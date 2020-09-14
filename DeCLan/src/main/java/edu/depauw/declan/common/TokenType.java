@@ -27,8 +27,7 @@ public enum TokenType {
 	COMMA, // comma ","
 	PERIOD, // period "."
 	// the rest are reserved words whose lexeme matches their name
-	BEGIN, BY, CONST, DIV, DO, ELSE, ELSIF, END, FALSE, FOR, IF, MOD, OR, PROCEDURE, REPEAT, RETURN, THEN, TO, TRUE,
-	UNTIL, VAR, WHILE;
+	BEGIN, BY, CONST, DIV, DO, ELSE, ELSIF, END, FALSE, FOR, IF, MOD, OR, PROCEDURE, REPEAT, RETURN, THEN, TO, TRUE, UNTIL, VAR, WHILE;
 
 	public static final Map<String, TokenType> reserved;
 
