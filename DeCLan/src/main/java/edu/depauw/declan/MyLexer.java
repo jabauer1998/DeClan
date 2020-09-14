@@ -8,6 +8,7 @@ import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.Token;
 import edu.depauw.declan.common.TokenFactory;
 import edu.depauw.declan.common.TokenType;
+import edu.depauw.declan.common.MyIO;
 
 public class MyLexer implements Lexer {
 	private Source source;
@@ -63,14 +64,18 @@ public class MyLexer implements Lexer {
 
 		while (!source.atEOF()) {
 			char c = source.current();
-
 			switch (state) {
 			case INIT:
 				// Look for the start of a token
 				if (Character.isWhitespace(c)) {
 					source.advance();
 					continue;
-				} else if (Character.isLetter(c)) {
+				} else if (Character.isUpperCase(c)){
+				        state = State.KEYWORD;
+					lexeme.append(c);
+					position = source.getPosition();
+					source.advance();
+				} else if (Character.isLetter(c)){
 					state = State.IDENT;
 					lexeme.append(c);
 					// Record starting position of identifier or keyword token
@@ -89,22 +94,34 @@ public class MyLexer implements Lexer {
 					return;
 				} else {
 					// TODO handle other characters here
-					
 					position = source.getPosition();
-					System.err.println("Unrecognized character " + c + " at " + position);
+					ERROR("Unrecognized character " + c + " at " + position);
 					source.advance();
 					continue;
 				}
-				
+			case KEYWORD:
+			    if(Character.isUpperCase(c)){
+				lexeme.append(c);
+				source.advance();
+			    } else if(Character.isLetterOrDigit(c)) {
+				state = State.IDENT;
+				source.advance();
+				continue;
+			    } else if(reserved.containsKey(lexeme.toString())){
+				nextToken = tokenFactory.makeToken(reserved.get(lexeme.toString()), position);
+				return;
+			    } else {
+				ERROR("Unexpected Character " + c + " Found!!!");
+			    }
 			case IDENT:
-				// Handle next character of an identifier or keyword
+				//Handle next character of an identifier or keyword
 				if (Character.isLetterOrDigit(c)) {
 					lexeme.append(c);
 					source.advance();
 					continue;
 				} else {
-					nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
-					return;
+				    nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
+				    return;
 				}
 			
 			case COLON:

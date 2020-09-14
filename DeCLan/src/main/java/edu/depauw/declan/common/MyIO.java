@@ -12,17 +12,17 @@ public class MyIO{
     
     private static  boolean DEBUG_ENABLED = true; //boolean to allow debugging ptrace statements
 
-    public static void Out(String message){ //Prints out a line just like standard output
+    public static void OUT(String message){ //Prints out a line just like standard output
 	System.out.println(message);
     }
     
-    public static void DbgOut(String message){ //trace debugging print function
+    public static void DBG(String message){ //trace debugging print function
 	if(DEBUG_ENABLED){
 	    Out(BOLDPURPLE("DBG") + ' ' + BOLDGREY("=>") + ' ' + message);
 	}
     }
     
-    public static void ErrOut(String message){ //Prints an error and halts program execution
+    public static void ERROR(String message){ //Prints an error and halts program execution
 	Out(BOLDRED("ERROR") + ' ' + BOLDGREY("=>") + ' ' + message);
 	System.exit(1);
     }
