@@ -48,8 +48,7 @@ public class MyLexer implements Lexer {
 	}
 
 	private static enum State {
-	    INIT, IDENT, COLON, KEYWORD, LESS, GREATER, NOTEQUAL, TXT, STRING, COMMENT, NUM
-		// TODO add more states here
+	    INIT, IDENT, COLON, KEYWORD, OP, TXT, STRING, COMMENT, NUM
 	}
 
 	/**
@@ -68,20 +67,20 @@ public class MyLexer implements Lexer {
 			case INIT:
 				// Look for the start of a token
 				if (Character.isWhitespace(c)) {
-					source.advance();
-					continue;
+				    source.advance();
+				    continue;
 				} else if (Character.isUpperCase(c)) {
-				        state = State.KEYWORD;
-					lexeme.append(c);
-					position = source.getPosition();
-					source.advance();
+				    state = State.KEYWORD;
+				    lexeme.append(c);
+				    position = source.getPosition();
+				    source.advance();
 				} else if (Character.isLetter(c)){
-					state = State.IDENT;
-					lexeme.append(c);
+				    state = State.IDENT;
+				    lexeme.append(c);
 					// Record starting position of identifier or keyword token
-					position = source.getPosition();
-					source.advance();
-					continue;
+				    position = source.getPosition();
+				    source.advance();
+				    continue;
 				} else if (Character.isDigit(c)) {
 				    state = State.NUM;
 				    lexeme.append(c);
@@ -89,97 +88,22 @@ public class MyLexer implements Lexer {
 				    source.advance();
 				    continue;
 				} else if (c == '\"') {
-				    state = State.TXT
+				    state = State.TXT;
 				    quotecount++;
 				    position = source.getPosition();
 				    source.advance();
 				    continue;
-				} else if (c == ':') {
-					state = State.COLON;
-					position = source.getPosition();
-					source.advance();
-					continue;
-				} else if (c == '=') {
-					position = source.getPosition();
-					source.advance();
-					nextToken = tokenFactory.makeToken(TokenType.EQ, position);
-					return;
-				} else if (c == '<') {
-				    state = State.LESS;
+				} else if (singleOperators.containsKey(c)){
+				    state = State.SINGLEOP;
 				    position = source.getPosition();
-				    source.advance();
+				    lexeme.append(c);
 				    continue;
-				} else if (c == '>') {
-				    state = State.GREATER;
-				    position = source.getPosition();
-				    source.advance();
-				    continue;
-				} else if (c == '(') {
-				    position = source.getPosition();
-				    source.advance();
-				    nextToken = tokenFactory.makeToken(TokenType.LPAR, position);
-				    return;
-				} else if (c == '(') {
-				    position = source.getPosition();
-				    source.advance();
-				    nextToken = tokenFactory.makeToken(TokenType.RPAR, position);
-				    return;
-				} else if (c == '#') {
-				    state = State.GREATER;
-				    position = source.getPosition();
-				    source.advance();
-				    continue;
-				} else if (c == '+') {
-				    position = source.getPosition();
-				    source.advance();
-				    nextToken = tokenFactory.makeToken(TokenType.PLUS, position);
-				    return;
-				} else if (c == '-') {
-				    position = source.getPosition();
-				    source.advance();
-				    nextToken = tokenFactory.makeToken(TokenType.MINUS, position);
-				    return;
-				} else if (c == '*') {
-				    position = source.getPosition();
-				    source.advance();
-				    nextToken = tokenFactory.makeToken(TokenType.TIMES, position);
-				    return;
-				} else if (c == '/') {
-				    position = source.getPosition();
-				    source.advance();
-				    nextToken = tokenFactory.makeToken(TokenType.DIVIDE, position);
-				    return;
-				} else if (c == '&') {
-				    position = source.getPosition();
-				    source.advance();
-				    nextToken = tokenFactory.makeToken(TokenType.AND, position);
-				    return;
-				}  else if (c == '~') {
-				    position = source.getPosition();
-				    source.advance();
-				    nextToken = tokenFactory.makeToken(TokenType.NOT, position);
-				    return;
-				}  else if (c == ';') {
-				    position = source.getPosition();
-				    source.advance();
-				    nextToken = tokenFactory.makeToken(TokenType.SEMI, position);
-				    return;
-				}  else if (c == ',') {
-				    position = source.getPosition();
-				    source.advance();
-				    nextToken = tokenFactory.makeToken(TokenType.COMMA, position);
-				    return;
-				}  else if (c == '.') {
-				    position = source.getPosition();
-				    source.advance();
-				    nextToken = tokenFactory.makeToken(TokenType.PERIOD, position);
-				    return;
 				} else {
-					// TODO handle other characters here
-					position = source.getPosition();
-					ERROR("Unrecognized character " + c + " at " + position);
-					source.advance();
-					continue;
+				    // TODO handle other characters here
+				    position = source.getPosition();
+				    ERROR("Unrecognized character " + c + " at " + position);
+				    source.advance();
+				    continue;
 				}
 			case KEYWORD:
 			    if(Character.isUpperCase(c)){
@@ -194,65 +118,33 @@ public class MyLexer implements Lexer {
 			case IDENT:
 				//Handle next character of an identifier or keyword
 				if (Character.isLetterOrDigit(c)) {
-					lexeme.append(c);
-					source.advance();
-					continue;
+				    lexeme.append(c);
+				    source.advance();
+				    continue;
 				} else {
 				    nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
 				    return;
 				}
-			case COLON:
-				// Check for : vs :=
+			case EQSTATE:
+				// Check for : vs := or < vs <= etc...
 				if (c == '=') {
-					source.advance();
-					nextToken = tokenFactory.makeToken(TokenType.ASSIGN, position);
-					return;
-				} else {
-					nextToken = tokenFactory.makeToken(TokenType.COLON, position);
-					return;
+				    lexeme.append(c);
+				    source.advance();
 				}
-			case LESS:
-			    //check for < vs <=
-			    if(c == '='){
-				source.advance();
-				nextToken = tokenFactory.makeToken(TokenType.LE, position);
+				nextToken = tokenFactory.makeToken(eqreserved.get(lexeme.toString()), position);
 				return;
-			    } else {
-				nextToken = tokenFactory.makeToken(TokenType.LT, position);
-				return;
-			    }
-			case GREATER:
-			    //check for < vs <=
-			    if(c == '='){
-				source.advance();
-				nextToken = tokenFactory.makeToken(TokenType.GE, position);
-				return;
-			    } else {
-				nextToken = tokenFactory.makeToken(TokenType.GT, position);
-				return;
-			    }
-			case NOTEQUAL:
-			    if(c == '='){
-				source.advance();
-				nextToken = tokenFactory.makeToken(TokenType.NE, position);
-				return;
-			    } else {
-				ERROR("Unexpected # found in code at position " + position);
-			    }
 			case TXT:
 			    if(c == '\"'){
 				quotecount++;
 				if(quotecount == 3){
 				    state = State.COMMENT;
 				}
-				source.advance();
-				continue;
 			    } else {
 				state = State.STRING;
 				lexeme.append(c);
-				source.advance();
-				continue;
 			    }
+			    source.advance();
+			    continue;
 			case STRING:
 			    if(c == '\"'){
 				source.advance();
@@ -269,13 +161,11 @@ public class MyLexer implements Lexer {
 				if(quotecount == 0){
 				    state = State.INIT;
 				}
-				source.advance();
-				continue;
 			    } else {
 				quotecount = 3;
-				source.advance();
-				continue;
 			    }
+			    source.advance();
+			    continue;
 			case NUM:
 			    if(Character.isDigit(c) || (c <= 'F' && c >= 'A')){
 				lexeme.append(c);
@@ -285,6 +175,21 @@ public class MyLexer implements Lexer {
 				nextToken = TokenFactory.makeNumToken(lexeme.toString(), position);
 				return;
 			    }
+			case OP:
+			    if (c == '<' || c == '>' || c == ':'){
+				source.advance();
+				c = source.current(); //see if c is =
+				if (c == '=') {
+				    lexeme.append(c);
+				    source.advance();
+				    nextToken = tokenFactory.makeToken(dualOperators.get(lexeme.toString()), position);
+				} else {
+				    nextToken = tokenFactory.makeToken(singleOperators.get(lexeme.toString().charAt(0)), position);
+				}
+			    } else {
+				nextToken = tokenFactory.makeToken(singleOperators.get(lexeme.toString().charAt(0)), position);
+			    }
+			    return;
 			// TODO and more state cases here
 			}
 		}

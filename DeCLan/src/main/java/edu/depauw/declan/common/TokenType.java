@@ -29,35 +29,66 @@ public enum TokenType {
 	// the rest are reserved words whose lexeme matches their name
 	BEGIN, BY, CONST, DIV, DO, ELSE, ELSIF, END, FALSE, FOR, IF, MOD, OR, PROCEDURE, REPEAT, RETURN, THEN, TO, TRUE, UNTIL, VAR, WHILE;
 
-	public static final Map<String, TokenType> reserved;
-
-	private static void addReserved(TokenType type) {
-		reserved.put(type.toString(), type);
+	public static final Map<String, TokenType> keywords;
+	public static final Map<Character, TokenType> singleOperators;
+	public static final Map<String, TokenType> dualOperators;
+	
+	private static void addKeyword(TokenType type) {
+	    keywords.put(type.toString(), type);
 	}
-
+	private static void addSingleOp(Character key, TokenType type){
+	    singleOperators.put(key, type);
+	}
+	private static void addDualOp(String key, TokenType type){
+	    dualOperators.put(key, type);
+	}
 	static {
-		reserved = new HashMap<>();
-		addReserved(BEGIN);
-		addReserved(BY);
-		addReserved(CONST);
-		addReserved(DIV);
-		addReserved(DO);
-		addReserved(ELSE);
-		addReserved(ELSIF);
-		addReserved(END);
-		addReserved(FALSE);
-		addReserved(FOR);
-		addReserved(IF);
-		addReserved(MOD);
-		addReserved(OR);
-		addReserved(PROCEDURE);
-		addReserved(REPEAT);
-		addReserved(RETURN);
-		addReserved(THEN);
-		addReserved(TO);
-		addReserved(TRUE);
-		addReserved(UNTIL);
-		addReserved(VAR);
-		addReserved(WHILE);
+		keywords = new HashMap<>();
+		addKeyword(BEGIN);
+		addKeyword(BY);
+		addKeyword(CONST);
+		addKeyword(DIV);
+		addKeyword(DO);
+		addKeyword(ELSE);
+		addKeyword(ELSIF);
+		addKeyword(END);
+		addKeyword(FALSE);
+		addKeyword(FOR);
+		addKeyword(IF);
+		addKeyword(MOD);
+		addKeyword(OR);
+		addKeyword(PROCEDURE);
+		addKeyword(REPEAT);
+		addKeyword(RETURN);
+		addKeyword(THEN);
+		addKeyword(TO);
+		addKeyword(TRUE);
+		addKeyword(UNTIL);
+		addKeyword(VAR);
+		addKeyword(WHILE);
+
+		singleOperators = new HashMap<>();
+		addSingleOp('<', LT);
+		addSingleOp('>', GT);
+		addSingleOp(':', COLON);
+		addSingleOp('+', PLUS);
+		addSingleOp('-', MINUS);
+		addSingleOp('&', AND);
+		addSingleOp('#', NE);
+		addSingleOp('=', EQ);
+		addSingleOp('(', LPAR);
+		addSingleOp(')', RPAR);
+		addSingleOp('~', NOT);
+		addSingleOp('-', MINUS);
+		addSingleOp('/', DIVIDE);
+		addSingleOp('*', TIMES);
+		addSingleOp(';', SEMI);
+		addSingleOp(',', COMMA);
+		addSingleOp('.', PERIOD);
+		
+		dualOperators = new HashMap<>();
+		addDualOp(">=", GE);
+		addDualOp("<=", LE);
+		addDualOp(":=", ASSIGN);
 	}
 }
