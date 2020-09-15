@@ -24,6 +24,10 @@ public class MyIO{
     
     public static void ERROR(String message){ //Prints an error and halts program execution
 	Out(BOLDRED("ERROR") + ' ' + BOLDGREY("=>") + ' ' + message);
+    }
+
+    public static void FATAL(String message){ //Prints an error and halts program execution
+	ERROR(message);
 	System.exit(1);
     }
 };
