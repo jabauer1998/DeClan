@@ -1,5 +1,6 @@
 package edu.depauw.declan.common;
 
+import java.util.TreeMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +43,7 @@ public enum TokenType {
 	private static void addDualOp(String key, TokenType type){
 	    dualOperators.put(key, type);
 	}
+
 	static {
 		keywords = new HashMap<>();
 		addKeyword(BEGIN);
@@ -86,7 +88,7 @@ public enum TokenType {
 		addSingleOp(',', COMMA);
 		addSingleOp('.', PERIOD);
 		
-		dualOperators = new HashMap<>();
+		dualOperators = new TreeMap<>();
 		addDualOp(">=", GE);
 		addDualOp("<=", LE);
 		addDualOp(":=", ASSIGN);
