@@ -48,7 +48,7 @@ public class MyLexer implements Lexer {
 	}
 
 	private static enum State {
-	    INIT, IDENT, COLON, KEYWORD, OP, TXT, STRING, COMMENT, NUM
+	    INIT, IDENT, KEYWORD, OP, TXT, STRING, COMMENT, NUM
 	}
 
 	/**
@@ -71,40 +71,27 @@ public class MyLexer implements Lexer {
 				    continue;
 				} else if (Character.isUpperCase(c)) {
 				    state = State.KEYWORD;
-				    lexeme.append(c);
-				    position = source.getPosition();
-				    source.advance();
 				} else if (Character.isLetter(c)){
 				    state = State.IDENT;
-				    lexeme.append(c);
-					// Record starting position of identifier or keyword token
-				    position = source.getPosition();
-				    source.advance();
-				    continue;
 				} else if (Character.isDigit(c)) {
 				    state = State.NUM;
-				    lexeme.append(c);
-				    position = source.getPosition();
-				    source.advance();
-				    continue;
 				} else if (c == '\"') {
 				    state = State.TXT;
 				    quotecount++;
-				    position = source.getPosition();
 				    source.advance();
 				    continue;
 				} else if (singleOperators.containsKey(c)){
 				    state = State.SINGLEOP;
-				    position = source.getPosition();
 				    lexeme.append(c);
-				    continue;
 				} else {
-				    // TODO handle other characters here
 				    position = source.getPosition();
 				    ERROR("Unrecognized character " + c + " at " + position);
-				    source.advance();
 				    continue;
 				}
+				lexme.append(c);
+				position = source.getPosition();
+				source.advance();
+				continue;
 			case KEYWORD:
 			    if(Character.isUpperCase(c)){
 				lexeme.append(c);
@@ -121,10 +108,9 @@ public class MyLexer implements Lexer {
 				    lexeme.append(c);
 				    source.advance();
 				    continue;
-				} else {
-				    nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
-				    return;
 				}
+				nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
+				return;
 			case TXT:
 			    if(c == '\"'){
 				quotecount++;
@@ -142,11 +128,10 @@ public class MyLexer implements Lexer {
 				source.advance();
 				nextToken = TokenFactory.makeStringToken(lexeme.toString(), position);
 				return;
-			    } else {
-				lexeme.append();
-				source.advance();
-				continue;
 			    }
+			    lexeme.append();
+			    source.advance();
+			    continue;
 			case COMMENT:
 			    if (c == '\"') {
 				quotecount--;
@@ -163,10 +148,9 @@ public class MyLexer implements Lexer {
 				lexeme.append(c);
 				source.advance();
 				continue;
-			    } else {
-				nextToken = TokenFactory.makeNumToken(lexeme.toString(), position);
-				return;
 			    }
+			    nextToken = TokenFactory.makeNumToken(lexeme.toString(), position);
+			    return;
 			case OP:
 			    if (c == '<' || c == '>' || c == ':'){
 				source.advance();
