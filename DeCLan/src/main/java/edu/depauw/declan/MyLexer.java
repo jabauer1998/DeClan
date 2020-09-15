@@ -110,7 +110,7 @@ public class MyLexer implements Lexer {
 				lexeme.append(c);
 				source.advance();
 			    } else if(reserved.containsKey(lexeme.toString())){
-				nextToken = tokenFactory.makeToken(reserved.get(lexeme.toString()), position);
+				nextToken = tokenFactory.makeToken(keywords.get(lexeme.toString()), position);
 				return;
 			    } else {
 				state = state.INIT;
@@ -125,14 +125,6 @@ public class MyLexer implements Lexer {
 				    nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
 				    return;
 				}
-			case EQSTATE:
-				// Check for : vs := or < vs <= etc...
-				if (c == '=') {
-				    lexeme.append(c);
-				    source.advance();
-				}
-				nextToken = tokenFactory.makeToken(eqreserved.get(lexeme.toString()), position);
-				return;
 			case TXT:
 			    if(c == '\"'){
 				quotecount++;
