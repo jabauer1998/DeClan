@@ -69,20 +69,19 @@ public class MyLexer implements Lexer {
 				if (Character.isWhitespace(c)) {
 				    source.advance();
 				    continue;
+				} else if (c == '\"') {
+				    state = State.TXT;
+				    quotecount++;
+				    source.advance();
+				    continue;
 				} else if (Character.isUpperCase(c)) {
 				    state = State.KEYWORD;
 				} else if (Character.isLetter(c)){
 				    state = State.IDENT;
 				} else if (Character.isDigit(c)) {
 				    state = State.NUM;
-				} else if (c == '\"') {
-				    state = State.TXT;
-				    quotecount++;
-				    source.advance();
-				    continue;
 				} else if (singleOperators.containsKey(c)){
-				    state = State.SINGLEOP;
-				    lexeme.append(c);
+				    state = State.OP;
 				} else {
 				    position = source.getPosition();
 				    ERROR("Unrecognized character " + c + " at " + position);
@@ -96,7 +95,7 @@ public class MyLexer implements Lexer {
 			    if(Character.isUpperCase(c)){
 				lexeme.append(c);
 				source.advance();
-			    } else if(reserved.containsKey(lexeme.toString())){
+			    } else if(keywords.containsKey(lexeme.toString())){
 				nextToken = tokenFactory.makeToken(keywords.get(lexeme.toString()), position);
 				return;
 			    } else {
