@@ -186,14 +186,14 @@ public class MyLexer implements Lexer {
 			return;
 	        case STRING:
 		    MyIO.ERROR("Unterminated String");
-		    nextToken == null;
+		    nextToken = null;
 		    return;
 		case COMMENT:
 		    MyIO.ERROR("Unterminated Comment");
-		    nextToken == null;
+		    nextToken = null;
 		    return;
 		case NUM:
-		    nextToken = tokenFactory.makeNumToken(lexeme.toString(). position);
+		    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
 		    return;
 		// TODO handle more state cases here as well
 		}
