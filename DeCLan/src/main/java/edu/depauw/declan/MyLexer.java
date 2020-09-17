@@ -72,22 +72,20 @@ public class MyLexer implements Lexer {
 				} else if (c == '\"') {
 				    state = State.TXT;
 				    quotecount++;
-				    source.advance();
-				    continue;
 				} else if (Character.isUpperCase(c)) {
 				    state = State.KEYWORD;
 				} else if (Character.isLetter(c)){
 				    state = State.IDENT;
 				} else if (Character.isDigit(c)) {
 				    state = State.NUM;
-				} else if (singleOperators.containsKey(c)){
+				} else if (TokenType.singleOperators.containsKey(c)){
 				    state = State.OP;
 				} else {
 				    position = source.getPosition();
-				    ERROR("Unrecognized character " + c + " at " + position);
+				    MyIO.ERROR("Unrecognized character " + c + " at " + position);
 				    continue;
 				}
-				lexme.append(c);
+				lexeme.append(c);
 				position = source.getPosition();
 				source.advance();
 				continue;
@@ -95,12 +93,13 @@ public class MyLexer implements Lexer {
 			    if(Character.isUpperCase(c)){
 				lexeme.append(c);
 				source.advance();
-			    } else if(keywords.containsKey(lexeme.toString())){
-				nextToken = tokenFactory.makeToken(keywords.get(lexeme.toString()), position);
+			    } else if(TokenType.keywords.containsKey(lexeme.toString())){
+				nextToken = tokenFactory.makeToken(TokenType.keywords.get(lexeme.toString()), position);
 				return;
 			    } else {
 				state = state.INIT;
 			    }
+			    continue;
 			case IDENT:
 				//Handle next character of an identifier or keyword
 				if (Character.isLetterOrDigit(c)) {
@@ -118,21 +117,23 @@ public class MyLexer implements Lexer {
 				}
 			    } else {
 				state = State.STRING;
-				lexeme.append(c);
+				String s = "";
+				s += c;
+				lexeme.replace(0, 1, s); //replace " with the new character
 			    }
 			    source.advance();
 			    continue;
 			case STRING:
 			    if(c == '\"'){
 				source.advance();
-				nextToken = TokenFactory.makeStringToken(lexeme.toString(), position);
+				nextToken = tokenFactory.makeStringToken(lexeme.toString(), position);
 				return;
 			    }
-			    lexeme.append();
+			    lexeme.append(c);
 			    source.advance();
 			    continue;
 			case COMMENT:
-			    if (c == '\"') {
+			    if(c == '\"'){
 				quotecount--;
 				if(quotecount == 0){
 				    state = State.INIT;
@@ -143,26 +144,26 @@ public class MyLexer implements Lexer {
 			    source.advance();
 			    continue;
 			case NUM:
-			    if(Character.isDigit(c) || (c <= 'F' && c >= 'A')){
+			    if(Character.isLetterOrDigit(c)){
 				lexeme.append(c);
 				source.advance();
 				continue;
 			    }
-			    nextToken = TokenFactory.makeNumToken(lexeme.toString(), position);
+			    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
 			    return;
 			case OP:
 			    if (c == '<' || c == '>' || c == ':'){
 				source.advance();
 				c = source.current(); //see if c is =
-				if (c == '=') {
+				if(c == '=') {
 				    lexeme.append(c);
 				    source.advance();
-				    nextToken = tokenFactory.makeToken(dualOperators.get(lexeme.toString()), position);
+				    nextToken = tokenFactory.makeToken(TokenType.dualOperators.get(lexeme.toString()), position);
 				} else {
-				    nextToken = tokenFactory.makeToken(singleOperators.get(lexeme.toString().charAt(0)), position);
+				    nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
 				}
 			    } else {
-				nextToken = tokenFactory.makeToken(singleOperators.get(lexeme.toString().charAt(0)), position);
+				nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
 			    }
 			    return;
 			// TODO and more state cases here
@@ -175,17 +176,25 @@ public class MyLexer implements Lexer {
 			// No more tokens found
 			nextToken = null;
 			return;
-			
 		case IDENT:
 			// Successfully ended an identifier or keyword
 			nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
 			return;
-			
-		case COLON:
-			// Final token was :
-			nextToken = tokenFactory.makeToken(TokenType.COLON, position);
+		case TXT:
+		        nextToken = 
+		        nextToken = null;
 			return;
-			
+	        case STRING:
+		    MyIO.ERROR("Unterminated String");
+		    nextToken == null;
+		    return;
+		case COMMENT:
+		    MyIO.ERROR("Unterminated Comment");
+		    nextToken == null;
+		    return;
+		case NUM:
+		    nextToken = tokenFactory.makeNumToken(lexeme.toString(). position);
+		    return;
 		// TODO handle more state cases here as well
 		}
 	}

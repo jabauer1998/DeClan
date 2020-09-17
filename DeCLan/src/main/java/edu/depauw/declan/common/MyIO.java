@@ -1,3 +1,7 @@
+package edu.depauw.declan.common;
+
+import java.lang.*;
+
 public class MyIO{
     
     private static String BOLDPURPLE(String message){
@@ -18,12 +22,12 @@ public class MyIO{
     
     public static void DBG(String message){ //trace debugging print function
 	if(DEBUG_ENABLED){
-	    Out(BOLDPURPLE("DBG") + ' ' + BOLDGREY("=>") + ' ' + message);
+	    OUT(BOLDPURPLE("DBG") + ' ' + BOLDGREY("=>") + ' ' + message);
 	}
     }
     
     public static void ERROR(String message){ //Prints an error and halts program execution
-	Out(BOLDRED("ERROR") + ' ' + BOLDGREY("=>") + ' ' + message);
+	OUT(BOLDRED("ERROR") + ' ' + BOLDGREY("=>") + ' ' + message);
     }
 
     public static void FATAL(String message){ //Prints an error and halts program execution
