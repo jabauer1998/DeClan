@@ -30,12 +30,12 @@ public enum TokenType {
 	// the rest are reserved words whose lexeme matches their name
 	BEGIN, BY, CONST, DIV, DO, ELSE, ELSIF, END, FALSE, FOR, IF, MOD, OR, PROCEDURE, REPEAT, RETURN, THEN, TO, TRUE, UNTIL, VAR, WHILE;
 
-	public static final Map<String, TokenType> keywords;
+	public static final Map<String, TokenType> reserved;
 	public static final Map<Character, TokenType> singleOperators;
 	public static final Map<String, TokenType> dualOperators;
 	
 	private static void addKeyword(TokenType type) {
-	    keywords.put(type.toString(), type);
+	    reserved.put(type.toString(), type);
 	}
 	private static void addSingleOp(Character key, TokenType type){
 	    singleOperators.put(key, type);
@@ -45,7 +45,7 @@ public enum TokenType {
 	}
 
 	static {
-		keywords = new HashMap<>();
+		reserved = new HashMap<>();
 		addKeyword(BEGIN);
 		addKeyword(BY);
 		addKeyword(CONST);

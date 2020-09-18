@@ -22,22 +22,19 @@ public class MyLexer implements Lexer {
 	}
 
 	public boolean hasNext() {
-		if (nextToken == null) {
+		if(nextToken == null) {
 			scanNext();
 		}
-
 		return nextToken != null;
 	}
 
-	public Token next() {
+	public Token next(){
 		if (nextToken == null) {
 			scanNext();
 		}
-
 		if (nextToken == null) {
-			throw new NoSuchElementException("No more tokens");
+		    MyIO.ERROR("No more tokens");
 		}
-
 		Token result = nextToken;
 		nextToken = null;
 		return result;
@@ -76,7 +73,7 @@ public class MyLexer implements Lexer {
 				    state = State.KEYWORD;
 				} else if (Character.isLetter(c)){
 				    state = State.IDENT;
-				} else if (Character.isDigit(c)) {
+				} else if (Character.isDigit(c)){
 				    state = State.NUM;
 				} else if (TokenType.singleOperators.containsKey(c)){
 				    state = State.OP;
@@ -93,15 +90,15 @@ public class MyLexer implements Lexer {
 			    if(Character.isUpperCase(c)){
 				lexeme.append(c);
 				source.advance();
-			    } else if(TokenType.keywords.containsKey(lexeme.toString())){
-				nextToken = tokenFactory.makeToken(TokenType.keywords.get(lexeme.toString()), position);
-				return;
+			    } else if(Character.isLetterOrDigit(c)) {
+				state = State.IDENT;
 			    } else {
-				state = state.INIT;
+				nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
+				 return;
 			    }
 			    continue;
 			case IDENT:
-				//Handle next character of an identifier or keyword
+			    //Handle next character of an identifier or keyword
 				if (Character.isLetterOrDigit(c)) {
 				    lexeme.append(c);
 				    source.advance();
@@ -169,21 +166,24 @@ public class MyLexer implements Lexer {
 			// TODO and more state cases here
 			}
 		}
-
 		// Clean up at end of source
 		switch (state) {
 		case INIT:
-			// No more tokens found
-			nextToken = null;
-			return;
+		    // No more tokens found
+		    nextToken = null;
+		    return;
+		case KEYWORD:
+		    //Not entire keyword was found so it is likely an identity
+		    nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
+		    return;
 		case IDENT:
-			// Successfully ended an identifier or keyword
-			nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
-			return;
+		    // Successfully ended an identifier
+		    nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
+		    return;
 		case TXT:
-		        nextToken = 
-		        nextToken = null;
-			return;
+		    MyIO.ERROR("Extra quotation mark at the end");
+		    nextToken = null;
+		    return;
 	        case STRING:
 		    MyIO.ERROR("Unterminated String");
 		    nextToken = null;
@@ -195,7 +195,7 @@ public class MyLexer implements Lexer {
 		case NUM:
 		    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
 		    return;
-		// TODO handle more state cases here as well
+		// The operator doesnt need any clean up it will be impossible to get down here from that state
 		}
 	}
 }
