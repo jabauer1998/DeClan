@@ -1,3 +1,5 @@
+#!/bin/bash
+
 CURDIR="$(pwd)"
 FULLPATH=$CURDIR/edu/depauw/declan
 RELPATH=./edu/depauw/declan
