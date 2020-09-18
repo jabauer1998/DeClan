@@ -8,7 +8,7 @@ import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.Token;
 import edu.depauw.declan.common.TokenFactory;
 import edu.depauw.declan.common.TokenType;
-import edu.depauw.declan.common.MyIO;
+import static edu.depauw.declan.common.MyIO.*;
 
 public class MyLexer implements Lexer {
 	private Source source;
@@ -33,7 +33,7 @@ public class MyLexer implements Lexer {
 			scanNext();
 		}
 		if (nextToken == null) {
-		    MyIO.ERROR("No more tokens");
+		    ERROR("No more tokens");
 		}
 		Token result = nextToken;
 		nextToken = null;
@@ -79,7 +79,7 @@ public class MyLexer implements Lexer {
 				    state = State.OP;
 				} else {
 				    position = source.getPosition();
-				    MyIO.ERROR("Unrecognized character " + c + " at " + position);
+				    ERROR("Unrecognized character " + c + " at " + position);
 				    continue;
 				}
 				lexeme.append(c);
@@ -181,15 +181,15 @@ public class MyLexer implements Lexer {
 		    nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
 		    return;
 		case TXT:
-		    MyIO.ERROR("Extra quotation mark at the end");
+		    ERROR("Extra quotation mark at the end");
 		    nextToken = null;
 		    return;
 	        case STRING:
-		    MyIO.ERROR("Unterminated String");
+		    ERROR("Unterminated String");
 		    nextToken = null;
 		    return;
 		case COMMENT:
-		    MyIO.ERROR("Unterminated Comment");
+		    ERROR("Unterminated Comment");
 		    nextToken = null;
 		    return;
 		case NUM:

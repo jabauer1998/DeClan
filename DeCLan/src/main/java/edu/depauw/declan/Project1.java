@@ -2,7 +2,7 @@ package edu.depauw.declan;
 
 import edu.depauw.declan.common.Lexer;
 import edu.depauw.declan.common.Token;
-import edu.depauw.declan.common.MyIO;
+import static edu.depauw.declan.common.MyIO.*;
 
 /**
  * Main class for Project 1 -- Scanner for DeCLan (Fall 2020). Scans tokens from
@@ -19,6 +19,6 @@ public class Project1 {
 			System.out.println(token);
 		    }
 		}
-		System.out.println("DONE");
+		OUT("DONE");
 	}
 }
