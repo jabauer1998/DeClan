@@ -2,4 +2,6 @@ To compile;
 
 Step 1 => Put Jar file in depauw/declan directory
 
-Step 2 => Run this command => javac -cp DeCLanModel-1x.jar ./*.java ./common/*.java
+Step 2 => Run this command => javac -cp DeCLanModel-1x.jar:. ./*.java ./common/*.java
+
+Step 3 => Run this Command => java -cp edu/depauw/declan/DeCLanModel-1x.jar:. edu.depauw.declan.Project1
