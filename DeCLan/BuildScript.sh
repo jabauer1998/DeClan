@@ -9,6 +9,11 @@ function SLASH_TO_DOTS
     echo $1 | sed 's:/:.:'
 }
 
+function CLEAN_SRC
+{
+    rm -rf *~ *.class *#
+}
+
 function SRC_CHECK
 {
     local tf="F"
@@ -40,6 +45,7 @@ function BUILD_SRC
 	else
 	    echo "SRC did not Build succesfully..."
 	    echo "Exiting Program..."
+	    exit 1
 	fi
 	
     fi
@@ -74,10 +80,21 @@ function RUN_SRC
 
 
 if [[ $# -ne 1 ]]; then
-   echo "You must specify only one argument and the argument can only be 'TEST' or 'PROGRAM1'"
+   echo 'You must specify only one argument and the argument can only be "TEST","PROGRAM1", or "CLEAN"...'
    exit 1
 fi
+
+if [[ $1 == "CLEAN" ]]; then
+    CLEAN_SRC
+    exit 1
+fi
+
+echo "Entering directory..."
+cd ./src/main/java
    
 SRC_CHECK
 BUILD_SRC
 RUN_SRC
+
+echo "Leaving Directory..."
+cd ../../../
