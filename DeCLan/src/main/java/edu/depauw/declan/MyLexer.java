@@ -57,7 +57,7 @@ public class MyLexer implements Lexer {
 		State state = State.INIT;
 		StringBuilder lexeme = new StringBuilder();
 		Position position = null;
-		int quotecount = 0;
+		int Comment = 0;
 		while (!source.atEOF()) {
 			char c = source.current();
 			switch (state) {
@@ -67,8 +67,8 @@ public class MyLexer implements Lexer {
 				    source.advance();
 				    continue;
 				} else if (c == '\"') {
-				    state = State.TXT;
-				    quotecount++;
+				    state = State.STRING;
+	
 				} else if (Character.isUpperCase(c)) {
 				    state = State.KEYWORD;
 				} else if (Character.isLetter(c)){
@@ -106,39 +106,36 @@ public class MyLexer implements Lexer {
 				}
 				nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
 				return;
-			case TXT:
-			    if(c == '\"'){
-				quotecount++;
-				if(quotecount == 3){
-				    state = State.COMMENT;
-				}
-			    } else {
-				state = State.STRING;
-				String s = "";
-				s += c;
-				lexeme.replace(0, 1, s); //replace " with the new character
-			    }
-			    source.advance();
-			    continue;
 			case STRING:
-			    if(c == '\"'){
+			    if(c != '\"'){
 				source.advance();
-				nextToken = tokenFactory.makeStringToken(lexeme.toString(), position);
-				return;
+				lexeme.append(c);
 			    }
-			    lexeme.append(c);
-			    source.advance();
-			    continue;
+			    nextToken = tokenFactory.makeStringToken(lexeme.toString(), position);
+			    return;
 			case COMMENT:
-			    if(c == '\"'){
-				quotecount--;
-				if(quotecount == 0){
-				    state = State.INIT;
-				}
+			    if(c == '(') {
+				  source.advance();
+				  c = source.current();
+				  if(c == '*') {
+				      state = State.COMMENT;
+				      source.advance();
+				      Comment++;
+				  }
+			    } else if(c == '*') {
+				  source.advance();
+				  c = source.current();
+				  if(c == ')') {
+				      state = State.COMMENT;
+				      source.advance();
+				      Comment--;
+				  }
+				  if(Comment <= 0){
+				      state = state.INIT;
+				  }
 			    } else {
-				quotecount = 3;
+				source.advance();
 			    }
-			    source.advance();
 			    continue;
 			case NUM:
 			    if(Character.isLetterOrDigit(c)){
@@ -159,6 +156,16 @@ public class MyLexer implements Lexer {
 				} else {
 				    nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
 				}
+                            } else if(c == '(') {
+				  source.advance();
+				  c = source.current();
+				  if(c == '*') {
+				      state = State.COMMENT;
+				      source.advance();
+				      Comment++;
+				      continue;
+				  }
+				  nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
 			    } else {
 				nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
 			    }
