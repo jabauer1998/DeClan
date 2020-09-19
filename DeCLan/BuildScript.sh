@@ -1,9 +1,9 @@
 #!/bin/bash
 
 CURDIR="$(pwd)"
-FULLPATH=$CURDIR/src/main/java/edu/depauw/declan
-RELPATH=edu/depauw/declan
-LIBDIR=$CURDIR/libs
+FULLPATH="$CURDIR/src/main/java/edu/depauw/declan"
+RELPATH="edu/depauw/declan"
+LIBDIR="$CURDIR/libs"
 TYPE=$1
 
 function SLASH_TO_DOTS
@@ -13,7 +13,7 @@ function SLASH_TO_DOTS
 
 function CLEAN_SRC
 {
-    rm -rf *~ *.class *#
+    rm -f "$FULLPATH/*~" "$FULLPATH/*.class" "$FULLPATH/*#" "$FULLPATH/common/*~" "$FULLPATH/common/*.class" "$FULLPATH/common/*#"
 }
 
 function SRC_CHECK
@@ -36,14 +36,14 @@ function SRC_CHECK
 function COPYLIBS
 {
     echo "Copying over libraries/jar files..."
-    cp $LIBDIR/* "$FULLPATH"
+    cp -r "$LIBDIR/"*.jar "$FULLPATH"
     echo "Coppied over libraries..."
 }
 
 function RMLIBS
 {
     echo "Removing Libraries..."
-    rm "$FULLPATH"/*.jar
+    rm "$FULLPATH/"*.jar
     echo "Removed Libraries..."
 }
 
@@ -56,8 +56,8 @@ function BUILD_SRC
 	echo "__________________________________________________________"
 	echo ""
 	echo ""
-	cd $RELPATH
-	local ERRORS=$(javac -cp $RELPATH/DeCLanModel-1x.jar:. ./*.java ./common/*.java | grep "errors")
+	cd "$RELPATH"
+	local ERRORS=$(javac -cp "./DeCLanModel-1x.jar:." ./*.java ./common/*.java | grep "errors")
 	echo ""
 	echo ""
 	echo "__________________________________________________________"
@@ -116,8 +116,8 @@ echo "Entering directory..."
 cd ./src/main/java
    
 SRC_CHECK
-BUILD_SRC
 COPYLIBS
+BUILD_SRC
 RUN_SRC
 RMLIBS
 
