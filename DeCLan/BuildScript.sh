@@ -49,8 +49,9 @@ function RMLIBS
 
 function BUILD_SRC
 {
-    if [ -a "$FULLPATH/Project1.class" ] && [ -a "$FULLPATH/Test.class" ]; then
-	echo "Already Compiled Skipping to Run Step..."
+    local tf=$(ls "$FULLPATH")
+    if [[ "$tf" != "" ]]; then
+	echo "Already Built Skipping to Run Step..."
     else
 	echo "Building SRC..."
 	echo "______________________BUILD_LOG___________________________"
@@ -93,7 +94,7 @@ function RUN_SRC
        echo "________________________RUN_LOG___________________________"
        echo ""
        echo ""
-       java -cp "$RELPATH/*:." $LOCPATH.MyLexerBasicTest
+       java -cp "$RELPATH/*:."  $LOCPATH.org.junit.runner.JUnitCore $LOCPATH.MyLexerBasicTest
        echo ""
        echo ""
        echo "__________________________________________________________"
