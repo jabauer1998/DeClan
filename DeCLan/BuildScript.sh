@@ -53,11 +53,12 @@ function BUILD_SRC
 	echo "Already Compiled Skipping to Run Step..."
     else
 	echo "Building SRC..."
-	echo "_____________________BUILD_LOG____________________________"
+	echo "______________________BUILD_LOG___________________________"
 	echo ""
 	echo ""
 	cd "$RELPATH"
-	local ERRORS=$(javac -cp \* ./*.java ./common/*.java | grep "errors")
+	local ERRORS=$(javac -cp \* ./*.java ./common/*.java | grep "errors")> /dev/null
+	echo $ERRORS
 	echo ""
 	echo ""
 	echo "__________________________________________________________"
@@ -70,7 +71,6 @@ function BUILD_SRC
 	    echo "Exiting Program..."
 	    exit 1
 	fi
-	
     fi
 }
 
@@ -82,7 +82,7 @@ function RUN_SRC
        echo "________________________RUN_LOG___________________________"
        echo ""
        echo ""
-       java -cp .:\* $LOCPATH.Project1
+       java -cp "$RELPATH/*:." $LOCPATH.Project1
        echo ""
        echo ""
        echo "__________________________________________________________"
@@ -93,7 +93,7 @@ function RUN_SRC
        echo "________________________RUN_LOG___________________________"
        echo ""
        echo ""
-       java -cp $RELPATH/DeCLanModel-1x.jar:. $LOCPATH.MyLexerBasicTest
+       java -cp "$RELPATH/*:." $LOCPATH.MyLexerBasicTest
        echo ""
        echo ""
        echo "__________________________________________________________"
