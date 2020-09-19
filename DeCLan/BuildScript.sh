@@ -43,7 +43,7 @@ function COPYLIBS
 function RMLIBS
 {
     echo "Removing Libraries..."
-    rm "$FULLPATH/"*.jar
+    rm -f "$FULLPATH/"*.jar
     echo "Removed Libraries..."
 }
 
@@ -52,19 +52,19 @@ function BUILD_SRC
     if [ -a "$FULLPATH/Project1.class" ] && [ -a "$FULLPATH/Test.class" ]; then
 	echo "Already Compiled Skipping to Run Step..."
     else
-	echo "Compiling SRC..."
-	echo "__________________________________________________________"
+	echo "Building SRC..."
+	echo "_____________________BUILD_LOG____________________________"
 	echo ""
 	echo ""
 	cd "$RELPATH"
-	local ERRORS=$(javac -cp "./DeCLanModel-1x.jar:." ./*.java ./common/*.java | grep "errors")
+	local ERRORS=$(javac -cp \* ./*.java ./common/*.java | grep "errors")
 	echo ""
 	echo ""
 	echo "__________________________________________________________"
 	echo ""
 	cd ../../../
 	if [[ "$ERRORS" == "" ]]; then
-	    echo "SRC compiled succesfully..."
+	    echo "SRC Built Succesfully..."
 	else
 	    echo "SRC did not Build succesfully..."
 	    echo "Exiting Program..."
@@ -79,23 +79,25 @@ function RUN_SRC
     local LOCPATH="$(SLASH_TO_DOTS $RELPATH)"
     if [[ "$TYPE" == "PROJECT1" ]]; then
        echo "Running Program1..."
+       echo "________________________RUN_LOG___________________________"
+       echo ""
+       echo ""
+       java -cp .:\* $LOCPATH.Project1
+       echo ""
+       echo ""
        echo "__________________________________________________________"
        echo ""
-       echo ""
-       java -cp $RELPATH/DeCLanModel-1x.jar:. $LOCPATH.Project1
-       echo ""
-       echo ""
-       echo "__________________________________________________________"
        echo "Project 1 complete..."
     elif [[ "$TYPE" == "TEST" ]]; then
        echo "Running Test Cases..."
-       echo "__________________________________________________________"
+       echo "________________________RUN_LOG___________________________"
        echo ""
        echo ""
        java -cp $RELPATH/DeCLanModel-1x.jar:. $LOCPATH.MyLexerBasicTest
        echo ""
        echo ""
        echo "__________________________________________________________"
+       echo ""
        echo "Test cases complete..."
     fi
 }
