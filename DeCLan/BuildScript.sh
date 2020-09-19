@@ -1,9 +1,9 @@
 #!/bin/bash
 
 CURDIR="$(pwd)"
-FULLPATH=$CURDIR/edu/depauw/declan
+FULLPATH=$CURDIR/src/main/java/edu/depauw/declan
 RELPATH=edu/depauw/declan
-
+LIBDIR=$CURDIR/libs
 TYPE=$1
 
 function SLASH_TO_DOTS
@@ -33,14 +33,35 @@ function SRC_CHECK
     fi	    
 }
 
+function COPYLIBS
+{
+    echo "Copying over libraries/jar files..."
+    cp $LIBDIR/* "$FULLPATH"
+    echo "Coppied over libraries..."
+}
+
+function RMLIBS
+{
+    echo "Removing Libraries..."
+    rm "$FULLPATH"/*.jar
+    echo "Removed Libraries..."
+}
+
 function BUILD_SRC
 {
-    if [ -a "$SRCPATH/Project1.class" ] && [ -a "$SRCPATH/Test.class" ]; then
+    if [ -a "$FULLPATH/Project1.class" ] && [ -a "$FULLPATH/Test.class" ]; then
 	echo "Already Compiled Skipping to Run Step..."
     else
 	echo "Compiling SRC..."
-	cd edu/depauw/declan/
-	local ERRORS=$(javac -cp DeCLanModel-1x.jar:. ./*.java ./common/*.java | grep "errors")
+	echo "__________________________________________________________"
+	echo ""
+	echo ""
+	cd $RELPATH
+	local ERRORS=$(javac -cp $RELPATH/DeCLanModel-1x.jar:. ./*.java ./common/*.java | grep "errors")
+	echo ""
+	echo ""
+	echo "__________________________________________________________"
+	echo ""
 	cd ../../../
 	if [[ "$ERRORS" == "" ]]; then
 	    echo "SRC compiled succesfully..."
@@ -65,7 +86,7 @@ function RUN_SRC
        echo ""
        echo ""
        echo "__________________________________________________________"
-       echo "Program 1 complete..."
+       echo "Project 1 complete..."
     elif [[ "$TYPE" == "TEST" ]]; then
        echo "Running Test Cases..."
        echo "__________________________________________________________"
@@ -96,7 +117,9 @@ cd ./src/main/java
    
 SRC_CHECK
 BUILD_SRC
+COPYLIBS
 RUN_SRC
+RMLIBS
 
 echo "Leaving Directory..."
 cd ../../../
