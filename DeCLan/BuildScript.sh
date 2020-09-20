@@ -49,7 +49,7 @@ function RMLIBS
 
 function BUILD_SRC
 {
-    local tf=$(ls "$FULLPATH")
+    local tf=$(ls "$FULLPATH"/*.class)
     if [[ "$tf" != "" ]]; then
 	echo "Already Built Skipping to Run Step..."
     else
