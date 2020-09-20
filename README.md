@@ -8,7 +8,7 @@ I added a build script to the code to make compilation easier for future project
 *PROJECT1 => builds and runs project1*<br>
 *TEST => builds and runs the junit testcases*<br><br>
 
-*EX command: =>* `bash BuildScript CLEAN`<br>
+*EX command: =>* `bash BuildScript.sh CLEAN`<br>
 **(NOTE: this command was executed inside the DeClan directory as this is where the build script lies)**<br><br>
 
 The advantages of the build script is it will check if you have all of the required dependencies as well. For instance java installed on your machine. It also displayes the results in a very readable format.<br><br>
