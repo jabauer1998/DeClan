@@ -94,7 +94,7 @@ function RUN_SRC
        echo "________________________RUN_LOG___________________________"
        echo ""
        echo ""
-       java -cp "$RELPATH/*:."  $LOCPATH.org.junit.runner.JUnitCore $LOCPATH.MyLexerBasicTest
+       java -cp "$RELPATH/*:." -jar $RELPATH/junit-platform-console-standalone-1.7.0.jar -cp "$RELPATH/*:." --select-file $LOCPATH.MyLexerBasicTest
        echo ""
        echo ""
        echo "__________________________________________________________"
