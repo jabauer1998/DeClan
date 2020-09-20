@@ -1,4 +1,4 @@
-# CSC426 Public Repository ~ ***IMPORTANT UPDATE*** - PLEASE READ 
+# CSC426 Public Repository ~ ***IMPORTANT UPDATE*** ~ PLEASE READ 
 I added a build script to the code to make compilation easier for future projects on the command line/shell. This is a bourne again shell script. How this script works is you provide it an argument and it will do the required task.<br><br>
 
 **There are 4 tasks available:**<br><br>
