@@ -77,7 +77,7 @@ function BUILD_SRC
 function RUN_SRC
 {
     local LOCPATH="$(SLASH_TO_DOTS $RELPATH)"
-    if [[ "$TYPE" == "PROJECT1" ]]; then
+    if [ "$TYPE" == "PROJECT1" ] || [ "$TYPE" == "ALL" ]; then
        echo "Running Program1..."
        echo "________________________RUN_LOG___________________________"
        echo ""
@@ -88,9 +88,10 @@ function RUN_SRC
        echo "__________________________________________________________"
        echo ""
        echo "Project 1 complete..."
-    elif [[ "$TYPE" == "TEST" ]]; then
+    fi
+    if [ "$TYPE" == "TEST" ] || [ "$TYPE" == "ALL" ]; then
        echo "Running Test Cases..."
-       echo "________________________RUN_LOG___________________________"
+       echo "_______________________TEST_LOG___________________________"
        echo ""
        echo ""
        java -cp "$RELPATH/*:." -jar $RELPATH/junit-platform-console-standalone-1.7.0.jar -cp "$RELPATH/*:." --scan-class-path
@@ -105,16 +106,16 @@ function RUN_SRC
 
 
 if [[ $# -ne 1 ]]; then
-   echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "BUILD" or "CLEAN"...'
+   echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "ALL", "BUILD", or "CLEAN"...'
    exit 1
 fi
 
 
 
-if [[ "$1" == "CLEAN" ]]; then
+if [[ "$TYPE" == "CLEAN" ]]; then
     CLEAN_SRC
     exit 1
-elif [[ "$1" == "BUILD" ]]; then
+elif [[ "$TYPE" == "BUILD" ]]; then
     echo "Entering directory..."
     cd ./src/main/java
     SRC_CHECK
@@ -123,20 +124,18 @@ elif [[ "$1" == "BUILD" ]]; then
     RM_LIBS
     echo "Leaving Directory..."
     cd ../../../
-elif [ "$1" == "TEST" ] || [ "$1" == "PROJECT1" ]; then
-    
-echo "Entering directory..."
-cd ./src/main/java
-SRC_CHECK
-COPY_LIBS
-BUILD_SRC
-RUN_SRC
-RM_LIBS
-echo "Leaving Directory..."
-cd ../../../
-
+elif [ "$TYPE" == "TEST" ] || [ "$1" == "PROJECT1" ] || [ "$1" == "ALL" ]; then
+    echo "Entering directory..."
+    cd ./src/main/java
+    SRC_CHECK
+    COPY_LIBS
+    BUILD_SRC
+    RUN_SRC
+    RM_LIBS
+    echo "Leaving Directory..."
+    cd ../../../
 else
     echo "Invalid argument: $1"
-    echo echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "BUILD" or "CLEAN"...'
+    echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "ALL",  "BUILD" or "CLEAN"...'
     exit 1
 fi
