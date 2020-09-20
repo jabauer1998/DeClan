@@ -33,14 +33,14 @@ function SRC_CHECK
     fi	    
 }
 
-function COPYLIBS
+function COPY_LIBS
 {
     echo "Copying over libraries/jar files..."
     cp -r "$LIBDIR/"*.jar "$FULLPATH"
     echo "Coppied over libraries..."
 }
 
-function RMLIBS
+function RM_LIBS
 {
     echo "Removing Libraries..."
     rm -f "$FULLPATH/"*.jar
@@ -58,8 +58,7 @@ function BUILD_SRC
 	echo ""
 	echo ""
 	cd "$RELPATH"
-	local ERRORS=$(javac -cp \* ./*.java ./common/*.java | grep "errors")> /dev/null
-	echo $ERRORS
+	local ERRORS=$(javac -cp \* ./*.java ./common/*.java | grep "errors")
 	echo ""
 	echo ""
 	echo "__________________________________________________________"
@@ -106,23 +105,38 @@ function RUN_SRC
 
 
 if [[ $# -ne 1 ]]; then
-   echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", or "CLEAN"...'
+   echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "BUILD" or "CLEAN"...'
    exit 1
 fi
 
-if [[ $1 == "CLEAN" ]]; then
+
+
+if [[ "$1" == "CLEAN" ]]; then
     CLEAN_SRC
     exit 1
-fi
-
+elif [[ "$1" == "BUILD" ]]; then
+    echo "Entering directory..."
+    cd ./src/main/java
+    SRC_CHECK
+    COPY_LIBS
+    BUILD_SRC
+    RM_LIBS
+    echo "Leaving Directory..."
+    cd ../../../
+elif [ "$1" == "TEST" ] || [ "$1" == "PROJECT1" ]; then
+    
 echo "Entering directory..."
 cd ./src/main/java
-   
 SRC_CHECK
-COPYLIBS
+COPY_LIBS
 BUILD_SRC
 RUN_SRC
-RMLIBS
-
+RM_LIBS
 echo "Leaving Directory..."
 cd ../../../
+
+else
+    echo "Invalid argument: $1"
+    echo echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "BUILD" or "CLEAN"...'
+    exit 1
+fi
