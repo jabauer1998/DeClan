@@ -94,7 +94,7 @@ function RUN_SRC
        echo "_______________________TEST_LOG___________________________"
        echo ""
        echo ""
-       java -cp "$RELPATH/*:." -jar $RELPATH/junit-platform-console-standalone-1.7.0.jar -cp "$RELPATH/*:." --scan-class-path
+       java -jar $RELPATH/junit-platform-console-standalone-1.7.0.jar -cp "$RELPATH/DeCLanModel-1x.jar:." --scan-class-path
        echo ""
        echo ""
        echo "__________________________________________________________"
