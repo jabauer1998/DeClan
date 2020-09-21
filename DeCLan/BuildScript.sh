@@ -13,7 +13,7 @@ function SLASH_TO_DOTS
 
 function CLEAN_SRC
 {
-    rm -f "$FULLPATH/"*~ "$FULLPATH/"*.class "$FULLPATH/"*# "$FULLPATH/common/"*~ "$FULLPATH/common/"*.class "$FULLPATH/common/"*#
+    rm -f "$FULLPATH/"*~ "$FULLPATH/"*.class "$FULLPATH/"*"#" "$FULLPATH/common/"*~ "$FULLPATH/common/"*.class "$FULLPATH/common/"*"#"
 }
 
 function SRC_CHECK

@@ -68,21 +68,26 @@ public class MyLexer implements Lexer {
 				    continue;
 				} else if (c == '\"') {
 				    state = State.STRING;
-	
 				} else if (Character.isUpperCase(c)) {
 				    state = State.KEYWORD;
+				    lexeme.append(c);
 				} else if (Character.isLetter(c)){
 				    state = State.IDENT;
+				    lexeme.append(c);
 				} else if (Character.isDigit(c)){
 				    state = State.NUM;
+				    lexeme.append(c);
 				} else if (TokenType.singleOperators.containsKey(c)){
 				    state = State.OP;
+				    lexeme.append(c);
+				    position = source.getPosition();
+				    continue;
 				} else {
 				    position = source.getPosition();
 				    ERROR("Unrecognized character " + c + " at " + position);
+				    source.advance();
 				    continue;
 				}
-				lexeme.append(c);
 				position = source.getPosition();
 				source.advance();
 				continue;
@@ -94,7 +99,7 @@ public class MyLexer implements Lexer {
 				state = State.IDENT;
 			    } else {
 				nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
-				 return;
+				return;
 			    }
 			    continue;
 			case IDENT:
@@ -110,8 +115,10 @@ public class MyLexer implements Lexer {
 			    if(c != '\"'){
 				source.advance();
 				lexeme.append(c);
+				continue;
 			    }
 			    nextToken = tokenFactory.makeStringToken(lexeme.toString(), position);
+			    source.advance();
 			    return;
 			case COMMENT:
 			    if(c == '(') {
@@ -151,8 +158,8 @@ public class MyLexer implements Lexer {
 				c = source.current(); //see if c is =
 				if(c == '=') {
 				    lexeme.append(c);
-				    source.advance();
 				    nextToken = tokenFactory.makeToken(TokenType.dualOperators.get(lexeme.toString()), position);
+				    source.advance();
 				} else {
 				    nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
 				}
@@ -168,6 +175,7 @@ public class MyLexer implements Lexer {
 				  nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
 			    } else {
 				nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
+				source.advance();
 			    }
 			    return;
 			// TODO and more state cases here
