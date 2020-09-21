@@ -125,7 +125,6 @@ public class MyLexer implements Lexer {
 				  source.advance();
 				  c = source.current();
 				  if(c == '*') {
-				      state = State.COMMENT;
 				      source.advance();
 				      Comment++;
 				  }
@@ -133,12 +132,11 @@ public class MyLexer implements Lexer {
 				  source.advance();
 				  c = source.current();
 				  if(c == ')') {
-				      state = State.COMMENT;
 				      source.advance();
 				      Comment--;
-				  }
-				  if(Comment <= 0){
-				      state = state.INIT;
+				      if(Comment <= 0){
+					  state = state.INIT;
+				      }
 				  }
 			    } else {
 				source.advance();
@@ -168,6 +166,7 @@ public class MyLexer implements Lexer {
 				  c = source.current();
 				  if(c == '*') {
 				      state = State.COMMENT;
+				      lexeme.deleteCharAt(0); //remove ( from lexeme it is only a comment not a token
 				      source.advance();
 				      Comment++;
 				      continue;
