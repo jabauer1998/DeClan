@@ -58,6 +58,8 @@ public class MyLexer implements Lexer {
 		StringBuilder lexeme = new StringBuilder();
 		Position position = null;
 		int Comment = 0;
+		boolean dot = false;
+		boolean scalefact = false;
 		while (!source.atEOF()) {
 			char c = source.current();
 			switch (state) {
@@ -143,7 +145,29 @@ public class MyLexer implements Lexer {
 			    }
 			    continue;
 			case NUM:
-			    if(Character.isLetterOrDigit(c)){
+			    if(c == 'E' && !scalefact){
+				lexeme.append(c);
+				source.advance();
+				c = source.current();
+				if(c == '+' || c == '-'){
+				    lexeme.append(c);
+				    scalefact = true;
+				    dot = false;
+				    source.advance();
+				} else if(Character.toLowerCase(c) >= 'a' && Character.toLowerCase(c) <= 'f' || Character.isDigit(c)) {
+				    lexeme.append(c);
+				    source.advance();
+				}
+				continue;
+			    } else if (c == 'H') {
+				lexeme.append(c);
+				source.advance();
+			    } else if (c == '.' && !dot) {
+				dot = true;
+				lexeme.append(c);
+				source.advance();
+				continue;
+			    } else if(Character.toLowerCase(c) <= 'f' && Character.toLowerCase(c) >= 'a' || Character.isDigit(c)){
 				lexeme.append(c);
 				source.advance();
 				continue;
@@ -194,20 +218,17 @@ public class MyLexer implements Lexer {
 		    // Successfully ended an identifier
 		    nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
 		    return;
-		case TXT:
-		    ERROR("Extra quotation mark at the end");
-		    nextToken = null;
-		    return;
 	        case STRING:
-		    ERROR("Unterminated String");
+		    ERROR("Unterminated string literal at end of file");
 		    nextToken = null;
 		    return;
 		case COMMENT:
-		    ERROR("Unterminated Comment");
+		    ERROR("Unterminated comment at end of file");
 		    nextToken = null;
 		    return;
 		case NUM:
 		    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+		    ERROR("Unterminated numerical literal at end of file");
 		    return;
 		// The operator doesnt need any clean up it will be impossible to get down here from that state
 		}
