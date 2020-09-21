@@ -13,7 +13,7 @@ function SLASH_TO_DOTS
 
 function CLEAN_SRC
 {
-    rm -f "$FULLPATH/"*~ "$FULLPATH/"*.class "$FULLPATH/"*# "$FULLPATH/common/"*~ "$FULLPATH/common/"*.class "$FULLPATH/common/"*#
+    rm -f "$FULLPATH/"*~ "$FULLPATH/"*.class "$FULLPATH/"*"#" "$FULLPATH/common/"*~ "$FULLPATH/common/"*.class "$FULLPATH/common/"*"#"
 }
 
 function SRC_CHECK
@@ -94,7 +94,7 @@ function RUN_SRC
        echo "_______________________TEST_LOG___________________________"
        echo ""
        echo ""
-       java -cp "$RELPATH/*:." -jar $RELPATH/junit-platform-console-standalone-1.7.0.jar -cp "$RELPATH/*:." --scan-class-path
+       java -jar $RELPATH/junit-platform-console-standalone-1.7.0.jar -cp "$RELPATH/DeCLanModel-1x.jar:." --scan-class-path
        echo ""
        echo ""
        echo "__________________________________________________________"
