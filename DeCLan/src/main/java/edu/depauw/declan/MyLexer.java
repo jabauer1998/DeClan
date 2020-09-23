@@ -153,6 +153,7 @@ public class MyLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
+				DBG("Token is: " + lexeme.toString());
 				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
 				return;
 			    }
@@ -161,6 +162,7 @@ public class MyLexer implements Lexer {
 			        lexeme.append(c);
 				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
 				source.advance();
+				DBG("My token is: " + lexeme.toString());
 				return;
 			    } else if (Character.toLowerCase(c) >= 'a' && Character.toLowerCase(c) <= 'f' || Character.isDigit(c)) {
 				lexeme.append(c);
@@ -185,6 +187,7 @@ public class MyLexer implements Lexer {
 					state = State.EXP;
 					continue;
 				    } else {
+					DBG("Token is: " + lexeme.toString());
 					nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
 					return;
 				    }
@@ -208,7 +211,9 @@ public class MyLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
+				DBG("Token is: " + lexeme.toString());
 				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+				source.advance();
 				return;
 			    }
 			case OP:
@@ -217,9 +222,11 @@ public class MyLexer implements Lexer {
 				c = source.current(); //see if c is =
 				if(c == '=') {
 				    lexeme.append(c);
+				    DBG("Token is: " + lexeme.toString());
 				    nextToken = tokenFactory.makeToken(TokenType.dualOperators.get(lexeme.toString()), position);
 				    source.advance();
 				} else {
+				    DBG("Token is: " + lexeme.toString());
 				    nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
 				}
                             } else if(c == '(') {
@@ -267,6 +274,14 @@ public class MyLexer implements Lexer {
 		case NUM:
 		    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
 		    ERROR("Unterminated numerical literal at end of file");
+		    return;
+		case EXP:
+		    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+		    ERROR("Unterminated exponent literal at end of file");
+		    return;
+		case HEX:
+		    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+		    ERROR("Unterminated hex literal at end of file");
 		    return;
 		// The operator doesnt need any clean up it will be impossible to get down here from that state
 		}
