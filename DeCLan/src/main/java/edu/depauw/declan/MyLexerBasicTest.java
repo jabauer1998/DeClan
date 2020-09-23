@@ -68,11 +68,7 @@ class MyLexerBasicTest {
 	
 	@Test
 	void testRealNumbers() {
-	    Start_DBG();
-	    DBG("This is the real number test");
 	    compareToModel("0. 1.2 345.678 01.E23 4.5E+6 7.8E-09");
-	    DBG("The real number test is over");
-	    End_DBG();
 	}
 	
 	@Test
