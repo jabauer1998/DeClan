@@ -46,7 +46,7 @@ public class MyLexer implements Lexer {
 	}
 
 	private static enum State {
-	    INIT, IDENT, KEYWORD, OP, STRING, COMMENT, NUM, HEX, EXP
+	    INIT, IDENT, KEYWORD, OP, STRING, COMMENT, NUM, HEX, EXP, REAL
 	}
 
 	/**
@@ -59,7 +59,6 @@ public class MyLexer implements Lexer {
 		StringBuilder lexeme = new StringBuilder();
 		Position position = null;
 		int Comment = 0;
-		boolean dot = false;
 		while (!source.atEOF()) {
 			char c = source.current();
 			switch (state) {
@@ -70,15 +69,27 @@ public class MyLexer implements Lexer {
 				    continue;
 				} else if (c == '\"') {
 				    state = State.STRING;
+				    position = source.getPosition();
+				    source.advance();
+				    continue;
 				} else if (Character.isUpperCase(c)) {
 				    state = State.KEYWORD;
 				    lexeme.append(c);
+				    position = source.getPosition();
+				    source.advance();
+				    continue;
 				} else if (Character.isLetter(c)){
 				    state = State.IDENT;
 				    lexeme.append(c);
+				    position = source.getPosition();
+				    source.advance();
+				    continue;
 				} else if (Character.isDigit(c)){
 				    state = State.NUM;
 				    lexeme.append(c);
+				    position = source.getPosition();
+				    source.advance();
+				    continue;
 				} else if (TokenType.singleOperators.containsKey(c)){
 				    state = State.OP;
 				    lexeme.append(c);
@@ -90,41 +101,41 @@ public class MyLexer implements Lexer {
 				    source.advance();
 				    continue;
 				}
-				position = source.getPosition();
-				source.advance();
-				continue;
 			case KEYWORD:
 			    if(Character.isUpperCase(c)){
 				lexeme.append(c);
 				source.advance();
+				continue;
 			    } else if(Character.isLetterOrDigit(c)) {
 				state = State.IDENT;
+				continue;
 			    } else {
 				DBG("Token is: " + lexeme.toString());
 				nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
 				return;
 			    }
-			    continue;
 			case IDENT:
 			    //Handle next character of an identifier or keyword
 				if (Character.isLetterOrDigit(c)) {
 				    lexeme.append(c);
 				    source.advance();
 				    continue;
+				} else {
+				    DBG("Token is: " + lexeme.toString());
+				    nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
+				    return;
 				}
-				DBG("Token is: " + lexeme.toString());
-				nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
-				return;
 			case STRING:
 			    if(c != '\"'){
 				source.advance();
 				lexeme.append(c);
 				continue;
+			    } else {
+				DBG("Token is: " + lexeme.toString());
+				nextToken = tokenFactory.makeStringToken(lexeme.toString(), position);
+				source.advance();
+				return;
 			    }
-			    DBG("Token is: " + lexeme.toString());
-			    nextToken = tokenFactory.makeStringToken(lexeme.toString(), position);
-			    source.advance();
-			    return;
 			case COMMENT:
 			    if(c == '(') {
 				  source.advance();
@@ -174,8 +185,8 @@ public class MyLexer implements Lexer {
 				state = State.INIT;
 				continue;
 			    }
-			case NUM:
-			    if(c == 'E'){
+			case REAL:
+			    if(c == 'E') {
 				lexeme.append(c);
 				source.advance();
 				c = source.current();
@@ -187,23 +198,35 @@ public class MyLexer implements Lexer {
 					state = State.EXP;
 					continue;
 				    } else {
-					DBG("Token is: " + lexeme.toString());
-					nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
-					return;
+					ERROR("Missing exponent in real literal " + lexeme.toString() + " at " + position);
+					lexeme.setLength(0);
+					state = state.INIT;
+					continue;
 				    }
-				} else if (dot && Character.isDigit(c)) {
+				} else if (Character.isDigit(c)) {
 				    state = State.EXP;
 				    continue;
 				} else {
-				    state = State.HEX;
+				    ERROR("Missing exponent in real literal " + lexeme.toString() + " at " + position);
+				    lexeme.setLength(0);
+				    state = State.INIT;
 				    continue;
 				}
-			    } else if (c == '.' && !dot) {
-				dot = true;
+			    } else if(Character.isDigit(c)) {
 				lexeme.append(c);
 				source.advance();
 				continue;
-			    } else if(Character.toLowerCase(c) <= 'f' && Character.toLowerCase(c) >= 'a' || c == 'H' && !dot){
+			    } else {
+				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+				return;
+			    }
+			case NUM:
+			    if (c == '.') {
+				state = State.REAL;
+				lexeme.append(c);
+				source.advance();
+				continue;
+			    } else if(Character.toLowerCase(c) <= 'f' && Character.toLowerCase(c) >= 'a' || c == 'H'){
 				state = State.HEX;
 				continue;
 			    } else if (Character.isDigit(c)){
@@ -213,7 +236,6 @@ public class MyLexer implements Lexer {
 			    } else {
 				DBG("Token is: " + lexeme.toString());
 				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
-				source.advance();
 				return;
 			    }
 			case OP:
@@ -273,15 +295,15 @@ public class MyLexer implements Lexer {
 		    return;
 		case NUM:
 		    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
-		    ERROR("Unterminated numerical literal at end of file");
 		    return;
 		case EXP:
 		    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
-		    ERROR("Unterminated exponent literal at end of file");
 		    return;
 		case HEX:
 		    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
-		    ERROR("Unterminated hex literal at end of file");
+		    return;
+		case REAL:
+		    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
 		    return;
 		// The operator doesnt need any clean up it will be impossible to get down here from that state
 		}
