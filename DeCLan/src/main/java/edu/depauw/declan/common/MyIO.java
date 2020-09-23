@@ -14,7 +14,15 @@ public class MyIO{
 	return "\u001b[30;1m" + message + "\u001b[0m"; //Changes color to bright black (or grey)
     }
     
-    private static  boolean DEBUG_ENABLED = true; //boolean to allow debugging ptrace statements
+    private static  boolean DEBUG_ENABLED = false; //boolean to allow debugging ptrace statements
+
+    public static void Start_DBG(){ //Allow Debugging
+	DEBUG_ENABLED = true;
+    }
+
+    public static void End_DBG(){
+	DEBUG_ENABLED = false; //Stop Debugging
+    }
 
     public static void OUT(String message){ //Prints out a line just like standard output
 	System.out.println(message);
