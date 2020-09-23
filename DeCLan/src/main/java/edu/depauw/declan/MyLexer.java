@@ -8,6 +8,7 @@ import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.Token;
 import edu.depauw.declan.common.TokenFactory;
 import edu.depauw.declan.common.TokenType;
+
 import static edu.depauw.declan.common.MyIO.*;
 
 public class MyLexer implements Lexer {
@@ -45,7 +46,7 @@ public class MyLexer implements Lexer {
 	}
 
 	private static enum State {
-	    INIT, IDENT, KEYWORD, OP, TXT, STRING, COMMENT, NUM
+	    INIT, IDENT, KEYWORD, OP, STRING, COMMENT, NUM, HEX, EXP
 	}
 
 	/**
@@ -59,7 +60,6 @@ public class MyLexer implements Lexer {
 		Position position = null;
 		int Comment = 0;
 		boolean dot = false;
-		boolean scalefact = false;
 		while (!source.atEOF()) {
 			char c = source.current();
 			switch (state) {
@@ -100,6 +100,7 @@ public class MyLexer implements Lexer {
 			    } else if(Character.isLetterOrDigit(c)) {
 				state = State.IDENT;
 			    } else {
+				DBG("Token is: " + lexeme.toString());
 				nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
 				return;
 			    }
@@ -111,6 +112,7 @@ public class MyLexer implements Lexer {
 				    source.advance();
 				    continue;
 				}
+				DBG("Token is: " + lexeme.toString());
 				nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
 				return;
 			case STRING:
@@ -119,6 +121,7 @@ public class MyLexer implements Lexer {
 				lexeme.append(c);
 				continue;
 			    }
+			    DBG("Token is: " + lexeme.toString());
 			    nextToken = tokenFactory.makeStringToken(lexeme.toString(), position);
 			    source.advance();
 			    return;
@@ -144,36 +147,70 @@ public class MyLexer implements Lexer {
 				source.advance();
 			    }
 			    continue;
+			case EXP:
+			    if(Character.isDigit(c)){
+				lexeme.append(c);
+				source.advance();
+				continue;
+			    } else {
+				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+				return;
+			    }
+			case HEX:
+			    if(c == 'H'){
+			        lexeme.append(c);
+				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+				source.advance();
+				return;
+			    } else if (Character.toLowerCase(c) >= 'a' && Character.toLowerCase(c) <= 'f' || Character.isDigit(c)) {
+				lexeme.append(c);
+				source.advance();
+				continue;
+			    } else {
+				ERROR("Unterminated hex literal " + lexeme.toString() + " at " + position); //print error 
+				lexeme.setLength(0); //clear string builder buffer
+				state = State.INIT;
+				continue;
+			    }
 			case NUM:
-			    if(c == 'E' && !scalefact){
+			    if(c == 'E'){
 				lexeme.append(c);
 				source.advance();
 				c = source.current();
 				if(c == '+' || c == '-'){
 				    lexeme.append(c);
-				    scalefact = true;
-				    dot = false;
 				    source.advance();
-				} else if(Character.toLowerCase(c) >= 'a' && Character.toLowerCase(c) <= 'f' || Character.isDigit(c)) {
-				    lexeme.append(c);
-				    source.advance();
+				    c = source.current();
+				    if(Character.isDigit(c)){
+					state = State.EXP;
+					continue;
+				    } else {
+					nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
+					return;
+				    }
+				} else if (dot && Character.isDigit(c)) {
+				    state = State.EXP;
+				    continue;
+				} else {
+				    state = State.HEX;
+				    continue;
 				}
-				continue;
-			    } else if (c == 'H') {
-				lexeme.append(c);
-				source.advance();
 			    } else if (c == '.' && !dot) {
 				dot = true;
 				lexeme.append(c);
 				source.advance();
 				continue;
-			    } else if(Character.toLowerCase(c) <= 'f' && Character.toLowerCase(c) >= 'a' || Character.isDigit(c)){
+			    } else if(Character.toLowerCase(c) <= 'f' && Character.toLowerCase(c) >= 'a' || c == 'H' && !dot){
+				state = State.HEX;
+				continue;
+			    } else if (Character.isDigit(c)){
 				lexeme.append(c);
 				source.advance();
 				continue;
+			    } else {
+				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+				return;
 			    }
-			    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
-			    return;
 			case OP:
 			    if (c == '<' || c == '>' || c == ':'){
 				source.advance();
@@ -190,7 +227,7 @@ public class MyLexer implements Lexer {
 				  c = source.current();
 				  if(c == '*') {
 				      state = State.COMMENT;
-				      lexeme.deleteCharAt(0); //remove ( from lexeme it is only a comment not a token
+				      lexeme.setLength(0); //remove ( from lexeme it is only a comment not a token
 				      source.advance();
 				      Comment++;
 				      continue;
@@ -200,6 +237,7 @@ public class MyLexer implements Lexer {
 				nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
 				source.advance();
 			    }
+			    DBG("Token is: " + lexeme.toString());
 			    return;
 			// TODO and more state cases here
 			}

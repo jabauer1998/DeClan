@@ -26,7 +26,7 @@ public class MyIO{
 	}
     }
     
-    public static void ERROR(String message){ //Prints an error and halts program execution
+    public static void ERROR(String message){ //Prints an error message
 	OUT(BOLDRED("ERROR") + ' ' + BOLDGREY("=>") + ' ' + message);
     }
 

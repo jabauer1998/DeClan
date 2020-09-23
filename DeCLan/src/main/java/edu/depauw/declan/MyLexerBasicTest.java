@@ -15,6 +15,7 @@ import edu.depauw.declan.common.TokenFactory;
 import edu.depauw.declan.model.LexerImpl;
 import edu.depauw.declan.model.SourceImpl;
 import edu.depauw.declan.model.TokenFactoryImpl;
+import static edu.depauw.declan.common.MyIO.*;
 
 class MyLexerBasicTest {
 
@@ -77,7 +78,9 @@ class MyLexerBasicTest {
 	
 	@Test
 	void testAdvancedErrorRecovery() {
+	        DBG("Token is Start of failed Test");
 		compareToModel("1F+2E-3.4E*5.E-D6");
+		DBG("Token is end of failed Test"); 
 	}
 
 	void compareToModel(String input) {
