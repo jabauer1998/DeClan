@@ -1,44 +1,91 @@
 package edu.depauw.declan.common;
-
 import java.lang.*;
 
+/**
+This class contains methods to make the error statements for the compiler nicer and more readable. This class has a few types of print statements aswell as private methods to change the color of the text using escape sequences.
+@author Jacob Bauer
+ */
 public class MyIO{
-    
+
+    /** Changes the color of the text to purple
+	@param <code> message </code> the string to change to purple
+	@return the purple text
+	@author Jacob Bauer
+     */
     private static String BOLDPURPLE(String message){
 	return "\u001b[35;1m" + message + "\u001b[0m"; //Changes text color to bright magenta
     }
+    /** Changes the color of the text to red
+	@param <code> message </code> the string to change to red
+	@return the red text
+	@author Jacob Bauer
+     */
     private static String BOLDRED(String message){
-	return "\u001b[31;1m" + message + "\u001b[0m";//Changes text color to bright red
+	return "\u001b[31;1m" + message + "\u001b[0m";
     }
+    /** Changes the color of the text to Grey
+	@param <code>message</code> the string to change to Grey
+	@return the grey text
+	@author Jacob Bauer
+     */
     private static String BOLDGREY(String message){
-	return "\u001b[30;1m" + message + "\u001b[0m"; //Changes color to bright black (or grey)
+	return "\u001b[30;1m" + message + "\u001b[0m";
     }
     
-    private static  boolean DEBUG_ENABLED = false; //boolean to allow debugging ptrace statements
+    private static  boolean DEBUG_ENABLED = false;
 
-    public static void Start_DBG(){ //Allow Debugging
+    /**
+       This function enables debuuging in a section of code by setting <code> DEBUG_ENABLED </code> to true
+       @author Jacob Bauer
+     */
+    public static void Start_DBG(){
 	DEBUG_ENABLED = true;
     }
-
+    /**
+       This function disables debuuging in a section of code by setting <code> DEBUG_ENABLED </code> to false
+       @author Jacob Bauer
+     */
     public static void End_DBG(){
-	DEBUG_ENABLED = false; //Stop Debugging
+	DEBUG_ENABLED = false;
     }
-
-    public static void OUT(String message){ //Prints out a line just like standard output
+    /** 
+	A shorthand method for <code> System.out.println() </code>
+	@param <code> message </code> message to print out
+	@author Jacob Bauer
+     */
+    public static void OUT(String message){
 	System.out.println(message);
     }
+
+    /**
+       Prints a Debugging Statement if debugging is enabled
+       @param <code> message </code> debugging message to print out
+       @author Jacob Bauer
+     */
     
-    public static void DBG(String message){ //trace debugging print function
+    public static void DBG(String message){
 	if(DEBUG_ENABLED){
 	    OUT(BOLDPURPLE("DBG") + ' ' + BOLDGREY("=>") + ' ' + message);
 	}
     }
+
+    /**
+       Prints an error message out to the console
+       @param <code> message </code> error  message to print out
+       @author Jacob Bauer
+     */
     
-    public static void ERROR(String message){ //Prints an error message
+    public static void ERROR(String message){
 	OUT(BOLDRED("ERROR") + ' ' + BOLDGREY("=>") + ' ' + message);
     }
 
-    public static void FATAL(String message){ //Prints an error and halts program execution
+     /**
+       Prints an error message out to the console and terminates the program
+       @param <code> message </code> error  message to print out
+       @author Jacob Bauer
+     */
+    
+    public static void FATAL(String message){
 	ERROR(message);
 	System.exit(1);
     }

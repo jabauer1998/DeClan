@@ -176,10 +176,10 @@ public class MyLexer implements Lexer {
 				    source.advance();
 				    c = source.current();
 				    if(Character.isDigit(c)){
-					state = State.EXP;
+					state = State.EXP; //go to exp state
 					continue;
 				    } else {
-					ERROR("Missing exponent in real literal " + lexeme.toString() + " at " + position);
+					ERROR("Missing exponent in real literal " + lexeme.toString() + " at " + position); //print error and go to next token
 					lexeme.setLength(0);
 					state = state.INIT;
 					continue;
@@ -188,7 +188,7 @@ public class MyLexer implements Lexer {
 				    state = State.EXP;
 				    continue;
 				} else {
-				    ERROR("Missing exponent in real literal " + lexeme.toString() + " at " + position);
+				    ERROR("Missing exponent in real literal " + lexeme.toString() + " at " + position); //print error and go to next token
 				    lexeme.setLength(0);
 				    state = State.INIT;
 				    continue;
@@ -198,7 +198,7 @@ public class MyLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
-				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position); //created a Real Number Token
 				return;
 			    }
 			case NUM:
