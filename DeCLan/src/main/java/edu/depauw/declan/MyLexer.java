@@ -8,6 +8,7 @@ import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.Token;
 import edu.depauw.declan.common.TokenFactory;
 import edu.depauw.declan.common.TokenType;
+import static edu.depauw.declan.common.TokenType.*;
 
 import static edu.depauw.declan.common.MyIO.*;
 
@@ -46,7 +47,7 @@ public class MyLexer implements Lexer {
 	}
 
 	private static enum State {
-	    INIT, IDENT, KEYWORD, OP, STRING, COMMENT, NUM, HEX, EXP, REAL
+	    INIT, IDENT, OP, STRING, COMMENT, NUM, HEX, EXP, REAL
 	}
 
 	/**
@@ -72,12 +73,6 @@ public class MyLexer implements Lexer {
 				    position = source.getPosition();
 				    source.advance();
 				    continue;
-				} else if (Character.isUpperCase(c)) {
-				    state = State.KEYWORD;
-				    lexeme.append(c);
-				    position = source.getPosition();
-				    source.advance();
-				    continue;
 				} else if (Character.isLetter(c)){
 				    state = State.IDENT;
 				    lexeme.append(c);
@@ -90,7 +85,7 @@ public class MyLexer implements Lexer {
 				    position = source.getPosition();
 				    source.advance();
 				    continue;
-				} else if (TokenType.singleOperators.containsKey(c)){
+				} else if (contSingleOpToken(c)){
 				    state = State.OP;
 				    lexeme.append(c);
 				    position = source.getPosition();
@@ -101,19 +96,6 @@ public class MyLexer implements Lexer {
 				    source.advance();
 				    continue;
 				}
-			case KEYWORD:
-			    if(Character.isUpperCase(c)){
-				lexeme.append(c);
-				source.advance();
-				continue;
-			    } else if(Character.isLetterOrDigit(c)) {
-				state = State.IDENT;
-				continue;
-			    } else {
-				DBG("Token is: " + lexeme.toString());
-				nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
-				return;
-			    }
 			case IDENT:
 			    //Handle next character of an identifier or keyword
 				if (Character.isLetterOrDigit(c)) {
@@ -121,7 +103,6 @@ public class MyLexer implements Lexer {
 				    source.advance();
 				    continue;
 				} else {
-				    DBG("Token is: " + lexeme.toString());
 				    nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
 				    return;
 				}
@@ -144,6 +125,7 @@ public class MyLexer implements Lexer {
 				      source.advance();
 				      Comment++;
 				  }
+				  continue;
 			    } else if(c == '*') {
 				  source.advance();
 				  c = source.current();
@@ -154,17 +136,17 @@ public class MyLexer implements Lexer {
 					  state = state.INIT;
 				      }
 				  }
+				  continue;
 			    } else {
 				source.advance();
+				continue;
 			    }
-			    continue;
 			case EXP:
 			    if(Character.isDigit(c)){
 				lexeme.append(c);
 				source.advance();
 				continue;
 			    } else {
-				DBG("Token is: " + lexeme.toString());
 				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
 				return;
 			    }
@@ -173,7 +155,6 @@ public class MyLexer implements Lexer {
 			        lexeme.append(c);
 				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
 				source.advance();
-				DBG("My token is: " + lexeme.toString());
 				return;
 			    } else if (Character.toLowerCase(c) >= 'a' && Character.toLowerCase(c) <= 'f' || Character.isDigit(c)) {
 				lexeme.append(c);
@@ -226,7 +207,7 @@ public class MyLexer implements Lexer {
 				lexeme.append(c);
 				source.advance();
 				continue;
-			    } else if(Character.toLowerCase(c) <= 'f' && Character.toLowerCase(c) >= 'a' || c == 'H'){
+			    } else if(c <= 'F' && c >= 'A' || c == 'H'){
 				state = State.HEX;
 				continue;
 			    } else if (Character.isDigit(c)){
@@ -234,7 +215,6 @@ public class MyLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
-				DBG("Token is: " + lexeme.toString());
 				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
 				return;
 			    }
@@ -244,12 +224,12 @@ public class MyLexer implements Lexer {
 				c = source.current(); //see if c is =
 				if(c == '=') {
 				    lexeme.append(c);
-				    DBG("Token is: " + lexeme.toString());
-				    nextToken = tokenFactory.makeToken(TokenType.dualOperators.get(lexeme.toString()), position);
+				    nextToken = tokenFactory.makeToken(getDualOpToken(lexeme.toString()), position);
 				    source.advance();
+				    return;
 				} else {
-				    DBG("Token is: " + lexeme.toString());
-				    nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
+				    nextToken = tokenFactory.makeToken(getSingleOpToken(lexeme.toString()), position);
+				    return;
 				}
                             } else if(c == '(') {
 				  source.advance();
@@ -260,15 +240,15 @@ public class MyLexer implements Lexer {
 				      source.advance();
 				      Comment++;
 				      continue;
+				  } else {
+				      nextToken = tokenFactory.makeToken(getSingleOpToken(lexeme.toString()), position);
+				      return;
 				  }
-				  nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
 			    } else {
-				nextToken = tokenFactory.makeToken(TokenType.singleOperators.get(lexeme.toString().charAt(0)), position);
+				nextToken = tokenFactory.makeToken(getSingleOpToken(lexeme.toString()), position);
 				source.advance();
+				return;
 			    }
-			    DBG("Token is: " + lexeme.toString());
-			    return;
-			// TODO and more state cases here
 			}
 		}
 		// Clean up at end of source
@@ -276,10 +256,6 @@ public class MyLexer implements Lexer {
 		case INIT:
 		    // No more tokens found
 		    nextToken = null;
-		    return;
-		case KEYWORD:
-		    //Not entire keyword was found so it is likely an identity
-		    nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
 		    return;
 		case IDENT:
 		    // Successfully ended an identifier

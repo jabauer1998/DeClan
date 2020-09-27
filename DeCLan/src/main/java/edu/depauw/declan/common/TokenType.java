@@ -31,8 +31,8 @@ public enum TokenType {
 	BEGIN, BY, CONST, DIV, DO, ELSE, ELSIF, END, FALSE, FOR, IF, MOD, OR, PROCEDURE, REPEAT, RETURN, THEN, TO, TRUE, UNTIL, VAR, WHILE;
 
 	public static final Map<String, TokenType> reserved;
-	public static final Map<Character, TokenType> singleOperators;
-	public static final Map<String, TokenType> dualOperators;
+	private static final Map<Character, TokenType> singleOperators;
+	private static final Map<String, TokenType> dualOperators;
 	
 	private static void addKeyword(TokenType type) {
 	    reserved.put(type.toString(), type);
@@ -44,6 +44,22 @@ public enum TokenType {
 	    dualOperators.put(key, type);
 	}
 
+	public static boolean contDualOpToken(String key){
+	    return dualOperators.containsKey(key);
+	}
+
+	public static boolean contSingleOpToken(char key){
+	    return singleOperators.containsKey(key);
+	}
+
+	public static TokenType getDualOpToken(String key){
+	    return dualOperators.get(key);
+	}
+
+	public static TokenType getSingleOpToken(String key){
+	    return singleOperators.get(key.charAt(0));
+	}
+	
 	static {
 		reserved = new HashMap<>();
 		addKeyword(BEGIN);
