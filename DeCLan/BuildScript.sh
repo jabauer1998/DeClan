@@ -1,8 +1,8 @@
 #!/bin/bash
 
 CURDIR="$(pwd)"
-FULLPATH="$CURDIR/src/main/java/edu/depauw/declan"
-RELPATH="edu/depauw/declan"
+FULLPATH="$CURDIR/src/main/java/edu/depauw/declan/main"
+RELPATH="edu/depauw/declan/main"
 LIBDIR="$CURDIR/libs"
 TYPE=$1
 
@@ -13,7 +13,7 @@ function SLASH_TO_DOTS
 
 function CLEAN_SRC
 {
-    rm -f "$FULLPATH/"*~ "$FULLPATH/"*.class "$FULLPATH/"*"#" "$FULLPATH/common/"*~ "$FULLPATH/common/"*.class "$FULLPATH/common/"*"#"
+    rm -rf *~ *.class *"#"
 }
 
 function SRC_CHECK
@@ -58,7 +58,7 @@ function BUILD_SRC
 	echo ""
 	echo ""
 	cd "$RELPATH"
-	local ERRORS=$(javac -cp \* ./*.java ./common/*.java | grep "errors")
+	local ERRORS=$(javac -cp \* ./main/*.java ./common/*.java ./common/ast/*.java | grep "errors")
 	echo ""
 	echo ""
 	echo "__________________________________________________________"
@@ -89,6 +89,18 @@ function RUN_SRC
        echo ""
        echo "Project 1 complete..."
     fi
+    if [ "$TYPE" == "PROJECT2" ] || [ "$TYPE" == "ALL" ]; then
+       echo "Running Program2..."
+       echo "________________________RUN_LOG___________________________"
+       echo ""
+       echo ""
+       java -cp "$RELPATH/*:." $LOCPATH.Project2
+       echo ""
+       echo ""
+       echo "__________________________________________________________"
+       echo ""
+       echo "Project 2 complete..."
+    fi
     if [ "$TYPE" == "TEST" ] || [ "$TYPE" == "ALL" ]; then
        echo "Running Test Cases..."
        echo "_______________________TEST_LOG___________________________"
@@ -106,7 +118,7 @@ function RUN_SRC
 
 
 if [[ $# -ne 1 ]]; then
-   echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "ALL", "BUILD", or "CLEAN"...'
+   echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "PROJECT2", "ALL", "BUILD", or "CLEAN"...'
    exit 1
 fi
 
@@ -124,7 +136,7 @@ elif [[ "$TYPE" == "BUILD" ]]; then
     RM_LIBS
     echo "Leaving Directory..."
     cd ../../../
-elif [ "$TYPE" == "TEST" ] || [ "$1" == "PROJECT1" ] || [ "$1" == "ALL" ]; then
+elif [ "$TYPE" == "TEST" ] || [ "$1" == "PROJECT1" ] || [ "$1" == "PROJECT2" ] || [ "$1" == "ALL" ]; then
     echo "Entering directory..."
     cd ./src/main/java
     SRC_CHECK
@@ -136,6 +148,6 @@ elif [ "$TYPE" == "TEST" ] || [ "$1" == "PROJECT1" ] || [ "$1" == "ALL" ]; then
     cd ../../../
 else
     echo "Invalid argument: $1"
-    echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "ALL",  "BUILD" or "CLEAN"...'
+    echo 'You must specify only one argument and the argument can only be "TEST", "PROJECT1", "PROJECT2", "ALL",  "BUILD" or "CLEAN"...'
     exit 1
 fi
