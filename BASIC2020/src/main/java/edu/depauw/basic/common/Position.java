@@ -1,4 +1,4 @@
-package edu.depauw.declan.common;
+package edu.depauw.basic.common;
 
 import java.util.Objects;
 

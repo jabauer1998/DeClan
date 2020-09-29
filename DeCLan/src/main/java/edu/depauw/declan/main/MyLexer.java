@@ -1,25 +1,26 @@
-package edu.depauw.declan;
+package edu.depauw.declan.main;
 
 import java.util.NoSuchElementException;
 
+import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Lexer;
 import edu.depauw.declan.common.Position;
 import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.Token;
-import edu.depauw.declan.common.TokenFactory;
 import edu.depauw.declan.common.TokenType;
-import static edu.depauw.declan.common.TokenType.*;
 
+import static edu.depauw.declan.common.Token.*;
+import static edu.depauw.declan.common.TokenType.*;
 import static edu.depauw.declan.common.MyIO.*;
 
 public class MyLexer implements Lexer {
 	private Source source;
-	private TokenFactory tokenFactory;
 	private Token nextToken;
+        private ErrorLog errorLog;
 
-	public MyLexer(Source source, TokenFactory tokenFactory) {
+        public MyLexer(Source source, ErrorLog errorLog) {
 		this.source = source;
-		this.tokenFactory = tokenFactory;
+		this.errorLog = errorLog;
 		this.nextToken = null;
 	}
 
@@ -103,7 +104,7 @@ public class MyLexer implements Lexer {
 				    source.advance();
 				    continue;
 				} else {
-				    nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
+				    nextToken = createId(lexeme.toString(), position);
 				    return;
 				}
 			case STRING:
@@ -113,7 +114,7 @@ public class MyLexer implements Lexer {
 				continue;
 			    } else {
 				DBG("Token is: " + lexeme.toString());
-				nextToken = tokenFactory.makeStringToken(lexeme.toString(), position);
+				nextToken = createString(lexeme.toString(), position);
 				source.advance();
 				return;
 			    }
@@ -147,13 +148,13 @@ public class MyLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
-				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+				nextToken = createNum(lexeme.toString(), position);
 				return;
 			    }
 			case HEX:
 			    if(c == 'H'){
 			        lexeme.append(c);
-				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+				nextToken = createNum(lexeme.toString(), position);
 				source.advance();
 				return;
 			    } else if (Character.toLowerCase(c) >= 'a' && Character.toLowerCase(c) <= 'f' || Character.isDigit(c)) {
@@ -198,7 +199,7 @@ public class MyLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
-				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position); //created a Real Number Token
+				nextToken = createNum(lexeme.toString(), position); //created a Real Number Token
 				return;
 			    }
 			case NUM:
@@ -215,7 +216,7 @@ public class MyLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
-				nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+				nextToken = createNum(lexeme.toString(), position);
 				return;
 			    }
 			case OP:
@@ -224,11 +225,11 @@ public class MyLexer implements Lexer {
 				c = source.current(); //see if c is =
 				if(c == '=') {
 				    lexeme.append(c);
-				    nextToken = tokenFactory.makeToken(getDualOpToken(lexeme.toString()), position);
+				    nextToken = create(getDualOpToken(lexeme.toString()), position);
 				    source.advance();
 				    return;
 				} else {
-				    nextToken = tokenFactory.makeToken(getSingleOpToken(lexeme.toString()), position);
+				    nextToken = create(getSingleOpToken(lexeme.toString()), position);
 				    return;
 				}
                             } else if(c == '(') {
@@ -241,11 +242,11 @@ public class MyLexer implements Lexer {
 				      Comment++;
 				      continue;
 				  } else {
-				      nextToken = tokenFactory.makeToken(getSingleOpToken(lexeme.toString()), position);
+				      nextToken = create(getSingleOpToken(lexeme.toString()), position);
 				      return;
 				  }
 			    } else {
-				nextToken = tokenFactory.makeToken(getSingleOpToken(lexeme.toString()), position);
+				nextToken = create(getSingleOpToken(lexeme.toString()), position);
 				source.advance();
 				return;
 			    }
@@ -259,7 +260,7 @@ public class MyLexer implements Lexer {
 		    return;
 		case IDENT:
 		    // Successfully ended an identifier
-		    nextToken = tokenFactory.makeIdToken(lexeme.toString(), position);
+		    nextToken = createId(lexeme.toString(), position);
 		    return;
 	        case STRING:
 		    ERROR("Unterminated string literal at end of file");
@@ -270,16 +271,16 @@ public class MyLexer implements Lexer {
 		    nextToken = null;
 		    return;
 		case NUM:
-		    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+		    nextToken = createNum(lexeme.toString(), position);
 		    return;
 		case EXP:
-		    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+		    nextToken = createNum(lexeme.toString(), position);
 		    return;
 		case HEX:
-		    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+		    nextToken = createNum(lexeme.toString(), position);
 		    return;
 		case REAL:
-		    nextToken = tokenFactory.makeNumToken(lexeme.toString(), position);
+		    nextToken = createNum(lexeme.toString(), position);
 		    return;
 		// The operator doesnt need any clean up it will be impossible to get down here from that state
 		}

@@ -1,4 +1,4 @@
-package edu.depauw.declan.common;
+package edu.depauw.basic.common;
 
 /**
  * A Source object wraps an input source of characters with the
