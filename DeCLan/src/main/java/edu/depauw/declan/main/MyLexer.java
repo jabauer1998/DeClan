@@ -2,22 +2,25 @@ package edu.depauw.declan.main;
 
 import java.util.NoSuchElementException;
 
+import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Lexer;
 import edu.depauw.declan.common.Position;
 import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.Token;
-import static edu.depauw.declan.common.Token.*;
 import edu.depauw.declan.common.TokenType;
-import static edu.depauw.declan.common.TokenType.*;
 
+import static edu.depauw.declan.common.Token.*;
+import static edu.depauw.declan.common.TokenType.*;
 import static edu.depauw.declan.common.MyIO.*;
 
 public class MyLexer implements Lexer {
 	private Source source;
 	private Token nextToken;
+        private ErrorLog errorLog;
 
-	public MyLexer(Source source) {
+        public MyLexer(Source source, ErrorLog errorLog) {
 		this.source = source;
+		this.errorLog = errorLog;
 		this.nextToken = null;
 	}
 

@@ -49,7 +49,7 @@ function RM_LIBS
 
 function BUILD_SRC
 {
-    local tf=$(ls "$FULLPATH"/*.class)
+    local tf=$(ls -R -d *.class)
     if [[ "$tf" != "" ]]; then
 	echo "Already Built Skipping to Run Step..."
     else
@@ -58,12 +58,12 @@ function BUILD_SRC
 	echo ""
 	echo ""
 	cd "$RELPATH"
-	local ERRORS=$(javac -cp \* ./*.java ../common/*.java ../common/ast/*.java | grep "errors")
+	local ERRORS=$(javac -cp \* ./*.java ../common/*.java ../common/ast/*.java)
 	echo ""
 	echo ""
 	echo "__________________________________________________________"
 	echo ""
-	cd ../../../
+	cd ../../../../
 	if [[ "$ERRORS" == "" ]]; then
 	    echo "SRC Built Succesfully..."
 	else
@@ -106,7 +106,7 @@ function RUN_SRC
        echo "_______________________TEST_LOG___________________________"
        echo ""
        echo ""
-       java -jar $RELPATH/junit-platform-console-standalone-1.7.0.jar -cp "$RELPATH/DeCLanModel-1x.jar:." --scan-class-path
+       java -jar $RELPATH/junit-platform-console-standalone-1.7.0.jar -cp "$RELPATH/DeCLanModel-2x.jar:." --scan-class-path
        echo ""
        echo ""
        echo "__________________________________________________________"
