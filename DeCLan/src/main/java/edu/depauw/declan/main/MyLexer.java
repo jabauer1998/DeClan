@@ -94,6 +94,7 @@ public class MyLexer implements Lexer {
 				} else {
 				    position = source.getPosition();
 				    ERROR("Unrecognized character " + c + " at " + position);
+				    errorLog.add("Unrecognized character " + c, position);
 				    source.advance();
 				    continue;
 				}
@@ -113,7 +114,6 @@ public class MyLexer implements Lexer {
 				lexeme.append(c);
 				continue;
 			    } else {
-				DBG("Token is: " + lexeme.toString());
 				nextToken = createString(lexeme.toString(), position);
 				source.advance();
 				return;
@@ -162,7 +162,8 @@ public class MyLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
-				ERROR("Unterminated hex literal " + lexeme.toString() + " at " + position); //print error 
+				ERROR("Unterminated hex literal " + lexeme.toString() + " at " + position); //print error
+				errorLog.add("Unterminated hex literal " + lexeme.toString(), position);
 				lexeme.setLength(0); //clear string builder buffer
 				state = State.INIT;
 				continue;
@@ -181,6 +182,7 @@ public class MyLexer implements Lexer {
 					continue;
 				    } else {
 					ERROR("Missing exponent in real literal " + lexeme.toString() + " at " + position); //print error and go to next token
+					errorLog.add("Missing exponent in real literal " + lexeme.toString(), position);
 					lexeme.setLength(0);
 					state = state.INIT;
 					continue;
@@ -190,6 +192,7 @@ public class MyLexer implements Lexer {
 				    continue;
 				} else {
 				    ERROR("Missing exponent in real literal " + lexeme.toString() + " at " + position); //print error and go to next token
+				    errorLog.add("Missing exponent in real literal " + lexeme.toString(), position);
 				    lexeme.setLength(0);
 				    state = State.INIT;
 				    continue;
