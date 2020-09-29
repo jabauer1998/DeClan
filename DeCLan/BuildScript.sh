@@ -51,7 +51,7 @@ function RM_LIBS
 
 function BUILD_SRC
 {
-    local tf=$(ls -R -d *.class)
+    local tf=$(find . -name '*.class')
     if [[ "$tf" != "" ]]; then
 	echo "Already Built Skipping to Run Step..."
     else
