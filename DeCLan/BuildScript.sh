@@ -13,7 +13,9 @@ function SLASH_TO_DOTS
 
 function CLEAN_SRC
 {
-    rm -rf *~ *.class *"#"
+    find . -type f -name '*.class' -delete
+    find . -type f -name '*~' -delete
+    find . -type f -name '*#' -delete
 }
 
 function SRC_CHECK
