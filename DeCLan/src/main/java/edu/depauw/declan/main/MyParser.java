@@ -17,6 +17,11 @@ import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.NumValue;
 import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.Statement;
+import edu.depauw.declan.common.ast.EmptyStatement;
+import edu.depauw.declan.common.ast.ProcedureCall;
+import edu.depauw.declan.common.ast.Expression;
+import edu.depauw.declan.common.ast.BinaryOperation;
+import edu.depauw.declan.common.ast.UnaryOperation;
 
 /**
  * A parser for a subset of DeCLan consisting only of integer constant
@@ -120,7 +125,6 @@ public class MyParser implements Parser {
 		match(TokenType.END);
 		match(TokenType.PERIOD);
 		matchEOF();
-
 		return new Program(start, constDecls, statements);
 	}
 
@@ -169,32 +173,145 @@ public class MyParser implements Parser {
 	// StatementSequenceRest ->
 	private Collection<Statement> parseStatementSequence() {
 		// TODO Auto-generated method stub
-		return null;
+	    List<Statement> statements = new ArrayList<>();
+	    while(willMatch(TokenType.ID)){
+		Statement s = ParseStatement();
+		statements.add(s);
+		match(TokenType.SEMI);
+	    }
+	    return Collections.unmodifiableCollection(statements);
 	}
+
+        private UnaryOperation.OpType UnOp() {
+	    if(willMatch(TokenType.PLUS)){
+		skip();
+		return UnaryOperation.OpType.PLUS;
+	    } else {
+		match(TokenType.MINUS);
+		return UnaryOperation.OpType.MINUS;
+	    }
+        }
+
+        
 
 	// TODO handle the rest of the grammar:
 	//
 	// Statement -> ProcedureCall
 	// Statement ->
-	//
+	private Statement ParseStatement(){
+	    Statement pcall;
+	    if(willMatch(TokenType.ID)) {
+		pcall = ParseProcedureCall();
+	    } else {
+		
+	    }
+	    return pcall;
+        }
 	// ProcedureCall -> ident ( Expression )
+        private ProcedureCall ParseProcedureCall(){
+	    Position start = currentPosition;
+	    Identifier ident = ParseIdentifier();
+	    match(TokenType.LPAR);
+	    exp = ParseExpression();
+	    match(TokenType.LPAR);
+	    return new ProcedureCall(start, ident, exp);
+        }
 	//
 	// Expression -> + Term ExprRest
 	// Expression -> - Term ExprRest
 	// Expression -> Term ExprRest
-	//
-	// ExprRest -> AddOperator Term ExprRest
+        // ExprRest -> AddOperator Term ExprRest
 	// ExprRest ->
-	//
+         private Expression ParseExpression(){
+	    Position start = currentPosition; 
+	    Expression left;
+	    if(willMatch(TokenType.MINUS) || willMatch(TokenType.PLUS)){
+		UnaryOperation.OpType pm = ParseUnaryOp();
+		left = ParseTerm();
+		left = new UnaryOperation(start, pm, left);
+	    } else {
+		left = ParseTerm();
+	    }
+	    while(willMatch(TokenType.PLUS) || willMatch(TokenType.MINUS)){
+		BinaryOperation.OpType op = ParseAddOp();
+		Expression right = ParseTerm();
+		left = new BinaryOperation(start, left, op, right);
+	    }
+	    return left;
+        }
 	// AddOperator -> + | -
-	//
+	 private BinaryOperation.OpType ParseAddOp() {
+	    if(willMatch(TokenType.PLUS)){
+		skip();
+		return BinaryOperation.OpType.PLUS;
+	    } else {
+		match(TokenType.MINUS);
+		return BinaryOperation.OpType.MINUS;
+	    }
+        }
+        private BinaryOperation.OpType ParseUnOp() {
+	    if(willMatch(TokenType.PLUS)){
+		skip();
+		return UnaryOperation.OpType.PLUS;
+	    } else {
+		match(TokenType.MINUS);
+		return UnaryOperation.OpType.MINUS;
+	    }
+        }
 	// Term -> Factor TermRest
-	//
-	// TermRest -> MulOperator Factor TermRest
+        // TermRest -> MulOperator Factor TermRest
 	// TermRest ->
-	//
+        private Expression ParseTerm(){
+	    Position start = currentPosition();
+	    Expression left = ParseFactor();
+	    while (willMatch(TokenType.DIV) || willMatch(TokenType.MOD) || willMatch(TokenType.TIMES)){
+		BinaryOperation OpType = ParseMultOp();
+		Expression right = ParseFactor();
+		left = new BinaryOperation(start, left, OpType, right);
+	    }
+	    return left;
+        }
+    
 	// MulOperator -> * | DIV | MOD
-	//
+        private BinaryOperation.OpType ParseMultOp() {
+	    if(willMatch(TokenType.TIMES)){
+		skip();
+		return BinaryOperation.OpType.TIMES;
+	    } else if(willMatch(TokenType.DIVIDE)) {
+		skip();
+		return BinaryOperation.OpType.DIV;
+	    } else {
+		match(TokenType.MOD);
+		return BinaryOperation.OpType.MOD;
+	    }
+        }
 	// Factor -> number | ident
 	// Factor -> ( Expression )
+        private Expression ParseFactor(){
+	    if(willMatch(TokenType.NUM)){
+		return ParseNumValue(); 
+	    } else if(willMatch(TokenType.ID)){
+		return ParseIdentifier();
+	    } else if(willMatch(TokenType.LPAR)) {
+		skip();
+		Expression expr = ParseExpression();
+		match(TokenType.RPAR);
+	        return expr;
+	    } else {
+		FATAL("Error Factor must be an identifier or an id");
+		return null;
+	    }
+	}
+    
+        private Identifier ParseIdentifier() {
+	    Position start = currentPosition;
+	    Token id = match(TokenType.ID);
+	    return new Identifier(start, id);
+        }
+    
+        private NumValue ParseNumValue() {
+	    Position start = currentPosition;
+	    Token num = match(TokenType.NUM);
+	    return new NumValue(start, num);
+        }
 }
