@@ -73,6 +73,8 @@ function BUILD_SRC
 	    echo "SRC Built Succesfully..."
 	else
 	    echo "SRC did not Build succesfully..."
+	    echo "Cleaning SRC"
+	    CLEAN_SRC
 	    echo "Exiting Program..."
 	    exit 1
 	fi

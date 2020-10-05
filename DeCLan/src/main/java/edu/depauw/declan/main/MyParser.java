@@ -120,7 +120,6 @@ public class MyParser implements Parser {
 	@Override
 	public Program parseProgram() {
 		Position start = currentPosition;
-
 		Collection<ConstDecl> constDecls = parseDeclSequence();
 		match(TokenType.BEGIN);
 		Collection<Statement> statements = parseStatementSequence();
@@ -137,15 +136,12 @@ public class MyParser implements Parser {
 	// ConstDeclSequence ->
 	private Collection<ConstDecl> parseDeclSequence() {
 		List<ConstDecl> constDecls = new ArrayList<>();
-
 		if (willMatch(TokenType.CONST)) {
 			skip();
-
 			// FIRST(ConstDecl) = ID
 			while (willMatch(TokenType.ID)) {
 				ConstDecl constDecl = parseConstDecl();
 				constDecls.add(constDecl);
-
 				match(TokenType.SEMI);
 			}
 		}
@@ -157,15 +153,9 @@ public class MyParser implements Parser {
 	// ConstDecl -> ident = number
 	private ConstDecl parseConstDecl() {
 		Position start = currentPosition;
-
-		Token idTok = match(TokenType.ID);
-		Identifier id = new Identifier(idTok.getPosition(), idTok.getLexeme());
-
+		Identifier id = ParseIdentifier();
 		match(TokenType.EQ);
-
-		Token numTok = match(TokenType.NUM);
-		NumValue num = new NumValue(numTok.getPosition(), numTok.getLexeme());
-
+		NumValue num = ParseNumValue();
 		return new ConstDecl(start, id, num);
 	}
 
@@ -292,13 +282,13 @@ public class MyParser implements Parser {
 	        return expr;
 	    }
 	}
-    
+        //ident -> IDENT 
         private Identifier ParseIdentifier() {
 	    Position start = currentPosition;
 	    Token id = match(TokenType.ID);
 	    return new Identifier(start, id.getLexeme());
         }
-    
+        //number -> NUM
         private NumValue ParseNumValue() {
 	    Position start = currentPosition;
 	    Token num = match(TokenType.NUM);
