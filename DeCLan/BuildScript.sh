@@ -60,14 +60,16 @@ function BUILD_SRC
 	echo ""
 	echo ""
 	cd "$RELPATH"
-	local ERRORS=$(javac -cp \* ./*.java ../common/*.java ../common/ast/*.java)
-	echo $ERRORS
+	errors=""
+	if javac -cp \* ./*.java ../common/*.java ../common/ast/*.java; then
+	    errors="PASS"
+	fi
 	echo ""
 	echo ""
 	echo "__________________________________________________________"
 	echo ""
 	cd ../../../../
-	if [[ "$ERRORS" == "" ]]; then
+	if [[ "$errors" == "PASS" ]]; then
 	    echo "SRC Built Succesfully..."
 	else
 	    echo "SRC did not Build succesfully..."

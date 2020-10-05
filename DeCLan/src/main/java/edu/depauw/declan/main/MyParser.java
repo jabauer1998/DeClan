@@ -242,7 +242,7 @@ public class MyParser implements Parser {
 	    return left;
         }
 	// AddOperator -> + | -
-	 private BinaryOperation.OpType ParseAddOp() {
+    private BinaryOperation.OpType ParseAddOp(){
 	    if(willMatch(TokenType.PLUS)){
 		skip();
 		return BinaryOperation.OpType.PLUS;
