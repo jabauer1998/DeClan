@@ -23,6 +23,8 @@ import edu.depauw.declan.common.ast.Expression;
 import edu.depauw.declan.common.ast.BinaryOperation;
 import edu.depauw.declan.common.ast.UnaryOperation;
 
+import static edu.depauw.declan.common.MyIO.*;
+
 /**
  * A parser for a subset of DeCLan consisting only of integer constant
  * declarations and calls to PrintInt with integer expression arguments. This is
@@ -182,16 +184,6 @@ public class MyParser implements Parser {
 	    return Collections.unmodifiableCollection(statements);
 	}
 
-        private UnaryOperation.OpType UnOp() {
-	    if(willMatch(TokenType.PLUS)){
-		skip();
-		return UnaryOperation.OpType.PLUS;
-	    } else {
-		match(TokenType.MINUS);
-		return UnaryOperation.OpType.MINUS;
-	    }
-        }
-
         
 
 	// TODO handle the rest of the grammar:
@@ -199,11 +191,12 @@ public class MyParser implements Parser {
 	// Statement -> ProcedureCall
 	// Statement ->
 	private Statement ParseStatement(){
+	    Position start = currentPosition;
 	    Statement pcall;
 	    if(willMatch(TokenType.ID)) {
 		pcall = ParseProcedureCall();
 	    } else {
-		
+		pcall = new EmptyStatement(start);
 	    }
 	    return pcall;
         }
@@ -212,13 +205,22 @@ public class MyParser implements Parser {
 	    Position start = currentPosition;
 	    Identifier ident = ParseIdentifier();
 	    match(TokenType.LPAR);
-	    exp = ParseExpression();
+	    Expression exp = ParseExpression();
 	    match(TokenType.LPAR);
 	    return new ProcedureCall(start, ident, exp);
         }
 	//
 	// Expression -> + Term ExprRest
 	// Expression -> - Term ExprRest
+        private UnaryOperation.OpType ParseUnaryOp() {
+	    if(willMatch(TokenType.PLUS)){
+		skip();
+		return UnaryOperation.OpType.PLUS;
+	    } else {
+		match(TokenType.MINUS);
+		return UnaryOperation.OpType.MINUS;
+	    }
+        }
 	// Expression -> Term ExprRest
         // ExprRest -> AddOperator Term ExprRest
 	// ExprRest ->
@@ -249,25 +251,16 @@ public class MyParser implements Parser {
 		return BinaryOperation.OpType.MINUS;
 	    }
         }
-        private BinaryOperation.OpType ParseUnOp() {
-	    if(willMatch(TokenType.PLUS)){
-		skip();
-		return UnaryOperation.OpType.PLUS;
-	    } else {
-		match(TokenType.MINUS);
-		return UnaryOperation.OpType.MINUS;
-	    }
-        }
 	// Term -> Factor TermRest
         // TermRest -> MulOperator Factor TermRest
 	// TermRest ->
         private Expression ParseTerm(){
-	    Position start = currentPosition();
+	    Position start = currentPosition;
 	    Expression left = ParseFactor();
 	    while (willMatch(TokenType.DIV) || willMatch(TokenType.MOD) || willMatch(TokenType.TIMES)){
-		BinaryOperation OpType = ParseMultOp();
+		BinaryOperation.OpType op = ParseMultOp();
 		Expression right = ParseFactor();
-		left = new BinaryOperation(start, left, OpType, right);
+		left = new BinaryOperation(start, left, op, right);
 	    }
 	    return left;
         }
@@ -306,12 +299,12 @@ public class MyParser implements Parser {
         private Identifier ParseIdentifier() {
 	    Position start = currentPosition;
 	    Token id = match(TokenType.ID);
-	    return new Identifier(start, id);
+	    return new Identifier(start, id.getLexeme());
         }
     
         private NumValue ParseNumValue() {
 	    Position start = currentPosition;
 	    Token num = match(TokenType.NUM);
-	    return new NumValue(start, num);
+	    return new NumValue(start, num.getLexeme());
         }
 }

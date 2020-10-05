@@ -60,7 +60,8 @@ function BUILD_SRC
 	echo ""
 	echo ""
 	cd "$RELPATH"
-	local ERRORS="javac -cp \* ./*.java ../common/*.java ../common/ast/*.java"
+	local ERRORS=$(javac -cp \* ./*.java ../common/*.java ../common/ast/*.java)
+	echo $ERRORS
 	echo ""
 	echo ""
 	echo "__________________________________________________________"
