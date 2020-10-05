@@ -206,7 +206,7 @@ public class MyParser implements Parser {
 	    Identifier ident = ParseIdentifier();
 	    match(TokenType.LPAR);
 	    Expression exp = ParseExpression();
-	    match(TokenType.LPAR);
+	    match(TokenType.RPAR);
 	    return new ProcedureCall(start, ident, exp);
         }
 	//
@@ -270,7 +270,7 @@ public class MyParser implements Parser {
 	    if(willMatch(TokenType.TIMES)){
 		skip();
 		return BinaryOperation.OpType.TIMES;
-	    } else if(willMatch(TokenType.DIVIDE)) {
+	    } else if(willMatch(TokenType.DIV)) {
 		skip();
 		return BinaryOperation.OpType.DIV;
 	    } else {
@@ -285,14 +285,11 @@ public class MyParser implements Parser {
 		return ParseNumValue(); 
 	    } else if(willMatch(TokenType.ID)){
 		return ParseIdentifier();
-	    } else if(willMatch(TokenType.LPAR)) {
-		skip();
+	    } else {
+		match(TokenType.LPAR);
 		Expression expr = ParseExpression();
 		match(TokenType.RPAR);
 	        return expr;
-	    } else {
-		FATAL("Error Factor must be an identifier or an id");
-		return null;
 	    }
 	}
     
