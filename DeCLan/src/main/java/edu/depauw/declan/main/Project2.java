@@ -26,8 +26,8 @@ public class Project2 {
 				+ "END.\n";
 
 		Properties props = new Properties();
-		props.setProperty("useModelLexer", "false");
-		props.setProperty("useModelParser", "false");
+		props.setProperty("useModelLexer", "true");
+		props.setProperty("useModelParser", "true");
 		props.setProperty("sourceFile", "");
 		props.setProperty("demoSource", demoSource);
 		

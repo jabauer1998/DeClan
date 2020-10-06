@@ -115,8 +115,7 @@ public class MyParser implements Parser {
 		}
 		return token;
 	}
-
-	// Program -> DeclSequence BEGIN StatementSequence END .
+	// Program -> DeclSequence BEGIN StatementSequence END
 	@Override
 	public Program parseProgram() {
 		Position start = currentPosition;
@@ -166,7 +165,7 @@ public class MyParser implements Parser {
 	private Collection<Statement> parseStatementSequence() {
 		// TODO Auto-generated method stub
 	    List<Statement> statements = new ArrayList<>();
-	    while(willMatch(TokenType.ID)){
+	    while(!willMatch(TokenType.END)){
 		Statement s = ParseStatement();
 		statements.add(s);
 		match(TokenType.SEMI);
@@ -174,19 +173,15 @@ public class MyParser implements Parser {
 	    return Collections.unmodifiableCollection(statements);
 	}
 
-        
-
 	// TODO handle the rest of the grammar:
 	//
 	// Statement -> ProcedureCall
 	// Statement ->
 	private Statement ParseStatement(){
 	    Position start = currentPosition;
-	    Statement pcall;
+	    Statement pcall = new EmptyStatement(start);
 	    if(willMatch(TokenType.ID)) {
 		pcall = ParseProcedureCall();
-	    } else {
-		pcall = new EmptyStatement(start);
 	    }
 	    return pcall;
         }
@@ -214,7 +209,7 @@ public class MyParser implements Parser {
 	// Expression -> Term ExprRest
         // ExprRest -> AddOperator Term ExprRest
 	// ExprRest ->
-         private Expression ParseExpression(){
+        private Expression ParseExpression(){
 	    Position start = currentPosition; 
 	    Expression left;
 	    if(willMatch(TokenType.MINUS) || willMatch(TokenType.PLUS)){
@@ -232,7 +227,7 @@ public class MyParser implements Parser {
 	    return left;
         }
 	// AddOperator -> + | -
-    private BinaryOperation.OpType ParseAddOp(){
+        private BinaryOperation.OpType ParseAddOp(){
 	    if(willMatch(TokenType.PLUS)){
 		skip();
 		return BinaryOperation.OpType.PLUS;
@@ -284,14 +279,14 @@ public class MyParser implements Parser {
 	}
         //ident -> IDENT 
         private Identifier ParseIdentifier() {
-	    Position start = currentPosition;
 	    Token id = match(TokenType.ID);
+	    Position start = currentPosition;
 	    return new Identifier(start, id.getLexeme());
         }
         //number -> NUM
         private NumValue ParseNumValue() {
-	    Position start = currentPosition;
 	    Token num = match(TokenType.NUM);
+	    Position start = currentPosition;
 	    return new NumValue(start, num.getLexeme());
         }
 }
