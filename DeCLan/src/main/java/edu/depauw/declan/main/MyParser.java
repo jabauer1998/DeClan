@@ -168,7 +168,9 @@ public class MyParser implements Parser {
 	    while(!willMatch(TokenType.END)){
 		Statement s = ParseStatement();
 		statements.add(s);
-		match(TokenType.SEMI);
+		if(!willMatch(TokenType.END)){
+		    match(TokenType.SEMI);
+		}
 	    }
 	    return Collections.unmodifiableCollection(statements);
 	}
@@ -187,8 +189,8 @@ public class MyParser implements Parser {
         }
 	// ProcedureCall -> ident ( Expression )
         private ProcedureCall ParseProcedureCall(){
-	    Position start = currentPosition;
 	    Identifier ident = ParseIdentifier();
+	    Position start = currentPosition;
 	    match(TokenType.LPAR);
 	    Expression exp = ParseExpression();
 	    match(TokenType.RPAR);
