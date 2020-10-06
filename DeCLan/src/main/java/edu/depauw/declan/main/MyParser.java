@@ -17,6 +17,13 @@ import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.NumValue;
 import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.Statement;
+import edu.depauw.declan.common.ast.EmptyStatement;
+import edu.depauw.declan.common.ast.ProcedureCall;
+import edu.depauw.declan.common.ast.Expression;
+import edu.depauw.declan.common.ast.BinaryOperation;
+import edu.depauw.declan.common.ast.UnaryOperation;
+
+import static edu.depauw.declan.common.MyIO.*;
 
 /**
  * A parser for a subset of DeCLan consisting only of integer constant
@@ -108,19 +115,16 @@ public class MyParser implements Parser {
 		}
 		return token;
 	}
-
-	// Program -> DeclSequence BEGIN StatementSequence END .
+	// Program -> DeclSequence BEGIN StatementSequence END
 	@Override
 	public Program parseProgram() {
 		Position start = currentPosition;
-
 		Collection<ConstDecl> constDecls = parseDeclSequence();
 		match(TokenType.BEGIN);
 		Collection<Statement> statements = parseStatementSequence();
 		match(TokenType.END);
 		match(TokenType.PERIOD);
 		matchEOF();
-
 		return new Program(start, constDecls, statements);
 	}
 
@@ -131,15 +135,12 @@ public class MyParser implements Parser {
 	// ConstDeclSequence ->
 	private Collection<ConstDecl> parseDeclSequence() {
 		List<ConstDecl> constDecls = new ArrayList<>();
-
 		if (willMatch(TokenType.CONST)) {
 			skip();
-
 			// FIRST(ConstDecl) = ID
 			while (willMatch(TokenType.ID)) {
 				ConstDecl constDecl = parseConstDecl();
 				constDecls.add(constDecl);
-
 				match(TokenType.SEMI);
 			}
 		}
@@ -151,15 +152,9 @@ public class MyParser implements Parser {
 	// ConstDecl -> ident = number
 	private ConstDecl parseConstDecl() {
 		Position start = currentPosition;
-
-		Token idTok = match(TokenType.ID);
-		Identifier id = new Identifier(idTok.getPosition(), idTok.getLexeme());
-
+		Identifier id = ParseIdentifier();
 		match(TokenType.EQ);
-
-		Token numTok = match(TokenType.NUM);
-		NumValue num = new NumValue(numTok.getPosition(), numTok.getLexeme());
-
+		NumValue num = ParseNumValue();
 		return new ConstDecl(start, id, num);
 	}
 
@@ -169,32 +164,131 @@ public class MyParser implements Parser {
 	// StatementSequenceRest ->
 	private Collection<Statement> parseStatementSequence() {
 		// TODO Auto-generated method stub
-		return null;
+	    List<Statement> statements = new ArrayList<>();
+	    while(!willMatch(TokenType.END)){
+		Statement s = ParseStatement();
+		statements.add(s);
+		if(!willMatch(TokenType.END)){
+		    match(TokenType.SEMI);
+		}
+	    }
+	    return Collections.unmodifiableCollection(statements);
 	}
 
 	// TODO handle the rest of the grammar:
 	//
 	// Statement -> ProcedureCall
 	// Statement ->
-	//
+	private Statement ParseStatement(){
+	    Position start = currentPosition;
+	    Statement pcall = new EmptyStatement(start);
+	    if(willMatch(TokenType.ID)) {
+		pcall = ParseProcedureCall();
+	    }
+	    return pcall;
+        }
 	// ProcedureCall -> ident ( Expression )
+        private ProcedureCall ParseProcedureCall(){
+	    Identifier ident = ParseIdentifier();
+	    Position start = currentPosition;
+	    match(TokenType.LPAR);
+	    Expression exp = ParseExpression();
+	    match(TokenType.RPAR);
+	    return new ProcedureCall(start, ident, exp);
+        }
 	//
 	// Expression -> + Term ExprRest
 	// Expression -> - Term ExprRest
+        private UnaryOperation.OpType ParseUnaryOp() {
+	    if(willMatch(TokenType.PLUS)){
+		skip();
+		return UnaryOperation.OpType.PLUS;
+	    } else {
+		match(TokenType.MINUS);
+		return UnaryOperation.OpType.MINUS;
+	    }
+        }
 	// Expression -> Term ExprRest
-	//
-	// ExprRest -> AddOperator Term ExprRest
+        // ExprRest -> AddOperator Term ExprRest
 	// ExprRest ->
-	//
+        private Expression ParseExpression(){
+	    Position start = currentPosition; 
+	    Expression left;
+	    if(willMatch(TokenType.MINUS) || willMatch(TokenType.PLUS)){
+		UnaryOperation.OpType pm = ParseUnaryOp();
+		left = ParseTerm();
+		left = new UnaryOperation(start, pm, left);
+	    } else {
+		left = ParseTerm();
+	    }
+	    while(willMatch(TokenType.PLUS) || willMatch(TokenType.MINUS)){
+		BinaryOperation.OpType op = ParseAddOp();
+		Expression right = ParseTerm();
+		left = new BinaryOperation(start, left, op, right);
+	    }
+	    return left;
+        }
 	// AddOperator -> + | -
-	//
+        private BinaryOperation.OpType ParseAddOp(){
+	    if(willMatch(TokenType.PLUS)){
+		skip();
+		return BinaryOperation.OpType.PLUS;
+	    } else {
+		match(TokenType.MINUS);
+		return BinaryOperation.OpType.MINUS;
+	    }
+        }
 	// Term -> Factor TermRest
-	//
-	// TermRest -> MulOperator Factor TermRest
+        // TermRest -> MulOperator Factor TermRest
 	// TermRest ->
-	//
+        private Expression ParseTerm(){
+	    Position start = currentPosition;
+	    Expression left = ParseFactor();
+	    while (willMatch(TokenType.DIV) || willMatch(TokenType.MOD) || willMatch(TokenType.TIMES)){
+		BinaryOperation.OpType op = ParseMultOp();
+		Expression right = ParseFactor();
+		left = new BinaryOperation(start, left, op, right);
+	    }
+	    return left;
+        }
+    
 	// MulOperator -> * | DIV | MOD
-	//
+        private BinaryOperation.OpType ParseMultOp() {
+	    if(willMatch(TokenType.TIMES)){
+		skip();
+		return BinaryOperation.OpType.TIMES;
+	    } else if(willMatch(TokenType.DIV)) {
+		skip();
+		return BinaryOperation.OpType.DIV;
+	    } else {
+		match(TokenType.MOD);
+		return BinaryOperation.OpType.MOD;
+	    }
+        }
 	// Factor -> number | ident
 	// Factor -> ( Expression )
+        private Expression ParseFactor(){
+	    if(willMatch(TokenType.NUM)){
+		return ParseNumValue(); 
+	    } else if(willMatch(TokenType.ID)){
+		return ParseIdentifier();
+	    } else {
+		match(TokenType.LPAR);
+		Expression expr = ParseExpression();
+		match(TokenType.RPAR);
+	        return expr;
+	    }
+	}
+        //ident -> IDENT 
+        private Identifier ParseIdentifier() {
+	    Token id = match(TokenType.ID);
+	    Position start = currentPosition;
+	    return new Identifier(start, id.getLexeme());
+        }
+        //number -> NUM
+        private NumValue ParseNumValue() {
+	    Token num = match(TokenType.NUM);
+	    Position start = currentPosition;
+	    return new NumValue(start, num.getLexeme());
+        }
 }

@@ -101,9 +101,15 @@ class MyParserTest {
 
 		// Check that the error logs match
 		Iterator<ErrorLog.LogItem> myItems = myErrorLog.iterator();
+		System.err.println("+++++++++++Model error Log+++++++++++++=");
 		for (ErrorLog.LogItem item : modelErrorLog) {
 			assertTrue(myItems.hasNext(), "Not enough error items");
 			assertEquals(item, myItems.next());
+			System.err.println(item);
+		}
+		System.err.println("+++++++++++My error Log+++++++++++++=");
+		for (ErrorLog.LogItem item : myErrorLog) {
+			System.err.println(item);
 		}
 		assertFalse(myItems.hasNext(), "Too many error items");
 	}

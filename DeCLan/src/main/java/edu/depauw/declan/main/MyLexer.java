@@ -9,7 +9,6 @@ import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.Token;
 import edu.depauw.declan.common.TokenType;
 
-import static edu.depauw.declan.common.Token.*;
 import static edu.depauw.declan.common.TokenType.*;
 import static edu.depauw.declan.common.MyIO.*;
 
@@ -36,7 +35,7 @@ public class MyLexer implements Lexer {
 			scanNext();
 		}
 		if (nextToken == null) {
-		    ERROR("No more tokens");
+		    FATAL("No more tokens");
 		}
 		Token result = nextToken;
 		nextToken = null;
@@ -94,6 +93,7 @@ public class MyLexer implements Lexer {
 				} else {
 				    position = source.getPosition();
 				    ERROR("Unrecognized character " + c + " at " + position);
+				    errorLog.add("Unrecognized character " + c, position);
 				    source.advance();
 				    continue;
 				}
@@ -104,7 +104,7 @@ public class MyLexer implements Lexer {
 				    source.advance();
 				    continue;
 				} else {
-				    nextToken = createId(lexeme.toString(), position);
+				    nextToken = Token.createId(lexeme.toString(), position);
 				    return;
 				}
 			case STRING:
@@ -113,8 +113,7 @@ public class MyLexer implements Lexer {
 				lexeme.append(c);
 				continue;
 			    } else {
-				DBG("Token is: " + lexeme.toString());
-				nextToken = createString(lexeme.toString(), position);
+				nextToken = Token.createString(lexeme.toString(), position);
 				source.advance();
 				return;
 			    }
@@ -148,13 +147,13 @@ public class MyLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
-				nextToken = createNum(lexeme.toString(), position);
+				nextToken = Token.createNum(lexeme.toString(), position);
 				return;
 			    }
 			case HEX:
 			    if(c == 'H'){
 			        lexeme.append(c);
-				nextToken = createNum(lexeme.toString(), position);
+				nextToken = Token.createNum(lexeme.toString(), position);
 				source.advance();
 				return;
 			    } else if (Character.toLowerCase(c) >= 'a' && Character.toLowerCase(c) <= 'f' || Character.isDigit(c)) {
@@ -162,7 +161,8 @@ public class MyLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
-				ERROR("Unterminated hex literal " + lexeme.toString() + " at " + position); //print error 
+				ERROR("Unterminated hex literal " + lexeme.toString() + " at " + position); //print error
+				errorLog.add("Unterminated hex literal " + lexeme.toString(), position);
 				lexeme.setLength(0); //clear string builder buffer
 				state = State.INIT;
 				continue;
@@ -181,6 +181,7 @@ public class MyLexer implements Lexer {
 					continue;
 				    } else {
 					ERROR("Missing exponent in real literal " + lexeme.toString() + " at " + position); //print error and go to next token
+					errorLog.add("Missing exponent in real literal " + lexeme.toString(), position);
 					lexeme.setLength(0);
 					state = state.INIT;
 					continue;
@@ -190,6 +191,7 @@ public class MyLexer implements Lexer {
 				    continue;
 				} else {
 				    ERROR("Missing exponent in real literal " + lexeme.toString() + " at " + position); //print error and go to next token
+				    errorLog.add("Missing exponent in real literal " + lexeme.toString(), position);
 				    lexeme.setLength(0);
 				    state = State.INIT;
 				    continue;
@@ -199,7 +201,7 @@ public class MyLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
-				nextToken = createNum(lexeme.toString(), position); //created a Real Number Token
+				nextToken = Token.createNum(lexeme.toString(), position); //created a Real Number Token
 				return;
 			    }
 			case NUM:
@@ -216,7 +218,7 @@ public class MyLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
-				nextToken = createNum(lexeme.toString(), position);
+				nextToken = Token.createNum(lexeme.toString(), position);
 				return;
 			    }
 			case OP:
@@ -225,11 +227,11 @@ public class MyLexer implements Lexer {
 				c = source.current(); //see if c is =
 				if(c == '=') {
 				    lexeme.append(c);
-				    nextToken = create(getDualOpToken(lexeme.toString()), position);
+				    nextToken = Token.create(getDualOpToken(lexeme.toString()), position);
 				    source.advance();
 				    return;
 				} else {
-				    nextToken = create(getSingleOpToken(lexeme.toString()), position);
+				    nextToken = Token.create(getSingleOpToken(lexeme.toString()), position);
 				    return;
 				}
                             } else if(c == '(') {
@@ -242,11 +244,11 @@ public class MyLexer implements Lexer {
 				      Comment++;
 				      continue;
 				  } else {
-				      nextToken = create(getSingleOpToken(lexeme.toString()), position);
+				      nextToken = Token.create(getSingleOpToken(lexeme.toString()), position);
 				      return;
 				  }
 			    } else {
-				nextToken = create(getSingleOpToken(lexeme.toString()), position);
+				nextToken = Token.create(getSingleOpToken(lexeme.toString()), position);
 				source.advance();
 				return;
 			    }
@@ -260,27 +262,29 @@ public class MyLexer implements Lexer {
 		    return;
 		case IDENT:
 		    // Successfully ended an identifier
-		    nextToken = createId(lexeme.toString(), position);
+		    nextToken = Token.createId(lexeme.toString(), position);
 		    return;
 	        case STRING:
 		    ERROR("Unterminated string literal at end of file");
+		    errorLog.add("Unterminated string literal at end of file", position);
 		    nextToken = null;
 		    return;
 		case COMMENT:
 		    ERROR("Unterminated comment at end of file");
+		    errorLog.add("Unterminated comment at end of file", position);
 		    nextToken = null;
 		    return;
 		case NUM:
-		    nextToken = createNum(lexeme.toString(), position);
+		    nextToken = Token.createNum(lexeme.toString(), position);
 		    return;
 		case EXP:
-		    nextToken = createNum(lexeme.toString(), position);
+		    nextToken = Token.createNum(lexeme.toString(), position);
 		    return;
 		case HEX:
-		    nextToken = createNum(lexeme.toString(), position);
+		    nextToken = Token.createNum(lexeme.toString(), position);
 		    return;
 		case REAL:
-		    nextToken = createNum(lexeme.toString(), position);
+		    nextToken = Token.createNum(lexeme.toString(), position);
 		    return;
 		// The operator doesnt need any clean up it will be impossible to get down here from that state
 		}
