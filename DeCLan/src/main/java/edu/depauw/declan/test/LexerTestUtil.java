@@ -1,4 +1,4 @@
-package edu.depauw.declan.main;
+package edu.depauw.declan.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -12,6 +12,7 @@ import edu.depauw.declan.common.Lexer;
 import edu.depauw.declan.common.ReaderSource;
 import edu.depauw.declan.common.Source;
 import edu.depauw.declan.model.ReferenceLexer;
+import edu.depauw.declan.main.MyLexer;
 
 public class LexerTestUtil {
 
@@ -31,7 +32,7 @@ public class LexerTestUtil {
 		ErrorLog modelErrorLog = new ErrorLog();
 
 		try (Lexer myLexer = new MyLexer(mySource, myErrorLog);
-			 Lexer modelLexer = new ReferenceLexer(modelSource, modelErrorLog)) {
+			Lexer modelLexer = new ReferenceLexer(modelSource, modelErrorLog)) {
 			while (modelLexer.hasNext()) {
 				assertTrue(myLexer.hasNext(), "Not enough tokens");
 				assertEquals(modelLexer.next(), myLexer.next());
