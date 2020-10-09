@@ -6,6 +6,7 @@ import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ParseException;
 import edu.depauw.declan.common.Parser;
 import edu.depauw.declan.common.ast.PostfixPrintVisitor;
+import edu.depauw.declan.common.ast.PostfixInterpreterVisitor;
 import edu.depauw.declan.common.ast.Program;
 
 /**
@@ -35,7 +36,10 @@ public class Project2 {
 
 		try (Parser parser = config.getParser()) {
 			Program program = parser.parseProgram();
+			System.out.println("Proj 1 Interpreter");
 			program.accept(new PostfixPrintVisitor());
+			System.out.println("Proj 2(op 1)/ proj 3 Interpreter");
+			program.accept(new PostfixInterpreterVisitor());
 		} catch (ParseException pe) {
 			System.err.println(pe.getMessage());
 		}
