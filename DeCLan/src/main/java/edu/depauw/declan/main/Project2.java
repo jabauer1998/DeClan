@@ -1,10 +1,12 @@
 package edu.depauw.declan.main;
 
 import java.util.Properties;
+import java.util.ArrayList;
 
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ParseException;
 import edu.depauw.declan.common.Parser;
+import edu.depauw.declan.common.StackSolver;
 import edu.depauw.declan.common.ast.PostfixPrintVisitor;
 import edu.depauw.declan.common.ast.PostfixInterpreterVisitor;
 import edu.depauw.declan.common.ast.Program;
@@ -38,8 +40,11 @@ public class Project2 {
 			Program program = parser.parseProgram();
 			System.out.println("Proj 1 Interpreter");
 			program.accept(new PostfixPrintVisitor());
+			System.out.println("DONE");
 			System.out.println("Proj 2(op 1)/ proj 3 Interpreter");
 			program.accept(new PostfixInterpreterVisitor());
+			System.out.println("Proj 2(op 2)/ Stack Language Interpreter");
+			StackSolver.stackSolver(new ArrayList<>());
 		} catch (ParseException pe) {
 			System.err.println(pe.getMessage());
 		}
@@ -47,7 +52,5 @@ public class Project2 {
 		for (ErrorLog.LogItem item : config.getErrorLog()) {
 			System.err.println(item);
 		}
-
-		System.out.println("DONE");
 	}
 }

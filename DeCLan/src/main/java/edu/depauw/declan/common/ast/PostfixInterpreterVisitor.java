@@ -91,10 +91,8 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	public void visit(BinaryOperation binaryOperation) {
 		binaryOperation.getLeft().accept(this);
 		int leftvalue = accumulator.pop();
-		out.println("left is: " + leftvalue);
 		binaryOperation.getRight().accept(this);
 		int rightvalue = accumulator.pop();
-		out.println("right is: " + rightvalue);
 		switch (binaryOperation.getOperator()) {
 		case PLUS:
 		    accumulator.push(leftvalue + rightvalue);
