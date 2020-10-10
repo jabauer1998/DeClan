@@ -1,4 +1,4 @@
-package edu.depauw.declan.main;
+package edu.depauw.declan.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -21,6 +21,7 @@ import edu.depauw.declan.common.ast.PostfixPrintVisitor;
 import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.model.ReferenceLexer;
 import edu.depauw.declan.model.ReferenceParser;
+import edu.depauw.declan.main.MyParser;
 
 class MyParserTest {
 
@@ -101,15 +102,9 @@ class MyParserTest {
 
 		// Check that the error logs match
 		Iterator<ErrorLog.LogItem> myItems = myErrorLog.iterator();
-		System.err.println("+++++++++++Model error Log+++++++++++++=");
 		for (ErrorLog.LogItem item : modelErrorLog) {
 			assertTrue(myItems.hasNext(), "Not enough error items");
 			assertEquals(item, myItems.next());
-			System.err.println(item);
-		}
-		System.err.println("+++++++++++My error Log+++++++++++++=");
-		for (ErrorLog.LogItem item : myErrorLog) {
-			System.err.println(item);
 		}
 		assertFalse(myItems.hasNext(), "Too many error items");
 	}

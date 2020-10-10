@@ -36,7 +36,7 @@ public class UnaryOperation extends AbstractASTNode implements Expression {
 
 	@Override
 	public void accept(ASTVisitor visitor) {
-		visitor.visit(this);
+	    visitor.visit(this);
 	}
 
 	/**

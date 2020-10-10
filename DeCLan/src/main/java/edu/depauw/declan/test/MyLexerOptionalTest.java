@@ -1,6 +1,6 @@
-package edu.depauw.declan.main;
+package edu.depauw.declan.test;
 
-import static edu.depauw.declan.main.LexerTestUtil.compareToModel;
+import static edu.depauw.declan.test.LexerTestUtil.compareToModel;
 
 import org.junit.jupiter.api.Test;
 
