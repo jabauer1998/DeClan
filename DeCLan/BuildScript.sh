@@ -157,7 +157,7 @@ elif [[ "$TYPE" == "BUILD" ]]; then
     RM_LIBS
     echo "Leaving Directory..."
     cd ../../../
-elif [ "$TYPE" == "TEST" ] || [ "$1" == "PROJECT1" ] || [ "$1" == "PROJECT2" ] || [ "$1" == "ALL" ]; then
+elif [ "$TYPE" == "TEST" ] || [ "$1" == "PROJECT1" ] || [ "$1" == "PROJECT2" ] || [ "$1" == "PROJECT3" ] || [ "$1" == "ALL" ]; then
     echo "Entering directory..."
     cd ./src/main/java
     SRC_CHECK
