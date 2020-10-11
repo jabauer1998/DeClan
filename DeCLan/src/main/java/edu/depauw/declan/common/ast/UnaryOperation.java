@@ -36,7 +36,12 @@ public class UnaryOperation extends AbstractASTNode implements Expression {
 
 	@Override
 	public void accept(ASTVisitor visitor) {
-	    visitor.visit(this);
+		visitor.visit(this);
+	}
+
+	@Override
+	public <R> R acceptResult(ExpressionVisitor<R> visitor) {
+		return visitor.visitResult(this);
 	}
 
 	/**
