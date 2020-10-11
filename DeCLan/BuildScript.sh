@@ -13,9 +13,11 @@ function SLASH_TO_DOTS
 
 function CLEAN_SRC
 {
+    echo "Cleaning Src..."
     find . -type f -name '*.class' -delete
     find . -type f -name '*~' -delete
     find . -type f -name '*#' -delete
+    echo "Src Cleaned..."
 }
 
 function SRC_CHECK
@@ -73,8 +75,8 @@ function BUILD_SRC
 	    echo "SRC Built Succesfully..."
 	else
 	    echo "SRC did not Build succesfully..."
-	    echo "Cleaning SRC"
 	    CLEAN_SRC
+	    RM_LIBS
 	    echo "Exiting Program..."
 	    exit 1
 	fi
@@ -86,7 +88,7 @@ function RUN_SRC
     local LOCPATH="$(SLASH_TO_DOTS $RELPATH)"
     if [ "$TYPE" == "PROJECT1" ] || [ "$TYPE" == "ALL" ]; then
        echo "Running Program1..."
-       echo "________________________RUN_LOG___________________________"
+       echo "___________________PROJECT1_LOG___________________________"
        echo ""
        echo ""
        java -cp "$RELPATH/*:." $LOCPATH.Project1
@@ -97,8 +99,8 @@ function RUN_SRC
        echo "Project 1 complete..."
     fi
     if [ "$TYPE" == "PROJECT2" ] || [ "$TYPE" == "ALL" ]; then
-       echo "Running Program2..."
-       echo "________________________RUN_LOG___________________________"
+       echo "Running Project2..."
+       echo "___________________PROJECT2_LOG___________________________"
        echo ""
        echo ""
        java -cp "$RELPATH/*:." $LOCPATH.Project2
@@ -108,12 +110,24 @@ function RUN_SRC
        echo ""
        echo "Project 2 complete..."
     fi
+    if [ "$TYPE" == "PROJECT3" ] || [ "$TYPE" == "ALL" ]; then
+       echo "Running Project3..."
+       echo "___________________PROJECT3_LOG___________________________"
+       echo ""
+       echo ""
+       java -cp "$RELPATH/*:." $LOCPATH.Project3
+       echo ""
+       echo ""
+       echo "__________________________________________________________"
+       echo ""
+       echo "Project 3 complete..."
+    fi
     if [ "$TYPE" == "TEST" ] || [ "$TYPE" == "ALL" ]; then
        echo "Running Test Cases..."
        echo "_______________________TEST_LOG___________________________"
        echo ""
        echo ""
-       java -jar $RELPATH/junit-platform-console-standalone-1.7.0.jar -cp "$RELPATH/DeCLanModel-2x.jar:." --scan-class-path
+       java -jar $RELPATH/junit-platform-console-standalone-1.7.0.jar -cp "$RELPATH/DeCLanModel-3x.jar:." --scan-class-path
        echo ""
        echo ""
        echo "__________________________________________________________"
@@ -125,7 +139,7 @@ function RUN_SRC
 
 
 if [[ $# -ne 1 ]]; then
-   echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "PROJECT2", "ALL", "BUILD", or "CLEAN"...'
+   echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "PROJECT2", "PROJECT3", "ALL", "BUILD", or "CLEAN"...'
    exit 1
 fi
 
@@ -155,6 +169,6 @@ elif [ "$TYPE" == "TEST" ] || [ "$1" == "PROJECT1" ] || [ "$1" == "PROJECT2" ] |
     cd ../../../
 else
     echo "Invalid argument: $1"
-    echo 'You must specify only one argument and the argument can only be "TEST", "PROJECT1", "PROJECT2", "ALL",  "BUILD" or "CLEAN"...'
+    echo 'You must specify only one argument and the argument can only be "TEST", "PROJECT1", "PROJECT2", "PROJECT3", "ALL", "BUILD" or "CLEAN"...'
     exit 1
 fi

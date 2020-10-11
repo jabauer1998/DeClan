@@ -5,8 +5,6 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import static edu.depauw.declan.common.MyIO.*;
-
 /**
  * An ErrorLog accumulates error messages and their corresponding positions
  * while compiling. Errors may be retrieved in order by source position.

@@ -32,7 +32,7 @@ public class LexerTestUtil {
 		ErrorLog modelErrorLog = new ErrorLog();
 
 		try (Lexer myLexer = new MyLexer(mySource, myErrorLog);
-			Lexer modelLexer = new ReferenceLexer(modelSource, modelErrorLog)) {
+			 Lexer modelLexer = new ReferenceLexer(modelSource, modelErrorLog)) {
 			while (modelLexer.hasNext()) {
 				assertTrue(myLexer.hasNext(), "Not enough tokens");
 				assertEquals(modelLexer.next(), myLexer.next());
