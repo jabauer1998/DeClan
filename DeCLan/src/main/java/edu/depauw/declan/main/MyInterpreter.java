@@ -12,6 +12,7 @@ import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.Statement;
+import java.lang.Math;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -48,7 +49,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Integer> {
 	@Override
 	public void visit(ProcedureCall procedureCall) {
 		if (procedureCall.getProcedureName().getLexeme().equals("PrintInt")) {
-			int value = procedureCall.getArgument().acceptResult(this);
+			Number value = procedureCall.getArgument().acceptResult(this);
 			OUT("" + value);
 		} else {
 			// Ignore all other procedure calls
@@ -80,27 +81,41 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Integer> {
 	}
     
 	@Override
-	public Integer visitResult(BinaryOperation binaryOperation) {
-		Integer leftvalue = binaryOperation.getLeft().acceptResult(this);
-		Integer rightvalue = binaryOperation.getRight().acceptResult(this);
-		switch (binaryOperation.getOperator()) {
-		case PLUS:
-		    return leftvalue + rightvalue;
-		case MINUS:
-		    return leftvalue - rightvalue;
-		case TIMES:
-		    return leftvalue * rightvalue;
-		case DIV:
-		    return leftvalue / rightvalue;
-		case MOD:
-		    return leftvalue % rightvalue;
+	public Number visitResult(BinaryOperation binaryOperation) {
+		Number leftvalue = binaryOperation.getLeft().acceptResult(this);
+		Number rightvalue = binaryOperation.getRight().acceptResult(this);
+		if(leftvalue instanceof Double || rightvalue instanceof Double)
+		{
+		    switch (binaryOperation.getOperator()) {
+			case PLUS:
+			    return leftvalue + rightvalue;
+			case MINUS:
+			    return leftvalue - rightvalue;
+			case TIMES:
+			    return leftvalue * rightvalue;
+			case DIVIDE:
+			    return leftvalue / rightvalue;
+		    }
+		} else {
+		    switch (binaryOperation.getOperator()) {
+			case PLUS:
+			    return leftvalue + rightvalue;
+			case MINUS:
+			    return leftvalue - rightvalue;
+			case TIMES:
+			    return leftvalue * rightvalue;
+			case DIV:
+			    return leftvalue / rightvalue;
+		        case MOD:
+			    return leftvalue % rightvalue;
+		    }
 		}
 		return null;
 	}
 
 	@Override
-	public Integer visitResult(UnaryOperation unaryOperation) {
-		Integer value = unaryOperation.getExpression().acceptResult(this);
+	public Number visitResult(UnaryOperation unaryOperation) {
+		Number value = unaryOperation.getExpression().acceptResult(this);
 		switch (unaryOperation.getOperator()) {
 		case PLUS:
 		    return value;
@@ -110,14 +125,62 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Integer> {
 		return null;
 	}
 
+        //Checks to see if number has exponent E and is not Hex
+        private static int checkE(String s){
+	    boolean notHex = true;
+	    int idex = -1;
+	    for(int i = 0; i < s.length(); i++){
+		if(s.charAt(i) == 'E'){
+		    idex = i;
+		}
+	    }
+	    if(s.charAt(s.length() - 1) == 'H'){
+		notHex = false;
+	    }
+	    return (notHex) ? idex : -1;
+        }
+
+        private static String ConvertEstring(String s, int Eindex){
+	    double beforeE = Double.parseDouble(subString(0, Eindex));
+	    int Exponent = Integer.parseInt(s.substring(Eindex + 1, s.length()));
+	    return ("" + (beforeE * Math.pow(10, Exponent)));
+        }
+    
 	@Override
-	public Integer visitResult(Identifier identifier) {
-		return Integer.parseInt(environment.getOrDefault(identifier.getLexeme(), "0"));
+	public Number visitResult(Identifier identifier){
+		String lexeme = environment.getOrDefault(identifier.getLexeme(), "0");
+		int Eindex = checkE(lexeme);
+		if(Eindex > 0){
+		    if(lexeme.contains('.')){
+			return Double.parseDouble(ConvertEstring(lexeme, Eindex));
+		    } else {
+			return Integer.parseInteger(ConvertEstring(lexeme, Eindex));
+		    }
+		} else {
+		    if(lexeme.contains('.')){
+			return Double.parseDouble(lexeme);
+		    } else {
+			return Integer.parseInteger(lexeme);
+		    }
+		}
 	}
 
 	@Override
-	public Integer visitResult(NumValue numValue) {
-		return Integer.parseInt(numValue.getLexeme());
+	public Number visitResult(NumValue numValue){
+		String lexeme = numValue.getLexeme();
+		int Eindex = checkE(lexeme);
+		if(Eindex > 0){
+		    if(lexeme.contains('.')){
+			return Double.parseDouble(ConvertEstring(lexeme, Eindex));
+		    } else {
+			return Integer.parseInteger(ConvertEstring(lexeme, Eindex));
+		    }
+		} else {
+		    if(lexeme.contains('.')){
+			return Double.parseDouble(lexeme);
+		    } else {
+			return Integer.parseInteger(lexeme);
+		    }
+		}
 	}
-
 }
