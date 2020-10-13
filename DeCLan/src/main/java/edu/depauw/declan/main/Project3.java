@@ -24,7 +24,7 @@ public class Project3 {
 				+ "  PrintInt(2 * (six + seven) MOD six);\n"
 				+ "  PrintInt(six - seven DIV 2);\n"
 				+ "  PrintInt(six * seven);\n"
-		                + "  PrintDouble(1.E1);\n"
+		                + "  PrintDouble(1.89087E6);\n"
 		                + "  PrintDouble(1.87);\n"
 		                + "  PrintDouble(bignine);\n"
 				+ "END.\n";
