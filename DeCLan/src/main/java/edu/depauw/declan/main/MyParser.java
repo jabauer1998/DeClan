@@ -260,6 +260,9 @@ public class MyParser implements Parser {
 	    } else if(willMatch(TokenType.DIV)) {
 		skip();
 		return BinaryOperation.OpType.DIV;
+	    } else if(willMatch(TokenType.DIVIDE)){
+		skip();
+		return BinaryOperation.OpType.DIVIDE;
 	    } else {
 		match(TokenType.MOD);
 		return BinaryOperation.OpType.MOD;

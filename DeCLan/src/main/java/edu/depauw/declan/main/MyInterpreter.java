@@ -12,14 +12,15 @@ import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.Statement;
-import java.lang.Math;
 
+import java.lang.Number;
+import java.lang.Math;
 import java.util.Map;
 import java.util.HashMap;
 
 import static edu.depauw.declan.common.MyIO.*;
 
-public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Integer> {
+public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 	private ErrorLog errorLog;
         private Map<String, String> environment;
 	// TODO declare any data structures needed by the interpreter
@@ -50,9 +51,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Integer> {
 	public void visit(ProcedureCall procedureCall) {
 		if (procedureCall.getProcedureName().getLexeme().equals("PrintInt")) {
 			Number value = procedureCall.getArgument().acceptResult(this);
-			OUT("" + value);
-		} else {
-			// Ignore all other procedure calls
+			OUT("" + value.intValue());
+		} else if (procedureCall.getProcedureName().getLexeme().equals("PrintDouble")) {
+			Number value = procedureCall.getArgument().acceptResult(this);
+			OUT("" + value.doubleValue());
 		}
 	}
         @Override
@@ -88,26 +90,26 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Integer> {
 		{
 		    switch (binaryOperation.getOperator()) {
 			case PLUS:
-			    return leftvalue + rightvalue;
+			    return leftvalue.doubleValue() + rightvalue.doubleValue();
 			case MINUS:
-			    return leftvalue - rightvalue;
+			    return leftvalue.doubleValue() - rightvalue.doubleValue();
 			case TIMES:
-			    return leftvalue * rightvalue;
+			    return leftvalue.doubleValue() * rightvalue.doubleValue();
 			case DIVIDE:
-			    return leftvalue / rightvalue;
+			    return leftvalue.doubleValue() / rightvalue.doubleValue();
 		    }
 		} else {
 		    switch (binaryOperation.getOperator()) {
 			case PLUS:
-			    return leftvalue + rightvalue;
+			    return leftvalue.intValue() + rightvalue.intValue();
 			case MINUS:
-			    return leftvalue - rightvalue;
+			    return leftvalue.intValue() - rightvalue.intValue();
 			case TIMES:
-			    return leftvalue * rightvalue;
+			    return leftvalue.intValue() * rightvalue.intValue();
 			case DIV:
-			    return leftvalue / rightvalue;
+			    return leftvalue.intValue() / rightvalue.intValue();
 		        case MOD:
-			    return leftvalue % rightvalue;
+			    return leftvalue.intValue() % rightvalue.intValue();
 		    }
 		}
 		return null;
@@ -116,11 +118,21 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Integer> {
 	@Override
 	public Number visitResult(UnaryOperation unaryOperation) {
 		Number value = unaryOperation.getExpression().acceptResult(this);
-		switch (unaryOperation.getOperator()) {
-		case PLUS:
-		    return value;
-		case MINUS:
-		    return -value;
+		if(value instanceof Double)
+		{
+		    switch (unaryOperation.getOperator()){
+		    case PLUS:
+			return value.doubleValue();
+		    case MINUS:
+			return -value.doubleValue();
+		    }
+		} else {
+		    switch (unaryOperation.getOperator()){
+		    case PLUS:
+			return value.intValue();
+		    case MINUS:
+			return -value.intValue();
+		    }
 		}
 		return null;
 	}
@@ -141,7 +153,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Integer> {
         }
 
         private static String ConvertEstring(String s, int Eindex){
-	    double beforeE = Double.parseDouble(subString(0, Eindex));
+	    double beforeE = Double.parseDouble(s.substring(0, Eindex));
 	    int Exponent = Integer.parseInt(s.substring(Eindex + 1, s.length()));
 	    return ("" + (beforeE * Math.pow(10, Exponent)));
         }
@@ -151,16 +163,16 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Integer> {
 		String lexeme = environment.getOrDefault(identifier.getLexeme(), "0");
 		int Eindex = checkE(lexeme);
 		if(Eindex > 0){
-		    if(lexeme.contains('.')){
+		    if(lexeme.contains(".")){
 			return Double.parseDouble(ConvertEstring(lexeme, Eindex));
 		    } else {
-			return Integer.parseInteger(ConvertEstring(lexeme, Eindex));
+			return Integer.parseInt(ConvertEstring(lexeme, Eindex));
 		    }
 		} else {
-		    if(lexeme.contains('.')){
+		    if(lexeme.contains(".")){
 			return Double.parseDouble(lexeme);
 		    } else {
-			return Integer.parseInteger(lexeme);
+			return Integer.parseInt(lexeme);
 		    }
 		}
 	}
@@ -170,16 +182,16 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Integer> {
 		String lexeme = numValue.getLexeme();
 		int Eindex = checkE(lexeme);
 		if(Eindex > 0){
-		    if(lexeme.contains('.')){
+		    if(lexeme.contains(".")){
 			return Double.parseDouble(ConvertEstring(lexeme, Eindex));
 		    } else {
-			return Integer.parseInteger(ConvertEstring(lexeme, Eindex));
+			return Integer.parseInt(ConvertEstring(lexeme, Eindex));
 		    }
 		} else {
-		    if(lexeme.contains('.')){
+		    if(lexeme.contains(".")){
 			return Double.parseDouble(lexeme);
 		    } else {
-			return Integer.parseInteger(lexeme);
+			return Integer.parseInt(lexeme);
 		    }
 		}
 	}
