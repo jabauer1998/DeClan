@@ -16,7 +16,7 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	 * The environment is used to record the bindings of numeric values to
 	 * constants.
 	 */
-	private Map<String, String> environment;
+        private Map<String, TableEntry> environment;
 	private PrintWriter out;
         private Stack<Integer> accumulator;
 
@@ -41,8 +41,8 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	@Override
 	public void visit(Program program) {
 		// Process all of the constant declarations
-		for (ConstDeclaration constDecl : program.getConstDecls()) {
-			constDecl.accept(this);
+		for (Declaration Decl : program.getDecls()) {
+			Decl.accept(this);
 		}
 		// Process all of the statements in the program body
 		for (Statement statement : program.getStatements()) {
@@ -55,7 +55,12 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 		// Bind a numeric value to a constant identifier
 		Identifier id = constDecl.getIdentifier();
 		NumValue num = constDecl.getNumber();
-		environment.put(id.getLexeme(), num.getLexeme());
+		environment.put(id.getLexeme(), new TableEntry("CONST", num.getLexeme()));
+	}
+
+        @Override
+	public void visit(VariableDeclaration varDecl) {
+	    //do nothing not supported yet
 	}
 
 	@Override
@@ -120,7 +125,7 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 
 	@Override
 	public void visit(Identifier identifier) {
-	    int value = Integer.parseInt(environment.getOrDefault(identifier.getLexeme(), "0"));
+	    int value = Integer.parseInt(environment.get(identifier.getLexeme()).getValue());
 	    accumulator.push(value);
 	}
 }

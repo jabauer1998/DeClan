@@ -28,4 +28,6 @@ public interface ASTVisitor {
 	void visit(NumValue numValue);
 
 	void visit(Identifier identifier);
+    
+        void visit(VariableDeclaration varDecl);
 }

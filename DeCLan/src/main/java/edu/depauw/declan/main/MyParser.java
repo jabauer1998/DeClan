@@ -13,6 +13,8 @@ import edu.depauw.declan.common.Position;
 import edu.depauw.declan.common.Token;
 import edu.depauw.declan.common.TokenType;
 import edu.depauw.declan.common.ast.ConstDeclaration;
+import edu.depauw.declan.common.ast.VariableDeclaration;
+import edu.depauw.declan.common.ast.Declaration;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.NumValue;
 import edu.depauw.declan.common.ast.Program;
@@ -119,21 +121,32 @@ public class MyParser implements Parser {
 	@Override
 	public Program parseProgram() {
 		Position start = currentPosition;
-		List<ConstDeclaration> constDecls = parseDeclSequence();
+		List<Declaration> Decls = parseDeclarationSequence();
 		match(TokenType.BEGIN);
 		List<Statement> statements = parseStatementSequence();
 		match(TokenType.END);
 		match(TokenType.PERIOD);
 		matchEOF();
-		return new Program(start, constDecls, statements);
+		return new Program(start, Decls, statements);
 	}
+
+        public List<Declaration> parseDeclarationSequence(){
+	    List<Declaration> Decls = new ArrayList<>();
+	    if(willMatch(TokenType.CONST)){
+		Decls.addAll(parseConstDeclSequence());
+	    }
+	    if(willMatch(TokenType.VAR)){
+		Decls.addAll(parseVariableDeclSequence());
+	    }
+	    return Decls;
+        }
 
 	// DeclSequence -> CONST ConstDeclSequence
 	// DeclSequence ->
 	//
 	// ConstDeclSequence -> ConstDecl ; ConstDeclSequence
 	// ConstDeclSequence ->
-	private List<ConstDeclaration> parseDeclSequence() {
+	private List<ConstDeclaration> parseConstDeclSequence(){
 		List<ConstDeclaration> constDecls = new ArrayList<>();
 		if (willMatch(TokenType.CONST)) {
 			skip();
@@ -144,12 +157,24 @@ public class MyParser implements Parser {
 				match(TokenType.SEMI);
 			}
 		}
-
-		// Return a read-only view of the list of ConstDecl objects
 		return Collections.unmodifiableList(constDecls);
 	}
+        
+        
+        private List<VariableDeclaration> parseVariableDeclSequence(){
+	    List<VariableDeclaration> varDecls = new ArrayList<>();
+	    while (willMatch(TokenType.VAR)) {
+		skip();
+		List<VariableDeclaration> varDecl = parseVariableDecl();
+		varDecls.addAll(varDecl);
+		match(TokenType.SEMI);
+	    }
+	    return Collections.unmodifiableList(varDecls);
+	}
 
-	// ConstDecl -> ident = number
+        
+
+	// ConstDecl -> ident =umber
 	private ConstDeclaration parseConstDecl() {
 		Position start = currentPosition;
 		Identifier id = ParseIdentifier();
@@ -157,6 +182,24 @@ public class MyParser implements Parser {
 		NumValue num = ParseNumValue();
 		return new ConstDeclaration(start, id, num);
 	}
+
+        private List <VariableDeclaration> parseVariableDecl() {
+	    Position start = currentPosition;
+	    List<Identifier> identList = new ArrayList<>();
+	    while(willMatch(TokenType.ID)){
+		Token varname = skip();
+		identList.add(new Identifier(varname.getPosition(), varname.getLexeme()));
+		match(TokenType.COMMA);
+	    }
+	    match(TokenType.COLON);
+	    Token type = match(TokenType.ID);
+	    Identifier typeid = new Identifier(type.getPosition(), type.getLexeme());
+	    List <VariableDeclaration> varDecl = new ArrayList<>();
+	    for(int i = 0; i < identList.size(); i++){
+		varDecl.add(new VariableDeclaration(start, identList.get(i), typeid));
+	    }
+	    return Collections.unmodifiableList(varDecl);
+        }
 
 	// StatementSequence -> Statement StatementSequenceRest
 	//

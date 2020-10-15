@@ -34,13 +34,11 @@ public class ConstDeclaration extends AbstractASTNode implements Declaration {
 	public NumValue getNumber() {
 		return number;
 	}
-
-	@Override
+        @Override
 	public void accept(ASTVisitor visitor) {
 		visitor.visit(this);
 	}
-
-	@Override
+        @Override
 	public <R> R acceptResult(DeclarationVisitor<R> visitor) {
 		return visitor.visitResult(this);
 	}
