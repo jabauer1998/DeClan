@@ -14,4 +14,6 @@ public interface StatementVisitor<R> {
 	R visitResult(EmptyStatement emptyStatement);
 
 	R visitResult(ProcedureCall procedureCall);
+
+        R visitResult(Assignment procedureCall);
 }

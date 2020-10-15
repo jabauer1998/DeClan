@@ -16,5 +16,8 @@ public interface Declaration {
 	 * 
 	 * @param visitor
 	 */
-	<R> R acceptResult(DeclarationVisitor<R> visitor);
+
+    void accept(ASTVisitor visitor);
+    <R> R acceptResult(DeclarationVisitor<R> visitor);
+    
 }

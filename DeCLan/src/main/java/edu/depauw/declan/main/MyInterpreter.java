@@ -4,6 +4,8 @@ import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ast.ASTVisitor;
 import edu.depauw.declan.common.ast.BinaryOperation;
 import edu.depauw.declan.common.ast.ConstDeclaration;
+import edu.depauw.declan.common.ast.VariableDeclaration;
+import edu.depauw.declan.common.ast.Declaration;
 import edu.depauw.declan.common.ast.EmptyStatement;
 import edu.depauw.declan.common.ast.ExpressionVisitor;
 import edu.depauw.declan.common.ast.Identifier;
@@ -12,6 +14,8 @@ import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.Statement;
+import edu.depauw.declan.common.ast.Assignment;
+import edu.depauw.declan.common.ast.TableEntry;
 
 import java.lang.Number;
 import java.lang.Math;
@@ -22,7 +26,7 @@ import static edu.depauw.declan.common.MyIO.*;
 
 public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 	private ErrorLog errorLog;
-        private Map<String, String> environment;
+        private Map<String, TableEntry> environment;
 	// TODO declare any data structures needed by the interpreter
 	
 	public MyInterpreter(ErrorLog errorLog) {
@@ -32,8 +36,8 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 
 	@Override
 	public void visit(Program program) {
-	        for (ConstDeclaration constDecl : program.getConstDecls()) {
-			constDecl.accept(this);
+	        for (Declaration Decl : program.getDecls()) {
+			Decl.accept(this);
 		}
 		for (Statement statement : program.getStatements()) {
 			statement.accept(this);
@@ -44,7 +48,14 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 	public void visit(ConstDeclaration constDecl) {
 	        Identifier id = constDecl.getIdentifier();
 		NumValue num = constDecl.getNumber();
-		environment.put(id.getLexeme(), num.getLexeme());
+		environment.put(id.getLexeme(), new TableEntry("CONST", num.getLexeme()));
+	}
+
+        @Override
+	public void visit(VariableDeclaration varDecl) {
+	        Identifier id = varDecl.getIdentifier();
+		Identifier type = varDecl.getType();
+		environment.put(id.getLexeme(), new TableEntry(type.getLexeme()));
 	}
 
 	@Override
@@ -56,6 +67,28 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 			Number value = procedureCall.getArgument().acceptResult(this);
 			OUT("" + value.doubleValue());
 		}
+	}
+        @Override
+	public void visit(Assignment assignment) {
+	    String name = assignment.getVariableName().getLexeme();
+	    if(environment.containsKey(name)){
+		TableEntry entry = environment.get(name);
+		if(!entry.getType().equals("CONST")){
+		    if(entry.getType().equals("REAL")){
+			Number value = assignment.getVariableValue().acceptResult(this);
+			String newValue = "" + value.doubleValue();
+			entry.setValue(newValue);
+		    } else if(entry.getType().equals("INTEGER")){
+			Number value = assignment.getVariableValue().acceptResult(this);
+			String newValue = "" + value.intValue();
+			entry.setValue(newValue);
+		    }
+		} else {
+		    FATAL("Variable " + assignment.getVariableName().getLexeme() + " at " + assignment.getVariableName().getStart() + " declared as const");
+		}
+	    } else {
+		FATAL("Undeclared Variable " + assignment.getVariableName().getLexeme() + " at " + assignment.getVariableName().getStart());
+	    }
 	}
         @Override
 	public void visit(EmptyStatement emptyStatement) {
@@ -160,7 +193,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
     
 	@Override
 	public Number visitResult(Identifier identifier){
-		String lexeme = environment.getOrDefault(identifier.getLexeme(), "0");
+	        String lexeme = environment.get(identifier.getLexeme()).getValue();
 		int Eindex = checkE(lexeme);
 		if(Eindex > 0){
 		    if(lexeme.contains(".")){

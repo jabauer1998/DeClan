@@ -39,14 +39,19 @@ public class PostfixPrintVisitor implements ASTVisitor {
 	@Override
 	public void visit(Program program) {
 		// Process all of the constant declarations
-		for (ConstDeclaration constDecl : program.getConstDecls()) {
-			constDecl.accept(this);
+		for (Declaration Decl : program.getDecls()) {
+			Decl.accept(this);
 		}
 
 		// Process all of the statements in the program body
 		for (Statement statement : program.getStatements()) {
 			statement.accept(this);
 		}
+	}
+
+        @Override
+	public void visit(VariableDeclaration varDecl){
+	    //dont do anything not supported at this point in the project
 	}
 
 	@Override
@@ -76,6 +81,11 @@ public class PostfixPrintVisitor implements ASTVisitor {
 		// Do nothing
 	}
 
+         @Override
+	public void visit(Assignment assignment) {
+	    
+	}
+        
 	@Override
 	public void visit(UnaryOperation unaryOperation) {
 		// Handle a unary operation by printing out its subexpression
