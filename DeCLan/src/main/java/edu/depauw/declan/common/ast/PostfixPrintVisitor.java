@@ -81,6 +81,11 @@ public class PostfixPrintVisitor implements ASTVisitor {
 		// Do nothing
 	}
 
+         @Override
+	public void visit(Assignment assignment) {
+	    
+	}
+        
 	@Override
 	public void visit(UnaryOperation unaryOperation) {
 		// Handle a unary operation by printing out its subexpression

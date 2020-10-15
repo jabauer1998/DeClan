@@ -30,4 +30,6 @@ public interface ASTVisitor {
 	void visit(Identifier identifier);
     
         void visit(VariableDeclaration varDecl);
+
+        void visit(Assignment assignment);
 }

@@ -14,6 +14,7 @@ import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.Statement;
+import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.TableEntry;
 
 import java.lang.Number;
@@ -66,6 +67,28 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 			Number value = procedureCall.getArgument().acceptResult(this);
 			OUT("" + value.doubleValue());
 		}
+	}
+        @Override
+	public void visit(Assignment assignment) {
+	    String name = assignment.getVariableName().getLexeme();
+	    if(environment.containsKey(name)){
+		TableEntry entry = environment.get(name);
+		if(!entry.getType().equals("CONST")){
+		    if(entry.getType().equals("REAL")){
+			Number value = assignment.getVariableValue().acceptResult(this);
+			String newValue = "" + value.doubleValue();
+			entry.setValue(newValue);
+		    } else if(entry.getType().equals("INTEGER")){
+			Number value = assignment.getVariableValue().acceptResult(this);
+			String newValue = "" + value.intValue();
+			entry.setValue(newValue);
+		    }
+		} else {
+		    FATAL("Variable " + assignment.getVariableName().getLexeme() + " at " + assignment.getVariableName().getStart() + " declared as const");
+		}
+	    } else {
+		FATAL("Undeclared Variable " + assignment.getVariableName().getLexeme() + " at " + assignment.getVariableName().getStart());
+	    }
 	}
         @Override
 	public void visit(EmptyStatement emptyStatement) {

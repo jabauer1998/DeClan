@@ -19,6 +19,7 @@ import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.NumValue;
 import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.Statement;
+import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.EmptyStatement;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.Expression;
@@ -186,12 +187,16 @@ public class MyParser implements Parser {
         private List <VariableDeclaration> parseVariableDecl() {
 	    Position start = currentPosition;
 	    List<Identifier> identList = new ArrayList<>();
-	    while(willMatch(TokenType.ID)){
-		Token varname = skip();
+	    while(!willMatch(TokenType.COLON)){
+		Token varname = match(TokenType.ID);
 		identList.add(new Identifier(varname.getPosition(), varname.getLexeme()));
-		match(TokenType.COMMA);
+		if(!willMatch(TokenType.COMMA)){
+		    match(TokenType.COLON);
+		    break;
+		} else {
+		    skip();
+		}
 	    }
-	    match(TokenType.COLON);
 	    Token type = match(TokenType.ID);
 	    Identifier typeid = new Identifier(type.getPosition(), type.getLexeme());
 	    List <VariableDeclaration> varDecl = new ArrayList<>();
@@ -221,23 +226,35 @@ public class MyParser implements Parser {
 	// TODO handle the rest of the grammar:
 	//
 	// Statement -> ProcedureCall
-	// Statement ->
+	// Statement -> Assignment
+        // Statement -> Empty
 	private Statement ParseStatement(){
 	    Position start = currentPosition;
-	    Statement pcall = new EmptyStatement(start);
+	    Statement statement = new EmptyStatement(start);
 	    if(willMatch(TokenType.ID)) {
-		pcall = ParseProcedureCall();
+		Identifier ident = ParseIdentifier();
+		if(willMatch(TokenType.ASSIGN)) {
+		    skip();
+		    statement = ParseAssignment(ident);
+		} else if(willMatch(TokenType.LPAR)) {
+		    skip();
+		    statement = ParseProcedureCall(ident);
+		}
 	    }
-	    return pcall;
+	    return statement;
         }
 	// ProcedureCall -> ident ( Expression )
-        private ProcedureCall ParseProcedureCall(){
-	    Identifier ident = ParseIdentifier();
+        private ProcedureCall ParseProcedureCall(Identifier nameOfProcedure){
 	    Position start = currentPosition;
-	    match(TokenType.LPAR);
 	    Expression exp = ParseExpression();
 	    match(TokenType.RPAR);
-	    return new ProcedureCall(start, ident, exp);
+	    return new ProcedureCall(start, nameOfProcedure, exp);
+        }
+    
+        private Assignment ParseAssignment(Identifier toBeAssigned){
+	    Position start = currentPosition;
+	    Expression exp = ParseExpression();
+	    return new Assignment(start, toBeAssigned, exp);
         }
 	//
 	// Expression -> + Term ExprRest
