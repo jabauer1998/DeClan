@@ -16,7 +16,7 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	 * The environment is used to record the bindings of numeric values to
 	 * constants.
 	 */
-        private Map<String, TableEntry> environment;
+        private Map<String, VariableEntry> environment;
 	private PrintWriter out;
         private Stack<Integer> accumulator;
 
@@ -55,7 +55,7 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 		// Bind a numeric value to a constant identifier
 		Identifier id = constDecl.getIdentifier();
 		NumValue num = constDecl.getNumber();
-		environment.put(id.getLexeme(), new TableEntry("CONST", num.getLexeme()));
+		environment.put(id.getLexeme(), new VariableEntry("CONST", num.getLexeme()));
 	}
 
         @Override
