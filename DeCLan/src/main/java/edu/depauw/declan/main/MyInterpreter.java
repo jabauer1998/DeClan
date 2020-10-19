@@ -15,7 +15,8 @@ import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
-import edu.depauw.declan.common.ast.TableEntry;
+import edu.depauw.declan.common.ast.VariableEntry;
+import edu.depauw.declan.common.ast.Environment;
 
 import java.lang.Number;
 import java.lang.Math;
@@ -26,36 +27,38 @@ import static edu.depauw.declan.common.MyIO.*;
 
 public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 	private ErrorLog errorLog;
-        private Map<String, TableEntry> environment;
+        private Environment <VariableEntry> varEnvironment;
 	// TODO declare any data structures needed by the interpreter
 	
 	public MyInterpreter(ErrorLog errorLog) {
 		this.errorLog = errorLog;
-		this.environment = new HashMap<>();
+		this.varEnvironment = new Environment<>();
 	}
 
 	@Override
 	public void visit(Program program) {
+	        varEnvironment.addScope();
 	        for (Declaration Decl : program.getDecls()) {
 			Decl.accept(this);
 		}
 		for (Statement statement : program.getStatements()) {
 			statement.accept(this);
 		}
+		varEnvironment.removeScope();
 	}
 
 	@Override
 	public void visit(ConstDeclaration constDecl) {
 	        Identifier id = constDecl.getIdentifier();
 		NumValue num = constDecl.getNumber();
-		environment.put(id.getLexeme(), new TableEntry("CONST", num.getLexeme()));
+		varEnvironment.addEntry(id.getLexeme(), new VariableEntry("CONST", num.getLexeme()));
 	}
 
         @Override
 	public void visit(VariableDeclaration varDecl) {
 	        Identifier id = varDecl.getIdentifier();
 		Identifier type = varDecl.getType();
-		environment.put(id.getLexeme(), new TableEntry(type.getLexeme()));
+		varEnvironment.addEntry(id.getLexeme(), new VariableEntry(type.getLexeme()));
 	}
 
 	@Override
@@ -68,11 +71,12 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 			OUT("" + value.doubleValue());
 		}
 	}
+        
         @Override
 	public void visit(Assignment assignment) {
 	    String name = assignment.getVariableName().getLexeme();
-	    if(environment.containsKey(name)){
-		TableEntry entry = environment.get(name);
+	    if(varEnvironment.entryExists(name)){
+		VariableEntry entry = varEnvironment.findEntry(name);
 		if(!entry.getType().equals("CONST")){
 		    if(entry.getType().equals("REAL")){
 			Number value = assignment.getVariableValue().acceptResult(this);
@@ -193,7 +197,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
     
 	@Override
 	public Number visitResult(Identifier identifier){
-	        String lexeme = environment.get(identifier.getLexeme()).getValue();
+	        String lexeme = varEnvironment.findEntry(identifier.getLexeme()).getValue();
 		int Eindex = checkE(lexeme);
 		if(Eindex > 0){
 		    if(lexeme.contains(".")){
