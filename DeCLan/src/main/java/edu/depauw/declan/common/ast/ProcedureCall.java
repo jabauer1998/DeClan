@@ -11,7 +11,7 @@ import edu.depauw.declan.common.Position;
  */
 public class ProcedureCall extends AbstractASTNode implements Statement {
 	private final Identifier procedureName;
-	private final Expression argument;
+	private final List<Expression> arguments;
 
 	/**
 	 * Construct a ProcedureCall ast node starting at the given source Position,
@@ -21,10 +21,16 @@ public class ProcedureCall extends AbstractASTNode implements Statement {
 	 * @param procedureName
 	 * @param argument
 	 */
-	public ProcedureCall(Position start, Identifier procedureName, Expression argument) {
+	public ProcedureCall(Position start, Identifier procedureName, List<Expression> arguments) {
 		super(start);
 		this.procedureName = procedureName;
-		this.argument = argument;
+		this.arguments = arguments;
+	}
+
+        public ProcedureCall(Position start, Identifier procedureName) {
+		super(start);
+		this.procedureName = procedureName;
+		this.arguments = null;
 	}
 
 	public Identifier getProcedureName() {
@@ -32,7 +38,7 @@ public class ProcedureCall extends AbstractASTNode implements Statement {
 	}
 
 	public Expression getArgument() {
-		return argument;
+		return arguments;
 	}
 
 	@Override

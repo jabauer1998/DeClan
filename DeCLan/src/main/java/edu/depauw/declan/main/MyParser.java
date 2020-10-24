@@ -21,6 +21,8 @@ import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.EmptyStatement;
+import edu.depauw.declan.common.ast.IfStatement;
+import edu.depauw.declan.common.ast.IfBlock;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.Expression;
 import edu.depauw.declan.common.ast.BinaryOperation;
@@ -228,6 +230,7 @@ public class MyParser implements Parser {
 	//
 	// Statement -> ProcedureCall
 	// Statement -> Assignment
+        // Statement -> IfStatement
         // Statement -> Empty
 	private Statement ParseStatement(){
 	    Position start = currentPosition;
@@ -237,25 +240,70 @@ public class MyParser implements Parser {
 		if(willMatch(TokenType.ASSIGN)) {
 		    skip();
 		    statement = ParseAssignment(ident);
-		} else if(willMatch(TokenType.LPAR)) {
-		    skip();
+		} else {
 		    statement = ParseProcedureCall(ident);
 		}
+	    } else if(willMatch(Tokentype.IF)) {
+		statement = parseIfStatement();
 	    }
 	    return statement;
         }
-	// ProcedureCall -> ident ( Expression )
+        private IfStatement ParseIfStatement(){
+	    match(TokenType.IF);
+	    List<IfBlock> ifStatements = new ArrayList<>();
+	    Expression ifexpr = ParseExpression();
+	    match(TokenType.THEN);
+	    List<Statement> doThis = parseStatementSequence();
+	    while(!willMatch(TokenType.END)){
+		
+		if(willMatch(TokenType.ELSE) || willMatch(TokenType.END)){
+		    break;
+		}
+	    }
+	    match(TokenType.END);
+	    
+	}
+	// ProcedureCall -> ident ( ExpList )
         private ProcedureCall ParseProcedureCall(Identifier nameOfProcedure){
 	    Position start = currentPosition;
-	    Expression exp = ParseExpression();
-	    match(TokenType.RPAR);
-	    return new ProcedureCall(start, nameOfProcedure, exp);
+	    if(willMatch(Tokentype.LPAR)){
+		List<Expression> expList = ParseExpressionList();
+		match(TokenType.RPAR);
+		return new ProcedurCall(start, nameOfProcedure, expList);
+	    }
+	    return new ProcedureCall(start, nameOfProcedure);
         }
-    
+
+
         private Assignment ParseAssignment(Identifier toBeAssigned){
 	    Position start = currentPosition;
 	    Expression exp = ParseExpression();
 	    return new Assignment(start, toBeAssigned, exp);
+        }
+
+        //ExpList -> Expression ExpListRest
+        //ExpListRest -> , Expression
+        //ExpListRest ->
+        private List<Expression> ParseExpressionList(){
+	    List<Expression> expList = new ArrayList<Expression>();
+	    while(willMatch(TokenType.PLUS) || willMatch(TokenType.MINUS) || willMatch(TokenType.ID) || willMatch(TokenType.NUM) || willMatch(TokenType.STRING) || willMatch(TokenType.TRUE) || willMatch(TokenType.FALSE) || willMatch(TokenType.LPAR) || willMatch(TokenType.NOT)){ //check if it is a factor or a term
+		Expression exp = ParseExpression();
+		expList.add(exp);
+		if(!willMatch(TokenType.COMMA)){
+		    break;
+		} else {
+		    skip();
+		}
+	    }
+	    return expList;
+        }
+        //ActualParameters -> ( ExpList )
+        //ActualParameters -> ( )
+        private List<Expression> ParseActualParameters(){
+	    match(TokenType.LPAR);
+	    List<Expression> elist = ParseExpressionList();
+	    match(TokenType.RPAR);
+	    return elist;
         }
         //Expression -> SimpleExpr
         //Expression -> SimpleExpr Relation SimpleExpr
