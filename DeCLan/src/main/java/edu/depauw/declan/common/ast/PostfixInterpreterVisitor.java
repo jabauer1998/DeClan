@@ -133,4 +133,9 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	    int value = Integer.parseInt(environment.get(identifier.getLexeme()).getValue());
 	    accumulator.push(value);
 	}
+
+        @Override
+	public void visit(BooleanOperation bool){
+
+	}
 }

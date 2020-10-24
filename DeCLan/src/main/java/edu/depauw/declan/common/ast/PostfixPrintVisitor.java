@@ -145,4 +145,9 @@ public class PostfixPrintVisitor implements ASTVisitor {
 		String value = environment.getOrDefault(identifier.getLexeme(), "0");
 		out.println(value);
 	}
+
+        @Override
+	public void visit(BooleanOperation bool){
+
+	}
 }

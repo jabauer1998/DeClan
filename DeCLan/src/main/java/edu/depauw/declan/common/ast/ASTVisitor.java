@@ -25,6 +25,8 @@ public interface ASTVisitor {
 
 	void visit(BinaryOperation binaryOperation);
 
+        void visit(BooleanOperation booleanOperation);
+
 	void visit(NumValue numValue);
 
 	void visit(Identifier identifier);

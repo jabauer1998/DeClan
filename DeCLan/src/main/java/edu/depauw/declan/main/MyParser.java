@@ -24,6 +24,7 @@ import edu.depauw.declan.common.ast.EmptyStatement;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.Expression;
 import edu.depauw.declan.common.ast.BinaryOperation;
+import edu.depauw.declan.common.ast.BooleanOperation;
 import edu.depauw.declan.common.ast.UnaryOperation;
 
 import static edu.depauw.declan.common.MyIO.*;
@@ -256,22 +257,38 @@ public class MyParser implements Parser {
 	    Expression exp = ParseExpression();
 	    return new Assignment(start, toBeAssigned, exp);
         }
-	//
-	// Expression -> + Term ExprRest
-	// Expression -> - Term ExprRest
-        private UnaryOperation.OpType ParseUnaryOp() {
-	    if(willMatch(TokenType.PLUS)){
-		skip();
-		return UnaryOperation.OpType.PLUS;
+        //Expression -> SimpleExpr
+        //Expression -> SimpleExpr Relation SimpleExpr
+        private Expression ParseExpression(){
+	    Position start = currentPosition;
+	    Expression left = ParseSimpleExpression();
+	    if(willMatch(TokenType.NE) || willMatch(TokenType.LE) || willMatch(TokenType.LT) || willMatch(TokenType.EQ) || willMatch(TokenType.GT) || willMatch(TokenType.GE)){
+		BooleanOperation.OpType op = ParseBoolOp();
+		Expression right = ParseSimpleExpression();
+		left = new BooleanOperation(start, left, op, right);
+	    }
+	    return left;
+	}
+    
+        private BooleanOperation.OpType ParseBoolOp(){
+	    if(willMatch(TokenType.NE)){
+		    return BooleanOperation.OpType.NE;
+	    } else if(willMatch(TokenType.EQ)){
+		    return BooleanOperation.OpType.EQ;
+	    } else if(willMatch(TokenType.LT)){
+		    return BooleanOperation.OpType.LT;
+	    } else if(willMatch(TokenType.GT)){
+		    return BooleanOperation.OpType.GT;
+	    } else if(willMatch(TokenType.GE)){
+		    return BooleanOperation.OpType.GE;
 	    } else {
-		match(TokenType.MINUS);
-		return UnaryOperation.OpType.MINUS;
+		    return BooleanOperation.OpType.LE;
 	    }
         }
-	// Expression -> Term ExprRest
-        // ExprRest -> AddOperator Term ExprRest
-	// ExprRest ->
-        private Expression ParseExpression(){
+        //SimpleExpr -> + Term SimpleExprRest
+        //SimpleExpr -> - Term SimpleExprRest
+        //SimpleExpr -> Term SimpleExprRest
+        private Expression ParseSimpleExpression(){
 	    Position start = currentPosition; 
 	    Expression left;
 	    if(willMatch(TokenType.MINUS) || willMatch(TokenType.PLUS)){
@@ -287,6 +304,18 @@ public class MyParser implements Parser {
 		left = new BinaryOperation(start, left, op, right);
 	    }
 	    return left;
+        }
+        //
+	// Expression -> + Term ExprRest
+	// Expression -> - Term ExprRest
+        private UnaryOperation.OpType ParseUnaryOp() {
+	    if(willMatch(TokenType.PLUS)){
+		skip();
+		return UnaryOperation.OpType.PLUS;
+	    } else {
+		match(TokenType.MINUS);
+		return UnaryOperation.OpType.MINUS;
+	    }
         }
 	// AddOperator -> + | -
         private BinaryOperation.OpType ParseAddOp(){

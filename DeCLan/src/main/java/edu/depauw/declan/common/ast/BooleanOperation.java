@@ -8,7 +8,7 @@ import edu.depauw.declan.common.Position;
  * 
  * @author bhoward
  */
-public class BinaryOperation extends AbstractASTNode implements Expression {
+public class BooleanOperation extends AbstractASTNode implements Expression {
 	private final OpType operator;
 	private final Expression left, right;
 
@@ -21,7 +21,7 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 	 * @param operator
 	 * @param right
 	 */
-	public BinaryOperation(Position start, Expression left, OpType operator, Expression right) {
+	public BooleanOperation(Position start, Expression left, OpType operator, Expression right) {
 		super(start);
 		this.left = left;
 		this.operator = operator;
@@ -57,6 +57,6 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 	 * @author bhoward
 	 */
 	public enum OpType {
-	    PLUS, MINUS, TIMES, DIV, MOD, DIVIDE, OR, AND
+	    NE, EQ, GT, GE, LT, LE
 	}
 }
