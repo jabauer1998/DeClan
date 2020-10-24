@@ -15,14 +15,9 @@ import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
-<<<<<<< Updated upstream
 import edu.depauw.declan.common.ast.VariableEntry;
 import edu.depauw.declan.common.ast.Environment;
-=======
-import edu.depauw.declan.common.ast.TableEntry;
 import edu.depauw.declan.common.ast.BooleanOperation;
->>>>>>> Stashed changes
-
 import java.lang.Number;
 import java.lang.Math;
 import java.util.Map;
