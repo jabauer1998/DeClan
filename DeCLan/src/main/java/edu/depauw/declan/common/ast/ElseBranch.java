@@ -3,16 +3,14 @@ package edu.depauw.declan.common.ast;
 import java.util.List;
 import edu.depauw.declan.common.Position;
 
-public class IfStatement extends AbstractASTNode implements Statement {
-    private final List <IfElseBlock> toVerifyAndExecute;
+public class ElseBranch extends Branch implements Statement {
   
-    public IfStatement(Position start, List<IfElseBlock> toVerifyAndExecute){
-	super(start);
-	this.toVerifyAndExecute = toVerifyAndExecute;
+    public ElseBranch(Position start, List<Statement> toExecute){
+        super(start, toExecute);
     }
   
-    public List<IfElseBlock> getIfStatement(){
-	return toVerifyAndExecute;
+    public List<Statement> getExecStatements(){
+       return super.getExecStatements();
     }
 
 

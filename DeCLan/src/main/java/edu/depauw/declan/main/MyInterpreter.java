@@ -7,7 +7,9 @@ import edu.depauw.declan.common.ast.ConstDeclaration;
 import edu.depauw.declan.common.ast.VariableDeclaration;
 import edu.depauw.declan.common.ast.Declaration;
 import edu.depauw.declan.common.ast.EmptyStatement;
-import edu.depauw.declan.common.ast.IfStatement;
+import edu.depauw.declan.common.ast.IfElifBranch;
+import edu.depauw.declan.common.ast.ElseBranch;
+import edu.depauw.declan.common.ast.Branch;
 import edu.depauw.declan.common.ast.ExpressionVisitor;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.NumValue;
@@ -63,7 +65,12 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 	}
 
         @Override
-	public void visit(IfStatement ifs){
+	public void visit(IfElifBranch ifs){
+	  
+	}
+
+        @Override
+	public void visit(ElseBranch ifs){
 	  
 	}
         

@@ -63,7 +63,12 @@ public class PostfixPrintVisitor implements ASTVisitor {
 		environment.put(id.getLexeme(), num.getLexeme());
 	}
         @Override
-	public void visit(IfStatement ifs){
+	public void visit(IfElifBranch ifs){
+	  
+	}
+
+        @Override
+	public void visit(ElseBranch ifs){
 	  
 	}
 	@Override

@@ -20,7 +20,9 @@ public interface ASTVisitor {
 
 	void visit(EmptyStatement emptyStatement);
 
-        void visit(IfStatement ifStatement);
+        void visit(IfElifBranch ifStatement);
+        
+        void visit(ElseBranch ifStatement);
 
 	// Expressions
 	void visit(UnaryOperation unaryOperation);

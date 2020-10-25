@@ -21,10 +21,9 @@ import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.EmptyStatement;
-import edu.depauw.declan.common.ast.IfStatement;
-import edu.depauw.declan.common.ast.IfBlock;
-import edu.depauw.declan.common.ast.ElseBlock;
-import edu.depauw.declan.common.ast.IfElseBlock;
+import edu.depauw.declan.common.ast.ElseBranch;
+import edu.depauw.declan.common.ast.IfElifBranch;
+import edu.depauw.declan.common.ast.Branch;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.Expression;
 import edu.depauw.declan.common.ast.BinaryOperation;
@@ -212,7 +211,6 @@ public class MyParser implements Parser {
         }
 
 	// StatementSequence -> Statement StatementSequenceRest
-	//
 	// StatementSequenceRest -> ; Statement StatementSequenceRest
 	// StatementSequenceRest ->
 	private List<Statement> parseStatementSequence() {
@@ -227,9 +225,6 @@ public class MyParser implements Parser {
 	    }
 	    return Collections.unmodifiableList(statements);
 	}
-
-	// TODO handle the rest of the grammar:
-	//
 	// Statement -> ProcedureCall
 	// Statement -> Assignment
         // Statement -> IfStatement
@@ -240,7 +235,6 @@ public class MyParser implements Parser {
 	    if(willMatch(TokenType.ID)) {
 		Identifier ident = ParseIdentifier();
 		if(willMatch(TokenType.ASSIGN)) {
-		    skip();
 		    statement = ParseAssignment(ident);
 		} else {
 		    statement = ParseProcedureCall(ident);
@@ -250,34 +244,33 @@ public class MyParser implements Parser {
 	    }
 	    return statement;
         }
-        private IfStatement ParseIfStatement(){
+        private Branch parseBranch(){
+	  Position start = currentPosition;
+	  Branch result;
+	  if(willMatch(TokenType.ELSIF)){
+	    skip();
+	    Expression exp = ParseExpression();
+	    match(TokenType.THEN);
+	    List<Statement> stats = parseStatementSequence();
+	    result  = new IfElifBranch(start, exp, stats, parseBranch());
+	  } else if(willMatch(TokenType.ELSE)) {
+	    skip();
+	    List<Statement> stats = parseStatementSequence();
+	    result = new ElseBranch(start, stats);
+	  } else {
+	    result = null;
+	  }
+	  return result;
+	}
+        private IfElifBranch ParseIfStatement(){
 	    Position start = currentPosition; 
 	    match(TokenType.IF);
-	    List<IfElseBlock> ifStatements = new ArrayList<>();
-	    Expression ifexpr = ParseExpression();
+	    Expression ifExpr = ParseExpression();
 	    match(TokenType.THEN);
-	    List<Statement> doThis = parseStatementSequence();
-	    IfBlock ifblock = new IfBlock(ifexpr, doThis);
-	    ifStatements.add(ifblock);
-	    while(!willMatch(TokenType.END) || !willMatch(TokenType.ELSE)){
-	        match(TokenType.ELSIF);
-		ifexpr = ParseExpression();
-	        match(TokenType.THEN);
-		doThis = parseStatementSequence();
-		ifblock = new IfBlock(ifexpr, doThis);
-	        ifStatements.add(ifblock);
-		if(willMatch(TokenType.ELSE) || willMatch(TokenType.END)){
-		    break;
-		}
-	    }
-	    if(willMatch(TokenType.ELSE)){
-	       skip();
-	       doThis = parseStatementSequence();
-	       ElseBlock elseblock = new ElseBlock(doThis);
-	       ifStatements.add(elseblock);
-	    }
+	    List<Statement> topStatements = parseStatementSequence();
+	    IfElifBranch topBranch = new IfElifBranch(start, ifExpr, topStatements, parseBranch());
 	    match(TokenType.END);
-	    return new IfStatement(start, ifStatements);
+	    return topBranch;
 	}
 	// ProcedureCall -> ident ( ExpList )
         private ProcedureCall ParseProcedureCall(Identifier nameOfProcedure){
@@ -292,6 +285,7 @@ public class MyParser implements Parser {
 
         private Assignment ParseAssignment(Identifier toBeAssigned){
 	    Position start = currentPosition;
+	    match(TokenType.ASSIGN);
 	    Expression exp = ParseExpression();
 	    return new Assignment(start, toBeAssigned, exp);
         }
@@ -301,16 +295,17 @@ public class MyParser implements Parser {
         //ExpListRest ->
         private List<Expression> ParseExpressionList(){
 	    List<Expression> expList = new ArrayList<Expression>();
-	    while(willMatch(TokenType.PLUS) || willMatch(TokenType.MINUS) || willMatch(TokenType.ID) || willMatch(TokenType.NUM) || willMatch(TokenType.STRING) || willMatch(TokenType.TRUE) || willMatch(TokenType.FALSE) || willMatch(TokenType.LPAR) || willMatch(TokenType.NOT)){ //check if it is a factor or a term
+	    while(!willMatch(TokenType.RPAR)){ //check if it is a factor or a term
 		Expression exp = ParseExpression();
 		expList.add(exp);
 		if(willMatch(TokenType.COMMA)){
 		    skip();
+		    continue;
 		} else {
 		    break;
 		}
 	    }
-	    return expList;
+	    return Collections.unmodifiableList(expList);
         }
         //ActualParameters -> ( ExpList )
         //ActualParameters -> ( )
@@ -318,7 +313,7 @@ public class MyParser implements Parser {
 	    match(TokenType.LPAR);
 	    List<Expression> elist = ParseExpressionList();
 	    match(TokenType.RPAR);
-	    return elist;
+	    return Collections.unmodifiableList(elist);
         }
         //Expression -> SimpleExpr
         //Expression -> SimpleExpr Relation SimpleExpr
