@@ -1,6 +1,7 @@
 package edu.depauw.declan.common.ast;
 
 import edu.depauw.declan.common.Position;
+import java.util.List;
 
 /**
  * An ASTNode representing a procedure call statement, which consists of an
@@ -37,7 +38,7 @@ public class ProcedureCall extends AbstractASTNode implements Statement {
 		return procedureName;
 	}
 
-	public Expression getArgument() {
+	public List<Expression> getArguments() {
 		return arguments;
 	}
 

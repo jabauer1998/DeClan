@@ -15,5 +15,7 @@ public interface StatementVisitor<R> {
 
 	R visitResult(ProcedureCall procedureCall);
 
-        R visitResult(Assignment procedureCall);
+        R visitResult(Assignment Assignment);
+
+        R visitResult(IfStatement ifs);
 }

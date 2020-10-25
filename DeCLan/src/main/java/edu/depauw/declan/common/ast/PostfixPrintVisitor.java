@@ -62,14 +62,17 @@ public class PostfixPrintVisitor implements ASTVisitor {
 
 		environment.put(id.getLexeme(), num.getLexeme());
 	}
-
+        @Override
+	public void visit(IfStatement ifs){
+	  
+	}
 	@Override
 	public void visit(ProcedureCall procedureCall) {
 		// For Project 2, the only recognized procedure is "PrintInt", which
 		// takes a single INTEGER argument. The output first prints out the
 		// argument in postfix, and then prints the "PRINT" instruction.
 		if (procedureCall.getProcedureName().getLexeme().equals("PrintInt")) {
-			procedureCall.getArgument().accept(this);
+		        procedureCall.getArguments().get(0).accept(this);
 			out.println("PRINT");
 		} else {
 			// Ignore all other procedure calls

@@ -66,11 +66,16 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	@Override
 	public void visit(ProcedureCall procedureCall) {
 		if (procedureCall.getProcedureName().getLexeme().equals("PrintInt")) {
-			procedureCall.getArgument().accept(this);
+		        procedureCall.getArguments().get(0).accept(this);
 			out.println(accumulator.pop());
 		} else {
 			// Ignore all other procedure calls
 		}
+	}
+
+        @Override
+	public void visit(IfStatement ifs){
+	  
 	}
 
         @Override

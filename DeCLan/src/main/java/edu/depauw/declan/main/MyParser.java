@@ -23,6 +23,8 @@ import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.EmptyStatement;
 import edu.depauw.declan.common.ast.IfStatement;
 import edu.depauw.declan.common.ast.IfBlock;
+import edu.depauw.declan.common.ast.ElseBlock;
+import edu.depauw.declan.common.ast.IfElseBlock;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.Expression;
 import edu.depauw.declan.common.ast.BinaryOperation;
@@ -243,33 +245,46 @@ public class MyParser implements Parser {
 		} else {
 		    statement = ParseProcedureCall(ident);
 		}
-	    } else if(willMatch(Tokentype.IF)) {
-		statement = parseIfStatement();
+	    } else if(willMatch(TokenType.IF)) {
+		statement = ParseIfStatement();
 	    }
 	    return statement;
         }
         private IfStatement ParseIfStatement(){
+	    Position start = currentPosition; 
 	    match(TokenType.IF);
-	    List<IfBlock> ifStatements = new ArrayList<>();
+	    List<IfElseBlock> ifStatements = new ArrayList<>();
 	    Expression ifexpr = ParseExpression();
 	    match(TokenType.THEN);
 	    List<Statement> doThis = parseStatementSequence();
-	    while(!willMatch(TokenType.END)){
-		
+	    IfBlock ifblock = new IfBlock(ifexpr, doThis);
+	    ifStatements.add(ifblock);
+	    while(!willMatch(TokenType.END) || !willMatch(TokenType.ELSE)){
+	        match(TokenType.ELSIF);
+		ifexpr = ParseExpression();
+	        match(TokenType.THEN);
+		doThis = parseStatementSequence();
+		ifblock = new IfBlock(ifexpr, doThis);
+	        ifStatements.add(ifblock);
 		if(willMatch(TokenType.ELSE) || willMatch(TokenType.END)){
 		    break;
 		}
 	    }
+	    if(willMatch(TokenType.ELSE)){
+	       skip();
+	       doThis = parseStatementSequence();
+	       ElseBlock elseblock = new ElseBlock(doThis);
+	       ifStatements.add(elseblock);
+	    }
 	    match(TokenType.END);
-	    
+	    return new IfStatement(start, ifStatements);
 	}
 	// ProcedureCall -> ident ( ExpList )
         private ProcedureCall ParseProcedureCall(Identifier nameOfProcedure){
 	    Position start = currentPosition;
-	    if(willMatch(Tokentype.LPAR)){
-		List<Expression> expList = ParseExpressionList();
-		match(TokenType.RPAR);
-		return new ProcedurCall(start, nameOfProcedure, expList);
+	    if(willMatch(TokenType.LPAR)){
+		List<Expression> expList = ParseActualParameters();
+		return new ProcedureCall(start, nameOfProcedure, expList);
 	    }
 	    return new ProcedureCall(start, nameOfProcedure);
         }
@@ -289,10 +304,10 @@ public class MyParser implements Parser {
 	    while(willMatch(TokenType.PLUS) || willMatch(TokenType.MINUS) || willMatch(TokenType.ID) || willMatch(TokenType.NUM) || willMatch(TokenType.STRING) || willMatch(TokenType.TRUE) || willMatch(TokenType.FALSE) || willMatch(TokenType.LPAR) || willMatch(TokenType.NOT)){ //check if it is a factor or a term
 		Expression exp = ParseExpression();
 		expList.add(exp);
-		if(!willMatch(TokenType.COMMA)){
-		    break;
-		} else {
+		if(willMatch(TokenType.COMMA)){
 		    skip();
+		} else {
+		    break;
 		}
 	    }
 	    return expList;

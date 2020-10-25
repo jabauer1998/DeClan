@@ -7,6 +7,7 @@ import edu.depauw.declan.common.ast.ConstDeclaration;
 import edu.depauw.declan.common.ast.VariableDeclaration;
 import edu.depauw.declan.common.ast.Declaration;
 import edu.depauw.declan.common.ast.EmptyStatement;
+import edu.depauw.declan.common.ast.IfStatement;
 import edu.depauw.declan.common.ast.ExpressionVisitor;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.NumValue;
@@ -61,13 +62,18 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 		varEnvironment.addEntry(id.getLexeme(), new VariableEntry(type.getLexeme()));
 	}
 
+        @Override
+	public void visit(IfStatement ifs){
+	  
+	}
+        
 	@Override
 	public void visit(ProcedureCall procedureCall) {
 		if (procedureCall.getProcedureName().getLexeme().equals("PrintInt")) {
-			Number value = procedureCall.getArgument().acceptResult(this);
+		        Number value = procedureCall.getArguments().get(0).acceptResult(this);
 			OUT("" + value.intValue());
 		} else if (procedureCall.getProcedureName().getLexeme().equals("PrintDouble")) {
-			Number value = procedureCall.getArgument().acceptResult(this);
+		        Number value = procedureCall.getArguments().get(0).acceptResult(this);
 			OUT("" + value.doubleValue());
 		}
 	}
@@ -118,7 +124,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 	public void visit(Identifier identifier) {
 		// Not used
 	}
-    
+        
 	@Override
 	public Number visitResult(BinaryOperation binaryOperation) {
 		Number leftvalue = binaryOperation.getLeft().acceptResult(this);
