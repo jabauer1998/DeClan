@@ -19,5 +19,7 @@ public interface StatementVisitor<R> {
 
         R visitResult(IfElifBranch ifs);
 
+        R visitResult(WhileElifBranch ifs);
+
         R visitResult(ElseBranch ifs);
 }

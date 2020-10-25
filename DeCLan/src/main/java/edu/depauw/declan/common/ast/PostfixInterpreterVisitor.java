@@ -77,12 +77,17 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	public void visit(IfElifBranch ifs){
 	  
 	}
-
+        
         @Override
 	public void visit(ElseBranch ifs){
 	  
 	}
-
+        
+        @Override
+	public void visit(WhileElifBranch ifs){
+	  
+	}
+        
         @Override
 	public void visit(Assignment assignment) {
 	    //do nothing this is not needed yet

@@ -68,6 +68,11 @@ public class PostfixPrintVisitor implements ASTVisitor {
 	}
 
         @Override
+	public void visit(WhileElifBranch ifs){
+	  
+	}
+
+        @Override
 	public void visit(ElseBranch ifs){
 	  
 	}

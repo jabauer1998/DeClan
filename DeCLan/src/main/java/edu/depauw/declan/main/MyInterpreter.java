@@ -8,6 +8,7 @@ import edu.depauw.declan.common.ast.VariableDeclaration;
 import edu.depauw.declan.common.ast.Declaration;
 import edu.depauw.declan.common.ast.EmptyStatement;
 import edu.depauw.declan.common.ast.IfElifBranch;
+import edu.depauw.declan.common.ast.WhileElifBranch;
 import edu.depauw.declan.common.ast.ElseBranch;
 import edu.depauw.declan.common.ast.Branch;
 import edu.depauw.declan.common.ast.ExpressionVisitor;
@@ -64,6 +65,12 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 		varEnvironment.addEntry(id.getLexeme(), new VariableEntry(type.getLexeme()));
 	}
 
+
+        @Override
+	public void visit(WhileElifBranch ifs){
+	  
+	}
+    
         @Override
 	public void visit(IfElifBranch ifs){
 	  

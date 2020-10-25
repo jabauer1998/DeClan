@@ -23,6 +23,7 @@ import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.EmptyStatement;
 import edu.depauw.declan.common.ast.ElseBranch;
 import edu.depauw.declan.common.ast.IfElifBranch;
+import edu.depauw.declan.common.ast.WhileElifBranch;
 import edu.depauw.declan.common.ast.Branch;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.Expression;
@@ -182,9 +183,9 @@ public class MyParser implements Parser {
 	// ConstDecl -> ident =umber
 	private ConstDeclaration parseConstDecl() {
 		Position start = currentPosition;
-		Identifier id = ParseIdentifier();
+		Identifier id = parseIdentifier();
 		match(TokenType.EQ);
-		NumValue num = ParseNumValue();
+		NumValue num = parseNumValue();
 		return new ConstDeclaration(start, id, num);
 	}
         //IdentList -> ident IdentListRest
@@ -219,7 +220,7 @@ public class MyParser implements Parser {
 		// TODO Auto-generated method stub
 	    List<Statement> statements = new ArrayList<>();
 	    while(!willMatch(TokenType.END)){
-		Statement s = ParseStatement();
+		Statement s = parseStatement();
 		statements.add(s);
 		if(!willMatch(TokenType.END)){
 		    match(TokenType.SEMI);
@@ -227,36 +228,37 @@ public class MyParser implements Parser {
 	    }
 	    return Collections.unmodifiableList(statements);
 	}
-	// Statement -> ProcedureCall
-	// Statement -> Assignment
-        // Statement -> IfStatement
-        // Statement -> Empty
-	private Statement ParseStatement(){
+        //Statement -> Assignment | ProcedureCall | IfStatement | WhileStatement | RepeatStatement | ForStatement
+        //Statement ->
+	private Statement parseStatement(){
 	    Position start = currentPosition;
 	    Statement statement = new EmptyStatement(start);
 	    if(willMatch(TokenType.ID)) {
-		Identifier ident = ParseIdentifier();
+		Identifier ident = parseIdentifier();
 		if(willMatch(TokenType.ASSIGN)) {
-		    statement = ParseAssignment(ident);
+		    statement = parseAssignment(ident);
 		} else {
-		    statement = ParseProcedureCall(ident);
+		    statement = parseProcedureCall(ident);
 		}
 	    } else if(willMatch(TokenType.IF)) {
-		statement = ParseIfStatement();
+		statement = parseIfStatement();
+	    } else if(willMatch(TokenType.WHILE)) {
+	      statement = parseWhileStatement();
 	    }
 	    return statement;
         }
+
         //ElsifThenSequence -> ELSIF Expression THEN StatementSequence ElsifThenSequence
         //ElsifThenSequence ->
-        private Branch parseBranch(){
+        private Branch parseIfBranch(){
 	  Position start = currentPosition;
 	  Branch result;
 	  if(willMatch(TokenType.ELSIF)){
 	    skip();
-	    Expression exp = ParseExpression();
+	    Expression exp = parseExpression();
 	    match(TokenType.THEN);
 	    List<Statement> stats = parseStatementSequence();
-	    result  = new IfElifBranch(start, exp, stats, parseBranch());
+	    result  = new IfElifBranch(start, exp, stats, parseIfBranch());
 	  } else if(willMatch(TokenType.ELSE)) {
 	    skip();
 	    List<Statement> stats = parseStatementSequence();
@@ -268,42 +270,72 @@ public class MyParser implements Parser {
 	}
         //IfStatement -> IF Expression THEN StatementSequence ElsifSequence ELSE StatementSequence END
         //IfStatement -> IF Expression THEN StatementSequence ElsifSequence END
-        private IfElifBranch ParseIfStatement(){
+        private IfElifBranch parseIfStatement(){
 	    Position start = currentPosition; 
 	    match(TokenType.IF);
-	    Expression ifExpr = ParseExpression();
+	    Expression ifExpr = parseExpression();
 	    match(TokenType.THEN);
 	    List<Statement> topStatements = parseStatementSequence();
-	    IfElifBranch topBranch = new IfElifBranch(start, ifExpr, topStatements, parseBranch());
+	    IfElifBranch topBranch = new IfElifBranch(start, ifExpr, topStatements, parseIfBranch());
 	    match(TokenType.END);
 	    return topBranch;
 	}
+
+        //ElsifDoSequence -> ELSIF Expression DO StatementSequence ElsifDoSequence
+        //ElsifDoSequence ->
+        private Branch parseWhileBranch(){
+	  Position start = currentPosition;
+	  Branch result;
+	  if(willMatch(TokenType.ELSIF)){
+	    skip();
+	    Expression exp = parseExpression();
+	    match(TokenType.DO);
+	    List<Statement> stats = parseStatementSequence();
+	    result  = new WhileElifBranch(start, exp, stats, parseIfBranch());
+	  } else {
+	    result = null;
+	  }
+	  return result;
+        }
         
-	// ProcedureCall -> ident ActualParameters
-        private ProcedureCall ParseProcedureCall(Identifier nameOfProcedure){
+        //WhileStatement -> WHILE Expression DO StatementSequence ElsifDoSequence END
+        private WhileElifBranch parseWhileStatement(){
+	  Position start = currentPosition; 
+	  match(TokenType.WHILE);
+	  Expression whileExpr = parseExpression();
+	  match(TokenType.DO);
+	  List<Statement> topStatements = parseStatementSequence();
+	  WhileElifBranch topBranch = new WhileElifBranch(start, whileExpr, topStatements, parseWhileBranch());
+	  match(TokenType.END);
+	  return topBranch;
+        }
+
+        
+	//ProcedureCall -> ident ActualParameters
+        private ProcedureCall parseProcedureCall(Identifier nameOfProcedure){
 	    Position start = currentPosition;
 	    if(willMatch(TokenType.LPAR)){
-		List<Expression> expList = ParseActualParameters();
+		List<Expression> expList = parseActualParameters();
 		return new ProcedureCall(start, nameOfProcedure, expList);
 	    }
 	    return new ProcedureCall(start, nameOfProcedure);
         }
 
         //Assignment -> ident := Expression
-        private Assignment ParseAssignment(Identifier toBeAssigned){
+        private Assignment parseAssignment(Identifier toBeAssigned){
 	    Position start = currentPosition;
 	    match(TokenType.ASSIGN);
-	    Expression exp = ParseExpression();
+	    Expression exp = parseExpression();
 	    return new Assignment(start, toBeAssigned, exp);
         }
 
         //ExpList -> Expression ExpListRest
         //ExpListRest -> , Expression
         //ExpListRest ->
-        private List<Expression> ParseExpressionList(){
+        private List<Expression> parseExpressionList(){
 	    List<Expression> expList = new ArrayList<Expression>();
 	    while(!willMatch(TokenType.RPAR)){ //check if it is a factor or a term
-		Expression exp = ParseExpression();
+		Expression exp = parseExpression();
 		expList.add(exp);
 		if(willMatch(TokenType.COMMA)){
 		    skip();
@@ -316,26 +348,26 @@ public class MyParser implements Parser {
         }
         //ActualParameters -> ( ExpList )
         //ActualParameters -> ( )
-        private List<Expression> ParseActualParameters(){
+        private List<Expression> parseActualParameters(){
 	    match(TokenType.LPAR);
-	    List<Expression> elist = ParseExpressionList();
+	    List<Expression> elist = parseExpressionList();
 	    match(TokenType.RPAR);
 	    return Collections.unmodifiableList(elist);
         }
         //Expression -> SimpleExpr
         //Expression -> SimpleExpr Relation SimpleExpr
-        private Expression ParseExpression(){
+        private Expression parseExpression(){
 	    Position start = currentPosition;
-	    Expression left = ParseSimpleExpression();
+	    Expression left = parseSimpleExpression();
 	    if(willMatch(TokenType.NE) || willMatch(TokenType.LE) || willMatch(TokenType.LT) || willMatch(TokenType.EQ) || willMatch(TokenType.GT) || willMatch(TokenType.GE)){
-		BooleanOperation.OpType op = ParseBoolOp();
-		Expression right = ParseSimpleExpression();
+		BooleanOperation.OpType op = parseBoolOp();
+		Expression right = parseSimpleExpression();
 		left = new BooleanOperation(start, left, op, right);
 	    }
 	    return left;
 	}
     
-        private BooleanOperation.OpType ParseBoolOp(){
+        private BooleanOperation.OpType parseBoolOp(){
 	    if(willMatch(TokenType.NE)){
 		    return BooleanOperation.OpType.NE;
 	    } else if(willMatch(TokenType.EQ)){
@@ -353,19 +385,19 @@ public class MyParser implements Parser {
         //SimpleExpr -> + Term SimpleExprRest
         //SimpleExpr -> - Term SimpleExprRest
         //SimpleExpr -> Term SimpleExprRest
-        private Expression ParseSimpleExpression(){
+        private Expression parseSimpleExpression(){
 	    Position start = currentPosition; 
 	    Expression left;
 	    if(willMatch(TokenType.MINUS) || willMatch(TokenType.PLUS)){
-		UnaryOperation.OpType pm = ParseUnaryOp();
-		left = ParseTerm();
+		UnaryOperation.OpType pm = parseUnaryOp();
+		left = parseTerm();
 		left = new UnaryOperation(start, pm, left);
 	    } else {
-		left = ParseTerm();
+		left = parseTerm();
 	    }
 	    while(willMatch(TokenType.PLUS) || willMatch(TokenType.MINUS)){
-		BinaryOperation.OpType op = ParseAddOp();
-		Expression right = ParseTerm();
+		BinaryOperation.OpType op = parseAddOp();
+		Expression right = parseTerm();
 		left = new BinaryOperation(start, left, op, right);
 	    }
 	    return left;
@@ -373,7 +405,7 @@ public class MyParser implements Parser {
         //
 	// Expression -> + Term ExprRest
 	// Expression -> - Term ExprRest
-        private UnaryOperation.OpType ParseUnaryOp() {
+        private UnaryOperation.OpType parseUnaryOp() {
 	    if(willMatch(TokenType.PLUS)){
 		skip();
 		return UnaryOperation.OpType.PLUS;
@@ -383,7 +415,7 @@ public class MyParser implements Parser {
 	    }
         }
 	// AddOperator -> + | -
-        private BinaryOperation.OpType ParseAddOp(){
+        private BinaryOperation.OpType parseAddOp(){
 	    if(willMatch(TokenType.PLUS)){
 		skip();
 		return BinaryOperation.OpType.PLUS;
@@ -395,19 +427,19 @@ public class MyParser implements Parser {
 	// Term -> Factor TermRest
         // TermRest -> MulOperator Factor TermRest
 	// TermRest ->
-        private Expression ParseTerm(){
+        private Expression parseTerm(){
 	    Position start = currentPosition;
-	    Expression left = ParseFactor();
+	    Expression left = parseFactor();
 	    while (willMatch(TokenType.DIV) || willMatch(TokenType.MOD) || willMatch(TokenType.TIMES)){
-		BinaryOperation.OpType op = ParseMultOp();
-		Expression right = ParseFactor();
+		BinaryOperation.OpType op = parseMultOp();
+		Expression right = parseFactor();
 		left = new BinaryOperation(start, left, op, right);
 	    }
 	    return left;
         }
     
 	// MulOperator -> * | DIV | MOD
-        private BinaryOperation.OpType ParseMultOp() {
+        private BinaryOperation.OpType parseMultOp() {
 	    if(willMatch(TokenType.TIMES)){
 		skip();
 		return BinaryOperation.OpType.TIMES;
@@ -424,26 +456,26 @@ public class MyParser implements Parser {
         }
 	// Factor -> number | ident
 	// Factor -> ( Expression )
-        private Expression ParseFactor(){
+        private Expression parseFactor(){
 	    if(willMatch(TokenType.NUM)){
-		return ParseNumValue(); 
+		return parseNumValue(); 
 	    } else if(willMatch(TokenType.ID)){
-		return ParseIdentifier();
+		return parseIdentifier();
 	    } else {
 		match(TokenType.LPAR);
-		Expression expr = ParseExpression();
+		Expression expr = parseExpression();
 		match(TokenType.RPAR);
 	        return expr;
 	    }
 	}
         //ident -> IDENT 
-        private Identifier ParseIdentifier() {
+        private Identifier parseIdentifier() {
 	    Token id = match(TokenType.ID);
 	    Position start = currentPosition;
 	    return new Identifier(start, id.getLexeme());
         }
         //number -> NUM
-        private NumValue ParseNumValue() {
+        private NumValue parseNumValue() {
 	    Token num = match(TokenType.NUM);
 	    Position start = currentPosition;
 	    return new NumValue(start, num.getLexeme());

@@ -24,6 +24,8 @@ public interface ASTVisitor {
         
         void visit(ElseBranch ifStatement);
 
+        void visit(WhileElifBranch ifStatement);
+
 	// Expressions
 	void visit(UnaryOperation unaryOperation);
 
