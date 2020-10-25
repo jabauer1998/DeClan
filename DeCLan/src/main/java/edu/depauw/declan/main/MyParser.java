@@ -165,7 +165,7 @@ public class MyParser implements Parser {
 		return Collections.unmodifiableList(constDecls);
 	}
         
-        
+        //VariableDecl -> IdentList : Type
         private List<VariableDeclaration> parseVariableDeclSequence(){
 	    List<VariableDeclaration> varDecls = new ArrayList<>();
 	    while (willMatch(TokenType.VAR)) {
@@ -187,7 +187,9 @@ public class MyParser implements Parser {
 		NumValue num = ParseNumValue();
 		return new ConstDeclaration(start, id, num);
 	}
-
+        //IdentList -> ident IdentListRest
+        //IdentListRest -> , ident IdentListRest
+        //IdentListRest ->
         private List <VariableDeclaration> parseVariableDecl() {
 	    Position start = currentPosition;
 	    List<Identifier> identList = new ArrayList<>();
@@ -244,6 +246,8 @@ public class MyParser implements Parser {
 	    }
 	    return statement;
         }
+        //ElsifThenSequence -> ELSIF Expression THEN StatementSequence ElsifThenSequence
+        //ElsifThenSequence ->
         private Branch parseBranch(){
 	  Position start = currentPosition;
 	  Branch result;
@@ -262,6 +266,8 @@ public class MyParser implements Parser {
 	  }
 	  return result;
 	}
+        //IfStatement -> IF Expression THEN StatementSequence ElsifSequence ELSE StatementSequence END
+        //IfStatement -> IF Expression THEN StatementSequence ElsifSequence END
         private IfElifBranch ParseIfStatement(){
 	    Position start = currentPosition; 
 	    match(TokenType.IF);
@@ -272,7 +278,8 @@ public class MyParser implements Parser {
 	    match(TokenType.END);
 	    return topBranch;
 	}
-	// ProcedureCall -> ident ( ExpList )
+        
+	// ProcedureCall -> ident ActualParameters
         private ProcedureCall ParseProcedureCall(Identifier nameOfProcedure){
 	    Position start = currentPosition;
 	    if(willMatch(TokenType.LPAR)){
@@ -282,7 +289,7 @@ public class MyParser implements Parser {
 	    return new ProcedureCall(start, nameOfProcedure);
         }
 
-
+        //Assignment -> ident := Expression
         private Assignment ParseAssignment(Identifier toBeAssigned){
 	    Position start = currentPosition;
 	    match(TokenType.ASSIGN);
