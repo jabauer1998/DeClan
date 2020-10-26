@@ -20,12 +20,14 @@ import edu.depauw.declan.common.ast.NumValue;
 import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
+import edu.depauw.declan.common.ast.ForAssignment;
 import edu.depauw.declan.common.ast.EmptyStatement;
 import edu.depauw.declan.common.ast.ElseBranch;
 import edu.depauw.declan.common.ast.IfElifBranch;
 import edu.depauw.declan.common.ast.WhileElifBranch;
 import edu.depauw.declan.common.ast.RepeatBranch;
 import edu.depauw.declan.common.ast.Branch;
+import edu.depauw.declan.common.ast.ForBranch;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.Expression;
 import edu.depauw.declan.common.ast.BinaryOperation;
@@ -246,10 +248,22 @@ public class MyParser implements Parser {
 	      statement = parseWhileStatement();
 	    } else if(willMatch(TokenType.REPEAT)){
 	      statement = parseRepeatStatement();
+	    } else if (willMatch(TokenType.FOR)){
+	      statement = parseForStatement();
 	    }
 	    return statement;
         }
-
+    
+        //ProcedureCall -> ident ActualParameters
+        private ProcedureCall parseProcedureCall(Identifier nameOfProcedure){
+	    Position start = currentPosition;
+	    if(willMatch(TokenType.LPAR)){
+		List<Expression> expList = parseActualParameters();
+		return new ProcedureCall(start, nameOfProcedure, expList);
+	    }
+	    return new ProcedureCall(start, nameOfProcedure);
+        }
+   
         //ElsifThenSequence -> ELSIF Expression THEN StatementSequence ElsifThenSequence
         //ElsifThenSequence ->
         private Branch parseIfBranch(){
@@ -322,15 +336,24 @@ public class MyParser implements Parser {
 	  return new RepeatBranch(start, topStatements, endExpr);
         }
 
-        
-	//ProcedureCall -> ident ActualParameters
-        private ProcedureCall parseProcedureCall(Identifier nameOfProcedure){
-	    Position start = currentPosition;
-	    if(willMatch(TokenType.LPAR)){
-		List<Expression> expList = parseActualParameters();
-		return new ProcedureCall(start, nameOfProcedure, expList);
-	    }
-	    return new ProcedureCall(start, nameOfProcedure);
+        //ForStatement -> FOR ident := Expression TO Expression BY ConstExpr DO StatementSequence END
+        //ForStatement -> FOR ident := Expression TO Expression DO StatementSequence END
+        private ForBranch parseForStatement(){
+	  Position start = currentPosition;
+	  match(TokenType.FOR);
+	  Identifier parseIdent = parseIdentifier();
+	  ForAssignment assign = new ForAssignment(parseAssignment(parseIdent));
+	  match(TokenType.TO);
+	  Expression toCheck = parseExpression();
+	  Expression toChange = null;
+	  if(willMatch(TokenType.BY)){
+	    skip();
+	    toChange = parseExpression();
+	  }
+	  match(TokenType.DO);
+	  List<Statement> toDo = parseStatementSequence();
+	  match(TokenType.END);
+	  return new ForBranch(start, assign, toCheck, toChange, toDo);
         }
 
         //Assignment -> ident := Expression

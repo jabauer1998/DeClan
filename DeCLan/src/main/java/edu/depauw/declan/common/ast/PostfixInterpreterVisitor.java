@@ -98,6 +98,11 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	    //do nothing this is not needed yet
 	}
 
+        @Override
+	public void visit(ForAssignment assignment) {
+	    
+	}
+
 	@Override
 	public void visit(EmptyStatement emptyStatement){
 		// Do nothing

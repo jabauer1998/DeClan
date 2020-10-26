@@ -21,6 +21,7 @@ import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
+import edu.depauw.declan.common.ast.ForAssignment;
 import edu.depauw.declan.common.ast.VariableEntry;
 import edu.depauw.declan.common.ast.Environment;
 
@@ -135,6 +136,32 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 	    varEnvironment.removeScope();
 	  } while (toCheck.acceptResult(this).intValue() != 0);
 	}
+
+        @Override
+	public void visit(ForBranch forbranch){
+	  Expression toMod = forbranch.getModifyExpression();
+	  if(toMod != null){
+	    varEnvironment.addScope();
+	    for(forbranch.getInitAssignment().accept(this); forbranch.getTargetExpression().acceptResult(this).intValue() != 0; toMod.acceptResult(this)){
+	      varEnvironment.addScope();
+	      for(int i = 0; i < toExec.size(); i++){
+		toExec.get(i).accept(this);
+	      }
+	      varEnvironment.removeScope();
+	    }
+	    varEnvironment.removeScope();
+	  } else {
+	    varEnvironment.addScope();
+	    for(forbranch.getInitAssignment().accept(this); forbranch.getTargetExpression().acceptResult(this).intValue() != 0; /* Nothing here */){
+	      varEnvironment.addScope();
+	      for(int i = 0; i < toExec.size(); i++){
+		toExec.get(i).accept(this);
+	      }
+	      varEnvironment.removeScope();
+	    }
+	    varEnvironment.removeScope();
+	  }
+	}
         
         @Override
 	public void visit(Assignment assignment) {
@@ -157,6 +184,18 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 	    } else {
 		FATAL("Undeclared Variable " + assignment.getVariableName().getLexeme() + " at " + assignment.getVariableName().getStart());
 	    }
+	}
+        @Override
+        public void visit(ForAssignment assignment) {
+	  String name = assignment.getVariableName().getLexeme();
+	  Number value = assignment.getVariableValue().acceptResult(this);
+	  if(value instanceof Double){
+	    String valueStr = "" + value.doubleValue();
+	    varEnvironment.addEntry(name, new VariableEntry("DOUBLE", valueStr));
+	  } else {
+	    String valueStr = "" + value.intValue();
+	    varEnvironment.addEntry(name, new VariableEntry("INTEGER", valueStr));
+	  }
 	}
         @Override
 	public void visit(EmptyStatement emptyStatement) {

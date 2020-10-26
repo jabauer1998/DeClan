@@ -100,8 +100,13 @@ public class PostfixPrintVisitor implements ASTVisitor {
 		// Do nothing
 	}
 
-         @Override
+        @Override
 	public void visit(Assignment assignment) {
+	    
+	}
+
+        @Override
+	public void visit(ForAssignment assignment) {
 	    
 	}
         

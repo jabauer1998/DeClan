@@ -30,6 +30,10 @@ public interface ASTVisitor {
 
         void visit(RepeatBranch RepeatStatement);
 
+        void visit(Assignment assignment);
+  
+        void visit(ForAssignment assignment);
+
 	// Expressions
 	void visit(UnaryOperation unaryOperation);
 
@@ -38,6 +42,4 @@ public interface ASTVisitor {
 	void visit(NumValue numValue);
 
 	void visit(Identifier identifier);
-
-        void visit(Assignment assignment);
 }
