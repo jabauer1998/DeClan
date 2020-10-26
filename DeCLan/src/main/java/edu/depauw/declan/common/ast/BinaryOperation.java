@@ -57,6 +57,6 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 	 * @author bhoward
 	 */
 	public enum OpType {
-	    PLUS, MINUS, TIMES, DIV, MOD, DIVIDE, OR, AND
+	  PLUS, MINUS, TIMES, DIV, MOD, DIVIDE, OR, AND, LT, LE, GT, GE, NE, EQ
 	}
 }

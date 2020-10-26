@@ -87,6 +87,11 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	public void visit(WhileElifBranch ifs){
 	  
 	}
+
+        @Override
+	public void visit(RepeatBranch repeatStatement){
+	  
+	}
         
         @Override
 	public void visit(Assignment assignment) {
@@ -147,10 +152,5 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	public void visit(Identifier identifier) {
 	    int value = Integer.parseInt(environment.get(identifier.getLexeme()).getValue());
 	    accumulator.push(value);
-	}
-
-        @Override
-	public void visit(BooleanOperation bool){
-
 	}
 }

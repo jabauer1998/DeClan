@@ -76,6 +76,12 @@ public class PostfixPrintVisitor implements ASTVisitor {
 	public void visit(ElseBranch ifs){
 	  
 	}
+
+        @Override
+	public void visit(RepeatBranch ifs){
+	  
+	}
+  
 	@Override
 	public void visit(ProcedureCall procedureCall) {
 		// For Project 2, the only recognized procedure is "PrintInt", which
@@ -157,10 +163,5 @@ public class PostfixPrintVisitor implements ASTVisitor {
 		// identifier has not been declared.
 		String value = environment.getOrDefault(identifier.getLexeme(), "0");
 		out.println(value);
-	}
-
-        @Override
-	public void visit(BooleanOperation bool){
-
 	}
 }

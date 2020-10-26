@@ -15,6 +15,8 @@ public interface ASTVisitor {
 	// Declarations
 	void visit(ConstDeclaration constDecl);
 
+        void visit(VariableDeclaration varDecl);
+
 	// Statements
 	void visit(ProcedureCall procedureCall);
 
@@ -24,20 +26,18 @@ public interface ASTVisitor {
         
         void visit(ElseBranch ifStatement);
 
-        void visit(WhileElifBranch ifStatement);
+        void visit(WhileElifBranch whileStatement);
+
+        void visit(RepeatBranch RepeatStatement);
 
 	// Expressions
 	void visit(UnaryOperation unaryOperation);
 
 	void visit(BinaryOperation binaryOperation);
 
-        void visit(BooleanOperation booleanOperation);
-
 	void visit(NumValue numValue);
 
 	void visit(Identifier identifier);
-    
-        void visit(VariableDeclaration varDecl);
 
         void visit(Assignment assignment);
 }

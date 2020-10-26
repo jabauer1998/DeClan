@@ -22,4 +22,6 @@ public interface StatementVisitor<R> {
         R visitResult(WhileElifBranch ifs);
 
         R visitResult(ElseBranch ifs);
+
+        R visitResult(RepeatBranch ifs);
 }

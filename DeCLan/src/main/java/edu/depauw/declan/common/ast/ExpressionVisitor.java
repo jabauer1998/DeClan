@@ -15,8 +15,6 @@ public interface ExpressionVisitor<R> {
 
 	R visitResult(UnaryOperation unaryOperation);
 
-        R visitResult(BooleanOperation booleanOperation);
-
 	R visitResult(Identifier identifier);
 
 	R visitResult(NumValue numValue);

@@ -9,7 +9,9 @@ import edu.depauw.declan.common.ast.Declaration;
 import edu.depauw.declan.common.ast.EmptyStatement;
 import edu.depauw.declan.common.ast.IfElifBranch;
 import edu.depauw.declan.common.ast.WhileElifBranch;
+import edu.depauw.declan.common.ast.Expression;
 import edu.depauw.declan.common.ast.ElseBranch;
+import edu.depauw.declan.common.ast.RepeatBranch;
 import edu.depauw.declan.common.ast.Branch;
 import edu.depauw.declan.common.ast.ExpressionVisitor;
 import edu.depauw.declan.common.ast.Identifier;
@@ -21,11 +23,13 @@ import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.VariableEntry;
 import edu.depauw.declan.common.ast.Environment;
-import edu.depauw.declan.common.ast.BooleanOperation;
+
 import java.lang.Number;
 import java.lang.Math;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+
 
 import static edu.depauw.declan.common.MyIO.*;
 
@@ -64,22 +68,6 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 		Identifier type = varDecl.getType();
 		varEnvironment.addEntry(id.getLexeme(), new VariableEntry(type.getLexeme()));
 	}
-
-
-        @Override
-	public void visit(WhileElifBranch ifs){
-	  
-	}
-    
-        @Override
-	public void visit(IfElifBranch ifs){
-	  
-	}
-
-        @Override
-	public void visit(ElseBranch ifs){
-	  
-	}
         
 	@Override
 	public void visit(ProcedureCall procedureCall) {
@@ -90,6 +78,62 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 		        Number value = procedureCall.getArguments().get(0).acceptResult(this);
 			OUT("" + value.doubleValue());
 		}
+	}
+
+
+        @Override
+	public void visit(WhileElifBranch whilebranch){
+	  Expression toCheck = whilebranch.getExpression();
+	  if(toCheck.acceptResult(this).intValue() != 0){
+	    List<Statement> toExec = whilebranch.getExecStatements();
+	    do {
+	      varEnvironment.addScope();
+	      for(int i = 0; i < toExec.size(); i++){
+		toExec.get(i).accept(this);
+	      }
+	      varEnvironment.removeScope();
+	    } while (toCheck.acceptResult(this).intValue() != 0);
+	  } else if (whilebranch.getNextBranch() != null){
+	    whilebranch.getNextBranch().accept(this);
+	  }
+	}
+    
+        @Override
+	public void visit(IfElifBranch ifbranch){
+	  Expression toCheck = ifbranch.getExpression();
+	  if(toCheck.acceptResult(this).intValue() != 0){
+	    varEnvironment.addScope();
+	    List<Statement> toExec = ifbranch.getExecStatements();
+	    for(int i = 0; i < toExec.size(); i++){
+	      toExec.get(i).accept(this);
+	    }
+	    varEnvironment.removeScope();
+	  } else if(ifbranch.getNextBranch() != null) {
+	    ifbranch.getNextBranch().accept(this);
+	  }
+	}
+
+        @Override
+	public void visit(ElseBranch elsebranch){
+	  varEnvironment.addScope();
+	  List<Statement> toExec = elsebranch.getExecStatements();
+	  for(int i = 0; i < toExec.size(); i++){
+	    toExec.get(i).accept(this);
+	  }
+	  varEnvironment.removeScope();
+	}
+
+        @Override
+	public void visit(RepeatBranch repeatbranch){
+	  Expression toCheck = repeatbranch.getExpression();
+	  List<Statement> toExec = repeatbranch.getExecStatements();
+	  do {
+	    varEnvironment.addScope();
+	    for(int i = 0; i < toExec.size(); i++){
+	      toExec.get(i).accept(this);
+	    }
+	    varEnvironment.removeScope();
+	  } while (toCheck.acceptResult(this).intValue() != 0);
 	}
         
         @Override
@@ -138,35 +182,62 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 	public void visit(Identifier identifier) {
 		// Not used
 	}
-        
+  
 	@Override
 	public Number visitResult(BinaryOperation binaryOperation) {
-		Number leftvalue = binaryOperation.getLeft().acceptResult(this);
-		Number rightvalue = binaryOperation.getRight().acceptResult(this);
-		if(leftvalue instanceof Double || rightvalue instanceof Double)
-		{
+		Number leftValue = binaryOperation.getLeft().acceptResult(this);
+		Number rightValue = binaryOperation.getRight().acceptResult(this);
+		if(leftValue instanceof Double || rightValue instanceof Double){
 		    switch (binaryOperation.getOperator()) {
-			case PLUS:
-			    return leftvalue.doubleValue() + rightvalue.doubleValue();
-			case MINUS:
-			    return leftvalue.doubleValue() - rightvalue.doubleValue();
-			case TIMES:
-			    return leftvalue.doubleValue() * rightvalue.doubleValue();
-			case DIVIDE:
-			    return leftvalue.doubleValue() / rightvalue.doubleValue();
+		    case PLUS:
+		      return leftValue.doubleValue() + rightValue.doubleValue();
+		    case MINUS:
+		      return leftValue.doubleValue() - rightValue.doubleValue();
+		    case TIMES:
+		      return leftValue.doubleValue() * rightValue.doubleValue();
+		    case DIVIDE:
+		      return leftValue.doubleValue() / rightValue.doubleValue();
+		    case LT:
+		      return (int)((leftValue.doubleValue() < rightValue.doubleValue()) ? 1 : 0);
+		    case GT:
+		      return (int)((leftValue.doubleValue() > rightValue.doubleValue()) ? 1 : 0);
+		    case NE:
+		      return (int)((leftValue.doubleValue() != rightValue.doubleValue()) ? 1 : 0);
+		    case EQ:
+		      return (int)((leftValue.doubleValue() == rightValue.doubleValue()) ? 1 : 0);
+		    case GE:
+		      return (int)((leftValue.doubleValue() >= rightValue.doubleValue()) ? 1 : 0);
+		    case LE:
+		      return (int)((leftValue.doubleValue() <= rightValue.doubleValue()) ? 1 : 0);
 		    }
 		} else {
 		    switch (binaryOperation.getOperator()) {
-			case PLUS:
-			    return leftvalue.intValue() + rightvalue.intValue();
-			case MINUS:
-			    return leftvalue.intValue() - rightvalue.intValue();
-			case TIMES:
-			    return leftvalue.intValue() * rightvalue.intValue();
-			case DIV:
-			    return leftvalue.intValue() / rightvalue.intValue();
-		        case MOD:
-			    return leftvalue.intValue() % rightvalue.intValue();
+		    case PLUS:
+		      return leftValue.intValue() + rightValue.intValue();
+		    case MINUS:
+		      return leftValue.intValue() - rightValue.intValue();
+		    case TIMES:
+		      return leftValue.intValue() * rightValue.intValue();
+		    case DIV:
+		      return leftValue.intValue() / rightValue.intValue();
+		    case MOD:
+		      return leftValue.intValue() % rightValue.intValue();
+		    case LT:
+		      return (int)((leftValue.intValue() < rightValue.intValue()) ? 1 : 0);
+		    case GT:
+		      return (int)((leftValue.intValue() > rightValue.intValue()) ? 1 : 0);
+		    case NE:
+		      return (int)((leftValue.intValue() != rightValue.intValue()) ? 1 : 0);
+		    case EQ:
+		      return (int)((leftValue.intValue() == rightValue.intValue()) ? 1 : 0);
+		    case GE:
+		      return (int)((leftValue.intValue() >= rightValue.intValue()) ? 1 : 0);
+		    case LE:
+		      return (int)((leftValue.intValue() <= rightValue.intValue()) ? 1 : 0);
+		    case AND:
+		      return (int)(((leftValue.intValue() != 0) && (rightValue.intValue() != 0)) ? 1 : 0);
+		    case OR:
+		      return (int)(((leftValue.intValue() != 0) || (rightValue.intValue() != 0)) ? 1 : 0);
 		    }
 		}
 		return null;
@@ -189,76 +260,42 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 			return value.intValue();
 		    case MINUS:
 			return -value.intValue();
+		    case NOT:
+		        return (int)((!(value.intValue() != 0)) ? 1 : 0);
 		    }
 		}
 		return null;
 	}
-
-        //Checks to see if number has exponent E and is not Hex
-        private static int checkE(String s){
-	    boolean notHex = true;
-	    int idex = -1;
-	    for(int i = 0; i < s.length(); i++){
-		if(s.charAt(i) == 'E'){
-		    idex = i;
-		}
-	    }
-	    if(s.charAt(s.length() - 1) == 'H'){
-		notHex = false;
-	    }
-	    return (notHex) ? idex : -1;
-        }
-
-        private static String ConvertEstring(String s, int Eindex){
-	    double beforeE = Double.parseDouble(s.substring(0, Eindex));
-	    int Exponent = Integer.parseInt(s.substring(Eindex + 1, s.length()));
-	    return ("" + (beforeE * Math.pow(10, Exponent)));
-        }
     
 	@Override
 	public Number visitResult(Identifier identifier){
-	        String lexeme = varEnvironment.findEntry(identifier.getLexeme()).getValue();
-		int Eindex = checkE(lexeme);
-		if(Eindex > 0){
-		    if(lexeme.contains(".")){
-			return Double.parseDouble(ConvertEstring(lexeme, Eindex));
-		    } else {
-			return Integer.parseInt(ConvertEstring(lexeme, Eindex));
-		    }
+	        VariableEntry ident = varEnvironment.findEntry(identifier.getLexeme());
+	        String lexeme = ident.getValue();
+		if(ident.getType().equals("CONST")){
+		  if(lexeme.contains(".")){
+		    return Double.parseDouble(lexeme);
+		  } else {
+		    return Integer.parseInt(lexeme);
+		  }
+		} else if(ident.getType().equals("INTEGER")){
+		    return Integer.parseInt(lexeme);
+		} else if (ident.getType().equals("REAL")){
+		    return Double.parseDouble(lexeme);
+		} else if (ident.getType().equals("BOOLEAN")){
+		  return (int)((Integer.parseInt(lexeme) != 0)? 1 : 0);
 		} else {
-		    if(lexeme.contains(".")){
-			return Double.parseDouble(lexeme);
-		    } else {
-			return Integer.parseInt(lexeme);
-		    }
+		  FATAL(identifier.getLexeme() + " at position " + identifier.getStart() + " is unknown type -> " + ident.getType());
+		  return null;
 		}
 	}
 
 	@Override
 	public Number visitResult(NumValue numValue){
 		String lexeme = numValue.getLexeme();
-		int Eindex = checkE(lexeme);
-		if(Eindex > 0){
-		    if(lexeme.contains(".")){
-			return Double.parseDouble(ConvertEstring(lexeme, Eindex));
-		    } else {
-			return Integer.parseInt(ConvertEstring(lexeme, Eindex));
-		    }
+		if(lexeme.contains(".")){
+		  return Double.parseDouble(lexeme);
 		} else {
-		    if(lexeme.contains(".")){
-			return Double.parseDouble(lexeme);
-		    } else {
-			return Integer.parseInt(lexeme);
-		    }
+		  return Integer.parseInt(lexeme);
 		}
-	}
-
-        public Number visitResult(BooleanOperation op){
-	    return null;
-        }
-
-        @Override
-	public void visit(BooleanOperation bool){
-
 	}
 }

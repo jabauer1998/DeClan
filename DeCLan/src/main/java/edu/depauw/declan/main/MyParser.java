@@ -24,11 +24,11 @@ import edu.depauw.declan.common.ast.EmptyStatement;
 import edu.depauw.declan.common.ast.ElseBranch;
 import edu.depauw.declan.common.ast.IfElifBranch;
 import edu.depauw.declan.common.ast.WhileElifBranch;
+import edu.depauw.declan.common.ast.RepeatBranch;
 import edu.depauw.declan.common.ast.Branch;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.Expression;
 import edu.depauw.declan.common.ast.BinaryOperation;
-import edu.depauw.declan.common.ast.BooleanOperation;
 import edu.depauw.declan.common.ast.UnaryOperation;
 
 import static edu.depauw.declan.common.MyIO.*;
@@ -240,10 +240,12 @@ public class MyParser implements Parser {
 		} else {
 		    statement = parseProcedureCall(ident);
 		}
-	    } else if(willMatch(TokenType.IF)) {
+	    } else if(willMatch(TokenType.IF)){
 		statement = parseIfStatement();
-	    } else if(willMatch(TokenType.WHILE)) {
+	    } else if(willMatch(TokenType.WHILE)){
 	      statement = parseWhileStatement();
+	    } else if(willMatch(TokenType.REPEAT)){
+	      statement = parseRepeatStatement();
 	    }
 	    return statement;
         }
@@ -310,6 +312,16 @@ public class MyParser implements Parser {
 	  return topBranch;
         }
 
+        //RepeatStatement -> REPEAT StatementSequence UNTIL Expression
+        private RepeatBranch parseRepeatStatement(){
+	  Position start = currentPosition;
+	  match(TokenType.REPEAT);
+	  List<Statement> topStatements = parseStatementSequence();
+	  match(TokenType.UNTIL);
+	  Expression endExpr = parseExpression();
+	  return new RepeatBranch(start, topStatements, endExpr);
+        }
+
         
 	//ProcedureCall -> ident ActualParameters
         private ProcedureCall parseProcedureCall(Identifier nameOfProcedure){
@@ -360,26 +372,32 @@ public class MyParser implements Parser {
 	    Position start = currentPosition;
 	    Expression left = parseSimpleExpression();
 	    if(willMatch(TokenType.NE) || willMatch(TokenType.LE) || willMatch(TokenType.LT) || willMatch(TokenType.EQ) || willMatch(TokenType.GT) || willMatch(TokenType.GE)){
-		BooleanOperation.OpType op = parseBoolOp();
+		BinaryOperation.OpType op = parseBoolOp();
 		Expression right = parseSimpleExpression();
-		left = new BooleanOperation(start, left, op, right);
+		left = new BinaryOperation(start, left, op, right);
 	    }
 	    return left;
 	}
-    
-        private BooleanOperation.OpType parseBoolOp(){
-	    if(willMatch(TokenType.NE)){
-		    return BooleanOperation.OpType.NE;
+        
+        private BinaryOperation.OpType parseBoolOp() {
+	  if(willMatch(TokenType.NE)){
+	        skip();
+	        return BinaryOperation.OpType.NE;
 	    } else if(willMatch(TokenType.EQ)){
-		    return BooleanOperation.OpType.EQ;
+	        skip();
+		return BinaryOperation.OpType.EQ;
 	    } else if(willMatch(TokenType.LT)){
-		    return BooleanOperation.OpType.LT;
+	        skip();
+		return BinaryOperation.OpType.LT;
 	    } else if(willMatch(TokenType.GT)){
-		    return BooleanOperation.OpType.GT;
+	        skip();
+		return BinaryOperation.OpType.GT;
 	    } else if(willMatch(TokenType.GE)){
-		    return BooleanOperation.OpType.GE;
+	        skip();
+		return BinaryOperation.OpType.GE;
 	    } else {
-		    return BooleanOperation.OpType.LE;
+	        match(TokenType.LE);
+		return BinaryOperation.OpType.LE;
 	    }
         }
         //SimpleExpr -> + Term SimpleExprRest
@@ -419,6 +437,9 @@ public class MyParser implements Parser {
 	    if(willMatch(TokenType.PLUS)){
 		skip();
 		return BinaryOperation.OpType.PLUS;
+	    } else if(willMatch(TokenType.OR)){
+		skip();
+		return BinaryOperation.OpType.OR;
 	    } else {
 		match(TokenType.MINUS);
 		return BinaryOperation.OpType.MINUS;
@@ -437,7 +458,6 @@ public class MyParser implements Parser {
 	    }
 	    return left;
         }
-    
 	// MulOperator -> * | DIV | MOD
         private BinaryOperation.OpType parseMultOp() {
 	    if(willMatch(TokenType.TIMES)){
@@ -449,6 +469,9 @@ public class MyParser implements Parser {
 	    } else if(willMatch(TokenType.DIVIDE)){
 		skip();
 		return BinaryOperation.OpType.DIVIDE;
+	    } else if(willMatch(TokenType.AND)){
+		skip();
+		return BinaryOperation.OpType.AND;
 	    } else {
 		match(TokenType.MOD);
 		return BinaryOperation.OpType.MOD;
