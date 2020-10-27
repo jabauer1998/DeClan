@@ -28,10 +28,12 @@ public interface ASTVisitor {
 
         void visit(WhileElifBranch whileStatement);
 
+        void visit(ForBranch assignment);
+
         void visit(RepeatBranch RepeatStatement);
 
         void visit(Assignment assignment);
-  
+
         void visit(ForAssignment assignment);
 
 	// Expressions

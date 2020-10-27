@@ -109,6 +109,11 @@ public class PostfixPrintVisitor implements ASTVisitor {
 	public void visit(ForAssignment assignment) {
 	    
 	}
+
+        @Override
+	public void visit(ForBranch assignment) {
+	    
+	}
         
 	@Override
 	public void visit(UnaryOperation unaryOperation) {

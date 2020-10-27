@@ -103,6 +103,11 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	    
 	}
 
+        @Override
+	public void visit(ForBranch assignment) {
+	    
+	}
+
 	@Override
 	public void visit(EmptyStatement emptyStatement){
 		// Do nothing
@@ -155,7 +160,7 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 
 	@Override
 	public void visit(Identifier identifier) {
-	    int value = Integer.parseInt(environment.get(identifier.getLexeme()).getValue());
+	    int value = environment.get(identifier.getLexeme()).getValue().intValue();
 	    accumulator.push(value);
 	}
 }

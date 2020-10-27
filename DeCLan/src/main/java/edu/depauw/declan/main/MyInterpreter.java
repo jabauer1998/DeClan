@@ -9,6 +9,7 @@ import edu.depauw.declan.common.ast.Declaration;
 import edu.depauw.declan.common.ast.EmptyStatement;
 import edu.depauw.declan.common.ast.IfElifBranch;
 import edu.depauw.declan.common.ast.WhileElifBranch;
+import edu.depauw.declan.common.ast.ForBranch;
 import edu.depauw.declan.common.ast.Expression;
 import edu.depauw.declan.common.ast.ElseBranch;
 import edu.depauw.declan.common.ast.RepeatBranch;
@@ -140,24 +141,45 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
         @Override
 	public void visit(ForBranch forbranch){
 	  Expression toMod = forbranch.getModifyExpression();
+	  List<Statement> toExec = forbranch.getExecStatements();
 	  if(toMod != null){
-	    varEnvironment.addScope();
-	    for(forbranch.getInitAssignment().accept(this); forbranch.getTargetExpression().acceptResult(this).intValue() != 0; toMod.acceptResult(this)){
-	      varEnvironment.addScope();
-	      for(int i = 0; i < toExec.size(); i++){
-		toExec.get(i).accept(this);
-	      }
-	      varEnvironment.removeScope();
+	    Number incriment = toMod.acceptResult(this);
+	    if(incriment instanceof Double){
+		varEnvironment.addScope();
+		forbranch.getInitAssignment().accept(this);
+		while(forbranch.getTargetExpression().acceptResult(this).intValue() != 0){
+		    varEnvironment.addScope();
+		    for(int i = 0; i < toExec.size(); i++){
+			toExec.get(i).accept(this);
+		    }
+		    varEnvironment.removeScope();
+		    VariableEntry entry = varEnvironment.findEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+		    entry.setValue(entry.getValue().doubleValue() + incriment.doubleValue());
+		}
+	        varEnvironment.removeScope();
+	    } else {
+		varEnvironment.addScope();
+		forbranch.getInitAssignment().accept(this);
+		while(forbranch.getTargetExpression().acceptResult(this).intValue() != 0){
+		    varEnvironment.addScope();
+		    for(int i = 0; i < toExec.size(); i++){
+			toExec.get(i).accept(this);
+		    }
+		    varEnvironment.removeScope();
+		    VariableEntry entry = varEnvironment.findEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+		    entry.setValue(entry.getValue().intValue() + incriment.intValue());
+		}
+	        varEnvironment.removeScope();
 	    }
-	    varEnvironment.removeScope();
 	  } else {
 	    varEnvironment.addScope();
-	    for(forbranch.getInitAssignment().accept(this); forbranch.getTargetExpression().acceptResult(this).intValue() != 0; /* Nothing here */){
-	      varEnvironment.addScope();
-	      for(int i = 0; i < toExec.size(); i++){
-		toExec.get(i).accept(this);
-	      }
-	      varEnvironment.removeScope();
+	    forbranch.getInitAssignment().accept(this);
+	    while(forbranch.getTargetExpression().acceptResult(this).intValue() != 0){
+		varEnvironment.addScope();
+		for(int i = 0; i < toExec.size(); i++){
+		    toExec.get(i).accept(this);
+		}
+		varEnvironment.removeScope();
 	    }
 	    varEnvironment.removeScope();
 	  }
@@ -168,15 +190,13 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 	    String name = assignment.getVariableName().getLexeme();
 	    if(varEnvironment.entryExists(name)){
 		VariableEntry entry = varEnvironment.findEntry(name);
-		if(!entry.getType().equals("CONST")){
-		    if(entry.getType().equals("REAL")){
+		if(entry.getType() != VariableEntry.VarType.CONST){
+		    if(entry.getType() == VariableEntry.VarType.REAL){
 			Number value = assignment.getVariableValue().acceptResult(this);
-			String newValue = "" + value.doubleValue();
-			entry.setValue(newValue);
-		    } else if(entry.getType().equals("INTEGER")){
+			entry.setValue(value.doubleValue());
+		    } else if(entry.getType() == VariableEntry.VarType.INTEGER){
 			Number value = assignment.getVariableValue().acceptResult(this);
-			String newValue = "" + value.intValue();
-			entry.setValue(newValue);
+			entry.setValue(value.intValue());
 		    }
 		} else {
 		    FATAL("Variable " + assignment.getVariableName().getLexeme() + " at " + assignment.getVariableName().getStart() + " declared as const");
@@ -309,19 +329,19 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 	@Override
 	public Number visitResult(Identifier identifier){
 	        VariableEntry ident = varEnvironment.findEntry(identifier.getLexeme());
-	        String lexeme = ident.getValue();
-		if(ident.getType().equals("CONST")){
-		  if(lexeme.contains(".")){
-		    return Double.parseDouble(lexeme);
+	        Number lexeme = ident.getValue();
+		if(ident.getType() == VariableEntry.VarType.CONST){
+		  if(lexeme instanceof Double){
+		      return lexeme.doubleValue();
 		  } else {
-		    return Integer.parseInt(lexeme);
+		      return lexeme.intValue();
 		  }
-		} else if(ident.getType().equals("INTEGER")){
-		    return Integer.parseInt(lexeme);
-		} else if (ident.getType().equals("REAL")){
-		    return Double.parseDouble(lexeme);
-		} else if (ident.getType().equals("BOOLEAN")){
-		  return (int)((Integer.parseInt(lexeme) != 0)? 1 : 0);
+		} else if(ident.getType() == VariableEntry.VarType.INTEGER){
+		    return lexeme.intValue();
+		} else if (ident.getType() == VariableEntry.VarType.REAL){
+		    return lexeme.doubleValue();
+		} else if (ident.getType() == VariableEntry.VarType.BOOLEAN){
+		    return (int)((lexeme.intValue() != 0) ? 1 : 0);
 		} else {
 		  FATAL(identifier.getLexeme() + " at position " + identifier.getStart() + " is unknown type -> " + ident.getType());
 		  return null;

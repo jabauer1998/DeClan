@@ -19,6 +19,8 @@ public interface StatementVisitor<R> {
 
         R visitResult(ForAssignment Assignment);
 
+        R visitResult(ForBranch Assignment);
+
         R visitResult(IfElifBranch ifs);
 
         R visitResult(WhileElifBranch ifs);
