@@ -86,7 +86,7 @@ public class MyIO{
      */
     
     public static void FATAL(String message){
-	ERROR(message);
+	OUT(BOLDRED("FATAL-ERROR") + ' ' + BOLDGREY("=>") + ' ' + message);
 	System.exit(1);
     }
 };

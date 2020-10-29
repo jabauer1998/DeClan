@@ -59,6 +59,11 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	}
 
         @Override
+	public void visit(ProcedureDeclaration constDecl) {
+	  
+	}
+
+        @Override
 	public void visit(VariableDeclaration varDecl) {
 	    //do nothing not supported yet
 	}
@@ -71,6 +76,11 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 		} else {
 			// Ignore all other procedure calls
 		}
+	}
+
+        @Override
+	public void visit(FunctionCall call) {
+	  
 	}
 
         @Override

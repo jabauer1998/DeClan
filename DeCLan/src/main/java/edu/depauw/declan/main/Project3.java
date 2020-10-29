@@ -21,6 +21,7 @@ public class Project3 {
 				  "CONST six = 6; seven = 7; bignine = 9.E-3;\n"
 		                + "VAR eight, nine, ten : INTEGER;\n"
 				+ "BEGIN\n"
+		                + "  REPEAT\n"
 		                + "  eight := six + 2;\n"
 		                + "  ten := (13 - eight) * 2;\n"
 		                + "  nine := (ten * 9) DIV ten - eight + eight;\n"
@@ -34,7 +35,8 @@ public class Project3 {
 		                + "  PrintInt(eight);\n"
 		                + "  PrintInt(nine);\n"
 		                + "  PrintInt(ten);\n"
-		                + "  PrintInt(eight + nine + ten)\n"
+		                + "  PrintInt(eight + nine + ten);\n"
+		                + "  UNTIL 1\n"
 				+ "END.\n";
 
 		Properties props = new Properties();

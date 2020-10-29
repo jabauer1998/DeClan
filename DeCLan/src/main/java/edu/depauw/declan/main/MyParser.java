@@ -14,6 +14,7 @@ import edu.depauw.declan.common.Token;
 import edu.depauw.declan.common.TokenType;
 import edu.depauw.declan.common.ast.ConstDeclaration;
 import edu.depauw.declan.common.ast.VariableDeclaration;
+import edu.depauw.declan.common.ast.ProcedureDeclaration;
 import edu.depauw.declan.common.ast.Declaration;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.NumValue;
@@ -29,6 +30,7 @@ import edu.depauw.declan.common.ast.RepeatBranch;
 import edu.depauw.declan.common.ast.Branch;
 import edu.depauw.declan.common.ast.ForBranch;
 import edu.depauw.declan.common.ast.ProcedureCall;
+import edu.depauw.declan.common.ast.FunctionCall;
 import edu.depauw.declan.common.ast.Expression;
 import edu.depauw.declan.common.ast.BinaryOperation;
 import edu.depauw.declan.common.ast.UnaryOperation;
@@ -137,7 +139,10 @@ public class MyParser implements Parser {
 		matchEOF();
 		return new Program(start, Decls, statements);
 	}
-
+        // DeclSequence -> CONST ConstDeclSequence VAR VariableDeclSequence ProcedureDeclSequence
+        // DeclSequence -> CONST ConstDeclSequence ProcedureDeclSequence
+        // DeclSequence -> VAR VariableDeclSequence ProcedureDeclSequence
+        // DeclSequence -> ProcedureDeclSequence
         public List<Declaration> parseDeclarationSequence(){
 	    List<Declaration> Decls = new ArrayList<>();
 	    if(willMatch(TokenType.CONST)){
@@ -146,12 +151,11 @@ public class MyParser implements Parser {
 	    if(willMatch(TokenType.VAR)){
 		Decls.addAll(parseVariableDeclSequence());
 	    }
+	    Decls.addAll(parseProcedureDeclSequence());
 	    return Decls;
         }
 
-	// DeclSequence -> CONST ConstDeclSequence
-	// DeclSequence ->
-	//
+	
 	// ConstDeclSequence -> ConstDecl ; ConstDeclSequence
 	// ConstDeclSequence ->
 	private List<ConstDeclaration> parseConstDeclSequence(){
@@ -179,10 +183,80 @@ public class MyParser implements Parser {
 	    }
 	    return Collections.unmodifiableList(varDecls);
 	}
+        //ProcedureDeclSequence -> ProcedureDecl ; ProcedureDeclSequence
+        //ProcedureDeclSequence ->
+        private List<ProcedureDeclaration> parseProcedureDeclSequence(){
+	    List<ProcedureDeclaration> procDecls = new ArrayList<>();
+	    while (willMatch(TokenType.PROCEDURE)) {
+		ProcedureDeclaration proc = parseProcedureDecl();
+		match(TokenType.SEMI);
+	    }
+	    return Collections.unmodifiableList(procDecls);
+	}
 
+
+        //ProcedureDecl -> ProcedureHead ; ProcedureBody ident
+        private ProcedureDeclaration parseProcedureDecl(){
+	  Position start = currentPosition;
+	  // ProcedureHead -> PROCEDURE ident FormalParameters
+          // ProcedureHead -> PROCEDURE ident
+	  match(TokenType.PROCEDURE);
+	  Identifier procName = parseIdentifier();
+	  List<VariableDeclaration> fpSequence = new ArrayList<>();
+	  Identifier returnType = null;
+	  // FormalParameters -> ( FPSection FPSectionSequence ) : Type
+          // FormalParameters -> ( FPSection FPSectionSequence )
+          // FormalParameters -> ( ) : Type
+          // FormalParameters -> ( )
+	  if(willMatch(TokenType.LPAR)){
+	    skip();
+	    // FPSectionSequence -> ; FPSection FPSectionSequence
+            // FPSectionSequence ->
+	    while(!willMatch(TokenType.RPAR)){
+	      //FPSection -> VAR IdentList : Type
+              //FPSection -> IdentList : Type
+	      if(willMatch(TokenType.VAR)){
+		skip();
+	      }
+	      List<VariableDeclaration> aSequence = parseVariableDecl();
+	      fpSequence.addAll(aSequence);
+	      if(willMatch(TokenType.SEMI)){
+		skip();
+	      }
+	    }
+	    match(TokenType.RPAR);
+	    if(willMatch(TokenType.COLON)){
+	      skip();
+	      returnType = parseIdentifier();
+	    }
+	  }
+	  match(TokenType.SEMI);
+	  // ProcedureBody -> DeclSequence BEGIN StatementSequence RETURN Expression END
+          // ProcedureBody -> DeclSequence BEGIN StatementSequence END
+          // ProcedureBody -> DeclSequence RETURN Expression END
+          // ProcedureBody -> DeclSequence END
+	  List<Declaration> procDeclSequence = parseDeclarationSequence();
+	  List<Statement> toExecute = null;
+	  if(willMatch(TokenType.BEGIN)){
+	    skip();
+	    toExecute = parseStatementSequence();
+	  }
+	  Expression retExpression = null;
+	  if(willMatch(TokenType.RETURN)){
+	    skip();
+	    retExpression = parseExpression();
+	  }
+	  match(TokenType.END);
+	  Identifier nameCheck = parseIdentifier();
+	  if(!nameCheck.getLexeme().equals(procName.getLexeme())){
+	    FATAL("Expected -> identity at the end of the function declaration must be the same as the function name");
+	  }
+	  return new ProcedureDeclaration(start, procName, fpSequence, returnType, procDeclSequence, toExecute, retExpression);
+        }
         
-
-	// ConstDecl -> ident =umber
+        
+  
+	// ConstDecl -> ident = number
 	private ConstDeclaration parseConstDecl() {
 		Position start = currentPosition;
 		Identifier id = parseIdentifier();
@@ -221,10 +295,10 @@ public class MyParser implements Parser {
 	private List<Statement> parseStatementSequence() {
 		// TODO Auto-generated method stub
 	    List<Statement> statements = new ArrayList<>();
-	    while(!willMatch(TokenType.END)){
+	    while(!willMatch(TokenType.END) && !willMatch(TokenType.UNTIL)){
 		Statement s = parseStatement();
 		statements.add(s);
-		if(!willMatch(TokenType.END)){
+		if(!willMatch(TokenType.END) && !willMatch(TokenType.UNTIL)){
 		    match(TokenType.SEMI);
 		}
 	    }
@@ -506,7 +580,14 @@ public class MyParser implements Parser {
 	    if(willMatch(TokenType.NUM)){
 		return parseNumValue(); 
 	    } else if(willMatch(TokenType.ID)){
-		return parseIdentifier();
+	        Token id = skip();
+		Position start = currentPosition;
+		if(willMatch(TokenType.LPAR)){
+		  List<Expression> expList = parseActualParameters();
+		  return new FunctionCall(start, new Identifier(start, id.getLexeme()), expList);
+		} else {
+		  return parseIdentifier(id);
+		}
 	    } else {
 		match(TokenType.LPAR);
 		Expression expr = parseExpression();
@@ -520,6 +601,12 @@ public class MyParser implements Parser {
 	    Position start = currentPosition;
 	    return new Identifier(start, id.getLexeme());
         }
+        //ident -> IDENT 
+        private Identifier parseIdentifier(Token id) {
+	    Position start = currentPosition;
+	    return new Identifier(start, id.getLexeme());
+        }
+  
         //number -> NUM
         private NumValue parseNumValue() {
 	    Token num = match(TokenType.NUM);

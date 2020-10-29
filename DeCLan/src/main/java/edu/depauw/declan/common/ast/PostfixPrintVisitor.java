@@ -59,8 +59,12 @@ public class PostfixPrintVisitor implements ASTVisitor {
 		// Bind a numeric value to a constant identifier
 		Identifier id = constDecl.getIdentifier();
 		NumValue num = constDecl.getNumber();
-
 		environment.put(id.getLexeme(), num.getLexeme());
+	}
+
+        @Override
+	public void visit(ProcedureDeclaration procDecl) {
+	  
 	}
         @Override
 	public void visit(IfElifBranch ifs){
@@ -163,6 +167,11 @@ public class PostfixPrintVisitor implements ASTVisitor {
 	public void visit(NumValue numValue) {
 		// Handle a NumValue leaf by simply printing it out.
 		out.println(numValue.getLexeme());
+	}
+
+        @Override
+	public void visit(FunctionCall fcall) {
+	  
 	}
 
 	@Override

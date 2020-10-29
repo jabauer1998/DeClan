@@ -17,6 +17,8 @@ public interface ASTVisitor {
 
         void visit(VariableDeclaration varDecl);
 
+        void visit(ProcedureDeclaration varDecl);
+
 	// Statements
 	void visit(ProcedureCall procedureCall);
 
@@ -44,4 +46,6 @@ public interface ASTVisitor {
 	void visit(NumValue numValue);
 
 	void visit(Identifier identifier);
+
+        void visit(FunctionCall functionCall);
 }
