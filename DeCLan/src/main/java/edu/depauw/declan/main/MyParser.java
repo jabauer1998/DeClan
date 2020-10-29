@@ -295,11 +295,13 @@ public class MyParser implements Parser {
 	private List<Statement> parseStatementSequence() {
 		// TODO Auto-generated method stub
 	    List<Statement> statements = new ArrayList<>();
-	    while(!willMatch(TokenType.END) && !willMatch(TokenType.UNTIL)){
+	    while(!(willMatch(TokenType.END) || willMatch(TokenType.UNTIL) || willMatch(TokenType.ELSIF) || willMatch(TokenType.ELSE) || willMatch(TokenType.RETURN))){
 		Statement s = parseStatement();
 		statements.add(s);
-		if(!willMatch(TokenType.END) && !willMatch(TokenType.UNTIL)){
-		    match(TokenType.SEMI);
+		if(willMatch(TokenType.END) || willMatch(TokenType.UNTIL) || willMatch(TokenType.ELSIF) || willMatch(TokenType.ELSE) || willMatch(TokenType.RETURN)){
+		  break;
+		} else {
+		  match(TokenType.SEMI);
 		}
 	    }
 	    return Collections.unmodifiableList(statements);
@@ -342,7 +344,7 @@ public class MyParser implements Parser {
         //ElsifThenSequence ->
         private Branch parseIfBranch(){
 	  Position start = currentPosition;
-	  Branch result;
+	  Branch result = null;
 	  if(willMatch(TokenType.ELSIF)){
 	    skip();
 	    Expression exp = parseExpression();
@@ -353,7 +355,10 @@ public class MyParser implements Parser {
 	    skip();
 	    List<Statement> stats = parseStatementSequence();
 	    result = new ElseBranch(start, stats);
+	  } else if (willMatch(TokenType.END)) {
+	    result = null;
 	  } else {
+	    FATAL("Expected ELSIF, END or ELSE token toward the end of if statement");
 	    result = null;
 	  }
 	  return result;

@@ -2,6 +2,7 @@ package edu.depauw.declan.common.ast;
 
 import edu.depauw.declan.common.Position;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * An ASTNode representing a procedure call statement, which consists of an
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public class ProcedureCall extends AbstractASTNode implements Statement {
 	private final Identifier procedureName;
-	private final List<Expression> arguments;
+	private List<Expression> arguments;
 
 	/**
 	 * Construct a ProcedureCall ast node starting at the given source Position,
@@ -26,6 +27,13 @@ public class ProcedureCall extends AbstractASTNode implements Statement {
 		super(start);
 		this.procedureName = procedureName;
 		this.arguments = arguments;
+	}
+
+        public ProcedureCall(Position start, Identifier procedureName, Expression argument) { //for testing compilation
+		super(start);
+		this.procedureName = procedureName;
+		this.arguments = new ArrayList<>();
+		this.arguments.add(argument);
 	}
 
         public ProcedureCall(Position start, Identifier procedureName) {
