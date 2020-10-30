@@ -350,7 +350,7 @@ public class MyParser implements Parser {
       Expression exp = parseExpression();
       match(TokenType.THEN);
       List<Statement> stats = parseStatementSequence();
-      result  = new IfElifBranch(start, exp, stats, parseIfBranch());
+      result = new IfElifBranch(start, exp, stats, parseIfBranch());
     } else if(willMatch(TokenType.ELSE)) {
       skip();
       List<Statement> stats = parseStatementSequence();
@@ -630,6 +630,9 @@ public class MyParser implements Parser {
       skip();
       Position start = currentPosition;
       return new NumValue(start, "0");
+    } else {
+      FATAL("Expected True or False value to enter the function");
+      return null;
     }
   }
 }
