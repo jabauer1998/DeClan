@@ -4,6 +4,8 @@ import java.lang.String;
 import java.lang.StringBuilder;
 import edu.depauw.declan.common.Position;
 
+import static edu.depauw.declan.common.MyIO.*;
+
 /**
  * An ASTNode representing a binary operation (+, -, *, DIV, or MOD currently),
  * with left and right subexpressions and an operator.
@@ -53,6 +55,7 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 	  mystring.append("( ");
 	  mystring.append(getRight().toString());
 	  mystring.append(" ))");
+	  return mystring.toString();
 	}
 	@Override
 	public void accept(ASTVisitor visitor) {
@@ -75,31 +78,31 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 	}
 
         private static String opToString(OpType op){
-	  if(op == PLUS){
+	  if(op == OpType.PLUS){
 	    return "+";
-	  } else if (op == MINUS){
+	  } else if (op == OpType.MINUS){
 	    return "-";
-	  } else if (op == TIMES){
+	  } else if (op == OpType.TIMES){
 	    return "*";
-	  } else if(op == DIV || op == DIVIDE){
+	  } else if(op == OpType.DIV || op == OpType.DIVIDE){
 	    return "/";
-	  } else if (op == MOD){
+	  } else if (op == OpType.MOD){
 	    return "%";
-	  } else if (op == OR){
+	  } else if (op == OpType.OR){
 	    return "||";
-	  } else if (op == AND){
+	  } else if (op == OpType.AND){
 	    return "&&";
-	  } else if (op == LT){
+	  } else if (op == OpType.LT){
 	    return "<";
-	  } else if (op == LE){
+	  } else if (op == OpType.LE){
 	    return "<=";
-	  } else if (op == GT){
+	  } else if (op == OpType.GT){
 	    return ">";
-	  } else if (op == GE){
+	  } else if (op == OpType.GE){
 	    return ">=";
-	  } else if (op == NE){
+	  } else if (op == OpType.NE){
 	    return "!=";
-	  } else if (op == EQ){
+	  } else if (op == OpType.EQ){
 	    return "==";
 	  } else {
 	    FATAL("Error no operator found");

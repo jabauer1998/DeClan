@@ -18,7 +18,7 @@ public class ElseBranch extends Branch implements Statement {
   
     @Override
     public String toString(){
-      StringBuilder mystring;
+      StringBuilder mystring = new StringBuilder();
       mystring.append("ELSE:\n");
       List<Statement> stat = getExecStatements();
       for(int i = 0; i < stat.size(); i++){
@@ -26,6 +26,7 @@ public class ElseBranch extends Branch implements Statement {
 	mystring.append(stat.get(i).toString());
 	mystring.append('\n');
       }
+      return mystring.toString();
     }
 
     @Override

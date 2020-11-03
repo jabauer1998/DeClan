@@ -4,6 +4,7 @@ import java.lang.String;
 import java.lang.StringBuilder;
 
 import edu.depauw.declan.common.Position;
+import static edu.depauw.declan.common.MyIO.*;
 
 /**
  * An ASTNode representing a unary operation (+ or -, currently), with a single
@@ -45,6 +46,7 @@ public class UnaryOperation extends AbstractASTNode implements Expression {
 	  mystring.append("( ");
 	  mystring.append(getExpression().toString());
 	  mystring.append(" ))");
+	  return mystring.toString();
 	}
   
 	@Override
@@ -68,11 +70,11 @@ public class UnaryOperation extends AbstractASTNode implements Expression {
 	}
 
         private String opToString(OpType op){
-	  if(op == PLUS){
+	  if(op == OpType.PLUS){
 	    return "+";
-	  } else if (op == MINUS){
+	  } else if (op == OpType.MINUS){
 	    return "-";
-	  } else if (op == NOT){
+	  } else if (op == OpType.NOT){
 	    return "!";
 	  } else {
 	    FATAL("Error Unary OpType Not Found");

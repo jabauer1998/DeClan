@@ -28,7 +28,7 @@ public class IfElifBranch extends Branch implements Statement {
 
     @Override
     public String toString(){
-      StringBuilder mystring;
+      StringBuilder mystring = new StringBuilder();
       if(firstif){
         mystring.append("IF => ");
 	firstif = false;
@@ -43,7 +43,7 @@ public class IfElifBranch extends Branch implements Statement {
 	mystring.append('\n');
       }
       if(getNextBranch() != null){
-	mystring.append(getNextBranch.toString());
+	mystring.append(getNextBranch().toString());
       }
       return mystring.toString();
     }

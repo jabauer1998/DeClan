@@ -3,6 +3,7 @@ package edu.depauw.declan.common.ast;
 import java.lang.String;
 import java.lang.StringBuilder;
 import java.util.List;
+import java.util.ArrayList;
 
 import static edu.depauw.declan.common.MyIO.*;
 
@@ -16,10 +17,9 @@ public class ProcedureEntry{
   
     public ProcedureEntry(List<VariableDeclaration> arguments, String type, List<Declaration> local, List<Statement> ExecutionStats, Expression ReturnStatement){
         if(arguments == null){
-	  this.arguments = new ArrayList<>();
-        } else {
-	  this.arguments = arguments;
+	  arguments = new ArrayList<>();
         }
+	this.arguments = arguments;
         if(type.equals("REAL")){
 	    Type = ProcType.REAL;
 	} else if(type.equals("INTEGER")){
@@ -31,10 +31,9 @@ public class ProcedureEntry{
 	}
 	this.local = local;
 	if(ExecutionStats == null){
-	  this.ExecutonStats = new ArrayList<>();
-	} else {
-	  this.ExecutionStats = ExecutionStats;
+	  ExecutionStats = new ArrayList<>();
 	}
+	this.ExecutionStats = ExecutionStats;
 	this.ReturnStatement = ReturnStatement;
     }
   
@@ -42,12 +41,12 @@ public class ProcedureEntry{
     public String toString(){
       StringBuilder mystring = new StringBuilder();
       mystring.append("TYPE: ");
-      mystring.append(typeToString(getType));
+      mystring.append(typeToString(getType()));
       mystring.append(" ARGUMENTS: ");
       mystring.append("( ");
-      List<VariableDeclaration> arguments = getArguments();
-      for(int i = 0; i < arguments.size(); i++){
-	mystring.append(argumets.get(i).toString());
+      List<VariableDeclaration> argments = getArguments();
+      for(int i = 0; i < argments.size(); i++){
+	mystring.append(argments.get(i).toString());
 	mystring.append(' ');
       }
       mystring.append(")\n");
@@ -60,7 +59,7 @@ public class ProcedureEntry{
       List<Statement> exec = getExecList();
       for(int i = 0; i < exec.size(); i++){
 	mystring.append("\tStatement " + i + ": ");
-	mystring.append(exec.get(i));
+	mystring.append(exec.get(i).toString());
 	mystring.append('\n');
       }
       if(getReturnStatement() != null){
@@ -96,16 +95,16 @@ public class ProcedureEntry{
     }
 
     private static String typeToString(ProcType proc){
-      if(proc == INTEGER){
+      if(proc == ProcType.INTEGER){
 	return "int";
-      } else if (proc == BOOLEAN){
+      } else if (proc == ProcType.BOOLEAN){
 	return "bool";
-      } else if (proc == REAL){
+      } else if (proc == ProcType.REAL){
 	return "double";
-      } else if (proc == VOID){
+      } else if (proc == ProcType.VOID){
 	return "void";
       } else {
-	FATAL("Unknown return type value: " + (int)proc);
+	FATAL("Unknown return type value: " + proc);
 	return "";
       }
     }

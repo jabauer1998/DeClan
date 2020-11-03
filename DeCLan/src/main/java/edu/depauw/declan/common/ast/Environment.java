@@ -91,7 +91,7 @@ public class Environment <TableType> {
       for(int i = environment.size() - 1; i >= 0; i--){
 	mystring.append("STACK LEVEL -> " + i + '\n');
 	HashMap<String, TableType> list = environment.get(i);
-	for(String key : list){
+	for(String key : list.keySet()){
 	  mystring.append("KEY: " + key + " VALUE: ");
 	  mystring.append(list.get(key).toString());
 	  mystring.append('\n');

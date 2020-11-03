@@ -3,7 +3,9 @@ package edu.depauw.declan.common.ast;
 import edu.depauw.declan.common.Position;
 import java.lang.String;
 import java.lang.StringBuilder;
+
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * An ASTNode representing a function call statement, which consists of an
@@ -55,7 +57,8 @@ public class FunctionCall extends AbstractASTNode implements Expression {
 	    mystring.append(args.get(i).toString());
 	    mystring.append(' ');
 	  }
-	  mystirng.append(");");
+	  mystring.append(");");
+	  return mystring.toString();
         }
 
 	@Override

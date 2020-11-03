@@ -2,6 +2,7 @@ package edu.depauw.declan.common.ast;
 
 import edu.depauw.declan.common.Position;
 import java.util.List;
+import java.util.ArrayList;
 import java.lang.String;
 import java.lang.StringBuilder;
 
@@ -73,12 +74,12 @@ public class ProcedureDeclaration extends AbstractASTNode implements Declaration
 	  mystring.append("IDENT: ");
 	  mystring.append(getProcedureName().toString());
 	  mystring.append(" TYPE: ");
-	  mystring.append(getReturnType.toString());
+	  mystring.append(getReturnType().toString());
 	  mystring.append(" ARGUMENTS: ");
 	  mystring.append("( ");
-	  List<VariableDeclaration> arguments = getArguments();
+	  List<VariableDeclaration> argu = getArguments();
 	  for(int i = 0; i < arguments.size(); i++){
-	    mystring.append(argumets.get(i).toString());
+	    mystring.append(argu.get(i).toString());
 	    mystring.append(' ');
 	  }
 	  mystring.append(")\n");
@@ -88,7 +89,7 @@ public class ProcedureDeclaration extends AbstractASTNode implements Declaration
 	    mystring.append(local.get(i).toString());
 	    mystring.append('\n');
 	  }
-	  List<Statement> exec = getExececutionStatements();
+	  List<Statement> exec = getExecutionStatements();
 	  for(int i = 0; i < exec.size(); i++){
 	    mystring.append("\tStatement " + i + ": ");
 	    mystring.append(exec.get(i));

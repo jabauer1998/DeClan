@@ -70,16 +70,16 @@ public class VariableEntry{
     }
 
     private String typeToString(VarType type){
-      if(type == INTEGER){
+      if(type == VarType.INTEGER){
 	return "int";
-      } else if (type == BOOLEAN){
+      } else if (type == VarType.BOOLEAN){
 	return "bool";
-      } else if (type == REAL){
+      } else if (type == VarType.REAL){
 	return "real";
-      } else if (type == CONST){
+      } else if (type == VarType.CONST){
 	return "const";
       } else {
-	FATAL("Unknown vartype value: " + (int)type);
+	FATAL("Unknown vartype value: " + type);
 	return "";
       }
     }

@@ -62,7 +62,8 @@ public class ProcedureCall extends AbstractASTNode implements Statement {
 	    mystring.append(args.get(i).toString());
 	    mystring.append(' ');
 	  }
-	  mystirng.append(");");
+	  mystring.append(");");
+	  return mystring.toString();
         }
 
 	@Override

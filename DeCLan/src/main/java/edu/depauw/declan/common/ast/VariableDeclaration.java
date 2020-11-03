@@ -41,8 +41,9 @@ public class VariableDeclaration extends AbstractASTNode implements Declaration 
 	  StringBuilder mystring = new StringBuilder();
 	  mystring.append(getIdentifier().toString());
 	  mystring.append(' ');
-	  mystring.append(getType.toString());
+	  mystring.append(getType().toString());
 	  mystring.append(';');
+	  return mystring.toString();
         }
 	@Override
 	public void accept(ASTVisitor visitor) {

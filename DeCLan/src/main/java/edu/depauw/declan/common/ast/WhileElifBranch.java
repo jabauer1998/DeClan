@@ -1,7 +1,7 @@
 package edu.depauw.declan.common.ast;
 
-import java.util.String;
-import java.util.StringBuilder;
+import java.lang.String;
+import java.lang.StringBuilder;
 
 import java.util.List;
 import edu.depauw.declan.common.Position;
@@ -31,7 +31,7 @@ public class WhileElifBranch extends Branch implements Statement {
 
     @Override
     public String toString(){
-      StringBuilder mystring;
+      StringBuilder mystring = new StringBuilder();
       if(firstwhile){
         mystring.append("WHILE => ");
 	firstwhile = false;
@@ -46,7 +46,7 @@ public class WhileElifBranch extends Branch implements Statement {
 	mystring.append('\n');
       }
       if(getNextBranch() != null){
-	mystring.append(getNextBranch.toString());
+	mystring.append(getNextBranch().toString());
       }
       return mystring.toString();
     }

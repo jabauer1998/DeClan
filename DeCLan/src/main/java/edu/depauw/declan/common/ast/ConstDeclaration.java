@@ -44,7 +44,8 @@ public class ConstDeclaration extends AbstractASTNode implements Declaration {
 	  mystring.append(identifier.toString());
 	  mystring.append(" = ");
 	  mystring.append(number.toString());
-	  mystring.append("\n");
+	  mystring.append(';');
+	  return mystring.toString();
 	}
   
         @Override
