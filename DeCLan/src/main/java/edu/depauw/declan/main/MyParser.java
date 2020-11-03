@@ -183,12 +183,14 @@ public class MyParser implements Parser {
     }
     return Collections.unmodifiableList(varDecls);
   }
+  
   //ProcedureDeclSequence -> ProcedureDecl ; ProcedureDeclSequence
   //ProcedureDeclSequence ->
   private List<ProcedureDeclaration> parseProcedureDeclSequence(){
     List<ProcedureDeclaration> procDecls = new ArrayList<>();
     while (willMatch(TokenType.PROCEDURE)) {
       ProcedureDeclaration proc = parseProcedureDecl();
+      procDecls.add(proc);
       match(TokenType.SEMI);
     }
     return Collections.unmodifiableList(procDecls);

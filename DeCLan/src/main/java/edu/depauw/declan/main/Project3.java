@@ -23,10 +23,14 @@ public class Project3 {
 		                + "PROCEDURE ADD(VAR X : INTEGER; VAR Y : INTEGER) : INTEGER;\n"
 		                + "    RETURN X + Y\n"
 		                + "END ADD;"
+		                + "PROCEDURE MULT(VAR X : INTEGER; VAR Y : INTEGER) : INTEGER;\n"
+		                + "    RETURN 70 * 80\n"
+		                + "END MULT;"
 				+ "BEGIN\n"
-		                + "result := ADD(2, 3);\n"
-		                + "PrintInt(5);"
-		                + "PrintInt(result)\n"
+		                + "FOR VAR I := 0 TO I < 20 BY 1 DO\n"
+		                + "  result := ADD(MULT(5, 8), seven);\n"
+		                + "  PrintInt(result)\n"
+		                + "END"
 				+ "END.\n";
 
 		Properties props = new Properties();

@@ -350,11 +350,9 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
   }
   @Override
   public Number visitResult(FunctionCall funcCall) {
-    Start_DBG();
     String funcName = funcCall.getFunctionName().getLexeme();
     ProcedureEntry fentry = procEnvironment.findEntry(funcName);
-    DBG("Does it make it here");
-    List<VariableDeclaration> args = fentry.getArguments(); //fails here
+    List<VariableDeclaration> args = fentry.getArguments(); //fails here means fentry is returning null for some reason
     varEnvironment.addScope();
     if(args != null && args.size() > 0){
       List<Expression> valArgs = funcCall.getArguments();
