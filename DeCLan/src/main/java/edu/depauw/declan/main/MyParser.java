@@ -222,6 +222,8 @@ public class MyParser implements Parser {
 	fpSequence.addAll(aSequence);
 	if(willMatch(TokenType.SEMI)){
 	  skip();
+	} else {
+	  break;
 	}
       }
       match(TokenType.RPAR);

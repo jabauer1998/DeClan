@@ -1,11 +1,15 @@
 package edu.depauw.declan.common.ast;
 
+import java.util.String;
+import java.util.StringBuilder;
+
 import java.util.List;
 import edu.depauw.declan.common.Position;
 
 public class WhileElifBranch extends Branch implements Statement {
     private final Expression toCheck;
     private final Branch branchTo;
+    private static Boolean firstwhile = true;
     
     public WhileElifBranch(Position start, Expression toCheck, List<Statement> toExecute, Branch branchTo){
       super(start, toExecute);
@@ -23,6 +27,28 @@ public class WhileElifBranch extends Branch implements Statement {
 
     public Branch getNextBranch(){
       return branchTo;
+    }
+
+    @Override
+    public String toString(){
+      StringBuilder mystring;
+      if(firstwhile){
+        mystring.append("WHILE => ");
+	firstwhile = false;
+      } else {
+	mystring.append("ELIF WHILE => ");
+      }
+      mystring.append(getExpression().toString() + ":\n");
+      List<Statement> stat = getExecStatements();
+      for(int i = 0; i < stat.size(); i++){
+	mystring.append("\tStatement " + i + " = ");
+	mystring.append(stat.get(i).toString());
+	mystring.append('\n');
+      }
+      if(getNextBranch() != null){
+	mystring.append(getNextBranch.toString());
+      }
+      return mystring.toString();
     }
   
     @Override

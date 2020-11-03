@@ -1,6 +1,7 @@
 package edu.depauw.declan.common.ast;
 
 import java.lang.String;
+import java.lang.StringBuilder;
 import java.lang.Number;
 
 import static edu.depauw.declan.common.MyIO.*;
@@ -42,6 +43,16 @@ public class VariableEntry{
     public VariableEntry(String type){
 	this(type, "");
     }
+
+    @Override
+    public String toString(){
+      StringBuilder mystring = new StringBuilder();
+      mystring.append("Var TYPE: ");
+      mystring.append(typeToString(getType()));
+      mystring.append("Cur VALUE: ");
+      mystring.append("" + getValue());
+      return mystring.toString();
+    }
     
     public Number getValue(){
 	if(value == null){
@@ -58,6 +69,21 @@ public class VariableEntry{
 	this.value = value;
     }
 
+    private String typeToString(VarType type){
+      if(type == INTEGER){
+	return "int";
+      } else if (type == BOOLEAN){
+	return "bool";
+      } else if (type == REAL){
+	return "real";
+      } else if (type == CONST){
+	return "const";
+      } else {
+	FATAL("Unknown vartype value: " + (int)type);
+	return "";
+      }
+    }
+  
     public static enum VarType{
 	INTEGER, BOOLEAN, REAL, CONST
     }

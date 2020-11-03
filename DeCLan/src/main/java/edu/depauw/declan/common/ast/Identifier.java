@@ -26,6 +26,11 @@ public class Identifier extends AbstractASTNode implements Expression {
 		return lexeme;
 	}
 
+        @Override
+        public String toString(){
+	  return getLexeme();
+        }
+
 	@Override
 	public void accept(ASTVisitor visitor) {
 		visitor.visit(this);

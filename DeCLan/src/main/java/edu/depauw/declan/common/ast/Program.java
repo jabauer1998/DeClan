@@ -2,6 +2,8 @@ package edu.depauw.declan.common.ast;
 
 import java.util.Collection;
 import java.util.List;
+import java.lang.String;
+import java.lang.StringBuilder;
 
 import edu.depauw.declan.common.Position;
 
@@ -32,7 +34,25 @@ public class Program extends AbstractASTNode {
 		this.Decls = Decls;
 		this.statements = statements;
 	}
-
+        @Override
+        public String toString(){
+	  StringBuilder mystring = new StringBuilder();
+	  mystring.append("Program Decls:\n");
+	  List<Declarations> decl = getDecls();
+	  for(int i = 0; i < decl.size(); i++){
+	    mystring.append(decl.get(i).toString());
+	    mystring.append('\n');
+	  }
+	  mystring.append("Program Statements:\n");
+	  List<Statements> stats = getStatements();
+	  for(int i = 0; i < stats.size(); i++){
+	    mystring.append(stats.get(i).toString());
+	    mystring.append('\n');
+	  }
+	  mystring.append("DONE!!!");
+	  return mystring.toString();
+	}
+  
 	public List<Declaration> getDecls() {
 		return Decls;
 	}

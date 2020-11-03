@@ -1,5 +1,6 @@
 package edu.depauw.declan.common.ast;
 
+import java.lang.String;
 import edu.depauw.declan.common.Position;
 
 public class ForAssignment extends AbstractASTNode implements Statement {
@@ -16,6 +17,10 @@ public class ForAssignment extends AbstractASTNode implements Statement {
 
     public Expression getVariableValue(){
       return assignment.getVariableValue();
+    }
+
+    public String toString(){
+      return assignment.toString();
     }
 
     @Override

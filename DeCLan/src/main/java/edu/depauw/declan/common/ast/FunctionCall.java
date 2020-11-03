@@ -1,14 +1,16 @@
 package edu.depauw.declan.common.ast;
 
 import edu.depauw.declan.common.Position;
+import java.lang.String;
+import java.lang.StringBuilder;
 import java.util.List;
 
 /**
- * An ASTNode representing a procedure call statement, which consists of an
+ * An ASTNode representing a function call statement, which consists of an
  * Identifier naming the procedure and an Expression giving its argument (in the
  * future this will become a list of Expressions).
  * 
- * @author bhoward
+ * @author Jacob Bauer
  */
 public class FunctionCall extends AbstractASTNode implements Expression {
 	private final Identifier procedureName;
@@ -32,7 +34,7 @@ public class FunctionCall extends AbstractASTNode implements Expression {
         public FunctionCall(Position start, Identifier procedureName) {
 		super(start);
 		this.procedureName = procedureName;
-		this.arguments = null;
+		this.arguments = new ArrayList<>();
 	}
 
 	public Identifier getFunctionName() {
@@ -42,6 +44,19 @@ public class FunctionCall extends AbstractASTNode implements Expression {
 	public List<Expression> getArguments() {
 		return arguments;
 	}
+
+        @Override
+        public String toString(){
+	  StringBuilder mystring = new StringBuilder();
+	  mystring.append(getFunctionName().toString());
+	  mystring.append("( ");
+	  List <Expression> args = getArguments();
+	  for(int i = 0; i < args.size(); i++){
+	    mystring.append(args.get(i).toString());
+	    mystring.append(' ');
+	  }
+	  mystirng.append(");");
+        }
 
 	@Override
 	public void accept(ASTVisitor visitor) {

@@ -1,6 +1,8 @@
 package edu.depauw.declan.common.ast;
 
 import edu.depauw.declan.common.Position;
+import java.lang.String;
+import java.lang.StringBuilder;
 
 public class Assignment extends AbstractASTNode implements Statement {
     private final Identifier variableName;
@@ -18,6 +20,16 @@ public class Assignment extends AbstractASTNode implements Statement {
 
     public Expression getVariableValue(){
 	    return variableValue;
+    }
+
+    @Override
+    public String toString(){
+      StringBuilder mystring = new StringBuilder();
+      mystring.append(getVariableName().toString());
+      mystring.append(" = ");
+      mystring.append(getVariableValue().toString());
+      mystring.append('\n');
+      return mystring.toString();
     }
 
     @Override

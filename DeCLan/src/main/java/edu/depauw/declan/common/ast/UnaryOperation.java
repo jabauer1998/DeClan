@@ -1,5 +1,8 @@
 package edu.depauw.declan.common.ast;
 
+import java.lang.String;
+import java.lang.StringBuilder;
+
 import edu.depauw.declan.common.Position;
 
 /**
@@ -34,6 +37,16 @@ public class UnaryOperation extends AbstractASTNode implements Expression {
 		return expression;
 	}
 
+        @Override
+	public String toString(){
+	  StringBuilder mystring = new StringBuilder();
+	  mystring.append("( ");
+	  mystring.append(opToString(getOperator()));
+	  mystring.append("( ");
+	  mystring.append(getExpression().toString());
+	  mystring.append(" ))");
+	}
+  
 	@Override
 	public void accept(ASTVisitor visitor) {
 		visitor.visit(this);
@@ -53,4 +66,17 @@ public class UnaryOperation extends AbstractASTNode implements Expression {
 	public enum OpType {
 	    PLUS, MINUS, NOT
 	}
+
+        private String opToString(OpType op){
+	  if(op == PLUS){
+	    return "+";
+	  } else if (op == MINUS){
+	    return "-";
+	  } else if (op == NOT){
+	    return "!";
+	  } else {
+	    FATAL("Error Unary OpType Not Found");
+	    return null;
+	  }
+        }
 }

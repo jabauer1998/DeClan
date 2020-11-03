@@ -1,5 +1,7 @@
 package edu.depauw.declan.common.ast;
 
+import java.lang.String;
+import java.lang.StringBuilder;
 import edu.depauw.declan.common.Position;
 
 /**
@@ -39,7 +41,19 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 	public Expression getRight() {
 		return right;
 	}
-
+        @Override
+        public String toString(){
+	  StringBuilder mystring = new StringBuilder();
+	  mystring.append("(( ");
+	  mystring.append(getLeft().toString());
+	  mystring.append(" )");
+	  mystring.append(' ');
+	  mystring.append(opToString(getOperator()));
+	  mystring.append(' ');
+	  mystring.append("( ");
+	  mystring.append(getRight().toString());
+	  mystring.append(" ))");
+	}
 	@Override
 	public void accept(ASTVisitor visitor) {
 		visitor.visit(this);
@@ -59,4 +73,37 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 	public enum OpType {
 	  PLUS, MINUS, TIMES, DIV, MOD, DIVIDE, OR, AND, LT, LE, GT, GE, NE, EQ
 	}
+
+        private static String opToString(OpType op){
+	  if(op == PLUS){
+	    return "+";
+	  } else if (op == MINUS){
+	    return "-";
+	  } else if (op == TIMES){
+	    return "*";
+	  } else if(op == DIV || op == DIVIDE){
+	    return "/";
+	  } else if (op == MOD){
+	    return "%";
+	  } else if (op == OR){
+	    return "||";
+	  } else if (op == AND){
+	    return "&&";
+	  } else if (op == LT){
+	    return "<";
+	  } else if (op == LE){
+	    return "<=";
+	  } else if (op == GT){
+	    return ">";
+	  } else if (op == GE){
+	    return ">=";
+	  } else if (op == NE){
+	    return "!=";
+	  } else if (op == EQ){
+	    return "==";
+	  } else {
+	    FATAL("Error no operator found");
+	    return null;
+	  }
+        }
 }

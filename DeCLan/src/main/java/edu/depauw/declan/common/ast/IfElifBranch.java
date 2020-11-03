@@ -6,6 +6,7 @@ import edu.depauw.declan.common.Position;
 public class IfElifBranch extends Branch implements Statement {
     private final Expression toCheck;
     private final Branch branchTo;
+    private static Boolean firstif = true;
     
     public IfElifBranch(Position start, Expression toCheck, List<Statement> toExecute, Branch branchTo){
       super(start, toExecute);
@@ -23,6 +24,28 @@ public class IfElifBranch extends Branch implements Statement {
 
     public Branch getNextBranch(){
       return branchTo;
+    }
+
+    @Override
+    public String toString(){
+      StringBuilder mystring;
+      if(firstif){
+        mystring.append("IF => ");
+	firstif = false;
+      } else {
+	mystring.append("ELIF => ");
+      }
+      mystring.append(getExpression().toString() + ":\n");
+      List<Statement> stat = getExecStatements();
+      for(int i = 0; i < stat.size(); i++){
+	mystring.append("\tStatement " + i + " = ");
+	mystring.append(stat.get(i).toString());
+	mystring.append('\n');
+      }
+      if(getNextBranch() != null){
+	mystring.append(getNextBranch.toString());
+      }
+      return mystring.toString();
     }
   
     @Override

@@ -1,6 +1,8 @@
 package edu.depauw.declan.common.ast;
 
 import java.util.List;
+import java.lang.String;
+import java.lang.StringBuilder;
 import edu.depauw.declan.common.Position;
 
 public class RepeatBranch extends Branch implements Statement {
@@ -17,6 +19,22 @@ public class RepeatBranch extends Branch implements Statement {
 
     public Expression getExpression(){
       return toCheck;
+    }
+
+    @Override
+    public String toString(){
+      StringBuilder mystring = new StringBuilder();
+      mystring.append("REPEAT:\n");
+      List<Statement> stats = getExecStatements();
+      for(int i = 0; i < stats.size(); i++){
+	mystring.append("\tStatement " + i + ": ");
+	mystring.append(stats.get(i).toString());
+	mystring.append('\n');
+      }
+      mystring.append("UNTIL ");
+      mystring.append(getExpression().toString());
+      mystring.append('\n');
+      return mystring.toString();
     }
   
     @Override

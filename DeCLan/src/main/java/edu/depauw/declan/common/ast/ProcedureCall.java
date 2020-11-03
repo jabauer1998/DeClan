@@ -1,8 +1,12 @@
 package edu.depauw.declan.common.ast;
 
 import edu.depauw.declan.common.Position;
+
 import java.util.List;
 import java.util.ArrayList;
+
+import java.lang.String;
+import java.lang.StringBuilder;
 
 /**
  * An ASTNode representing a procedure call statement, which consists of an
@@ -30,16 +34,14 @@ public class ProcedureCall extends AbstractASTNode implements Statement {
 	}
 
         public ProcedureCall(Position start, Identifier procedureName, Expression argument) { //for testing compilation
-		super(start);
-		this.procedureName = procedureName;
-		this.arguments = new ArrayList<>();
+	        this(start, procedureName);
 		this.arguments.add(argument);
 	}
 
         public ProcedureCall(Position start, Identifier procedureName) {
 		super(start);
 		this.procedureName = procedureName;
-		this.arguments = null;
+		this.arguments = new ArrayList<>();
 	}
 
 	public Identifier getProcedureName() {
@@ -49,6 +51,19 @@ public class ProcedureCall extends AbstractASTNode implements Statement {
 	public List<Expression> getArguments() {
 		return arguments;
 	}
+  
+	@Override
+        public String toString(){
+	  StringBuilder mystring = new StringBuilder();
+	  mystring.append(getProcedureName().toString());
+	  mystring.append("( ");
+	  List <Expression> args = getArguments();
+	  for(int i = 0; i < args.size(); i++){
+	    mystring.append(args.get(i).toString());
+	    mystring.append(' ');
+	  }
+	  mystirng.append(");");
+        }
 
 	@Override
 	public void accept(ASTVisitor visitor) {

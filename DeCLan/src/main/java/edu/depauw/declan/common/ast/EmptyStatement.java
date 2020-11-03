@@ -21,6 +21,11 @@ public class EmptyStatement extends AbstractASTNode implements Statement {
 		super(start);
 	}
 
+        @Override
+	public String toString(){
+	  return "";
+	}
+
 	@Override
 	public void accept(ASTVisitor visitor) {
 		visitor.visit(this);

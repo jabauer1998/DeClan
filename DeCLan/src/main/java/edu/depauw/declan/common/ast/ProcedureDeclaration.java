@@ -2,6 +2,8 @@ package edu.depauw.declan.common.ast;
 
 import edu.depauw.declan.common.Position;
 import java.util.List;
+import java.lang.String;
+import java.lang.StringBuilder;
 
 /**
  * An ASTNode representing a Procedure declaration. It contains the Identifier being
@@ -26,11 +28,17 @@ public class ProcedureDeclaration extends AbstractASTNode implements Declaration
 	 * @param identifier
 	 * @param number
 	 */
-  public ProcedureDeclaration(Position start, Identifier procedureName, List<VariableDeclaration> arguments, Identifier returnType, List<Declaration> localVariables, List<Statement> toExec, Expression returnStatement){
+        public ProcedureDeclaration(Position start, Identifier procedureName, List<VariableDeclaration> arguments, Identifier returnType, List<Declaration> localVariables, List<Statement> toExec, Expression returnStatement){
 	    super(start);
 	    this.procedureName = procedureName;
+	    if(arguments == null){
+	      arguments = new ArrayList<>();
+	    }
 	    this.arguments = arguments;
 	    this.localVariables = localVariables;
+	    if(toExec == null){
+	      toExec = new ArrayList<>();
+	    }
 	    this.toExec = toExec;
 	    this.returnStatement = returnStatement;
 	    this.returnType = returnType;
@@ -58,6 +66,40 @@ public class ProcedureDeclaration extends AbstractASTNode implements Declaration
 
         public Expression getReturnStatement(){
 	  return returnStatement;
+        }
+
+        public String toString(){
+	  StringBuilder mystring = new StringBuilder();
+	  mystring.append("IDENT: ");
+	  mystring.append(getProcedureName().toString());
+	  mystring.append(" TYPE: ");
+	  mystring.append(getReturnType.toString());
+	  mystring.append(" ARGUMENTS: ");
+	  mystring.append("( ");
+	  List<VariableDeclaration> arguments = getArguments();
+	  for(int i = 0; i < arguments.size(); i++){
+	    mystring.append(argumets.get(i).toString());
+	    mystring.append(' ');
+	  }
+	  mystring.append(")\n");
+	  List<Declaration> local = getLocalVariables();
+	  for(int i = 0; i < local.size(); i++){
+	    mystring.append('\t');
+	    mystring.append(local.get(i).toString());
+	    mystring.append('\n');
+	  }
+	  List<Statement> exec = getExececutionStatements();
+	  for(int i = 0; i < exec.size(); i++){
+	    mystring.append("\tStatement " + i + ": ");
+	    mystring.append(exec.get(i));
+	    mystring.append('\n');
+	  }
+	  if(getReturnStatement() != null){
+	    mystring.append("\treturn ");
+	    mystring.append(getReturnStatement().toString());
+	    mystring.append(";\n");
+	  }
+	  return mystring.toString();
         }
 
 	@Override

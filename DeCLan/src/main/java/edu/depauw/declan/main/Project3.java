@@ -19,18 +19,14 @@ public class Project3 {
 	public static void main(String[] args) {
 		String demoSource =
 		                  "CONST six = 6; seven = 7; bignine = 9.E-3;\n"
+		                + "VAR result : INTEGER;\n"
 		                + "PROCEDURE ADD(VAR X : INTEGER; VAR Y : INTEGER) : INTEGER;\n"
-		                + "BEGIN\n"
 		                + "    RETURN X + Y\n"
 		                + "END ADD;"
 				+ "BEGIN\n"
-		                + "  REPEAT\n"
-		                + "  FOR I := 0 UNTIL I := 20 BY 1\n"
-		                + "  DO\n"
-		                + "  PrintInt(ADD(I * 2 + 3, 1000 / 2));\n"
-		                + "  END;\n"
-		                + "  i = i + 1"
-		                + "  UNTIL i > 3\n"
+		                + "result := ADD(2, 3);\n"
+		                + "PrintInt(5);"
+		                + "PrintInt(result)\n"
 				+ "END.\n";
 
 		Properties props = new Properties();

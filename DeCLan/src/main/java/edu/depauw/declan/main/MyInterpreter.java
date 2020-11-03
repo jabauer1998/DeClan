@@ -81,7 +81,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 
   @Override
   public void visit(ProcedureDeclaration procDecl) {
-    procEnvironment.addEntry(procDecl.getProcedureName().getLexeme(), new ProcedureEntry(procDecl));
+    procEnvironment.addEntry(procDecl.getProcedureName().getLexeme(), new ProcedureEntry(procDecl.getArguments(), procDecl.getReturnType().getLexeme(), procDecl.getLocalVariables(), procDecl.getExecutionStatements(), procDecl.getReturnStatement()));
   }
         
   @Override
@@ -99,16 +99,20 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
       varEnvironment.addScope();
       if(args != null && args.size() > 0){
 	List<Expression> valArgs = procedureCall.getArguments();
-	for(int i = 0; i < args.size(); i++){
-	  args.get(i).accept(this); //declare parameter variables 
-	  VariableEntry toChange = varEnvironment.findEntry(args.get(i).getIdentifier().getLexeme());
-	  Number variableValue = valArgs.get(i).acceptResult(this);
-	  toChange.setValue(variableValue);
+	if(args.size() == valArgs.size()){
+	  for(int i = 0; i < args.size(); i++){
+	    args.get(i).accept(this); //declare parameter variables 
+	    VariableEntry toChange = varEnvironment.findEntry(args.get(i).getIdentifier().getLexeme());
+	    Number variableValue = valArgs.get(i).acceptResult(this);
+	    toChange.setValue(variableValue);
+	  }
+	} else {
+	  FATAL("Unexpected amount of arguments provided from Caller to Callie");
 	}
       }
       List<Declaration> LocalDecl = pentry.getLocalVariables();
       for(Declaration decl : LocalDecl){
-	decl.accept(this);
+        decl.accept(this);
       }
       List<Statement> toExec = pentry.getExecList();
       if(toExec != null && toExec.size() > 0){
@@ -173,7 +177,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 	toExec.get(i).accept(this);
       }
       varEnvironment.removeScope();
-    } while (toCheck.acceptResult(this).intValue() != 0);
+    } while (toCheck.acceptResult(this).intValue() == 0); //keep going until statement is true
   }
 
   @Override
@@ -346,9 +350,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
   }
   @Override
   public Number visitResult(FunctionCall funcCall) {
+    Start_DBG();
     String funcName = funcCall.getFunctionName().getLexeme();
     ProcedureEntry fentry = procEnvironment.findEntry(funcName);
-    List<VariableDeclaration> args = fentry.getArguments();
+    DBG("Does it make it here");
+    List<VariableDeclaration> args = fentry.getArguments(); //fails here
     varEnvironment.addScope();
     if(args != null && args.size() > 0){
       List<Expression> valArgs = funcCall.getArguments();
