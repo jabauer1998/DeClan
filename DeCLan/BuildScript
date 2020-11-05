@@ -1,5 +1,6 @@
 #!/bin/bash
-
+#Created a Build Script to easily display the project results as well as run the program from the unix shell 
+#Author Jacob Bauer
 CURDIR="$(pwd)"
 FULLPATH="$CURDIR/src/main/java/edu/depauw/declan/main"
 RELPATH="edu/depauw/declan/main"

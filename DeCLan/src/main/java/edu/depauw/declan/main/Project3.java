@@ -15,26 +15,23 @@ import edu.depauw.declan.common.ast.Program;
  * 
  * @author bhoward
  */
+
 public class Project3 {
 	public static void main(String[] args) {
 		String demoSource =
-				  "CONST six = 6; seven = 7; bignine = 9.E-3;\n"
-		                + "VAR eight, nine, ten : INTEGER;\n"
+		                  "CONST six = 6; seven = 7; bignine = 9.E-3;\n"
+		                + "VAR result : INTEGER;\n"
+		                + "PROCEDURE ADD(VAR X : INTEGER; VAR Y : INTEGER) : INTEGER;\n"
+		                + "    RETURN X + Y\n"
+		                + "END ADD;"
+		                + "PROCEDURE MULT(VAR X : INTEGER; VAR Y : INTEGER) : INTEGER;\n"
+		                + "    RETURN X * Y\n"
+		                + "END MULT;"
 				+ "BEGIN\n"
-		                + "  eight := six + 2;\n"
-		                + "  ten := (13 - eight) * 2;\n"
-		                + "  nine := (ten * 9) DIV ten - eight + eight;\n"
-				+ "  PrintInt(seven - six);\n"
-				+ "  PrintInt(2 * (six + seven) MOD six);\n"
-				+ "  PrintInt(six - seven DIV 2);\n"
-				+ "  PrintInt(six * seven);\n"
-		                + "  PrintDouble(1.89087E6);\n"
-		                + "  PrintDouble(1.87);\n"
-		                + "  PrintDouble(bignine);\n"
-		                + "  PrintInt(eight);\n"
-		                + "  PrintInt(nine);\n"
-		                + "  PrintInt(ten);\n"
-		                + "  PrintInt(eight + nine + ten)\n"
+		                + "FOR I := 0 TO I < 20 BY 1 DO\n"
+		                + "  result := ADD(MULT(0FFH, 1), 0);\n"
+		                + "  PrintInt(result)\n"
+		                + "END\n"
 				+ "END.\n";
 
 		Properties props = new Properties();

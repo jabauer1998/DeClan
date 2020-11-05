@@ -1,6 +1,8 @@
 package edu.depauw.declan.common.ast;
 
 import edu.depauw.declan.common.Position;
+import java.lang.String;
+import java.lang.StringBuilder;
 
 /**
  * An ASTNode representing a CONST declaration. It contains the Identifier being
@@ -34,6 +36,18 @@ public class ConstDeclaration extends AbstractASTNode implements Declaration {
 	public NumValue getNumber() {
 		return number;
 	}
+
+        @Override
+	public String toString(){
+	  StringBuilder mystring = new StringBuilder();
+	  mystring.append("const ");
+	  mystring.append(identifier.toString());
+	  mystring.append(" = ");
+	  mystring.append(number.toString());
+	  mystring.append(';');
+	  return mystring.toString();
+	}
+  
         @Override
 	public void accept(ASTVisitor visitor) {
 		visitor.visit(this);

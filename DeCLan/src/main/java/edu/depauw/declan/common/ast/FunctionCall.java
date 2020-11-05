@@ -1,61 +1,56 @@
 package edu.depauw.declan.common.ast;
 
 import edu.depauw.declan.common.Position;
+import java.lang.String;
+import java.lang.StringBuilder;
 
 import java.util.List;
 import java.util.ArrayList;
 
-import java.lang.String;
-import java.lang.StringBuilder;
-
 /**
- * An ASTNode representing a procedure call statement, which consists of an
+ * An ASTNode representing a function call statement, which consists of an
  * Identifier naming the procedure and an Expression giving its argument (in the
  * future this will become a list of Expressions).
  * 
- * @author bhoward
+ * @author Jacob Bauer
  */
-public class ProcedureCall extends AbstractASTNode implements Statement {
+public class FunctionCall extends AbstractASTNode implements Expression {
 	private final Identifier procedureName;
-	private List<Expression> arguments;
+	private final List<Expression> arguments;
 
 	/**
 	 * Construct a ProcedureCall ast node starting at the given source Position,
 	 * with the specified procedure name and argument Expression.
 	 * 
 	 * @param start
-	 * @param procedureName
+	 * @param functionName
 	 * @param argument
 	 */
-	public ProcedureCall(Position start, Identifier procedureName, List<Expression> arguments) {
+        
+        public FunctionCall(Position start, Identifier procedureName, List<Expression> arguments) {
 		super(start);
 		this.procedureName = procedureName;
 		this.arguments = arguments;
 	}
 
-        public ProcedureCall(Position start, Identifier procedureName, Expression argument) { //for testing compilation
-	        this(start, procedureName);
-		this.arguments.add(argument);
-	}
-
-        public ProcedureCall(Position start, Identifier procedureName) {
+        public FunctionCall(Position start, Identifier procedureName) {
 		super(start);
 		this.procedureName = procedureName;
 		this.arguments = new ArrayList<>();
 	}
 
-	public Identifier getProcedureName() {
+	public Identifier getFunctionName() {
 		return procedureName;
 	}
 
 	public List<Expression> getArguments() {
 		return arguments;
 	}
-  
-	@Override
+
+        @Override
         public String toString(){
 	  StringBuilder mystring = new StringBuilder();
-	  mystring.append(getProcedureName().toString());
+	  mystring.append(getFunctionName().toString());
 	  mystring.append("( ");
 	  List <Expression> args = getArguments();
 	  for(int i = 0; i < args.size(); i++){
@@ -72,7 +67,7 @@ public class ProcedureCall extends AbstractASTNode implements Statement {
 	}
 
 	@Override
-	public <R> R acceptResult(StatementVisitor<R> visitor) {
+	public <R> R acceptResult(ExpressionVisitor<R> visitor) {
 		return visitor.visitResult(this);
 	}
 }

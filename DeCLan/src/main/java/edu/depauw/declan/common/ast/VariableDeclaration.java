@@ -1,5 +1,7 @@
 package edu.depauw.declan.common.ast;
 
+import java.lang.String;
+import java.lang.StringBuilder;
 import edu.depauw.declan.common.Position;
 
 /**
@@ -34,7 +36,15 @@ public class VariableDeclaration extends AbstractASTNode implements Declaration 
 	public Identifier getType() {
 		return type;
 	}
-
+        @Override
+        public String toString(){
+	  StringBuilder mystring = new StringBuilder();
+	  mystring.append(getIdentifier().toString());
+	  mystring.append(' ');
+	  mystring.append(getType().toString());
+	  mystring.append(';');
+	  return mystring.toString();
+        }
 	@Override
 	public void accept(ASTVisitor visitor) {
 		visitor.visit(this);

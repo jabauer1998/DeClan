@@ -3,6 +3,10 @@ package edu.depauw.declan.common.ast;
 import java.util.Stack;
 import java.util.HashMap;
 
+import java.lang.String;
+import java.lang.StringBuilder;
+
+
 /**
  *The environment class is used to create symbol tables for the Declan Compiler
  *The symbol tables are implemented using hashmaps and the scopes are implemented using stacks
@@ -51,6 +55,7 @@ public class Environment <TableType> {
 	}
 	return false;
     }
+  
     /**
      * The find Entry method tries to find the symbolname passed and it returns the data corresponding to the symbol
      * @param <code> symbolName </code> => String => the symbol name passed
@@ -74,5 +79,24 @@ public class Environment <TableType> {
 	HashMap<String, TableType> saved = environment.pop();
 	saved.put(name, description);
 	environment.push(saved);
+    }
+
+    /**
+    * To String
+    */
+
+    @Override
+    public String toString(){
+      StringBuilder mystring = new StringBuilder();
+      for(int i = environment.size() - 1; i >= 0; i--){
+	mystring.append("STACK LEVEL -> " + i + '\n');
+	HashMap<String, TableType> list = environment.get(i);
+	for(String key : list.keySet()){
+	  mystring.append("KEY: " + key + " VALUE: ");
+	  mystring.append(list.get(key).toString());
+	  mystring.append('\n');
+	}
+      }
+      return mystring.toString();
     }
 }

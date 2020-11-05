@@ -59,6 +59,11 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	}
 
         @Override
+	public void visit(ProcedureDeclaration constDecl) {
+	  
+	}
+
+        @Override
 	public void visit(VariableDeclaration varDecl) {
 	    //do nothing not supported yet
 	}
@@ -66,7 +71,7 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	@Override
 	public void visit(ProcedureCall procedureCall) {
 		if (procedureCall.getProcedureName().getLexeme().equals("PrintInt")) {
-			procedureCall.getArgument().accept(this);
+		        procedureCall.getArguments().get(0).accept(this);
 			out.println(accumulator.pop());
 		} else {
 			// Ignore all other procedure calls
@@ -74,8 +79,43 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	}
 
         @Override
+	public void visit(FunctionCall call) {
+	  
+	}
+
+        @Override
+	public void visit(IfElifBranch ifs){
+	  
+	}
+        
+        @Override
+	public void visit(ElseBranch ifs){
+	  
+	}
+        
+        @Override
+	public void visit(WhileElifBranch ifs){
+	  
+	}
+
+        @Override
+	public void visit(RepeatBranch repeatStatement){
+	  
+	}
+        
+        @Override
 	public void visit(Assignment assignment) {
 	    //do nothing this is not needed yet
+	}
+
+        @Override
+	public void visit(ForAssignment assignment) {
+	    
+	}
+
+        @Override
+	public void visit(ForBranch assignment) {
+	    
 	}
 
 	@Override
@@ -130,7 +170,7 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 
 	@Override
 	public void visit(Identifier identifier) {
-	    int value = Integer.parseInt(environment.get(identifier.getLexeme()).getValue());
+	    int value = environment.get(identifier.getLexeme()).getValue().intValue();
 	    accumulator.push(value);
 	}
 }

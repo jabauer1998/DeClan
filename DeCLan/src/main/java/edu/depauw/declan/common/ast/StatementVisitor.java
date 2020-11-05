@@ -15,5 +15,17 @@ public interface StatementVisitor<R> {
 
 	R visitResult(ProcedureCall procedureCall);
 
-        R visitResult(Assignment procedureCall);
+        R visitResult(Assignment Assignment);
+
+        R visitResult(ForAssignment Assignment);
+
+        R visitResult(ForBranch Assignment);
+
+        R visitResult(IfElifBranch ifs);
+
+        R visitResult(WhileElifBranch ifs);
+
+        R visitResult(ElseBranch ifs);
+
+        R visitResult(RepeatBranch ifs);
 }

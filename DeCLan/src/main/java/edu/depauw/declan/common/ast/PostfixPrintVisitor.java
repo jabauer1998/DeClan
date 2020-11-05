@@ -59,17 +59,40 @@ public class PostfixPrintVisitor implements ASTVisitor {
 		// Bind a numeric value to a constant identifier
 		Identifier id = constDecl.getIdentifier();
 		NumValue num = constDecl.getNumber();
-
 		environment.put(id.getLexeme(), num.getLexeme());
 	}
 
+        @Override
+	public void visit(ProcedureDeclaration procDecl) {
+	  
+	}
+        @Override
+	public void visit(IfElifBranch ifs){
+	  
+	}
+
+        @Override
+	public void visit(WhileElifBranch ifs){
+	  
+	}
+
+        @Override
+	public void visit(ElseBranch ifs){
+	  
+	}
+
+        @Override
+	public void visit(RepeatBranch ifs){
+	  
+	}
+  
 	@Override
 	public void visit(ProcedureCall procedureCall) {
 		// For Project 2, the only recognized procedure is "PrintInt", which
 		// takes a single INTEGER argument. The output first prints out the
 		// argument in postfix, and then prints the "PRINT" instruction.
 		if (procedureCall.getProcedureName().getLexeme().equals("PrintInt")) {
-			procedureCall.getArgument().accept(this);
+		        procedureCall.getArguments().get(0).accept(this);
 			out.println("PRINT");
 		} else {
 			// Ignore all other procedure calls
@@ -81,8 +104,18 @@ public class PostfixPrintVisitor implements ASTVisitor {
 		// Do nothing
 	}
 
-         @Override
+        @Override
 	public void visit(Assignment assignment) {
+	    
+	}
+
+        @Override
+	public void visit(ForAssignment assignment) {
+	    
+	}
+
+        @Override
+	public void visit(ForBranch assignment) {
 	    
 	}
         
@@ -134,6 +167,11 @@ public class PostfixPrintVisitor implements ASTVisitor {
 	public void visit(NumValue numValue) {
 		// Handle a NumValue leaf by simply printing it out.
 		out.println(numValue.getLexeme());
+	}
+
+        @Override
+	public void visit(FunctionCall fcall) {
+	  
 	}
 
 	@Override
