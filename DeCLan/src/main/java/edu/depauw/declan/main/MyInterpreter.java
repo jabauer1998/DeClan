@@ -32,6 +32,8 @@ import edu.depauw.declan.common.ast.Environment;
 
 import java.lang.Number;
 import java.lang.Math;
+import java.lang.String;
+import java.lang.StringBuilder;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -64,12 +66,21 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
     varEnvironment.removeScope();
     procEnvironment.removeScope();
   }
-
+  
+  private static String ifHexToInt(String lexeme){
+    if(lexeme.charAt(0) == '0' && lexeme.length() > 1 && !lexeme.contains(".")){ //is it a hex number
+      int value = (int)Long.parseLong(lexeme.substring(1, lexeme.length() - 1), 16);  
+      return ("" + value);
+    } else {
+      return lexeme; //else returninput it is fine
+    }
+  }
+  
   @Override
   public void visit(ConstDeclaration constDecl) {
     Identifier id = constDecl.getIdentifier();
     NumValue num = constDecl.getNumber();
-    varEnvironment.addEntry(id.getLexeme(), new VariableEntry("CONST", num.getLexeme()));
+    varEnvironment.addEntry(id.getLexeme(), new VariableEntry("CONST", ifHexToInt(num.getLexeme())));
   }
 
   @Override
@@ -428,7 +439,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 
   @Override
   public Number visitResult(NumValue numValue){
-    String lexeme = numValue.getLexeme();
+    String lexeme = ifHexToInt(numValue.getLexeme()); //change to hex if you need to otherwise unchanged
     if(lexeme.contains(".")){
       return Double.parseDouble(lexeme);
     } else {

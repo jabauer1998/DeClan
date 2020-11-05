@@ -25,11 +25,11 @@ public class Project3 {
 		                + "    RETURN X + Y\n"
 		                + "END ADD;"
 		                + "PROCEDURE MULT(VAR X : INTEGER; VAR Y : INTEGER) : INTEGER;\n"
-		                + "    RETURN 70 * 80\n"
+		                + "    RETURN X * Y\n"
 		                + "END MULT;"
 				+ "BEGIN\n"
 		                + "FOR I := 0 TO I < 20 BY 1 DO\n"
-		                + "  result := ADD(MULT(7, 10), seven);\n"
+		                + "  result := ADD(MULT(0FFH, 1), 0);\n"
 		                + "  PrintInt(result)\n"
 		                + "END\n"
 				+ "END.\n";
