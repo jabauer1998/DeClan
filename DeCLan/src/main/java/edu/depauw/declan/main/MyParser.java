@@ -299,14 +299,12 @@ public class MyParser implements Parser {
   private List<Statement> parseStatementSequence() {
     // TODO Auto-generated method stub
     List<Statement> statements = new ArrayList<>();
-    while(!(willMatch(TokenType.END) || willMatch(TokenType.UNTIL) || willMatch(TokenType.ELSIF) || willMatch(TokenType.ELSE) || willMatch(TokenType.RETURN))){
-      Statement s = parseStatement();
+    Statement s = parseStatement();
+    statements.add(s);
+    while(willMatch(TokenType.SEMI)){
+      skip();
+      s = parseStatement();
       statements.add(s);
-      if(willMatch(TokenType.END) || willMatch(TokenType.UNTIL) || willMatch(TokenType.ELSIF) || willMatch(TokenType.ELSE) || willMatch(TokenType.RETURN)){
-	break;
-      } else {
-	match(TokenType.SEMI);
-      }
     }
     return Collections.unmodifiableList(statements);
   }

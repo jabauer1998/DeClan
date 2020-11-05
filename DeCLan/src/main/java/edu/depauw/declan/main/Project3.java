@@ -15,6 +15,7 @@ import edu.depauw.declan.common.ast.Program;
  * 
  * @author bhoward
  */
+
 public class Project3 {
 	public static void main(String[] args) {
 		String demoSource =
@@ -27,10 +28,10 @@ public class Project3 {
 		                + "    RETURN 70 * 80\n"
 		                + "END MULT;"
 				+ "BEGIN\n"
-		                + "FOR VAR I := 0 TO I < 20 BY 1 DO\n"
-		                + "  result := ADD(MULT(5, 8), seven);\n"
+		                + "FOR I := 0 TO I < 20 BY 1 DO\n"
+		                + "  result := ADD(MULT(7, 10), seven);\n"
 		                + "  PrintInt(result)\n"
-		                + "END"
+		                + "END\n"
 				+ "END.\n";
 
 		Properties props = new Properties();
