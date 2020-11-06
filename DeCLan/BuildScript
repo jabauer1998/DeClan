@@ -88,7 +88,7 @@ function RUN_SRC
 {
     local LOCPATH="$(SLASH_TO_DOTS $RELPATH)"
     if [ "$TYPE" == "PROJECT1" ] || [ "$TYPE" == "ALL" ]; then
-       echo "Running Program1..."
+       echo "Running Project1..."
        echo "___________________PROJECT1_LOG___________________________"
        echo ""
        echo ""
@@ -109,7 +109,7 @@ function RUN_SRC
        echo ""
        echo "__________________________________________________________"
        echo ""
-       echo "Project 2 complete..."
+       echo "Project2 complete..."
     fi
     if [ "$TYPE" == "PROJECT3" ] || [ "$TYPE" == "ALL" ]; then
        echo "Running Project3..."
@@ -121,7 +121,19 @@ function RUN_SRC
        echo ""
        echo "__________________________________________________________"
        echo ""
-       echo "Project 3 complete..."
+       echo "Project3 complete..."
+    fi
+    if [ "$TYPE" == "PROJECT4" ] || [ "$TYPE" == "ALL" ]; then
+       echo "Running Project4..."
+       echo "___________________PROJECT3_LOG___________________________"
+       echo ""
+       echo ""
+       java -cp "$RELPATH/*:." $LOCPATH.Project4
+       echo ""
+       echo ""
+       echo "__________________________________________________________"
+       echo ""
+       echo "Project4 complete..."
     fi
     if [ "$TYPE" == "TEST" ] || [ "$TYPE" == "ALL" ]; then
        echo "Running Test Cases..."
@@ -133,14 +145,14 @@ function RUN_SRC
        echo ""
        echo "__________________________________________________________"
        echo ""
-       echo "Test cases complete..."
+       echo "Test Cases complete..."
     fi
 }
 
 
 
 if [[ $# -ne 1 ]]; then
-   echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "PROJECT2", "PROJECT3", "ALL", "BUILD", or "CLEAN"...'
+   echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "PROJECT2", "PROJECT3", "PROJECT4", "ALL", "BUILD", or "CLEAN"...'
    exit 1
 fi
 
@@ -158,7 +170,7 @@ elif [[ "$TYPE" == "BUILD" ]]; then
     RM_LIBS
     echo "Leaving Directory..."
     cd ../../../
-elif [ "$TYPE" == "TEST" ] || [ "$1" == "PROJECT1" ] || [ "$1" == "PROJECT2" ] || [ "$1" == "PROJECT3" ] || [ "$1" == "ALL" ]; then
+elif [ "$TYPE" == "TEST" ] || [ "$1" == "PROJECT1" ] || [ "$1" == "PROJECT2" ] || [ "$1" == "PROJECT3" ] || [ "$1" == "PROJECT4" ] || [ "$1" == "ALL" ]; then
     echo "Entering directory..."
     cd ./src/main/java
     SRC_CHECK
@@ -170,6 +182,6 @@ elif [ "$TYPE" == "TEST" ] || [ "$1" == "PROJECT1" ] || [ "$1" == "PROJECT2" ] |
     cd ../../../
 else
     echo "Invalid argument: $1"
-    echo 'You must specify only one argument and the argument can only be "TEST", "PROJECT1", "PROJECT2", "PROJECT3", "ALL", "BUILD" or "CLEAN"...'
+    echo 'You must specify only one argument and the argument can only be "TEST", "PROJECT1", "PROJECT2", "PROJECT3", "PROJECT4", "ALL", "BUILD" or "CLEAN"...'
     exit 1
 fi
