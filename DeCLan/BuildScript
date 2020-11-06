@@ -1,6 +1,7 @@
 #!/bin/bash
 #Created a Build Script to easily display the project results as well as run the program from the unix shell 
 #Author Jacob Bauer
+source ./BuildScript-completion.bash
 CURDIR="$(pwd)"
 FULLPATH="$CURDIR/src/main/java/edu/depauw/declan/main"
 RELPATH="edu/depauw/declan/main"
@@ -148,8 +149,6 @@ function RUN_SRC
        echo "Test Cases complete..."
     fi
 }
-
-
 
 if [[ $# -ne 1 ]]; then
    echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "PROJECT2", "PROJECT3", "PROJECT4", "ALL", "BUILD", or "CLEAN"...'
