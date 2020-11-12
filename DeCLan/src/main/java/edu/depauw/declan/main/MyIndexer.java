@@ -226,7 +226,9 @@ public class MyIndexer implements ASTVisitor {
 	public void visit(ProcedureCall procedureCall){
 	  Identifier id = procedureCall.getProcedureName();
 	  List<Expression> params = procedureCall.getArguments();
-	  printIndexMessage("USE", id.getStart(), id.getLexeme() + ", declared at " + procEnvironment.findEntry(id.getLexeme()).toString());
+	  if(procEnvironment.findEntry(id.getLexeme()) != null){
+	    printIndexMessage("USE", id.getStart(), id.getLexeme() + ", declared at " + procEnvironment.findEntry(id.getLexeme()).toString());
+	  }
 	  for(int i = 0; i < params.size(); i++){
 	    params.get(i).accept(this);
 	  }

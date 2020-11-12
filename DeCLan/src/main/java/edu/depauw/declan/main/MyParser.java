@@ -206,7 +206,7 @@ public class MyParser implements Parser {
     match(TokenType.PROCEDURE);
     Identifier procName = parseIdentifier();
     List<VariableDeclaration> fpSequence = new ArrayList<>();
-    Identifier returnType = null;
+    Identifier returnType = new Identifier(start, "VOID"); //defualt is no return Type
     // FormalParameters -> ( FPSection FPSectionSequence ) : Type
     // FormalParameters -> ( FPSection FPSectionSequence )
     // FormalParameters -> ( ) : Type

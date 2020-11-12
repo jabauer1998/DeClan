@@ -107,13 +107,13 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   @Override
   public void visit(ProcedureCall procedureCall) {
     if (procedureCall.getProcedureName().getLexeme().equals("PrintInt")) {
-      Number value = procedureCall.getArguments().get(0).acceptResult(this);
+      Number value = (Number)procedureCall.getArguments().get(0).acceptResult(this);
       OUT("" + value.intValue());
     } else if (procedureCall.getProcedureName().getLexeme().equals("PrintDouble")) {
-      Number value = procedureCall.getArguments().get(0).acceptResult(this);
+      Number value = (Number)procedureCall.getArguments().get(0).acceptResult(this);
       OUT("" + value.doubleValue());
     } else if(procedureCall.getProcedureName().getLexeme().equals("PrintString")) {
-      String value = procedureCall.getArguments().get(0).acceptResult(this);
+      String value = (String)procedureCall.getArguments().get(0).acceptResult(this);
       OUT(value);
     }else {
       String funcName = procedureCall.getProcedureName().getLexeme();
@@ -126,7 +126,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	  for(int i = 0; i < args.size(); i++){
 	    args.get(i).accept(this); //declare parameter variables 
 	    VariableEntry toChange = varEnvironment.findEntry(args.get(i).getIdentifier().getLexeme());
-	    Number variableValue = valArgs.get(i).acceptResult(this);
+	    Number variableValue = (Number)valArgs.get(i).acceptResult(this);
 	    toChange.setValue(variableValue);
 	  }
 	} else {
@@ -151,15 +151,13 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   @Override
   public void visit(WhileElifBranch whilebranch){
     Expression toCheck = whilebranch.getExpression();
-    if(toCheck.acceptResult(this).intValue() != 0){
+    if(((Number)toCheck.acceptResult(this)).intValue() != 0){
       List<Statement> toExec = whilebranch.getExecStatements();
       do {
-	varEnvironment.addScope();
 	for(int i = 0; i < toExec.size(); i++){
 	  toExec.get(i).accept(this);
 	}
-	varEnvironment.removeScope();
-      } while (toCheck.acceptResult(this).intValue() != 0);
+      } while (((Number)toCheck.acceptResult(this)).intValue() != 0);
     } else if (whilebranch.getNextBranch() != null){
       whilebranch.getNextBranch().accept(this);
     }
@@ -168,13 +166,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   @Override
   public void visit(IfElifBranch ifbranch){
     Expression toCheck = ifbranch.getExpression();
-    if(toCheck.acceptResult(this).intValue() != 0){
-      varEnvironment.addScope();
+    if(((Number)toCheck.acceptResult(this)).intValue() != 0){
       List<Statement> toExec = ifbranch.getExecStatements();
       for(int i = 0; i < toExec.size(); i++){
 	toExec.get(i).accept(this);
       }
-      varEnvironment.removeScope();
     } else if(ifbranch.getNextBranch() != null) {
       ifbranch.getNextBranch().accept(this);
     }
@@ -182,12 +178,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 
   @Override
   public void visit(ElseBranch elsebranch){
-    varEnvironment.addScope();
     List<Statement> toExec = elsebranch.getExecStatements();
     for(int i = 0; i < toExec.size(); i++){
       toExec.get(i).accept(this);
     }
-    varEnvironment.removeScope();
   }
 
   @Override
@@ -195,12 +189,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     Expression toCheck = repeatbranch.getExpression();
     List<Statement> toExec = repeatbranch.getExecStatements();
     do {
-      varEnvironment.addScope();
       for(int i = 0; i < toExec.size(); i++){
 	toExec.get(i).accept(this);
       }
-      varEnvironment.removeScope();
-    } while (toCheck.acceptResult(this).intValue() == 0); //keep going until statement is true
+    } while (((Number)toCheck.acceptResult(this)).intValue() == 0); //keep going until statement is true
   }
 
   @Override
@@ -208,16 +200,14 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     Expression toMod = forbranch.getModifyExpression();
     List<Statement> toExec = forbranch.getExecStatements();
     if(toMod != null){
-      Number incriment = toMod.acceptResult(this);
+      Number incriment = (Number)toMod.acceptResult(this);
       if(incriment instanceof Double){
 	varEnvironment.addScope();
 	forbranch.getInitAssignment().accept(this);
-	while(forbranch.getTargetExpression().acceptResult(this).intValue() != 0){
-	  varEnvironment.addScope();
+	while(((Number)forbranch.getTargetExpression().acceptResult(this)).intValue() != 0){
 	  for(int i = 0; i < toExec.size(); i++){
 	    toExec.get(i).accept(this);
 	  }
-	  varEnvironment.removeScope();
 	  VariableEntry entry = varEnvironment.findEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
 	  entry.setValue(entry.getValue().doubleValue() + incriment.doubleValue());
 	}
@@ -225,12 +215,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       } else {
 	varEnvironment.addScope();
 	forbranch.getInitAssignment().accept(this);
-	while(forbranch.getTargetExpression().acceptResult(this).intValue() != 0){
-	  varEnvironment.addScope();
+	while(((Number)forbranch.getTargetExpression().acceptResult(this)).intValue() != 0){
 	  for(int i = 0; i < toExec.size(); i++){
 	    toExec.get(i).accept(this);
 	  }
-	  varEnvironment.removeScope();
 	  VariableEntry entry = varEnvironment.findEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
 	  entry.setValue(entry.getValue().intValue() + incriment.intValue());
 	}
@@ -239,12 +227,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     } else {
       varEnvironment.addScope();
       forbranch.getInitAssignment().accept(this);
-      while(forbranch.getTargetExpression().acceptResult(this).intValue() != 0){
-	varEnvironment.addScope();
+      while(((Number)forbranch.getTargetExpression().acceptResult(this)).intValue() != 0){
 	for(int i = 0; i < toExec.size(); i++){
 	  toExec.get(i).accept(this);
 	}
-	varEnvironment.removeScope();
       }
       varEnvironment.removeScope();
     }
@@ -257,10 +243,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       VariableEntry entry = varEnvironment.findEntry(name);
       if(entry.getType() != VariableEntry.VarType.CONST){
 	if(entry.getType() == VariableEntry.VarType.REAL){
-	  Number value = assignment.getVariableValue().acceptResult(this);
+	  Number value = (Number)assignment.getVariableValue().acceptResult(this);
 	  entry.setValue(value.doubleValue());
 	} else if(entry.getType() == VariableEntry.VarType.INTEGER){
-	  Number value = assignment.getVariableValue().acceptResult(this);
+	  Number value = (Number)assignment.getVariableValue().acceptResult(this);
 	  entry.setValue(value.intValue());
 	}
       } else {
@@ -273,7 +259,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   @Override
   public void visit(ForAssignment assignment) {
     String name = assignment.getVariableName().getLexeme();
-    Number value = assignment.getVariableValue().acceptResult(this);
+    Number value = (Number)assignment.getVariableValue().acceptResult(this);
     if(value instanceof Double){
       String valueStr = "" + value.doubleValue();
       varEnvironment.addEntry(name, new VariableEntry("DOUBLE", valueStr));
@@ -313,9 +299,9 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   }
   
   @Override
-  public Number visitResult(BinaryOperation binaryOperation) {
-    Number leftValue = binaryOperation.getLeft().acceptResult(this);
-    Number rightValue = binaryOperation.getRight().acceptResult(this);
+  public Object visitResult(BinaryOperation binaryOperation) {
+    Number leftValue = (Number)binaryOperation.getLeft().acceptResult(this);
+    Number rightValue = (Number)binaryOperation.getRight().acceptResult(this);
     if(leftValue instanceof Double || rightValue instanceof Double){
       switch (binaryOperation.getOperator()) {
       case PLUS:
@@ -377,7 +363,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     //donotuse
   }
   @Override
-  public Number visitResult(FunctionCall funcCall) {
+  public Object visitResult(FunctionCall funcCall) {
     String funcName = funcCall.getFunctionName().getLexeme();
     ProcedureEntry fentry = procEnvironment.findEntry(funcName);
     List<VariableDeclaration> args = fentry.getArguments(); //fails here means fentry is returning null for some reason
@@ -387,7 +373,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       for(int i = 0; i < args.size(); i++){
 	args.get(i).accept(this); //declare parameter variables 
 	VariableEntry toChange = varEnvironment.findEntry(args.get(i).getIdentifier().getLexeme());
-	Number variableValue = valArgs.get(i).acceptResult(this);
+	Number variableValue = (Number)valArgs.get(i).acceptResult(this);
 	toChange.setValue(variableValue);
       }
     }
@@ -404,14 +390,14 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     if(fentry.getType() == ProcedureEntry.ProcType.VOID){
       FATAL("Return Type is Void it should be either Integer, Real, or Boolean");
     }
-    Number retValue = fentry.getReturnStatement().acceptResult(this);
+    Number retValue = (Number)fentry.getReturnStatement().acceptResult(this);
     varEnvironment.removeScope(); //clean up local declarations as well as parameters
     return retValue;
   }
 
   @Override
-  public Number visitResult(UnaryOperation unaryOperation) {
-    Number value = unaryOperation.getExpression().acceptResult(this);
+  public Object visitResult(UnaryOperation unaryOperation) {
+    Number value = (Number)unaryOperation.getExpression().acceptResult(this);
     if(value instanceof Double){
       switch (unaryOperation.getOperator()){
       case PLUS:
@@ -433,7 +419,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   }
     
   @Override
-  public Number visitResult(Identifier identifier){
+  public Object visitResult(Identifier identifier){
     VariableEntry ident = varEnvironment.findEntry(identifier.getLexeme());
     Number lexeme = ident.getValue();
     if(ident.getType() == VariableEntry.VarType.CONST){
@@ -455,7 +441,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   }
 
   @Override
-  public Number visitResult(NumValue numValue){
+  public Object visitResult(NumValue numValue){
     String lexeme = ifHexToInt(numValue.getLexeme()); //change to hex if you need to otherwise unchanged
     if(lexeme.contains(".")){
       return Double.parseDouble(lexeme);
@@ -465,7 +451,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   }
 
   @Override
-  public String visitResult(StrValue numValue){
+  public Object visitResult(StrValue numValue){
     return numValue.getLexeme();
   }
 }

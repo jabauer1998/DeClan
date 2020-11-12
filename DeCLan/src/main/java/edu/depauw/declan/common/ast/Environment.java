@@ -55,19 +55,6 @@ public class Environment <KeyType, TableType> {
 	}
 	return false;
     }
-    /**
-     * This method is used to check if a variable exists within the top scope only
-     * @param <code> symbolName </code> => String => the name of the symbol you want to find
-     * @author Jacob Bauer
-     */
-    public boolean entryExistsTopScope(KeyType symbolName){
-      HashMap<KeyType, TableType> current  = environment.peek();
-      if(current.containsKey(symbolName)){
-	return true;
-      } else {
-	return false;
-      }
-    }
   
     /**
      * The find Entry method tries to find the symbolname passed and it returns the data corresponding to the symbol
@@ -89,13 +76,9 @@ public class Environment <KeyType, TableType> {
      * 
      */
     public void addEntry(KeyType name, TableType description){
-      if(entryExistsTopScope(name)){
-	HashMap<KeyType, TableType> saved = environment.pop();
-	saved.put(name, description);
-	environment.push(saved);
-      } else {
-	//print error it doesnt exist in top scope
-      }
+      HashMap<KeyType, TableType> saved = environment.pop();
+      saved.put(name, description);
+      environment.push(saved);
     }
 
     /**
