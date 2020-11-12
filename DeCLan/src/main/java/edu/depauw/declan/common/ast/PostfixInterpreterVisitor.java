@@ -168,6 +168,11 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	    accumulator.push(value);
 	}
 
+        @Override
+	public void visit(StrValue numValue) {
+	   
+	}
+
 	@Override
 	public void visit(Identifier identifier) {
 	    int value = environment.get(identifier.getLexeme()).getValue().intValue();

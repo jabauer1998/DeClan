@@ -19,6 +19,7 @@ import edu.depauw.declan.common.ast.Branch;
 import edu.depauw.declan.common.ast.ExpressionVisitor;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.NumValue;
+import edu.depauw.declan.common.ast.StrValue;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.FunctionCall;
 import edu.depauw.declan.common.ast.Program;
@@ -30,7 +31,9 @@ import edu.depauw.declan.common.ast.VariableEntry;
 import edu.depauw.declan.common.ast.ProcedureEntry;
 import edu.depauw.declan.common.ast.Environment;
 
+
 import java.lang.Number;
+import java.lang.Object;
 import java.lang.Math;
 import java.lang.String;
 import java.lang.StringBuilder;
@@ -41,10 +44,10 @@ import java.util.List;
 
 import static edu.depauw.declan.common.MyIO.*;
 
-public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
+public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   private ErrorLog errorLog;
-  private Environment <VariableEntry> varEnvironment;
-  private Environment <ProcedureEntry> procEnvironment;
+  private Environment <String, VariableEntry> varEnvironment;
+  private Environment <String, ProcedureEntry> procEnvironment;
   // TODO declare any data structures needed by the interpreter
 	
   public MyInterpreter(ErrorLog errorLog) {
@@ -92,7 +95,13 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
 
   @Override
   public void visit(ProcedureDeclaration procDecl) {
-    procEnvironment.addEntry(procDecl.getProcedureName().getLexeme(), new ProcedureEntry(procDecl.getArguments(), procDecl.getReturnType().getLexeme(), procDecl.getLocalVariables(), procDecl.getExecutionStatements(), procDecl.getReturnStatement()));
+    String procedureName = procDecl.getProcedureName().getLexeme();
+    List <VariableDeclaration> args = procDecl.getArguments();
+    String returnType = procDecl.getReturnType().getLexeme();
+    List <Declaration> localVars = procDecl.getLocalVariables();
+    List <Statement> Exec = procDecl.getExecutionStatements();
+    Expression retExp = procDecl.getReturnStatement();
+    procEnvironment.addEntry(procedureName, new ProcedureEntry(args, returnType, localVars, Exec, retExp));
   }
         
   @Override
@@ -103,7 +112,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
     } else if (procedureCall.getProcedureName().getLexeme().equals("PrintDouble")) {
       Number value = procedureCall.getArguments().get(0).acceptResult(this);
       OUT("" + value.doubleValue());
-    } else {
+    } else if(procedureCall.getProcedureName().getLexeme().equals("PrintString")) {
+      String value = procedureCall.getArguments().get(0).acceptResult(this);
+      OUT(value);
+    }else {
       String funcName = procedureCall.getProcedureName().getLexeme();
       ProcedureEntry pentry = procEnvironment.findEntry(funcName);
       List<VariableDeclaration> args = pentry.getArguments();
@@ -291,6 +303,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
   }
 
   @Override
+  public void visit(StrValue numValue) {
+    // Not used
+  }
+
+  @Override
   public void visit(Identifier identifier) {
     // Not used
   }
@@ -445,5 +462,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Number> {
     } else {
       return Integer.parseInt(lexeme);
     }
+  }
+
+  @Override
+  public String visitResult(StrValue numValue){
+    return numValue.getLexeme();
   }
 }

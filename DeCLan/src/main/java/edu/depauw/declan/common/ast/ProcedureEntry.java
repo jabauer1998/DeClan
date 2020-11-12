@@ -5,6 +5,8 @@ import java.lang.StringBuilder;
 import java.util.List;
 import java.util.ArrayList;
 
+import edu.depauw.declan.common.Position;
+
 import static edu.depauw.declan.common.MyIO.*;
 
 public class ProcedureEntry{

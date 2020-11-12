@@ -18,6 +18,7 @@ import edu.depauw.declan.common.ast.ProcedureDeclaration;
 import edu.depauw.declan.common.ast.Declaration;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.NumValue;
+import edu.depauw.declan.common.ast.StrValue;
 import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
@@ -581,7 +582,7 @@ public class MyParser implements Parser {
       return BinaryOperation.OpType.MOD;
     }
   }
-  // Factor -> number | ident
+  // Factor -> number | ident | string
   // Factor -> ( Expression )
   private Expression parseFactor(){
     if(willMatch(TokenType.NUM)){
@@ -597,6 +598,8 @@ public class MyParser implements Parser {
       } else {
 	return parseIdentifier(id);
       }
+    } else if (willMatch(TokenType.STRING)){
+      return parseStrValue();
     } else {
       match(TokenType.LPAR);
       Expression expr = parseExpression();
@@ -621,6 +624,13 @@ public class MyParser implements Parser {
     Token num = match(TokenType.NUM);
     Position start = currentPosition;
     return new NumValue(start, num.getLexeme());
+  }
+
+  //number -> NUM
+  private StrValue parseStrValue() {
+    Token str = match(TokenType.STRING);
+    Position start = currentPosition;
+    return new StrValue(start, str.getLexeme());
   }
   //Number == true of false
   private NumValue parseBoolValue() {

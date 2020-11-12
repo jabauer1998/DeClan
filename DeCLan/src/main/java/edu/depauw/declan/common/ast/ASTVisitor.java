@@ -45,6 +45,8 @@ public interface ASTVisitor {
 
 	void visit(NumValue numValue);
 
+        void visit(StrValue numValue);
+
 	void visit(Identifier identifier);
 
         void visit(FunctionCall functionCall);

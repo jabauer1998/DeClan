@@ -170,6 +170,11 @@ public class PostfixPrintVisitor implements ASTVisitor {
 	}
 
         @Override
+	public void visit(StrValue numValue) {
+	       
+	}
+
+        @Override
 	public void visit(FunctionCall fcall) {
 	  
 	}

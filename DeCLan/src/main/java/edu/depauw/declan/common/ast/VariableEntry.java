@@ -5,11 +5,13 @@ import java.lang.StringBuilder;
 import java.lang.Number;
 
 import static edu.depauw.declan.common.MyIO.*;
+import edu.depauw.declan.common.Position;
 
 public class VariableEntry{
     
     private VarType typedef; //variable to store the type or CONST
     private Number value; //variable to store the current value of the variable
+    private Position declPosition; //where variable was declared
     
     public VariableEntry(String type, String value){
 	if(type.equals("CONST")){
@@ -41,7 +43,7 @@ public class VariableEntry{
     }
 
     public VariableEntry(String type){
-	this(type, "");
+      this(type, "");
     }
 
     @Override
