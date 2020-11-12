@@ -115,7 +115,9 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     } else if(procedureCall.getProcedureName().getLexeme().equals("PrintString")) {
       String value = (String)procedureCall.getArguments().get(0).acceptResult(this);
       OUT(value);
-    }else {
+    } else if(procedureCall.getProcedureName().getLexeme().equals("PrintLn")){
+      OUT("\n");
+    } else {
       String funcName = procedureCall.getProcedureName().getLexeme();
       ProcedureEntry pentry = procEnvironment.findEntry(funcName);
       List<VariableDeclaration> args = pentry.getArguments();

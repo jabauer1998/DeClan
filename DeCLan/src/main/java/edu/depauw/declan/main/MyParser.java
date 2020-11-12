@@ -347,7 +347,7 @@ public class MyParser implements Parser {
   //ElsifThenSequence ->
   private Branch parseIfBranch(){
     Position start = currentPosition;
-    Branch result = null;
+    Branch result;
     if(willMatch(TokenType.ELSIF)){
       skip();
       Expression exp = parseExpression();
@@ -381,9 +381,9 @@ public class MyParser implements Parser {
 
   //ElsifDoSequence -> ELSIF Expression DO StatementSequence ElsifDoSequence
   //ElsifDoSequence ->
-  private Branch parseWhileBranch(){
+  private WhileElifBranch parseWhileBranch(){
     Position start = currentPosition;
-    Branch result;
+    WhileElifBranch result;
     if(willMatch(TokenType.ELSIF)){
       skip();
       Expression exp = parseExpression();
