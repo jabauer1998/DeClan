@@ -2,88 +2,47 @@ package edu.depauw.declan.common.ast;
 
 import java.lang.String;
 import java.lang.StringBuilder;
-import java.lang.Number;
 
 import static edu.depauw.declan.common.MyIO.*;
 import edu.depauw.declan.common.Position;
 
 public class VariableEntry{
     
-    private VarType typedef; //variable to store the type or CONST
-    private Number value; //variable to store the current value of the variable
+    private Boolean CONST; //variable to store the type or CONST
+    private Object value; //variable to store the current value of the variable
     private Position declPosition; //where variable was declared
     
-    public VariableEntry(String type, String value){
-	if(type.equals("CONST")){
-	    this.typedef = VarType.CONST;
-	} else if(type.equals("REAL")){
-	    this.typedef = VarType.REAL;
-	} else if(type.equals("INTEGER")){
-	    this.typedef = VarType.INTEGER;
-	} else if(type.equals("BOOLEAN")){
-	    this.typedef = VarType.BOOLEAN;
+    public VariableEntry(Boolean CONST, String value){
+        this.CONST = CONST;
+	if(value.charAt(0) == '\"' && value.charAt(value.length() - 1) == '\"'){
+	  this.value = value.substring(1, value.length() - 1);
+	} else if (value.equals("TRUE")){
+	  this.value = true;
+	} else if (value.equals("FALSE")){
+	  this.value = false;
+	} else if(value.contains(".")) {
+	  this.value = Double.parseDouble(value);
+	} else if (!value.equals("")) {
+	  this.value = Integer.parseInt(value);
 	} else {
-	    FATAL("Unknown type: " + type);
-	}
-	if(!value.equals("")){
-	    if(typedef == VarType.CONST){
-		if(value.contains(".")){
-		    this.value = Double.parseDouble(value);
-		} else {
-		    this.value = Integer.parseInt(value);
-		}
-	    } else if(this.typedef == VarType.REAL) {
-		this.value = Double.parseDouble(value);
-	    } else {
-		this.value = Integer.parseInt(value);
-	    }
-	} else {
-	    this.value = null;
+	  this.value = null;
 	}
     }
 
-    public VariableEntry(String type){
-      this(type, "");
-    }
-
-    @Override
-    public String toString(){
-      StringBuilder mystring = new StringBuilder();
-      mystring.append("Var TYPE: ");
-      mystring.append(typeToString(getType()));
-      mystring.append("Cur VALUE: ");
-      mystring.append("" + getValue());
-      return mystring.toString();
+    public VariableEntry(){
+      this(false, "");
     }
     
-    public Number getValue(){
+    public Object getValue(){
 	if(value == null){
-	    FATAL("Value hasnt been initialized to a value yet");
+	    FATAL("Variable hast been initialized to any value yet");
 	}
 	return value;
     }
+  
     
-    public VarType getType(){
-	return typedef;
-    }
-    
-    public void setValue(Number value){
+    public void setValue(Object value){
 	this.value = value;
-    }
-
-    private String typeToString(VarType type){
-      if(type == VarType.INTEGER){
-	return "int";
-      } else if (type == VarType.BOOLEAN){
-	return "bool";
-      } else if (type == VarType.REAL){
-	return "real";
-      } else if (type == VarType.CONST){
-	return "const";
-      } else {
-	FATAL("Unknown vartype value: " + type);
-	return "";
-      }
     }
   
     public static enum VarType{

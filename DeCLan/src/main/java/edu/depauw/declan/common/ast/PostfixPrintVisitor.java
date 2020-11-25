@@ -175,6 +175,11 @@ public class PostfixPrintVisitor implements ASTVisitor {
 	}
 
         @Override
+	public void visit(BoolValue boolValue) {
+	       
+	}
+
+        @Override
 	public void visit(FunctionCall fcall) {
 	  
 	}

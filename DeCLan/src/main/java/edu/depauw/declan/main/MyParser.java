@@ -163,7 +163,6 @@ public class MyParser implements Parser {
     List<ConstDeclaration> constDecls = new ArrayList<>();
     if (willMatch(TokenType.CONST)) {
       skip();
-      // FIRST(ConstDecl) = ID
       while (willMatch(TokenType.ID)) {
 	ConstDeclaration constDecl = parseConstDecl();
 	constDecls.add(constDecl);
@@ -173,7 +172,8 @@ public class MyParser implements Parser {
     return Collections.unmodifiableList(constDecls);
   }
         
-  //VariableDecl -> IdentList : Type
+  //VariableDeclSequence -> VariableDecl ; VariableDeclSequence
+  //VariableDeclSequence ->
   private List<VariableDeclaration> parseVariableDeclSequence(){
     List<VariableDeclaration> varDecls = new ArrayList<>();
     while (willMatch(TokenType.VAR)) {
@@ -215,24 +215,27 @@ public class MyParser implements Parser {
       skip();
       // FPSectionSequence -> ; FPSection FPSectionSequence
       // FPSectionSequence ->
-      while(!willMatch(TokenType.RPAR)){
-	//FPSection -> VAR IdentList : Type
-	//FPSection -> IdentList : Type
+      // FPSection -> VAR IdentList : Type
+      // FPSection -> IdentList : Type
+      if(willMatch(TokenType.ID) || willMatch(TokenType.VAR)){
 	if(willMatch(TokenType.VAR)){
 	  skip();
 	}
 	List<VariableDeclaration> aSequence = parseVariableDecl();
 	fpSequence.addAll(aSequence);
-	if(willMatch(TokenType.SEMI)){
+	while(willMatch(TokenType.SEMI)){
 	  skip();
-	} else {
-	  break;
+	  if(willMatch(TokenType.VAR)){
+	    skip();
+	  }
+	  aSequence = parseVariableDecl();
+	  fpSequence.addAll(aSequence);
 	}
       }
       match(TokenType.RPAR);
       if(willMatch(TokenType.COLON)){
-	skip();
-	returnType = parseIdentifier();
+        skip();
+        returnType = parseIdentifier();
       }
     }
     match(TokenType.SEMI);
@@ -241,7 +244,7 @@ public class MyParser implements Parser {
     // ProcedureBody -> DeclSequence RETURN Expression END
     // ProcedureBody -> DeclSequence END
     List<Declaration> procDeclSequence = parseDeclarationSequence();
-    List<Statement> toExecute = null;
+    List<Statement> toExecute = new ArrayList<>();
     if(willMatch(TokenType.BEGIN)){
       skip();
       toExecute = parseStatementSequence();
@@ -254,7 +257,7 @@ public class MyParser implements Parser {
     match(TokenType.END);
     Identifier nameCheck = parseIdentifier();
     if(!nameCheck.getLexeme().equals(procName.getLexeme())){
-      FATAL("Expected -> identity at the end of the function declaration must be the same as the function name");
+      FATAL("Expected -> Identity Given at the end of Procedure Declaration ( " + nameCheck.getLexeme() + " ) is not equal to the Expected Procedure Declaration Name ( " + procName.getLexeme() + " )");
     }
     return new ProcedureDeclaration(start, procName, fpSequence, returnType, procDeclSequence, toExecute, retExpression);
   }
@@ -263,33 +266,32 @@ public class MyParser implements Parser {
   
   // ConstDecl -> ident = number
   private ConstDeclaration parseConstDecl() {
-    Position start = currentPosition;
     Identifier id = parseIdentifier();
     match(TokenType.EQ);
-    NumValue num = parseNumValue();
-    return new ConstDeclaration(start, id, num);
+    Expression num = parseNumValue();
+    return new ConstDeclaration(id.getStart(), id, num);
   }
-  //IdentList -> ident IdentListRest
-  //IdentListRest -> , ident IdentListRest
-  //IdentListRest ->
+
+  //VariableDecl -> IdentList : Type
   private List <VariableDeclaration> parseVariableDecl() {
-    Position start = currentPosition;
     List<Identifier> identList = new ArrayList<>();
-    while(!willMatch(TokenType.COLON)){
-      Token varname = match(TokenType.ID);
+    //IdentList -> ident IdentListRest
+    //IdentListRest -> , ident IdentListRest
+    //IdentListRest ->
+    Token varname = match(TokenType.ID);
+    identList.add(new Identifier(varname.getPosition(), varname.getLexeme()));
+    while(willMatch(TokenType.COMMA)){
+      skip();
+      varname = match(TokenType.ID);
       identList.add(new Identifier(varname.getPosition(), varname.getLexeme()));
-      if(!willMatch(TokenType.COMMA)){
-	match(TokenType.COLON);
-	break;
-      } else {
-	skip();
-      }
     }
+    match(TokenType.COLON);
     Token type = match(TokenType.ID);
     Identifier typeid = new Identifier(type.getPosition(), type.getLexeme());
     List <VariableDeclaration> varDecl = new ArrayList<>();
     for(int i = 0; i < identList.size(); i++){
-      varDecl.add(new VariableDeclaration(start, identList.get(i), typeid));
+      Identifier elem = identList.get(i);
+      varDecl.add(new VariableDeclaration(elem.getStart(), elem, typeid));
     }
     return Collections.unmodifiableList(varDecl);
   }
@@ -451,15 +453,12 @@ public class MyParser implements Parser {
   //ExpListRest ->
   private List<Expression> parseExpressionList(){
     List<Expression> expList = new ArrayList<Expression>();
-    while(!willMatch(TokenType.RPAR)){ //check if it is a factor or a term
-      Expression exp = parseExpression();
+    Expression exp = parseExpression();
+    expList.add(exp);
+    while(willMatch(TokenType.COMMA)){
+      skip();
+      exp = parseExpression();
       expList.add(exp);
-      if(willMatch(TokenType.COMMA)){
-	skip();
-	continue;
-      } else {
-	break;
-      }
     }
     return Collections.unmodifiableList(expList);
   }
@@ -467,7 +466,10 @@ public class MyParser implements Parser {
   //ActualParameters -> ( )
   private List<Expression> parseActualParameters(){
     match(TokenType.LPAR);
-    List<Expression> elist = parseExpressionList();
+    List<Expression> elist = new ArrayList<>();
+    if(!willMatch(TokenType.RPAR)){
+      elist = parseExpressionList();
+    }
     match(TokenType.RPAR);
     return Collections.unmodifiableList(elist);
   }
@@ -582,7 +584,7 @@ public class MyParser implements Parser {
       return BinaryOperation.OpType.MOD;
     }
   }
-  // Factor -> number | ident | string
+  // Factor -> number | ident | string | functioncall | TRUE | FALSE | ~FACTOR
   // Factor -> ( Expression )
   private Expression parseFactor(){
     if(willMatch(TokenType.NUM)){
@@ -600,6 +602,11 @@ public class MyParser implements Parser {
       }
     } else if (willMatch(TokenType.STRING)){
       return parseStrValue();
+    } else if (willMatch(TopkenType.NOT)){
+      Position start = currentPosition;
+      UnaryOperation.OpType not = parseUnaryOp();
+      Expression exp = parseFactor();
+      return new UnaryOperation(start, not, exp);
     } else {
       match(TokenType.LPAR);
       Expression expr = parseExpression();
@@ -626,14 +633,14 @@ public class MyParser implements Parser {
     return new NumValue(start, num.getLexeme());
   }
 
-  //number -> NUM
+  //string -> STRING
   private StrValue parseStrValue() {
     Token str = match(TokenType.STRING);
     Position start = currentPosition;
     return new StrValue(start, str.getLexeme());
   }
   //Number == true of false
-  private NumValue parseBoolValue() {
+  private BoolValue parseBoolValue() {
     if(willMatch(TokenType.TRUE)){
       skip();
       Position start = currentPosition;

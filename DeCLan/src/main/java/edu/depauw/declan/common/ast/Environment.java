@@ -57,17 +57,18 @@ public class Environment <KeyType, TableType> {
     }
   
     /**
-     * The find Entry method tries to find the symbolname passed and it returns the data corresponding to the symbol
+     * The get Entry method tries to find the symbolname passed and it returns the data corresponding to the symbol
      * @param <code> symbolName </code> => String => the symbol name passed
      * @author Jacob Bauer
      */
     
-    public TableType findEntry(String symbolName){
+    public TableType getEntry(KeyType symbolName){
 	for(HashMap<KeyType, TableType> current : environment){
 	    if(current.containsKey(symbolName)){
 		return current.get(symbolName);
 	    }
 	}
+	FATAL("Entry with key: " + symbolName.toString() + " Doesnt Exist!!!");
 	return null;
     }
 

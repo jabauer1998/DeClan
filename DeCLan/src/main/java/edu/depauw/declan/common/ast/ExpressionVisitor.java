@@ -19,6 +19,8 @@ public interface ExpressionVisitor<R> {
 
 	R visitResult(NumValue numValue);
 
+        R visitResult(BoolValue boolValue);
+
         R visitResult(StrValue numValue);
 
         R visitResult(FunctionCall function);

@@ -27,7 +27,7 @@ public class Project3 {
 				+ "  VAR c : INTEGER;\n"
 				+ "  BEGIN\n"
 				+ "    IF b = 0 THEN c := a\n"
-				+ "    ELSE c := gcd(b, a MOD b)\n"
+				+ "    ELSE c := gcd(b, a DIV b)\n"
 				+ "    END;\n"
 				+ "    RETURN c\n"
 				+ "  END gcd;\n"

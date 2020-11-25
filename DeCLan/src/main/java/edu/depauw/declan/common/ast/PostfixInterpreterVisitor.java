@@ -169,7 +169,12 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	}
 
         @Override
-	public void visit(StrValue numValue) {
+	public void visit(StrValue strValue) {
+	   
+	}
+
+        @Override
+	public void visit(BoolValue boolValue) {
 	   
 	}
 
