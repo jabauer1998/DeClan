@@ -22,13 +22,13 @@ public class BoolValue extends AbstractASTNode implements Expression {
 	 * @param start
 	 * @param lexeme
 	 */
-	public NumValue(Position start, String lexeme) {
+	public BoolValue(Position start, String lexeme) {
 		super(start);
 		this.lexeme = lexeme;
 	}
 
 	public String getLexeme() {
-		return lexeme;
+	    return lexeme;
 	}
 
         @Override

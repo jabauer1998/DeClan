@@ -58,7 +58,7 @@ public class PostfixPrintVisitor implements ASTVisitor {
 	public void visit(ConstDeclaration constDecl) {
 		// Bind a numeric value to a constant identifier
 		Identifier id = constDecl.getIdentifier();
-		NumValue num = constDecl.getNumber();
+		NumValue num = (NumValue)constDecl.getValue();
 		environment.put(id.getLexeme(), num.getLexeme());
 	}
 

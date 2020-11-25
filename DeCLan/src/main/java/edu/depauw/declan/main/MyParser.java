@@ -18,6 +18,7 @@ import edu.depauw.declan.common.ast.ProcedureDeclaration;
 import edu.depauw.declan.common.ast.Declaration;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.NumValue;
+import edu.depauw.declan.common.ast.BoolValue;
 import edu.depauw.declan.common.ast.StrValue;
 import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.Statement;
@@ -602,7 +603,7 @@ public class MyParser implements Parser {
       }
     } else if (willMatch(TokenType.STRING)){
       return parseStrValue();
-    } else if (willMatch(TopkenType.NOT)){
+    } else if (willMatch(TokenType.NOT)){
       Position start = currentPosition;
       UnaryOperation.OpType not = parseUnaryOp();
       Expression exp = parseFactor();
@@ -644,11 +645,11 @@ public class MyParser implements Parser {
     if(willMatch(TokenType.TRUE)){
       skip();
       Position start = currentPosition;
-      return new NumValue(start, "1");
+      return new BoolValue(start, "TRUE");
     } else if (willMatch(TokenType.FALSE)){
       skip();
       Position start = currentPosition;
-      return new NumValue(start, "0");
+      return new BoolValue(start, "FALSE");
     } else {
       FATAL("Expected True or False value to enter the function");
       return null;

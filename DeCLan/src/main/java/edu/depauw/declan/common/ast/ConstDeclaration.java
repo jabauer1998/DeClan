@@ -13,7 +13,7 @@ import java.lang.StringBuilder;
  */
 public class ConstDeclaration extends AbstractASTNode implements Declaration {
 	private final Identifier identifier;
-	private final NumValue number;
+	private final Expression value;
 
 	/**
 	 * Construct a ConstDecl ast node starting at the given source position, with
@@ -23,18 +23,24 @@ public class ConstDeclaration extends AbstractASTNode implements Declaration {
 	 * @param identifier
 	 * @param number
 	 */
-	public ConstDeclaration(Position start, Identifier identifier, NumValue number) {
+	public ConstDeclaration(Position start, Identifier identifier, Expression value) {
 		super(start);
 		this.identifier = identifier;
-		this.number = number;
+		this.value = value;
+	}
+
+        public ConstDeclaration(Position start, Identifier identifier, NumValue value) {
+	    super(start);
+	    this.identifier = identifier;
+	    this.value = value;
 	}
 
 	public Identifier getIdentifier() {
 		return identifier;
 	}
 
-	public NumValue getNumber() {
-		return number;
+	public Expression getValue() {
+		return value;
 	}
 
         @Override
@@ -43,7 +49,7 @@ public class ConstDeclaration extends AbstractASTNode implements Declaration {
 	  mystring.append("const ");
 	  mystring.append(identifier.toString());
 	  mystring.append(" = ");
-	  mystring.append(number.toString());
+	  mystring.append(value.toString());
 	  mystring.append(';');
 	  return mystring.toString();
 	}

@@ -1,8 +1,9 @@
 package edu.depauw.declan.common.ast;
 
+import static edu.depauw.declan.common.MyIO.*;
+
 import java.util.Stack;
 import java.util.HashMap;
-
 import java.lang.String;
 import java.lang.StringBuilder;
 

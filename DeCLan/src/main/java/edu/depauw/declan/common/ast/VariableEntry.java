@@ -11,22 +11,10 @@ public class VariableEntry{
     private Boolean CONST; //variable to store the type or CONST
     private Object value; //variable to store the current value of the variable
     private Position declPosition; //where variable was declared
-    
-    public VariableEntry(Boolean CONST, String value){
+
+    public VariableEntry(Boolean CONST, Object value){
         this.CONST = CONST;
-	if(value.charAt(0) == '\"' && value.charAt(value.length() - 1) == '\"'){
-	  this.value = value.substring(1, value.length() - 1);
-	} else if (value.equals("TRUE")){
-	  this.value = true;
-	} else if (value.equals("FALSE")){
-	  this.value = false;
-	} else if(value.contains(".")) {
-	  this.value = Double.parseDouble(value);
-	} else if (!value.equals("")) {
-	  this.value = Integer.parseInt(value);
-	} else {
-	  this.value = null;
-	}
+	this.value = value;
     }
 
     public VariableEntry(){

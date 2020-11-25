@@ -54,8 +54,8 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	public void visit(ConstDeclaration constDecl) {
 		// Bind a numeric value to a constant identifier
 		Identifier id = constDecl.getIdentifier();
-		NumValue num = constDecl.getNumber();
-		environment.put(id.getLexeme(), new VariableEntry("CONST", num.getLexeme()));
+		NumValue num = (NumValue)constDecl.getValue();
+		environment.put(id.getLexeme(), new VariableEntry(true, num.getLexeme()));
 	}
 
         @Override
@@ -180,7 +180,7 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 
 	@Override
 	public void visit(Identifier identifier) {
-	    int value = environment.get(identifier.getLexeme()).getValue().intValue();
+	    int value = (Integer)environment.get(identifier.getLexeme()).getValue();
 	    accumulator.push(value);
 	}
 }

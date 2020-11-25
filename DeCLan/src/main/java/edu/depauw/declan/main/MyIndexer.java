@@ -19,6 +19,7 @@ import edu.depauw.declan.common.ast.Branch;
 import edu.depauw.declan.common.ast.ExpressionVisitor;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.NumValue;
+import edu.depauw.declan.common.ast.BoolValue;
 import edu.depauw.declan.common.ast.StrValue;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.FunctionCall;
@@ -110,7 +111,6 @@ public class MyIndexer implements ASTVisitor {
 	@Override
 	public void visit(ConstDeclaration constDecl) {
 	  Identifier id = constDecl.getIdentifier();
-	  NumValue num = constDecl.getNumber();
 	  varEnvironment.addEntry(id.getLexeme(), id.getStart());
 	  printIndexMessage("DECL", id.getStart(), "CONST " + id.getLexeme());
 	}
@@ -226,8 +226,8 @@ public class MyIndexer implements ASTVisitor {
 	public void visit(ProcedureCall procedureCall){
 	  Identifier id = procedureCall.getProcedureName();
 	  List<Expression> params = procedureCall.getArguments();
-	  if(procEnvironment.findEntry(id.getLexeme()) != null){
-	    printIndexMessage("USE", id.getStart(), id.getLexeme() + ", declared at " + procEnvironment.findEntry(id.getLexeme()).toString());
+	  if(procEnvironment.getEntry(id.getLexeme()) != null){
+	    printIndexMessage("USE", id.getStart(), id.getLexeme() + ", declared at " + procEnvironment.getEntry(id.getLexeme()).toString());
 	  }
 	  for(int i = 0; i < params.size(); i++){
 	    params.get(i).accept(this);
@@ -256,6 +256,11 @@ public class MyIndexer implements ASTVisitor {
 	}
 
         @Override
+	public void visit(BoolValue numValue) {
+	    //do nothing
+	}
+
+        @Override
 	public void visit(StrValue numValue) {
 	    //do nothing
 	}
@@ -264,7 +269,7 @@ public class MyIndexer implements ASTVisitor {
 	public void visit(FunctionCall fcall) {
 	  Identifier id = fcall.getFunctionName();
 	  List<Expression> params = fcall.getArguments();
-	  printIndexMessage("USE", id.getStart(), id.getLexeme() + ", declared at " + procEnvironment.findEntry(id.getLexeme()).toString());
+	  printIndexMessage("USE", id.getStart(), id.getLexeme() + ", declared at " + procEnvironment.getEntry(id.getLexeme()).toString());
 	  for(int i = 0; i < params.size(); i++){
 	    params.get(i).accept(this);
 	  }
@@ -272,6 +277,6 @@ public class MyIndexer implements ASTVisitor {
 
 	@Override
 	public void visit(Identifier id){
-	  printIndexMessage("USE", id.getStart(), id.getLexeme() + ", declared at " + varEnvironment.findEntry(id.getLexeme()).toString());
+	  printIndexMessage("USE", id.getStart(), id.getLexeme() + ", declared at " + varEnvironment.getEntry(id.getLexeme()).toString());
 	}
 }
