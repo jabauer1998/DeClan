@@ -64,7 +64,7 @@ function BUILD_SRC
 	echo ""
 	cd "$RELPATH"
 	errors=""
-	if javac -cp \* ./*.java ../common/*.java ../test/*.java ../common/ast/*.java; then
+	if javac -cp \* ./*.java ../common/*.java ../test/*.java ../common/ast/*.java ../common/symboltable/*.java; then
 	    errors="PASS"
 	fi
 	echo ""

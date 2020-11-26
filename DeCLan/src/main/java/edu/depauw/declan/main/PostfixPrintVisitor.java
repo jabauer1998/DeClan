@@ -1,4 +1,32 @@
-package edu.depauw.declan.common.ast;
+package edu.depauw.declan.main;
+
+import edu.depauw.declan.common.ErrorLog;
+import edu.depauw.declan.common.ast.ASTVisitor;
+import edu.depauw.declan.common.ast.BinaryOperation;
+import edu.depauw.declan.common.ast.ConstDeclaration;
+import edu.depauw.declan.common.ast.VariableDeclaration;
+import edu.depauw.declan.common.ast.ProcedureDeclaration;
+import edu.depauw.declan.common.ast.Declaration;
+import edu.depauw.declan.common.ast.EmptyStatement;
+import edu.depauw.declan.common.ast.IfElifBranch;
+import edu.depauw.declan.common.ast.WhileElifBranch;
+import edu.depauw.declan.common.ast.ForBranch;
+import edu.depauw.declan.common.ast.Expression;
+import edu.depauw.declan.common.ast.ElseBranch;
+import edu.depauw.declan.common.ast.RepeatBranch;
+import edu.depauw.declan.common.ast.Branch;
+import edu.depauw.declan.common.ast.Identifier;
+import edu.depauw.declan.common.ast.NumValue;
+import edu.depauw.declan.common.ast.StrValue;
+import edu.depauw.declan.common.ast.BoolValue;
+import edu.depauw.declan.common.ast.ProcedureCall;
+import edu.depauw.declan.common.ast.FunctionCall;
+import edu.depauw.declan.common.ast.Program;
+import edu.depauw.declan.common.ast.UnaryOperation;
+import edu.depauw.declan.common.ast.Statement;
+import edu.depauw.declan.common.ast.Assignment;
+import edu.depauw.declan.common.ast.ForAssignment;
+
 
 import java.io.PrintWriter;
 import java.util.HashMap;

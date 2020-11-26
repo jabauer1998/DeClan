@@ -1,4 +1,4 @@
-package edu.depauw.declan.common.ast;
+package edu.depauw.declan.common.symboltable;
 
 import static edu.depauw.declan.common.MyIO.*;
 

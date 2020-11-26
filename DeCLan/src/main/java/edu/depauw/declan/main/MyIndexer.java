@@ -28,7 +28,8 @@ import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.ForAssignment;
-import edu.depauw.declan.common.ast.Environment;
+
+import edu.depauw.declan.common.symboltable.Environment;
 
 import java.lang.Number;
 import java.lang.Math;
@@ -73,7 +74,7 @@ public class MyIndexer implements ASTVisitor {
         private static String ifHexToInt(String lexeme){
 	  if(lexeme.charAt(0) == '0' && lexeme.length() > 1 && !lexeme.contains(".")){ //is it a hex number
 	    int value = (int)Long.parseLong(lexeme.substring(1, lexeme.length() - 1), 16);  
-	    return ("" + value);
+	    return "" + value;
 	  } else {
 	    return lexeme; //else returninput it is fine
 	  }

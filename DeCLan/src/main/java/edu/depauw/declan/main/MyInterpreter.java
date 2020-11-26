@@ -1,4 +1,3 @@
-
 package edu.depauw.declan.main;
 
 import edu.depauw.declan.common.ErrorLog;
@@ -28,9 +27,10 @@ import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.ForAssignment;
-import edu.depauw.declan.common.ast.VariableEntry;
-import edu.depauw.declan.common.ast.ProcedureEntry;
-import edu.depauw.declan.common.ast.Environment;
+
+import edu.depauw.declan.common.symboltable.VariableEntry;
+import edu.depauw.declan.common.symboltable.ProcedureEntry;
+import edu.depauw.declan.common.symboltable.Environment;
 
 
 import java.lang.Number;
