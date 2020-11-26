@@ -32,9 +32,4 @@ public class VariableEntry{
     public void setValue(Object value){
 	this.value = value;
     }
-  
-    public static enum VarType{
-	INTEGER, BOOLEAN, REAL, CONST
-    }
-    
 }
