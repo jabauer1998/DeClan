@@ -125,7 +125,7 @@ function RUN_SRC
     fi
     if [ "$TYPE" == "PROJECT4" ] || [ "$TYPE" == "ALL" ]; then
        echo "Running Project4..."
-       echo "___________________PROJECT3_LOG___________________________"
+       echo "___________________PROJECT4_LOG___________________________"
        echo ""
        echo ""
        java -cp "$RELPATH/*:." $LOCPATH.Project4

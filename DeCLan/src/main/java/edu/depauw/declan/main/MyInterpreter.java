@@ -41,6 +41,7 @@ import java.lang.StringBuilder;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 
 
 import static edu.depauw.declan.common.MyIO.*;
@@ -73,7 +74,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   
   private static String ifHexToInt(String lexeme){
     if(lexeme.charAt(0) == '0' && lexeme.length() > 1 && !lexeme.contains(".")){ //is it a hex number
-      int value = (int)Long.parseLong(lexeme.substring(1, lexeme.length() - 1), 16);  
+      Long value = Long.parseLong(lexeme.substring(1, lexeme.length() - 1), 16);  
       return ("" + value);
     } else {
       return lexeme; //else returninput it is fine
@@ -86,23 +87,33 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     Expression valueExpr = constDecl.getValue();
     if(valueExpr instanceof NumValue){
 	NumValue val = (NumValue)valueExpr;
-	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(true, ifHexToInt(val.getLexeme())));
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(true, Double.parseDouble(ifHexToInt(val.getLexeme()))));
     } else if (valueExpr instanceof BoolValue) {
 	BoolValue val = (BoolValue)valueExpr;
-	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(true, val.getLexeme()));
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(true, Boolean.parseBoolean(val.getLexeme())));
     } else if (valueExpr instanceof StrValue) {
 	StrValue val = (StrValue)valueExpr;
 	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(true, val.getLexeme()));
     } else {
-	    FATAL("Error invalid constant expression for constant " + id.getLexeme() + " AT " + id.getStart().toString());
+	    FATAL("Error invalid constant expression for constant " + id.getLexeme() + " at " + id.getStart().toString());
     }
   }
 
   @Override
   public void visit(VariableDeclaration varDecl) {
     Identifier id = varDecl.getIdentifier();
-    Identifier type = varDecl.getType();
-    varEnvironment.addEntry(id.getLexeme(), new VariableEntry());
+    String type = varDecl.getType().getLexeme();
+    if(type.equals("BOOLEAN")){
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, new Boolean(false)));
+    } else if (type.equals("DOUBLE")){
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, new Double(0)));
+    } else if (type.equals("STRING")){
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, new String("")));
+    } else if (type.equals("INTEGER")){
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, new Integer(0)));
+    } else {
+	FATAL("Variable " + id.getLexeme() + " is of unknown type " + type);
+    }
   }
 
   @Override
@@ -130,34 +141,35 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     } else if(procedureCall.getProcedureName().getLexeme().equals("PrintLn")){
 	OUT(""); //print a new line
     } else {
-      String funcName = procedureCall.getProcedureName().getLexeme();
-      ProcedureEntry pentry = procEnvironment.getEntry(funcName);
-      List<VariableDeclaration> args = pentry.getArguments();
-      varEnvironment.addScope();
-      if(args.size() > 0){
+	String funcName = procedureCall.getProcedureName().getLexeme();
+	ProcedureEntry pentry = procEnvironment.getEntry(funcName);
+	List<VariableDeclaration> args = pentry.getArguments();
 	List<Expression> valArgs = procedureCall.getArguments();
+	List<Object> valArgResults = new ArrayList<>();
+	for(Expression valArg : valArgs){
+	    Object result = valArg.acceptResult(this);
+	    valArgResults.add(result);
+	}
+	varEnvironment.addScope();
 	if(args.size() == valArgs.size()){
-	  for(int i = 0; i < args.size(); i++){
-	    args.get(i).accept(this); //declare parameter variables 
-	    VariableEntry toChange = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
-	    Object variableValue = valArgs.get(i).acceptResult(this);
-	    toChange.setValue(variableValue);
-	  }
+	    for(int i = 0; i < args.size(); i++){
+		args.get(i).accept(this); //declare parameter variables 
+		VariableEntry toChange = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
+		Object variableValue = valArgResults.get(i);
+		toChange.setValue(variableValue);
+	    }
 	} else {
-	  FATAL("Unexpected amount of arguments provided from Caller to Callie in Function " + procedureCall.getProcedureName().getLexeme());
+	    FATAL("Unexpected amount of arguments provided from Caller to Callie in Function " + procedureCall.getProcedureName().getLexeme());
 	}
-      }
-      List<Declaration> LocalDecl = pentry.getLocalVariables();
-      for(Declaration decl : LocalDecl){
-        decl.accept(this);
-      }
-      List<Statement> toExec = pentry.getExecList();
-      if(toExec.size() > 0){
+	List<Declaration> LocalDecl = pentry.getLocalVariables();
+	for(Declaration decl : LocalDecl){
+	    decl.accept(this);
+	}
+	List<Statement> toExec = pentry.getExecList();
 	for(Statement toDo : toExec){
-	  toDo.accept(this);
+	    toDo.accept(this);
 	}
-      }
-      varEnvironment.removeScope(); //clean up local declarations as well as parameters	
+	varEnvironment.removeScope(); //clean up local declarations as well as parameters	
     }
   }
 
@@ -255,14 +267,22 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     String name = assignment.getVariableName().getLexeme();
     if(varEnvironment.entryExists(name)){
       VariableEntry entry = varEnvironment.getEntry(name);
-      if(entry.getValue() instanceof Double){
+      if(entry.isConst()){
+	  FATAL("Variable " + assignment.getVariableName().getLexeme() + " at " + assignment.getVariableName().getStart() + " declared as const");
+      } else if(entry.getValue() instanceof Double){
 	  Object value = assignment.getVariableValue().acceptResult(this);
-	  entry.setValue(value);
+	  entry.setValue((Double)value);
       } else if(entry.getValue() instanceof Integer){
 	  Object value = assignment.getVariableValue().acceptResult(this);
-	  entry.setValue(value);
+	  entry.setValue((Integer)value);
+      } else if(entry.getValue() instanceof String){
+	  Object value = assignment.getVariableValue().acceptResult(this);
+	  entry.setValue((String)value);
+      } else if(entry.getValue() instanceof Boolean){
+	  Object value = assignment.getVariableValue().acceptResult(this);
+	  entry.setValue((Boolean)value);
       } else {
-	FATAL("Variable " + assignment.getVariableName().getLexeme() + " at " + assignment.getVariableName().getStart() + " declared as const");
+	  FATAL("Variable in Assignment " + name + " is of unknown DeClan type?");
       }
     } else {
       FATAL("Undeclared Variable " + assignment.getVariableName().getLexeme() + " at " + assignment.getVariableName().getStart());
@@ -273,11 +293,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     String name = assignment.getVariableName().getLexeme();
     Object value = assignment.getVariableValue().acceptResult(this);
     if(value instanceof Double){
-      String valueStr = "" + (Double)value;
-      varEnvironment.addEntry(name, new VariableEntry(false, valueStr));
+	varEnvironment.addEntry(name, new VariableEntry(false, (Double)value));
+    } else if (value instanceof Integer) {
+	varEnvironment.addEntry(name, new VariableEntry(false, (Integer)value));
     } else {
-      String valueStr = "" + (Integer)value;
-      varEnvironment.addEntry(name, new VariableEntry(false, valueStr));
+	FATAL("Variable in For Assignment " + name + " is of unknown DeClan type?");
     }
   }
   @Override
@@ -314,110 +334,156 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   public void visit(Identifier identifier) {
     // Not used
   }
+
+  @Override
+  public void visit(FunctionCall funcCall){
+    // Not used
+  }
   
   @Override
   public Object visitResult(BinaryOperation binaryOperation) {
     Object leftValue = binaryOperation.getLeft().acceptResult(this);
     Object rightValue = binaryOperation.getRight().acceptResult(this);
     if (leftValue instanceof Boolean && rightValue instanceof Boolean) {
-      switch(binaryOperation.getOperator()){
+	switch(binaryOperation.getOperator()){
 	case NE:
-	  return (Boolean)leftValue != (Boolean)rightValue;
+	    return (Boolean)leftValue != (Boolean)rightValue;
         case EQ:
-	  return (Boolean)leftValue == (Boolean)rightValue;
+	    return (Boolean)leftValue == (Boolean)rightValue;
         case AND:
-	  return (Boolean)leftValue && (Boolean)rightValue;
+	    return (Boolean)leftValue && (Boolean)rightValue;
         case OR:
-	  return (Boolean)leftValue || (Boolean)rightValue;
+	    return (Boolean)leftValue || (Boolean)rightValue;
 	}
-    } else if((leftValue instanceof Double && rightValue instanceof Integer) || (rightValue instanceof Double && leftValue instanceof Integer)){
-      switch (binaryOperation.getOperator()) {
-      case PLUS:
-	return (Double)leftValue + (Double)rightValue;
-      case MINUS:
-	return (Double)leftValue - (Double)rightValue;
-      case TIMES:
-	return (Double)leftValue * (Double)rightValue;
-      case DIVIDE:
-	return (Double)leftValue / (Double)rightValue;
-      case LT:
-	return (Double)leftValue < (Double)rightValue;
-      case GT:
-	return (Double)leftValue > (Double)rightValue;
-      case NE:
-	return (Double)leftValue != (Double)rightValue;
-      case EQ:
-	return (Double)leftValue == (Double)rightValue;
-      case GE:
-	return (Double)leftValue >= (Double)rightValue;
-      case LE:
-	return (Double)leftValue <= (Double)rightValue;
-      }
-    } else if (leftValue instanceof Integer && rightValue instanceof Integer) {
-      switch (binaryOperation.getOperator()) {
-      case PLUS:
-	return (Integer)leftValue + (Integer)rightValue;
-      case MINUS:
-	return (Integer)leftValue - (Integer)rightValue;
-      case TIMES:
-	return (Integer)leftValue * (Integer)rightValue;
-      case DIV:
-	return (Integer)((Integer)leftValue/(Integer)rightValue);
-      case DIVIDE:
-	return (Integer)leftValue / (Integer)rightValue;
-      case MOD:
-	return (Integer)leftValue % (Integer)rightValue;
-      case LT:
-	return (Integer)leftValue < (Integer)rightValue;
-      case GT:
-	return (Integer)leftValue > (Integer)rightValue;
-      case NE:
-	return (Integer)leftValue != (Integer)rightValue;
-      case EQ:
-	return (Integer)leftValue == (Integer)rightValue;
-      case GE:
-	return (Integer)leftValue >= (Integer)rightValue;
-      case LE:
-	return (Integer)leftValue <= (Integer)rightValue;
-      }
+    } else if((leftValue instanceof Double && rightValue instanceof Integer)){
+	switch (binaryOperation.getOperator()) {
+	case PLUS:
+	    return (Double)leftValue + (Integer)rightValue;
+	case MINUS:
+	    return (Double)leftValue - (Integer)rightValue;
+	case TIMES:
+	    return (Double)leftValue * (Integer)rightValue;
+	case DIVIDE:
+	    return (Double)leftValue / (Integer)rightValue;
+	case DIV:
+	    return (int)((Double)leftValue/(Integer)rightValue);
+	case LT:
+	    return (Double)leftValue < (Integer)rightValue;
+	case GT:
+	    return (Double)leftValue > (Integer)rightValue;
+	case GE:
+	    return (Double)leftValue >= (Integer)rightValue;
+	case LE:
+	    return (Double)leftValue <= (Integer)rightValue;
+	}
+    } else if (rightValue instanceof Double && leftValue instanceof Integer) {
+	switch (binaryOperation.getOperator()) {
+	case PLUS:
+	    return (Integer)leftValue + (Double)rightValue;
+	case MINUS:
+	    return (Integer)leftValue - (Double)rightValue;
+	case TIMES:
+	    return (Integer)leftValue * (Double)rightValue;
+	case DIV:
+	    return (int)((Integer)leftValue/(Double)rightValue);
+	case DIVIDE:
+	    return (Integer)leftValue / (Double)rightValue;
+	case LT:
+	    return (Integer)leftValue < (Double)rightValue;
+	case GT:
+	    return (Integer)leftValue > (Double)rightValue;
+	case GE:
+	    return (Integer)leftValue >= (Double)rightValue;
+	case LE:
+	    return (Integer)leftValue <= (Double)rightValue;
+	}
+    } else if (leftValue instanceof Double && rightValue instanceof Double) {
+	switch (binaryOperation.getOperator()) {
+	case PLUS:
+	    return (Double)leftValue + (Double)rightValue;
+	case MINUS:
+	    return (Double)leftValue - (Double)rightValue;
+	case TIMES:
+	    return (Double)leftValue * (Double)rightValue;
+	case DIV:
+	    return (int)((Double)leftValue/(Double)rightValue);
+	case DIVIDE:
+	    return (Double)leftValue / (Double)rightValue;
+	case MOD:
+	    return (Double)leftValue % (Double)rightValue;
+	case LT:
+	    return (Double)leftValue < (Double)rightValue;
+	case GT:
+	    return (Double)leftValue > (Double)rightValue;
+	case NE:
+	    return (Double)leftValue != (Double)rightValue;
+	case EQ:
+	    return (Double)leftValue == (Double)rightValue;
+	case GE:
+	    return (Double)leftValue >= (Double)rightValue;
+	case LE:
+	    return (Double)leftValue <= (Double)rightValue;
+	}
+    } else if (rightValue instanceof Integer && leftValue instanceof Integer) {
+	switch (binaryOperation.getOperator()) {
+	case PLUS:
+	    return (Integer)leftValue + (Integer)rightValue;
+	case MINUS:
+	    return (Integer)leftValue - (Integer)rightValue;
+	case TIMES:
+	    return (Integer)leftValue * (Integer)rightValue;
+	case DIV:
+	    return (int)((Integer)leftValue/(Integer)rightValue);
+	case DIVIDE:
+	    return (Integer)leftValue/(Integer)rightValue;
+	case LT:
+	    return (Integer)leftValue < (Integer)rightValue;
+	case GT:
+	    return (Integer)leftValue > (Integer)rightValue;
+	case NE:
+	    return (Integer)leftValue != (Integer)rightValue;
+	case EQ:
+	    return (Integer)leftValue == (Integer)rightValue;
+	case GE:
+	    return (Integer)leftValue >= (Integer)rightValue;
+	case LE:
+	    return (Integer)leftValue <= (Integer)rightValue;
+	}
     } else {
-      FATAL("Unknown Operation Performed");
+      FATAL("Unknown Operation Performed between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName());
     }
     return null;
   }
 
   @Override
-  public void visit(FunctionCall funcCall){
-    //donotuse
-  }
-  @Override
   public Object visitResult(FunctionCall funcCall) {
     String funcName = funcCall.getFunctionName().getLexeme();
     ProcedureEntry fentry = procEnvironment.getEntry(funcName);
     List<VariableDeclaration> args = fentry.getArguments();
+    List<Expression> valArgs = funcCall.getArguments();
+    List<Object> valArgResults = new ArrayList<>();
+    for(Expression valArg : valArgs){
+	Object result = valArg.acceptResult(this);
+	valArgResults.add(result);
+    }
     varEnvironment.addScope();
-    if(args.size() > 0){
-      List<Expression> valArgs = funcCall.getArguments();
-      if(args.size() == valArgs.size()){
-	for(int i = 0; i < args.size(); i++){
-	  args.get(i).accept(this); //declare parameter variable
-	  VariableEntry toChange = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
-	  Number variableValue = (Number)valArgs.get(i).acceptResult(this);
-	  toChange.setValue(variableValue);
-	}
-      } else {
-	FATAL("Unexpected amount of arguments provided from Caller to Callie in Function " + funcCall.getFunctionName().getLexeme());
+    if(args.size() == valArgs.size()){
+      for(int i = 0; i < args.size(); i++){
+	args.get(i).accept(this); //declare parameter variable
+	VariableEntry toChange = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
+	Object variableValue = valArgResults.get(i);
+	toChange.setValue(variableValue);
       }
+    } else {
+      FATAL("Unexpected amount of arguments provided from Caller to Callie in Function " + funcCall.getFunctionName().getLexeme());
     }
     List<Declaration> LocalDecl = fentry.getLocalVariables();
     for(Declaration decl : LocalDecl){
       decl.accept(this);
     }
     List<Statement> toExec = fentry.getExecList();
-    if(toExec.size() > 0){
-      for(Statement toDo : toExec){
-	toDo.accept(this);
-      }
+    for(Statement toDo : toExec){
+      toDo.accept(this);
     }
     if(fentry.getType() == ProcedureEntry.ProcType.VOID){
       FATAL("Return Type is Void it should be either INTEGER, REAL, or BOOLEAN");
@@ -460,7 +526,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     if(value != null){
       return value;
     } else {
-      FATAL("Identifier wasnt found in the table");
+      FATAL("Identifier " + identifier.getLexeme() + " wasnt found in the table");
       return null;
     }
   }

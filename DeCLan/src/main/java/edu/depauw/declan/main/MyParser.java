@@ -162,9 +162,9 @@ public class MyParser implements Parser {
   // ConstDeclSequence ->
   private List<ConstDeclaration> parseConstDeclSequence(){
     List<ConstDeclaration> constDecls = new ArrayList<>();
-    if (willMatch(TokenType.CONST)) {
+    if (willMatch(TokenType.CONST)){
       skip();
-      while (willMatch(TokenType.ID)) {
+      while(willMatch(TokenType.ID)){
 	ConstDeclaration constDecl = parseConstDecl();
 	constDecls.add(constDecl);
 	match(TokenType.SEMI);
@@ -528,9 +528,7 @@ public class MyParser implements Parser {
     }
     return left;
   }
-  //
-  // Expression -> + Term ExprRest
-  // Expression -> - Term ExprRest
+    
   private UnaryOperation.OpType parseUnaryOp() {
     if(willMatch(TokenType.PLUS)){
       skip();
