@@ -1,12 +1,13 @@
-# CSC426 Public Repository ~ ***IMPORTANT UPDATE => PROJECT3*** ~ PLEASE READ <br><br>
+# CSC426 Public Repository ~ ***IMPORTANT UPDATE => PROJECT4*** ~ PLEASE READ <br><br>
 I made several important edits to my buildscript to build project 3. I made it executable so the command is different now. I also removed the sh. See below...<br><br>
-**There are 7 tasks available:**<br><br>
+**There are 8 tasks available:**<br><br>
 
 *CLEAN => cleans up all of the .class files in the directory* <br>
 *BUILD => builds the src in the directory but doesnt run anything*<br>
 *PROJECT1 => builds and runs project1*<br>
 *PROJECT2 => builds and runs project2*<br>
 *PROJECT3 => builds and runs project3*<br>
+*PROJECT4 => builds and runs project4*<br>
 *TEST => builds and runs the junit testcases*<br>
 *ALL => buids and runs the project file aswell as the junit testcases*<br><br>
 
