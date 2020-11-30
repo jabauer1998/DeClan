@@ -7,7 +7,6 @@ import edu.depauw.declan.common.ParseException;
 import edu.depauw.declan.common.Parser;
 import edu.depauw.declan.common.ast.ASTVisitor;
 import edu.depauw.declan.common.ast.Program;
-import edu.depauw.declan.model.ReferenceIndexer;
 
 /**
  * Main class for Project 4 -- Full parser and indexer for DeCLan (Fall 2020).
@@ -60,8 +59,7 @@ public class Project4 {
 
 		try (Parser parser = config.getParser()) {
 			Program program = parser.parseProgram();
-			// TODO replace the ReferenceIndexer with your own visitor object
-			ASTVisitor indexer = new ReferenceIndexer(config.getErrorLog());
+			ASTVisitor indexer = new MyIndexer();
 			program.accept(indexer);
 		} catch (ParseException pe) {
 			System.err.println(pe.getMessage());

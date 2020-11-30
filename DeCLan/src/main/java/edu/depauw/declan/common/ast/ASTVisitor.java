@@ -36,14 +36,16 @@ public interface ASTVisitor {
 
         void visit(Assignment assignment);
 
-        void visit(ForAssignment assignment);
-
 	// Expressions
 	void visit(UnaryOperation unaryOperation);
 
 	void visit(BinaryOperation binaryOperation);
 
 	void visit(NumValue numValue);
+
+        void visit(BoolValue boolValue);
+
+        void visit(StrValue numValue);
 
 	void visit(Identifier identifier);
 

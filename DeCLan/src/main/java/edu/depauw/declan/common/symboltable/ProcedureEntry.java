@@ -1,9 +1,15 @@
-package edu.depauw.declan.common.ast;
+package edu.depauw.declan.common.symboltable;
 
 import java.lang.String;
 import java.lang.StringBuilder;
 import java.util.List;
 import java.util.ArrayList;
+
+import edu.depauw.declan.common.Position;
+import edu.depauw.declan.common.ast.VariableDeclaration;
+import edu.depauw.declan.common.ast.Declaration;
+import edu.depauw.declan.common.ast.Statement;
+import edu.depauw.declan.common.ast.Expression;
 
 import static edu.depauw.declan.common.MyIO.*;
 

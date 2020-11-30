@@ -17,11 +17,11 @@ import edu.depauw.declan.common.ParseException;
 import edu.depauw.declan.common.Parser;
 import edu.depauw.declan.common.ReaderSource;
 import edu.depauw.declan.common.Source;
-import edu.depauw.declan.common.ast.PostfixPrintVisitor;
 import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.model.ReferenceLexer;
 import edu.depauw.declan.model.ReferenceParser;
 import edu.depauw.declan.main.MyParser;
+import edu.depauw.declan.main.PostfixPrintVisitor;
 
 class MyParserTest {
 

@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ParseException;
 import edu.depauw.declan.common.Parser;
-import edu.depauw.declan.common.StackSolver;
-import edu.depauw.declan.common.ast.PostfixPrintVisitor;
-import edu.depauw.declan.common.ast.PostfixInterpreterVisitor;
 import edu.depauw.declan.common.ast.Program;
+
+import edu.depauw.declan.main.StackSolver;
 
 /**
  * Main class for Project 2 -- Parser for a subset of DeCLan (Fall 2020). Parse

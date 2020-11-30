@@ -1,4 +1,4 @@
-package edu.depauw.declan.common;
+package edu.depauw.declan.main;
 
 import java.util.ArrayList;
 import java.util.Stack;
