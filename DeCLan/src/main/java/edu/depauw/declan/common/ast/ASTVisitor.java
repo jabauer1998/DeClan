@@ -36,8 +36,6 @@ public interface ASTVisitor {
 
         void visit(Assignment assignment);
 
-        void visit(ForAssignment assignment);
-
 	// Expressions
 	void visit(UnaryOperation unaryOperation);
 

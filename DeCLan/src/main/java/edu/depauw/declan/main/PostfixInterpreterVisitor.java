@@ -25,7 +25,6 @@ import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
-import edu.depauw.declan.common.ast.ForAssignment;
 
 import edu.depauw.declan.common.symboltable.VariableEntry;
 
@@ -135,11 +134,6 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
         @Override
 	public void visit(Assignment assignment) {
 		//do nothing this is not needed yet
-	}
-
-        @Override
-	public void visit(ForAssignment assignment) {
-	    	//do nothing this is not needed yet
 	}
 
         @Override

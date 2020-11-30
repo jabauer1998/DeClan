@@ -10,6 +10,7 @@ package edu.depauw.declan.common.ast;
  * 
  * @author bhoward
  */
+
 public interface StatementVisitor<R> {
 	R visitResult(EmptyStatement emptyStatement);
 
@@ -17,15 +18,13 @@ public interface StatementVisitor<R> {
 
         R visitResult(Assignment Assignment);
 
-        R visitResult(ForAssignment Assignment);
-
-        R visitResult(ForBranch Assignment);
+        R visitResult(ForBranch forbranch);
 
         R visitResult(IfElifBranch ifs);
 
-        R visitResult(WhileElifBranch ifs);
+        R visitResult(WhileElifBranch wloop);
 
-        R visitResult(ElseBranch ifs);
+        R visitResult(ElseBranch ebranch);
 
-        R visitResult(RepeatBranch ifs);
+        R visitResult(RepeatBranch repeatbranch);
 }

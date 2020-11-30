@@ -27,7 +27,6 @@ import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
-import edu.depauw.declan.common.ast.ForAssignment;
 
 import edu.depauw.declan.common.symboltable.Environment;
 
@@ -195,7 +194,7 @@ public class MyIndexer implements ASTVisitor {
 
         @Override
 	public void visit(ForBranch branch){
-	  ForAssignment fassign = branch.getInitAssignment();
+	  Assignment fassign = branch.getInitAssignment();
 	  Expression texp = branch.getTargetExpression();
 	  Expression mexp = branch.getModifyExpression();
           List<Statement> toDo = branch.getExecStatements();
@@ -205,14 +204,6 @@ public class MyIndexer implements ASTVisitor {
 	  for(int i = 0; i < toDo.size(); i++){
 	    toDo.get(i).accept(this);
 	  }
-	}
-
-        @Override
-	public void visit(ForAssignment assignment) {
-	  Identifier id = assignment.getVariableName();
-	  Expression exp = assignment.getVariableValue();
-	  id.accept(this);
-	  exp.accept(this);
 	}
 
         @Override

@@ -25,7 +25,6 @@ import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
-import edu.depauw.declan.common.ast.ForAssignment;
 
 
 import java.io.PrintWriter;
@@ -134,11 +133,6 @@ public class PostfixPrintVisitor implements ASTVisitor {
 
         @Override
 	public void visit(Assignment assignment) {
-	    
-	}
-
-        @Override
-	public void visit(ForAssignment assignment) {
 	    
 	}
 

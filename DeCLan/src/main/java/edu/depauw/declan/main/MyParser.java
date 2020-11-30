@@ -23,7 +23,6 @@ import edu.depauw.declan.common.ast.StrValue;
 import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
-import edu.depauw.declan.common.ast.ForAssignment;
 import edu.depauw.declan.common.ast.EmptyStatement;
 import edu.depauw.declan.common.ast.ElseBranch;
 import edu.depauw.declan.common.ast.IfElifBranch;
@@ -49,7 +48,6 @@ import static edu.depauw.declan.common.MyIO.*;
 public class MyParser implements Parser {
   private Lexer lexer;
   private ErrorLog errorLog;
-
   /**
    * Holds the current Token from the Lexer, or null if at end of file
    */
@@ -427,7 +425,7 @@ public class MyParser implements Parser {
     Position start = currentPosition;
     match(TokenType.FOR);
     Identifier parseIdent = parseIdentifier();
-    ForAssignment assign = new ForAssignment(parseAssignment(parseIdent));
+    Assignment assign = parseAssignment(parseIdent);
     match(TokenType.TO);
     Expression toCheck = parseExpression();
     Expression toChange = null;

@@ -6,11 +6,11 @@ import java.lang.StringBuilder;
 import edu.depauw.declan.common.Position;
 
 public class ForBranch extends Branch implements Statement {
-    private final ForAssignment initAssign;
+    private final Assignment initAssign;
     private final Expression toCheck;
     private final Expression toMod;
     
-    public ForBranch(Position start, ForAssignment initAssign, Expression toCheck, Expression toMod, List<Statement> toExecute){
+    public ForBranch(Position start, Assignment initAssign, Expression toCheck, Expression toMod, List<Statement> toExecute){
       super(start, toExecute);
       this.toCheck = toCheck;
       this.initAssign = initAssign;
@@ -29,7 +29,7 @@ public class ForBranch extends Branch implements Statement {
       return toMod;
     }
 
-    public ForAssignment getInitAssignment(){
+    public Assignment getInitAssignment(){
       return initAssign;
     }
   

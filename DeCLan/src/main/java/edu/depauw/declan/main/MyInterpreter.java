@@ -26,7 +26,6 @@ import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.Assignment;
-import edu.depauw.declan.common.ast.ForAssignment;
 
 import edu.depauw.declan.common.symboltable.VariableEntry;
 import edu.depauw.declan.common.symboltable.ProcedureEntry;
@@ -77,7 +76,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       Long value = Long.parseLong(lexeme.substring(1, lexeme.length() - 1), 16);  
       return ("" + value);
     } else {
-      return lexeme; //else returninput it is fine
+      return lexeme; //else return input it is fine
     }
   }
   
@@ -85,15 +84,15 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   public void visit(ConstDeclaration constDecl) {
     Identifier id = constDecl.getIdentifier();
     Expression valueExpr = constDecl.getValue();
-    if(valueExpr instanceof NumValue){
-	NumValue val = (NumValue)valueExpr;
-	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(true, Double.parseDouble(ifHexToInt(val.getLexeme()))));
-    } else if (valueExpr instanceof BoolValue) {
-	BoolValue val = (BoolValue)valueExpr;
-	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(true, Boolean.parseBoolean(val.getLexeme())));
-    } else if (valueExpr instanceof StrValue) {
-	StrValue val = (StrValue)valueExpr;
-	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(true, val.getLexeme()));
+    Object value = valueExpr.acceptResult(this);
+    if(value instanceof Integer){
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(true, (Integer)value));
+    } else if (value instanceof Boolean) {
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(true, (Boolean)value));
+    } else if (value instanceof String) {
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(true, (String)value));
+    } else if(value instanceof Double) {
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(true, (Double)value));
     } else {
 	    FATAL("Error invalid constant expression for constant " + id.getLexeme() + " at " + id.getStart().toString());
     }
@@ -228,37 +227,40 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     if(toMod != null){
       Object incriment = toMod.acceptResult(this);
       if(incriment instanceof Double){
-	varEnvironment.addScope();
 	forbranch.getInitAssignment().accept(this);
-	while((Boolean)forbranch.getTargetExpression().acceptResult(this)){
+	Object target = forbranch.getTargetExpression().acceptResult(this);
+	Object curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme()).getValue();
+	while((Double)target != (Double)curvalue){
 	  for(int i = 0; i < toExec.size(); i++){
 	    toExec.get(i).accept(this);
 	  }
 	  VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
 	  entry.setValue((Double)entry.getValue() + (Double)incriment);
+	  curvalue = entry.getValue();
 	}
-	varEnvironment.removeScope();
       } else {
-	varEnvironment.addScope();
 	forbranch.getInitAssignment().accept(this);
-	while((Boolean)forbranch.getTargetExpression().acceptResult(this)){
+	Object target = forbranch.getTargetExpression().acceptResult(this);
+	Object curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme()).getValue();
+	while((Integer)target != (Integer)curvalue){
 	  for(int i = 0; i < toExec.size(); i++){
 	    toExec.get(i).accept(this);
 	  }
 	  VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
 	  entry.setValue((Integer)entry.getValue() + (Integer)incriment);
+	  curvalue = entry.getValue();
 	}
-	varEnvironment.removeScope();
       }
     } else {
-      varEnvironment.addScope();
       forbranch.getInitAssignment().accept(this);
-      while((Boolean)forbranch.getTargetExpression().acceptResult(this)){
+      Object target = forbranch.getTargetExpression().acceptResult(this);
+      Object curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme()).getValue();
+      while((Integer)target != (Integer)curvalue){
 	for(int i = 0; i < toExec.size(); i++){
 	  toExec.get(i).accept(this);
 	}
+	curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme()).getValue();
       }
-      varEnvironment.removeScope();
     }
   }
         
@@ -288,22 +290,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       FATAL("Undeclared Variable " + assignment.getVariableName().getLexeme() + " at " + assignment.getVariableName().getStart());
     }
   }
-  @Override
-  public void visit(ForAssignment assignment) {
-    String name = assignment.getVariableName().getLexeme();
-    Object value = assignment.getVariableValue().acceptResult(this);
-    if(value instanceof Double){
-	varEnvironment.addEntry(name, new VariableEntry(false, (Double)value));
-    } else if (value instanceof Integer) {
-	varEnvironment.addEntry(name, new VariableEntry(false, (Integer)value));
-    } else {
-	FATAL("Variable in For Assignment " + name + " is of unknown DeClan type?");
-    }
-  }
+  
   @Override
   public void visit(EmptyStatement emptyStatement) {
-    // TODO Auto-generated method stub
-
+    // Not used
   }
   @Override
   public void visit(UnaryOperation unaryOperation) {
@@ -354,6 +344,9 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	    return (Boolean)leftValue && (Boolean)rightValue;
         case OR:
 	    return (Boolean)leftValue || (Boolean)rightValue;
+	default:
+	    FATAL("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName());
+	    return null;
 	}
     } else if((leftValue instanceof Double && rightValue instanceof Integer)){
 	switch (binaryOperation.getOperator()) {
@@ -368,13 +361,16 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	case DIV:
 	    return (int)((Double)leftValue/(Integer)rightValue);
 	case LT:
-	    return (Double)leftValue < (Integer)rightValue;
+	    return (Boolean)((Double)leftValue < (Integer)rightValue);
 	case GT:
-	    return (Double)leftValue > (Integer)rightValue;
+	    return (Boolean)((Double)leftValue > (Integer)rightValue);
 	case GE:
-	    return (Double)leftValue >= (Integer)rightValue;
+	    return (Boolean)((Double)leftValue >= (Integer)rightValue);
 	case LE:
-	    return (Double)leftValue <= (Integer)rightValue;
+	    return (Boolean)((Double)leftValue <= (Integer)rightValue);
+	default:
+	    FATAL("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName());
+	    return null;
 	}
     } else if (rightValue instanceof Double && leftValue instanceof Integer) {
 	switch (binaryOperation.getOperator()) {
@@ -389,13 +385,16 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	case DIVIDE:
 	    return (Integer)leftValue / (Double)rightValue;
 	case LT:
-	    return (Integer)leftValue < (Double)rightValue;
+	    return (Boolean)((Integer)leftValue < (Double)rightValue);
 	case GT:
-	    return (Integer)leftValue > (Double)rightValue;
+	    return (Boolean)((Integer)leftValue > (Double)rightValue);
 	case GE:
-	    return (Integer)leftValue >= (Double)rightValue;
+	    return (Boolean)((Integer)leftValue >= (Double)rightValue);
 	case LE:
-	    return (Integer)leftValue <= (Double)rightValue;
+	    return (Boolean)((Integer)leftValue <= (Double)rightValue);
+	default:
+	    FATAL("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName());
+	    return null;
 	}
     } else if (leftValue instanceof Double && rightValue instanceof Double) {
 	switch (binaryOperation.getOperator()) {
@@ -406,23 +405,26 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	case TIMES:
 	    return (Double)leftValue * (Double)rightValue;
 	case DIV:
-	    return (int)((Double)leftValue/(Double)rightValue);
+	    return (int)((Double)leftValue / (Double)rightValue);
 	case DIVIDE:
 	    return (Double)leftValue / (Double)rightValue;
 	case MOD:
 	    return (Double)leftValue % (Double)rightValue;
 	case LT:
-	    return (Double)leftValue < (Double)rightValue;
+	    return (Boolean)((Double)leftValue < (Double)rightValue);
 	case GT:
-	    return (Double)leftValue > (Double)rightValue;
+	    return (Boolean)((Double)leftValue > (Double)rightValue);
 	case NE:
-	    return (Double)leftValue != (Double)rightValue;
+	    return (Boolean)((Double)leftValue != (Double)rightValue);
 	case EQ:
-	    return (Double)leftValue == (Double)rightValue;
+	    return (Boolean)((Double)leftValue == (Double)rightValue);
 	case GE:
-	    return (Double)leftValue >= (Double)rightValue;
+	    return (Boolean)((Double)leftValue >= (Double)rightValue);
 	case LE:
-	    return (Double)leftValue <= (Double)rightValue;
+	    return (Boolean)((Double)leftValue <= (Double)rightValue);
+	default:
+	    FATAL("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName());
+	    return null;
 	}
     } else if (rightValue instanceof Integer && leftValue instanceof Integer) {
 	switch (binaryOperation.getOperator()) {
@@ -433,26 +435,29 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	case TIMES:
 	    return (Integer)leftValue * (Integer)rightValue;
 	case DIV:
-	    return (int)((Integer)leftValue/(Integer)rightValue);
+	    return (int)((Integer)leftValue / (Integer)rightValue);
 	case DIVIDE:
-	    return (Integer)leftValue/(Integer)rightValue;
+	    return (Integer)leftValue / (Integer)rightValue;
 	case LT:
-	    return (Integer)leftValue < (Integer)rightValue;
+	    return (Boolean)((Integer)leftValue < (Integer)rightValue);
 	case GT:
-	    return (Integer)leftValue > (Integer)rightValue;
+	    return (Boolean)((Integer)leftValue > (Integer)rightValue);
 	case NE:
-	    return (Integer)leftValue != (Integer)rightValue;
+	    return (Boolean)((Integer)leftValue != (Integer)rightValue);
 	case EQ:
-	    return (Integer)leftValue == (Integer)rightValue;
+	    return (Boolean)((Integer)leftValue == (Integer)rightValue);
 	case GE:
-	    return (Integer)leftValue >= (Integer)rightValue;
+	    return (Boolean)((Integer)leftValue >= (Integer)rightValue);
 	case LE:
-	    return (Integer)leftValue <= (Integer)rightValue;
+	    return (Boolean)((Integer)leftValue <= (Integer)rightValue);
+	default:
+	    FATAL("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName());
+	    return null;
 	}
     } else {
-      FATAL("Unknown Operation Performed between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName());
+      FATAL("Operation of Unknown Type of " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName());
+      return null;
     }
-    return null;
   }
 
   @Override
@@ -504,6 +509,8 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	return value;
       case MINUS:
 	return -(Double)value;
+      default:
+	return null;
       }
     } else if (value instanceof Integer) {
       switch (unaryOperation.getOperator()){
@@ -511,12 +518,14 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	return value;
       case MINUS:
 	return -(Integer)value;
+      default:
+	FATAL("Unexpected operator in unary operation of type " + value.getClass().getSimpleName());
+	return null;
       }
     } else {
       FATAL("Unexpected type in unary operation");
       return null;
     }
-    return null;
   }
     
   @Override
