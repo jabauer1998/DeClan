@@ -256,7 +256,7 @@ public class MyParser implements Parser {
     match(TokenType.END);
     Identifier nameCheck = parseIdentifier();
     if(!nameCheck.getLexeme().equals(procName.getLexeme())){
-      FATAL("Expected -> Identity Given at the end of Procedure Declaration ( " + nameCheck.getLexeme() + " ) is not equal to the Expected Procedure Declaration Name ( " + procName.getLexeme() + " )");
+	errorLog.add("Expected -> Identity Given at the end of Procedure Declaration ( " + nameCheck.getLexeme() + " ) is not equal to the Expected Procedure Declaration Name ( " + procName.getLexeme() + " )", start);
     }
     return new ProcedureDeclaration(start, procName, fpSequence, returnType, procDeclSequence, toExecute, retExpression);
   }
@@ -362,7 +362,7 @@ public class MyParser implements Parser {
     } else if (willMatch(TokenType.END)) {
       result = null;
     } else {
-      FATAL("Expected ELSIF, END or ELSE token toward the end of if statement");
+      errorLog.add("Expected ELSIF, END or ELSE token toward the end of if statement", start);
       result = null;
     }
     return result;
@@ -647,7 +647,8 @@ public class MyParser implements Parser {
       Position start = currentPosition;
       return new BoolValue(start, "FALSE");
     } else {
-      FATAL("Expected True or False value to enter the function");
+      Position start = currentPosition;
+      errorLog.add("Expected True or False value to enter the function", start);
       return null;
     }
   }

@@ -35,7 +35,7 @@ public class MyLexer implements Lexer {
 			scanNext();
 		}
 		if (nextToken == null) {
-		    FATAL("No more tokens");
+		    System.err.println("No more tokens");
 		}
 		Token result = nextToken;
 		nextToken = null;
@@ -92,7 +92,6 @@ public class MyLexer implements Lexer {
 				    continue;
 				} else {
 				    position = source.getPosition();
-				    ERROR("Unrecognized character " + c + " at " + position);
 				    errorLog.add("Unrecognized character " + c, position);
 				    source.advance();
 				    continue;
@@ -161,7 +160,6 @@ public class MyLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
-				ERROR("Unterminated hex literal " + lexeme.toString() + " at " + position); //print error
 				errorLog.add("Unterminated hex literal " + lexeme.toString(), position);
 				lexeme.setLength(0); //clear string builder buffer
 				state = State.INIT;
@@ -180,7 +178,6 @@ public class MyLexer implements Lexer {
 					state = State.EXP; //go to exp state
 					continue;
 				    } else {
-					ERROR("Missing exponent in real literal " + lexeme.toString() + " at " + position); //print error and go to next token
 					errorLog.add("Missing exponent in real literal " + lexeme.toString(), position);
 					lexeme.setLength(0);
 					state = state.INIT;
@@ -190,7 +187,6 @@ public class MyLexer implements Lexer {
 				    state = State.EXP;
 				    continue;
 				} else {
-				    ERROR("Missing exponent in real literal " + lexeme.toString() + " at " + position); //print error and go to next token
 				    errorLog.add("Missing exponent in real literal " + lexeme.toString(), position);
 				    lexeme.setLength(0);
 				    state = State.INIT;
@@ -265,12 +261,10 @@ public class MyLexer implements Lexer {
 		    nextToken = Token.createId(lexeme.toString(), position);
 		    return;
 	        case STRING:
-		    ERROR("Unterminated string literal at end of file");
 		    errorLog.add("Unterminated string literal at end of file", position);
 		    nextToken = null;
 		    return;
 		case COMMENT:
-		    ERROR("Unterminated comment at end of file");
 		    errorLog.add("Unterminated comment at end of file", position);
 		    nextToken = null;
 		    return;

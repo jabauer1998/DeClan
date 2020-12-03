@@ -20,7 +20,7 @@ public class MyIO{
 	@return the red text
 	@author Jacob Bauer
      */
-    private static String BOLDRED(String message){
+    public static String BOLDRED(String message){
 	return "\u001b[31;1m" + message + "\u001b[0m";
     }
     /** Changes the color of the text to Grey
@@ -28,11 +28,11 @@ public class MyIO{
 	@return the grey text
 	@author Jacob Bauer
      */
-    private static String BOLDGREY(String message){
+    public static String BOLDGREY(String message){
 	return "\u001b[30;1m" + message + "\u001b[0m";
     }
     
-    private static  boolean DEBUG_ENABLED = false;
+    public static  boolean DEBUG_ENABLED = false;
 
     /**
        This function enables debuuging in a section of code by setting <code> DEBUG_ENABLED </code> to true
@@ -67,26 +67,5 @@ public class MyIO{
 	if(DEBUG_ENABLED){
 	    OUT(BOLDPURPLE("DBG") + ' ' + BOLDGREY("=>") + ' ' + message);
 	}
-    }
-
-    /**
-       Prints an error message out to the console
-       @param <code> message </code> error  message to print out
-       @author Jacob Bauer
-     */
-    
-    public static void ERROR(String message){
-	OUT(BOLDRED("ERROR") + ' ' + BOLDGREY("=>") + ' ' + message);
-    }
-
-     /**
-       Prints an error message out to the console and terminates the program
-       @param <code> message </code> error  message to print out
-       @author Jacob Bauer
-     */
-    
-    public static void FATAL(String message){
-	OUT(BOLDRED("FATAL-ERROR") + ' ' + BOLDGREY("=>") + ' ' + message);
-	System.exit(1);
     }
 };

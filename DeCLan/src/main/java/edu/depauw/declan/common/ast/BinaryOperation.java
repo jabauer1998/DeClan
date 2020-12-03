@@ -102,11 +102,8 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 	    return ">=";
 	  } else if (op == OpType.NE){
 	    return "!=";
-	  } else if (op == OpType.EQ){
-	    return "==";
 	  } else {
-	    FATAL("Error no operator found");
-	    return null;
+	    return "==";
 	  }
         }
 }

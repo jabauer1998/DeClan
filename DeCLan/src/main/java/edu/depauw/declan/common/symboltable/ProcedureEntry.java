@@ -107,11 +107,8 @@ public class ProcedureEntry{
 	return "bool";
       } else if (proc == ProcType.REAL){
 	return "double";
-      } else if (proc == ProcType.VOID){
-	return "void";
       } else {
-	FATAL("Unknown return type value: " + proc);
-	return "";
+	return "void";
       }
     }
 }

@@ -74,11 +74,8 @@ public class UnaryOperation extends AbstractASTNode implements Expression {
 	    return "+";
 	  } else if (op == OpType.MINUS){
 	    return "-";
-	  } else if (op == OpType.NOT){
-	    return "!";
 	  } else {
-	    FATAL("Error Unary OpType Not Found");
-	    return null;
+	    return "!";
 	  }
         }
 }
