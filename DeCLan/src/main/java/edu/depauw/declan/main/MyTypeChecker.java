@@ -99,10 +99,10 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerT
 	Identifier id = constDecl.getIdentifier();
 	Expression valueExpr = constDecl.getValue();
 	TypeCheckerTypes value = valueExpr.acceptResult(this);
-	if(!varEnvironment.entryExists(id.getLexeme())){
+	if(!varEnvironment.inScope(id.getLexeme())){
 	    varEnvironment.addEntry(id.getLexeme(), value);
 	} else {
-	    errorLog.add("Variable " + id.getLexeme() + " within scope already declared", constDecl.getStart());
+	    errorLog.add("Constant " + id.getLexeme() + " within scope already declared", id.getStart());
 	}
     }
 
@@ -110,10 +110,10 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerT
     public void visit(VariableDeclaration varDecl) {
 	Identifier id = varDecl.getIdentifier();
 	String type = varDecl.getType().getLexeme();
-	if(!varEnvironment.entryExists(id.getLexeme())){
+	if(!varEnvironment.inScope(id.getLexeme())){
 	    varEnvironment.addEntry(id.getLexeme(), StringToType(type));
 	} else {
-	    errorLog.add("Variable " + id.getLexeme() + " within scope already declared", varDecl.getStart());
+	    errorLog.add("Multiple Declaration of Variable " + id.getLexeme(), id.getStart());
 	}
     }
 
@@ -135,10 +135,12 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerT
 		exe.accept(this);
 	    }
 	    Expression retExp = procDecl.getReturnStatement();
-	    TypeCheckerTypes type = retExp.acceptResult(this);
 	    String returnType = procDecl.getReturnType().getLexeme();
-	    if(StringToType(returnType) != type){
-		errorLog.add("Return Expression is not of type " + returnType, procDecl.getStart());
+	    if(!returnType.equals("VOID")){
+		TypeCheckerTypes type = retExp.acceptResult(this);
+		if(StringToType(returnType) != type){
+		    errorLog.add("Return Expression is not of type " + returnType, procDecl.getStart());
+		}
 	    }
 	    varEnvironment.removeScope();
 	    procEnvironment.addEntry(procedureName, new ProcedureEntry(args, returnType, localVars, Exec, retExp));
@@ -199,7 +201,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerT
     public void visit(WhileElifBranch whilebranch){
 	Expression toCheck = whilebranch.getExpression();
 	if(toCheck.acceptResult(this) != TypeCheckerTypes.BOOLEAN){
-	    errorLog.add("Invalid Boolean Expression in While Loop", whilebranch.getStart());
+	    errorLog.add("Invalid Boolean Expression in While Loop", toCheck.getStart());
 	}
 	List<Statement> toExec = whilebranch.getExecStatements();
 	for(int i = 0; i < toExec.size(); i++){
@@ -359,7 +361,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerT
 	} else if ((leftValue == TypeCheckerTypes.REAL || rightValue == TypeCheckerTypes.REAL) && (op == BinaryOperation.OpType.DIVIDE)) {
 	    return TypeCheckerTypes.REAL;
 	} else if((leftValue == rightValue) && (op == BinaryOperation.OpType.LT || op == BinaryOperation.OpType.LE || op == BinaryOperation.OpType.GE || op == BinaryOperation.OpType.GT)){
-	    return leftValue;
+	    return TypeCheckerTypes.BOOLEAN;
 	} else if ((leftValue == TypeCheckerTypes.REAL && rightValue == TypeCheckerTypes.INTEGER) || (rightValue == TypeCheckerTypes.REAL && leftValue == TypeCheckerTypes.INTEGER)){
 	    return TypeCheckerTypes.REAL;
 	} else if (leftValue == TypeCheckerTypes.INTEGER && rightValue == TypeCheckerTypes.INTEGER) {

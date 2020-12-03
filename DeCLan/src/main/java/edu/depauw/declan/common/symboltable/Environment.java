@@ -56,6 +56,17 @@ public class Environment <KeyType, TableType> {
 	}
 	return false;
     }
+    /**
+     * This method is used to check if a variable exists within the current scope
+     * @param <code> symbolName </code> => String => the name of the symbol you want to find
+     * @author Jacob Bauer
+     */
+    public boolean inScope(KeyType symbolName){
+	HashMap<KeyType, TableType> list = environment.pop();
+	boolean tf = list.containsKey(symbolName);
+	environment.push(list);
+	return tf;
+    }
   
     /**
      * The get Entry method tries to find the symbolname passed and it returns the data corresponding to the symbol
