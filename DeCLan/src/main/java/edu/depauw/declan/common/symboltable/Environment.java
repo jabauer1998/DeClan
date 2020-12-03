@@ -69,7 +69,6 @@ public class Environment <KeyType, TableType> {
 		return current.get(symbolName);
 	    }
 	}
-	ERROR("Entry with key: " + symbolName.toString() + " Doesnt Exist!!!");
 	return null;
     }
 

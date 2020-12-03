@@ -7,51 +7,45 @@ import edu.depauw.declan.common.ParseException;
 import edu.depauw.declan.common.Parser;
 import edu.depauw.declan.common.ast.ASTVisitor;
 import edu.depauw.declan.common.ast.Program;
+import edu.depauw.declan.model.ReferenceChecker;
 
 /**
- * Main class for Project 4 -- Full parser and indexer for DeCLan (Fall 2020).
- * Parse a program, then print out an index of identifier declarations and uses.
+ * Main class for Project 5 -- Typechecker for larger subset of DeCLan (Fall 2020).
+ * Parse a program, then check for type errors.
  * 
  * @author bhoward
  */
-public class Project4 {
+public class Project5 {
 	public static void main(String[] args) {
 		String demoSource =
 				  "(* Declare some constants and a global variable *)\n"
 				+ "CONST six = 6; seven = 7;\n"
 				+ "VAR answer : INTEGER;\n"
-				+ "(* Define a function *)\n"
-				+ "PROCEDURE gcd(a: INTEGER; b: INTEGER): INTEGER;\n"
-				+ "  VAR c : INTEGER;\n"
-				+ "  BEGIN\n"
-				+ "    IF b = 0 THEN c := a\n"
-				+ "    ELSE c := gcd(b, a DIV b)\n"
-				+ "    END;\n"
-				+ "    RETURN c\n"
-				+ "  END gcd;\n"
 				+ "(* Define a proper procedure *)\n"
-				+ "PROCEDURE Display(VAR answer: INTEGER; a, b: INTEGER);\n"
-				+ "  VAR i : INTEGER;\n"
+				+ "PROCEDURE Display(answer: INTEGER; a, b: INTEGER; x: REAL);\n"
+				+ "  VAR i, j : INTEGER;\n"
 				+ "  BEGIN\n"
+				+ "    j := answer;\n"
 				+ "    FOR i := a TO b BY -1 DO\n"
-				+ "      PrintInt(answer); PrintLn;\n"
-				+ "      WHILE answer > i DO answer := answer - 1\n"
-				+ "      ELSIF answer < i DO answer := answer + 1\n"
+				+ "      PrintInt(j); PrintLn();\n"
+				+ "      WHILE j > i DO j := j - 1\n"
+				+ "      ELSIF j < i DO j := j + 1\n"
 				+ "      END\n"
-				+ "    END\n"
+				+ "    END;\n"
+				+ "    ASSERT(j = b, \"something went wrong\");\n"
+				+ "    PrintReal(x); PrintLn()\n"
 				+ "  END Display;\n"
 				+ "(*********** Main Program ***********)\n"
 				+ "BEGIN\n"
-				+ "  answer := six * seven * gcd(six, seven);\n"
+				+ "  answer := six * seven;\n"
 				+ "  PrintString(\"The answer is \");\n"
-				+ "  Display(answer, seven, six);\n"
-				+ "  PrintInt(answer); PrintLn;\n"
+				+ "  Display(answer, seven, six, 3.14159265);\n"
+				+ "  PrintInt(answer); PrintLn();\n"
 				+ "END.\n";
 
 		Properties props = new Properties();
 		props.setProperty("useModelLexer", "false");
 		props.setProperty("useModelParser", "false");
-		props.setProperty("useFullParser", "true");
 		props.setProperty("sourceFile", "");
 		props.setProperty("demoSource", demoSource);
 
@@ -59,8 +53,9 @@ public class Project4 {
 
 		try (Parser parser = config.getParser()) {
 			Program program = parser.parseProgram();
-			ASTVisitor indexer = new MyIndexer(config.getErrorLog());
-			program.accept(indexer);
+			// TODO replace the ReferenceChecker with your own visitor object
+			ASTVisitor checker = new MyTypeChecker(config.getErrorLog());
+			program.accept(checker);
 		} catch (ParseException pe) {
 			System.err.println(pe.getMessage());
 		}

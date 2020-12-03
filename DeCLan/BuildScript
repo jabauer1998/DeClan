@@ -135,6 +135,18 @@ function RUN_SRC
        echo ""
        echo "Project4 complete..."
     fi
+    if [ "$TYPE" == "PROJECT5" ] || [ "$TYPE" == "ALL" ]; then
+       echo "Running Project5..."
+       echo "___________________PROJECT5_LOG___________________________"
+       echo ""
+       echo ""
+       java -cp "$RELPATH/*:." $LOCPATH.Project5
+       echo ""
+       echo ""
+       echo "__________________________________________________________"
+       echo ""
+       echo "Project5 complete..."
+    fi
     if [ "$TYPE" == "TEST" ] || [ "$TYPE" == "ALL" ]; then
        echo "Running Test Cases..."
        echo "_______________________TEST_LOG___________________________"
@@ -150,7 +162,7 @@ function RUN_SRC
 }
 
 if [[ $# -ne 1 ]]; then
-   echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "PROJECT2", "PROJECT3", "PROJECT4", "ALL", "BUILD", or "CLEAN"...'
+   echo 'You must specify only one argument and the argument can only be "TEST","PROJECT1", "PROJECT2", "PROJECT3", "PROJECT4", "PROJECT5", "ALL", "BUILD", or "CLEAN"...'
    exit 1
 fi
 
@@ -168,7 +180,7 @@ elif [[ "$TYPE" == "BUILD" ]]; then
     RM_LIBS
     echo "Leaving Directory..."
     cd ../../../
-elif [ "$TYPE" == "TEST" ] || [ "$1" == "PROJECT1" ] || [ "$1" == "PROJECT2" ] || [ "$1" == "PROJECT3" ] || [ "$1" == "PROJECT4" ] || [ "$1" == "ALL" ]; then
+elif [ "$TYPE" == "TEST" ] || [ "$1" == "PROJECT1" ] || [ "$1" == "PROJECT2" ] || [ "$1" == "PROJECT3" ] || [ "$1" == "PROJECT4" ] || [ "$1" == "PROJECT5" ] || [ "$1" == "ALL" ]; then
     echo "Entering directory..."
     cd ./src/main/java
     SRC_CHECK
@@ -180,6 +192,6 @@ elif [ "$TYPE" == "TEST" ] || [ "$1" == "PROJECT1" ] || [ "$1" == "PROJECT2" ] |
     cd ../../../
 else
     echo "Invalid argument: $1"
-    echo 'You must specify only one argument and the argument can only be "TEST", "PROJECT1", "PROJECT2", "PROJECT3", "PROJECT4", "ALL", "BUILD" or "CLEAN"...'
+    echo 'You must specify only one argument and the argument can only be "TEST", "PROJECT1", "PROJECT2", "PROJECT3", "PROJECT4", "PROJECT5", "ALL", "BUILD" or "CLEAN"...'
     exit 1
 fi

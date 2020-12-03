@@ -94,7 +94,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     } else if(value instanceof Double) {
 	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(true, (Double)value));
     } else {
-	    FATAL("Error invalid constant expression for constant " + id.getLexeme() + " at " + id.getStart().toString());
+	errorLog.add("Error invalid constant expression for constant " + id.getLexeme(), id.getStart());
     }
   }
 
@@ -111,7 +111,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     } else if (type.equals("INTEGER")){
 	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, new Integer(0)));
     } else {
-	FATAL("Variable " + id.getLexeme() + " is of unknown type " + type);
+	errorLog.add("Variable " + id.getLexeme() + " is of unknown type " + type, varDecl.getStart());
     }
   }
 
@@ -158,7 +158,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 		toChange.setValue(variableValue);
 	    }
 	} else {
-	    FATAL("Unexpected amount of arguments provided from Caller to Callie in Function " + procedureCall.getProcedureName().getLexeme());
+	    errorLog.add("Unexpected amount of arguments provided from Caller to Callie in Function " + funcName, procedureCall.getStart());
 	}
 	List<Declaration> LocalDecl = pentry.getLocalVariables();
 	for(Declaration decl : LocalDecl){
@@ -270,7 +270,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     if(varEnvironment.entryExists(name)){
       VariableEntry entry = varEnvironment.getEntry(name);
       if(entry.isConst()){
-	  FATAL("Variable " + assignment.getVariableName().getLexeme() + " at " + assignment.getVariableName().getStart() + " declared as const");
+	  errorLog.add("Variable " + assignment.getVariableName().getLexeme() + " declared as const", assignment.getVariableName().getStart());
       } else if(entry.getValue() instanceof Double){
 	  Object value = assignment.getVariableValue().acceptResult(this);
 	  entry.setValue((Double)value);
@@ -284,10 +284,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	  Object value = assignment.getVariableValue().acceptResult(this);
 	  entry.setValue((Boolean)value);
       } else {
-	  FATAL("Variable in Assignment " + name + " is of unknown DeClan type?");
+	  errorLog.add("Variable in Assignment " + name + " is of unknown DeClan type?", assignment.getStart());
       }
     } else {
-      FATAL("Undeclared Variable " + assignment.getVariableName().getLexeme() + " at " + assignment.getVariableName().getStart());
+	errorLog.add("Undeclared Variable " + assignment.getVariableName().getLexeme(), assignment.getVariableName().getStart());
     }
   }
   
@@ -345,7 +345,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         case OR:
 	    return (Boolean)leftValue || (Boolean)rightValue;
 	default:
-	    FATAL("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName());
+	    errorLog.add("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName(), binaryOperation.getStart());
 	    return null;
 	}
     } else if((leftValue instanceof Double && rightValue instanceof Integer)){
@@ -369,7 +369,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	case LE:
 	    return (Boolean)((Double)leftValue <= (Integer)rightValue);
 	default:
-	    FATAL("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName());
+	    errorLog.add("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName(), binaryOperation.getStart());
 	    return null;
 	}
     } else if (rightValue instanceof Double && leftValue instanceof Integer) {
@@ -393,7 +393,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	case LE:
 	    return (Boolean)((Integer)leftValue <= (Double)rightValue);
 	default:
-	    FATAL("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName());
+	    errorLog.add("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName(), binaryOperation.getStart());
 	    return null;
 	}
     } else if (leftValue instanceof Double && rightValue instanceof Double) {
@@ -423,7 +423,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	case LE:
 	    return (Boolean)((Double)leftValue <= (Double)rightValue);
 	default:
-	    FATAL("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName());
+	    errorLog.add("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName(), binaryOperation.getStart());
 	    return null;
 	}
     } else if (rightValue instanceof Integer && leftValue instanceof Integer) {
@@ -451,11 +451,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	case LE:
 	    return (Boolean)((Integer)leftValue <= (Integer)rightValue);
 	default:
-	    FATAL("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName());
+	    errorLog.add("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName(), binaryOperation.getStart());
 	    return null;
 	}
     } else {
-      FATAL("Operation of Unknown Type of " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName());
+      errorLog.add("Unknown Operation with " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName(), binaryOperation.getStart());
       return null;
     }
   }
@@ -480,7 +480,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	toChange.setValue(variableValue);
       }
     } else {
-      FATAL("Unexpected amount of arguments provided from Caller to Callie in Function " + funcCall.getFunctionName().getLexeme());
+	errorLog.add("Unexpected amount of arguments provided from Caller to Callie in Function " + funcCall.getFunctionName().getLexeme(), funcCall.getStart());
     }
     List<Declaration> LocalDecl = fentry.getLocalVariables();
     for(Declaration decl : LocalDecl){
@@ -491,7 +491,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       toDo.accept(this);
     }
     if(fentry.getType() == ProcedureEntry.ProcType.VOID){
-      FATAL("Return Type is Void it should be either INTEGER, REAL, or BOOLEAN");
+	errorLog.add("Return Type is Void it should be either INTEGER, REAL, or BOOLEAN", funcCall.getStart());
     }
     Object retValue = fentry.getReturnStatement().acceptResult(this);
     varEnvironment.removeScope(); //clean up local declarations as well as parameters
@@ -519,11 +519,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       case MINUS:
 	return -(Integer)value;
       default:
-	FATAL("Unexpected operator in unary operation of type " + value.getClass().getSimpleName());
+	errorLog.add("Unexpected operator in unary operation of type " + value.getClass().getSimpleName(), unaryOperation.getStart());
 	return null;
       }
     } else {
-      FATAL("Unexpected type in unary operation");
+      errorLog.add("Unexpected type in unary operation",  unaryOperation.getStart());
       return null;
     }
   }
@@ -535,7 +535,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     if(value != null){
       return value;
     } else {
-      FATAL("Identifier " + identifier.getLexeme() + " wasnt found in the table");
+      errorLog.add("Identifier " + identifier.getLexeme() + " wasnt found in the table", identifier.getStart());
       return null;
     }
   }

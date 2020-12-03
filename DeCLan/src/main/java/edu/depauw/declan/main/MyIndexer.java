@@ -56,14 +56,16 @@ public class MyIndexer implements ASTVisitor {
         private Environment<String, Position> varEnvironment;
         private Environment<String, Position> procEnvironment;
         private boolean ParTrue;
+        private ErrorLog errorLog;
 
 	/**
 	 * Construct a default PostfixPrintVisitor that writes to the console.
 	 */
-	public MyIndexer() {
+	public MyIndexer(ErrorLog errorLog) {
 	    this.varEnvironment = new Environment<>();
 	    this.procEnvironment = new Environment<>();
 	    this.ParTrue = false;
+	    this.errorLog = errorLog;
 	}
 
         private static void printIndexMessage(String Descriptor, Position position, String Rest){
@@ -218,8 +220,10 @@ public class MyIndexer implements ASTVisitor {
 	public void visit(ProcedureCall procedureCall){
 	  Identifier id = procedureCall.getProcedureName();
 	  List<Expression> params = procedureCall.getArguments();
-	  if(procEnvironment.getEntry(id.getLexeme()) != null){
+	  if(procEnvironment.entryExists(id.getLexeme())){
 	    printIndexMessage("USE", id.getStart(), id.getLexeme() + ", declared at " + procEnvironment.getEntry(id.getLexeme()).toString());
+	  } else {
+	    errorLog.add("Entry " + id.getLexeme() + " doesnt exist", procedureCall.getStart());
 	  }
 	  for(int i = 0; i < params.size(); i++){
 	    params.get(i).accept(this);
@@ -261,14 +265,22 @@ public class MyIndexer implements ASTVisitor {
 	public void visit(FunctionCall fcall) {
 	  Identifier id = fcall.getFunctionName();
 	  List<Expression> params = fcall.getArguments();
-	  printIndexMessage("USE", id.getStart(), id.getLexeme() + ", declared at " + procEnvironment.getEntry(id.getLexeme()).toString());
-	  for(int i = 0; i < params.size(); i++){
-	    params.get(i).accept(this);
+	  if(procEnvironment.entryExists(id.getLexeme())){
+	      printIndexMessage("USE", id.getStart(), id.getLexeme() + ", declared at " + procEnvironment.getEntry(id.getLexeme()).toString());
+	      for(int i = 0; i < params.size(); i++){
+		  params.get(i).accept(this);
+	      }
+	  } else {
+	      errorLog.add("Entry " + id.getLexeme() + " doesnt exist", fcall.getStart());
 	  }
 	}
 
 	@Override
 	public void visit(Identifier id){
-	  printIndexMessage("USE", id.getStart(), id.getLexeme() + ", declared at " + varEnvironment.getEntry(id.getLexeme()).toString());
+	    if(varEnvironment.entryExists(id.getLexeme())){
+		printIndexMessage("USE", id.getStart(), id.getLexeme() + ", declared at " + varEnvironment.getEntry(id.getLexeme()).toString());
+	    } else {
+		errorLog.add("Entry " + id.getLexeme() + " doesnt exist", id.getStart());
+	    }
 	}
 }
