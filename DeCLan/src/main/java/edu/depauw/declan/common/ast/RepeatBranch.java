@@ -5,6 +5,11 @@ import java.lang.String;
 import java.lang.StringBuilder;
 import edu.depauw.declan.common.Position;
 
+/**
+ * This class allows for repeat statements which act like the inverse of a do while loop
+ * They run UNTIL the condition is true
+ * @author Jacob Bauer
+ */
 public class RepeatBranch extends Branch implements Statement {
     private final Expression toCheck;
     

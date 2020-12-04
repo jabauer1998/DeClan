@@ -6,6 +6,12 @@ import java.lang.StringBuilder;
 import java.util.List;
 import edu.depauw.declan.common.Position;
 
+/**
+ * This AST class allows for while loops
+ * in DeClan you can actually branch with your loops like if statements
+ * (Example)While(some expr) - Do this... Elsif - Do this ... etc ...
+ * @author Jacob Bauer
+ */
 public class WhileElifBranch extends Branch implements Statement {
     private final Expression toCheck;
     private final Branch branchTo;

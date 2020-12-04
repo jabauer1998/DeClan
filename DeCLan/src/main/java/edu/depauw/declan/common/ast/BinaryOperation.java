@@ -10,7 +10,7 @@ import static edu.depauw.declan.common.MyIO.*;
  * An ASTNode representing a binary operation (+, -, *, DIV, or MOD currently),
  * with left and right subexpressions and an operator.
  * 
- * @author bhoward
+ * @author bhoward, Jacob Bauer
  */
 public class BinaryOperation extends AbstractASTNode implements Expression {
 	private final OpType operator;

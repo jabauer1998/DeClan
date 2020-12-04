@@ -6,11 +6,11 @@ import java.lang.StringBuilder;
 import edu.depauw.declan.common.Position;
 
 /**
- * An ASTNode representing a numeric literal. It is stored here as a lexeme
+ * An ASTNode representing a String literal. It is stored here as a lexeme
  * (that is, a String), to avoid the question of what Java numeric type to use
  * to represent it as an actual number.
  * 
- * @author bhoward
+ * @author Jacob Bauer
  */
 public class StrValue extends AbstractASTNode implements Expression {
 	private final String lexeme;

@@ -12,6 +12,11 @@ import edu.depauw.declan.common.TokenType;
 import static edu.depauw.declan.common.TokenType.*;
 import static edu.depauw.declan.common.MyIO.*;
 
+/**
+ * The MyLexer class is the lexer for the Declan Language
+ * This Lexer also supports the options for project 1 which are floating point and hex numerals aswell as nested comments
+ * @author Jacob Bauer
+ */
 public class MyLexer implements Lexer {
 	private Source source;
 	private Token nextToken;

@@ -8,8 +8,8 @@ import java.lang.StringBuilder;
  * An ASTNode representing a CONST declaration. It contains the Identifier being
  * declared plus the constant value (currently just a NumValue) being bound to
  * it.
- * 
- * @author bhoward
+ * I also added support for Const Strings and Booleans
+ * @author bhoward, Jacob
  */
 public class ConstDeclaration extends AbstractASTNode implements Declaration {
 	private final Identifier identifier;

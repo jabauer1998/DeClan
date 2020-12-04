@@ -3,6 +3,10 @@ package edu.depauw.declan.common.ast;
 import java.util.List;
 import edu.depauw.declan.common.Position;
 
+/**  
+ * This is the AST Node that supports if or elif clauses
+ * @author Jacob Bauer
+ */
 public class IfElifBranch extends Branch implements Statement {
     private final Expression toCheck;
     private final Branch branchTo;

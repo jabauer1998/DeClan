@@ -36,7 +36,7 @@ import java.util.Map;
  * "print out the abstract syntax tree in postorder, suitable for execution on a
  * simple stack machine." It is used for Project 2 of CSC 426.
  * 
- * @author bhoward
+ * @author bhoward, Jacob Bauer
  */
 public class PostfixPrintVisitor implements ASTVisitor {
 	/**
