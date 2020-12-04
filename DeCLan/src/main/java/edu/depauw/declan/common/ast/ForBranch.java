@@ -5,6 +5,10 @@ import java.lang.String;
 import java.lang.StringBuilder;
 import edu.depauw.declan.common.Position;
 
+/**
+ * This is the ast class that allows for for Loops in the Declan Language
+ * @author Jacob Bauer
+ */
 public class ForBranch extends Branch implements Statement {
     private final Assignment initAssign;
     private final Expression toCheck;

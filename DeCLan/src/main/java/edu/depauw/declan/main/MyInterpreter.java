@@ -31,6 +31,7 @@ import edu.depauw.declan.common.symboltable.VariableEntry;
 import edu.depauw.declan.common.symboltable.ProcedureEntry;
 import edu.depauw.declan.common.symboltable.Environment;
 
+import static edu.depauw.declan.common.MyIO.*;
 
 import java.lang.Number;
 import java.lang.Object;
@@ -42,8 +43,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
-
-import static edu.depauw.declan.common.MyIO.*;
+/**
+ *The my interpreter class is a visitor object that can interpret the entire DeClan Language
+ * It also takes in an error log object in order to record errors
+ *@author Jacob Bauer
+ */
 
 public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   private ErrorLog errorLog;
@@ -57,6 +61,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     this.procEnvironment = new Environment<>();
   }
 
+  
   @Override
   public void visit(Program program) {
     procEnvironment.addScope();
@@ -70,7 +75,8 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     varEnvironment.removeScope();
     procEnvironment.removeScope();
   }
-  
+
+    //this function is needed to change a Hex String from the Declan Format to the expected Java format
   private static String ifHexToInt(String lexeme){
     if(lexeme.charAt(0) == '0' && lexeme.length() > 1 && !lexeme.contains(".")){ //is it a hex number
       Long value = Long.parseLong(lexeme.substring(1, lexeme.length() - 1), 16);  

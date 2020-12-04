@@ -5,7 +5,10 @@ import java.lang.StringBuilder;
 import java.lang.String;
 import edu.depauw.declan.common.Position;
 
-
+/**
+ * This is the Else AST visitor class that represents the else branch in the if statement
+ * @author Jacob Bauer
+*/
 public class ElseBranch extends Branch implements Statement {
   
     public ElseBranch(Position start, List<Statement> toExecute){

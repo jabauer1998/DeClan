@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.lang.String;
 
+/**
+ *The Stack Solver is a Stack Based Language Interpreter that can solve the stack based language created by the PostfixPrintVisitor
+ *This was an option for project 2
+ *The default input is the string provided but it can also take in a command line argument string and use that as well
+ *@author Jacob Bauer
+ */
 public class StackSolver {
     private static String standardInput  = "7\n"
 	          + "6\n"

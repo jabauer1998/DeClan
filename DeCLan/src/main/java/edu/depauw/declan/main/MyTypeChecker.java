@@ -49,6 +49,12 @@ enum TypeCheckerTypes {
 	VOID, INTEGER, STRING, REAL, BOOLEAN
 }
 
+/**
+ * This is the type checker visitor
+ * It provides type checking to the entire language
+ * Types are represented as Enums
+ * @author Jacob Bauer 
+ */
 public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerTypes> {
     private ErrorLog errorLog;
     

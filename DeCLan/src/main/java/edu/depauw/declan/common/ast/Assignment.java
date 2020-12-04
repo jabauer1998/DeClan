@@ -4,6 +4,11 @@ import edu.depauw.declan.common.Position;
 import java.lang.String;
 import java.lang.StringBuilder;
 
+/**
+ * The assignment class allows the programmer to execute Assignments in Declan
+ * The Syntax is as followed: ident := Expression
+ * @author Jacob Bauer
+ */
 public class Assignment extends AbstractASTNode implements Statement {
     private final Identifier variableName;
     private final Expression variableValue;

@@ -42,11 +42,10 @@ import java.util.List;
 import static edu.depauw.declan.common.MyIO.*;
 
 /**
- * This is an implementation of the ASTVisitor that encapsulates the algorithm
- * "print out the abstract syntax tree in postorder, suitable for execution on a
- * simple stack machine." It is used for Project 2 of CSC 426.
- * 
- * @author bhoward
+ * This is the Indexer class 
+ * All it does is it collects info from identifiers both where they are called and defined and displayes it in a readable format
+ * Its a nice way to test if you are parsing the positions correctly in all of the AST nodes
+ * @author Jacob Bauer
  */
 public class MyIndexer implements ASTVisitor {
 	/**
@@ -58,9 +57,6 @@ public class MyIndexer implements ASTVisitor {
         private boolean ParTrue;
         private ErrorLog errorLog;
 
-	/**
-	 * Construct a default PostfixPrintVisitor that writes to the console.
-	 */
 	public MyIndexer(ErrorLog errorLog) {
 	    this.varEnvironment = new Environment<>();
 	    this.procEnvironment = new Environment<>();
@@ -229,11 +225,6 @@ public class MyIndexer implements ASTVisitor {
 	    params.get(i).accept(this);
 	  }
 	}
-
-	@Override
-	public void visit(EmptyStatement emptyStatement) {
-		// Do nothing
-	}
         
 	@Override
 	public void visit(UnaryOperation unaryOperation) {
@@ -246,6 +237,11 @@ public class MyIndexer implements ASTVisitor {
 		binaryOperation.getRight().accept(this);
 	}
 
+        @Override
+	public void visit(EmptyStatement emptyStatement) {
+		// Do nothing
+	}
+    
 	@Override
 	public void visit(NumValue numValue) {
 	    //do nothing

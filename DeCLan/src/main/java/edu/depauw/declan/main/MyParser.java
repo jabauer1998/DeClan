@@ -43,7 +43,7 @@ import static edu.depauw.declan.common.MyIO.*;
  * declarations and calls to PrintInt with integer expression arguments. This is
  * starter code for CSC426 Project 2.
  * 
- * @author bhoward
+ * @author bhoward, Jacob Bauer
  */
 public class MyParser implements Parser {
   private Lexer lexer;
