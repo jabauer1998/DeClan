@@ -26,6 +26,6 @@ public class If implements ICode {
 	}
 
 	public enum Op {
-		EQ, GT
+	    EQ, GT, NE, GE, LE, LT
 	}
 }

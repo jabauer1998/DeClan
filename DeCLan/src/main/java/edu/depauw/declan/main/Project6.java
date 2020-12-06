@@ -69,7 +69,8 @@ program.accept(new ReferenceInterpreter(config.getErrorLog()));
 			
 			// Generate intermediate code assuming the type checker succeeded
 			MyCodeGenerator generator = new MyCodeGenerator(config.getErrorLog(), checker);
-			List<ICode> code = program.accept(generator);
+			program.accept(generator);
+			List<ICode> code = generator.getCode();
 			// Print out the intermediate code
 			for (ICode instr : code) {
 				System.out.println(instr);
