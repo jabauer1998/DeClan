@@ -62,14 +62,15 @@ public class Project6 {
 
 		try (Parser parser = config.getParser()) {
 			Program program = parser.parseProgram();
-program.accept(new ReferenceInterpreter(config.getErrorLog()));			
+                        program.accept(new MyInterpreter(config.getErrorLog()));			
 			// Type-check the program, recording discovered type info in the checker object
 			MyTypeChecker checker = new MyTypeChecker(config.getErrorLog());
 			program.accept(checker);
 			
 			// Generate intermediate code assuming the type checker succeeded
 			MyCodeGenerator generator = new MyCodeGenerator(config.getErrorLog(), checker);
-			List<ICode> code = program.accept(generator, void);
+			program.accept(generator);
+			List<ICode> code = generator.getCode();
 			// Print out the intermediate code
 			for (ICode instr : code) {
 				System.out.println(instr);

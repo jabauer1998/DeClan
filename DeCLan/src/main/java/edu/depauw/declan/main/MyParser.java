@@ -555,7 +555,7 @@ public class MyParser implements Parser {
   private Expression parseTerm(){
     Position start = currentPosition;
     Expression left = parseFactor();
-    while (willMatch(TokenType.DIV) || willMatch(TokenType.MOD) || willMatch(TokenType.TIMES)){
+    while (willMatch(TokenType.DIV) || willMatch(TokenType.MOD) || willMatch(TokenType.TIMES) || willMatch(TokenType.DIVIDE)){
       BinaryOperation.OpType op = parseMultOp();
       Expression right = parseFactor();
       left = new BinaryOperation(start, left, op, right);

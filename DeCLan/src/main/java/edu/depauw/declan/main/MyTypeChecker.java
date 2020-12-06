@@ -45,21 +45,21 @@ import java.util.ArrayList;
 
 import static edu.depauw.declan.common.MyIO.*;
 
-enum TypeCheckerTypes {
-	VOID, INTEGER, STRING, REAL, BOOLEAN
-}
-
 /**
  * This is the type checker visitor
  * It provides type checking to the entire language
  * Types are represented as Enums
  * @author Jacob Bauer 
  */
-public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerTypes> {
+public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecker.TypeCheckerTypes> {
     private ErrorLog errorLog;
     
     private Environment <String, TypeCheckerTypes> varEnvironment;
     private Environment <String, ProcedureEntry> procEnvironment;
+
+    public static enum TypeCheckerTypes {
+	VOID, INTEGER, BOOLEAN, STRING, REAL
+    }
     
     // TODO declare any data structures needed by the interpreter
 
