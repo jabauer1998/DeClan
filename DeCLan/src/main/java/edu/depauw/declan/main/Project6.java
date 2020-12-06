@@ -22,7 +22,7 @@ public class Project6 {
 	public static void main(String[] args) {
 		String demoSource =
 				  "(* Declare some constants and a global variable *)\n"
-				+ "CONST six = 6; seven = 7;\n"
+				+ "CONST six = 2; seven = 7;\n"
 				+ "VAR answer, temp : INTEGER;\n"
 				+ "(* Define a proper procedure *)\n"
 				+ "PROCEDURE Display(answer: INTEGER; a, b: INTEGER; x: REAL);\n"

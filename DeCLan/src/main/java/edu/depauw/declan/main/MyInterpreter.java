@@ -361,54 +361,6 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	    errorLog.add("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName(), binaryOperation.getStart());
 	    return null;
 	}
-    } else if((leftValue instanceof Double && rightValue instanceof Integer)){
-	switch (binaryOperation.getOperator()) {
-	case PLUS:
-	    return (Double)leftValue + (Integer)rightValue;
-	case MINUS:
-	    return (Double)leftValue - (Integer)rightValue;
-	case TIMES:
-	    return (Double)leftValue * (Integer)rightValue;
-	case DIVIDE:
-	    return (Double)leftValue / (Integer)rightValue;
-	case DIV:
-	    return (int)((Double)leftValue/(Integer)rightValue);
-	case LT:
-	    return (Boolean)((Double)leftValue < (Integer)rightValue);
-	case GT:
-	    return (Boolean)((Double)leftValue > (Integer)rightValue);
-	case GE:
-	    return (Boolean)((Double)leftValue >= (Integer)rightValue);
-	case LE:
-	    return (Boolean)((Double)leftValue <= (Integer)rightValue);
-	default:
-	    errorLog.add("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName(), binaryOperation.getStart());
-	    return null;
-	}
-    } else if (rightValue instanceof Double && leftValue instanceof Integer) {
-	switch (binaryOperation.getOperator()) {
-	case PLUS:
-	    return (Integer)leftValue + (Double)rightValue;
-	case MINUS:
-	    return (Integer)leftValue - (Double)rightValue;
-	case TIMES:
-	    return (Integer)leftValue * (Double)rightValue;
-	case DIV:
-	    return (int)((Integer)leftValue/(Double)rightValue);
-	case DIVIDE:
-	    return (Integer)leftValue / (Double)rightValue;
-	case LT:
-	    return (Boolean)((Integer)leftValue < (Double)rightValue);
-	case GT:
-	    return (Boolean)((Integer)leftValue > (Double)rightValue);
-	case GE:
-	    return (Boolean)((Integer)leftValue >= (Double)rightValue);
-	case LE:
-	    return (Boolean)((Integer)leftValue <= (Double)rightValue);
-	default:
-	    errorLog.add("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName(), binaryOperation.getStart());
-	    return null;
-	}
     } else if (leftValue instanceof Double && rightValue instanceof Double) {
 	switch (binaryOperation.getOperator()) {
 	case PLUS:
@@ -417,12 +369,8 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	    return (Double)leftValue - (Double)rightValue;
 	case TIMES:
 	    return (Double)leftValue * (Double)rightValue;
-	case DIV:
-	    return (int)((Double)leftValue / (Double)rightValue);
 	case DIVIDE:
 	    return (Double)leftValue / (Double)rightValue;
-	case MOD:
-	    return (Double)leftValue % (Double)rightValue;
 	case LT:
 	    return (Boolean)((Double)leftValue < (Double)rightValue);
 	case GT:
@@ -447,10 +395,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	    return (Integer)leftValue - (Integer)rightValue;
 	case TIMES:
 	    return (Integer)leftValue * (Integer)rightValue;
+	case MOD:
+	    return (Integer)leftValue % (Integer)rightValue;
 	case DIV:
-	    return (int)((Integer)leftValue / (Integer)rightValue);
-	case DIVIDE:
-	    return (Integer)leftValue / (Integer)rightValue;
+	    return new Integer((Integer)leftValue / (Integer)rightValue);
 	case LT:
 	    return (Boolean)((Integer)leftValue < (Integer)rightValue);
 	case GT:
@@ -464,7 +412,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	case LE:
 	    return (Boolean)((Integer)leftValue <= (Integer)rightValue);
 	default:
-	    errorLog.add("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName(), binaryOperation.getStart());
+	    errorLog.add("Invalid operation between " + leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName() + "with opertor " + binaryOperation.getOperator(), binaryOperation.getStart());
 	    return null;
 	}
     } else {

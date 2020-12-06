@@ -362,18 +362,14 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	BinaryOperation.OpType op = binaryOperation.getOperator();
 	if((leftValue == TypeCheckerTypes.BOOLEAN && rightValue == TypeCheckerTypes.BOOLEAN) && (op == BinaryOperation.OpType.AND || op == BinaryOperation.OpType.OR)){
 	    return TypeCheckerTypes.BOOLEAN;
-	} else if((leftValue == TypeCheckerTypes.INTEGER || rightValue == TypeCheckerTypes.INTEGER) && (op == BinaryOperation.OpType.DIV || op == BinaryOperation.OpType.MOD)){
+	} else if((leftValue == TypeCheckerTypes.INTEGER && rightValue == TypeCheckerTypes.INTEGER) && (op == BinaryOperation.OpType.DIV || op == BinaryOperation.OpType.MOD || op == BinaryOperation.OpType.PLUS || op == BinaryOperation.OpType.MINUS || op == BinaryOperation.OpType.TIMES)){
 	    return TypeCheckerTypes.INTEGER;
-	} else if ((leftValue == TypeCheckerTypes.REAL || rightValue == TypeCheckerTypes.REAL) && (op == BinaryOperation.OpType.DIVIDE)) {
+	} else if ((leftValue == TypeCheckerTypes.REAL && rightValue == TypeCheckerTypes.REAL) && (op == BinaryOperation.OpType.DIVIDE || op == BinaryOperation.OpType.PLUS || op == BinaryOperation.OpType.MINUS || op == BinaryOperation.OpType.TIMES)) {
 	    return TypeCheckerTypes.REAL;
-	} else if((leftValue == rightValue) && (op == BinaryOperation.OpType.LT || op == BinaryOperation.OpType.LE || op == BinaryOperation.OpType.GE || op == BinaryOperation.OpType.GT)){
+	} else if ((leftValue == rightValue) && (op == BinaryOperation.OpType.EQ || op == BinaryOperation.OpType.NE || op == BinaryOperation.OpType.LT || op == BinaryOperation.OpType.LE || op == BinaryOperation.OpType.GT || op == BinaryOperation.OpType.GE)) {
 	    return TypeCheckerTypes.BOOLEAN;
-	} else if ((leftValue == TypeCheckerTypes.REAL && rightValue == TypeCheckerTypes.INTEGER) || (rightValue == TypeCheckerTypes.REAL && leftValue == TypeCheckerTypes.INTEGER)){
-	    return TypeCheckerTypes.REAL;
-	} else if (leftValue == TypeCheckerTypes.INTEGER && rightValue == TypeCheckerTypes.INTEGER) {
-	    return TypeCheckerTypes.INTEGER;
 	} else {
-	    errorLog.add("Type mismatch in binary opperation ",  binaryOperation.getStart());
+	    errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
 	    return null;
 	}
     }
