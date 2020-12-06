@@ -31,8 +31,6 @@ import edu.depauw.declan.common.symboltable.VariableEntry;
 import edu.depauw.declan.common.symboltable.ProcedureEntry;
 import edu.depauw.declan.common.symboltable.Environment;
 
-import static edu.depauw.declan.common.MyIO.*;
-
 import java.lang.Number;
 import java.lang.Object;
 import java.lang.Math;
@@ -136,22 +134,22 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   public void visit(ProcedureCall procedureCall) {
     if (procedureCall.getProcedureName().getLexeme().equals("PrintInt")) {
       Object value = procedureCall.getArguments().get(0).acceptResult(this);
-      OUT("" + (Integer)value);
+      System.out.print("" + (Integer)value);
     } else if (procedureCall.getProcedureName().getLexeme().equals("PrintDouble") || procedureCall.getProcedureName().getLexeme().equals("PrintReal")) {
       Object value = procedureCall.getArguments().get(0).acceptResult(this);
-      OUT("" + (Double)value);
+      System.out.print("" + (Double)value);
     } else if(procedureCall.getProcedureName().getLexeme().equals("PrintString")) {
       Object value = procedureCall.getArguments().get(0).acceptResult(this);
-      OUT((String)value);
+      System.out.print((String)value);
     } else if(procedureCall.getProcedureName().getLexeme().equals("ASSERT")){
       Boolean value = (Boolean)procedureCall.getArguments().get(0).acceptResult(this);
       String toPrint = (String)procedureCall.getArguments().get(1).acceptResult(this);
       if(!value){
-	  OUT(toPrint);
+	  System.out.print(toPrint);
 	  System.exit(1);
       }
     } else if(procedureCall.getProcedureName().getLexeme().equals("PrintLn")){
-	
+	System.out.println("");
     } else {
 	String funcName = procedureCall.getProcedureName().getLexeme();
 	ProcedureEntry pentry = procEnvironment.getEntry(funcName);
