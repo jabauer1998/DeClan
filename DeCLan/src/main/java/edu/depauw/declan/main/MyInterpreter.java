@@ -167,7 +167,6 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	    for(int i = 0; i < args.size(); i++){
 		args.get(i).accept(this); //declare parameter variables 
 		VariableEntry toChange = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
-		System.out.println(args.get(i).getIdentifier().getLexeme() + "in" + funcName);
 		Object variableValue = valArgResults.get(i);
 		toChange.setValue(variableValue);
 	    }
