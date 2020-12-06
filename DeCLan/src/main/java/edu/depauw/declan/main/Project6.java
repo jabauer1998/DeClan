@@ -62,7 +62,7 @@ public class Project6 {
 
 		try (Parser parser = config.getParser()) {
 			Program program = parser.parseProgram();
-program.accept(new ReferenceInterpreter(config.getErrorLog()));			
+                        program.accept(new MyInterpreter(config.getErrorLog()));			
 			// Type-check the program, recording discovered type info in the checker object
 			MyTypeChecker checker = new MyTypeChecker(config.getErrorLog());
 			program.accept(checker);

@@ -110,7 +110,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     String type = varDecl.getType().getLexeme();
     if(type.equals("BOOLEAN")){
 	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, new Boolean(false)));
-    } else if (type.equals("DOUBLE")){
+    } else if (type.equals("REAL")){
 	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, new Double(0)));
     } else if (type.equals("STRING")){
 	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, new String("")));
@@ -137,14 +137,21 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     if (procedureCall.getProcedureName().getLexeme().equals("PrintInt")) {
       Object value = procedureCall.getArguments().get(0).acceptResult(this);
       OUT("" + (Integer)value);
-    } else if (procedureCall.getProcedureName().getLexeme().equals("PrintDouble")) {
+    } else if (procedureCall.getProcedureName().getLexeme().equals("PrintDouble") || procedureCall.getProcedureName().getLexeme().equals("PrintReal")) {
       Object value = procedureCall.getArguments().get(0).acceptResult(this);
       OUT("" + (Double)value);
     } else if(procedureCall.getProcedureName().getLexeme().equals("PrintString")) {
       Object value = procedureCall.getArguments().get(0).acceptResult(this);
       OUT((String)value);
+    } else if(procedureCall.getProcedureName().getLexeme().equals("ASSERT")){
+      Boolean value = (Boolean)procedureCall.getArguments().get(0).acceptResult(this);
+      String toPrint = (String)procedureCall.getArguments().get(1).acceptResult(this);
+      if(!value){
+	  OUT(toPrint);
+	  System.exit(1);
+      }
     } else if(procedureCall.getProcedureName().getLexeme().equals("PrintLn")){
-	OUT(""); //print a new line
+	
     } else {
 	String funcName = procedureCall.getProcedureName().getLexeme();
 	ProcedureEntry pentry = procEnvironment.getEntry(funcName);
@@ -160,6 +167,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	    for(int i = 0; i < args.size(); i++){
 		args.get(i).accept(this); //declare parameter variables 
 		VariableEntry toChange = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
+		System.out.println(args.get(i).getIdentifier().getLexeme() + "in" + funcName);
 		Object variableValue = valArgResults.get(i);
 		toChange.setValue(variableValue);
 	    }
