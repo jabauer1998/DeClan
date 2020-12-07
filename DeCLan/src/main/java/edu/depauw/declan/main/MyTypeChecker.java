@@ -117,7 +117,14 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	Identifier id = varDecl.getIdentifier();
 	String type = varDecl.getType().getLexeme();
 	if(!varEnvironment.inScope(id.getLexeme())){
-	    varEnvironment.addEntry(id.getLexeme(), StringToType(type));
+	    switch(StringToType(type)){
+	    case STRING:
+		errorLog.add("Variable " + id.getLexeme() + "is of invalid type " + type, id.getStart());
+	    case VOID:
+		errorLog.add("Variable " + id.getLexeme() + "is of invalid type " + type, id.getStart());
+	    default:
+		varEnvironment.addEntry(id.getLexeme(), StringToType(type));
+	    }
 	} else {
 	    errorLog.add("Multiple Declaration of Variable " + id.getLexeme(), id.getStart());
 	}
@@ -177,28 +184,28 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	} else {
 	    String funcName = procedureCall.getProcedureName().getLexeme();
 	    if(procEnvironment.entryExists(funcName)){
-			ProcedureEntry pentry = procEnvironment.getEntry(funcName);
-			List<VariableDeclaration> args = pentry.getArguments();
-			List<Expression> valArgs = procedureCall.getArguments();
-			List<TypeCheckerTypes> exprValues = new ArrayList<>();
-			for(Expression expr : valArgs){
-				exprValues.add(expr.acceptResult(this));
-			}
-			varEnvironment.addScope();
-			if(args.size() == valArgs.size()){
-				for(int i = 0; i < args.size(); i++){
-					args.get(i).accept(this); //declare parameter variables 
-					TypeCheckerTypes toChangeType = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
-					TypeCheckerTypes argumentType = exprValues.get(i);
-					if(toChangeType != argumentType){
-					    errorLog.add("In function " + funcName + " type mismatch at parameter " + (i + 1), procedureCall.getStart());
-					}
-				}
-			} else {
-			    errorLog.add("Unexpected amount of arguments provided from Caller to Callie in Function " + procedureCall.getProcedureName().getLexeme(), procedureCall.getStart());
-			}
-			varEnvironment.removeScope(); //clean up local declarations as well as parameters
+		ProcedureEntry pentry = procEnvironment.getEntry(funcName);
+		List<VariableDeclaration> args = pentry.getArguments();
+		List<Expression> valArgs = procedureCall.getArguments();
+		List<TypeCheckerTypes> exprValues = new ArrayList<>();
+		for(Expression expr : valArgs){
+		    exprValues.add(expr.acceptResult(this));
 		}
+		varEnvironment.addScope();
+		if(args.size() == valArgs.size()){
+		    for(int i = 0; i < args.size(); i++){
+			args.get(i).accept(this); //declare parameter variables 
+			TypeCheckerTypes toChangeType = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
+			TypeCheckerTypes argumentType = exprValues.get(i);
+			if(toChangeType != argumentType){
+			    errorLog.add("In function " + funcName + " type mismatch at parameter " + (i + 1), procedureCall.getStart());
+			}
+		    }
+		} else {
+		    errorLog.add("Unexpected amount of arguments provided from Caller to Callie in Function " + procedureCall.getProcedureName().getLexeme(), procedureCall.getStart());
+		}
+		varEnvironment.removeScope(); //clean up local declarations as well as parameters
+	    }
 	}
     }	
 
@@ -258,43 +265,22 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	Expression toMod = forbranch.getModifyExpression();
 	List<Statement> toExec = forbranch.getExecStatements();
 	if(toMod != null){
+	    forbranch.getInitAssignment().accept(this);
 	    TypeCheckerTypes incriment = toMod.acceptResult(this);
-	    if(incriment == TypeCheckerTypes.REAL){
-		forbranch.getInitAssignment().accept(this);
-		TypeCheckerTypes target = forbranch.getTargetExpression().acceptResult(this);
-		if(target != TypeCheckerTypes.REAL){
-		    errorLog.add("In for loop the target should be of type Real", forbranch.getStart());
-		}
-		TypeCheckerTypes curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-		if(curvalue != TypeCheckerTypes.REAL){
-		    errorLog.add("In for loop at the variable should be of type Real", forbranch.getStart());
-		}
-		for(int i = 0; i < toExec.size(); i++){
-		    toExec.get(i).accept(this);
-		}
-	    } else if (incriment == TypeCheckerTypes.INTEGER){
-		forbranch.getInitAssignment().accept(this);
-		TypeCheckerTypes target = forbranch.getTargetExpression().acceptResult(this);
-		if(target != TypeCheckerTypes.INTEGER){
-		    errorLog.add("In for loop the target should be of type Integer", forbranch.getStart());
-		}
-		TypeCheckerTypes curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-		if(curvalue != TypeCheckerTypes.INTEGER){
-		    errorLog.add("In for loop at the variable should be of type Integer", forbranch.getStart());
-		}
-		for(int i = 0; i < toExec.size(); i++){
-		    toExec.get(i).accept(this);
-		}
+	    TypeCheckerTypes target = forbranch.getTargetExpression().acceptResult(this);
+	    TypeCheckerTypes curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+	    if(incriment != target || incriment != curvalue){
+		errorLog.add("Type Mismatch in head of For Loop", forbranch.getStart());
+	    }
+	    for(int i = 0; i < toExec.size(); i++){
+	       toExec.get(i).accept(this);
 	    }
 	} else {
 	    forbranch.getInitAssignment().accept(this);
 	    TypeCheckerTypes target = forbranch.getTargetExpression().acceptResult(this);
-	    if(target != TypeCheckerTypes.INTEGER){
-		errorLog.add("In for loop the target should be of type Integer", forbranch.getStart());
-	    }
 	    TypeCheckerTypes curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-	    if(curvalue != TypeCheckerTypes.INTEGER){
-	        errorLog.add("In for loop at the variable should be of type Integer", forbranch.getStart());
+	    if(curvalue != target){
+	        errorLog.add("Type Mismatch in head of For Loop", forbranch.getStart());
 	    }
 	    for(int i = 0; i < toExec.size(); i++){
 		toExec.get(i).accept(this);
@@ -360,17 +346,43 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	TypeCheckerTypes leftValue = binaryOperation.getLeft().acceptResult(this);
 	TypeCheckerTypes rightValue = binaryOperation.getRight().acceptResult(this);
 	BinaryOperation.OpType op = binaryOperation.getOperator();
-	if((leftValue == TypeCheckerTypes.BOOLEAN && rightValue == TypeCheckerTypes.BOOLEAN) && (op == BinaryOperation.OpType.AND || op == BinaryOperation.OpType.OR)){
-	    return TypeCheckerTypes.BOOLEAN;
-	} else if((leftValue == TypeCheckerTypes.INTEGER && rightValue == TypeCheckerTypes.INTEGER) && (op == BinaryOperation.OpType.DIV || op == BinaryOperation.OpType.MOD || op == BinaryOperation.OpType.PLUS || op == BinaryOperation.OpType.MINUS || op == BinaryOperation.OpType.TIMES)){
-	    return TypeCheckerTypes.INTEGER;
-	} else if ((leftValue == TypeCheckerTypes.REAL && rightValue == TypeCheckerTypes.REAL) && (op == BinaryOperation.OpType.DIVIDE || op == BinaryOperation.OpType.PLUS || op == BinaryOperation.OpType.MINUS || op == BinaryOperation.OpType.TIMES)) {
-	    return TypeCheckerTypes.REAL;
-	} else if ((leftValue == rightValue) && (op == BinaryOperation.OpType.EQ || op == BinaryOperation.OpType.NE || op == BinaryOperation.OpType.LT || op == BinaryOperation.OpType.LE || op == BinaryOperation.OpType.GT || op == BinaryOperation.OpType.GE)) {
-	    return TypeCheckerTypes.BOOLEAN;
-	} else {
-	    errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
+	switch(op){
+	case MOD:
+	    if(leftValue != TypeCheckerTypes.INTEGER || rightValue != TypeCheckerTypes.INTEGER){
+		errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
+	    }
 	    return null;
+	case DIVIDE:
+	    if(leftValue != TypeCheckerTypes.REAL || rightValue != TypeCheckerTypes.REAL){
+		errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
+	    }
+	    return null;
+	case DIV:
+	    if(leftValue != TypeCheckerTypes.INTEGER || rightValue != TypeCheckerTypes.INTEGER){
+		errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
+	    }
+	    return null;
+	case AND:
+	    if(leftValue != TypeCheckerTypes.BOOLEAN || rightValue != TypeCheckerTypes.BOOLEAN){
+		errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
+	    }
+	    return null;
+	case OR:
+	    if(leftValue != TypeCheckerTypes.BOOLEAN || rightValue != TypeCheckerTypes.BOOLEAN){
+		errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
+	    }
+	    return null;
+	default:
+	    if(leftValue != rightValue){
+		errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
+		return null;
+	    } else {
+		if(op == BinaryOperation.OpType.EQ || op == BinaryOperation.OpType.NE || op == BinaryOperation.OpType.LT || op == BinaryOperation.OpType.LE || op == BinaryOperation.OpType.GT || op == BinaryOperation.OpType.GE){
+		    return TypeCheckerTypes.BOOLEAN;
+		} else {
+		    return leftValue;
+		}
+	    }
 	}
     }
 
@@ -413,7 +425,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	if (value == TypeCheckerTypes.BOOLEAN || value == TypeCheckerTypes.INTEGER || value == TypeCheckerTypes.REAL){
 	    return value;
 	} else {
-	    errorLog.add("Type Missmatch in Unary Operation " , unaryOperation.getStart());
+	    errorLog.add("Invalid Type for Unary Operation " + value , unaryOperation.getStart());
 	    return null;
 	}
     }
