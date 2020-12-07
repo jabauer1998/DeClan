@@ -531,9 +531,12 @@ public class MyParser implements Parser {
     if(willMatch(TokenType.PLUS)){
       skip();
       return UnaryOperation.OpType.PLUS;
-    } else {
-      match(TokenType.MINUS);
+    } else if (willMatch(TokenType.MINUS)){
+      skip();
       return UnaryOperation.OpType.MINUS;
+    } else {
+      match(TokenType.NOT);
+      return UnaryOperation.OpType.NOT;
     }
   }
   // AddOperator -> + | -
