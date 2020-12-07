@@ -9,7 +9,7 @@ I made several important edits to my buildscript to build project 5. I made it e
 *PROJECT3 => builds and runs project3*<br>
 *PROJECT4 => builds and runs project4*<br>
 *PROJECT5 => builds and runs project5*<br>
-*PROJECT5 => builds and runs project6*<br>
+*PROJECT6 => builds and runs project6*<br>
 *TEST => builds and runs the junit testcases*<br>
 *ALL => buids and runs the project file aswell as the junit testcases*<br><br>
 
@@ -17,5 +17,3 @@ I made several important edits to my buildscript to build project 5. I made it e
 **(NOTE: this command was executed inside the DeClan directory as this is where the build script lies. This build script is only designed to work if invoked from within the directory)**<br><br>
 
 The advantages of the build script is it will check if you have all of the required dependencies as well. For instance java installed on your machine. It also displayes the results in a very readable format.<br><br>
-
-Starter projects for the Fall 2020 Compilers class at DePauw University
