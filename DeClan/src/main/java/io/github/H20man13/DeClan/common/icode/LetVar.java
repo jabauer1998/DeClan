@@ -1,8 +1,8 @@
 package io.github.H20man13.DeClan.common.icode;
 
 public class LetVar implements ICode {
-	private String place;
-	private String var;
+	public String place;
+	public String var;
 
 	public LetVar(String place, String var) {
 		this.place = place;

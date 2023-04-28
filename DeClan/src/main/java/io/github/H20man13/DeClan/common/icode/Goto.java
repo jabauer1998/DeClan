@@ -1,7 +1,7 @@
 package io.github.H20man13.DeClan.common.icode;
 
 public class Goto implements ICode {
-	private String label;
+	public String label;
 
 	public Goto(String label) {
 		this.label = label;

@@ -1,6 +1,7 @@
 package io.github.H20man13.DeClan.main;
 
 import io.github.H20man13.DeClan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.OpUtil;
 import io.github.H20man13.DeClan.common.ast.ASTVisitor;
 import io.github.H20man13.DeClan.common.ast.BinaryOperation;
 import io.github.H20man13.DeClan.common.ast.ConstDeclaration;
@@ -351,65 +352,18 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   public Object visitResult(BinaryOperation binaryOperation) {
     Object leftValue = binaryOperation.getLeft().acceptResult(this);
     Object rightValue = binaryOperation.getRight().acceptResult(this);
-    if (leftValue instanceof Boolean || rightValue instanceof Boolean) {
-	switch(binaryOperation.getOperator()){
-	case NE:
-	    return (Boolean)leftValue != (Boolean)rightValue;
-        case EQ:
-	    return (Boolean)leftValue == (Boolean)rightValue;
-        case AND:
-	    return (Boolean)leftValue && (Boolean)rightValue;
-        default:
-	    return (Boolean)leftValue || (Boolean)rightValue;
-	}
-    } else if (leftValue instanceof Double || rightValue instanceof Double) {
-	switch (binaryOperation.getOperator()) {
-	case PLUS:
-	    return (Double)leftValue + (Double)rightValue;
-	case MINUS:
-	    return (Double)leftValue - (Double)rightValue;
-	case TIMES:
-	    return (Double)leftValue * (Double)rightValue;
-	case DIVIDE:
-	    return (Double)leftValue / (Double)rightValue;
-	case LT:
-	    return (Boolean)((Double)leftValue < (Double)rightValue);
-	case GT:
-	    return (Boolean)((Double)leftValue > (Double)rightValue);
-	case NE:
-	    return (Boolean)((Double)leftValue != (Double)rightValue);
-	case EQ:
-	    return (Boolean)((Double)leftValue == (Double)rightValue);
-	case GE:
-	    return (Boolean)((Double)leftValue >= (Double)rightValue);
-	default:
-	    return (Boolean)((Double)leftValue <= (Double)rightValue);
-	}
-    } else {
-	switch (binaryOperation.getOperator()) {
-	case PLUS:
-	    return (Integer)leftValue + (Integer)rightValue;
-	case MINUS:
-	    return (Integer)leftValue - (Integer)rightValue;
-	case TIMES:
-	    return (Integer)leftValue * (Integer)rightValue;
-	case MOD:
-	    return (Integer)leftValue % (Integer)rightValue;
-	case DIV:
-	    return (Integer)((Integer)leftValue / (Integer)rightValue);
-	case LT:
-	    return (Boolean)((Integer)leftValue < (Integer)rightValue);
-	case GT:
-	    return (Boolean)((Integer)leftValue > (Integer)rightValue);
-	case NE:
-	    return (Boolean)((Integer)leftValue != (Integer)rightValue);
-	case EQ:
-	    return (Boolean)((Integer)leftValue == (Integer)rightValue);
-	case GE:
-	    return (Boolean)((Integer)leftValue >= (Integer)rightValue);
-	default:
-	    return (Boolean)((Integer)leftValue <= (Integer)rightValue);
-	}
+    switch(binaryOperation.getOperator()){
+        case NE: return OpUtil.notEqual(leftValue, rightValue);
+        case PLUS: return OpUtil.plus(leftValue, rightValue);
+        case MINUS: return OpUtil.minus(leftValue, rightValue);
+        case TIMES: return OpUtil.times(leftValue, rightValue);
+        case DIVIDE: return OpUtil.divide(leftValue, rightValue);
+        case LT: return OpUtil.lessThan(leftValue, rightValue);
+        case GT: return OpUtil.greaterThan(leftValue, rightValue);
+        case EQ: return OpUtil.equal(leftValue, rightValue);
+        case GE: return OpUtil.greaterThanOrEqualTo(leftValue, rightValue);
+        case LE: return OpUtil.lessThanOrEqualTo(leftValue, rightValue);
+        default: return null;
     }
   }
 
@@ -447,27 +401,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   @Override
   public Object visitResult(UnaryOperation unaryOperation) {
     Object value = unaryOperation.getExpression().acceptResult(this);
-    if (value instanceof Boolean){
-	switch(unaryOperation.getOperator()){
-	case NOT:
-	    return !(Boolean)value;
-	default:
-	    return value;
-	}
-    } else if(value instanceof Double){
-      switch (unaryOperation.getOperator()){
-      case MINUS:
-	return -(Double)value;
-      default:
-	return value;
-      }
-    } else {
-      switch (unaryOperation.getOperator()){
-      case MINUS:
-	return -(Integer)value;
-      default:
-	return value;
-      }
+	  switch(unaryOperation.getOperator()){
+	    case NOT: return OpUtil.not(value);
+      case PLUS: return value;
+      case MINUS: return OpUtil.negate(value);
+      default: return null;
     }
   }
     

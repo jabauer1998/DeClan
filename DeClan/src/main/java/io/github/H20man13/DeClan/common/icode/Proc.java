@@ -3,8 +3,8 @@ package io.github.H20man13.DeClan.common.icode;
 import java.util.List;
 
 public class Proc implements ICode {
-	private String pname;
-	private List<String> params;
+	public String pname;
+	public List<String> params;
 
 	public Proc(String pname, List<String> params) {
 		this.pname = pname;

@@ -4,10 +4,10 @@ import io.github.H20man13.DeClan.main.MyTypeChecker;
 import io.github.H20man13.DeClan.common.ast.BinaryOperation;
 
 public class LetBin implements ICode {
-	private String place;
-	private String left;
-	private Op op;
-	private String right;
+	public String place;
+	public String left;
+	public Op op;
+	public String right;
 
 	public LetBin(String place, String left, Op op, String right) {
 		this.place = place;

@@ -41,7 +41,7 @@ public class Environment <KeyType, TableType> {
      * @author Jacob Bauer
      */
     public void addScope(){
-	environment.push(new HashMap<>());
+	    environment.push(new HashMap<KeyType, TableType>());
     }
     /**
      * This method is used to check if a variable exists within the entire stack

@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan;
+package io.github.H20man13.DeClan.common;
 
 import java.util.Iterator;
 import java.util.Objects;

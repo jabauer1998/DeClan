@@ -5,8 +5,8 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import java.util.List;
 
 public class Call implements ICode {
-	private String pname;
-	private List<String> args;
+	public String pname;
+	public List<String> args;
 
 	public Call(String pname, List<String> args) {
 		this.pname = pname;

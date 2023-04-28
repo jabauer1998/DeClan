@@ -1,8 +1,8 @@
 package io.github.H20man13.DeClan.common.icode;
 
 public class LetBool implements ICode {
-	private String place;
-	private boolean value;
+	public String place;
+	public boolean value;
 	
 	public LetBool(String place, boolean value) {
 		this.place = place;

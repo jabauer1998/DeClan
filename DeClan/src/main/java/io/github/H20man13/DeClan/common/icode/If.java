@@ -1,8 +1,8 @@
 package io.github.H20man13.DeClan.common.icode;
 
 public class If implements ICode {
-	private String left, right, ifTrue, ifFalse;
-	private Op op;
+	public String left, right, ifTrue, ifFalse;
+	public Op op;
 
 	public If(String left, Op op, String right, String ifTrue, String ifFalse) {
 		this.left = left;

@@ -11,6 +11,14 @@ public class BasicBlock implements ICode{
         this.codeInBlock = codeInBlock;
     }
 
+    public List<ICode> getIcode(){
+        return this.codeInBlock;
+    }
+
+    public void setICode(List<ICode> list){
+        this.codeInBlock = list;
+    }
+
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();

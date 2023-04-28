@@ -1,8 +1,8 @@
 package io.github.H20man13.DeClan.common.icode;
 
 public class LetReal implements ICode {
-	private String place;
-	private double value;
+	public String place;
+	public double value;
 	
 	public LetReal(String place, double value) {
 		this.place = place;

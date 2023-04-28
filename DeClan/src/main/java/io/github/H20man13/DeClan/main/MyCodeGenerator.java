@@ -135,15 +135,15 @@ public class MyCodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
     varEnvironment.addScope();
     List <VariableDeclaration> args = procDecl.getArguments();
     for(int i = 0; i < args.size(); i++){
-	args.get(i).accept(this);
+	    args.get(i).accept(this);
     }
     List <Declaration> localVars = procDecl.getLocalVariables();
     for(int i = 0; i < localVars.size(); i++){
-	localVars.get(i).accept(this);
+	    localVars.get(i).accept(this);
     }
     List <Statement> Exec = procDecl.getExecutionStatements();
     for(int i = 0; i < Exec.size(); i++){
-	Exec.get(i).accept(this);
+	    Exec.get(i).accept(this);
     }
     Expression retExp = procDecl.getReturnStatement();
     String retPlace = retExp.acceptResult(this);
@@ -160,8 +160,8 @@ public class MyCodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
     List<Expression> valArgs = procedureCall.getArguments();
     List<String> valArgResults = new ArrayList<>();
     for(Expression valArg : valArgs){
-	String result = valArg.acceptResult(this);
-	valArgResults.add(result);
+	    String result = valArg.acceptResult(this);
+	    valArgResults.add(result);
     }
     icode.add(new Proc(funcName, valArgResults));
   }
@@ -174,24 +174,24 @@ public class MyCodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   public void visit(WhileElifBranch whilebranch){
     Expression toCheck = whilebranch.getExpression();
     List<Statement> toExec = whilebranch.getExecStatements();
-      String test = toCheck.acceptResult(this);
-      icode.add(new If(test, "WHILESTAT" +  WHILENUM + "_SEQ_" + WHILESEQNUM, "WHILENEXT" + WHILENUM + "_SEQ_" + WHILESEQNUM)); //Entry Point into series
-      icode.add(new Label("WHILECOND" + WHILENUM + "_SEQ_" + WHILESEQNUM)); //label for looping
-      icode.add(new If(test, "WHILESTAT" + WHILENUM + "_SEQ_" + WHILESEQNUM, "WHILEEND" + WHILENUM)); //Exit the Loop if the condition fails
-      icode.add(new Label("WHILESTAT" +  WHILENUM + "_SEQ_" + WHILESEQNUM));
-      for(int i = 0; i < toExec.size(); i++){
-	  toExec.get(i).accept(this);
-      }
-      icode.add(new Goto("WHILECOND" + WHILENUM + "_SEQ_" + WHILESEQNUM));
-      if(whilebranch.getNextBranch() != null) {
-	icode.add(new Label("WHILENEXT" +  WHILENUM + "_SEQ_" + WHILESEQNUM));
-        WHILESEQNUM++;
-        whilebranch.getNextBranch().accept(this);
-      } else {
-	  icode.add(new Label("WHILEEND" + WHILENUM));
-	  WHILESEQNUM = 0;
-	  WHILENUM++;
-      }
+    String test = toCheck.acceptResult(this);
+    icode.add(new If(test, "WHILESTAT" +  WHILENUM + "_SEQ_" + WHILESEQNUM, "WHILENEXT" + WHILENUM + "_SEQ_" + WHILESEQNUM)); //Entry Point into series
+    icode.add(new Label("WHILECOND" + WHILENUM + "_SEQ_" + WHILESEQNUM)); //label for looping
+    icode.add(new If(test, "WHILESTAT" + WHILENUM + "_SEQ_" + WHILESEQNUM, "WHILEEND" + WHILENUM)); //Exit the Loop if the condition fails
+    icode.add(new Label("WHILESTAT" +  WHILENUM + "_SEQ_" + WHILESEQNUM));
+    for(int i = 0; i < toExec.size(); i++){
+      toExec.get(i).accept(this);
+    }
+    icode.add(new Goto("WHILECOND" + WHILENUM + "_SEQ_" + WHILESEQNUM));
+    if(whilebranch.getNextBranch() != null) {
+      icode.add(new Label("WHILENEXT" +  WHILENUM + "_SEQ_" + WHILESEQNUM));
+      WHILESEQNUM++;
+      whilebranch.getNextBranch().accept(this);
+    } else {
+      icode.add(new Label("WHILEEND" + WHILENUM));
+      WHILESEQNUM = 0;
+      WHILENUM++;
+    }
   }
     
   private int IFSEQNUM = 0;
@@ -199,24 +199,24 @@ public class MyCodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
     
   @Override
   public void visit(IfElifBranch ifbranch){
-      Expression toCheck = ifbranch.getExpression();
-      String test = toCheck.acceptResult(this);
-      icode.add(new If(test, "IFSTAT" +  IFNUM + "_SEQ_" + IFSEQNUM, "IFNEXT" + IFNUM + "_SEQ_" + IFSEQNUM));
-      List<Statement> toExec = ifbranch.getExecStatements();
-      icode.add(new Label("IFSTAT" +  IFNUM + "_SEQ_" + IFSEQNUM));
-      for(int i = 0; i < toExec.size(); i++){
-	  toExec.get(i).accept(this);
-      }
-      icode.add(new Goto("IFEND" + IFNUM));
-      if(ifbranch.getNextBranch() != null) {
-	icode.add(new Label("IFNEXT" +  IFNUM + "_SEQ_" + IFSEQNUM));
-        IFSEQNUM++;
-        ifbranch.getNextBranch().accept(this);
-      } else {
-	  icode.add(new Label("IFEND" + IFNUM));
-	  IFSEQNUM = 0;
-	  IFNUM++;
-      }
+    Expression toCheck = ifbranch.getExpression();
+    String test = toCheck.acceptResult(this);
+    icode.add(new If(test, "IFSTAT" +  IFNUM + "_SEQ_" + IFSEQNUM, "IFNEXT" + IFNUM + "_SEQ_" + IFSEQNUM));
+    List<Statement> toExec = ifbranch.getExecStatements();
+    icode.add(new Label("IFSTAT" +  IFNUM + "_SEQ_" + IFSEQNUM));
+    for(int i = 0; i < toExec.size(); i++){
+      toExec.get(i).accept(this);
+    }
+    icode.add(new Goto("IFEND" + IFNUM));
+    if(ifbranch.getNextBranch() != null) {
+      icode.add(new Label("IFNEXT" +  IFNUM + "_SEQ_" + IFSEQNUM));
+      IFSEQNUM++;
+      ifbranch.getNextBranch().accept(this);
+    } else {
+      icode.add(new Label("IFEND" + IFNUM));
+      IFSEQNUM = 0;
+      IFNUM++;
+    }
   }
 
   @Override
@@ -237,7 +237,7 @@ public class MyCodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
     List<Statement> toExec = repeatbranch.getExecStatements();
     icode.add(new Label("REPEATBEG" + REPEATNUM));
     for(int i = 0; i < toExec.size(); i++){
-	toExec.get(i).accept(this);
+	    toExec.get(i).accept(this);
     }
     String test = toCheck.acceptResult(this);
     icode.add(new If(test, "REPEATEND" + REPEATNUM, "REPEATBEG" + REPEATNUM));
@@ -254,47 +254,47 @@ public class MyCodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
       String incriment = toMod.acceptResult(this);
       MyTypeChecker.TypeCheckerTypes incrimentType = toMod.acceptResult(typeChecker);
       if(incrimentType == MyTypeChecker.TypeCheckerTypes.REAL){
-	  forbranch.getInitAssignment().accept(this);
-	  String target = forbranch.getTargetExpression().acceptResult(this);
-	  String curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-	  icode.add(new Label("FORBEG" + FORNUM));
-	  icode.add(new If(curvalue, If.Op.NE, target, "FORLOOP" + FORNUM, "FOREND" + FORNUM));
-	  icode.add(new Label("FORLOOP" + FORNUM));
-	  for(int i = 0; i < toExec.size(); i++){
-	      toExec.get(i).accept(this);
-	  }
-	  String entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-	  icode.add(new LetBin(curvalue, curvalue, LetBin.Op.RADD, incriment));
-	  icode.add(new Goto("FORBEG" + FORNUM));
-	  icode.add(new Label("FOREND" + FORNUM));
+        forbranch.getInitAssignment().accept(this);
+        String target = forbranch.getTargetExpression().acceptResult(this);
+        String curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+        icode.add(new Label("FORBEG" + FORNUM));
+        icode.add(new If(curvalue, If.Op.NE, target, "FORLOOP" + FORNUM, "FOREND" + FORNUM));
+        icode.add(new Label("FORLOOP" + FORNUM));
+        for(int i = 0; i < toExec.size(); i++){
+            toExec.get(i).accept(this);
+        }
+        String entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+        icode.add(new LetBin(curvalue, curvalue, LetBin.Op.RADD, incriment));
+        icode.add(new Goto("FORBEG" + FORNUM));
+        icode.add(new Label("FOREND" + FORNUM));
       } else {
-	  forbranch.getInitAssignment().accept(this);
-	  String target = forbranch.getTargetExpression().acceptResult(this);
-	  String curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-	  icode.add(new Label("FORBEG" + FORNUM));
-	  icode.add(new If(target, If.Op.NE, curvalue, "FORLOOP" + FORNUM, "FOREND" + FORNUM));
-	  icode.add(new Label("FORLOOP" + FORNUM));
-	  for(int i = 0; i < toExec.size(); i++){
-	      toExec.get(i).accept(this);
-	  }
-	  String entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-	  icode.add(new LetBin(curvalue, curvalue, LetBin.Op.IADD, incriment));
-	  icode.add(new Goto("FORBEG" + FORNUM));
-	  icode.add(new Label("FOREND" + FORNUM));
+        forbranch.getInitAssignment().accept(this);
+        String target = forbranch.getTargetExpression().acceptResult(this);
+        String curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+        icode.add(new Label("FORBEG" + FORNUM));
+        icode.add(new If(target, If.Op.NE, curvalue, "FORLOOP" + FORNUM, "FOREND" + FORNUM));
+        icode.add(new Label("FORLOOP" + FORNUM));
+        for(int i = 0; i < toExec.size(); i++){
+            toExec.get(i).accept(this);
+        }
+        String entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+        icode.add(new LetBin(curvalue, curvalue, LetBin.Op.IADD, incriment));
+        icode.add(new Goto("FORBEG" + FORNUM));
+        icode.add(new Label("FOREND" + FORNUM));
       }
     } else {
-          forbranch.getInitAssignment().accept(this);
-	  String target = forbranch.getTargetExpression().acceptResult(this);
-	  String curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-	  icode.add(new Label("FORBEG" + FORNUM));
-	  icode.add(new If(target, If.Op.NE, curvalue, "FORLOOP" + FORNUM, "FOREND" + FORNUM));
-	  icode.add(new Label("FORLOOP" + FORNUM));
-	  for(int i = 0; i < toExec.size(); i++){
-	      toExec.get(i).accept(this);
-	  }
-	  String entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-	  icode.add(new Goto("FORBEG" + FORNUM));
-	  icode.add(new Label("FOREND" + FORNUM));
+      forbranch.getInitAssignment().accept(this);
+      String target = forbranch.getTargetExpression().acceptResult(this);
+      String curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+      icode.add(new Label("FORBEG" + FORNUM));
+      icode.add(new If(target, If.Op.NE, curvalue, "FORLOOP" + FORNUM, "FOREND" + FORNUM));
+      icode.add(new Label("FORLOOP" + FORNUM));
+      for(int i = 0; i < toExec.size(); i++){
+          toExec.get(i).accept(this);
+      }
+      String entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+      icode.add(new Goto("FORBEG" + FORNUM));
+      icode.add(new Label("FOREND" + FORNUM));
     }
     FORNUM++;
   }
@@ -362,8 +362,8 @@ public class MyCodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
     List<Expression> valArgs = funcCall.getArguments();
     List<String> valArgResults = new ArrayList<>();
     for(Expression valArg : valArgs){
-	String result = valArg.acceptResult(this);
-	valArgResults.add(result);
+	    String result = valArg.acceptResult(this);
+	    valArgResults.add(result);
     }
     icode.add(new Call(funcName, valArgResults));
     return procEnvironment.getEntry(funcName);
@@ -372,37 +372,19 @@ public class MyCodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   @Override
   public String visitResult(UnaryOperation unaryOperation) {
     String value = unaryOperation.getExpression().acceptResult(this);
-    MyTypeChecker.TypeCheckerTypes type = unaryOperation.getExpression().acceptResult(typeChecker);
-    switch(type){
-        case INTEGER:
-	    switch(unaryOperation.getOperator()){
+    
+	  switch(unaryOperation.getOperator()){
 	    case MINUS:
-		String place = genNextRegister();
-		icode.add(new LetUn(place, LetUn.Op.INEG, value));
-                return place;
-	    default:
-		return value;
-	    }
-        case REAL:
-	    switch(unaryOperation.getOperator()){
-	    case MINUS:
-		String place = genNextRegister();
-		icode.add(new LetUn(place, LetUn.Op.RNEG, value));
-                return place;
-	    default:
-		return value;
-	    }
-       case BOOLEAN:
-	   switch(unaryOperation.getOperator()){
+		    String place1 = genNextRegister();
+		    icode.add(new LetUn(place1, LetUn.Op.INEG, value));
+        return place1;
 	   case NOT:
-	       String place = genNextRegister();
-	       icode.add(new LetUn(place, LetUn.Op.BNOT, value));
-	       return place;
+	      String place2 = genNextRegister();
+	      icode.add(new LetUn(place2, LetUn.Op.BNOT, value));
+	      return place2;
 	   default:
-	       return value;
-	   }
-    }
-    return "";
+	      return value;
+	  }
   }
     
   @Override
@@ -416,23 +398,23 @@ public class MyCodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
       String rawnum = ifHexToInt(numValue.getLexeme());
       String place = genNextRegister();
       if(rawnum.contains(".")){
-	  icode.add(new LetReal(place, Double.parseDouble(rawnum)));
+	      icode.add(new LetReal(place, Double.parseDouble(rawnum)));
       } else {
-	  icode.add(new LetInt(place, Integer.parseInt(rawnum)));
+	      icode.add(new LetInt(place, Integer.parseInt(rawnum)));
       }
       return place;
   }
 
   @Override
   public String visitResult(BoolValue boolValue){
-    String lexeme = boolValue.getLexeme(); //change to hex if you need to otherwise unchanged
-    String place = genNextRegister();
-    if(lexeme.equals("TRUE")){
-	icode.add(new LetBool(place, true));
-    } else {
-	icode.add(new LetBool(place, false));
-    }
-    return place;
+      String lexeme = boolValue.getLexeme(); //change to hex if you need to otherwise unchanged
+      String place = genNextRegister();
+      if(lexeme.equals("TRUE")){
+	      icode.add(new LetBool(place, true));
+      } else {
+	      icode.add(new LetBool(place, false));
+      }
+      return place;
   }
 
   @Override

@@ -3,9 +3,9 @@ package io.github.H20man13.DeClan.common.icode;
 import io.github.H20man13.DeClan.main.MyTypeChecker;
 
 public class LetUn implements ICode {
-	private String place;
-	private Op op;
-	private String value;
+	public String place;
+	public Op op;
+	public String value;
 
 	public LetUn(String place, Op op, String value) {
 		this.place = place;
