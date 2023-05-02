@@ -8,7 +8,6 @@ import io.github.H20man13.DeClan.common.icode.LetReal;
 import io.github.H20man13.DeClan.common.icode.LetString;
 import io.github.H20man13.DeClan.common.icode.LetUn;
 import io.github.H20man13.DeClan.common.icode.LetVar;
-import io.github.H20man13.DeClan.common.icode.LetUn.Op;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 
 public class MyICodeMachine {

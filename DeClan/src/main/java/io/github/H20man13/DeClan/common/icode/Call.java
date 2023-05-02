@@ -5,10 +5,12 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import java.util.List;
 
 public class Call implements ICode {
+	public String place;
 	public String pname;
 	public List<String> args;
 
-	public Call(String pname, List<String> args) {
+	public Call(String place, String pname, List<String> args) {
+		this.place = place;
 		this.pname = pname;
 		this.args = args;
 	}
@@ -16,7 +18,11 @@ public class Call implements ICode {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("CALL " + pname + "(");
+		sb.append(place);
+		sb.append(" := ");
+		sb.append("CALL ");
+		sb.append(pname);
+		sb.append("(");
 		boolean first = true;
 		for (String arg : args) {
 			if (first) {
