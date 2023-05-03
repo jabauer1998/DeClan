@@ -38,12 +38,12 @@ public enum IrTokenType {
     LPAR,
     RPAR;
 
-    public static final Map<String, IrTokenType> reserved;
+    public static final Map<String, IrTokenType> reservedIr;
     private static final Map<Character, IrTokenType> singleOperators;
     private static final Map<String, IrTokenType> dualOperators;
 
     private static void addKeyword(IrTokenType type){
-        reserved.put(type.toString(), type);
+        reservedIr.put(type.toString(), type);
     }
 
     private static void addSingleOp(Character key, IrTokenType type){
@@ -71,7 +71,7 @@ public enum IrTokenType {
     }
 
     static {
-        reserved = new HashMap<>();
+        reservedIr = new HashMap<>();
         addKeyword(LABEL);
         addKeyword(IF);
         addKeyword(THEN);
@@ -81,6 +81,7 @@ public enum IrTokenType {
         addKeyword(GOTO);
         addKeyword(CALL);
         addKeyword(PROC);
+        addKeyword(NOT);
         addKeyword(PLUS);
         addKeyword(MINUS);
         addKeyword(TIMES);
@@ -88,6 +89,8 @@ public enum IrTokenType {
         addKeyword(MODULO);
         addKeyword(LT);
         addKeyword(GT);
+        addKeyword(GE);
+        addKeyword(LE);
         addKeyword(NE);
         addKeyword(EQ);
 

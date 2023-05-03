@@ -599,7 +599,7 @@ public class MyDeClanParser implements Parser {
 	      List<Expression> expList = parseActualParameters();
 	      return new FunctionCall(start, new Identifier(start, id.getLexeme()), expList);
       } else {
-	return parseIdentifier(id);
+	      return parseIdentifier(id);
       }
     } else if (willMatch(TokenType.STRING)){
       return parseStrValue();

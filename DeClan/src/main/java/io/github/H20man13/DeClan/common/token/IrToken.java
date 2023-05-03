@@ -64,8 +64,8 @@ public class IrToken {
     }
 
     public static IrToken createId(String lexeme, Position pos){
-        if(TokenType.reserved.containsKey(lexeme)){
-            return new IrToken(pos, IrTokenType.reserved.get(lexeme), lexeme);
+        if(IrTokenType.reservedIr.containsKey(lexeme)){
+            return new IrToken(pos, IrTokenType.reservedIr.get(lexeme), lexeme);
         } else {
             return new IrToken(pos, IrTokenType.ID, lexeme);
         }

@@ -80,6 +80,7 @@ public class MyIrLexer {
                     } else if(IrTokenType.contSingleOpToken(c) || c == ':'){
                         state = state.OP;
                         lexeme.append(c);
+                        source.advance();
                         position = source.getPosition();
                         continue;
                     } else {
@@ -151,7 +152,9 @@ public class MyIrLexer {
                         nextToken = IrToken.create(IrTokenType.getSingleOpToken(lexeme.toString()), lexeme.toString(), position);
                         return;
                     } else {
-                        state = state.INIT;
+                        nextToken = null;
+                        errorLog.add("Error: Invalid operator with lexeme " + lexeme.toString(), position);
+                        return;
                     }
             }
         }
