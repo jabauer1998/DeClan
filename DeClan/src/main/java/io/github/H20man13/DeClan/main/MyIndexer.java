@@ -31,15 +31,15 @@ import io.github.H20man13.DeClan.common.ast.Assignment;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 
 import java.lang.Number;
+
+import static io.github.H20man13.DeClan.main.MyIO.*;
+
 import java.lang.Math;
 import java.lang.String;
 import java.lang.StringBuilder;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-
-
-import static io.github.H20man13.DeClan.common.MyIO.*;
 
 /**
  * This is the Indexer class 

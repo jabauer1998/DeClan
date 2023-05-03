@@ -3,6 +3,8 @@ package io.github.H20man13.DeClan.common;
 import java.io.IOException;
 import java.io.Reader;
 
+import edu.depauw.declan.common.Source;
+
 /**
  * A ReaderSource object wraps a Reader (which will typically be a BufferedReader
  * wrapping another Reader connected to a file or an input stream) with the

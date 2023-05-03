@@ -62,13 +62,9 @@ public class MyICodeMachine {
         LetUn.Op op = var.op;
 
         switch(op){
-            case INEG:
+            case NEG:
                 Object val1 = OpUtil.negate(val);
                 results.addEntry(locVar, val1);
-                break;
-            case RNEG:
-                Object val2 = OpUtil.negate(val);
-                results.addEntry(place, val2);
                 break;
             case BNOT:
                 Object val3 = OpUtil.not(val);
@@ -93,46 +89,48 @@ public class MyICodeMachine {
 
         switch(op){
             case BAND:
-                //Not implemented Yet
+                Object val0 = OpUtil.and(leftVal, rightVal);
+                results.addEntry(place, val0);
                 break;
             case BOR:
-                //Not implemented yet
-                break;
-            case IDIV:
-                Object val1 = OpUtil.divide(leftVal, rightVal);
+                Object val1 = OpUtil.or(leftVal, rightVal);
                 results.addEntry(place, val1);
                 break;
-            case IADD:
-                Object val2 = OpUtil.plus(leftVal, rightVal);
+            case DIV:
+                Object val2 = OpUtil.divide(leftVal, rightVal);
                 results.addEntry(place, val2);
                 break;
-            case ISUB:
-                Object val3 = OpUtil.minus(leftVal, rightVal);
+            case ADD:
+                Object val3 = OpUtil.plus(leftVal, rightVal);
                 results.addEntry(place, val3);
                 break;
-            case IMUL:
-                Object val4 = OpUtil.times(leftVal, rightVal);
+            case SUB:
+                Object val4 = OpUtil.minus(leftVal, rightVal);
                 results.addEntry(place, val4);
                 break;
-            case IGE:
-                Object val5 = OpUtil.greaterThanOrEqualTo(leftVal, rightVal);
+            case MUL:
+                Object val5 = OpUtil.times(leftVal, rightVal);
                 results.addEntry(place, val5);
                 break;
-            case IGT:
-                Object val6 = OpUtil.greaterThan(leftVal, rightVal);
+            case GE:
+                Object val6 = OpUtil.greaterThanOrEqualTo(leftVal, rightVal);
                 results.addEntry(place, val6);
                 break;
-            case INE:
-                Object val7 = OpUtil.notEqual(leftVal, rightVal);
+            case GT:
+                Object val7 = OpUtil.greaterThan(leftVal, rightVal);
                 results.addEntry(place, val7);
                 break;
-            case ILT:
-                Object val8 = OpUtil.lessThan(leftVal, rightVal);
+            case NE:
+                Object val8 = OpUtil.notEqual(leftVal, rightVal);
                 results.addEntry(place, val8);
                 break;
-            case ILE:
-                Object val9 = OpUtil.lessThanOrEqualTo(leftVal, rightVal);
+            case LT:
+                Object val9 = OpUtil.lessThan(leftVal, rightVal);
                 results.addEntry(place, val9);
+                break;
+            case LE:
+                Object val10 = OpUtil.lessThanOrEqualTo(leftVal, rightVal);
+                results.addEntry(place, val10);
                 break;
             default:
                 break; 

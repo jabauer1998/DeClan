@@ -1,6 +1,8 @@
-package io.github.H20man13.DeClan.common;
+package io.github.H20man13.DeClan.common.token;
 
 import java.util.Objects;
+
+import io.github.H20man13.DeClan.common.Position;
 
 /**
  * A Token represents one lexical unit of a DeCLan source program. A Token
@@ -11,8 +13,8 @@ import java.util.Objects;
  * 
  * @author bhoward
  */
-public class Token {
-	private final TokenType type;
+public class DeClanToken {
+	private final DeClanTokenType type;
 	private final String lexeme;
 	private final Position position;
 
@@ -25,13 +27,13 @@ public class Token {
 	 * @param type   the TokenType of the token
 	 * @param lexeme the string value of the token
 	 */
-	Token(Position position, TokenType type, String lexeme) {
+	public DeClanToken(Position position, DeClanTokenType type, String lexeme) {
 		this.position = position;
 		this.type = type;
 		this.lexeme = lexeme;
 	}
 
-	public TokenType getType() {
+	public DeClanTokenType getType() {
 		return type;
 	}
 
@@ -68,7 +70,7 @@ public class Token {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Token other = (Token) obj;
+		DeClanToken other = (DeClanToken) obj;
 		return Objects.equals(lexeme, other.lexeme) && Objects.equals(position, other.position) && type == other.type;
 	}
 
@@ -83,8 +85,8 @@ public class Token {
 	 * @param column
 	 * @return
 	 */
-	public static Token createString(String lexeme, Position position) {
-		return new Token(position, TokenType.STRING, lexeme);
+	public static DeClanToken createString(String lexeme, Position position) {
+		return new DeClanToken(position, DeClanTokenType.STRING, lexeme);
 	}
 
 	/**
@@ -95,8 +97,8 @@ public class Token {
 	 * @param column
 	 * @return
 	 */
-	public static Token createNum(String lexeme, Position position) {
-		return new Token(position, TokenType.NUM, lexeme);
+	public static DeClanToken createNum(String lexeme, Position position) {
+		return new DeClanToken(position, DeClanTokenType.NUM, lexeme);
 	}
 
 	/**
@@ -108,11 +110,11 @@ public class Token {
 	 * @param column
 	 * @return
 	 */
-	public static Token createId(String lexeme, Position position) {
-		if (TokenType.reserved.containsKey(lexeme)) {
-			return new Token(position, TokenType.reserved.get(lexeme), null);
+	public static DeClanToken createId(String lexeme, Position position) {
+		if (DeClanTokenType.reserved.containsKey(lexeme)) {
+			return new DeClanToken(position, DeClanTokenType.reserved.get(lexeme), lexeme);
 		} else {
-			return new Token(position, TokenType.ID, lexeme);
+			return new DeClanToken(position, DeClanTokenType.ID, lexeme);
 		}
 	}
 
@@ -124,7 +126,7 @@ public class Token {
 	 * @param column
 	 * @return
 	 */
-	public static Token create(TokenType type, Position position) {
-		return new Token(position, type, null);
+	public static DeClanToken create(DeClanTokenType type, Position position) {
+		return new DeClanToken(position, type, null);
 	}
 }

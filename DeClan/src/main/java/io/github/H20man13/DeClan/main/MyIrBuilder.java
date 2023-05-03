@@ -77,7 +77,7 @@ public class MyIrBuilder {
 
     public String buildNegationAssignment(String value){
         String place = gen.genNextRegister();
-        output.add(factory.produceUnaryOperation(place, LetUn.Op.INEG, value));
+        output.add(factory.produceUnaryOperation(place, LetUn.Op.NEG, value));
         return place;
     }
 
@@ -95,55 +95,55 @@ public class MyIrBuilder {
 
     public String buildAdditionAssignment(String left,  String right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.IADD, right));
+        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.ADD, right));
         return place;
     }
 
     public String buildSubtractionAssignment(String left, String right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.ISUB, right));
+        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.SUB, right));
         return place;
     }
 
     public String buildMultiplicationAssignment(String left, String right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.IMUL, right));
+        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.MUL, right));
         return place;
     }
 
     public String buildDivisionAssignment(String left, String right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.IDIV, right));
+        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.DIV, right));
         return place;
     }
 
     public String buildModuloAssignment(String left, String right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.IMOD, right));
+        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.MOD, right));
         return place;
     }
 
     public String buildLessThanOrEqualAssignment(String left, String right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.ILE, right));
+        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.LE, right));
         return place;
     }
 
     public String buildLessThanAssignment(String left, String right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.ILT, right));
+        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.LT, right));
         return place;
     }
 
     public String buildGreaterThanOrEqualToAssignment(String left, String right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.IGE, right));
+        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.GE, right));
         return place;
     }
 
     public String buildGreaterThanAssignment(String left, String right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.IGT, right));
+        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.GT, right));
         return place;
     }
 
@@ -161,13 +161,13 @@ public class MyIrBuilder {
 
     public String buildEqualityAssignment(String left, String right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.IEQ, right));
+        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.EQ, right));
         return place;
     }
 
     public String buildInequalityAssignment(String left, String right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.INE, right));
+        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.NE, right));
         return place;
     }
 

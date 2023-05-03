@@ -17,20 +17,8 @@ public class LetUn implements ICode {
 	public String toString() {
 		return place + " := " + op + " " + value;
 	}
-    
-    public static Op getOp(MyTypeChecker.TypeCheckerTypes type){
-	switch(type){
-	case BOOLEAN:
-	    return Op.BNOT;
-	case REAL:
-	    return Op.RNEG;
-	case INTEGER:
-	    return Op.INEG; 
-	}
-	return null;
-    }
 
     public enum Op {
-	INEG, RNEG, BNOT
+		NEG, BNOT
     }
 }

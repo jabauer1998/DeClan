@@ -1,9 +1,10 @@
 package io.github.H20man13.DeClan.common.symboltable;
 
+import static io.github.H20man13.DeClan.main.MyIO.*;
+
 import java.lang.String;
 import java.lang.StringBuilder;
 
-import static io.github.H20man13.DeClan.common.MyIO.*;
 import io.github.H20man13.DeClan.common.Position;
 
 public class VariableEntry{

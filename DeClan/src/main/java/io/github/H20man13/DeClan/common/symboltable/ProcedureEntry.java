@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.symboltable;
 
+import static io.github.H20man13.DeClan.main.MyIO.*;
+
 import java.lang.String;
 import java.lang.StringBuilder;
 import java.util.List;
@@ -10,8 +12,6 @@ import io.github.H20man13.DeClan.common.ast.VariableDeclaration;
 import io.github.H20man13.DeClan.common.ast.Declaration;
 import io.github.H20man13.DeClan.common.ast.Statement;
 import io.github.H20man13.DeClan.common.ast.Expression;
-
-import static io.github.H20man13.DeClan.common.MyIO.*;
 
 public class ProcedureEntry{
 

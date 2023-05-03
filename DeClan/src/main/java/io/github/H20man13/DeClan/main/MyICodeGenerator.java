@@ -48,17 +48,11 @@ import io.github.H20man13.DeClan.common.symboltable.VariableEntry;
 import io.github.H20man13.DeClan.common.symboltable.ProcedureEntry;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 
-import static io.github.H20man13.DeClan.common.MyIO.*;
 import static io.github.H20man13.DeClan.common.RegisterGenerator.*;
+import static io.github.H20man13.DeClan.main.MyIO.*;
 
-import java.lang.Number;
-import java.lang.Object;
-import java.lang.Math;
 import java.lang.String;
-import java.lang.StringBuilder;
-import java.util.Map;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 

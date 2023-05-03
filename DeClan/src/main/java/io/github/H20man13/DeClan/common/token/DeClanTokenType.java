@@ -1,10 +1,10 @@
-package io.github.H20man13.DeClan.common;
+package io.github.H20man13.DeClan.common.token;
 
 import java.util.TreeMap;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum TokenType {
+public enum DeClanTokenType {
 	ID, // identifier, such as a variable name
 	NUM, // numeric literal
 	STRING, // string literal
@@ -30,11 +30,11 @@ public enum TokenType {
 	// the rest are reserved words whose lexeme matches their name
 	BEGIN, BY, CONST, DIV, DO, ELSE, ELSIF, END, FALSE, FOR, IF, MOD, OR, PROCEDURE, REPEAT, RETURN, THEN, TO, TRUE, UNTIL, VAR, WHILE;
 
-	public static final Map<String, TokenType> reserved; 
-	private static final Map<Character, TokenType> singleOperators; //all 1 character long operators
-	private static final Map<String, TokenType> dualOperators; //all two character long operators
+	public static final Map<String, DeClanTokenType> reserved; 
+	private static final Map<Character, DeClanTokenType> singleOperators; //all 1 character long operators
+	private static final Map<String, DeClanTokenType> dualOperators; //all two character long operators
 	
-	private static void addKeyword(TokenType type) {
+	private static void addKeyword(DeClanTokenType type) {
 	    reserved.put(type.toString(), type);
 	}
 
@@ -44,7 +44,7 @@ public enum TokenType {
 	   @param <code> type </code> token the character is mapped to 
 	   @author Jacob Bauer
 	*/
-	private static void addSingleOp(Character key, TokenType type){
+	private static void addSingleOp(Character key, DeClanTokenType type){
 	    singleOperators.put(key, type);
 	}
 	/**
@@ -53,7 +53,7 @@ public enum TokenType {
 	   @param <code> type </code> token the string is mapped to 
 	   @author Jacob Bauer
 	*/
-	private static void addDualOp(String key, TokenType type){
+	private static void addDualOp(String key, DeClanTokenType type){
 	    dualOperators.put(key, type);
 	}
 	/**
@@ -82,7 +82,7 @@ public enum TokenType {
 	   @author Jacob Bauer
 	*/
 	
-	public static TokenType getDualOpToken(String key){
+	public static DeClanTokenType getDualOpToken(String key){
 	    return dualOperators.get(key);
 	}
 
@@ -92,7 +92,7 @@ public enum TokenType {
 	   @author Jacob Bauer
 	*/
 	
-	public static TokenType getSingleOpToken(String key){
+	public static DeClanTokenType getSingleOpToken(String key){
 	    return singleOperators.get(key.charAt(0));
 	}
 	

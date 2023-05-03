@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common;
+package io.github.H20man13.DeClan.main;
 import java.lang.*;
 
 /**
@@ -16,7 +16,7 @@ public class MyIO{
 	return "\u001b[35;1m" + message + "\u001b[0m"; //Changes text color to bright magenta
     }
     /** Changes the color of the text to red
-	@param <code> message </code> the string to change to red
+	@param <code>message</code> the string to change to red
 	@return the red text
 	@author Jacob Bauer
      */

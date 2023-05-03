@@ -1,11 +1,13 @@
-package io.github.H20man13.DeClan.common;
+package edu.depauw.declan.common;
+
+import static io.github.H20man13.DeClan.main.MyIO.*;
 
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import static io.github.H20man13.DeClan.common.MyIO.*;
+import io.github.H20man13.DeClan.common.Position;
 
 /**
  * An ErrorLog accumulates error messages and their corresponding positions

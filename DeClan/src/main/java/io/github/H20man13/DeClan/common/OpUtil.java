@@ -75,4 +75,14 @@ public class OpUtil {
         else if(val1 instanceof Integer || val2 instanceof Integer) return (Integer)val1 <= (Integer)val2;
         else return null;
     }
+
+    public static Object and(Object val1, Object val2){
+        if(val1 instanceof Boolean && val2 instanceof Boolean) return (Boolean)val1 && (Boolean)val2;
+        else return null;
+    }
+
+    public static Object or(Object val1, Object val2){
+        if(val1 instanceof Boolean && val2 instanceof Boolean) return (Boolean)val1 || (Boolean)val2;
+        else return null;
+    }
 }

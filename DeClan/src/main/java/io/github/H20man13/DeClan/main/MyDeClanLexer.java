@@ -2,27 +2,27 @@ package io.github.H20man13.DeClan.main;
 
 import java.util.NoSuchElementException;
 
-import io.github.H20man13.DeClan.common.ErrorLog;
-import io.github.H20man13.DeClan.common.Lexer;
+import edu.depauw.declan.common.ErrorLog;
+import edu.depauw.declan.common.Lexer;
+import edu.depauw.declan.common.Source;
 import io.github.H20man13.DeClan.common.Position;
-import io.github.H20man13.DeClan.common.Source;
-import io.github.H20man13.DeClan.common.Token;
-import io.github.H20man13.DeClan.common.TokenType;
+import io.github.H20man13.DeClan.common.token.DeClanToken;
+import io.github.H20man13.DeClan.common.token.DeClanTokenType;
 
-import static io.github.H20man13.DeClan.common.TokenType.*;
-import static io.github.H20man13.DeClan.common.MyIO.*;
+import static io.github.H20man13.DeClan.common.token.DeClanTokenType.*;
+import static io.github.H20man13.DeClan.main.MyIO.*;
 
 /**
  * The MyLexer class is the lexer for the Declan Language
  * This Lexer also supports the options for project 1 which are floating point and hex numerals aswell as nested comments
  * @author Jacob Bauer
  */
-public class MyLexer implements Lexer {
+public class MyDeClanLexer implements Lexer {
 	private Source source;
-	private Token nextToken;
-        private ErrorLog errorLog;
+	private DeClanToken nextToken;
+    private ErrorLog errorLog;
 
-        public MyLexer(Source source, ErrorLog errorLog) {
+    public MyDeClanLexer(Source source, ErrorLog errorLog) {
 		this.source = source;
 		this.errorLog = errorLog;
 		this.nextToken = null;
@@ -35,14 +35,14 @@ public class MyLexer implements Lexer {
 		return nextToken != null;
 	}
 
-	public Token next(){
+	public DeClanToken next(){
 		if (nextToken == null) {
 			scanNext();
 		}
 		if (nextToken == null) {
 		    System.err.println("No more tokens");
 		}
-		Token result = nextToken;
+		DeClanToken result = nextToken;
 		nextToken = null;
 		return result;
 	}
@@ -108,18 +108,18 @@ public class MyLexer implements Lexer {
 				    source.advance();
 				    continue;
 				} else {
-				    nextToken = Token.createId(lexeme.toString(), position);
+				    nextToken = DeClanToken.createId(lexeme.toString(), position);
 				    return;
 				}
 			case STRING:
 			    if(c != '\"'){
-				source.advance();
-				lexeme.append(c);
-				continue;
+					source.advance();
+					lexeme.append(c);
+					continue;
 			    } else {
-				nextToken = Token.createString(lexeme.toString(), position);
-				source.advance();
-				return;
+					nextToken = DeClanToken.createString(lexeme.toString(), position);
+					source.advance();
+					return;
 			    }
 			case COMMENT:
 			    if(c == '(') {
@@ -151,13 +151,13 @@ public class MyLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
-				nextToken = Token.createNum(lexeme.toString(), position);
+				nextToken = DeClanToken.createNum(lexeme.toString(), position);
 				return;
 			    }
 			case HEX:
 			    if(c == 'H'){
 			        lexeme.append(c);
-				nextToken = Token.createNum(lexeme.toString(), position);
+				nextToken = DeClanToken.createNum(lexeme.toString(), position);
 				source.advance();
 				return;
 			    } else if (Character.toLowerCase(c) >= 'a' && Character.toLowerCase(c) <= 'f' || Character.isDigit(c)) {
@@ -176,18 +176,18 @@ public class MyLexer implements Lexer {
 				source.advance();
 				c = source.current();
 				if(c == '+' || c == '-'){
-				    lexeme.append(c);
-				    source.advance();
-				    c = source.current();
-				    if(Character.isDigit(c)){
-					state = State.EXP; //go to exp state
-					continue;
-				    } else {
-					errorLog.add("Missing exponent in real literal " + lexeme.toString(), position);
-					lexeme.setLength(0);
-					state = state.INIT;
-					continue;
-				    }
+					lexeme.append(c);
+					source.advance();
+					c = source.current();
+					if(Character.isDigit(c)){
+						state = State.EXP; //go to exp state
+						continue;
+					} else {
+						errorLog.add("Missing exponent in real literal " + lexeme.toString(), position);
+						lexeme.setLength(0);
+						state = state.INIT;
+						continue;
+					}
 				} else if (Character.isDigit(c)) {
 				    state = State.EXP;
 				    continue;
@@ -198,44 +198,44 @@ public class MyLexer implements Lexer {
 				    continue;
 				}
 			    } else if(Character.isDigit(c)) {
-				lexeme.append(c);
-				source.advance();
-				continue;
+					lexeme.append(c);
+					source.advance();
+					continue;
 			    } else {
-				nextToken = Token.createNum(lexeme.toString(), position); //created a Real Number Token
-				return;
+					nextToken = DeClanToken.createNum(lexeme.toString(), position); //created a Real Number Token
+					return;
 			    }
 			case NUM:
 			    if (c == '.') {
-				state = State.REAL;
-				lexeme.append(c);
-				source.advance();
-				continue;
+					state = State.REAL;
+					lexeme.append(c);
+					source.advance();
+					continue;
 			    } else if(c <= 'F' && c >= 'A' || c == 'H'){
-				state = State.HEX;
-				continue;
+					state = State.HEX;
+					continue;
 			    } else if (Character.isDigit(c)){
-				lexeme.append(c);
-				source.advance();
-				continue;
+					lexeme.append(c);
+					source.advance();
+					continue;
 			    } else {
-				nextToken = Token.createNum(lexeme.toString(), position);
-				return;
+					nextToken = DeClanToken.createNum(lexeme.toString(), position);
+					return;
 			    }
 			case OP:
 			    if (c == '<' || c == '>' || c == ':'){
-				source.advance();
-				c = source.current(); //see if c is =
-				if(c == '=') {
-				    lexeme.append(c);
-				    nextToken = Token.create(getDualOpToken(lexeme.toString()), position);
-				    source.advance();
-				    return;
-				} else {
-				    nextToken = Token.create(getSingleOpToken(lexeme.toString()), position);
-				    return;
-				}
-                            } else if(c == '(') {
+					source.advance();
+					c = source.current(); //see if c is =
+					if(c == '=') {
+						lexeme.append(c);
+						nextToken = DeClanToken.create(getDualOpToken(lexeme.toString()), position);
+						source.advance();
+						return;
+					} else {
+						nextToken = DeClanToken.create(getSingleOpToken(lexeme.toString()), position);
+						return;
+					}
+                } else if(c == '(') {
 				  source.advance();
 				  c = source.current();
 				  if(c == '*') {
@@ -245,13 +245,13 @@ public class MyLexer implements Lexer {
 				      Comment++;
 				      continue;
 				  } else {
-				      nextToken = Token.create(getSingleOpToken(lexeme.toString()), position);
+				      nextToken = DeClanToken.create(getSingleOpToken(lexeme.toString()), position);
 				      return;
 				  }
 			    } else {
-				nextToken = Token.create(getSingleOpToken(lexeme.toString()), position);
-				source.advance();
-				return;
+					nextToken = DeClanToken.create(getSingleOpToken(lexeme.toString()), position);
+					source.advance();
+					return;
 			    }
 			}
 		}
@@ -263,9 +263,9 @@ public class MyLexer implements Lexer {
 		    return;
 		case IDENT:
 		    // Successfully ended an identifier
-		    nextToken = Token.createId(lexeme.toString(), position);
+		    nextToken = DeClanToken.createId(lexeme.toString(), position);
 		    return;
-	        case STRING:
+	    case STRING:
 		    errorLog.add("Unterminated string literal at end of file", position);
 		    nextToken = null;
 		    return;
@@ -274,16 +274,16 @@ public class MyLexer implements Lexer {
 		    nextToken = null;
 		    return;
 		case NUM:
-		    nextToken = Token.createNum(lexeme.toString(), position);
+		    nextToken = DeClanToken.createNum(lexeme.toString(), position);
 		    return;
 		case EXP:
-		    nextToken = Token.createNum(lexeme.toString(), position);
+		    nextToken = DeClanToken.createNum(lexeme.toString(), position);
 		    return;
 		case HEX:
-		    nextToken = Token.createNum(lexeme.toString(), position);
+		    nextToken = DeClanToken.createNum(lexeme.toString(), position);
 		    return;
 		case REAL:
-		    nextToken = Token.createNum(lexeme.toString(), position);
+		    nextToken = DeClanToken.createNum(lexeme.toString(), position);
 		    return;
 		// The operator doesnt need any clean up it will be impossible to get down here from that state
 		}

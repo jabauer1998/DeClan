@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common;
+package edu.depauw.declan.common;
 
 import io.github.H20man13.DeClan.common.ast.Program;
 

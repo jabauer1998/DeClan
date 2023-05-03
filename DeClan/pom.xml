@@ -25,6 +25,13 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>edu.depauw.declan</groupId>
+      <artifactId>model</artifactId>
+      <version>1.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/libs/DeCLanModel-6x.jar</systemPath>
+    </dependency>
   </dependencies>
 
   <build>
