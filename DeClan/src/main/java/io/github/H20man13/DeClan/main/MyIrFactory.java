@@ -2,7 +2,7 @@ package io.github.H20man13.DeClan.main;
 
 import java.util.List;
 
-import io.github.H20man13.DeClan.common.ErrorLog;
+import edu.depauw.declan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;

@@ -3,7 +3,7 @@ package io.github.H20man13.DeClan.main;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.H20man13.DeClan.common.ErrorLog;
+import edu.depauw.declan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.RegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.LetBin;

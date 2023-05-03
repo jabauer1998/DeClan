@@ -4,8 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.depauw.declan.common.ErrorLog;
-import io.github.H20man13.DeClan.common.ParseException;
-import io.github.H20man13.DeClan.common.Position;
+import edu.depauw.declan.common.ParseException;
+import edu.depauw.declan.common.Position;
 import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;

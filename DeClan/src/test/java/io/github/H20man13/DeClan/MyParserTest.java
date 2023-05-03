@@ -11,52 +11,52 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import io.github.H20man13.DeClan.common.ParseException;
 import io.github.H20man13.DeClan.common.ReaderSource;
-import io.github.H20man13.DeClan.common.ast.Program;
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Lexer;
+import edu.depauw.declan.common.ParseException;
 import edu.depauw.declan.common.Parser;
 import edu.depauw.declan.common.Source;
+import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.model.ReferenceLexer;
 import edu.depauw.declan.model.ReferenceParser;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.PostfixPrintVisitor;
 
-class MyParserTest {
+public class MyParserTest {
 
 	@Test
-	void testEmptySource() {
+	public void testEmptySource() {
 		String input = "";
 		compareToModel(input);
 	}
 
 	@Test
-	void testDecls() {
+	public void testDecls() {
 		String input = "CONST a = 123; b = 45; BEGIN END.";
 		compareToModel(input);
 	}
 
 	@Test
-	void testNumValues() {
+	public void testNumValues() {
 		String input = "BEGIN PrintInt(0); PrintInt(12); PrintInt(-345) END.";
 		compareToModel(input);
 	}
 
 	@Test
-	void testConstValues() {
+	public void testConstValues() {
 		String input = "CONST a = 123; b = 45; BEGIN PrintInt(a); PrintInt(b) END.";
 		compareToModel(input);
 	}
 
 	@Test
-	void testExpressions() {
+	public void testExpressions() {
 		String input = "CONST six = 6; seven = 7; BEGIN PrintInt(seven - six); PrintInt(2 * (six + seven) MOD six); PrintInt(six - seven DIV 2); PrintInt(six * seven); END.";
 		compareToModel(input);
 	}
 	
 	@Test
-	void testEmptyStatements() {
+	public void testEmptyStatements() {
 		String input = "BEGIN ;;; END.";
 		compareToModel(input);
 	}

@@ -1,6 +1,6 @@
 package edu.depauw.declan.common;
 
-import io.github.H20man13.DeClan.common.ast.Program;
+import edu.depauw.declan.common.ast.Program;
 
 /**
  * A Parser is able to parse a DeCLan program into an abstract syntax tree. It

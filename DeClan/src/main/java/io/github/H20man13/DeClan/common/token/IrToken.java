@@ -2,7 +2,8 @@ package io.github.H20man13.DeClan.common.token;
 
 import java.util.Objects;
 
-import io.github.H20man13.DeClan.common.Position;
+import edu.depauw.declan.common.TokenType;
+import edu.depauw.declan.common.Position;
 
 public class IrToken {
     private final IrTokenType type;
@@ -63,7 +64,7 @@ public class IrToken {
     }
 
     public static IrToken createId(String lexeme, Position pos){
-        if(DeClanTokenType.reserved.containsKey(lexeme)){
+        if(TokenType.reserved.containsKey(lexeme)){
             return new IrToken(pos, IrTokenType.reserved.get(lexeme), lexeme);
         } else {
             return new IrToken(pos, IrTokenType.ID, lexeme);

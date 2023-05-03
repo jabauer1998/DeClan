@@ -2,14 +2,14 @@ package io.github.H20man13.DeClan.main;
 
 import java.util.NoSuchElementException;
 
+import edu.depauw.declan.common.Token;
+import edu.depauw.declan.common.TokenType;
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Lexer;
+import edu.depauw.declan.common.Position;
 import edu.depauw.declan.common.Source;
-import io.github.H20man13.DeClan.common.Position;
-import io.github.H20man13.DeClan.common.token.DeClanToken;
-import io.github.H20man13.DeClan.common.token.DeClanTokenType;
 
-import static io.github.H20man13.DeClan.common.token.DeClanTokenType.*;
+import static edu.depauw.declan.common.TokenType.*;
 import static io.github.H20man13.DeClan.main.MyIO.*;
 
 /**
@@ -19,7 +19,7 @@ import static io.github.H20man13.DeClan.main.MyIO.*;
  */
 public class MyDeClanLexer implements Lexer {
 	private Source source;
-	private DeClanToken nextToken;
+	private Token nextToken;
     private ErrorLog errorLog;
 
     public MyDeClanLexer(Source source, ErrorLog errorLog) {
@@ -35,14 +35,14 @@ public class MyDeClanLexer implements Lexer {
 		return nextToken != null;
 	}
 
-	public DeClanToken next(){
+	public Token next(){
 		if (nextToken == null) {
 			scanNext();
 		}
 		if (nextToken == null) {
 		    System.err.println("No more tokens");
 		}
-		DeClanToken result = nextToken;
+		Token result = nextToken;
 		nextToken = null;
 		return result;
 	}
@@ -108,7 +108,7 @@ public class MyDeClanLexer implements Lexer {
 				    source.advance();
 				    continue;
 				} else {
-				    nextToken = DeClanToken.createId(lexeme.toString(), position);
+				    nextToken = Token.createId(lexeme.toString(), position);
 				    return;
 				}
 			case STRING:
@@ -117,7 +117,7 @@ public class MyDeClanLexer implements Lexer {
 					lexeme.append(c);
 					continue;
 			    } else {
-					nextToken = DeClanToken.createString(lexeme.toString(), position);
+					nextToken = Token.createString(lexeme.toString(), position);
 					source.advance();
 					return;
 			    }
@@ -151,13 +151,13 @@ public class MyDeClanLexer implements Lexer {
 				source.advance();
 				continue;
 			    } else {
-				nextToken = DeClanToken.createNum(lexeme.toString(), position);
+				nextToken = Token.createNum(lexeme.toString(), position);
 				return;
 			    }
 			case HEX:
 			    if(c == 'H'){
 			        lexeme.append(c);
-				nextToken = DeClanToken.createNum(lexeme.toString(), position);
+				nextToken = Token.createNum(lexeme.toString(), position);
 				source.advance();
 				return;
 			    } else if (Character.toLowerCase(c) >= 'a' && Character.toLowerCase(c) <= 'f' || Character.isDigit(c)) {
@@ -202,7 +202,7 @@ public class MyDeClanLexer implements Lexer {
 					source.advance();
 					continue;
 			    } else {
-					nextToken = DeClanToken.createNum(lexeme.toString(), position); //created a Real Number Token
+					nextToken = Token.createNum(lexeme.toString(), position); //created a Real Number Token
 					return;
 			    }
 			case NUM:
@@ -219,7 +219,7 @@ public class MyDeClanLexer implements Lexer {
 					source.advance();
 					continue;
 			    } else {
-					nextToken = DeClanToken.createNum(lexeme.toString(), position);
+					nextToken = Token.createNum(lexeme.toString(), position);
 					return;
 			    }
 			case OP:
@@ -228,11 +228,11 @@ public class MyDeClanLexer implements Lexer {
 					c = source.current(); //see if c is =
 					if(c == '=') {
 						lexeme.append(c);
-						nextToken = DeClanToken.create(getDualOpToken(lexeme.toString()), position);
+						nextToken = Token.create(getDualOpToken(lexeme.toString()), position);
 						source.advance();
 						return;
 					} else {
-						nextToken = DeClanToken.create(getSingleOpToken(lexeme.toString()), position);
+						nextToken = Token.create(getSingleOpToken(lexeme.toString()), position);
 						return;
 					}
                 } else if(c == '(') {
@@ -245,11 +245,11 @@ public class MyDeClanLexer implements Lexer {
 				      Comment++;
 				      continue;
 				  } else {
-				      nextToken = DeClanToken.create(getSingleOpToken(lexeme.toString()), position);
+				      nextToken = Token.create(getSingleOpToken(lexeme.toString()), position);
 				      return;
 				  }
 			    } else {
-					nextToken = DeClanToken.create(getSingleOpToken(lexeme.toString()), position);
+					nextToken = Token.create(getSingleOpToken(lexeme.toString()), position);
 					source.advance();
 					return;
 			    }
@@ -263,7 +263,7 @@ public class MyDeClanLexer implements Lexer {
 		    return;
 		case IDENT:
 		    // Successfully ended an identifier
-		    nextToken = DeClanToken.createId(lexeme.toString(), position);
+		    nextToken = Token.createId(lexeme.toString(), position);
 		    return;
 	    case STRING:
 		    errorLog.add("Unterminated string literal at end of file", position);
@@ -274,16 +274,16 @@ public class MyDeClanLexer implements Lexer {
 		    nextToken = null;
 		    return;
 		case NUM:
-		    nextToken = DeClanToken.createNum(lexeme.toString(), position);
+		    nextToken = Token.createNum(lexeme.toString(), position);
 		    return;
 		case EXP:
-		    nextToken = DeClanToken.createNum(lexeme.toString(), position);
+		    nextToken = Token.createNum(lexeme.toString(), position);
 		    return;
 		case HEX:
-		    nextToken = DeClanToken.createNum(lexeme.toString(), position);
+		    nextToken = Token.createNum(lexeme.toString(), position);
 		    return;
 		case REAL:
-		    nextToken = DeClanToken.createNum(lexeme.toString(), position);
+		    nextToken = Token.createNum(lexeme.toString(), position);
 		    return;
 		// The operator doesnt need any clean up it will be impossible to get down here from that state
 		}

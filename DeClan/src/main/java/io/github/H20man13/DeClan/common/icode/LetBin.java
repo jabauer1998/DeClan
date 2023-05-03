@@ -1,7 +1,7 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import edu.depauw.declan.common.ast.BinaryOperation;
 import io.github.H20man13.DeClan.main.MyTypeChecker;
-import io.github.H20man13.DeClan.common.ast.BinaryOperation;
 
 public class LetBin implements ICode {
 	public String place;

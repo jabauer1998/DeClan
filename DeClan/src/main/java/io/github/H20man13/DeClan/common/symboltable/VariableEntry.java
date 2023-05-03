@@ -5,7 +5,7 @@ import static io.github.H20man13.DeClan.main.MyIO.*;
 import java.lang.String;
 import java.lang.StringBuilder;
 
-import io.github.H20man13.DeClan.common.Position;
+import edu.depauw.declan.common.Position;
 
 public class VariableEntry{
     

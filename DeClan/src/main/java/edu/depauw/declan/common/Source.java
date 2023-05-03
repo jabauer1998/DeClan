@@ -1,7 +1,5 @@
 package edu.depauw.declan.common;
 
-import io.github.H20man13.DeClan.common.Position;
-
 /**
  * A Source object wraps an input source of characters with the
  * ability to track the current line and column number, and to examine the

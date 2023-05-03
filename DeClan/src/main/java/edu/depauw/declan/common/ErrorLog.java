@@ -7,8 +7,6 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import io.github.H20man13.DeClan.common.Position;
-
 /**
  * An ErrorLog accumulates error messages and their corresponding positions
  * while compiling. Errors may be retrieved in order by source position.

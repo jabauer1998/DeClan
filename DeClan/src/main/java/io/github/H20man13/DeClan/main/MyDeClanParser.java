@@ -7,36 +7,37 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import edu.depauw.declan.common.Token;
+import edu.depauw.declan.common.TokenType;
+import edu.depauw.declan.common.ast.Assignment;
+import edu.depauw.declan.common.ast.BinaryOperation;
+import edu.depauw.declan.common.ast.BoolValue;
+import edu.depauw.declan.common.ast.Branch;
+import edu.depauw.declan.common.ast.ConstDeclaration;
+import edu.depauw.declan.common.ast.Declaration;
+import edu.depauw.declan.common.ast.ElseBranch;
+import edu.depauw.declan.common.ast.EmptyStatement;
+import edu.depauw.declan.common.ast.Expression;
+import edu.depauw.declan.common.ast.ForBranch;
+import edu.depauw.declan.common.ast.FunctionCall;
+import edu.depauw.declan.common.ast.Identifier;
+import edu.depauw.declan.common.ast.IfElifBranch;
+import edu.depauw.declan.common.ast.NumValue;
+import edu.depauw.declan.common.ast.ProcedureCall;
+import edu.depauw.declan.common.ast.ProcedureDeclaration;
+import edu.depauw.declan.common.ast.Program;
+import edu.depauw.declan.common.ast.RepeatBranch;
+import edu.depauw.declan.common.ast.Statement;
+import edu.depauw.declan.common.ast.StrValue;
+import edu.depauw.declan.common.ast.UnaryOperation;
+import edu.depauw.declan.common.ast.VariableDeclaration;
+import edu.depauw.declan.common.ast.WhileElifBranch;
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Lexer;
+import edu.depauw.declan.common.ParseException;
 import edu.depauw.declan.common.Parser;
-import io.github.H20man13.DeClan.common.ParseException;
-import io.github.H20man13.DeClan.common.Position;
-import io.github.H20man13.DeClan.common.ast.ConstDeclaration;
-import io.github.H20man13.DeClan.common.ast.VariableDeclaration;
-import io.github.H20man13.DeClan.common.ast.ProcedureDeclaration;
-import io.github.H20man13.DeClan.common.ast.Declaration;
-import io.github.H20man13.DeClan.common.ast.Identifier;
-import io.github.H20man13.DeClan.common.ast.NumValue;
-import io.github.H20man13.DeClan.common.ast.BoolValue;
-import io.github.H20man13.DeClan.common.ast.StrValue;
-import io.github.H20man13.DeClan.common.ast.Program;
-import io.github.H20man13.DeClan.common.ast.Statement;
-import io.github.H20man13.DeClan.common.ast.Assignment;
-import io.github.H20man13.DeClan.common.ast.EmptyStatement;
-import io.github.H20man13.DeClan.common.ast.ElseBranch;
-import io.github.H20man13.DeClan.common.ast.IfElifBranch;
-import io.github.H20man13.DeClan.common.ast.WhileElifBranch;
-import io.github.H20man13.DeClan.common.token.DeClanToken;
-import io.github.H20man13.DeClan.common.token.DeClanTokenType;
-import io.github.H20man13.DeClan.common.ast.RepeatBranch;
-import io.github.H20man13.DeClan.common.ast.Branch;
-import io.github.H20man13.DeClan.common.ast.ForBranch;
-import io.github.H20man13.DeClan.common.ast.ProcedureCall;
-import io.github.H20man13.DeClan.common.ast.FunctionCall;
-import io.github.H20man13.DeClan.common.ast.Expression;
-import io.github.H20man13.DeClan.common.ast.BinaryOperation;
-import io.github.H20man13.DeClan.common.ast.UnaryOperation;
+import edu.depauw.declan.common.Position;
+import edu.depauw.declan.common.Token;
 
 /**
  * A parser for a subset of DeCLan consisting only of integer constant
@@ -51,7 +52,7 @@ public class MyDeClanParser implements Parser {
   /**
    * Holds the current Token from the Lexer, or null if at end of file
    */
-  private DeClanToken current;
+  private Token current;
 
   /**
    * Holds the Position of the current Token, or the most recent one if at end of
@@ -78,7 +79,7 @@ public class MyDeClanParser implements Parser {
    * @param type
    * @return true if the TokenType matches the current token
    */
-  boolean willMatch(DeClanTokenType type) {
+  boolean willMatch(TokenType type) {
     return current != null && current.getType() == type;
   }
 
@@ -89,7 +90,7 @@ public class MyDeClanParser implements Parser {
    * @param type
    * @return the matched token if successful
    */
-  DeClanToken match(DeClanTokenType type) {
+  Token match(TokenType type) {
     if (willMatch(type)) {
       return skip();
     } else if (current == null) {
@@ -116,8 +117,8 @@ public class MyDeClanParser implements Parser {
    * 
    * @return the skipped token
    */
-  DeClanToken skip() {
-    DeClanToken token = current;
+  Token skip() {
+    Token token = current;
     if (lexer.hasNext()) {
       current = lexer.next();
       currentPosition = current.getPosition();
@@ -132,10 +133,10 @@ public class MyDeClanParser implements Parser {
   public Program parseProgram() {
     Position start = currentPosition;
     List<Declaration> Decls = parseDeclarationSequence();
-    match(DeClanTokenType.BEGIN);
+    match(TokenType.BEGIN);
     List<Statement> statements = parseStatementSequence();
-    match(DeClanTokenType.END);
-    match(DeClanTokenType.PERIOD);
+    match(TokenType.END);
+    match(TokenType.PERIOD);
     matchEOF();
     return new Program(start, Decls, statements);
   }
@@ -145,10 +146,10 @@ public class MyDeClanParser implements Parser {
   // DeclSequence -> ProcedureDeclSequence
   public List<Declaration> parseDeclarationSequence(){
     List<Declaration> Decls = new ArrayList<>();
-    if(willMatch(DeClanTokenType.CONST)){
+    if(willMatch(TokenType.CONST)){
       Decls.addAll(parseConstDeclSequence());
     }
-    if(willMatch(DeClanTokenType.VAR)){
+    if(willMatch(TokenType.VAR)){
       Decls.addAll(parseVariableDeclSequence());
     }
     Decls.addAll(parseProcedureDeclSequence());
@@ -160,12 +161,12 @@ public class MyDeClanParser implements Parser {
   // ConstDeclSequence ->
   private List<ConstDeclaration> parseConstDeclSequence(){
     List<ConstDeclaration> constDecls = new ArrayList<>();
-    if (willMatch(DeClanTokenType.CONST)){
+    if (willMatch(TokenType.CONST)){
       skip();
-      while(willMatch(DeClanTokenType.ID)){
+      while(willMatch(TokenType.ID)){
         ConstDeclaration constDecl = parseConstDecl();
         constDecls.add(constDecl);
-        match(DeClanTokenType.SEMI);
+        match(TokenType.SEMI);
       }
     }
     return Collections.unmodifiableList(constDecls);
@@ -175,11 +176,11 @@ public class MyDeClanParser implements Parser {
   //VariableDeclSequence ->
   private List<VariableDeclaration> parseVariableDeclSequence(){
     List<VariableDeclaration> varDecls = new ArrayList<>();
-    while (willMatch(DeClanTokenType.VAR)) {
+    while (willMatch(TokenType.VAR)) {
       skip();
       List<VariableDeclaration> varDecl = parseVariableDecl();
       varDecls.addAll(varDecl);
-      match(DeClanTokenType.SEMI);
+      match(TokenType.SEMI);
     }
     return Collections.unmodifiableList(varDecls);
   }
@@ -188,10 +189,10 @@ public class MyDeClanParser implements Parser {
   //ProcedureDeclSequence ->
   private List<ProcedureDeclaration> parseProcedureDeclSequence(){
     List<ProcedureDeclaration> procDecls = new ArrayList<>();
-    while (willMatch(DeClanTokenType.PROCEDURE)) {
+    while (willMatch(TokenType.PROCEDURE)) {
       ProcedureDeclaration proc = parseProcedureDecl();
       procDecls.add(proc);
-      match(DeClanTokenType.SEMI);
+      match(TokenType.SEMI);
     }
     return Collections.unmodifiableList(procDecls);
   }
@@ -202,7 +203,7 @@ public class MyDeClanParser implements Parser {
     Position start = currentPosition;
     // ProcedureHead -> PROCEDURE ident FormalParameters
     // ProcedureHead -> PROCEDURE ident
-    match(DeClanTokenType.PROCEDURE);
+    match(TokenType.PROCEDURE);
     Identifier procName = parseIdentifier();
     List<VariableDeclaration> fpSequence = new ArrayList<>();
     Identifier returnType = new Identifier(start, "VOID"); //defualt is no return Type
@@ -210,50 +211,50 @@ public class MyDeClanParser implements Parser {
     // FormalParameters -> ( FPSection FPSectionSequence )
     // FormalParameters -> ( ) : Type
     // FormalParameters -> ( )
-    if(willMatch(DeClanTokenType.LPAR)){
+    if(willMatch(TokenType.LPAR)){
       skip();
       // FPSectionSequence -> ; FPSection FPSectionSequence
       // FPSectionSequence ->
       // FPSection -> VAR IdentList : Type
       // FPSection -> IdentList : Type
-      if(willMatch(DeClanTokenType.ID) || willMatch(DeClanTokenType.VAR)){
-	if(willMatch(DeClanTokenType.VAR)){
+      if(willMatch(TokenType.ID) || willMatch(TokenType.VAR)){
+	if(willMatch(TokenType.VAR)){
 	  skip();
 	}
 	List<VariableDeclaration> aSequence = parseVariableDecl();
 	fpSequence.addAll(aSequence);
-	while(willMatch(DeClanTokenType.SEMI)){
+	while(willMatch(TokenType.SEMI)){
 	  skip();
-	  if(willMatch(DeClanTokenType.VAR)){
+	  if(willMatch(TokenType.VAR)){
 	    skip();
 	  }
 	  aSequence = parseVariableDecl();
 	  fpSequence.addAll(aSequence);
 	}
       }
-      match(DeClanTokenType.RPAR);
-      if(willMatch(DeClanTokenType.COLON)){
+      match(TokenType.RPAR);
+      if(willMatch(TokenType.COLON)){
         skip();
         returnType = parseIdentifier();
       }
     }
-    match(DeClanTokenType.SEMI);
+    match(TokenType.SEMI);
     // ProcedureBody -> DeclSequence BEGIN StatementSequence RETURN Expression END
     // ProcedureBody -> DeclSequence BEGIN StatementSequence END
     // ProcedureBody -> DeclSequence RETURN Expression END
     // ProcedureBody -> DeclSequence END
     List<Declaration> procDeclSequence = parseDeclarationSequence();
     List<Statement> toExecute = new ArrayList<>();
-    if(willMatch(DeClanTokenType.BEGIN)){
+    if(willMatch(TokenType.BEGIN)){
       skip();
       toExecute = parseStatementSequence();
     }
     Expression retExpression = null;
-    if(willMatch(DeClanTokenType.RETURN)){
+    if(willMatch(TokenType.RETURN)){
       skip();
       retExpression = parseExpression();
     }
-    match(DeClanTokenType.END);
+    match(TokenType.END);
     Identifier nameCheck = parseIdentifier();
     if(!nameCheck.getLexeme().equals(procName.getLexeme())){
 	errorLog.add("Expected -> Identity Given at the end of Procedure Declaration ( " + nameCheck.getLexeme() + " ) is not equal to the Expected Procedure Declaration Name ( " + procName.getLexeme() + " )", start);
@@ -266,7 +267,7 @@ public class MyDeClanParser implements Parser {
   // ConstDecl -> ident = number
   private ConstDeclaration parseConstDecl() {
     Identifier id = parseIdentifier();
-    match(DeClanTokenType.EQ);
+    match(TokenType.EQ);
     Expression num = parseNumValue();
     return new ConstDeclaration(id.getStart(), id, num);
   }
@@ -277,15 +278,15 @@ public class MyDeClanParser implements Parser {
     //IdentList -> ident IdentListRest
     //IdentListRest -> , ident IdentListRest
     //IdentListRest ->
-    DeClanToken varname = match(DeClanTokenType.ID);
+    Token varname = match(TokenType.ID);
     identList.add(new Identifier(varname.getPosition(), varname.getLexeme()));
-    while(willMatch(DeClanTokenType.COMMA)){
+    while(willMatch(TokenType.COMMA)){
       skip();
-      varname = match(DeClanTokenType.ID);
+      varname = match(TokenType.ID);
       identList.add(new Identifier(varname.getPosition(), varname.getLexeme()));
     }
-    match(DeClanTokenType.COLON);
-    DeClanToken type = match(DeClanTokenType.ID);
+    match(TokenType.COLON);
+    Token type = match(TokenType.ID);
     Identifier typeid = new Identifier(type.getPosition(), type.getLexeme());
     List <VariableDeclaration> varDecl = new ArrayList<>();
     for(int i = 0; i < identList.size(); i++){
@@ -303,7 +304,7 @@ public class MyDeClanParser implements Parser {
     List<Statement> statements = new ArrayList<>();
     Statement s = parseStatement();
     statements.add(s);
-    while(willMatch(DeClanTokenType.SEMI)){
+    while(willMatch(TokenType.SEMI)){
       skip();
       s = parseStatement();
       statements.add(s);
@@ -315,20 +316,20 @@ public class MyDeClanParser implements Parser {
   private Statement parseStatement(){
     Position start = currentPosition;
     Statement statement = new EmptyStatement(start);
-    if(willMatch(DeClanTokenType.ID)) {
+    if(willMatch(TokenType.ID)) {
       Identifier ident = parseIdentifier();
-      if(willMatch(DeClanTokenType.ASSIGN)) {
+      if(willMatch(TokenType.ASSIGN)) {
 	statement = parseAssignment(ident);
       } else {
 	statement = parseProcedureCall(ident);
       }
-    } else if(willMatch(DeClanTokenType.IF)){
+    } else if(willMatch(TokenType.IF)){
       statement = parseIfStatement();
-    } else if(willMatch(DeClanTokenType.WHILE)){
+    } else if(willMatch(TokenType.WHILE)){
       statement = parseWhileStatement();
-    } else if(willMatch(DeClanTokenType.REPEAT)){
+    } else if(willMatch(TokenType.REPEAT)){
       statement = parseRepeatStatement();
-    } else if (willMatch(DeClanTokenType.FOR)){
+    } else if (willMatch(TokenType.FOR)){
       statement = parseForStatement();
     }
     return statement;
@@ -337,7 +338,7 @@ public class MyDeClanParser implements Parser {
   //ProcedureCall -> ident ActualParameters
   private ProcedureCall parseProcedureCall(Identifier nameOfProcedure){
     Position start = currentPosition;
-    if(willMatch(DeClanTokenType.LPAR)){
+    if(willMatch(TokenType.LPAR)){
       List<Expression> expList = parseActualParameters();
       return new ProcedureCall(start, nameOfProcedure, expList);
     }
@@ -349,17 +350,17 @@ public class MyDeClanParser implements Parser {
   private Branch parseIfBranch(){
     Position start = currentPosition;
     Branch result;
-    if(willMatch(DeClanTokenType.ELSIF)){
+    if(willMatch(TokenType.ELSIF)){
       skip();
       Expression exp = parseExpression();
-      match(DeClanTokenType.THEN);
+      match(TokenType.THEN);
       List<Statement> stats = parseStatementSequence();
       result = new IfElifBranch(start, exp, stats, parseIfBranch());
-    } else if(willMatch(DeClanTokenType.ELSE)) {
+    } else if(willMatch(TokenType.ELSE)) {
       skip();
       List<Statement> stats = parseStatementSequence();
       result = new ElseBranch(start, stats);
-    } else if (willMatch(DeClanTokenType.END)) {
+    } else if (willMatch(TokenType.END)) {
       result = null;
     } else {
       errorLog.add("Expected ELSIF, END or ELSE token toward the end of if statement", start);
@@ -371,12 +372,12 @@ public class MyDeClanParser implements Parser {
   //IfStatement -> IF Expression THEN StatementSequence ElsifSequence END
   private IfElifBranch parseIfStatement(){
     Position start = currentPosition; 
-    match(DeClanTokenType.IF);
+    match(TokenType.IF);
     Expression ifExpr = parseExpression();
-    match(DeClanTokenType.THEN);
+    match(TokenType.THEN);
     List<Statement> topStatements = parseStatementSequence();
     IfElifBranch topBranch = new IfElifBranch(start, ifExpr, topStatements, parseIfBranch());
-    match(DeClanTokenType.END);
+    match(TokenType.END);
     return topBranch;
   }
 
@@ -385,10 +386,10 @@ public class MyDeClanParser implements Parser {
   private WhileElifBranch parseWhileBranch(){
     Position start = currentPosition;
     WhileElifBranch result;
-    if(willMatch(DeClanTokenType.ELSIF)){
+    if(willMatch(TokenType.ELSIF)){
       skip();
       Expression exp = parseExpression();
-      match(DeClanTokenType.DO);
+      match(TokenType.DO);
       List<Statement> stats = parseStatementSequence();
       result  = new WhileElifBranch(start, exp, stats, parseIfBranch());
     } else {
@@ -400,21 +401,21 @@ public class MyDeClanParser implements Parser {
   //WhileStatement -> WHILE Expression DO StatementSequence ElsifDoSequence END
   private WhileElifBranch parseWhileStatement(){
     Position start = currentPosition; 
-    match(DeClanTokenType.WHILE);
+    match(TokenType.WHILE);
     Expression whileExpr = parseExpression();
-    match(DeClanTokenType.DO);
+    match(TokenType.DO);
     List<Statement> topStatements = parseStatementSequence();
     WhileElifBranch topBranch = new WhileElifBranch(start, whileExpr, topStatements, parseWhileBranch());
-    match(DeClanTokenType.END);
+    match(TokenType.END);
     return topBranch;
   }
 
   //RepeatStatement -> REPEAT StatementSequence UNTIL Expression
   private RepeatBranch parseRepeatStatement(){
     Position start = currentPosition;
-    match(DeClanTokenType.REPEAT);
+    match(TokenType.REPEAT);
     List<Statement> topStatements = parseStatementSequence();
-    match(DeClanTokenType.UNTIL);
+    match(TokenType.UNTIL);
     Expression endExpr = parseExpression();
     return new RepeatBranch(start, topStatements, endExpr);
   }
@@ -423,26 +424,26 @@ public class MyDeClanParser implements Parser {
   //ForStatement -> FOR ident := Expression TO Expression DO StatementSequence END
   private ForBranch parseForStatement(){
     Position start = currentPosition;
-    match(DeClanTokenType.FOR);
+    match(TokenType.FOR);
     Identifier parseIdent = parseIdentifier();
     Assignment assign = parseAssignment(parseIdent);
-    match(DeClanTokenType.TO);
+    match(TokenType.TO);
     Expression toCheck = parseExpression();
     Expression toChange = null;
-    if(willMatch(DeClanTokenType.BY)){
+    if(willMatch(TokenType.BY)){
       skip();
       toChange = parseExpression();
     }
-    match(DeClanTokenType.DO);
+    match(TokenType.DO);
     List<Statement> toDo = parseStatementSequence();
-    match(DeClanTokenType.END);
+    match(TokenType.END);
     return new ForBranch(start, assign, toCheck, toChange, toDo);
   }
 
   //Assignment -> ident := Expression
   private Assignment parseAssignment(Identifier toBeAssigned){
     Position start = currentPosition;
-    match(DeClanTokenType.ASSIGN);
+    match(TokenType.ASSIGN);
     Expression exp = parseExpression();
     return new Assignment(start, toBeAssigned, exp);
   }
@@ -454,7 +455,7 @@ public class MyDeClanParser implements Parser {
     List<Expression> expList = new ArrayList<Expression>();
     Expression exp = parseExpression();
     expList.add(exp);
-    while(willMatch(DeClanTokenType.COMMA)){
+    while(willMatch(TokenType.COMMA)){
       skip();
       exp = parseExpression();
       expList.add(exp);
@@ -464,12 +465,12 @@ public class MyDeClanParser implements Parser {
   //ActualParameters -> ( ExpList )
   //ActualParameters -> ( )
   private List<Expression> parseActualParameters(){
-    match(DeClanTokenType.LPAR);
+    match(TokenType.LPAR);
     List<Expression> elist = new ArrayList<>();
-    if(!willMatch(DeClanTokenType.RPAR)){
+    if(!willMatch(TokenType.RPAR)){
       elist = parseExpressionList();
     }
-    match(DeClanTokenType.RPAR);
+    match(TokenType.RPAR);
     return Collections.unmodifiableList(elist);
   }
   //Expression -> SimpleExpr
@@ -477,7 +478,7 @@ public class MyDeClanParser implements Parser {
   private Expression parseExpression(){
     Position start = currentPosition;
     Expression left = parseSimpleExpression();
-    if(willMatch(DeClanTokenType.NE) || willMatch(DeClanTokenType.LE) || willMatch(DeClanTokenType.LT) || willMatch(DeClanTokenType.EQ) || willMatch(DeClanTokenType.GT) || willMatch(DeClanTokenType.GE)){
+    if(willMatch(TokenType.NE) || willMatch(TokenType.LE) || willMatch(TokenType.LT) || willMatch(TokenType.EQ) || willMatch(TokenType.GT) || willMatch(TokenType.GE)){
       BinaryOperation.OpType op = parseBoolOp();
       Expression right = parseSimpleExpression();
       left = new BinaryOperation(start, left, op, right);
@@ -486,23 +487,23 @@ public class MyDeClanParser implements Parser {
   }
         
   private BinaryOperation.OpType parseBoolOp() {
-    if(willMatch(DeClanTokenType.NE)){
+    if(willMatch(TokenType.NE)){
       skip();
       return BinaryOperation.OpType.NE;
-    } else if(willMatch(DeClanTokenType.EQ)){
+    } else if(willMatch(TokenType.EQ)){
       skip();
       return BinaryOperation.OpType.EQ;
-    } else if(willMatch(DeClanTokenType.LT)){
+    } else if(willMatch(TokenType.LT)){
       skip();
       return BinaryOperation.OpType.LT;
-    } else if(willMatch(DeClanTokenType.GT)){
+    } else if(willMatch(TokenType.GT)){
       skip();
       return BinaryOperation.OpType.GT;
-    } else if(willMatch(DeClanTokenType.GE)){
+    } else if(willMatch(TokenType.GE)){
       skip();
       return BinaryOperation.OpType.GE;
     } else {
-      match(DeClanTokenType.LE);
+      match(TokenType.LE);
       return BinaryOperation.OpType.LE;
     }
   }
@@ -512,14 +513,14 @@ public class MyDeClanParser implements Parser {
   private Expression parseSimpleExpression(){
     Position start = currentPosition; 
     Expression left;
-    if(willMatch(DeClanTokenType.MINUS) || willMatch(DeClanTokenType.PLUS)){
+    if(willMatch(TokenType.MINUS) || willMatch(TokenType.PLUS)){
       UnaryOperation.OpType pm = parseUnaryOp();
       left = parseTerm();
       left = new UnaryOperation(start, pm, left);
     } else {
       left = parseTerm();
     }
-    while(willMatch(DeClanTokenType.PLUS) || willMatch(DeClanTokenType.MINUS)){
+    while(willMatch(TokenType.PLUS) || willMatch(TokenType.MINUS)){
       BinaryOperation.OpType op = parseAddOp();
       Expression right = parseTerm();
       left = new BinaryOperation(start, left, op, right);
@@ -528,27 +529,27 @@ public class MyDeClanParser implements Parser {
   }
     
   private UnaryOperation.OpType parseUnaryOp() {
-    if(willMatch(DeClanTokenType.PLUS)){
+    if(willMatch(TokenType.PLUS)){
       skip();
       return UnaryOperation.OpType.PLUS;
-    } else if (willMatch(DeClanTokenType.MINUS)){
+    } else if (willMatch(TokenType.MINUS)){
       skip();
       return UnaryOperation.OpType.MINUS;
     } else {
-      match(DeClanTokenType.NOT);
+      match(TokenType.NOT);
       return UnaryOperation.OpType.NOT;
     }
   }
   // AddOperator -> + | -
   private BinaryOperation.OpType parseAddOp(){
-    if(willMatch(DeClanTokenType.PLUS)){
+    if(willMatch(TokenType.PLUS)){
       skip();
       return BinaryOperation.OpType.PLUS;
-    } else if(willMatch(DeClanTokenType.OR)){
+    } else if(willMatch(TokenType.OR)){
       skip();
       return BinaryOperation.OpType.OR;
     } else {
-      match(DeClanTokenType.MINUS);
+      match(TokenType.MINUS);
       return BinaryOperation.OpType.MINUS;
     }
   }
@@ -558,7 +559,7 @@ public class MyDeClanParser implements Parser {
   private Expression parseTerm(){
     Position start = currentPosition;
     Expression left = parseFactor();
-    while (willMatch(DeClanTokenType.DIV) || willMatch(DeClanTokenType.MOD) || willMatch(DeClanTokenType.TIMES) || willMatch(DeClanTokenType.DIVIDE)){
+    while (willMatch(TokenType.DIV) || willMatch(TokenType.MOD) || willMatch(TokenType.TIMES) || willMatch(TokenType.DIVIDE)){
       BinaryOperation.OpType op = parseMultOp();
       Expression right = parseFactor();
       left = new BinaryOperation(start, left, op, right);
@@ -567,85 +568,85 @@ public class MyDeClanParser implements Parser {
   }
   // MulOperator -> * | DIV | MOD
   private BinaryOperation.OpType parseMultOp() {
-    if(willMatch(DeClanTokenType.TIMES)){
+    if(willMatch(TokenType.TIMES)){
       skip();
       return BinaryOperation.OpType.TIMES;
-    } else if(willMatch(DeClanTokenType.DIV)) {
+    } else if(willMatch(TokenType.DIV)) {
       skip();
       return BinaryOperation.OpType.DIV;
-    } else if(willMatch(DeClanTokenType.DIVIDE)){
+    } else if(willMatch(TokenType.DIVIDE)){
       skip();
       return BinaryOperation.OpType.DIVIDE;
-    } else if(willMatch(DeClanTokenType.AND)){
+    } else if(willMatch(TokenType.AND)){
       skip();
       return BinaryOperation.OpType.AND;
     } else {
-      match(DeClanTokenType.MOD);
+      match(TokenType.MOD);
       return BinaryOperation.OpType.MOD;
     }
   }
   // Factor -> number | ident | string | functioncall | TRUE | FALSE | ~FACTOR
   // Factor -> ( Expression )
   private Expression parseFactor(){
-    if(willMatch(DeClanTokenType.NUM)){
+    if(willMatch(TokenType.NUM)){
       return parseNumValue(); 
-    } else if (willMatch(DeClanTokenType.TRUE) || willMatch(DeClanTokenType.FALSE)){
+    } else if (willMatch(TokenType.TRUE) || willMatch(TokenType.FALSE)){
       return parseBoolValue();
-    } else if(willMatch(DeClanTokenType.ID)){
-      DeClanToken id = skip();
+    } else if(willMatch(TokenType.ID)){
+      Token id = skip();
       Position start = currentPosition;
-      if(willMatch(DeClanTokenType.LPAR)){
-	List<Expression> expList = parseActualParameters();
-	return new FunctionCall(start, new Identifier(start, id.getLexeme()), expList);
+      if(willMatch(TokenType.LPAR)){
+	      List<Expression> expList = parseActualParameters();
+	      return new FunctionCall(start, new Identifier(start, id.getLexeme()), expList);
       } else {
 	return parseIdentifier(id);
       }
-    } else if (willMatch(DeClanTokenType.STRING)){
+    } else if (willMatch(TokenType.STRING)){
       return parseStrValue();
-    } else if (willMatch(DeClanTokenType.NOT)){
+    } else if (willMatch(TokenType.NOT)){
       Position start = currentPosition;
       UnaryOperation.OpType not = parseUnaryOp();
       Expression exp = parseFactor();
       return new UnaryOperation(start, not, exp);
     } else {
-      match(DeClanTokenType.LPAR);
+      match(TokenType.LPAR);
       Expression expr = parseExpression();
-      match(DeClanTokenType.RPAR);
+      match(TokenType.RPAR);
       return expr;
     }
   }
   //ident -> IDENT 
   private Identifier parseIdentifier() {
-    DeClanToken id = match(DeClanTokenType.ID);
+    Token id = match(TokenType.ID);
     Position start = currentPosition;
     return new Identifier(start, id.getLexeme());
   }
   //ident -> IDENT 
-  private Identifier parseIdentifier(DeClanToken id) {
+  private Identifier parseIdentifier(Token id) {
     Position start = currentPosition;
     return new Identifier(start, id.getLexeme());
   }
   
   //number -> NUM
   private NumValue parseNumValue() {
-    DeClanToken num = match(DeClanTokenType.NUM);
+    Token num = match(TokenType.NUM);
     Position start = currentPosition;
     return new NumValue(start, num.getLexeme());
   }
 
   //string -> STRING
   private StrValue parseStrValue() {
-    DeClanToken str = match(DeClanTokenType.STRING);
+    Token str = match(TokenType.STRING);
     Position start = currentPosition;
     return new StrValue(start, str.getLexeme());
   }
   //Number == true of false
   private BoolValue parseBoolValue() {
-    if(willMatch(DeClanTokenType.TRUE)){
+    if(willMatch(TokenType.TRUE)){
       skip();
       Position start = currentPosition;
       return new BoolValue(start, "TRUE");
-    } else if (willMatch(DeClanTokenType.FALSE)){
+    } else if (willMatch(TokenType.FALSE)){
       skip();
       Position start = currentPosition;
       return new BoolValue(start, "FALSE");
