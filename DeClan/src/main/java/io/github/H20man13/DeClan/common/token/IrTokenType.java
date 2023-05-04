@@ -17,18 +17,23 @@ public enum IrTokenType {
     GOTO,
     CALL,
     PROC,
-    PLUS,
-    MINUS,
-    NOT,
-    TIMES,
-    DIVIDE,
-    MODULO,
+    ADD,
+    SUB,
+    MUL,
+    DIV,
+    MOD,
+    BOR,
+    BAND,
+    NEG,
+    BNOT,
     LT,
     GT,
     GE,
     LE,
     NE,
     EQ,
+    END,
+    RETURN,
     
     //Operators
     ASSIGN,
@@ -81,18 +86,23 @@ public enum IrTokenType {
         addKeyword(GOTO);
         addKeyword(CALL);
         addKeyword(PROC);
-        addKeyword(NOT);
-        addKeyword(PLUS);
-        addKeyword(MINUS);
-        addKeyword(TIMES);
-        addKeyword(DIVIDE);
-        addKeyword(MODULO);
+        addKeyword(NEG);
+        addKeyword(BNOT);
+        addKeyword(SUB);
+        addKeyword(MUL);
+        addKeyword(DIV);
+        addKeyword(MOD);
+        addKeyword(ADD);
+        addKeyword(BAND);
+        addKeyword(BOR);
         addKeyword(LT);
         addKeyword(GT);
         addKeyword(GE);
         addKeyword(LE);
         addKeyword(NE);
         addKeyword(EQ);
+        addKeyword(END);
+        addKeyword(RETURN);
 
         dualOperators = new HashMap<>();
         addDualOp(":=", ASSIGN);

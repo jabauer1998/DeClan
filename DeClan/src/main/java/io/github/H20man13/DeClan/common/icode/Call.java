@@ -22,17 +22,17 @@ public class Call implements ICode {
 		sb.append(" := ");
 		sb.append("CALL ");
 		sb.append(pname);
-		sb.append("(");
+		sb.append(" ( ");
 		boolean first = true;
 		for (String arg : args) {
 			if (first) {
 				first = false;
 			} else {
-				sb.append(", ");
+				sb.append(" , ");
 			}
 			sb.append(arg);
 		}
-		sb.append(")");
+		sb.append(" )");
 		return sb.toString();
 	}
 }

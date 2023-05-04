@@ -7,6 +7,7 @@ import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ParseException;
 import edu.depauw.declan.common.Position;
 import io.github.H20man13.DeClan.common.icode.Call;
+import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
@@ -19,6 +20,7 @@ import io.github.H20man13.DeClan.common.icode.LetString;
 import io.github.H20man13.DeClan.common.icode.LetUn;
 import io.github.H20man13.DeClan.common.icode.LetVar;
 import io.github.H20man13.DeClan.common.icode.Proc;
+import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.LetUn.Op;
 import io.github.H20man13.DeClan.common.token.IrToken;
 import io.github.H20man13.DeClan.common.token.IrTokenType;
@@ -28,6 +30,7 @@ public class MyIrParser {
     private ErrorLog errorLog;
     private IrToken current;
     private Position currentPosition;
+    private int errorCount;
     
 
     public MyIrParser(MyIrLexer lexer, ErrorLog errorLog){
@@ -35,11 +38,16 @@ public class MyIrParser {
         this.errorLog = errorLog;
         this.current = null;
         this.currentPosition = new Position(0, 0);
+        this.errorCount = 0;
         skip();
     }
 
     public void close(){
         lexer.close();
+    }
+
+    public boolean containsErrors(){
+        return errorCount > 0;
     }
 
     boolean willMatch(IrTokenType type){
@@ -51,8 +59,10 @@ public class MyIrParser {
             return skip();
         } else if(current == null){
             errorLog.add("Expected " + type + ", found EOF", current.getPosition());
+            errorCount++;
         } else {
             errorLog.add("Expected " + type + ", found" + current.getType(), currentPosition);
+            errorCount++;
         }
         throw new ParseException("Parsing aborted");
     }
@@ -60,6 +70,7 @@ public class MyIrParser {
     void matchEOF(){
         if(current != null){
             errorLog.add("Expected end of file, found " + current.getType(), current.getPosition());
+            errorCount++;
             throw new ParseException("Parsing aborted");
         }
     }
@@ -86,13 +97,15 @@ public class MyIrParser {
     public List<ICode> parseProgram(){
         Position start = currentPosition;
         List<ICode> parseInstructions = parseInstructions();
+        match(IrTokenType.END);
+        parseInstructions.add(new End());
         matchEOF();
         return parseInstructions;
     }
 
     public List<ICode> parseInstructions(){
         List<ICode> toRet = new LinkedList<ICode>();
-        while(willMatch(IrTokenType.LABEL) || willMatch(IrTokenType.IF) || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) || willMatch(IrTokenType.PROC)){
+        while(willMatch(IrTokenType.LABEL) || willMatch(IrTokenType.IF) || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) || willMatch(IrTokenType.PROC) || willMatch(IrTokenType.RETURN)){
             ICode instr = parseInstruction();
             toRet.add(instr);
         }
@@ -109,6 +122,8 @@ public class MyIrParser {
             return parseGoto();
         } else if(willMatch(IrTokenType.PROC)){
             return parseProcedure();
+        } else if (willMatch(IrTokenType.RETURN)){
+            return parseReturn();  
         } else {
             return parseAssignment();
         }
@@ -166,6 +181,11 @@ public class MyIrParser {
         return new If(id.getLexeme(), toIfOp(op.getType()), atom.getLexeme(), labelOne.getLexeme(), labelTwo.getLexeme());
     }
 
+    private ICode parseReturn(){
+        match(IrTokenType.RETURN);
+        return new Return();
+    }
+
     private ICode parseLabel(){
         match(IrTokenType.LABEL);
         IrToken id = match(IrTokenType.ID);
@@ -199,11 +219,11 @@ public class MyIrParser {
         
         match(IrTokenType.ASSIGN);
 
-        if(willMatch(IrTokenType.MINUS)){
+        if(willMatch(IrTokenType.NEG)){
             skip();
             IrToken right = match(IrTokenType.ID);
             return new LetUn(id.getLexeme(), Op.NEG, right.getLexeme());
-        } else if(willMatch(IrTokenType.NOT)){
+        } else if(willMatch(IrTokenType.BNOT)){
             skip();
             IrToken right = match(IrTokenType.ID);
             return new LetUn(id.getLexeme(), Op.BNOT, right.getLexeme());
@@ -222,9 +242,10 @@ public class MyIrParser {
 
             return new Call(id.getLexeme(), callName.getLexeme(), args);
         } else if(willMatch(IrTokenType.FALSE)){
-           skip();
-           return new LetBool(id.getLexeme(), false);
+            skip();
+            return new LetBool(id.getLexeme(), false);
         } else if(willMatch(IrTokenType.TRUE)){
+            skip();
             return new LetBool(id.getLexeme(), true);
         } else if(willMatch(IrTokenType.STRING)){
             IrToken str = skip();
@@ -263,26 +284,34 @@ public class MyIrParser {
                 skip();
                 IrToken id3 = match(IrTokenType.ID);
                 return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.LE, id3.getLexeme());
-            } else if (willMatch(IrTokenType.PLUS)){
+            } else if (willMatch(IrTokenType.ADD)){
                 skip();
                 IrToken id3 = match(IrTokenType.ID);
                 return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.ADD, id3.getLexeme());
-            } else if (willMatch(IrTokenType.MINUS)){
+            } else if (willMatch(IrTokenType.SUB)){
                 skip();
                 IrToken id3 = match(IrTokenType.ID);
                 return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.SUB, id3.getLexeme());
-            } else if (willMatch(IrTokenType.TIMES)){
+            } else if (willMatch(IrTokenType.MUL)){
                 skip();
                 IrToken id3 = match(IrTokenType.ID);
                 return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.MUL, id3.getLexeme());
-            } else if (willMatch(IrTokenType.DIVIDE)){
+            } else if (willMatch(IrTokenType.DIV)){
                 skip();
                 IrToken id3 = match(IrTokenType.ID);
                 return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.DIV, id3.getLexeme());
-            } else if (willMatch(IrTokenType.MODULO)){
+            } else if (willMatch(IrTokenType.MOD)){
                 skip();
                 IrToken id3 = match(IrTokenType.ID);
                 return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.MOD, id3.getLexeme());
+            } else if(willMatch(IrTokenType.BAND)){
+                skip();
+                IrToken id3 = match(IrTokenType.ID);
+                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.BAND, id3.getLexeme());
+            } else if(willMatch(IrTokenType.BOR)){
+                skip();
+                IrToken id3 = match(IrTokenType.ID);
+                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.BOR, id3.getLexeme());
             } else {
                 return new LetVar(id.getLexeme(), id2.getLexeme());
             }

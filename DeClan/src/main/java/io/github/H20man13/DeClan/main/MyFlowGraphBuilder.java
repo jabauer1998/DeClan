@@ -4,24 +4,24 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.H20man13.DeClan.common.dag.BlockNode;
-import io.github.H20man13.DeClan.common.dag.DagNode;
-import io.github.H20man13.DeClan.common.dag.EntryNode;
-import io.github.H20man13.DeClan.common.dag.ExitNode;
+import io.github.H20man13.DeClan.common.flow.BlockNode;
+import io.github.H20man13.DeClan.common.flow.DagNode;
+import io.github.H20man13.DeClan.common.flow.EntryNode;
+import io.github.H20man13.DeClan.common.flow.ExitNode;
 import io.github.H20man13.DeClan.common.icode.BasicBlock;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Label;
 
-public class MyDagBuilder {
+public class MyFlowGraphBuilder {
     private List<ICode> intermediateCode;
     
-    public MyDagBuilder(List<ICode> intermediateCode){
+    public MyFlowGraphBuilder(List<ICode> intermediateCode){
         this.intermediateCode = intermediateCode;
     }
 
-    public EntryNode buildDag(){
+    public EntryNode buildFlowGraph(){
         if(intermediateCode.size() > 0){
             HashMap<String, BlockNode> labeledNodes = new HashMap<String, BlockNode>();
             List<BlockNode> dagNodes = new LinkedList<BlockNode>();

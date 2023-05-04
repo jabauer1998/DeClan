@@ -4,6 +4,8 @@
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ast/Assignment.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/Token.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/main/MyIrFactory.java
+/home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/flow/DagNode.java
+/home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/flow/BlockNode.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/icode/Label.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/icode/ICode.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ast/ConstDeclaration.java
@@ -12,7 +14,6 @@
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/main/MyIrLexer.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/icode/LetBin.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ast/AbstractASTNode.java
-/home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/dag/BlockNode.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ast/ProcedureCall.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/main/MyIndexer.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/icode/Return.java
@@ -32,6 +33,7 @@
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/icode/If.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/main/MyICodeMachine.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/main/PostfixInterpreterVisitor.java
+/home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/main/MyFlowGraphBuilder.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/icode/LetBool.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ast/ASTVisitor.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/symboltable/VariableEntry.java
@@ -40,14 +42,13 @@
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/icode/Call.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/TokenType.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/main/MyICodeGenerator.java
-/home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/dag/EntryNode.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/main/MyDeClanLexer.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/icode/LetReal.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/Position.java
+/home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/flow/EntryNode.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/symboltable/Environment.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ast/ElseBranch.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/main/MyIrBuilder.java
-/home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/main/MyDagBuilder.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ast/RepeatBranch.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ast/Identifier.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ast/WhileElifBranch.java
@@ -63,9 +64,9 @@
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ast/ASTNode.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/main/MyIO.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ast/EmptyStatement.java
-/home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/dag/DagNode.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/OpUtil.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/ReaderSource.java
+/home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/flow/ExitNode.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ast/DeclarationVisitor.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/main/MyOptimizer.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ast/ProcedureDeclaration.java
@@ -76,7 +77,6 @@
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ast/ExpressionVisitor.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/edu/depauw/declan/common/ParseException.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/icode/Proc.java
-/home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/dag/ExitNode.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/main/StackSolver.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/main/MyAnalysis.java
 /home/jabauer/DeClan-Compiler/DeClan/src/main/java/io/github/H20man13/DeClan/common/RegisterGenerator.java

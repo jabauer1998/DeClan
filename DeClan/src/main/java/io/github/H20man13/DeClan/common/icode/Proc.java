@@ -14,17 +14,17 @@ public class Proc implements ICode {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("PROC " + pname + "(");
+		sb.append("PROC " + pname + " ( ");
 		boolean first = true;
 		for (String param : params) {
 			if (first) {
 				first = false;
 			} else {
-				sb.append(", ");
+				sb.append(" , ");
 			}
 			sb.append(param);
 		}
-		sb.append(")");
+		sb.append(" )");
 		return sb.toString();
 	}
 }

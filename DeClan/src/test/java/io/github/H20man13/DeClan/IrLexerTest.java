@@ -40,7 +40,7 @@ public class IrLexerTest {
 
     @Test
     public void testKeywords(){
-        String keywords = "LABEL IF TRUE FALSE THEN ELSE GOTO CALL PROC PLUS MINUS NOT TIMES DIVIDE MODULO LT GT GE LE NE EQ";
+        String keywords = "LABEL IF TRUE FALSE THEN ELSE GOTO CALL PROC ADD SUB BNOT MUL DIV MOD LT GT GE LE NE EQ";
         Source source = new ReaderSource(new StringReader(keywords));
         ErrorLog errLog = new ErrorLog();
         MyIrLexer lex = new MyIrLexer(source, errLog);
@@ -55,12 +55,12 @@ public class IrLexerTest {
         tokTypes.add(IrTokenType.GOTO);
         tokTypes.add(IrTokenType.CALL); 
         tokTypes.add(IrTokenType.PROC);
-        tokTypes.add(IrTokenType.PLUS);
-        tokTypes.add(IrTokenType.MINUS);
-        tokTypes.add(IrTokenType.NOT); 
-        tokTypes.add(IrTokenType.TIMES);
-        tokTypes.add(IrTokenType.DIVIDE);
-        tokTypes.add(IrTokenType.MODULO);
+        tokTypes.add(IrTokenType.ADD);
+        tokTypes.add(IrTokenType.SUB);
+        tokTypes.add(IrTokenType.BNOT); 
+        tokTypes.add(IrTokenType.MUL);
+        tokTypes.add(IrTokenType.DIV);
+        tokTypes.add(IrTokenType.MOD);
         tokTypes.add(IrTokenType.LT); 
         tokTypes.add(IrTokenType.GT);
         tokTypes.add(IrTokenType.GE);

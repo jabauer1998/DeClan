@@ -22,7 +22,7 @@ public class If implements ICode {
 	
 	@Override
 	public String toString() {
-		return "IF " + left + " " + op + " " + right + ", " + ifTrue + ", " + ifFalse;
+		return "IF " + left + " " + op + " " + right + " THEN " + ifTrue + " ELSE " + ifFalse;
 	}
 
 	public enum Op {

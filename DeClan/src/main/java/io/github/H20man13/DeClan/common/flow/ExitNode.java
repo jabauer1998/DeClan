@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common.dag;
+package io.github.H20man13.DeClan.common.flow;
 
 public class ExitNode implements DagNode{
     private DagNode exit;

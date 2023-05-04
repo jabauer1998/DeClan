@@ -5,7 +5,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.flow.EntryNode;
 import io.github.H20man13.DeClan.common.icode.BasicBlock;
+import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
@@ -17,12 +19,14 @@ import io.github.H20man13.DeClan.common.icode.LetReal;
 import io.github.H20man13.DeClan.common.icode.LetString;
 import io.github.H20man13.DeClan.common.icode.LetUn;
 import io.github.H20man13.DeClan.common.icode.LetVar;
+import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 
 public class MyOptimizer {
     private List<ICode> intermediateCode;
     private Environment<String, Object> environment;
     private MyICodeMachine machine;
+    private EntryNode globalFlowGraph;
 
 
     public MyOptimizer(List<ICode> intermediateCode){
@@ -43,8 +47,10 @@ public class MyOptimizer {
                 firsts.add(i);
             } else if(i + 1 < intermediateCode.size() && 
             (intermediateInstruction instanceof If || 
-            intermediateInstruction instanceof Goto)){
-                //First instruction following an IF and a Goto are leaders
+            intermediateInstruction instanceof Goto ||
+            intermediateInstruction instanceof Proc ||
+            intermediateInstruction instanceof Call)){
+                //First instruction following an If/Goto/Proc/Call are leaders
                 firsts.add(i + 1);
             }
         }
@@ -324,5 +330,10 @@ public class MyOptimizer {
         }
 
         block.setICode(finalList);
+    }
+
+    public void buildGlobalFlowGraph(){
+        MyFlowGraphBuilder builder = new MyFlowGraphBuilder(intermediateCode);
+        this.globalFlowGraph = builder.buildFlowGraph();
     }
 }

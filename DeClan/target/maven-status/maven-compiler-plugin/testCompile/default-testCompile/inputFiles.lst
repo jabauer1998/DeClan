@@ -1,4 +1,7 @@
+/home/jabauer/DeClan-Compiler/DeClan/src/test/java/io/github/H20man13/DeClan/IrParserTest.java
 /home/jabauer/DeClan-Compiler/DeClan/src/test/java/io/github/H20man13/DeClan/MyLexerBasicTest.java
+/home/jabauer/DeClan-Compiler/DeClan/src/test/java/io/github/H20man13/DeClan/ICodeGeneratorTest.java
 /home/jabauer/DeClan-Compiler/DeClan/src/test/java/io/github/H20man13/DeClan/LexerTestUtil.java
 /home/jabauer/DeClan-Compiler/DeClan/src/test/java/io/github/H20man13/DeClan/MyLexerOptionalTest.java
 /home/jabauer/DeClan-Compiler/DeClan/src/test/java/io/github/H20man13/DeClan/MyParserTest.java
+/home/jabauer/DeClan-Compiler/DeClan/src/test/java/io/github/H20man13/DeClan/IrLexerTest.java
