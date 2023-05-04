@@ -34,9 +34,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git://github.com/h20man13/Emulator-Debug-Enviroment.git</connection>
-    <developerConnection>scm:git:ssh://github.com/h20man13/Emulator-Debug-Enviroment.git</developerConnection>
-    <url>https://github.com/h20man13/Emulator-Debug-Enviroment/tree/master</url>
+    <connection>scm:git:git://github.com/h20man13/DeClan-Compiler.git</connection>
+    <developerConnection>scm:git:ssh://github.com/h20man13/DeClan-Compiler.git</developerConnection>
+    <url>https://github.com/h20man13/DeClan-Compiler/tree/master</url>
     <tag>emulator_ide-1.0</tag>
   </scm>
 
