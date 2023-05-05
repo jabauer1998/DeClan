@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.flow.BlockNode;
-import io.github.H20man13.DeClan.common.flow.DagNode;
+import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.flow.EntryNode;
 import io.github.H20man13.DeClan.common.flow.ExitNode;
 import io.github.H20man13.DeClan.common.icode.BasicBlock;

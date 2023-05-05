@@ -67,9 +67,9 @@ public class MyIrBuilder {
         ICode result = null;
         String place = gen.genNextRegister();
         if(value.contains(".")){
-            result = factory.produceIntAssignment(value, Integer.parseInt(value));
+            result = factory.produceRealAssignment(value, Double.parseDouble(value));
         } else {
-            result = factory.produceRealAssignment(place, Double.parseDouble(value));
+            result = factory.produceIntAssignment(place, Integer.parseInt(value));
         }
         output.add(result);
         return place;

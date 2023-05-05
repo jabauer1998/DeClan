@@ -95,10 +95,11 @@ public class MyDeClanParser implements Parser {
       return skip();
     } else if (current == null) {
       errorLog.add("Expected " + type + ", found end of file", currentPosition);
+      throw new ParseException("Expected " + type + ", found end of file at " + currentPosition);
     } else {
       errorLog.add("Expected " + type + ", found " + current.getType(), currentPosition);
+      throw new ParseException("Expected " + type + ", found " + current.getType() + " at " + currentPosition);
     }
-    throw new ParseException("Parsing aborted");
   }
 
   /**
@@ -147,9 +148,11 @@ public class MyDeClanParser implements Parser {
   public List<Declaration> parseDeclarationSequence(){
     List<Declaration> Decls = new ArrayList<>();
     if(willMatch(TokenType.CONST)){
+      skip();
       Decls.addAll(parseConstDeclSequence());
     }
     if(willMatch(TokenType.VAR)){
+      skip();
       Decls.addAll(parseVariableDeclSequence());
     }
     Decls.addAll(parseProcedureDeclSequence());
@@ -161,13 +164,10 @@ public class MyDeClanParser implements Parser {
   // ConstDeclSequence ->
   private List<ConstDeclaration> parseConstDeclSequence(){
     List<ConstDeclaration> constDecls = new ArrayList<>();
-    if (willMatch(TokenType.CONST)){
-      skip();
-      while(willMatch(TokenType.ID)){
-        ConstDeclaration constDecl = parseConstDecl();
-        constDecls.add(constDecl);
-        match(TokenType.SEMI);
-      }
+    while(willMatch(TokenType.ID)){
+      ConstDeclaration constDecl = parseConstDecl();
+      constDecls.add(constDecl);
+      match(TokenType.SEMI);
     }
     return Collections.unmodifiableList(constDecls);
   }
@@ -176,8 +176,7 @@ public class MyDeClanParser implements Parser {
   //VariableDeclSequence ->
   private List<VariableDeclaration> parseVariableDeclSequence(){
     List<VariableDeclaration> varDecls = new ArrayList<>();
-    while (willMatch(TokenType.VAR)) {
-      skip();
+    while (willMatch(TokenType.ID)) {
       List<VariableDeclaration> varDecl = parseVariableDecl();
       varDecls.addAll(varDecl);
       match(TokenType.SEMI);
@@ -268,8 +267,8 @@ public class MyDeClanParser implements Parser {
   private ConstDeclaration parseConstDecl() {
     Identifier id = parseIdentifier();
     match(TokenType.EQ);
-    Expression num = parseNumValue();
-    return new ConstDeclaration(id.getStart(), id, num);
+    Expression exp = parseExpression();
+    return new ConstDeclaration(id.getStart(), id, exp);
   }
 
   //VariableDecl -> IdentList : Type
@@ -520,7 +519,7 @@ public class MyDeClanParser implements Parser {
     } else {
       left = parseTerm();
     }
-    while(willMatch(TokenType.PLUS) || willMatch(TokenType.MINUS)){
+    while(willMatch(TokenType.PLUS) || willMatch(TokenType.MINUS) || willMatch(TokenType.OR)){
       BinaryOperation.OpType op = parseAddOp();
       Expression right = parseTerm();
       left = new BinaryOperation(start, left, op, right);
@@ -559,7 +558,7 @@ public class MyDeClanParser implements Parser {
   private Expression parseTerm(){
     Position start = currentPosition;
     Expression left = parseFactor();
-    while (willMatch(TokenType.DIV) || willMatch(TokenType.MOD) || willMatch(TokenType.TIMES) || willMatch(TokenType.DIVIDE)){
+    while (willMatch(TokenType.DIV) || willMatch(TokenType.MOD) || willMatch(TokenType.TIMES) || willMatch(TokenType.DIVIDE) || willMatch(TokenType.AND)){
       BinaryOperation.OpType op = parseMultOp();
       Expression right = parseFactor();
       left = new BinaryOperation(start, left, op, right);

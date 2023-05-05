@@ -5,6 +5,6 @@ import java.util.List;
 
 import io.github.H20man13.DeClan.common.icode.BasicBlock;
 
-public interface DagNode {
+public interface FlowGraphNode {
     
 }

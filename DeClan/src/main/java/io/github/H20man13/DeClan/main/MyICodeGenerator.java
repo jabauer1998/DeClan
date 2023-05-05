@@ -139,9 +139,11 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
 	    exec.get(i).accept(this);
     }
     Expression retExp = procDecl.getReturnStatement();
-    String retPlace = retExp.acceptResult(this);
-    procEnvironment.addEntry(procedureName, retPlace);
-    builder.buildReturnStatement();
+    if(retExp != null){
+      String retPlace = retExp.acceptResult(this);
+      procEnvironment.addEntry(procedureName, retPlace);
+      builder.buildReturnStatement();
+    }
     varEnvironment.removeScope();
   }
         
