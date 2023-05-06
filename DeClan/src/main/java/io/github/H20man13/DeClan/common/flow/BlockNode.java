@@ -1,7 +1,10 @@
 package io.github.H20man13.DeClan.common.flow;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.text.StyledEditorKit.BoldAction;
 
@@ -23,17 +26,17 @@ import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.LiveInfo;
 
 public class BlockNode implements FlowGraphNode {
-    private BasicBlock block;
-    private List<FlowGraphNode> successors;
-    private List<FlowGraphNode> predecessors;
-    private Environment<String, LiveInfo> lifeInformation;
-    private DagNodeFactory factory;
-    private DagGraph dag;
+    protected BasicBlock block;
+    protected List<FlowGraphNode> successors;
+    protected List<FlowGraphNode> predecessors;
+    protected Environment<String, LiveInfo> lifeInformation;
+    protected DagNodeFactory factory;
+    protected DagGraph dag;
 
     public BlockNode(BasicBlock block){
         this.block = block;
-        this.successors = new LinkedList<FlowGraphNode>();
-        this.predecessors = new LinkedList<FlowGraphNode>();
+        this.successors = new ArrayList<FlowGraphNode>();
+        this.predecessors = new ArrayList<FlowGraphNode>();
         this.lifeInformation = new Environment<String, LiveInfo>();
         this.dag = new DagGraph();
         this.factory = new DagNodeFactory();
@@ -198,7 +201,20 @@ public class BlockNode implements FlowGraphNode {
         }
     }
 
-    public void eliminateDeadCode(){
+    public BasicBlock getBlock(){
+        return block;
+    }
+
+    public void addSuccessor(FlowGraphNode successor){
+        this.successors.add(successor);
+    }
+
+    public void addPredecessor(FlowGraphNode predecessor){
+        this.predecessors.add(predecessor);
+    }
+
+    @Override
+    public void removeDeadCode() {
         while(true){
             List<DagNode> roots = this.dag.getRoots();
             if(roots.size() <= 0){
@@ -211,19 +227,51 @@ public class BlockNode implements FlowGraphNode {
         }
     }
 
-    public void constructOptimizedIr(){
-        
+    @Override
+    public Set<Set<FlowGraphNode>> identifyLoops(Set<FlowGraphNode> visited) {
+        Set<Set<FlowGraphNode>> finalResult = new HashSet<>(); 
+        //Check if the visited Set contains a Loop
+        if(visited.contains(this)){
+            //Then it is a loop and we need to add a copy of this set to the loop
+            finalResult.add(visited);
+        }
+
+        for(FlowGraphNode successor : this.successors){
+            Set<FlowGraphNode> visitedCopy = new HashSet<FlowGraphNode>();
+            visitedCopy.addAll(visited);
+
+            Set<Set<FlowGraphNode>> result = successor.identifyLoops(visitedCopy);
+            finalResult.addAll(result);
+        }
+
+        return finalResult;
     }
 
-    public BasicBlock getBlock(){
-        return block;
+    @Override
+    public boolean containsPredecessorOutsideLoop(Set<FlowGraphNode> loop) {
+        for(FlowGraphNode predecessor : predecessors){
+            if(!loop.contains(predecessor)){
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void addSuccessor(FlowGraphNode successor){
-        this.successors.add(successor);
+    public void removePredecessor(FlowGraphNode node){
+        for(int i = 0; i < this.predecessors.size(); i++){
+            if(node.hashCode() == predecessors.get(i).hashCode()){
+                this.predecessors.remove(i);
+                break;
+            }
+        }
     }
 
-    public void addPredecessor(FlowGraphNode predecessor){
-        this.predecessors.add(predecessor);
+    public void removeSuccessor(FlowGraphNode node){
+        for(int i = 0; i < this.successors.size(); i++){
+            if(node.hashCode() == successors.get(i).hashCode()){
+                this.successors.remove(i);
+                break;
+            }
+        }
     }
 }

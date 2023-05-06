@@ -4,8 +4,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.EntryNode;
+import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
+import io.github.H20man13.DeClan.common.flow.LoopEntryNode;
 import io.github.H20man13.DeClan.common.icode.BasicBlock;
 import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.Goto;
@@ -335,5 +339,33 @@ public class MyOptimizer {
     public void buildGlobalFlowGraph(){
         MyFlowGraphBuilder builder = new MyFlowGraphBuilder(intermediateCode);
         this.globalFlowGraph = builder.buildFlowGraph();
+    }
+
+    public void removeDeadCode(){
+        this.globalFlowGraph.removeDeadCode();
+    }
+
+    public void makeLoopEntries(){
+        Set<Set<FlowGraphNode>> loops = this.globalFlowGraph.identifyLoops();
+
+        Set<FlowGraphNode> nodesToMakeLoopEntries = new HashSet<FlowGraphNode>();
+        for(Set<FlowGraphNode> loop: loops){
+            for(FlowGraphNode nodeInLoop: loop){
+                if(nodeInLoop.containsPredecessorOutsideLoop(loop)){
+                    nodesToMakeLoopEntries.add(nodeInLoop);
+                    break;
+                }
+            }
+        }
+
+        //To replace a Block Node with its root Entry Node all we need to do
+        //is call the copy constructor for the LoopEntryNode
+        //It will handle all the necessary removal and additions of Successors and predecessors
+        //Garbage Collection will automatically clean up the one that should be cleaned
+        for(FlowGraphNode nodeToMakeLoopEntry : nodesToMakeLoopEntries){
+            if(nodeToMakeLoopEntry instanceof BlockNode){
+                new LoopEntryNode((BlockNode)nodeToMakeLoopEntry);
+            }
+        }
     }
 }
