@@ -109,7 +109,27 @@ public class DagNodeFactory {
     }
     
 
-    public DagNode createValueNode(String nodeName){
-        return new DagValueNode(nodeName);
+    public DagNode createNullNode(String nodeName){
+        return new DagNullNode(nodeName);
+    }
+
+    public DagNode createBooleanNode(String nodeName, boolean value){
+        return new DagValueNode(nodeName, DagValueNode.ValueType.BOOL, value);
+    }
+
+    public DagNode createIntNode(String nodeName, int value){
+        return new DagValueNode(nodeName, DagValueNode.ValueType.INT, value);
+    }
+
+    public DagNode createRealNode(String nodeName, double value){
+        return new DagValueNode(nodeName, DagValueNode.ValueType.REAL, value);
+    }
+
+    public DagNode createStringNode(String nodeName, String value){
+        return new DagValueNode(nodeName, DagValueNode.ValueType.STRING, value);
+    }
+
+    public DagNode createVariableNode(String nodeName, DagNode child){
+        return new DagVariableNode(nodeName, child);
     }
 }

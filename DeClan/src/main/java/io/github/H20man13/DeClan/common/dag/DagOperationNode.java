@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.dag;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,6 +13,7 @@ public class DagOperationNode implements DagNode {
     }
 
     private List<DagNode> children;
+    private List<DagNode> ancestors;
     private HashSet<String> identifiers;
     private boolean nodeIsKilled;
     private Op operation;
@@ -20,10 +22,14 @@ public class DagOperationNode implements DagNode {
     public DagOperationNode(String identifier, Op operation, List<DagNode> children){
         this.children = new LinkedList<DagNode>();
         this.children.addAll(children);
+        for(DagNode child : children){
+            child.addAncestor(this);
+        }
         this.identifiers = new HashSet<String>();
         this.identifiers.add(identifier);
         this.nodeIsKilled = false;
         this.operation = operation;
+        this.ancestors = new ArrayList<>();
     }
 
     public void addIdentifier(String identifier){
@@ -68,5 +74,30 @@ public class DagOperationNode implements DagNode {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void addAncestor(DagNode ancestor) {
+        this.ancestors.add(ancestor);
+    }
+
+    @Override
+    public void deleteAncestor(DagNode ancestor) {
+        for(int i = 0; i < ancestors.size(); i++){
+            DagNode locAncestor = ancestors.get(i);
+            if(locAncestor.hashCode() == ancestor.hashCode()){
+                ancestors.remove(i);
+            }
+        }
+    }
+
+    @Override
+    public boolean isRoot() {
+        return ancestors.size() == 0;
+    }
+
+    @Override
+    public List<DagNode> getChildren() {
+        return this.children;
     }
 }

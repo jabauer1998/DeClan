@@ -5,21 +5,13 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DagValueNode implements DagNode{
-    public enum ValueType{
-        INT, REAL, BOOL, STRING
-    }
-
+public class DagNullNode implements DagNode {
     private HashSet<String> identifiers;
     private List<DagNode> ancestors;
-    private Object value;
-    private ValueType type;
 
-    public DagValueNode(String identifier, ValueType type, Object value){
+    public DagNullNode(String ident){
         this.identifiers = new HashSet<>();
-        this.identifiers.add(identifier);
-        this.value = value;
-        this.type = type;
+        this.identifiers.add(ident);
         this.ancestors = new ArrayList<>();
     }
 
@@ -29,10 +21,9 @@ public class DagValueNode implements DagNode{
     }
 
     @Override
-    public boolean equals(DagNode dagNode){
-        if(dagNode instanceof DagValueNode){
-            DagValueNode valDagNode = (DagValueNode)dagNode;
-            return valDagNode.type == type && this.value.hashCode() == valDagNode.hashCode();
+    public boolean equals(DagNode dagNode) {
+        if(dagNode instanceof DagNullNode){
+            return true;
         } else {
             return false;
         }
@@ -60,12 +51,11 @@ public class DagValueNode implements DagNode{
 
     @Override
     public boolean isRoot() {
-        return this.ancestors.size() == 0;
+        return ancestors.size() == 0;
     }
 
     @Override
     public List<DagNode> getChildren() {
         return new LinkedList<>();
     }
-    
 }

@@ -102,12 +102,12 @@ public class BlockNode implements FlowGraphNode {
                 DagNode right = this.dag.searchForLatestChild(binICode.right);
 
                 if(left == null){
-                    left = factory.createValueNode(binICode.left);
+                    left = factory.createNullNode(binICode.left);
                     this.dag.addDagNode(left);
                 }
 
                 if(right == null){
-                    right = factory.createValueNode(binICode.right);
+                    right = factory.createNullNode(binICode.right);
                     this.dag.addDagNode(right);
                 }
 
@@ -132,9 +132,8 @@ public class BlockNode implements FlowGraphNode {
                 DagNode exists = this.dag.getDagNode(newNode);
                 if(exists == null){
                     this.dag.addDagNode(newNode);
-                } else if(exists instanceof DagOperationNode){
-                    DagOperationNode opExists = (DagOperationNode)exists;
-                    opExists.addIdentifier(binICode.place);
+                } else {
+                    exists.addIdentifier(binICode.place);
                 }
             } else if(icode instanceof LetUn){
                 LetUn unICode = (LetUn)icode;
@@ -142,7 +141,7 @@ public class BlockNode implements FlowGraphNode {
                 DagNode right = this.dag.searchForLatestChild(unICode.value);
 
                 if(right == null){
-                    right = factory.createValueNode(unICode.value);
+                    right = factory.createNullNode(unICode.value);
                     this.dag.addDagNode(right);
                 }
 
@@ -156,14 +155,64 @@ public class BlockNode implements FlowGraphNode {
                 DagNode exists = this.dag.getDagNode(newNode);
                 if(exists == null){
                     this.dag.addDagNode(newNode);
-                } else if(exists instanceof DagOperationNode){
-                    DagOperationNode opExists = (DagOperationNode)exists;
-                    opExists.addIdentifier(unICode.place);
+                } else {
+                    exists.addIdentifier(unICode.place);
                 }
             } else if(icode instanceof LetVar){
-                
+                LetVar varICode = (LetVar)icode;
+
+                DagNode right = this.dag.searchForLatestChild(varICode.var);
+
+                if(right == null){
+                    right = factory.createNullNode(varICode.var);
+                    this.dag.addDagNode(right);
+                }
+
+                DagNode newNode = factory.createVariableNode(varICode.place, right);
+
+                DagNode exists = this.dag.getDagNode(newNode);
+                if(exists == null){
+                    this.dag.addDagNode(newNode);
+                } else {
+                    exists.addIdentifier(varICode.place);
+                }
+            } else if(icode instanceof LetBool){
+                LetBool boolICode = (LetBool)icode;
+
+                DagNode newNode = factory.createBooleanNode(boolICode.place, boolICode.value);
+
+                this.dag.addDagNode(newNode);
+            } else if(icode instanceof LetInt){
+                LetInt intICode = (LetInt)icode;
+                DagNode newNode = factory.createIntNode(intICode.place, intICode.value);
+                this.dag.addDagNode(newNode);
+            } else if(icode instanceof LetReal){
+                LetReal realICode = (LetReal)icode;
+                DagNode newNode = factory.createRealNode(realICode.place, realICode.value);
+                this.dag.addDagNode(newNode);
+            } else if(icode instanceof LetString){
+                LetString strICode = (LetString)icode;
+                DagNode newNode = factory.createStringNode(strICode.place, strICode.value);
+                this.dag.addDagNode(newNode);
             }
         }
+    }
+
+    public void eliminateDeadCode(){
+        while(true){
+            List<DagNode> roots = this.dag.getRoots();
+            if(roots.size() <= 0){
+                break;
+            }
+
+            for(DagNode root: roots){
+                this.dag.deleteDagNode(root);
+            }
+        }
+    }
+
+    public void constructOptimizedIr(){
+        
     }
 
     public BasicBlock getBlock(){

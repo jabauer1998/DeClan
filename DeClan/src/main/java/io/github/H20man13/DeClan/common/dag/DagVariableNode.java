@@ -5,39 +5,33 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DagValueNode implements DagNode{
-    public enum ValueType{
-        INT, REAL, BOOL, STRING
-    }
-
+public class DagVariableNode implements DagNode {
     private HashSet<String> identifiers;
+    private DagNode child;
     private List<DagNode> ancestors;
-    private Object value;
-    private ValueType type;
 
-    public DagValueNode(String identifier, ValueType type, Object value){
+    public DagVariableNode(String ident, DagNode child){
         this.identifiers = new HashSet<>();
-        this.identifiers.add(identifier);
-        this.value = value;
-        this.type = type;
         this.ancestors = new ArrayList<>();
+        child.addAncestor(this);
+        this.identifiers.add(ident);
+        this.child = child;
     }
 
     @Override
     public boolean containsId(String ident) {
         return this.identifiers.contains(ident);
     }
-
     @Override
-    public boolean equals(DagNode dagNode){
-        if(dagNode instanceof DagValueNode){
-            DagValueNode valDagNode = (DagValueNode)dagNode;
-            return valDagNode.type == type && this.value.hashCode() == valDagNode.hashCode();
+    public boolean equals(DagNode dagNode) {
+        if(dagNode instanceof DagVariableNode){
+            DagVariableNode varNode = (DagVariableNode)dagNode;
+            return this.child.hashCode() == varNode.child.hashCode();
         } else {
             return false;
         }
     }
-
+    
     @Override
     public void addIdentifier(String ident) {
         this.identifiers.add(ident);
@@ -65,7 +59,8 @@ public class DagValueNode implements DagNode{
 
     @Override
     public List<DagNode> getChildren() {
-        return new LinkedList<>();
+        LinkedList<DagNode> list = new LinkedList<DagNode>();
+        list.add(child);
+        return list;
     }
-    
 }
