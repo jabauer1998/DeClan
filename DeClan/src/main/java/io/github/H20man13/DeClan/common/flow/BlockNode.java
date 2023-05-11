@@ -274,4 +274,22 @@ public class BlockNode implements FlowGraphNode {
             }
         }
     }
+
+    @Override
+    public void generateOptimizedIr() {
+        ICode lstICode = new ICode() {};
+    }
+
+    public List<FlowGraphNode> getPredecessors(){
+        return this.predecessors;
+    }
+
+    public List<FlowGraphNode> getSuccessors(){
+        return this.successors;
+    }
+
+    @Override
+    public List<ICode> getICode() {
+        return block.getIcode();
+    }
 }

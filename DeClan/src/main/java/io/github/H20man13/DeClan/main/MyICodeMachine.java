@@ -1,6 +1,5 @@
 package io.github.H20man13.DeClan.main;
 
-import io.github.H20man13.DeClan.common.OpUtil;
 import io.github.H20man13.DeClan.common.icode.LetBin;
 import io.github.H20man13.DeClan.common.icode.LetBool;
 import io.github.H20man13.DeClan.common.icode.LetInt;
@@ -9,6 +8,7 @@ import io.github.H20man13.DeClan.common.icode.LetString;
 import io.github.H20man13.DeClan.common.icode.LetUn;
 import io.github.H20man13.DeClan.common.icode.LetVar;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
+import io.github.H20man13.DeClan.common.util.OpUtil;
 
 public class MyICodeMachine {
     Environment<String, Object> results;

@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common;
+package io.github.H20man13.DeClan.common.util;
 
 public class OpUtil {
     public static Object negate(Object val){

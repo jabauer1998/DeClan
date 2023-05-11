@@ -8,6 +8,7 @@ import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.flow.EntryNode;
 import io.github.H20man13.DeClan.common.flow.ExitNode;
+import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.icode.BasicBlock;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -21,7 +22,7 @@ public class MyFlowGraphBuilder {
         this.intermediateCode = intermediateCode;
     }
 
-    public EntryNode buildFlowGraph(){
+    public FlowGraph buildFlowGraph(){
         if(intermediateCode.size() > 0){
             HashMap<String, BlockNode> labeledNodes = new HashMap<String, BlockNode>();
             List<BlockNode> dagNodes = new LinkedList<BlockNode>();
@@ -74,10 +75,11 @@ public class MyFlowGraphBuilder {
             }
 
             EntryNode entry = new EntryNode(dagNodes.get(0));
-
             ExitNode exit = new ExitNode(dagNodes.get(dagNodes.size() - 1));
 
-            return entry;
+            FlowGraph flowGraph = new FlowGraph(entry, dagNodes, exit);
+
+            return flowGraph;
         } else {
             return null;
         }

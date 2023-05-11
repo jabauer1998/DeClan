@@ -8,6 +8,7 @@ import java.util.Set;
 
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.EntryNode;
+import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.flow.LoopEntryNode;
 import io.github.H20man13.DeClan.common.icode.BasicBlock;
@@ -30,7 +31,7 @@ public class MyOptimizer {
     private List<ICode> intermediateCode;
     private Environment<String, Object> environment;
     private MyICodeMachine machine;
-    private EntryNode globalFlowGraph;
+    private FlowGraph globalFlowGraph;
 
 
     public MyOptimizer(List<ICode> intermediateCode){
@@ -272,9 +273,9 @@ public class MyOptimizer {
         //After all the Indexes are collected that we need to ignore we can build the final list
         List<ICode> finalList = new LinkedList<ICode>();
         for(int i = 0; i < intermediateCode.size(); i++){
-            ICode icode = intermediateCode.get(i);
+            ICode iCode = intermediateCode.get(i);
             if(!indexes.contains(i)){
-                finalList.add(icode);
+                finalList.add(iCode);
             }
         }
 
@@ -358,14 +359,18 @@ public class MyOptimizer {
             }
         }
 
-        //To replace a Block Node with its root Entry Node all we need to do
+        //To replace a Block Node with its LoopEntryNode all we need to do
         //is call the copy constructor for the LoopEntryNode
         //It will handle all the necessary removal and additions of Successors and predecessors
-        //Garbage Collection will automatically clean up the one that should be cleaned
+        //Garbage Collection will automatically clean up the one that should be cleaned...
         for(FlowGraphNode nodeToMakeLoopEntry : nodesToMakeLoopEntries){
             if(nodeToMakeLoopEntry instanceof BlockNode){
                 new LoopEntryNode((BlockNode)nodeToMakeLoopEntry);
             }
         }
+    }
+
+    public void generateOptimizedIr(){
+        this.globalFlowGraph.generateOptimizedIr();
     }
 }
