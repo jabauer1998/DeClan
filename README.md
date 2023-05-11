@@ -1,19 +1,15 @@
 # CSC426 Public Repository ~ ***IMPORTANT UPDATE => PROJECT6*** ~ PLEASE READ <br><br>
-I made several important edits to my buildscript to build project 5. I made it executable so the command is different now. I also removed the sh. See below...<br><br>
-**There are 10 tasks available:**<br><br>
+# What is DeClan
 
-*CLEAN => cleans up all of the .class files in the directory* <br>
-*BUILD => builds the src in the directory but doesnt run anything*<br>
-*PROJECT1 => builds and runs project1*<br>
-*PROJECT2 => builds and runs project2*<br>
-*PROJECT3 => builds and runs project3*<br>
-*PROJECT4 => builds and runs project4*<br>
-*PROJECT5 => builds and runs project5*<br>
-*PROJECT6 => builds and runs project6*<br>
-*TEST => builds and runs the junit testcases*<br>
-*ALL => buids and runs the project file aswell as the junit testcases*<br><br>
+The Depauw Compilers Language is a subset of the Oberon programing laguage and was designed for the CSC 426 class at Depauw University.
+The language features While Loops, For Loops, Repeat Loops, If Statements, And Procedures.
 
-*Example command: =>* `./BuildScript CLEAN`<br>
-**(NOTE: this command was executed inside the DeClan directory as this is where the build script lies. This build script is only designed to work if invoked from within the directory)**<br><br>
+# What is Included in the Compiler
+The Compiler contains all the necessary components to Compile down to a Single Static Assignment Ir.
+Some optimization passes over Basic Blocks have been completed like Dead Code elimination and Common Sub Expression Elimination
+It also performs constant folding.
 
-The advantages of the build script is it will check if you have all of the required dependencies as well. For instance java installed on your machine. It also displayes the results in a very readable format.<br><br>
+# What is next
+I plan on adding support for more Global Analysis features. 
+I also have to support generation into the ARM7TDMIS architecture. 
+I plan on integrating this compiler into the ARM7TDMIS Emulator project that is on my github.
