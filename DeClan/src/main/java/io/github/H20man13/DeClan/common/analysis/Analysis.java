@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
@@ -13,13 +14,14 @@ public abstract class Analysis<SetType> {
     private FlowGraph flowGraph;
     private Direction direction;
     private Meet symbol;
+    private Set<SetType> semiLattice;
 
     private Map<FlowGraphNode, Set<SetType>> outputs;
     private Map<FlowGraphNode, Set<SetType>> inputs;
 
     public enum Direction{
         BACKWARDS,
-        FORWARDS,    
+        FORWARDS  
     }
 
     public enum Meet{
@@ -27,21 +29,26 @@ public abstract class Analysis<SetType> {
         INTERSECTION
     }
     
-    public Analysis(FlowGraph flowGraph, Direction direction, Meet symbol){
+    public Analysis(FlowGraph flowGraph, Direction direction, Meet symbol, Set<SetType> semiLattice){
         this.flowGraph = flowGraph;
         this.direction = direction;
         this.symbol = symbol;
         this.outputs = new HashMap<>();
         this.inputs = new HashMap<>();
+        this.semiLattice = semiLattice;
     }
 
-    public void run(){
+    public Analysis(FlowGraph flowGraph, Direction direction, Meet symbol){
+        this(flowGraph, direction, symbol, new HashSet<SetType>());
+    }
+
+    public void run() throws Exception{
         if(this.direction == Direction.FORWARDS){
             Map<FlowGraphNode, Set<SetType>> outputCache = new HashMap<>();
             outputs.put(this.flowGraph.getEntry(), new HashSet<SetType>());
 
             for(BlockNode block : this.flowGraph.getBlocks()){
-                outputs.put(block, new HashSet<SetType>());
+                outputs.put(block, semiLattice);
             }
 
             while(changesHaveOccured(this.outputs, outputCache)){

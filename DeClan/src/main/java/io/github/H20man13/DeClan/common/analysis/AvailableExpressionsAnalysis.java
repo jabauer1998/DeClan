@@ -1,7 +1,283 @@
 package io.github.H20man13.DeClan.common.analysis;
 
-import io.github.H20man13.DeClan.common.icode.ICode;
+import java.sql.DriverPropertyInfo;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
 
-public class AvailableExpressionsAnalysis extends Analysis<ICode> {
+import io.github.H20man13.DeClan.common.analysis.exp.BinExp;
+import io.github.H20man13.DeClan.common.analysis.exp.BoolExp;
+import io.github.H20man13.DeClan.common.analysis.exp.Exp;
+import io.github.H20man13.DeClan.common.analysis.exp.IdentExp;
+import io.github.H20man13.DeClan.common.analysis.exp.IntExp;
+import io.github.H20man13.DeClan.common.analysis.exp.RealExp;
+import io.github.H20man13.DeClan.common.analysis.exp.StrExp;
+import io.github.H20man13.DeClan.common.analysis.exp.UnExp;
+import io.github.H20man13.DeClan.common.analysis.exp.BinExp.Operator;
+import io.github.H20man13.DeClan.common.flow.BlockNode;
+import io.github.H20man13.DeClan.common.flow.FlowGraph;
+import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
+import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.LetBin;
+import io.github.H20man13.DeClan.common.icode.LetBool;
+import io.github.H20man13.DeClan.common.icode.LetInt;
+import io.github.H20man13.DeClan.common.icode.LetReal;
+import io.github.H20man13.DeClan.common.icode.LetString;
+import io.github.H20man13.DeClan.common.icode.LetUn;
+import io.github.H20man13.DeClan.common.icode.LetVar;
+import io.github.H20man13.DeClan.common.util.Utils;
+
+public class AvailableExpressionsAnalysis extends Analysis<Exp> {
+
+    private Map<FlowGraphNode, Set<Exp>> genSets;
+    private Map<FlowGraphNode, Set<Exp>> killSets;
+
+    public AvailableExpressionsAnalysis(FlowGraph flowGraph, Direction direction, Meet symbol) {
+        super(flowGraph, Direction.FORWARDS, Meet.INTERSECTION, makeGlobalFlowSet(flowGraph));
+        genSets = new HashMap<FlowGraphNode, Set<Exp>>();
+        killSets = new HashMap<FlowGraphNode, Set<Exp>>();
+
+        for(BlockNode block : flowGraph.getBlocks()){
+            Set<Exp> blockKill = new HashSet<Exp>();
+            Set<Exp> blockGen = new HashSet<Exp>();
+            List<ICode> codeList = block.getICode();
+            for(int i = 0; i < codeList.size(); i++){
+                ICode icode = codeList.get(i);
+                if(icode instanceof LetVar){
+                    LetVar value = (LetVar)icode;
+                    
+                    int defIndex = searchForDefinition(codeList, i, value.var);
+                    IdentExp defIdent = new IdentExp(value.var);
+                    if(defIndex != -1){
+                        if(!searchForSubsequentExpression(codeList, defIndex, defIdent)){
+                            blockKill.add(defIdent);
+                        }
+                    } else {
+                        blockGen.add(defIdent);
+                    }
+                } else if(icode instanceof LetUn){
+                    LetUn value = (LetUn)icode;
+                    int defIndex = searchForDefinition(codeList, i, value.value);
+                    IdentExp iExp = new IdentExp(value.value);
+                    UnExp uExp = new UnExp(Utils.getOp(value.op), iExp);
+
+                    if(defIndex != -1){
+                        if(!searchForSubsequentExpression(codeList, defIndex, uExp)){
+                            blockKill.add(uExp);
+                        }
+                    } else {
+                        blockGen.add(uExp);
+                    }
+                } else if(icode instanceof LetBin){
+                    LetBin value = (LetBin)icode;
+                    
+                    int defIndex1 = searchForDefinition(codeList, i, value.left);
+                    int defIndex2 = searchForDefinition(codeList, i, value.right);
+
+                    IdentExp lExp = new IdentExp(value.left);
+                    IdentExp rExp = new IdentExp(value.right);
+                    BinExp bExp = new BinExp(lExp, Utils.getOp(value.op), rExp);
+                    if(defIndex1 != -1 || defIndex2 != -1){
+                        boolean shouldKill = false;
+                        if(defIndex1 != -1 && !searchForSubsequentExpression(codeList, defIndex1, bExp)){
+                            shouldKill = true;
+                        }
+
+                        if(defIndex2 != -1 && !searchForSubsequentExpression(codeList, defIndex2, bExp)){
+                            shouldKill = true;
+                        }
+
+                        if(shouldKill){
+                            blockKill.add(bExp);
+                        }
+                    } else {
+                        blockGen.add(bExp);
+                    }
+                }
+            }
+
+            killSets.put(block, blockKill);
+            genSets.put(block, blockGen);
+        }
+    }
+
+    private boolean searchForSubsequentExpression(List<ICode> codeList, int defIndex, Exp defIdent){
+        for(int i = defIndex + 1; defIndex < codeList.size(); defIndex++){
+            ICode icode = codeList.get(i);
+            if(icode instanceof LetBool){
+                LetBool icodeDef = (LetBool)icode;
+                BoolExp bExp = new BoolExp(icodeDef.value);
+                if(defIdent.equals(bExp)){
+                    return true;
+                }
+            } else if(icode instanceof LetInt){
+                LetInt icodeDef = (LetInt)icode;
+                IntExp iExp = new IntExp(icodeDef.value);
+                if(defIdent.equals(iExp)){
+                    return true;
+                }
+            } else if(icode instanceof LetString){
+                LetString icodeDef = (LetString)icode;
+                StrExp sExp = new StrExp(icodeDef.value);
+                if(defIdent.equals(sExp)){
+                    return true;
+                }
+            } else if(icode instanceof LetReal){
+                LetReal icodeDef = (LetReal)icode;
+                RealExp rExp = new RealExp(icodeDef.value);
+                if(defIdent.equals(rExp)){
+                    return true;
+                }
+            } else if(icode instanceof LetVar){
+                LetVar icodeDef = (LetVar)icode;
+                IdentExp iExp = new IdentExp(icodeDef.var);
+                if(defIdent.equals(iExp)){
+                    return true;
+                }
+            } else if(icode instanceof LetUn){
+                LetUn icodeDef = (LetUn)icode;
+                IdentExp iExp = new IdentExp(icodeDef.value);
+                UnExp uExp = new UnExp(Utils.getOp(icodeDef.op), iExp);
+                if(defIdent.equals(uExp)){
+                    return true;
+                }
+            } else if(icode instanceof LetBin){
+                LetBin icodeDef = (LetBin)icode;
+                IdentExp iExp1 = new IdentExp(icodeDef.left);
+                IdentExp iExp2 = new IdentExp(icodeDef.right);
+                BinExp bExp = new BinExp(iExp1, Utils.getOp(icodeDef.op), iExp2);
+                if(defIdent.equals(bExp)){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private int searchForDefinition(List<ICode> codeList, int i, String var) {
+        for(int x = i + 1; x < codeList.size(); x++){
+            ICode icode = codeList.get(x);
+            if(icode instanceof LetBool){
+                LetBool icodeBool = (LetBool)icode;
+                String defVal = icodeBool.place;
+                if(var.equals(defVal)){
+                    return x;
+                }
+            } else if (icode instanceof LetString){
+                LetString icodeString = (LetString)icode;
+                String defVal = icodeString.place;
+                if(var.equals(defVal)){
+                    return x;
+                }
+            } else if(icode instanceof LetInt){
+                LetInt icodeInt = (LetInt)icode;
+                String defVal = icodeInt.place;
+                if(var.equals(defVal)){
+                    return x;
+                }
+            } else if(icode instanceof LetReal){
+                LetReal icodeReal = (LetReal)icode;
+                String defVal = icodeReal.place;
+                if(var.equals(defVal)){
+                    return x;
+                }
+            } else if(icode instanceof LetVar){
+                LetVar icodeVar = (LetVar)icode;
+                String defVal = icodeVar.place;
+                if(var.equals(defVal)){
+                    return x;
+                }
+            } else if(icode instanceof LetUn){
+                LetUn icodeVar = (LetUn)icode;
+                String defVal = icodeVar.place;
+                if(var.equals(defVal)){
+                    return x;
+                }
+            } else if(icode instanceof LetBin){
+                LetBin icodeVar = (LetBin)icode;
+                String defVal = icodeVar.place;
+                if(var.equals(defVal)){
+                    return x;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private static Set<Exp> makeGlobalFlowSet(FlowGraph graph){
+        Set<Exp> expressions = new HashSet<Exp>();
+        for(BlockNode block : graph.getBlocks()){
+            for(ICode icode : block.getICode()){
+                if(icode instanceof LetVar){
+                    IdentExp ident = new IdentExp(((LetVar)icode).var);
+                    if(!setContainsExp(expressions, ident)){
+                        expressions.add(ident);
+                    }
+                } else if(icode instanceof LetReal){
+                    RealExp realExp = new RealExp(((LetReal)icode).value);
+                    if(!setContainsExp(expressions, realExp)){
+                        expressions.add(realExp);
+                    }
+                } else if(icode instanceof LetInt){
+                    IntExp intExp = new IntExp(((LetInt)icode).value);
+                    if(!setContainsExp(expressions, intExp)){
+                        expressions.add(intExp);
+                    }
+                } else if(icode instanceof LetBool){
+                    BoolExp boolExp = new BoolExp(((LetBool)icode).value);
+                    if(!setContainsExp(expressions, boolExp)){
+                        expressions.add(boolExp);
+                    }
+                } else if(icode instanceof LetString){
+                    StrExp strExp = new StrExp(((LetString)icode).value);
+                    if(!setContainsExp(expressions, strExp)){
+                        expressions.add(strExp);
+                    }
+                } else if(icode instanceof LetBin){
+                    LetBin binOp = (LetBin)icode;
+                    IdentExp left = new IdentExp(binOp.left);
+                    BinExp.Operator op = Utils.getOp(binOp.op);
+                    IdentExp right = new IdentExp(binOp.right);
+                    BinExp bin = new BinExp(left, op, right);
+                    if(!setContainsExp(expressions, bin)){
+                        expressions.add(bin);
+                    }
+                } else if(icode instanceof LetUn){
+                    LetUn unOp = (LetUn)icode;
+                    IdentExp right = new IdentExp(unOp.value);
+                    UnExp.Operator op = Utils.getOp(unOp.op);
+                    UnExp unExp = new UnExp(op, right);
+                    if(!setContainsExp(expressions, unExp)){
+                        expressions.add(unExp);
+                    }
+                }
+            }
+        }
+        return expressions;
+    }
+
+    private static boolean setContainsExp(Set<Exp> returnSet, Exp exp){
+        for(Exp expInSet : returnSet){
+            if(expInSet.equals(exp)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Set<Exp> transferFunction(FlowGraphNode Node, Set<Exp> inputSet) {
+        Set<Exp> result = new HashSet<Exp>();
+
+        result.addAll(inputSet);
+        result.removeAll(killSets.get(Node));
+        result.addAll(genSets.get(Node));
+
+        return result;
+    }
     
 }

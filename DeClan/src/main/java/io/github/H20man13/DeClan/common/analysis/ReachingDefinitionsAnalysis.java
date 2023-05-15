@@ -11,13 +11,6 @@ import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.ICode;
-import io.github.H20man13.DeClan.common.icode.LetBin;
-import io.github.H20man13.DeClan.common.icode.LetBool;
-import io.github.H20man13.DeClan.common.icode.LetInt;
-import io.github.H20man13.DeClan.common.icode.LetReal;
-import io.github.H20man13.DeClan.common.icode.LetString;
-import io.github.H20man13.DeClan.common.icode.LetUn;
-import io.github.H20man13.DeClan.common.icode.LetVar;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class ReachingDefinitionsAnalysis extends Analysis<ICode> {

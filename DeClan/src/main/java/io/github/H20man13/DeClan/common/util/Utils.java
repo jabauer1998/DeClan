@@ -3,6 +3,8 @@ package io.github.H20man13.DeClan.common.util;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.analysis.exp.BinExp;
+import io.github.H20man13.DeClan.common.analysis.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.LetBin;
 import io.github.H20man13.DeClan.common.icode.LetBool;
@@ -42,6 +44,33 @@ public class Utils {
             return ((LetString)icode).place;
         } else {
             return null;
+        }
+    }
+
+    public static BinExp.Operator getOp(LetBin.Op op) {
+        switch(op){
+            case ADD: return BinExp.Operator.ADD;
+            case SUB: return BinExp.Operator.SUB;
+            case MUL: return BinExp.Operator.MUL;
+            case DIV: return BinExp.Operator.DIV;
+            case MOD: return BinExp.Operator.MOD;
+            case BAND: return BinExp.Operator.BAND;
+            case BOR: return BinExp.Operator.BOR;
+            case GE: return BinExp.Operator.GE;
+            case GT: return BinExp.Operator.GT;
+            case LT: return BinExp.Operator.LT;
+            case LE: return BinExp.Operator.LE;
+            case EQ: return BinExp.Operator.EQ;
+            case NE: return BinExp.Operator.NE;
+            default: return null;
+        }
+    }
+
+    public static UnExp.Operator getOp(LetUn.Op op){
+        switch(op){
+            case NEG: return UnExp.Operator.NEG;
+            case BNOT: return UnExp.Operator.BNOT;
+            default: return null;
         }
     }
 }
