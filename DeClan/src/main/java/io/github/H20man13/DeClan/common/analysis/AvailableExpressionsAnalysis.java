@@ -1,12 +1,10 @@
 package io.github.H20man13.DeClan.common.analysis;
 
-import java.sql.DriverPropertyInfo;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import io.github.H20man13.DeClan.common.analysis.exp.BinExp;
 import io.github.H20man13.DeClan.common.analysis.exp.BoolExp;
@@ -16,7 +14,6 @@ import io.github.H20man13.DeClan.common.analysis.exp.IntExp;
 import io.github.H20man13.DeClan.common.analysis.exp.RealExp;
 import io.github.H20man13.DeClan.common.analysis.exp.StrExp;
 import io.github.H20man13.DeClan.common.analysis.exp.UnExp;
-import io.github.H20man13.DeClan.common.analysis.exp.BinExp.Operator;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
