@@ -33,20 +33,11 @@ public class MyMainCompiler {
             List<ICode> generatedICode = codeGen.getICode();
             MyOptimizer optimizer = new MyOptimizer(generatedICode, gen);
 
-            optimizer.moveConstStatementsToFront();
-            optimizer.solveConstExpressions();
-            optimizer.removeUnusedCode();
             optimizer.breakIntoBasicBlocks();
             optimizer.buildGlobalFlowGraph();
             optimizer.removeDeadCode();
-            optimizer.generateOptimizedIrFromDag();
-            optimizer.makeLoopEntries();
             optimizer.runDataFlowAnalysis();
             optimizer.performPartialRedundancyElimination();
-
         }
-
-
-
     }
 }

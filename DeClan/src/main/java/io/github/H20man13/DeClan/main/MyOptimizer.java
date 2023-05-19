@@ -8,9 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.RegisterGenerator;
-import io.github.H20man13.DeClan.common.analysis.AnticipatedThis.globalFlowSetAnalysis;
-import io.github.H20man13.DeClan.common.analysis.AvailableThis.globalFlowSetAnalysis;
-import io.github.H20man13.DeClan.common.analysis.PostponableThis.globalFlowSetAnalysis;
 import io.github.H20man13.DeClan.common.analysis.AnticipatedExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.AvailableExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.PostponableExpressionsAnalysis;
@@ -25,6 +22,7 @@ import io.github.H20man13.DeClan.common.analysis.exp.StrExp;
 import io.github.H20man13.DeClan.common.analysis.exp.UnExp;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.EntryNode;
+import io.github.H20man13.DeClan.common.flow.ExitNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.flow.LoopEntryNode;
@@ -64,7 +62,6 @@ public class MyOptimizer {
     public MyOptimizer(List<ICode> intermediateCode){
         this(intermediateCode, new RegisterGenerator());
     }
-
 
     public MyOptimizer(List<ICode> intermediateCode, RegisterGenerator gen){
         this.gen = gen;
@@ -122,300 +119,72 @@ public class MyOptimizer {
         this.intermediateCode = basicBlocks;
     }
 
-    private void moveConstStatementsToFront(BasicBlock block){
-        List<ICode> blockCode = block.getIcode();
-        List<ICode> constStatements = new LinkedList<ICode>();
-        List<ICode> compoundStatements = new LinkedList<ICode>();
-        
-        for(int i = 0; i < blockCode.size(); i++){
-            ICode intCode = blockCode.get(i);
-            if(intCode instanceof LetBool){
-                constStatements.add(intCode);
-            } else if(intCode instanceof LetInt){
-                constStatements.add(intCode);
-            } else if(intCode instanceof LetReal){
-                constStatements.add(intCode);
-            } else if(intCode instanceof LetString){
-                constStatements.add(intCode);
-            } else {
-                compoundStatements.add(intCode);
-            }
-        }
-
-        constStatements.addAll(compoundStatements);
-        block.setICode(constStatements);
-    }
-
-    public void moveConstStatementsToFront(){
-        List<ICode> constStatements = new LinkedList<ICode>();
-        List<ICode> compoundStatements = new LinkedList<ICode>();
-        for(int i = 0; i < this.intermediateCode.size(); i++){
-            ICode intermediateCode = this.intermediateCode.get(i);
-            if(intermediateCode instanceof BasicBlock){
-                moveConstStatementsToFront((BasicBlock)intermediateCode);
-                compoundStatements.add(intermediateCode);
-            } else if(intermediateCode instanceof LetBool){
-                constStatements.add(intermediateCode);
-            } else if(intermediateCode instanceof LetInt){
-                constStatements.add(intermediateCode);
-            } else if(intermediateCode instanceof LetReal){
-                constStatements.add(intermediateCode);
-            } else if(intermediateCode instanceof LetString){
-                constStatements.add(intermediateCode);
-            } else {
-                compoundStatements.add(intermediateCode);
-            }
-        }
-
-        constStatements.addAll(compoundStatements);
-        this.intermediateCode = constStatements;
-    }
-
-    public void solveConstExpression(){
-        for(int i = 0; i < this.intermediateCode.size(); i++){
-            ICode intermediateCode = this.intermediateCode.get(i);
-            if(intermediateCode instanceof BasicBlock){
-                solveConstExpression((BasicBlock)intermediateCode);
-            } else if(intermediateCode instanceof LetBool){
-                machine.interpretLetBool((LetBool)intermediateCode);
-            } else if(intermediateCode instanceof LetInt){
-                machine.interpretLetInt((LetInt)intermediateCode);
-            } else if(intermediateCode instanceof LetReal){
-                machine.interpretLetReal((LetReal)intermediateCode);
-            } else if(intermediateCode instanceof LetString){
-                machine.interpretLetString((LetString)intermediateCode);
-            } else if(intermediateCode instanceof LetVar){
-                LetVar varDecl = (LetVar)intermediateCode;
-                if(environment.entryExists(varDecl.var)){
-                    //Then It is Constant and we need to Make this Var a Constant
-                    machine.interpretLetVar(varDecl);
-                    Object entryValue = environment.getEntry(varDecl.place);
-                    this.intermediateCode.set(i, generateConstant(varDecl.place, entryValue));
-                }
-            } else if(intermediateCode instanceof LetBin){
-                LetBin binOp = (LetBin)intermediateCode;
-                if(environment.entryExists(binOp.left) && environment.entryExists(binOp.right)){
-                    machine.interpretLetBin(binOp);
-                    Object entryValue = environment.getEntry(binOp.place);
-                    this.intermediateCode.set(i, generateConstant(binOp.place, entryValue));
-                }
-            } else if(intermediateCode instanceof LetUn){
-                LetUn unOp = (LetUn)intermediateCode;
-                if(environment.entryExists(unOp.value)){
-                    machine.interpretLetUn(unOp);
-                    Object entryValue = environment.getEntry(unOp.place);
-                    this.intermediateCode.set(i, generateConstant(unOp.place, entryValue));
-                }
-            }
-        }
-    }
-
-    private ICode generateConstant(String place, Object value){
-        if(value instanceof Double){
-            return new LetReal(place, (double)value);
-        } else if(value instanceof Integer){
-            return new LetInt(place, (int)value);
-        } else if(value instanceof String){
-            return new LetString(place, (String)value);
-        } else if(value instanceof Boolean){
-            return new LetBool(place, (boolean)value);
-        } else {
-            return null;
-        }
-    }
-
-    private void solveConstExpression(BasicBlock block){
-        List<ICode> statements = block.getIcode();
-        //First we need to move constant statements to the front of the Block
-        for(int i = 0; i < statements.size(); i++){
-            ICode intermediateCode = statements.get(i);
-            if(intermediateCode instanceof LetBool){
-                machine.interpretLetBool((LetBool)intermediateCode);
-            } else if(intermediateCode instanceof LetInt){
-                machine.interpretLetInt((LetInt)intermediateCode);
-            } else if(intermediateCode instanceof LetReal){
-                machine.interpretLetReal((LetReal)intermediateCode);
-            } else if(intermediateCode instanceof LetString){
-                machine.interpretLetString((LetString)intermediateCode);
-            } else if(intermediateCode instanceof LetVar){
-                LetVar varDecl = (LetVar)intermediateCode;
-                if(environment.entryExists(varDecl.var)){
-                    //Then It is Constant and we need to Make this Var a Constant
-                    machine.interpretLetVar(varDecl);
-                    Object entryValue = environment.getEntry(varDecl.place);
-                    statements.set(i, generateConstant(varDecl.place, entryValue));
-                }
-            } else if(intermediateCode instanceof LetBin){
-                LetBin binOp = (LetBin)intermediateCode;
-                if(environment.entryExists(binOp.left) && environment.entryExists(binOp.right)){
-                    machine.interpretLetBin(binOp);
-                    Object entryValue = environment.getEntry(binOp.place);
-                    statements.set(i, generateConstant(binOp.place, entryValue));
-                }
-            } else if(intermediateCode instanceof LetUn){
-                LetUn unOp = (LetUn)intermediateCode;
-                if(environment.entryExists(unOp.value)){
-                    machine.interpretLetUn(unOp);
-                    Object entryValue = environment.getEntry(unOp.place);
-                    statements.set(i, generateConstant(unOp.place, entryValue));
-                }
-            }
-        }
-    }
-
-    public void removeUnusedCode(){
-        HashMap<String, Integer> defined = new HashMap<>();
-        HashSet<String> used = new HashSet<>();
-        for(int i = 0; i < this.intermediateCode.size(); i++){
-            ICode intermCode = this.intermediateCode.get(i);
-            if(intermCode instanceof BasicBlock){
-                removeUnusedCode((BasicBlock)intermCode);
-            } else if(intermCode instanceof LetBool){
-                LetBool bool = (LetBool)intermCode;
-                defined.put(bool.place, i);
-            } else if(intermCode instanceof LetInt){
-                LetInt intVal = (LetInt)intermCode;
-                defined.put(intVal.place, i);
-            } else if(intermCode instanceof LetString){
-                LetString strVal = (LetString)intermCode;
-                defined.put(strVal.place, i);
-            } else if(intermCode instanceof LetReal){
-                LetReal realVal = (LetReal)intermCode;
-                defined.put(realVal.place, i);
-            } else if(intermCode instanceof LetVar){
-                LetVar varVal = (LetVar)intermCode;
-                defined.put(varVal.place, i);
-                used.add(varVal.var);
-            } else if(intermCode instanceof LetUn){
-                LetUn varVal = (LetUn)intermCode;
-                defined.put(varVal.place, i);
-                used.add(varVal.value);
-            } else if(intermCode instanceof LetBin){
-                LetBin varVal = (LetBin)intermCode;
-                defined.put(varVal.place, i);
-                used.add(varVal.left);
-                used.add(varVal.right);
-            }
-        }
-
-        //Now we need to interate through all the Defined Keys
-        //If any of them are Defined but never used then we need to add the Index to the List
-        HashSet<Integer> indexes = new HashSet<>();
-        for(String defVal : defined.keySet()){
-            if(!used.contains(defVal)){
-                indexes.add(defined.get(defVal));
-            }
-        }
-
-        //After all the Indexes are collected that we need to ignore we can build the final list
-        List<ICode> finalList = new LinkedList<ICode>();
-        for(int i = 0; i < intermediateCode.size(); i++){
-            ICode iCode = intermediateCode.get(i);
-            if(!indexes.contains(i)){
-                finalList.add(iCode);
-            }
-        }
-
-        this.intermediateCode = finalList;
-    }
-
-    private void removeUnusedCode(BasicBlock block){
-        HashMap<String, Integer> defined = new HashMap<>();
-        HashSet<String> used = new HashSet<>();
-        List<ICode> internalICode = block.getIcode();
-        for(int i = 0; i < internalICode.size(); i++){
-            ICode intermCode = internalICode.get(i);
-            if(intermCode instanceof LetBool){
-                LetBool bool = (LetBool)intermCode;
-                defined.put(bool.place, i);
-            } else if(intermCode instanceof LetInt){
-                LetInt intVal = (LetInt)intermCode;
-                defined.put(intVal.place, i);
-            } else if(intermCode instanceof LetString){
-                LetString strVal = (LetString)intermCode;
-                defined.put(strVal.place, i);
-            } else if(intermCode instanceof LetReal){
-                LetReal realVal = (LetReal)intermCode;
-                defined.put(realVal.place, i);
-            } else if(intermCode instanceof LetVar){
-                LetVar varVal = (LetVar)intermCode;
-                defined.put(varVal.place, i);
-                used.add(varVal.var);
-            } else if(intermCode instanceof LetUn){
-                LetUn varVal = (LetUn)intermCode;
-                defined.put(varVal.place, i);
-                used.add(varVal.value);
-            } else if(intermCode instanceof LetBin){
-                LetBin varVal = (LetBin)intermCode;
-                defined.put(varVal.place, i);
-                used.add(varVal.left);
-                used.add(varVal.right);
-            }
-        }
-
-        //Now we need to interate through all the Defined Keys
-        //If any of them are Defined but never used then we need to add the Index to the List
-        HashSet<Integer> indexes = new HashSet<>();
-        for(String defVal : defined.keySet()){
-            if(!used.contains(defVal)){
-                indexes.add(defined.get(defVal));
-            }
-        }
-
-        //After all the Indexes are collected that we need to ignore we can build the final list
-        List<ICode> finalList = new LinkedList<ICode>();
-        for(int i = 0; i < intermediateCode.size(); i++){
-            ICode icode = intermediateCode.get(i);
-            if(!indexes.contains(i)){
-                finalList.add(icode);
-            }
-        }
-
-        block.setICode(finalList);
-    }
-
     public void buildGlobalFlowGraph(){
-        MyFlowGraphBuilder builder = new MyFlowGraphBuilder(intermediateCode);
-        this.globalFlowGraph = builder.buildFlowGraph();
+        if(this.intermediateCode.size() > 0){
+            HashMap<String, BlockNode> labeledNodes = new HashMap<String, BlockNode>();
+            List<BlockNode> dagNodes = new LinkedList<BlockNode>();
+
+            for(int i = 0; i < intermediateCode.size(); i++){
+                ICode icodeAtIndex = intermediateCode.get(i);
+                if(icodeAtIndex instanceof BasicBlock){
+                    BasicBlock blockAtIndex = (BasicBlock)icodeAtIndex;
+                    BlockNode blockNode = new BlockNode(blockAtIndex);
+                    
+                    if(MyAnalysis.beginningOfBlockIsLabel(blockAtIndex)){
+                        Label firstLabel = (Label)blockAtIndex.getIcode().get(0);
+                        String labelName = firstLabel.label;
+                        labeledNodes.put(labelName, blockNode);
+                    }
+
+                    dagNodes.add(blockNode);
+                }
+            }
+
+            for(int i = 0; i < dagNodes.size(); i++){
+                BlockNode node = dagNodes.get(i);
+                BasicBlock block = node.getBlock();
+                if(MyAnalysis.endOfBlockIsJump(block)){
+                    ICode lastCode = block.getIcode().get(block.getIcode().size() - 1);
+                    if(lastCode instanceof If){
+                        If lastIf = (If)lastCode;
+                        BlockNode trueNode = labeledNodes.get(lastIf.ifTrue);
+                        node.addSuccessor(trueNode);
+                        trueNode.addPredecessor(node);
+                        BlockNode falseNode = labeledNodes.get(lastIf.ifFalse);
+                        node.addSuccessor(falseNode);
+                        falseNode.addPredecessor(node);
+                    } else if(lastCode instanceof Goto){
+                        Goto lastGoto = (Goto)lastCode;
+                        BlockNode labeledNode = labeledNodes.get(lastGoto.label);
+                        node.addSuccessor(labeledNode);
+                        labeledNode.addPredecessor(node);
+                    }
+                } else if(i + 1 < dagNodes.size()){
+                    BlockNode nextNode = dagNodes.get(i + 1);
+                    node.addSuccessor(nextNode);
+                    nextNode.addPredecessor(node);
+                }
+            }
+
+            EntryNode entry = new EntryNode(dagNodes.get(0));
+            ExitNode exit = new ExitNode(dagNodes.get(dagNodes.size() - 1));
+
+            FlowGraph flowGraph = new FlowGraph(entry, dagNodes, exit);
+
+            this.globalFlowGraph = flowGraph;
+        }
     }
 
     public void removeDeadCode(){
-        this.globalFlowGraph.removeDeadCode();
-    }
-
-    public void makeLoopEntries(){
-        Set<Set<FlowGraphNode>> loops = this.globalFlowGraph.identifyLoops();
-
-        Set<FlowGraphNode> nodesToMakeLoopEntries = new HashSet<FlowGraphNode>();
-        for(Set<FlowGraphNode> loop: loops){
-            for(FlowGraphNode nodeInLoop: loop){
-                if(nodeInLoop.containsPredecessorOutsideLoop(loop)){
-                    nodesToMakeLoopEntries.add(nodeInLoop);
-                    break;
-                }
-            }
-        }
-
-        //To replace a Block Node with its LoopEntryNode all we need to do
-        //is call the copy constructor for the LoopEntryNode
-        //It will handle all the necessary removal and additions of Successors and predecessors
-        //Garbage Collection will automatically clean up the one that should be cleaned...
-        for(FlowGraphNode nodeToMakeLoopEntry : nodesToMakeLoopEntries){
-            if(nodeToMakeLoopEntry instanceof BlockNode){
-                globalFlowGraph.replaceBlockNode(nodeToMakeLoopEntry, new LoopEntryNode((BlockNode)nodeToMakeLoopEntry));
-            }
-        }
-    }
-
-    public void generateOptimizedIrFromDag(){
         if(this.globalFlowGraph != null){
-            this.globalFlowGraph.generateOptimizedIr();
+            for(BlockNode block : this.globalFlowGraph.getBlocks()){
+                block.removeDeadCode();
+            }
         }
     }
 
     public void runDataFlowAnalysis(){
         if(this.globalFlowGraph != null){
-
             for(BlockNode block : this.globalFlowGraph.getBlocks()){
                 for(ICode icode : block.getICode()){
                     if(icode instanceof LetVar){
@@ -619,6 +388,12 @@ public class MyOptimizer {
                     }
                 }
             }
+            
+            List<ICode> resultList = new LinkedList<ICode>();
+            resultList.addAll(toPreAppendToBeginning);
+            resultList.addAll(icodeList);
+
+            block.getBlock().setICode(resultList);
         }
     }
 }
