@@ -42,7 +42,15 @@ public abstract class Analysis<SetType> {
         this(flowGraph, direction, symbol, new HashSet<SetType>());
     }
 
-    public void run() throws Exception{
+    public Set<SetType> getInputSet(FlowGraphNode Node){
+        return inputs.get(Node);
+    }
+
+    public Set<SetType> getOutputSet(FlowGraphNode Node){
+        return outputs.get(Node);
+    }
+
+    public void run(){
         if(this.direction == Direction.FORWARDS){
             Map<FlowGraphNode, Set<SetType>> outputCache = new HashMap<>();
             outputs.put(this.flowGraph.getEntry(), new HashSet<SetType>());

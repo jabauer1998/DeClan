@@ -26,8 +26,12 @@ public class MyIrBuilder {
     private int whileLoopSeqNumber;
 
     public MyIrBuilder(ErrorLog errLog){
+        this(errLog, new RegisterGenerator());
+    }
+
+    public MyIrBuilder(ErrorLog errLog, RegisterGenerator generator){
         this.factory = new MyIrFactory(errLog);
-        this.gen = new RegisterGenerator();
+        this.gen = generator;
         this.output = new LinkedList<>();
         this.forLoopNumber = 0;
         this.repeatLoopNumber = 0;

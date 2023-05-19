@@ -1,21 +1,21 @@
 package io.github.H20man13.DeClan.common.analysis.exp;
 
 public class UnExp implements Exp {
-    private Exp right;
-    private Operator op;
+    public IdentExp right;
+    public Operator op;
 
     public enum Operator{
         BNOT,
         NEG
     }
 
-    public UnExp(Operator op, Exp right){
+    public UnExp(Operator op, IdentExp right){
         this.right = right;
         this.op = op;
     }
 
     @Override
-    public boolean equals(Exp exp) {
+    public boolean equals(Object exp) {
         if(exp instanceof UnExp){
             UnExp unExp = (UnExp)exp;
             boolean operatorEquals = this.op == unExp.op;

@@ -15,6 +15,7 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.LetString;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.Proc;
+import io.github.H20man13.DeClan.common.RegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Call;
 
 import io.github.H20man13.DeClan.common.symboltable.VariableEntry;
@@ -69,9 +70,13 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   private Environment<String, String> procEnvironment;
   private MyIrBuilder builder;
 
-  public MyICodeGenerator(ErrorLog errorLog) {
+  public MyICodeGenerator(ErrorLog errorLog){
+    this(errorLog, new RegisterGenerator());
+  }
+
+  public MyICodeGenerator(ErrorLog errorLog, RegisterGenerator Gen) {
     this.errorLog = errorLog;
-    this.builder = new MyIrBuilder(errorLog);
+    this.builder = new MyIrBuilder(errorLog, Gen);
     this.varEnvironment = new Environment<>();
     this.procEnvironment = new Environment<>();
   }

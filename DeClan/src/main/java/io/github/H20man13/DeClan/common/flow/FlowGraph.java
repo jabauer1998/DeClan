@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.flow;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,7 +14,8 @@ public class FlowGraph {
     public FlowGraph(EntryNode entry, List<BlockNode> blockNodes, ExitNode exit){
         this.entryNode = entry;
         this.exitNode = exit;
-        this.blockNodes = blockNodes;
+        this.blockNodes = new ArrayList<BlockNode>();
+        this.blockNodes.addAll(blockNodes);
     }
 
     public void addBlockNode(BlockNode node){
@@ -42,5 +44,17 @@ public class FlowGraph {
 
     public List<BlockNode> getBlocks(){
         return blockNodes;
+    }
+
+    public void replaceBlockNode(FlowGraphNode nodeToMakeLoopEntry, LoopEntryNode loopEntryNode) {
+        for(int i = 0; i < this.blockNodes.size(); i++){
+            BlockNode block = this.blockNodes.get(i);
+            if(block.equals(nodeToMakeLoopEntry)){
+                this.blockNodes.set(i, loopEntryNode);
+                return;
+            }
+        }
+
+        this.blockNodes.add(loopEntryNode);
     }
 }

@@ -27,21 +27,21 @@ import io.github.H20man13.DeClan.common.icode.LetUn;
 import io.github.H20man13.DeClan.common.icode.LetVar;
 import io.github.H20man13.DeClan.common.util.Utils;
 
-public class AvailableExpressionsAnalysis extends Analysis<Exp> {
+public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
 
     private Map<FlowGraphNode, Set<Exp>> genSets;
     private Map<FlowGraphNode, Set<Exp>> killSets;
 
-    public AvailableExpressionsAnalysis(FlowGraph flowGraph, Set<Exp> globalFlowSet) {
-        super(flowGraph, Direction.FORWARDS, Meet.INTERSECTION, globalFlowSet);
+    public AnticipatedExpressionsAnalysis(FlowGraph flowGraph, Set<Exp> globalFlowSet) {
+        super(flowGraph, Direction.BACKWARDS, Meet.INTERSECTION, globalFlowSet);
         genSets = new HashMap<FlowGraphNode, Set<Exp>>();
-        killSets = new HashMap<FlowGraphNode, Set<Exp>>();
+        killSets =  new HashMap<FlowGraphNode, Set<Exp>>();
 
         for(BlockNode block : flowGraph.getBlocks()){
             Set<Exp> blockKill = new HashSet<Exp>();
             Set<Exp> blockGen = new HashSet<Exp>();
             List<ICode> codeList = block.getICode();
-            for(int i = 0; i < codeList.size(); i++){
+            for(int i = codeList.size(); i >= 0; i--){
                 ICode icode = codeList.get(i);
                 if(icode instanceof LetVar){
                     LetVar value = (LetVar)icode;
@@ -49,7 +49,7 @@ public class AvailableExpressionsAnalysis extends Analysis<Exp> {
                     int defIndex = searchForDefinition(codeList, i, value.var);
                     IdentExp defIdent = new IdentExp(value.var);
                     if(defIndex != -1){
-                        if(!searchForSubsequentExpression(codeList, defIndex, defIdent)){
+                        if(!searchForPreviousExpression(codeList, defIndex, defIdent)){
                             blockKill.add(defIdent);
                         }
                     } else {
@@ -62,7 +62,7 @@ public class AvailableExpressionsAnalysis extends Analysis<Exp> {
                     UnExp uExp = new UnExp(Utils.getOp(value.op), iExp);
 
                     if(defIndex != -1){
-                        if(!searchForSubsequentExpression(codeList, defIndex, uExp)){
+                        if(!searchForPreviousExpression(codeList, defIndex, uExp)){
                             blockKill.add(uExp);
                         }
                     } else {
@@ -79,11 +79,11 @@ public class AvailableExpressionsAnalysis extends Analysis<Exp> {
                     BinExp bExp = new BinExp(lExp, Utils.getOp(value.op), rExp);
                     if(defIndex1 != -1 || defIndex2 != -1){
                         boolean shouldKill = false;
-                        if(defIndex1 != -1 && !searchForSubsequentExpression(codeList, defIndex1, bExp)){
+                        if(defIndex1 != -1 && !searchForPreviousExpression(codeList, defIndex1, bExp)){
                             shouldKill = true;
                         }
 
-                        if(defIndex2 != -1 && !searchForSubsequentExpression(codeList, defIndex2, bExp)){
+                        if(defIndex2 != -1 && !searchForPreviousExpression(codeList, defIndex2, bExp)){
                             shouldKill = true;
                         }
 
@@ -101,8 +101,8 @@ public class AvailableExpressionsAnalysis extends Analysis<Exp> {
         }
     }
 
-    private boolean searchForSubsequentExpression(List<ICode> codeList, int defIndex, Exp defIdent){
-        for(int i = defIndex + 1; defIndex < codeList.size(); i++){
+    private boolean searchForPreviousExpression(List<ICode> codeList, int defIndex, Exp defIdent){
+        for(int i = defIndex - 1; defIndex >= 0; i--){
             ICode icode = codeList.get(i);
             if(icode instanceof LetBool){
                 LetBool icodeDef = (LetBool)icode;
@@ -156,7 +156,7 @@ public class AvailableExpressionsAnalysis extends Analysis<Exp> {
     }
 
     private int searchForDefinition(List<ICode> codeList, int i, String var) {
-        for(int x = i + 1; x < codeList.size(); x++){
+        for(int x = i - 1; x >= 0; x--){
             ICode icode = codeList.get(x);
             if(icode instanceof LetBool){
                 LetBool icodeBool = (LetBool)icode;
@@ -205,10 +205,11 @@ public class AvailableExpressionsAnalysis extends Analysis<Exp> {
         return -1;
     }
 
+
     @Override
     public Set<Exp> transferFunction(FlowGraphNode Node, Set<Exp> inputSet) {
         Set<Exp> result = new HashSet<Exp>();
-
+        
         result.addAll(inputSet);
         result.removeAll(killSets.get(Node));
         result.addAll(genSets.get(Node));

@@ -1,16 +1,15 @@
 package io.github.H20man13.DeClan.common.analysis.exp;
 
 public class BinExp implements Exp {
-    private Exp right;
-    private Exp left;
-    private Operator op;
+    public IdentExp right;
+    public IdentExp left;
+    public Operator op;
 
-    public BinExp(Exp right, Operator op, Exp left){
+    public BinExp(IdentExp right, Operator op, IdentExp left){
         this.right = right;
         this.left = left;
         this.op = op;
     }
-
     
     public enum Operator{
         ADD,
@@ -29,7 +28,7 @@ public class BinExp implements Exp {
     }
     
     @Override
-    public boolean equals(Exp exp) {
+    public boolean equals(Object exp) {
         if(exp instanceof BinExp){
             BinExp binExp = (BinExp)exp;
             boolean operatorEquals = this.op == binExp.op;
