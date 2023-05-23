@@ -12,14 +12,6 @@ import io.github.H20man13.DeClan.common.analysis.AnticipatedExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.AvailableExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.PostponableExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.UsedExpressionAnalysis;
-import io.github.H20man13.DeClan.common.analysis.exp.BinExp;
-import io.github.H20man13.DeClan.common.analysis.exp.BoolExp;
-import io.github.H20man13.DeClan.common.analysis.exp.Exp;
-import io.github.H20man13.DeClan.common.analysis.exp.IdentExp;
-import io.github.H20man13.DeClan.common.analysis.exp.IntExp;
-import io.github.H20man13.DeClan.common.analysis.exp.RealExp;
-import io.github.H20man13.DeClan.common.analysis.exp.StrExp;
-import io.github.H20man13.DeClan.common.analysis.exp.UnExp;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.EntryNode;
 import io.github.H20man13.DeClan.common.flow.ExitNode;
@@ -40,6 +32,14 @@ import io.github.H20man13.DeClan.common.icode.LetString;
 import io.github.H20man13.DeClan.common.icode.LetUn;
 import io.github.H20man13.DeClan.common.icode.LetVar;
 import io.github.H20man13.DeClan.common.icode.Proc;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
+import io.github.H20man13.DeClan.common.icode.exp.Exp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.IntExp;
+import io.github.H20man13.DeClan.common.icode.exp.RealExp;
+import io.github.H20man13.DeClan.common.icode.exp.StrExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.util.Utils;
 
@@ -188,46 +188,39 @@ public class MyOptimizer {
             for(BlockNode block : this.globalFlowGraph.getBlocks()){
                 for(ICode icode : block.getICode()){
                     if(icode instanceof LetVar){
-                        IdentExp ident = new IdentExp(((LetVar)icode).var);
-                        if(!Utils.setContainsExp(this.globalFlowSet, ident)){
-                            this.globalFlowSet.add(ident);
+                        LetVar ident = (LetVar)icode;
+                        if(!Utils.setContainsExp(this.globalFlowSet, ident.var)){
+                            this.globalFlowSet.add(ident.var);
                         }
                     } else if(icode instanceof LetReal){
-                        RealExp realExp = new RealExp(((LetReal)icode).value);
-                        if(!Utils.setContainsExp(this.globalFlowSet, realExp)){
-                            this.globalFlowSet.add(realExp);
+                        LetReal realExp = (LetReal)icode;
+                        if(!Utils.setContainsExp(this.globalFlowSet, realExp.value)){
+                            this.globalFlowSet.add(realExp.value);
                         }
                     } else if(icode instanceof LetInt){
-                        IntExp intExp = new IntExp(((LetInt)icode).value);
-                        if(!Utils.setContainsExp(this.globalFlowSet, intExp)){
-                            this.globalFlowSet.add(intExp);
+                        LetInt intExp = (LetInt)icode;
+                        if(!Utils.setContainsExp(this.globalFlowSet, intExp.value)){
+                            this.globalFlowSet.add(intExp.value);
                         }
                     } else if(icode instanceof LetBool){
-                        BoolExp boolExp = new BoolExp(((LetBool)icode).value);
-                        if(!Utils.setContainsExp(this.globalFlowSet, boolExp)){
-                            this.globalFlowSet.add(boolExp);
+                        LetBool boolExp = (LetBool)icode;
+                        if(!Utils.setContainsExp(this.globalFlowSet, boolExp.value)){
+                            this.globalFlowSet.add(boolExp.value);
                         }
                     } else if(icode instanceof LetString){
-                        StrExp strExp = new StrExp(((LetString)icode).value);
-                        if(!Utils.setContainsExp(this.globalFlowSet, strExp)){
-                            this.globalFlowSet.add(strExp);
+                        LetString strExp = (LetString)icode;
+                        if(!Utils.setContainsExp(this.globalFlowSet, strExp.value)){
+                            this.globalFlowSet.add(strExp.value);
                         }
                     } else if(icode instanceof LetBin){
                         LetBin binOp = (LetBin)icode;
-                        IdentExp left = new IdentExp(binOp.left);
-                        BinExp.Operator op = Utils.getOp(binOp.op);
-                        IdentExp right = new IdentExp(binOp.right);
-                        BinExp bin = new BinExp(left, op, right);
-                        if(!Utils.setContainsExp(this.globalFlowSet, bin)){
-                            this.globalFlowSet.add(bin);
+                        if(!Utils.setContainsExp(this.globalFlowSet, binOp.exp)){
+                            this.globalFlowSet.add(binOp.exp);
                         }
                     } else if(icode instanceof LetUn){
                         LetUn unOp = (LetUn)icode;
-                        IdentExp right = new IdentExp(unOp.value);
-                        UnExp.Operator op = Utils.getOp(unOp.op);
-                        UnExp unExp = new UnExp(op, right);
-                        if(!Utils.setContainsExp(this.globalFlowSet, unExp)){
-                            this.globalFlowSet.add(unExp);
+                        if(!Utils.setContainsExp(this.globalFlowSet, unOp.unExp)){
+                            this.globalFlowSet.add(unOp.unExp);
                         }
                     }
                 }
@@ -252,48 +245,38 @@ public class MyOptimizer {
                 for(ICode icode : block.getICode()){
                     if(icode instanceof LetBool){
                         LetBool boolICode = (LetBool)icode;
-                        BoolExp exp = new BoolExp(boolICode.value);
-                        if(!Utils.setContainsExp(blockUsed, exp)){
-                            blockUsed.add(exp);
+                        if(!Utils.setContainsExp(blockUsed, boolICode.value)){
+                            blockUsed.add(boolICode.value);
                         }
                     } else if(icode instanceof LetInt){
                         LetInt intICode = (LetInt)icode;
-                        IntExp exp = new IntExp(intICode.value);
-                        if(!Utils.setContainsExp(blockUsed, exp)){
-                            blockUsed.add(exp);
+                        if(!Utils.setContainsExp(blockUsed, intICode.value)){
+                            blockUsed.add(intICode.value);
                         }
                     } else if(icode instanceof LetReal){
                         LetReal realICode = (LetReal)icode;
-                        RealExp exp = new RealExp(realICode.value);
-                        if(!Utils.setContainsExp(blockUsed, exp)){
-                            blockUsed.add(exp);
+                        if(!Utils.setContainsExp(blockUsed, realICode.value)){
+                            blockUsed.add(realICode.value);
                         }
                     } else if(icode instanceof LetString){
                         LetString strICode = (LetString)icode;
-                        StrExp exp = new StrExp(strICode.value);
-                        if(!Utils.setContainsExp(blockUsed, exp)){
-                            blockUsed.add(exp);
+                        if(!Utils.setContainsExp(blockUsed, strICode.value)){
+                            blockUsed.add(strICode.value);
                         }
                     } else if(icode instanceof LetVar){
                         LetVar varICode = (LetVar)icode;
-                        IdentExp exp = new IdentExp(varICode.var);
-                        if(!Utils.setContainsExp(blockUsed, exp)){
-                            blockUsed.add(exp);
+                        if(!Utils.setContainsExp(blockUsed, varICode.var)){
+                            blockUsed.add(varICode.var);
                         }
                     } else if(icode instanceof LetUn){
                         LetUn unICode = (LetUn)icode;
-                        IdentExp iExp = new IdentExp(unICode.value);
-                        UnExp unExp = new UnExp(Utils.getOp(unICode.op), iExp);
-                        if(!Utils.setContainsExp(blockUsed, unExp)){
-                            blockUsed.add(unExp);
+                        if(!Utils.setContainsExp(blockUsed, unICode.unExp)){
+                            blockUsed.add(unICode.unExp);
                         }
                     } else if(icode instanceof LetBin){
                         LetBin binICode = (LetBin)icode;
-                        IdentExp iExp1 = new IdentExp(binICode.left);
-                        IdentExp iExp2 = new IdentExp(binICode.right);
-                        BinExp bExp = new BinExp(iExp1, Utils.getOp(binICode.op), iExp2);
-                        if(!Utils.setContainsExp(blockUsed, bExp)){
-                            blockUsed.add(bExp);
+                        if(!Utils.setContainsExp(blockUsed, binICode.exp)){
+                            blockUsed.add(binICode.exp);
                         }
                     }
                 }

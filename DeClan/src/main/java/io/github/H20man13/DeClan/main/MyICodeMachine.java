@@ -7,6 +7,13 @@ import io.github.H20man13.DeClan.common.icode.LetReal;
 import io.github.H20man13.DeClan.common.icode.LetString;
 import io.github.H20man13.DeClan.common.icode.LetUn;
 import io.github.H20man13.DeClan.common.icode.LetVar;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.IntExp;
+import io.github.H20man13.DeClan.common.icode.exp.RealExp;
+import io.github.H20man13.DeClan.common.icode.exp.StrExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.util.OpUtil;
 
@@ -24,47 +31,45 @@ public class MyICodeMachine {
 
     public void interpretLetBool(LetBool bool){
         String place = bool.place;
-        boolean value = bool.value;
-        results.addEntry(place, value);
+        BoolExp value = bool.value;
+        results.addEntry(place, value.trueFalse);
     }
 
     public void interpretLetString(LetString string){
         String place = string.place;
-        String value = string.value;
-        results.addEntry(place, value);
+        StrExp value = string.value;
+        results.addEntry(place, value.value);
     }
 
     public void interpretLetInt(LetInt integer){
         String place = integer.place;
-        int value = integer.value;
-        results.addEntry(place, value);
+        IntExp value = integer.value;
+        results.addEntry(place, value.value);
     }
 
     public void interpretLetReal(LetReal real){
         String place = real.place;
-        double value = real.value;
-        results.addEntry(place, value);
+        RealExp value = real.value;
+        results.addEntry(place, value.realValue);
     }
 
     public void interpretLetVar(LetVar var){
         String place = var.place;
-        String objVar = var.var;
-        Object objVal = results.getEntry(objVar);
+        IdentExp objVar = var.var;
+        Object objVal = results.getEntry(objVar.ident);
         results.addEntry(place, objVal);
     }
 
     public void interpretLetUn(LetUn var){
         String place = var.place;
         
-        String locVar = var.value;
-        Object val = results.getEntry(locVar);
+        UnExp locVar = var.unExp;
+        Object val = results.getEntry(locVar.right.toString());
 
-        LetUn.Op op = var.op;
-
-        switch(op){
+        switch(locVar.op){
             case NEG:
                 Object val1 = OpUtil.negate(val);
-                results.addEntry(locVar, val1);
+                results.addEntry(place, val1);
                 break;
             case BNOT:
                 Object val3 = OpUtil.not(val);
@@ -79,15 +84,11 @@ public class MyICodeMachine {
     public void interpretLetBin(LetBin var){
         String place = var.place;
         
-        String left = var.left;
-        Object leftVal = results.getEntry(left);
+        BinExp exp = var.exp;
+        Object leftVal = results.getEntry(exp.left.toString());
+        Object rightVal = results.getEntry(exp.right.toString());
 
-        String right = var.right;
-        Object rightVal = results.getEntry(right);
-
-        LetBin.Op op = var.op;
-
-        switch(op){
+        switch(exp.op){
             case BAND:
                 Object val0 = OpUtil.and(leftVal, rightVal);
                 results.addEntry(place, val0);

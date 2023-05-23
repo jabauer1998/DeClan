@@ -6,14 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.H20man13.DeClan.common.analysis.exp.BinExp;
-import io.github.H20man13.DeClan.common.analysis.exp.BoolExp;
-import io.github.H20man13.DeClan.common.analysis.exp.Exp;
-import io.github.H20man13.DeClan.common.analysis.exp.IdentExp;
-import io.github.H20man13.DeClan.common.analysis.exp.IntExp;
-import io.github.H20man13.DeClan.common.analysis.exp.RealExp;
-import io.github.H20man13.DeClan.common.analysis.exp.StrExp;
-import io.github.H20man13.DeClan.common.analysis.exp.UnExp;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
@@ -25,6 +17,14 @@ import io.github.H20man13.DeClan.common.icode.LetReal;
 import io.github.H20man13.DeClan.common.icode.LetString;
 import io.github.H20man13.DeClan.common.icode.LetUn;
 import io.github.H20man13.DeClan.common.icode.LetVar;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
+import io.github.H20man13.DeClan.common.icode.exp.Exp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.IntExp;
+import io.github.H20man13.DeClan.common.icode.exp.RealExp;
+import io.github.H20man13.DeClan.common.icode.exp.StrExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{

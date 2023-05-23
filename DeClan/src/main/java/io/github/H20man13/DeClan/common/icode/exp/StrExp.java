@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common.analysis.exp;
+package io.github.H20man13.DeClan.common.icode.exp;
 
 public class StrExp implements Exp{
     public String value;
@@ -15,6 +15,11 @@ public class StrExp implements Exp{
         } else {
             return false;
         }
+    }
+
+    @Override
+    public String toString(){
+        return '\"' + value + '\"';
     }
     
 }

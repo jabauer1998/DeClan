@@ -38,6 +38,7 @@ public class MyMainCompiler {
             optimizer.removeDeadCode();
             optimizer.runDataFlowAnalysis();
             optimizer.performPartialRedundancyElimination();
+            optimizer.performConstantPropogation();
         }
     }
 }

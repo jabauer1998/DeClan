@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common.analysis.exp;
+package io.github.H20man13.DeClan.common.icode.exp;
 
 public class BoolExp implements Exp {
     public boolean trueFalse;
@@ -15,6 +15,11 @@ public class BoolExp implements Exp {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public String toString(){
+        return (trueFalse) ? "TRUE" : "FALSE";
     }
     
 }

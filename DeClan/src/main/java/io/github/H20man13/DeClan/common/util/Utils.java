@@ -4,15 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import io.github.H20man13.DeClan.common.analysis.exp.BinExp;
-import io.github.H20man13.DeClan.common.analysis.exp.BoolExp;
-import io.github.H20man13.DeClan.common.analysis.exp.Exp;
-import io.github.H20man13.DeClan.common.analysis.exp.IdentExp;
-import io.github.H20man13.DeClan.common.analysis.exp.IntExp;
-import io.github.H20man13.DeClan.common.analysis.exp.RealExp;
-import io.github.H20man13.DeClan.common.analysis.exp.StrExp;
-import io.github.H20man13.DeClan.common.analysis.exp.UnExp;
-import io.github.H20man13.DeClan.common.analysis.exp.UnExp.Operator;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.LetBin;
 import io.github.H20man13.DeClan.common.icode.LetBool;
@@ -21,7 +12,16 @@ import io.github.H20man13.DeClan.common.icode.LetReal;
 import io.github.H20man13.DeClan.common.icode.LetString;
 import io.github.H20man13.DeClan.common.icode.LetUn;
 import io.github.H20man13.DeClan.common.icode.LetVar;
-import io.github.H20man13.DeClan.common.icode.LetUn.Op;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
+import io.github.H20man13.DeClan.common.icode.exp.Exp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.IntExp;
+import io.github.H20man13.DeClan.common.icode.exp.RealExp;
+import io.github.H20man13.DeClan.common.icode.exp.StrExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
+import io.github.H20man13.DeClan.common.token.IrTokenType;
 
 public class Utils {
     public static List<ICode> stripFromListExcept(List<ICode> list, ICode item){
@@ -36,33 +36,6 @@ public class Utils {
         return linkedList;
     }
 
-    public static BinExp.Operator getOp(LetBin.Op op) {
-        switch(op){
-            case ADD: return BinExp.Operator.ADD;
-            case SUB: return BinExp.Operator.SUB;
-            case MUL: return BinExp.Operator.MUL;
-            case DIV: return BinExp.Operator.DIV;
-            case MOD: return BinExp.Operator.MOD;
-            case BAND: return BinExp.Operator.BAND;
-            case BOR: return BinExp.Operator.BOR;
-            case GE: return BinExp.Operator.GE;
-            case GT: return BinExp.Operator.GT;
-            case LT: return BinExp.Operator.LT;
-            case LE: return BinExp.Operator.LE;
-            case EQ: return BinExp.Operator.EQ;
-            case NE: return BinExp.Operator.NE;
-            default: return null;
-        }
-    }
-
-    public static UnExp.Operator getOp(LetUn.Op op){
-        switch(op){
-            case NEG: return UnExp.Operator.NEG;
-            case BNOT: return UnExp.Operator.BNOT;
-            default: return null;
-        }
-    }
-
     public static boolean setContainsExp(Set<Exp> returnSet, Exp exp){
         for(Exp expInSet : returnSet){
             if(expInSet.equals(exp)){
@@ -70,62 +43,6 @@ public class Utils {
             }
         }
         return false;
-    }
-
-    public static LetUn.Op getOp(UnExp.Operator op) {
-        switch(op){
-            case BNOT: return LetUn.Op.BNOT;
-            case NEG: return LetUn.Op.NEG;
-            default: return null;
-        }
-    }
-
-    public static LetBin.Op getOp(BinExp.Operator op){
-        switch(op){
-            case ADD: return LetBin.Op.ADD;
-            case SUB: return LetBin.Op.SUB;
-            case MUL: return LetBin.Op.MUL;
-            case DIV: return LetBin.Op.DIV;
-            case MOD: return LetBin.Op.MOD;
-            case BAND: return LetBin.Op.BAND;
-            case BOR: return LetBin.Op.BOR;
-            case GE: return LetBin.Op.GE;
-            case GT: return LetBin.Op.GT;
-            case LT: return LetBin.Op.LT;
-            case LE: return LetBin.Op.LE;
-            case EQ: return LetBin.Op.EQ;
-            case NE: return LetBin.Op.NE;
-            default: return null;
-        }
-    }
-
-    public static Exp getExpressionFromICode(ICode icode){
-        if(icode instanceof LetVar){
-            return new IdentExp(((LetVar)icode).var);
-        } else if(icode instanceof LetReal){
-           return new RealExp(((LetReal)icode).value);
-        } else if(icode instanceof LetInt){
-           return new IntExp(((LetInt)icode).value);
-        } else if(icode instanceof LetBool){
-            return new BoolExp(((LetBool)icode).value);
-        } else if(icode instanceof LetString){
-            return new StrExp(((LetString)icode).value);
-        } else if(icode instanceof LetBin){
-            LetBin binOp = (LetBin)icode;
-            IdentExp left = new IdentExp(binOp.left);
-            BinExp.Operator op = Utils.getOp(binOp.op);
-            IdentExp right = new IdentExp(binOp.right);
-            BinExp bin = new BinExp(left, op, right);
-            return bin;
-        } else if(icode instanceof LetUn){
-            LetUn unOp = (LetUn)icode;
-            IdentExp right = new IdentExp(unOp.value);
-            UnExp.Operator op = Utils.getOp(unOp.op);
-            UnExp unExp = new UnExp(op, right);
-            return unExp;
-        } else {
-            return null;
-        }
     }
 
     public static String getPlace(ICode icode){
@@ -155,31 +72,56 @@ public class Utils {
         }
     }
 
-    public static ICode getICodeFromExpression(String place, Exp expression){
-        if(expression instanceof BoolExp){
-            BoolExp boolLatest = (BoolExp)expression;
-            return new LetBool(place, boolLatest.trueFalse);
-        } else if(expression instanceof IntExp){
-            IntExp intLatest = (IntExp)expression;
-            return new LetInt(place, intLatest.value);
-        } else if(expression instanceof RealExp){
-            RealExp realLatest = (RealExp)expression;
-            return new LetReal(place, realLatest.realValue);
-        } else if(expression instanceof StrExp){
-            StrExp strLatest = (StrExp)expression;
-            return new LetString(place, strLatest.value);
-        } else if(expression instanceof IdentExp){
-            IdentExp identLatest = (IdentExp)expression;
-            return new LetVar(place, identLatest.ident);
-        } else if(expression instanceof UnExp){
-            UnExp unLatest = (UnExp)expression;
-            IdentExp iExp = unLatest.right;
-            return new LetUn(place, Utils.getOp(unLatest.op), iExp.ident);
-        } else if(expression instanceof BinExp){
-            BinExp binLatest = (BinExp)expression;
-            IdentExp iExp1 = binLatest.left;
-            IdentExp iExp2 = binLatest.right;
-            return new LetBin(place, iExp1.ident, Utils.getOp(binLatest.op), iExp2.ident);
+    public static BinExp.Operator toBinOp(IrTokenType type){
+        switch(type){
+            case NE: return BinExp.Operator.NE;
+            case EQ: return BinExp.Operator.EQ;
+            case GE: return BinExp.Operator.GE;
+            case GT: return BinExp.Operator.GT;
+            case LE: return BinExp.Operator.LE;
+            case LT: return BinExp.Operator.LT;
+            case ADD: return BinExp.Operator.ADD;
+            case SUB: return BinExp.Operator.SUB;
+            case MUL: return BinExp.Operator.MUL;
+            case DIV: return BinExp.Operator.DIV;
+            case MOD: return BinExp.Operator.MOD;
+            case BOR: return BinExp.Operator.BOR;
+            case BAND: return BinExp.Operator.BAND;
+            default: return null;
+        }
+    }
+
+    public static ICode getICodeFromExpression(String register, Exp latestInstructionOutput) {
+        if(latestInstructionOutput instanceof BoolExp){
+            return new LetBool(register, (BoolExp)latestInstructionOutput);
+        } else if(latestInstructionOutput instanceof IntExp){
+            return new LetInt(register, (IntExp)latestInstructionOutput);
+        } else if(latestInstructionOutput instanceof RealExp){
+            return new LetReal(register, (RealExp)latestInstructionOutput);
+        } else if(latestInstructionOutput instanceof StrExp){
+            return new LetString(register, (StrExp)latestInstructionOutput);
+        } else if(latestInstructionOutput instanceof UnExp){
+            return new LetUn(register, (UnExp)latestInstructionOutput);
+        } else if(latestInstructionOutput instanceof BinExp){
+            return new LetBin(register, (BinExp)latestInstructionOutput);
+        } else {
+            return null;
+        }
+    }
+
+    public static Exp getExpressionFromICode(ICode elem) {
+        if(elem instanceof LetBool){
+            return ((LetBool)elem).value;
+        } else if(elem instanceof LetString){
+            return ((LetString)elem).value;
+        } else if(elem instanceof LetInt){
+            return ((LetInt)elem).value;
+        } else if(elem instanceof LetReal){
+            return ((LetReal)elem).value;
+        } else if(elem instanceof LetBin){
+            return ((LetBin)elem).exp;
+        } else if(elem instanceof LetUn){
+            return ((LetUn)elem).unExp;
         } else {
             return null;
         }

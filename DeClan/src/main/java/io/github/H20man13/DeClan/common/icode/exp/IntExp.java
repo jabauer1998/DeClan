@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common.analysis.exp;
+package io.github.H20man13.DeClan.common.icode.exp;
 
 public class IntExp implements Exp {
     public int value;
@@ -16,4 +16,9 @@ public class IntExp implements Exp {
             return false;
         }
     } 
+
+    @Override
+    public String toString(){
+        return "" + value;
+    }
 }

@@ -9,7 +9,10 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.LetBin;
 import io.github.H20man13.DeClan.common.icode.LetBool;
 import io.github.H20man13.DeClan.common.icode.LetUn;
-import io.github.H20man13.DeClan.common.icode.If.Op;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.icode.exp.Exp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 
 public class MyIrBuilder {
     private MyIrFactory factory;
@@ -79,15 +82,17 @@ public class MyIrBuilder {
         return place;
     }
 
-    public String buildNegationAssignment(String value){
+    public String buildNegationAssignment(Exp value){
         String place = gen.genNextRegister();
-        output.add(factory.produceUnaryOperation(place, LetUn.Op.NEG, value));
+        UnExp unaryExp = new UnExp(UnExp.Operator.NEG, value);
+        output.add(factory.produceUnaryOperation(place, unaryExp));
         return place;
     }
 
-    public String buildNotAssignment(String value){
+    public String buildNotAssignment(Exp value){
         String place = gen.genNextRegister();
-        output.add(factory.produceUnaryOperation(place, LetUn.Op.BNOT, value));
+        UnExp unExp = new UnExp(UnExp.Operator.BNOT, value);
+        output.add(factory.produceUnaryOperation(place, unExp));
         return place;
     }
 
@@ -97,81 +102,94 @@ public class MyIrBuilder {
         return place;
     }
 
-    public String buildAdditionAssignment(String left,  String right){
+    public String buildAdditionAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.ADD, right));
+        BinExp binExp = new BinExp(left, BinExp.Operator.ADD ,right);
+        output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildSubtractionAssignment(String left, String right){
+    public String buildSubtractionAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.SUB, right));
+        BinExp binExp = new BinExp(left, BinExp.Operator.SUB, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildMultiplicationAssignment(String left, String right){
+    public String buildMultiplicationAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.MUL, right));
+        BinExp binExp = new BinExp(left, BinExp.Operator.MUL, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildDivisionAssignment(String left, String right){
+    public String buildDivisionAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.DIV, right));
+        BinExp binExp = new BinExp(left, BinExp.Operator.DIV, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildModuloAssignment(String left, String right){
+    public String buildModuloAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.MOD, right));
+        BinExp binExp = new BinExp(left, BinExp.Operator.MOD, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildLessThanOrEqualAssignment(String left, String right){
+    public String buildLessThanOrEqualAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.LE, right));
+        BinExp binExp = new BinExp(left, BinExp.Operator.LE, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildLessThanAssignment(String left, String right){
+    public String buildLessThanAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.LT, right));
+        BinExp binExp = new BinExp(left, BinExp.Operator.LT, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildGreaterThanOrEqualToAssignment(String left, String right){
+    public String buildGreaterThanOrEqualToAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.GE, right));
+        BinExp binExp = new BinExp(left, BinExp.Operator.GE, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildGreaterThanAssignment(String left, String right){
+    public String buildGreaterThanAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.GT, right));
+        BinExp binExp = new BinExp(left, BinExp.Operator.GT, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildAndAssignment(String left, String right){
+    public String buildAndAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.BAND, right));
+        BinExp binExp = new BinExp(left, BinExp.Operator.BAND, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildOrAssignment(String left, String right){
+    public String buildOrAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.BOR, right));
+        BinExp binExp = new BinExp(left, BinExp.Operator.BOR, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildEqualityAssignment(String left, String right){
+    public String buildEqualityAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.EQ, right));
+        BinExp binExp = new BinExp(left, BinExp.Operator.EQ, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildInequalityAssignment(String left, String right){
+    public String buildInequalityAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        output.add(factory.produceBinaryOperation(place, left, LetBin.Op.NE, right));
+        BinExp binExp = new BinExp(left, BinExp.Operator.NE, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
@@ -185,9 +203,10 @@ public class MyIrBuilder {
         return place;
     }
 
-    public void buildForLoopBeginning(String currentValue, String target){
+    public void buildForLoopBeginning(Exp currentValue, Exp target){
         output.add(factory.produceLabel("FORBEG_" + forLoopNumber));
-        output.add(factory.produceIfStatement(currentValue, Op.NE, target, "FORLOOP_" + forLoopNumber, "FOREND_" + forLoopNumber));
+        BinExp bExp = new BinExp(currentValue, BinExp.Operator.NE, target);
+        output.add(factory.produceIfStatement(bExp, "FORLOOP_" + forLoopNumber, "FOREND_" + forLoopNumber));
         output.add(factory.produceLabel("FORLOOP_" + forLoopNumber));
     }
 
@@ -199,8 +218,9 @@ public class MyIrBuilder {
 
     public void buildRepeatLoopBeginning(String exprResult){
         String exprPlace = this.buildNumAssignment("0");
+        IdentExp identExp = new IdentExp(exprPlace);
         output.add(factory.produceLabel("REPEATBEG_" + repeatLoopNumber));
-        output.add(factory.produceIfStatement(exprPlace, Op.LT, exprResult, "REPEATLOOP_" + repeatLoopNumber, "REPEATEND_" + repeatLoopNumber));
+        output.add(factory.produceIfStatement(identExp, "REPEATLOOP_" + repeatLoopNumber, "REPEATEND_" + repeatLoopNumber));
         output.add(factory.produceLabel("REPEATLOOP_" + repeatLoopNumber));
     }
 
@@ -209,7 +229,7 @@ public class MyIrBuilder {
         repeatLoopNumber++;
     }
 
-    public void buildIfStatementBeginning(String test){
+    public void buildIfStatementBeginning(IdentExp test){
         output.add(factory.produceIfStatement(test, "IFSTAT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber, "IFNEXT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber));
         output.add(factory.produceLabel("IFSTAT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber));
     }
@@ -228,7 +248,7 @@ public class MyIrBuilder {
         ifStatementSeqNumber = 0;
     }
 
-    public void buildWhileLoopBeginning(String test){
+    public void buildWhileLoopBeginning(Exp test){
         output.add(factory.produceIfStatement(test, "WHILESTAT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber, "WHILENEXT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber));
         output.add(factory.produceLabel("WHILECOND_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber));
         output.add(factory.produceIfStatement(test, "WHILESTAT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber, "WHILEEND_" + whileLoopNumber));

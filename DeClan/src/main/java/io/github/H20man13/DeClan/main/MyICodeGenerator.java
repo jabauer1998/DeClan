@@ -14,6 +14,7 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.LetString;
 import io.github.H20man13.DeClan.common.icode.Return;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.RegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Call;
@@ -170,7 +171,8 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
     List<Statement> toExec = whilebranch.getExecStatements();
     String test = toCheck.acceptResult(this);
     
-    builder.buildWhileLoopBeginning(test);
+    IdentExp ident = new IdentExp(test);
+    builder.buildWhileLoopBeginning(ident);
     for(int i = 0; i < toExec.size(); i++){
       toExec.get(i).accept(this);
     }
@@ -187,7 +189,8 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   public void visit(IfElifBranch ifbranch){
     Expression toCheck = ifbranch.getExpression();
     String test = toCheck.acceptResult(this);
-    builder.buildIfStatementBeginning(test);
+    IdentExp ident = new IdentExp(test);
+    builder.buildIfStatementBeginning(ident);
 
     List<Statement> toExec = ifbranch.getExecStatements();
     for(int i = 0; i < toExec.size(); i++){
@@ -232,8 +235,10 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
         String incriment = toMod.acceptResult(this);
         forbranch.getInitAssignment().accept(this);
         String target = forbranch.getTargetExpression().acceptResult(this);
+        IdentExp targetIdent = new IdentExp(target);
         String curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-        builder.buildForLoopBeginning(curvalue, target);
+        IdentExp curValueIdent = new IdentExp(curvalue);
+        builder.buildForLoopBeginning(curValueIdent, targetIdent);
         for(int i = 0; i < toExec.size(); i++){
             toExec.get(i).accept(this);
         }
@@ -241,8 +246,10 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
     } else {
       forbranch.getInitAssignment().accept(this);
       String target = forbranch.getTargetExpression().acceptResult(this);
+      IdentExp targetIdent = new IdentExp(target);
       String curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-      builder.buildForLoopBeginning(curvalue, target);
+      IdentExp curvalueIdent = new IdentExp(curvalue);
+      builder.buildForLoopBeginning(curvalueIdent, targetIdent);
       for(int i = 0; i < toExec.size(); i++){
           toExec.get(i).accept(this);
       }
@@ -299,22 +306,24 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   @Override
   public String visitResult(BinaryOperation binaryOperation) {
       String leftValue = binaryOperation.getLeft().acceptResult(this);
+      IdentExp leftIdent = new IdentExp(leftValue);
       String rightValue = binaryOperation.getRight().acceptResult(this);
+      IdentExp rightIdent = new IdentExp(rightValue);
       switch (binaryOperation.getOperator()){
-        case PLUS: return builder.buildAdditionAssignment(leftValue, rightValue);
-        case MINUS: return builder.buildSubtractionAssignment(leftValue, rightValue);
-        case TIMES: return builder.buildMultiplicationAssignment(leftValue, rightValue);
-        case DIV: return builder.buildDivisionAssignment(leftValue, rightValue);
-        case DIVIDE: return builder.buildDivisionAssignment(leftValue, rightValue);
-        case MOD: return builder.buildModuloAssignment(leftValue, rightValue);
-        case LE: return builder.buildLessThanOrEqualAssignment(leftValue, rightValue);
-        case LT: return builder.buildLessThanAssignment(leftValue, rightValue);
-        case GE: return builder.buildGreaterThanOrEqualToAssignment(leftValue, rightValue);
-        case GT: return builder.buildGreaterThanAssignment(leftValue, rightValue);
-        case AND: return builder.buildAndAssignment(leftValue, rightValue);
-        case OR: return builder.buildOrAssignment(leftValue, rightValue);
-        case EQ: return builder.buildEqualityAssignment(leftValue, rightValue);
-        case NE: return builder.buildInequalityAssignment(leftValue, rightValue);
+        case PLUS: return builder.buildAdditionAssignment(leftIdent, rightIdent);
+        case MINUS: return builder.buildSubtractionAssignment(leftIdent, rightIdent);
+        case TIMES: return builder.buildMultiplicationAssignment(leftIdent, rightIdent);
+        case DIV: return builder.buildDivisionAssignment(leftIdent, rightIdent);
+        case DIVIDE: return builder.buildDivisionAssignment(leftIdent, rightIdent);
+        case MOD: return builder.buildModuloAssignment(leftIdent, rightIdent);
+        case LE: return builder.buildLessThanOrEqualAssignment(leftIdent, rightIdent);
+        case LT: return builder.buildLessThanAssignment(leftIdent, rightIdent);
+        case GE: return builder.buildGreaterThanOrEqualToAssignment(leftIdent, rightIdent);
+        case GT: return builder.buildGreaterThanAssignment(leftIdent, rightIdent);
+        case AND: return builder.buildAndAssignment(leftIdent, rightIdent);
+        case OR: return builder.buildOrAssignment(leftIdent, rightIdent);
+        case EQ: return builder.buildEqualityAssignment(leftIdent, rightIdent);
+        case NE: return builder.buildInequalityAssignment(leftIdent, rightIdent);
         default: return leftValue;
       }
   }
@@ -334,10 +343,12 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   @Override
   public String visitResult(UnaryOperation unaryOperation) {
     String value = unaryOperation.getExpression().acceptResult(this);
+
+    IdentExp valueIdent = new IdentExp(value);
     
 	  switch(unaryOperation.getOperator()){
-	    case MINUS: return builder.buildNegationAssignment(value);
-	    case NOT: return builder.buildNotAssignment(value);
+	    case MINUS: return builder.buildNegationAssignment(valueIdent);
+	    case NOT: return builder.buildNotAssignment(valueIdent);
 	    default: return value;
 	  }
   }

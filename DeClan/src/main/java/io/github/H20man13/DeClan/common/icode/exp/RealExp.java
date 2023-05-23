@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common.analysis.exp;
+package io.github.H20man13.DeClan.common.icode.exp;
 
 public class RealExp implements Exp {
     public double realValue;
@@ -15,5 +15,10 @@ public class RealExp implements Exp {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public String toString(){
+        return "" + realValue;
     }
 }

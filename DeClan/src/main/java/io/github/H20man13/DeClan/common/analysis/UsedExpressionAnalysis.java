@@ -4,9 +4,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.H20man13.DeClan.common.analysis.exp.Exp;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
+import io.github.H20man13.DeClan.common.icode.exp.Exp;
 
 public class UsedExpressionAnalysis extends Analysis<Exp> {
     private Map<FlowGraphNode, Set<Exp>> usedSets;

@@ -6,6 +6,7 @@ import java.util.List;
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ParseException;
 import edu.depauw.declan.common.Position;
+import edu.depauw.declan.common.TokenType;
 import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
@@ -21,9 +22,17 @@ import io.github.H20man13.DeClan.common.icode.LetUn;
 import io.github.H20man13.DeClan.common.icode.LetVar;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.Return;
-import io.github.H20man13.DeClan.common.icode.LetUn.Op;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
+import io.github.H20man13.DeClan.common.icode.exp.Exp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.IntExp;
+import io.github.H20man13.DeClan.common.icode.exp.RealExp;
+import io.github.H20man13.DeClan.common.icode.exp.StrExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.token.IrToken;
 import io.github.H20man13.DeClan.common.token.IrTokenType;
+import io.github.H20man13.DeClan.common.util.Utils;
 
 public class MyIrParser {
     private MyIrLexer lexer;
@@ -129,56 +138,61 @@ public class MyIrParser {
         }
     }
 
-    private static If.Op toIfOp(IrTokenType type){
-        switch(type){
-            case NE: return If.Op.NE;
-            case EQ: return If.Op.EQ;
-            case GE: return If.Op.GE;
-            case GT: return If.Op.GT;
-            case LE: return If.Op.LE;
-            case LT: return If.Op.LT;
-            default: return null;
+    private Exp parsePrimaryExpression(){
+        if(willMatch(IrTokenType.TRUE)){
+            skip();
+            return new BoolExp(true);
+        } else if(willMatch(IrTokenType.FALSE)){
+            skip();
+            return new BoolExp(false);
+        } else if(willMatch(IrTokenType.NUMBER)){
+            IrToken tok = skip();
+            if(tok.getLexeme().contains(".")){
+                return new RealExp(Double.parseDouble(tok.getLexeme()));
+            } else {
+                return new IntExp(Integer.parseInt(tok.getLexeme()));
+            }
+        } else if(willMatch(IrTokenType.STRING)){
+            IrToken tok = skip();
+            return new StrExp(tok.getLexeme());
+        } else if(willMatch(IrTokenType.ID)){
+            IrToken tok = skip();
+            return new IdentExp(tok.getLexeme());
+        } else {
+            return null;
         }
-    } 
+    }
 
-    private ICode parseIfStatement(){
-        match(IrTokenType.IF);
-        IrToken id = match(IrTokenType.ID);
+    private BinExp parseBinaryExpression(){
+        Exp left = parsePrimaryExpression();
+        Exp right = parsePrimaryExpression();
+
         IrToken op = null;
-        if(willMatch(IrTokenType.LT)){
-            op = skip();
-        } else if(willMatch(IrTokenType.GT)){
-            op = skip();
-        } else if(willMatch(IrTokenType.NE)){
-            op = skip();
-        } else if(willMatch(IrTokenType.GE)){
-            op = skip();
-        } else if(willMatch(IrTokenType.LE)){
+        if(willMatch(IrTokenType.LT) || willMatch(IrTokenType.ADD) 
+        || willMatch(IrTokenType.LE) || willMatch(IrTokenType.GT)
+        || willMatch(IrTokenType.NE) || willMatch(IrTokenType.GE)
+        || willMatch(IrTokenType.BOR) || willMatch(IrTokenType.SUB)
+        || willMatch(IrTokenType.MUL) || willMatch(IrTokenType.DIV)
+        || willMatch(IrTokenType.MOD) || willMatch(IrTokenType.BAND)){
             op = skip();
         } else {
             op = match(IrTokenType.EQ);
         }
 
-        IrToken atom = null;
-        if(willMatch(IrTokenType.NUMBER)){
-            atom = skip();
-        } else if(willMatch(IrTokenType.TRUE)){
-            atom = skip();
-        } else if(willMatch(IrTokenType.FALSE)){
-            atom = skip();
-        } else {
-            atom = match(IrTokenType.ID);
-        }
 
+        BinExp expr = new BinExp(left, Utils.toBinOp(op.getType()), right);
+        return expr;
+    }
+
+    private ICode parseIfStatement(){
+        match(IrTokenType.IF);
+        BinExp exp = parseBinaryExpression();
         match(IrTokenType.THEN);
-
         IrToken labelOne = match(IrTokenType.ID);
-
         match(IrTokenType.ELSE);
-
         IrToken labelTwo = match(IrTokenType.ID);
 
-        return new If(id.getLexeme(), toIfOp(op.getType()), atom.getLexeme(), labelOne.getLexeme(), labelTwo.getLexeme());
+        return new If(exp, labelOne.getLexeme(), labelTwo.getLexeme());
     }
 
     private ICode parseReturn(){
@@ -214,20 +228,29 @@ public class MyIrParser {
         return new Proc(procName.getLexeme(), args);
     }
 
+    private UnExp parseUnaryExpression(){
+        if(willMatch(IrTokenType.NEG)){
+            skip();
+            Exp right = parsePrimaryExpression();
+            return new UnExp(UnExp.Operator.NEG, right);
+        } else if(willMatch(IrTokenType.BNOT)){
+            skip();
+            Exp right = parsePrimaryExpression();
+            return new UnExp(UnExp.Operator.BNOT, right);
+        } else {
+            return null;
+        }
+    }
+
     private ICode parseAssignment(){
         IrToken id = match(IrTokenType.ID);
         
         match(IrTokenType.ASSIGN);
 
-        if(willMatch(IrTokenType.NEG)){
-            skip();
-            IrToken right = match(IrTokenType.ID);
-            return new LetUn(id.getLexeme(), Op.NEG, right.getLexeme());
-        } else if(willMatch(IrTokenType.BNOT)){
-            skip();
-            IrToken right = match(IrTokenType.ID);
-            return new LetUn(id.getLexeme(), Op.BNOT, right.getLexeme());
-        } else if(willMatch(IrTokenType.CALL)){
+        if(willMatch(IrTokenType.NEG) || willMatch(IrTokenType.BNOT)){
+            UnExp unExpr = parseUnaryExpression();
+            return new LetUn(id.getLexeme(), unExpr);
+        } if(willMatch(IrTokenType.CALL)){
             skip();
             IrToken callName = match(IrTokenType.ID);
             match(IrTokenType.LPAR);
@@ -258,63 +281,8 @@ public class MyIrParser {
                 return new LetInt(id.getLexeme(), Integer.parseInt(num.getLexeme()));
             }
         } else {
-            IrToken id2 = match(IrTokenType.ID);
-
-            if(willMatch(IrTokenType.EQ)){
-                skip();
-                IrToken id3 = match(IrTokenType.ID);
-                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.EQ, id3.getLexeme());
-            } else if (willMatch(IrTokenType.NE)){
-                skip();
-                IrToken id3 = match(IrTokenType.ID);
-                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.NE, id3.getLexeme());
-            } else if (willMatch(IrTokenType.GT)){
-                skip();
-                IrToken id3 = match(IrTokenType.ID);
-                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.GT, id3.getLexeme());
-            } else if (willMatch(IrTokenType.GE)){
-                skip();
-                IrToken id3 = match(IrTokenType.ID);
-                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.GE, id3.getLexeme());
-            } else if (willMatch(IrTokenType.LT)){
-                skip();
-                IrToken id3 = match(IrTokenType.ID);
-                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.LT, id3.getLexeme());
-            } else if (willMatch(IrTokenType.LE)){
-                skip();
-                IrToken id3 = match(IrTokenType.ID);
-                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.LE, id3.getLexeme());
-            } else if (willMatch(IrTokenType.ADD)){
-                skip();
-                IrToken id3 = match(IrTokenType.ID);
-                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.ADD, id3.getLexeme());
-            } else if (willMatch(IrTokenType.SUB)){
-                skip();
-                IrToken id3 = match(IrTokenType.ID);
-                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.SUB, id3.getLexeme());
-            } else if (willMatch(IrTokenType.MUL)){
-                skip();
-                IrToken id3 = match(IrTokenType.ID);
-                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.MUL, id3.getLexeme());
-            } else if (willMatch(IrTokenType.DIV)){
-                skip();
-                IrToken id3 = match(IrTokenType.ID);
-                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.DIV, id3.getLexeme());
-            } else if (willMatch(IrTokenType.MOD)){
-                skip();
-                IrToken id3 = match(IrTokenType.ID);
-                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.MOD, id3.getLexeme());
-            } else if(willMatch(IrTokenType.BAND)){
-                skip();
-                IrToken id3 = match(IrTokenType.ID);
-                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.BAND, id3.getLexeme());
-            } else if(willMatch(IrTokenType.BOR)){
-                skip();
-                IrToken id3 = match(IrTokenType.ID);
-                return new LetBin(id.getLexeme(), id2.getLexeme(), LetBin.Op.BOR, id3.getLexeme());
-            } else {
-                return new LetVar(id.getLexeme(), id2.getLexeme());
-            }
+            BinExp binExp = parseBinaryExpression();
+            return new LetBin(id.getLexeme(), binExp);
         }
     }
 }

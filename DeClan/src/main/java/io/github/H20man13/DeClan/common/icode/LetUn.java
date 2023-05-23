@@ -1,24 +1,19 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.main.MyTypeChecker;
 
 public class LetUn implements ICode {
 	public String place;
-	public Op op;
-	public String value;
+	public UnExp unExp;
 
-	public LetUn(String place, Op op, String value) {
+	public LetUn(String place, UnExp exp) {
 		this.place = place;
-		this.op = op;
-		this.value = value;
+		this.unExp = exp;
 	}
 	
 	@Override
 	public String toString() {
-		return place + " := " + op + " " + value;
+		return place + " := " + unExp.toString();
 	}
-
-    public enum Op {
-		NEG, BNOT
-    }
 }

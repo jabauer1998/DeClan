@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common.analysis.exp;
+package io.github.H20man13.DeClan.common.icode.exp;
 
 public class IdentExp implements Exp{
     public String ident;
@@ -15,5 +15,10 @@ public class IdentExp implements Exp{
         } else {
             return false;
         }
+    }
+
+    @Override
+    public String toString(){
+        return '\"' + ident.toString() + '\"';
     }
 }

@@ -17,7 +17,12 @@ import io.github.H20man13.DeClan.common.icode.LetUn;
 import io.github.H20man13.DeClan.common.icode.LetVar;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.Return;
-import io.github.H20man13.DeClan.common.icode.If.Op;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
+import io.github.H20man13.DeClan.common.icode.exp.Exp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp.Operator;
 
 public class MyIrFactory {
     private ErrorLog errorLog;
@@ -62,24 +67,26 @@ public class MyIrFactory {
         return new Proc(funcName, argResults);
     }
 
-    public If produceIfStatement(String test, String ifTrue, String ifFalse){
-        return new If(test, ifTrue, ifFalse);
+    public If produceIfStatement(Exp test, String ifTrue, String ifFalse){
+        BoolExp trueExp = new BoolExp(true);
+        BinExp bExp = new BinExp(test, Operator.EQ, trueExp);
+        return new If(bExp, ifTrue, ifFalse);
     }
 
-    public If produceIfStatement(String left, Op op, String right, String ifTrue, String ifFalse){
-        return new If(left, op, right, ifTrue, ifFalse);
+    public If produceIfStatement(BinExp exp, String ifTrue, String ifFalse){
+        return new If(exp, ifTrue, ifFalse);
     }
 
     public Label produceLabel(String name){
         return new Label(name);
     }
 
-    public LetUn produceUnaryOperation(String place, LetUn.Op op, String value){
-        return new LetUn(place, op, value);
+    public LetUn produceUnaryOperation(String place, UnExp value){
+        return new LetUn(place, value);
     }
 
-    public LetBin produceBinaryOperation(String place, String left, LetBin.Op op, String right){
-        return new LetBin(place, left, op, right);
+    public LetBin produceBinaryOperation(String place, BinExp value){
+        return new LetBin(place, value);
     }
 
     public Call produceProcedureCall(String place, String procedureName, List<String> arguments){

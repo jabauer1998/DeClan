@@ -1,31 +1,18 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+
 public class If implements ICode {
-	public String left, right, ifTrue, ifFalse;
-	public Op op;
+	public BinExp exp;
+	public String ifTrue, ifFalse;
 
-	public If(String left, Op op, String right, String ifTrue, String ifFalse) {
-		this.left = left;
-		this.op = op;
-		this.right = right;
-		this.ifTrue = ifTrue;
-		this.ifFalse = ifFalse;
-	}
-
-	public If(String test, String ifTrue, String ifFalse) {
-		this.left = test;
-		this.op = Op.EQ;
-		this.right = "TRUE";
+	public If(BinExp exp, String ifTrue, String ifFalse) {
 		this.ifTrue = ifTrue;
 		this.ifFalse = ifFalse;
 	}
 	
 	@Override
 	public String toString() {
-		return "IF " + left + " " + op + " " + right + " THEN " + ifTrue + " ELSE " + ifFalse;
-	}
-
-	public enum Op {
-	    EQ, GT, NE, GE, LE, LT
+		return "IF " + exp.toString() + " THEN " + ifTrue + " ELSE " + ifFalse;
 	}
 }

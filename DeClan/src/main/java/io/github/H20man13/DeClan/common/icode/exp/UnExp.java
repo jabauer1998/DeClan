@@ -1,7 +1,7 @@
-package io.github.H20man13.DeClan.common.analysis.exp;
+package io.github.H20man13.DeClan.common.icode.exp;
 
 public class UnExp implements Exp {
-    public IdentExp right;
+    public Exp right;
     public Operator op;
 
     public enum Operator{
@@ -9,7 +9,7 @@ public class UnExp implements Exp {
         NEG
     }
 
-    public UnExp(Operator op, IdentExp right){
+    public UnExp(Operator op, Exp right){
         this.right = right;
         this.op = op;
     }
@@ -24,5 +24,10 @@ public class UnExp implements Exp {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public String toString(){
+        return "" + op + " " + right.toString();
     }
 }
