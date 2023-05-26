@@ -6,11 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DagNullNode implements DagNode {
-    private HashSet<String> identifiers;
+    private List<String> identifiers;
     private List<DagNode> ancestors;
 
     public DagNullNode(String ident){
-        this.identifiers = new HashSet<>();
+        this.identifiers = new LinkedList<String>();
         this.identifiers.add(ident);
         this.ancestors = new ArrayList<>();
     }
@@ -21,7 +21,7 @@ public class DagNullNode implements DagNode {
     }
 
     @Override
-    public boolean equals(DagNode dagNode) {
+    public boolean equals(Object dagNode) {
         if(dagNode instanceof DagNullNode){
             return true;
         } else {
@@ -57,5 +57,10 @@ public class DagNullNode implements DagNode {
     @Override
     public List<DagNode> getChildren() {
         return new LinkedList<>();
+    }
+
+    @Override
+    public List<String> getIdentifiers() {
+        return identifiers;
     }
 }

@@ -6,16 +6,20 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DagVariableNode implements DagNode {
-    private HashSet<String> identifiers;
+    private List<String> identifiers;
     private DagNode child;
     private List<DagNode> ancestors;
 
     public DagVariableNode(String ident, DagNode child){
-        this.identifiers = new HashSet<>();
+        this.identifiers = new LinkedList<>();
         this.ancestors = new ArrayList<>();
         child.addAncestor(this);
         this.identifiers.add(ident);
         this.child = child;
+    }
+
+    public DagNode getChild(){
+        return child;
     }
 
     @Override
@@ -23,7 +27,7 @@ public class DagVariableNode implements DagNode {
         return this.identifiers.contains(ident);
     }
     @Override
-    public boolean equals(DagNode dagNode) {
+    public boolean equals(Object dagNode) {
         if(dagNode instanceof DagVariableNode){
             DagVariableNode varNode = (DagVariableNode)dagNode;
             return this.child.hashCode() == varNode.child.hashCode();
@@ -62,5 +66,10 @@ public class DagVariableNode implements DagNode {
         LinkedList<DagNode> list = new LinkedList<DagNode>();
         list.add(child);
         return list;
+    }
+
+    @Override
+    public List<String> getIdentifiers() {
+        return identifiers;
     }
 }

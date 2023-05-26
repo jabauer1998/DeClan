@@ -57,4 +57,8 @@ public class DagGraph {
         }
         return null;
     }
+
+    public List<DagNode> getDagNodes(){
+        return this.dagNodes;
+    }
 }

@@ -10,17 +10,17 @@ public class DagValueNode implements DagNode{
         INT, REAL, BOOL, STRING
     }
 
-    private HashSet<String> identifiers;
+    private List<String> identifiers;
     private List<DagNode> ancestors;
     private Object value;
     private ValueType type;
 
     public DagValueNode(String identifier, ValueType type, Object value){
-        this.identifiers = new HashSet<>();
+        this.identifiers = new LinkedList<String>();
         this.identifiers.add(identifier);
         this.value = value;
         this.type = type;
-        this.ancestors = new ArrayList<>();
+        this.ancestors = new ArrayList<DagNode>();
     }
 
     @Override
@@ -29,7 +29,7 @@ public class DagValueNode implements DagNode{
     }
 
     @Override
-    public boolean equals(DagNode dagNode){
+    public boolean equals(Object dagNode){
         if(dagNode instanceof DagValueNode){
             DagValueNode valDagNode = (DagValueNode)dagNode;
             return valDagNode.type == type && this.value.hashCode() == valDagNode.hashCode();
@@ -67,5 +67,17 @@ public class DagValueNode implements DagNode{
     public List<DagNode> getChildren() {
         return new LinkedList<>();
     }
-    
+
+    @Override
+    public List<String> getIdentifiers() {
+        return identifiers;
+    }
+
+    public ValueType getType(){
+        return type;
+    }
+
+    public Object getValue(){
+        return value;
+    }
 }

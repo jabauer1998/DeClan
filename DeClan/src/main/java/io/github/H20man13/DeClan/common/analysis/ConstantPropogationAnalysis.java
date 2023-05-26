@@ -23,7 +23,7 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>>
     private Map<FlowGraphNode, Set<Tuple<String, Object>>> constDefinitions;
     private Map<FlowGraphNode, Set<Tuple<String, Object>>> killDefinitions;
 
-    public ConstantPropogationAnalysis(FlowGraph flowGraph, Direction direction, Meet symbol) {
+    public ConstantPropogationAnalysis(FlowGraph flowGraph) {
         super(flowGraph, Direction.FORWARDS, Meet.UNION);
 
         this.constDefinitions = new HashMap<FlowGraphNode, Set<Tuple<String, Object>>>();
@@ -35,19 +35,19 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>>
             for(ICode icode : block.getICode()){
                 if(icode instanceof LetBool){
                     LetBool boolICode = (LetBool)icode;
-                    Tuple<String, Object> newTuple = new Tuple<String, Object>(boolICode.place, boolICode.value);
+                    Tuple<String, Object> newTuple = new Tuple<String, Object>(boolICode.place, boolICode.value.trueFalse);
                     setTuples.add(newTuple);
                 } else if(icode instanceof LetInt){
                     LetInt intICode = (LetInt)icode;
-                    Tuple<String, Object> newTuple = new Tuple<String, Object>(intICode.place, intICode.value);
+                    Tuple<String, Object> newTuple = new Tuple<String, Object>(intICode.place, intICode.value.value);
                     setTuples.add(newTuple);
                 } else if(icode instanceof LetReal){
                     LetReal realICode = (LetReal)icode;
-                    Tuple<String, Object> newTuple = new Tuple<String, Object>(realICode.place, realICode.value);
+                    Tuple<String, Object> newTuple = new Tuple<String, Object>(realICode.place, realICode.value.realValue);
                     setTuples.add(newTuple);
                 } else if(icode instanceof LetString){
                     LetString strICode = (LetString)icode;
-                    Tuple<String, Object> newTuple = new Tuple<String, Object>(strICode.place, strICode.value);
+                    Tuple<String, Object> newTuple = new Tuple<String, Object>(strICode.place, strICode.value.value);
                     setTuples.add(newTuple);
                 } else if(icode instanceof LetVar){
                     LetVar varICode = (LetVar)icode;
@@ -73,8 +73,7 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>>
         Set<Tuple<String, Object>> result = new HashSet<Tuple<String, Object>>();
 
         result.addAll(inputSet);
-        result.addAll(constDefinitions.get(Node));
-        
+
         for(Tuple<String, Object> killTuple : killDefinitions.get(Node)){
             String killText = killTuple.source;
             for(Tuple<String, Object> singleResult : result){
@@ -84,13 +83,22 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>>
             }
         }
 
+        result.addAll(constDefinitions.get(Node));
+
         Map<String, Set<Tuple<String, Object>>> found = new HashMap<String, Set<Tuple<String, Object>>>();
         for(Tuple<String, Object> setsFound : result){
             if(!found.containsKey(setsFound.source)){
                 found.put(setsFound.source, new HashSet<Tuple<String, Object>>());
             }
 
-            Set<Tuple<String, Object>> 
+            Set<Tuple<String, Object>> tuples = found.get(setsFound.source);
+            tuples.add(setsFound);
+        }
+
+        for(Set<Tuple<String, Object>> setFound : found.values()){
+            if(setFound.size() > 1){
+                result.removeAll(setFound);
+            }
         }
         
         return result;

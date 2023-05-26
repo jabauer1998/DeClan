@@ -17,15 +17,7 @@ import io.github.H20man13.DeClan.common.icode.LetReal;
 import io.github.H20man13.DeClan.common.icode.LetString;
 import io.github.H20man13.DeClan.common.icode.LetUn;
 import io.github.H20man13.DeClan.common.icode.LetVar;
-import io.github.H20man13.DeClan.common.icode.exp.BinExp;
-import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
-import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.H20man13.DeClan.common.icode.exp.IntExp;
-import io.github.H20man13.DeClan.common.icode.exp.RealExp;
-import io.github.H20man13.DeClan.common.icode.exp.StrExp;
-import io.github.H20man13.DeClan.common.icode.exp.UnExp;
-import io.github.H20man13.DeClan.common.util.Utils;
 
 public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
 
@@ -46,52 +38,46 @@ public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
                 if(icode instanceof LetVar){
                     LetVar value = (LetVar)icode;
                     
-                    int defIndex = searchForDefinition(codeList, i, value.var);
-                    IdentExp defIdent = new IdentExp(value.var);
+                    int defIndex = searchForDefinition(codeList, i, value.var.toString());
                     if(defIndex != -1){
-                        if(!searchForPreviousExpression(codeList, defIndex, defIdent)){
-                            blockKill.add(defIdent);
+                        if(!searchForPreviousExpression(codeList, defIndex, value.var)){
+                            blockKill.add(value.var);
                         }
                     } else {
-                        blockGen.add(defIdent);
+                        blockGen.add(value.var);
                     }
                 } else if(icode instanceof LetUn){
                     LetUn value = (LetUn)icode;
-                    int defIndex = searchForDefinition(codeList, i, value.value);
-                    IdentExp iExp = new IdentExp(value.value);
-                    UnExp uExp = new UnExp(Utils.getOp(value.op), iExp);
+                    int defIndex = searchForDefinition(codeList, i, value.unExp.right.toString());
 
                     if(defIndex != -1){
-                        if(!searchForPreviousExpression(codeList, defIndex, uExp)){
-                            blockKill.add(uExp);
+                        if(!searchForPreviousExpression(codeList, defIndex, value.unExp)){
+                            blockKill.add(value.unExp);
                         }
                     } else {
-                        blockGen.add(uExp);
+                        blockGen.add(value.unExp);
                     }
                 } else if(icode instanceof LetBin){
                     LetBin value = (LetBin)icode;
                     
-                    int defIndex1 = searchForDefinition(codeList, i, value.left);
-                    int defIndex2 = searchForDefinition(codeList, i, value.right);
+                    int defIndex1 = searchForDefinition(codeList, i, value.exp.left.toString());
+                    int defIndex2 = searchForDefinition(codeList, i, value.exp.right.toString());
 
-                    IdentExp lExp = new IdentExp(value.left);
-                    IdentExp rExp = new IdentExp(value.right);
-                    BinExp bExp = new BinExp(lExp, Utils.getOp(value.op), rExp);
                     if(defIndex1 != -1 || defIndex2 != -1){
                         boolean shouldKill = false;
-                        if(defIndex1 != -1 && !searchForPreviousExpression(codeList, defIndex1, bExp)){
+                        if(defIndex1 != -1 && !searchForPreviousExpression(codeList, defIndex1, value.exp)){
                             shouldKill = true;
                         }
 
-                        if(defIndex2 != -1 && !searchForPreviousExpression(codeList, defIndex2, bExp)){
+                        if(defIndex2 != -1 && !searchForPreviousExpression(codeList, defIndex2, value.exp)){
                             shouldKill = true;
                         }
 
                         if(shouldKill){
-                            blockKill.add(bExp);
+                            blockKill.add(value.exp);
                         }
                     } else {
-                        blockGen.add(bExp);
+                        blockGen.add(value.exp);
                     }
                 }
             }
@@ -106,47 +92,37 @@ public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
             ICode icode = codeList.get(i);
             if(icode instanceof LetBool){
                 LetBool icodeDef = (LetBool)icode;
-                BoolExp bExp = new BoolExp(icodeDef.value);
-                if(defIdent.equals(bExp)){
+                if(defIdent.equals(icodeDef.value)){
                     return true;
                 }
             } else if(icode instanceof LetInt){
                 LetInt icodeDef = (LetInt)icode;
-                IntExp iExp = new IntExp(icodeDef.value);
-                if(defIdent.equals(iExp)){
+                if(defIdent.equals(icodeDef.value)){
                     return true;
                 }
             } else if(icode instanceof LetString){
                 LetString icodeDef = (LetString)icode;
-                StrExp sExp = new StrExp(icodeDef.value);
-                if(defIdent.equals(sExp)){
+                if(defIdent.equals(icodeDef.value)){
                     return true;
                 }
             } else if(icode instanceof LetReal){
                 LetReal icodeDef = (LetReal)icode;
-                RealExp rExp = new RealExp(icodeDef.value);
-                if(defIdent.equals(rExp)){
+                if(defIdent.equals(icodeDef.value)){
                     return true;
                 }
             } else if(icode instanceof LetVar){
                 LetVar icodeDef = (LetVar)icode;
-                IdentExp iExp = new IdentExp(icodeDef.var);
-                if(defIdent.equals(iExp)){
+                if(defIdent.equals(icodeDef.var)){
                     return true;
                 }
             } else if(icode instanceof LetUn){
                 LetUn icodeDef = (LetUn)icode;
-                IdentExp iExp = new IdentExp(icodeDef.value);
-                UnExp uExp = new UnExp(Utils.getOp(icodeDef.op), iExp);
-                if(defIdent.equals(uExp)){
+                if(defIdent.equals(icodeDef.unExp)){
                     return true;
                 }
             } else if(icode instanceof LetBin){
                 LetBin icodeDef = (LetBin)icode;
-                IdentExp iExp1 = new IdentExp(icodeDef.left);
-                IdentExp iExp2 = new IdentExp(icodeDef.right);
-                BinExp bExp = new BinExp(iExp1, Utils.getOp(icodeDef.op), iExp2);
-                if(defIdent.equals(bExp)){
+                if(defIdent.equals(icodeDef.exp)){
                     return true;
                 }
             }

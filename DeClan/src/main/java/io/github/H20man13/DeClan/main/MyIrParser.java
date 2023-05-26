@@ -163,9 +163,29 @@ public class MyIrParser {
         }
     }
 
+    private BinExp parseRelationalExpression(){
+        Exp left = parsePrimaryExpression();
+
+        IrToken op = null;
+        if(willMatch(IrTokenType.EQ) 
+        || willMatch(IrTokenType.NE)
+        || willMatch(IrTokenType.GT)
+        || willMatch(IrTokenType.GE)
+        || willMatch(IrTokenType.LT)
+        || willMatch(IrTokenType.LE)){
+            op = skip();
+        } else {
+            op = match(IrTokenType.EQ);
+        }
+
+        Exp right = parsePrimaryExpression();
+
+        BinExp expr = new BinExp(left, Utils.toBinOp(op.getType()), right);
+        return expr;
+    }
+
     private BinExp parseBinaryExpression(){
         Exp left = parsePrimaryExpression();
-        Exp right = parsePrimaryExpression();
 
         IrToken op = null;
         if(willMatch(IrTokenType.LT) || willMatch(IrTokenType.ADD) 
@@ -173,11 +193,14 @@ public class MyIrParser {
         || willMatch(IrTokenType.NE) || willMatch(IrTokenType.GE)
         || willMatch(IrTokenType.BOR) || willMatch(IrTokenType.SUB)
         || willMatch(IrTokenType.MUL) || willMatch(IrTokenType.DIV)
-        || willMatch(IrTokenType.MOD) || willMatch(IrTokenType.BAND)){
+        || willMatch(IrTokenType.MOD) || willMatch(IrTokenType.BAND)
+        || willMatch(IrTokenType.EQ)){
             op = skip();
         } else {
             op = match(IrTokenType.EQ);
         }
+
+        Exp right = parsePrimaryExpression();
 
 
         BinExp expr = new BinExp(left, Utils.toBinOp(op.getType()), right);
@@ -186,7 +209,7 @@ public class MyIrParser {
 
     private ICode parseIfStatement(){
         match(IrTokenType.IF);
-        BinExp exp = parseBinaryExpression();
+        BinExp exp = parseRelationalExpression();
         match(IrTokenType.THEN);
         IrToken labelOne = match(IrTokenType.ID);
         match(IrTokenType.ELSE);

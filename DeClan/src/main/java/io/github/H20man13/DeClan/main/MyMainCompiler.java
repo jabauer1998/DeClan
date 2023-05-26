@@ -39,6 +39,8 @@ public class MyMainCompiler {
             optimizer.runDataFlowAnalysis();
             optimizer.performPartialRedundancyElimination();
             optimizer.performConstantPropogation();
+
+            List<ICode> optimizedICode = optimizer.getICode();
         }
     }
 }

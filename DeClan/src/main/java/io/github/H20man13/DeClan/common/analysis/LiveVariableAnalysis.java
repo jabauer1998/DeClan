@@ -58,8 +58,8 @@ public class LiveVariableAnalysis extends Analysis<String> {
                         blockDef.add(defPlace.place);
                     }
 
-                    if(!blockDef.contains(defPlace.var)){
-                        blockUse.add(defPlace.var);
+                    if(!blockDef.contains(defPlace.var.toString())){
+                        blockUse.add(defPlace.var.toString());
                     }
                 } else if(code instanceof LetBin){
                     LetBin defPlace = (LetBin)code;
@@ -67,12 +67,12 @@ public class LiveVariableAnalysis extends Analysis<String> {
                         blockDef.add(defPlace.place);
                     }
 
-                    if(!blockDef.contains(defPlace.left)){
+                    if(!blockDef.contains(defPlace.exp.left.toString())){
                         blockUse.add(defPlace.place);
                     }
 
-                    if(!blockDef.contains(defPlace.right)){
-                        blockUse.add(defPlace.right);
+                    if(!blockDef.contains(defPlace.exp.right.toString())){
+                        blockUse.add(defPlace.exp.right.toString());
                     }
                 } else if(code instanceof LetUn){
                     LetUn defPlace = (LetUn)code;
@@ -81,8 +81,8 @@ public class LiveVariableAnalysis extends Analysis<String> {
                         blockDef.add(defPlace.place);
                     }
 
-                    if(!blockDef.contains(defPlace.value)){
-                        blockUse.add(defPlace.value);
+                    if(!blockDef.contains(defPlace.unExp.right.toString())){
+                        blockUse.add(defPlace.unExp.right.toString());
                     }
                 }
             }

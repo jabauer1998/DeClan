@@ -8,8 +8,10 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.RegisterGenerator;
+import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.AnticipatedExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.AvailableExpressionsAnalysis;
+import io.github.H20man13.DeClan.common.analysis.ConstantPropogationAnalysis;
 import io.github.H20man13.DeClan.common.analysis.PostponableExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.UsedExpressionAnalysis;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
@@ -46,12 +48,12 @@ import io.github.H20man13.DeClan.common.util.Utils;
 public class MyOptimizer {
     private List<ICode> intermediateCode;
     private Environment<String, Object> environment;
-    private MyICodeMachine machine;
     private FlowGraph globalFlowGraph;
     private AnticipatedExpressionsAnalysis anticipatedAnal;
     private AvailableExpressionsAnalysis availableAnal;
     private PostponableExpressionsAnalysis postponableAnal;
     private UsedExpressionAnalysis usedAnal;
+    private ConstantPropogationAnalysis propAnal;
     private Map<FlowGraphNode, Set<Exp>> latest;
     private Map<FlowGraphNode, Set<Exp>> earliest;
     private Map<FlowGraphNode, Set<Exp>> used;
@@ -67,11 +69,22 @@ public class MyOptimizer {
         this.gen = gen;
         this.intermediateCode = intermediateCode;
         this.environment = new Environment<>();
-        this.machine = new MyICodeMachine(this.environment);
         this.latest = new HashMap<FlowGraphNode, Set<Exp>>();
         this.earliest = new HashMap<FlowGraphNode, Set<Exp>>();
         this.used = new HashMap<FlowGraphNode, Set<Exp>>();
         this.globalFlowSet = new HashSet<Exp>();
+    }
+
+    public List<ICode> getICode(){
+        if(this.globalFlowGraph == null){
+            return this.intermediateCode;
+        } else {
+            List<ICode> result = new LinkedList<ICode>();
+            for(BlockNode block : this.globalFlowGraph.getBlocks()){
+                result.addAll(block.getICode());
+            }
+            return result;
+        }
     }
 
     private List<Integer> findFirsts(){
@@ -327,6 +340,9 @@ public class MyOptimizer {
 
             this.usedAnal = new UsedExpressionAnalysis(this.globalFlowGraph, this.used, this.latest);
             this.usedAnal.run();
+
+            this.propAnal = new ConstantPropogationAnalysis(this.globalFlowGraph);
+            this.propAnal.run();
         }
     }
 
@@ -377,6 +393,73 @@ public class MyOptimizer {
             resultList.addAll(icodeList);
 
             block.getBlock().setICode(resultList);
+        }
+    }
+
+    public void performConstantPropogation(){
+        for(BlockNode block : this.globalFlowGraph.getBlocks()){
+            Set<Tuple<String, Object>> values = this.propAnal.getInputSet(block);
+            List<ICode> icodeList = block.getICode();
+            for(int i = 0; i < icodeList.size(); i++){
+                ICode icode = icodeList.get(i);
+                if(icode instanceof LetVar){
+                    LetVar varICode = (LetVar)icode;
+                    Object result = Utils.getValueFromSet(values, varICode.var.ident);
+                    if(result != null){
+                        if(result instanceof Boolean){
+                            icodeList.set(i, new LetBool(varICode.place, new BoolExp((boolean)result)));
+                        } else if(result instanceof Integer){
+                            icodeList.set(i, new LetInt(varICode.place, new IntExp((int)result)));
+                        } else if(result instanceof Double){
+                            icodeList.set(i, new LetReal(varICode.place, new RealExp((int)result)));
+                        } else if(result instanceof String){
+                            icodeList.set(i, new LetString(varICode.place, new StrExp((String)result)));
+                        }
+                    }
+                } else if(icode instanceof LetUn){
+                    LetUn unICode = (LetUn)icode;
+                    Object result = Utils.getValueFromSet(values, unICode.unExp.right.toString());
+                    if(result != null){
+                        if(result instanceof Boolean){
+                            unICode.unExp.right = new BoolExp((boolean)result);
+                        } else if(result instanceof Integer){
+                            unICode.unExp.right = new IntExp((int)result);
+                        } else if(result instanceof Double){
+                            unICode.unExp.right = new RealExp((double)result);
+                        } else if(result instanceof String){
+                            unICode.unExp.right = new StrExp((String)result);
+                        }
+                    }
+                } else if(icode instanceof LetBin){
+                    LetBin binICode = (LetBin)icode;
+                    
+                    Object result = Utils.getValueFromSet(values, binICode.exp.left.toString());
+                    if(result != null){
+                        if(result instanceof Boolean){
+                            binICode.exp.left = new BoolExp((boolean)result);
+                        } else if(result instanceof Integer){
+                            binICode.exp.left = new IntExp((int)result);
+                        } else if(result instanceof Double){
+                            binICode.exp.left = new RealExp((double)result);
+                        } else if(result instanceof String){
+                            binICode.exp.left = new StrExp((String)result);
+                        }
+                    }
+
+                    Object result2 = Utils.getValueFromSet(values, binICode.exp.right.toString());
+                    if(result2 != null){
+                        if(result2 instanceof Boolean){
+                            binICode.exp.right = new BoolExp((boolean)result);
+                        } else if(result2 instanceof Integer){
+                            binICode.exp.right = new IntExp((int)result);
+                        } else if(result2 instanceof Double){
+                            binICode.exp.right = new RealExp((double)result);
+                        } else if(result2 instanceof String){
+                            binICode.exp.right = new StrExp((String)result);
+                        }
+                    }
+                }
+            }
         }
     }
 }

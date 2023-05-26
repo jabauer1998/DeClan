@@ -5,7 +5,7 @@ public class BinExp implements Exp {
     public Exp left;
     public Operator op;
 
-    public BinExp(Exp right, Operator op, Exp left){
+    public BinExp(Exp left, Operator op, Exp right){
         this.right = right;
         this.left = left;
         this.op = op;

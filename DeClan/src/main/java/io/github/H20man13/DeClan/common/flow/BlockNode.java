@@ -13,8 +13,14 @@ import io.github.H20man13.DeClan.common.dag.DagGraph;
 import io.github.H20man13.DeClan.common.dag.DagNode;
 import io.github.H20man13.DeClan.common.dag.DagNodeFactory;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
+import io.github.H20man13.DeClan.common.dag.DagValueNode;
+import io.github.H20man13.DeClan.common.dag.DagVariableNode;
 import io.github.H20man13.DeClan.common.icode.BasicBlock;
+import io.github.H20man13.DeClan.common.icode.Call;
+import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.LetBin;
 import io.github.H20man13.DeClan.common.icode.LetBool;
 import io.github.H20man13.DeClan.common.icode.LetInt;
@@ -22,8 +28,13 @@ import io.github.H20man13.DeClan.common.icode.LetReal;
 import io.github.H20man13.DeClan.common.icode.LetString;
 import io.github.H20man13.DeClan.common.icode.LetUn;
 import io.github.H20man13.DeClan.common.icode.LetVar;
+import io.github.H20man13.DeClan.common.icode.Proc;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.LiveInfo;
+import io.github.H20man13.DeClan.common.util.Utils;
 
 public class BlockNode implements FlowGraphNode {
     protected BasicBlock block;
@@ -44,6 +55,114 @@ public class BlockNode implements FlowGraphNode {
         this.buildDag();
     }
 
+    private void buildCodeFromDag(){
+        List<ICode> result = new LinkedList<ICode>();
+        List<ICode> initialList = this.getICode();
+
+        if(initialList.size() > 0){
+            ICode firstElem = initialList.get(0);
+            if(firstElem instanceof Label){
+                result.add(firstElem);
+            }
+        }
+        for(DagNode node : this.dag.getDagNodes()){
+
+            List<String> isAlive = new LinkedList<String>();
+            for(String identifier: node.getIdentifiers()){
+                if(this.lifeInformation.entryExists(identifier)){
+                    LiveInfo info = this.lifeInformation.getEntry(identifier);
+                    if(info.isAlive){
+                        isAlive.add(identifier);
+                    }
+                }
+            }
+
+            String identifier = null;
+            if(isAlive.size() > 0){
+                identifier = isAlive.remove(0);
+            } else {
+                identifier = node.getIdentifiers().get(0);
+            }
+
+            if(node instanceof DagOperationNode){
+                DagOperationNode node2 = (DagOperationNode)node;
+
+                if(node2.getChildren().size() == 2){
+                    //Its a Binary Operation
+                    DagOperationNode.Op op = node2.getOperator();
+                    BinExp.Operator op2 = Utils.getBinOp(op);
+
+                    DagNode child1 = node2.getChildren().get(0);
+                    DagNode child2 = node2.getChildren().get(1);
+
+                    String identifier1 = Utils.getIdentifier(child1, lifeInformation);
+                    String identifier2 = Utils.getIdentifier(child2, lifeInformation);
+
+                    IdentExp exp1 = new IdentExp(identifier1);
+                    IdentExp exp2 = new IdentExp(identifier2);
+
+                    BinExp binExp = new BinExp(exp1, op2, exp2);
+
+                    result.add(new LetBin(identifier, binExp));
+                } else if(node2.getChildren().size() == 1) {
+                    //Its a Unary Operation
+                    DagOperationNode.Op op = node2.getOperator();
+                    UnExp.Operator op2 = Utils.getUnOp(op);
+
+                    DagNode child1 = node2.getChildren().get(0);
+
+                    String identifier1 = Utils.getIdentifier(child1, lifeInformation);
+
+                    IdentExp exp1 = new IdentExp(identifier1);
+
+                    UnExp unExp = new UnExp(op2, exp1);
+
+                    result.add(new LetUn(identifier, unExp));
+                }
+            } else if(node instanceof DagValueNode){
+                DagValueNode valNode = (DagValueNode)node;
+
+                DagValueNode.ValueType type = valNode.getType();
+                Object value = valNode.getValue();
+
+                if(type == DagValueNode.ValueType.STRING){
+                    result.add(new LetString(identifier, (String)value));
+                } else if(type == DagValueNode.ValueType.INT){
+                    result.add(new LetInt(identifier, (int)value));
+                } else if(type == DagValueNode.ValueType.REAL){
+                    result.add(new LetReal(identifier, (double)value));
+                } else {
+                    result.add(new LetBool(identifier, (boolean)value));
+                }
+                
+            } else if(node instanceof DagVariableNode){
+                DagVariableNode varNode = (DagVariableNode)node;
+
+                DagNode child = varNode.getChild();
+                String identifier1 = Utils.getIdentifier(child, lifeInformation);
+
+                result.add(new LetVar(identifier, identifier1));
+            }
+
+            for(String ident : isAlive){
+                result.add(new LetVar(ident, identifier));
+            }
+        }
+
+        if(initialList.size() > 0){
+            int size = initialList.size();
+            ICode lastElem = initialList.get(size - 1);
+            if(lastElem instanceof Call 
+               || lastElem instanceof If
+               || lastElem instanceof Goto
+               || lastElem instanceof Proc){
+                result.add(lastElem);
+            }
+        }
+        
+        block.setICode(result);
+    }
+
     private void updateLivelinessInformation(){
         List<ICode> icode = this.block.getIcode();
         for(int i = icode.size() - 1; i >= 0; i--){
@@ -57,10 +176,10 @@ public class BlockNode implements FlowGraphNode {
                     this.lifeInformation.addEntry(place, new LiveInfo(false, -1));
                 }
 
-                String left = binInstr.left;
+                String left = binInstr.exp.left.toString();
                 this.lifeInformation.addEntry(left, new LiveInfo(true, i));
 
-                String right = binInstr.right;
+                String right = binInstr.exp.right.toString();
                 this.lifeInformation.addEntry(right, new LiveInfo(true, i));
             } else if(threeAddressInstr instanceof LetUn){
                 LetUn unInstruction = (LetUn)threeAddressInstr;
@@ -70,7 +189,7 @@ public class BlockNode implements FlowGraphNode {
                     this.lifeInformation.addEntry(place, new LiveInfo(false, -1));
                 }
 
-                String right = unInstruction.value;
+                String right = unInstruction.unExp.right.toString();
                 this.lifeInformation.addEntry(place, new LiveInfo(true, i));
             } else if(threeAddressInstr instanceof LetBool){
                 LetBool boolInstr = (LetBool)threeAddressInstr;
@@ -101,22 +220,22 @@ public class BlockNode implements FlowGraphNode {
         for(ICode icode : icodes){
             if(icode instanceof LetBin){
                 LetBin binICode = (LetBin)icode;
-                DagNode left = this.dag.searchForLatestChild(binICode.left);
-                DagNode right = this.dag.searchForLatestChild(binICode.right);
+                DagNode left = this.dag.searchForLatestChild(binICode.exp.left.toString());
+                DagNode right = this.dag.searchForLatestChild(binICode.exp.right.toString());
 
                 if(left == null){
-                    left = factory.createNullNode(binICode.left);
+                    left = factory.createNullNode(binICode.exp.left.toString());
                     this.dag.addDagNode(left);
                 }
 
                 if(right == null){
-                    right = factory.createNullNode(binICode.right);
+                    right = factory.createNullNode(binICode.exp.right.toString());
                     this.dag.addDagNode(right);
                 }
 
 
                 DagNode newNode = null;
-                switch(binICode.op){
+                switch(binICode.exp.op){
                     case ADD: newNode = factory.createAdditionNode(binICode.place, left, right);
                     case SUB: newNode = factory.createSubtractionNode(binICode.place, left, right);
                     case MUL: newNode = factory.createMultiplicationNode(binICode.place, left, right);
@@ -141,16 +260,15 @@ public class BlockNode implements FlowGraphNode {
             } else if(icode instanceof LetUn){
                 LetUn unICode = (LetUn)icode;
 
-                DagNode right = this.dag.searchForLatestChild(unICode.value);
+                DagNode right = this.dag.searchForLatestChild(unICode.unExp.right.toString());
 
                 if(right == null){
-                    right = factory.createNullNode(unICode.value);
+                    right = factory.createNullNode(unICode.unExp.right.toString());
                     this.dag.addDagNode(right);
                 }
 
                 DagNode newNode = null;
-
-                switch(unICode.op){
+                switch(unICode.unExp.op){
                     case BNOT: newNode = factory.createNotNode(unICode.place, right);
                     case NEG: newNode = factory.createNegationNode(unICode.place, right);
                 }
@@ -164,10 +282,10 @@ public class BlockNode implements FlowGraphNode {
             } else if(icode instanceof LetVar){
                 LetVar varICode = (LetVar)icode;
 
-                DagNode right = this.dag.searchForLatestChild(varICode.var);
+                DagNode right = this.dag.searchForLatestChild(varICode.var.toString());
 
                 if(right == null){
-                    right = factory.createNullNode(varICode.var);
+                    right = factory.createNullNode(varICode.var.toString());
                     this.dag.addDagNode(right);
                 }
 
@@ -182,23 +300,24 @@ public class BlockNode implements FlowGraphNode {
             } else if(icode instanceof LetBool){
                 LetBool boolICode = (LetBool)icode;
 
-                DagNode newNode = factory.createBooleanNode(boolICode.place, boolICode.value);
+                DagNode newNode = factory.createBooleanNode(boolICode.place, boolICode.value.trueFalse);
 
                 this.dag.addDagNode(newNode);
             } else if(icode instanceof LetInt){
                 LetInt intICode = (LetInt)icode;
-                DagNode newNode = factory.createIntNode(intICode.place, intICode.value);
+                DagNode newNode = factory.createIntNode(intICode.place, intICode.value.value);
                 this.dag.addDagNode(newNode);
             } else if(icode instanceof LetReal){
                 LetReal realICode = (LetReal)icode;
-                DagNode newNode = factory.createRealNode(realICode.place, realICode.value);
+                DagNode newNode = factory.createRealNode(realICode.place, realICode.value.realValue);
                 this.dag.addDagNode(newNode);
             } else if(icode instanceof LetString){
                 LetString strICode = (LetString)icode;
-                DagNode newNode = factory.createStringNode(strICode.place, strICode.value);
+                DagNode newNode = factory.createStringNode(strICode.place, strICode.value.value);
                 this.dag.addDagNode(newNode);
             }
         }
+        buildCodeFromDag();
     }
 
     public BasicBlock getBlock(){
@@ -225,6 +344,7 @@ public class BlockNode implements FlowGraphNode {
                 this.dag.deleteDagNode(root);
             }
         }
+        buildCodeFromDag();
     }
 
     @Override

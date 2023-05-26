@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class DagOperationNode implements DagNode {
     public enum Op{
@@ -14,7 +15,7 @@ public class DagOperationNode implements DagNode {
 
     private List<DagNode> children;
     private List<DagNode> ancestors;
-    private HashSet<String> identifiers;
+    private List<String> identifiers;
     private boolean nodeIsKilled;
     private Op operation;
 
@@ -25,11 +26,15 @@ public class DagOperationNode implements DagNode {
         for(DagNode child : children){
             child.addAncestor(this);
         }
-        this.identifiers = new HashSet<String>();
+        this.identifiers = new LinkedList<String>();
         this.identifiers.add(identifier);
         this.nodeIsKilled = false;
         this.operation = operation;
         this.ancestors = new ArrayList<>();
+    }
+
+    public List<String> getIdentifiers(){
+        return identifiers;
     }
 
     public void addIdentifier(String identifier){
@@ -50,7 +55,7 @@ public class DagOperationNode implements DagNode {
     }
 
     @Override
-    public boolean equals(DagNode dagNode) {
+    public boolean equals(Object dagNode) {
         if(dagNode instanceof DagOperationNode){
             DagOperationNode opNode = (DagOperationNode)dagNode;
             boolean operationsAreEqual = opNode.operation == this.operation;
@@ -99,5 +104,9 @@ public class DagOperationNode implements DagNode {
     @Override
     public List<DagNode> getChildren() {
         return this.children;
+    }
+
+    public Op getOperator(){
+        return this.operation;
     }
 }

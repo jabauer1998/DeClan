@@ -19,6 +19,6 @@ public class IdentExp implements Exp{
 
     @Override
     public String toString(){
-        return '\"' + ident.toString() + '\"';
+        return ident;
     }
 }

@@ -7,6 +7,7 @@ public class If implements ICode {
 	public String ifTrue, ifFalse;
 
 	public If(BinExp exp, String ifTrue, String ifFalse) {
+		this.exp = exp;
 		this.ifTrue = ifTrue;
 		this.ifFalse = ifFalse;
 	}
