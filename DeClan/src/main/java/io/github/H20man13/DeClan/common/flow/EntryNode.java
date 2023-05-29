@@ -22,19 +22,6 @@ public class EntryNode implements FlowGraphNode {
     }
 
     @Override
-    public Set<Set<FlowGraphNode>> identifyLoops(Set<FlowGraphNode> visited) {
-        return entry.identifyLoops(visited);
-    }
-
-    @Override
-    public boolean containsPredecessorOutsideLoop(Set<FlowGraphNode> loop) {
-        return false;
-    }
-
-    @Override
-    public void generateOptimizedIr() {}
-
-    @Override
     public List<ICode> getICode() {
         return new LinkedList<ICode>();
     }

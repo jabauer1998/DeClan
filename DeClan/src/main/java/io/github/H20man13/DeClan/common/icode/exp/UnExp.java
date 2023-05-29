@@ -30,4 +30,14 @@ public class UnExp implements Exp {
     public String toString(){
         return "" + op + " " + right.toString();
     }
+
+    @Override
+    public boolean isBranch() {
+        return false;
+    }
+
+    @Override
+    public boolean isConstant() {
+        return false;
+    }
 }

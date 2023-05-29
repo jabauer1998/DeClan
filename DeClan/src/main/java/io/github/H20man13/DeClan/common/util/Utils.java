@@ -13,14 +13,8 @@ import io.github.H20man13.DeClan.common.dag.DagNullNode;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.dag.DagValueNode;
 import io.github.H20man13.DeClan.common.dag.DagVariableNode;
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
-import io.github.H20man13.DeClan.common.icode.LetBin;
-import io.github.H20man13.DeClan.common.icode.LetBool;
-import io.github.H20man13.DeClan.common.icode.LetInt;
-import io.github.H20man13.DeClan.common.icode.LetReal;
-import io.github.H20man13.DeClan.common.icode.LetString;
-import io.github.H20man13.DeClan.common.icode.LetUn;
-import io.github.H20man13.DeClan.common.icode.LetVar;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -56,33 +50,6 @@ public class Utils {
         return false;
     }
 
-    public static String getPlace(ICode icode){
-        if(icode instanceof LetBool){
-            LetBool boolICode = (LetBool)icode;
-            return boolICode.place;
-        } else if(icode instanceof LetInt){
-            LetInt intICode = (LetInt)icode;
-            return intICode.place;
-        } else if(icode instanceof LetReal){
-            LetReal realICode = (LetReal)icode;
-            return realICode.place;
-        } else if(icode instanceof LetString){
-            LetString strICode = (LetString)icode;
-            return strICode.place;
-        } else if(icode instanceof LetVar){
-            LetVar varICode = (LetVar)icode;
-            return varICode.place;
-        } else if(icode instanceof LetUn){
-            LetUn unICode = (LetUn)icode;
-            return unICode.place;
-        } else if(icode instanceof LetBin){
-            LetBin binICode = (LetBin)icode;
-            return binICode.place;
-        } else {
-            return null;
-        }
-    }
-
     public static BinExp.Operator toBinOp(IrTokenType type){
         switch(type){
             case NE: return BinExp.Operator.NE;
@@ -99,42 +66,6 @@ public class Utils {
             case BOR: return BinExp.Operator.BOR;
             case BAND: return BinExp.Operator.BAND;
             default: return null;
-        }
-    }
-
-    public static ICode getICodeFromExpression(String register, Exp latestInstructionOutput) {
-        if(latestInstructionOutput instanceof BoolExp){
-            return new LetBool(register, (BoolExp)latestInstructionOutput);
-        } else if(latestInstructionOutput instanceof IntExp){
-            return new LetInt(register, (IntExp)latestInstructionOutput);
-        } else if(latestInstructionOutput instanceof RealExp){
-            return new LetReal(register, (RealExp)latestInstructionOutput);
-        } else if(latestInstructionOutput instanceof StrExp){
-            return new LetString(register, (StrExp)latestInstructionOutput);
-        } else if(latestInstructionOutput instanceof UnExp){
-            return new LetUn(register, (UnExp)latestInstructionOutput);
-        } else if(latestInstructionOutput instanceof BinExp){
-            return new LetBin(register, (BinExp)latestInstructionOutput);
-        } else {
-            return null;
-        }
-    }
-
-    public static Exp getExpressionFromICode(ICode elem) {
-        if(elem instanceof LetBool){
-            return ((LetBool)elem).value;
-        } else if(elem instanceof LetString){
-            return ((LetString)elem).value;
-        } else if(elem instanceof LetInt){
-            return ((LetInt)elem).value;
-        } else if(elem instanceof LetReal){
-            return ((LetReal)elem).value;
-        } else if(elem instanceof LetBin){
-            return ((LetBin)elem).exp;
-        } else if(elem instanceof LetUn){
-            return ((LetUn)elem).unExp;
-        } else {
-            return null;
         }
     }
 
@@ -186,6 +117,20 @@ public class Utils {
 
         if(identifiers.size() > 0){
             return identifiers.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    public static Exp valueToExp(Object result) {
+        if(result instanceof Boolean){
+            return new BoolExp((boolean)result);
+        } else if(result instanceof Integer){
+            return new IntExp((int)result);
+        } else if(result instanceof String){
+            return new StrExp((String)result);
+        } else if(result instanceof Double){
+            return new RealExp((double)result);
         } else {
             return null;
         }

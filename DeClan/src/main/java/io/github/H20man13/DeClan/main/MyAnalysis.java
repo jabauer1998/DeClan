@@ -2,7 +2,7 @@ package io.github.H20man13.DeClan.main;
 
 import java.util.List;
 
-import io.github.H20man13.DeClan.common.icode.BasicBlock;
+import io.github.H20man13.DeClan.common.BasicBlock;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;

@@ -26,14 +26,6 @@ public class FlowGraph {
         this.entryNode.removeDeadCode();
     }
 
-    public Set<Set<FlowGraphNode>> identifyLoops(){
-        return this.entryNode.identifyLoops(new HashSet<FlowGraphNode>());
-    }
-
-    public void generateOptimizedIr(){
-        this.entryNode.generateOptimizedIr();
-    }
-
     public EntryNode getEntry(){
         return entryNode;
     }
@@ -44,17 +36,5 @@ public class FlowGraph {
 
     public List<BlockNode> getBlocks(){
         return blockNodes;
-    }
-
-    public void replaceBlockNode(FlowGraphNode nodeToMakeLoopEntry, LoopEntryNode loopEntryNode) {
-        for(int i = 0; i < this.blockNodes.size(); i++){
-            BlockNode block = this.blockNodes.get(i);
-            if(block.equals(nodeToMakeLoopEntry)){
-                this.blockNodes.set(i, loopEntryNode);
-                return;
-            }
-        }
-
-        this.blockNodes.add(loopEntryNode);
     }
 }

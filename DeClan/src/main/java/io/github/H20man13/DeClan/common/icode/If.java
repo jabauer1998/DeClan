@@ -16,4 +16,14 @@ public class If implements ICode {
 	public String toString() {
 		return "IF " + exp.toString() + " THEN " + ifTrue + " ELSE " + ifFalse;
 	}
+
+	@Override
+	public boolean isConstant() {
+		return false;
+	}
+
+	@Override
+	public boolean isBranch() {
+		return true;
+	}
 }

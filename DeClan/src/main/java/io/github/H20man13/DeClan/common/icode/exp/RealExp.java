@@ -21,4 +21,14 @@ public class RealExp implements Exp {
     public String toString(){
         return "" + realValue;
     }
+
+    @Override
+    public boolean isBranch() {
+        return false;
+    }
+
+    @Override
+    public boolean isConstant() {
+        return true;
+    }
 }

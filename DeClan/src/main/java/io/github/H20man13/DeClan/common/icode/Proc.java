@@ -27,4 +27,14 @@ public class Proc implements ICode {
 		sb.append(" )");
 		return sb.toString();
 	}
+
+	@Override
+	public boolean isConstant() {
+		return false;
+	}
+
+	@Override
+	public boolean isBranch() {
+		return true;
+	}
 }

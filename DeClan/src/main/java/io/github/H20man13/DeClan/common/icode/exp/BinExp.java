@@ -44,4 +44,14 @@ public class BinExp implements Exp {
     public String toString(){
         return left.toString() + " " + op + " " + right.toString();
     }
+
+    @Override
+    public boolean isBranch() {
+        return false;
+    }
+
+    @Override
+    public boolean isConstant() {
+        return false;
+    }
 }

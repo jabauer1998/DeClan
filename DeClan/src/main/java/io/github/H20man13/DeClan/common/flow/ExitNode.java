@@ -19,21 +19,6 @@ public class ExitNode implements FlowGraphNode{
     public void removeDeadCode() {}
 
     @Override
-    public Set<Set<FlowGraphNode>> identifyLoops(Set<FlowGraphNode> ids) {
-        return new HashSet<>();
-    }
-
-    @Override
-    public boolean containsPredecessorOutsideLoop(Set<FlowGraphNode> loop) {
-        return false;
-    }
-
-    @Override
-    public void generateOptimizedIr() {
-        return;
-    }
-
-    @Override
     public List<ICode> getICode() {
         return new LinkedList<ICode>();
     }

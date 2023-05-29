@@ -1,23 +1,14 @@
 package io.github.H20man13.DeClan.main;
 
-import io.github.H20man13.DeClan.common.icode.LetVar;
-import io.github.H20man13.DeClan.common.icode.LetInt;
-import io.github.H20man13.DeClan.common.icode.LetReal;
-import io.github.H20man13.DeClan.common.icode.LetUn;
-import io.github.H20man13.DeClan.common.icode.LetBin;
-import io.github.H20man13.DeClan.common.icode.LetString;
-import io.github.H20man13.DeClan.common.icode.LetBool;
 import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.End;
-import io.github.H20man13.DeClan.common.icode.LetString;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.RegisterGenerator;
-import io.github.H20man13.DeClan.common.icode.Call;
 
 import io.github.H20man13.DeClan.common.symboltable.VariableEntry;
 import io.github.H20man13.DeClan.common.symboltable.ProcedureEntry;

@@ -3,24 +3,21 @@ package io.github.H20man13.DeClan.main;
 import java.util.List;
 
 import edu.depauw.declan.common.ErrorLog;
-import io.github.H20man13.DeClan.common.icode.Call;
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Label;
-import io.github.H20man13.DeClan.common.icode.LetBin;
-import io.github.H20man13.DeClan.common.icode.LetBool;
-import io.github.H20man13.DeClan.common.icode.LetInt;
-import io.github.H20man13.DeClan.common.icode.LetReal;
-import io.github.H20man13.DeClan.common.icode.LetString;
-import io.github.H20man13.DeClan.common.icode.LetUn;
-import io.github.H20man13.DeClan.common.icode.LetVar;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
+import io.github.H20man13.DeClan.common.icode.exp.CallExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.IntExp;
+import io.github.H20man13.DeClan.common.icode.exp.RealExp;
+import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp.Operator;
 
@@ -35,24 +32,24 @@ public class MyIrFactory {
         return new End();
     }
 
-    public LetVar produceVariableAssignment(String place, String variableName){
-        return new LetVar(place, variableName);
+    public Assign produceVariableAssignment(String place, String variableName){
+        return new Assign(place, new StrExp(variableName));
     }
 
-    public LetBool produceBooleanAssignment(String place, boolean trueOrFalse){
-        return new LetBool(place, trueOrFalse);
+    public Assign produceBooleanAssignment(String place, boolean trueOrFalse){
+        return new Assign(place, new BoolExp(trueOrFalse));
     }
 
-    public LetReal produceRealAssignment(String place, double value){
-        return new LetReal(place, value);
+    public Assign produceRealAssignment(String place, double value){
+        return new Assign(place, new RealExp(value));
     }
 
-    public LetInt produceIntAssignment(String place, int value){
-        return new LetInt(place, value);
+    public Assign produceIntAssignment(String place, int value){
+        return new Assign(place, new IntExp(value));
     }
 
-    public LetString produceStringAssignment(String place, String value){
-        return new LetString(place, value);
+    public Assign produceStringAssignment(String place, String value){
+        return new Assign(place, new StrExp(value));
     }
 
     public Return produceReturnStatement(){
@@ -81,15 +78,15 @@ public class MyIrFactory {
         return new Label(name);
     }
 
-    public LetUn produceUnaryOperation(String place, UnExp value){
-        return new LetUn(place, value);
+    public Assign produceUnaryOperation(String place, UnExp value){
+        return new Assign(place, value);
     }
 
-    public LetBin produceBinaryOperation(String place, BinExp value){
-        return new LetBin(place, value);
+    public Assign produceBinaryOperation(String place, BinExp value){
+        return new Assign(place, value);
     }
 
-    public Call produceProcedureCall(String place, String procedureName, List<String> arguments){
-        return new Call(place, procedureName, arguments);
+    public Assign produceProcedureCall(String place, String procedureName, List<String> arguments){
+        return new Assign(place, new CallExp(procedureName, arguments));
     }
 }

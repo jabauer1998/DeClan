@@ -21,5 +21,15 @@ public class BoolExp implements Exp {
     public String toString(){
         return (trueFalse) ? "TRUE" : "FALSE";
     }
+
+    @Override
+    public boolean isBranch() {
+        return false;
+    }
+
+    @Override
+    public boolean isConstant() {
+        return true;
+    }
     
 }

@@ -5,10 +5,8 @@ import java.util.List;
 
 import edu.depauw.declan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.RegisterGenerator;
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
-import io.github.H20man13.DeClan.common.icode.LetBin;
-import io.github.H20man13.DeClan.common.icode.LetBool;
-import io.github.H20man13.DeClan.common.icode.LetUn;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
@@ -60,7 +58,7 @@ public class MyIrBuilder {
 
     public String buildBoolAssignment(String value){
         String place = gen.genNextRegister();
-        LetBool result = null;
+        Assign result = null;
         if(value.equals("TRUE")){
             result = factory.produceBooleanAssignment(place, true);
         } else {

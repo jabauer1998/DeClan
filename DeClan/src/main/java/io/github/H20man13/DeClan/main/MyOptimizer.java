@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.BasicBlock;
 import io.github.H20man13.DeClan.common.RegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.AnticipatedExpressionsAnalysis;
@@ -19,29 +20,13 @@ import io.github.H20man13.DeClan.common.flow.EntryNode;
 import io.github.H20man13.DeClan.common.flow.ExitNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
-import io.github.H20man13.DeClan.common.flow.LoopEntryNode;
-import io.github.H20man13.DeClan.common.icode.BasicBlock;
-import io.github.H20man13.DeClan.common.icode.Call;
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Label;
-import io.github.H20man13.DeClan.common.icode.LetBin;
-import io.github.H20man13.DeClan.common.icode.LetBool;
-import io.github.H20man13.DeClan.common.icode.LetInt;
-import io.github.H20man13.DeClan.common.icode.LetReal;
-import io.github.H20man13.DeClan.common.icode.LetString;
-import io.github.H20man13.DeClan.common.icode.LetUn;
-import io.github.H20man13.DeClan.common.icode.LetVar;
-import io.github.H20man13.DeClan.common.icode.Proc;
-import io.github.H20man13.DeClan.common.icode.exp.BinExp;
-import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.H20man13.DeClan.common.icode.exp.IntExp;
-import io.github.H20man13.DeClan.common.icode.exp.RealExp;
-import io.github.H20man13.DeClan.common.icode.exp.StrExp;
-import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.util.Utils;
 
@@ -73,6 +58,76 @@ public class MyOptimizer {
         this.earliest = new HashMap<FlowGraphNode, Set<Exp>>();
         this.used = new HashMap<FlowGraphNode, Set<Exp>>();
         this.globalFlowSet = new HashSet<Exp>();
+
+        List<Integer> firsts = findFirsts();
+        List<BasicBlock> basicBlocks = new LinkedList<BasicBlock>();
+        for(int leaderIndex = 0; leaderIndex < firsts.size(); leaderIndex++){
+            int endIndex;
+            if(leaderIndex + 1 < firsts.size()){
+                endIndex = firsts.get(leaderIndex + 1) - 1;
+            } else {
+                endIndex = this.intermediateCode.size() - 1;
+            }
+
+            List<ICode> basicBlockList = new LinkedList<ICode>();
+            for(int i = leaderIndex; i <= endIndex; i++){
+                basicBlockList.add(intermediateCode.get(i));
+            }
+
+            basicBlocks.add(new BasicBlock(basicBlockList));
+        }
+
+        HashMap<String, BlockNode> labeledNodes = new HashMap<String, BlockNode>();
+        List<BlockNode> dagNodes = new LinkedList<BlockNode>();
+
+        for(int i = 0; i < intermediateCode.size(); i++){
+            ICode icodeAtIndex = intermediateCode.get(i);
+            if(icodeAtIndex instanceof BasicBlock){
+                BasicBlock blockAtIndex = (BasicBlock)icodeAtIndex;
+                BlockNode blockNode = new BlockNode(blockAtIndex);
+                
+                if(MyAnalysis.beginningOfBlockIsLabel(blockAtIndex)){
+                    Label firstLabel = (Label)blockAtIndex.getIcode().get(0);
+                    String labelName = firstLabel.label;
+                    labeledNodes.put(labelName, blockNode);
+                }
+
+                dagNodes.add(blockNode);
+            }
+        }
+
+        for(int i = 0; i < dagNodes.size(); i++){
+            BlockNode node = dagNodes.get(i);
+            BasicBlock block = node.getBlock();
+            if(MyAnalysis.endOfBlockIsJump(block)){
+                ICode lastCode = block.getIcode().get(block.getIcode().size() - 1);
+                if(lastCode instanceof If){
+                    If lastIf = (If)lastCode;
+                    BlockNode trueNode = labeledNodes.get(lastIf.ifTrue);
+                    node.addSuccessor(trueNode);
+                    trueNode.addPredecessor(node);
+                    BlockNode falseNode = labeledNodes.get(lastIf.ifFalse);
+                    node.addSuccessor(falseNode);
+                    falseNode.addPredecessor(node);
+                } else if(lastCode instanceof Goto){
+                    Goto lastGoto = (Goto)lastCode;
+                    BlockNode labeledNode = labeledNodes.get(lastGoto.label);
+                    node.addSuccessor(labeledNode);
+                    labeledNode.addPredecessor(node);
+                }
+            } else if(i + 1 < dagNodes.size()){
+                BlockNode nextNode = dagNodes.get(i + 1);
+                node.addSuccessor(nextNode);
+                nextNode.addPredecessor(node);
+            }
+        }
+
+        EntryNode entry = new EntryNode(dagNodes.get(0));
+        ExitNode exit = new ExitNode(dagNodes.get(dagNodes.size() - 1));
+
+        FlowGraph flowGraph = new FlowGraph(entry, dagNodes, exit);
+
+        this.globalFlowGraph = flowGraph;
     }
 
     public List<ICode> getICode(){
@@ -97,95 +152,13 @@ public class MyOptimizer {
             } else if(intermediateInstruction instanceof Label){
                 //Target of Jumps are allways leaders
                 firsts.add(i);
-            } else if(i + 1 < intermediateCode.size() && 
-            (intermediateInstruction instanceof If || 
-            intermediateInstruction instanceof Goto ||
-            intermediateInstruction instanceof Proc ||
-            intermediateInstruction instanceof Call)){
+            } else if(i + 1 < intermediateCode.size() && intermediateInstruction.isBranch()){
                 //First instruction following an If/Goto/Proc/Call are leaders
                 firsts.add(i + 1);
             }
         }
 
         return firsts;
-    }
-
-    public void breakIntoBasicBlocks(){
-        List<Integer> firsts = findFirsts();
-        List<ICode> basicBlocks = new LinkedList<ICode>();
-        for(int leaderIndex = 0; leaderIndex < firsts.size(); leaderIndex++){
-            int endIndex;
-            if(leaderIndex + 1 < firsts.size()){
-                endIndex = firsts.get(leaderIndex + 1) - 1;
-            } else {
-                endIndex = this.intermediateCode.size() - 1;
-            }
-
-            List<ICode> basicBlockList = new LinkedList<ICode>();
-            for(int i = leaderIndex; i <= endIndex; i++){
-                basicBlockList.add(intermediateCode.get(i));
-            }
-
-            basicBlocks.add(new BasicBlock(basicBlockList));
-        }
-
-        this.intermediateCode = basicBlocks;
-    }
-
-    public void buildGlobalFlowGraph(){
-        if(this.intermediateCode.size() > 0){
-            HashMap<String, BlockNode> labeledNodes = new HashMap<String, BlockNode>();
-            List<BlockNode> dagNodes = new LinkedList<BlockNode>();
-
-            for(int i = 0; i < intermediateCode.size(); i++){
-                ICode icodeAtIndex = intermediateCode.get(i);
-                if(icodeAtIndex instanceof BasicBlock){
-                    BasicBlock blockAtIndex = (BasicBlock)icodeAtIndex;
-                    BlockNode blockNode = new BlockNode(blockAtIndex);
-                    
-                    if(MyAnalysis.beginningOfBlockIsLabel(blockAtIndex)){
-                        Label firstLabel = (Label)blockAtIndex.getIcode().get(0);
-                        String labelName = firstLabel.label;
-                        labeledNodes.put(labelName, blockNode);
-                    }
-
-                    dagNodes.add(blockNode);
-                }
-            }
-
-            for(int i = 0; i < dagNodes.size(); i++){
-                BlockNode node = dagNodes.get(i);
-                BasicBlock block = node.getBlock();
-                if(MyAnalysis.endOfBlockIsJump(block)){
-                    ICode lastCode = block.getIcode().get(block.getIcode().size() - 1);
-                    if(lastCode instanceof If){
-                        If lastIf = (If)lastCode;
-                        BlockNode trueNode = labeledNodes.get(lastIf.ifTrue);
-                        node.addSuccessor(trueNode);
-                        trueNode.addPredecessor(node);
-                        BlockNode falseNode = labeledNodes.get(lastIf.ifFalse);
-                        node.addSuccessor(falseNode);
-                        falseNode.addPredecessor(node);
-                    } else if(lastCode instanceof Goto){
-                        Goto lastGoto = (Goto)lastCode;
-                        BlockNode labeledNode = labeledNodes.get(lastGoto.label);
-                        node.addSuccessor(labeledNode);
-                        labeledNode.addPredecessor(node);
-                    }
-                } else if(i + 1 < dagNodes.size()){
-                    BlockNode nextNode = dagNodes.get(i + 1);
-                    node.addSuccessor(nextNode);
-                    nextNode.addPredecessor(node);
-                }
-            }
-
-            EntryNode entry = new EntryNode(dagNodes.get(0));
-            ExitNode exit = new ExitNode(dagNodes.get(dagNodes.size() - 1));
-
-            FlowGraph flowGraph = new FlowGraph(entry, dagNodes, exit);
-
-            this.globalFlowGraph = flowGraph;
-        }
     }
 
     public void removeDeadCode(){
@@ -200,40 +173,10 @@ public class MyOptimizer {
         if(this.globalFlowGraph != null){
             for(BlockNode block : this.globalFlowGraph.getBlocks()){
                 for(ICode icode : block.getICode()){
-                    if(icode instanceof LetVar){
-                        LetVar ident = (LetVar)icode;
-                        if(!Utils.setContainsExp(this.globalFlowSet, ident.var)){
-                            this.globalFlowSet.add(ident.var);
-                        }
-                    } else if(icode instanceof LetReal){
-                        LetReal realExp = (LetReal)icode;
-                        if(!Utils.setContainsExp(this.globalFlowSet, realExp.value)){
-                            this.globalFlowSet.add(realExp.value);
-                        }
-                    } else if(icode instanceof LetInt){
-                        LetInt intExp = (LetInt)icode;
-                        if(!Utils.setContainsExp(this.globalFlowSet, intExp.value)){
-                            this.globalFlowSet.add(intExp.value);
-                        }
-                    } else if(icode instanceof LetBool){
-                        LetBool boolExp = (LetBool)icode;
-                        if(!Utils.setContainsExp(this.globalFlowSet, boolExp.value)){
-                            this.globalFlowSet.add(boolExp.value);
-                        }
-                    } else if(icode instanceof LetString){
-                        LetString strExp = (LetString)icode;
-                        if(!Utils.setContainsExp(this.globalFlowSet, strExp.value)){
-                            this.globalFlowSet.add(strExp.value);
-                        }
-                    } else if(icode instanceof LetBin){
-                        LetBin binOp = (LetBin)icode;
-                        if(!Utils.setContainsExp(this.globalFlowSet, binOp.exp)){
-                            this.globalFlowSet.add(binOp.exp);
-                        }
-                    } else if(icode instanceof LetUn){
-                        LetUn unOp = (LetUn)icode;
-                        if(!Utils.setContainsExp(this.globalFlowSet, unOp.unExp)){
-                            this.globalFlowSet.add(unOp.unExp);
+                    if(icode instanceof Assign){
+                        Assign ident = (Assign)icode;
+                        if(!Utils.setContainsExp(this.globalFlowSet, ident.value)){
+                            this.globalFlowSet.add(ident.value);
                         }
                     }
                 }
@@ -256,40 +199,10 @@ public class MyOptimizer {
             for(BlockNode block : this.globalFlowGraph.getBlocks()){
                 Set<Exp> blockUsed = new HashSet<Exp>();
                 for(ICode icode : block.getICode()){
-                    if(icode instanceof LetBool){
-                        LetBool boolICode = (LetBool)icode;
-                        if(!Utils.setContainsExp(blockUsed, boolICode.value)){
-                            blockUsed.add(boolICode.value);
-                        }
-                    } else if(icode instanceof LetInt){
-                        LetInt intICode = (LetInt)icode;
-                        if(!Utils.setContainsExp(blockUsed, intICode.value)){
-                            blockUsed.add(intICode.value);
-                        }
-                    } else if(icode instanceof LetReal){
-                        LetReal realICode = (LetReal)icode;
-                        if(!Utils.setContainsExp(blockUsed, realICode.value)){
-                            blockUsed.add(realICode.value);
-                        }
-                    } else if(icode instanceof LetString){
-                        LetString strICode = (LetString)icode;
-                        if(!Utils.setContainsExp(blockUsed, strICode.value)){
-                            blockUsed.add(strICode.value);
-                        }
-                    } else if(icode instanceof LetVar){
-                        LetVar varICode = (LetVar)icode;
-                        if(!Utils.setContainsExp(blockUsed, varICode.var)){
-                            blockUsed.add(varICode.var);
-                        }
-                    } else if(icode instanceof LetUn){
-                        LetUn unICode = (LetUn)icode;
-                        if(!Utils.setContainsExp(blockUsed, unICode.unExp)){
-                            blockUsed.add(unICode.unExp);
-                        }
-                    } else if(icode instanceof LetBin){
-                        LetBin binICode = (LetBin)icode;
-                        if(!Utils.setContainsExp(blockUsed, binICode.exp)){
-                            blockUsed.add(binICode.exp);
+                    if(icode instanceof Assign){
+                        Assign utilICode = (Assign)icode;
+                        if(!Utils.setContainsExp(blockUsed, utilICode.value)){
+                            blockUsed.add(utilICode.value);
                         }
                     }
                 }
@@ -356,10 +269,7 @@ public class MyOptimizer {
             List<ICode> toPreAppendToBeginning = new LinkedList<ICode>();
             for(Exp latestInstructionOutput : latestInstructionUsedOutput){
                 String register = gen.genNextRegister();
-                ICode instruction = Utils.getICodeFromExpression(register, latestInstructionOutput);
-                if(instruction != null){
-                    toPreAppendToBeginning.add(instruction);
-                }
+                toPreAppendToBeginning.add(new Assign(register, latestInstructionOutput));
             }
 
             Set<Exp> notLatest = new HashSet<Exp>();
@@ -377,13 +287,16 @@ public class MyOptimizer {
             List<ICode> icodeList = block.getICode();
             for(int i = 0; i < icodeList.size(); i++){
                 ICode elem = icodeList.get(i);
-                String place = Utils.getPlace(elem);
-                Exp codeExp = Utils.getExpressionFromICode(elem);
-                if(codeExp != null && place != null){
-                    if(Utils.setContainsExp(useIntersectionNotLatestUnionUsedOut, codeExp)){
-                        String value = identifierMap.get(codeExp);
-                        LetVar var = new LetVar(place, value);
-                        icodeList.set(i, var);
+                if(elem instanceof Assign){
+                    Assign assignElem = (Assign)elem;
+                    String place = assignElem.place;
+                    Exp codeExp = assignElem.value;
+                    if(codeExp != null && place != null){
+                        if(Utils.setContainsExp(useIntersectionNotLatestUnionUsedOut, codeExp)){
+                            String value = identifierMap.get(codeExp);
+                            Assign var = new Assign(place, new IdentExp(value));
+                            icodeList.set(i, var);
+                        }
                     }
                 }
             }
@@ -402,61 +315,13 @@ public class MyOptimizer {
             List<ICode> icodeList = block.getICode();
             for(int i = 0; i < icodeList.size(); i++){
                 ICode icode = icodeList.get(i);
-                if(icode instanceof LetVar){
-                    LetVar varICode = (LetVar)icode;
-                    Object result = Utils.getValueFromSet(values, varICode.var.ident);
-                    if(result != null){
-                        if(result instanceof Boolean){
-                            icodeList.set(i, new LetBool(varICode.place, new BoolExp((boolean)result)));
-                        } else if(result instanceof Integer){
-                            icodeList.set(i, new LetInt(varICode.place, new IntExp((int)result)));
-                        } else if(result instanceof Double){
-                            icodeList.set(i, new LetReal(varICode.place, new RealExp((int)result)));
-                        } else if(result instanceof String){
-                            icodeList.set(i, new LetString(varICode.place, new StrExp((String)result)));
-                        }
-                    }
-                } else if(icode instanceof LetUn){
-                    LetUn unICode = (LetUn)icode;
-                    Object result = Utils.getValueFromSet(values, unICode.unExp.right.toString());
-                    if(result != null){
-                        if(result instanceof Boolean){
-                            unICode.unExp.right = new BoolExp((boolean)result);
-                        } else if(result instanceof Integer){
-                            unICode.unExp.right = new IntExp((int)result);
-                        } else if(result instanceof Double){
-                            unICode.unExp.right = new RealExp((double)result);
-                        } else if(result instanceof String){
-                            unICode.unExp.right = new StrExp((String)result);
-                        }
-                    }
-                } else if(icode instanceof LetBin){
-                    LetBin binICode = (LetBin)icode;
-                    
-                    Object result = Utils.getValueFromSet(values, binICode.exp.left.toString());
-                    if(result != null){
-                        if(result instanceof Boolean){
-                            binICode.exp.left = new BoolExp((boolean)result);
-                        } else if(result instanceof Integer){
-                            binICode.exp.left = new IntExp((int)result);
-                        } else if(result instanceof Double){
-                            binICode.exp.left = new RealExp((double)result);
-                        } else if(result instanceof String){
-                            binICode.exp.left = new StrExp((String)result);
-                        }
-                    }
-
-                    Object result2 = Utils.getValueFromSet(values, binICode.exp.right.toString());
-                    if(result2 != null){
-                        if(result2 instanceof Boolean){
-                            binICode.exp.right = new BoolExp((boolean)result);
-                        } else if(result2 instanceof Integer){
-                            binICode.exp.right = new IntExp((int)result);
-                        } else if(result2 instanceof Double){
-                            binICode.exp.right = new RealExp((double)result);
-                        } else if(result2 instanceof String){
-                            binICode.exp.right = new StrExp((String)result);
-                        }
+                if(icode instanceof Assign){
+                    Assign varICode = (Assign)icode;
+                    if(varICode.value instanceof IdentExp){
+                        IdentExp identVal = (IdentExp)varICode.value;
+                        Object result = Utils.getValueFromSet(values, identVal.ident);
+                        Exp resultExp = Utils.valueToExp(result);
+                        varICode.value = resultExp;
                     }
                 }
             }

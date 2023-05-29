@@ -5,4 +5,8 @@ public interface Exp {
     public boolean equals(Object exp);
     @Override
     public String toString();
+
+    public boolean isBranch();
+
+    public boolean isConstant();
 }

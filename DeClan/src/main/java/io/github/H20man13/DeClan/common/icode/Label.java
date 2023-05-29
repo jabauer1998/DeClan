@@ -11,4 +11,14 @@ public class Label implements ICode {
 	public String toString() {
 		return "LABEL " + label;
 	}
+
+	@Override
+	public boolean isConstant() {
+		return false;
+	}
+
+	@Override
+	public boolean isBranch() {
+		return false;
+	}
 }

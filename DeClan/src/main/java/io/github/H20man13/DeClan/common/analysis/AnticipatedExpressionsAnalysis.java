@@ -10,24 +10,17 @@ import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.ICode;
-import io.github.H20man13.DeClan.common.icode.LetBin;
-import io.github.H20man13.DeClan.common.icode.LetBool;
-import io.github.H20man13.DeClan.common.icode.LetInt;
-import io.github.H20man13.DeClan.common.icode.LetReal;
-import io.github.H20man13.DeClan.common.icode.LetString;
-import io.github.H20man13.DeClan.common.icode.LetUn;
-import io.github.H20man13.DeClan.common.icode.LetVar;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 
 public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
 
-    private Map<FlowGraphNode, Set<Exp>> genSets;
-    private Map<FlowGraphNode, Set<Exp>> killSets;
+    private Map<ICode, Set<Exp>> genSets;
+    private Map<ICode, Set<Exp>> killSets;
 
     public AnticipatedExpressionsAnalysis(FlowGraph flowGraph, Set<Exp> globalFlowSet) {
         super(flowGraph, Direction.BACKWARDS, Meet.INTERSECTION, globalFlowSet);
-        genSets = new HashMap<FlowGraphNode, Set<Exp>>();
-        killSets =  new HashMap<FlowGraphNode, Set<Exp>>();
+        genSets = new HashMap<ICode, Set<Exp>>();
+        killSets =  new HashMap<ICode, Set<Exp>>();
 
         for(BlockNode block : flowGraph.getBlocks()){
             Set<Exp> blockKill = new HashSet<Exp>();

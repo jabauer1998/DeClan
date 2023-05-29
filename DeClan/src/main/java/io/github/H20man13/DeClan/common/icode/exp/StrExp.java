@@ -21,5 +21,15 @@ public class StrExp implements Exp{
     public String toString(){
         return '\"' + value + '\"';
     }
+
+    @Override
+    public boolean isBranch() {
+        return false;
+    }
+
+    @Override
+    public boolean isConstant() {
+        return true;
+    }
     
 }

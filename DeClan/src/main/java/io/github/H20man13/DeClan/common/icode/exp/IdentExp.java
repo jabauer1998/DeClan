@@ -21,4 +21,14 @@ public class IdentExp implements Exp{
     public String toString(){
         return ident;
     }
+
+    @Override
+    public boolean isBranch() {
+        return false;
+    }
+
+    @Override
+    public boolean isConstant() {
+        return false;
+    }
 }

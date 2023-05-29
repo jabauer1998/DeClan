@@ -6,24 +6,17 @@ import java.util.List;
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ParseException;
 import edu.depauw.declan.common.Position;
-import edu.depauw.declan.common.TokenType;
-import io.github.H20man13.DeClan.common.icode.Call;
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Label;
-import io.github.H20man13.DeClan.common.icode.LetBin;
-import io.github.H20man13.DeClan.common.icode.LetBool;
-import io.github.H20man13.DeClan.common.icode.LetInt;
-import io.github.H20man13.DeClan.common.icode.LetReal;
-import io.github.H20man13.DeClan.common.icode.LetString;
-import io.github.H20man13.DeClan.common.icode.LetUn;
-import io.github.H20man13.DeClan.common.icode.LetVar;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
+import io.github.H20man13.DeClan.common.icode.exp.CallExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.IntExp;
@@ -184,29 +177,6 @@ public class MyIrParser {
         return expr;
     }
 
-    private BinExp parseBinaryExpression(){
-        Exp left = parsePrimaryExpression();
-
-        IrToken op = null;
-        if(willMatch(IrTokenType.LT) || willMatch(IrTokenType.ADD) 
-        || willMatch(IrTokenType.LE) || willMatch(IrTokenType.GT)
-        || willMatch(IrTokenType.NE) || willMatch(IrTokenType.GE)
-        || willMatch(IrTokenType.BOR) || willMatch(IrTokenType.SUB)
-        || willMatch(IrTokenType.MUL) || willMatch(IrTokenType.DIV)
-        || willMatch(IrTokenType.MOD) || willMatch(IrTokenType.BAND)
-        || willMatch(IrTokenType.EQ)){
-            op = skip();
-        } else {
-            op = match(IrTokenType.EQ);
-        }
-
-        Exp right = parsePrimaryExpression();
-
-
-        BinExp expr = new BinExp(left, Utils.toBinOp(op.getType()), right);
-        return expr;
-    }
-
     private ICode parseIfStatement(){
         match(IrTokenType.IF);
         BinExp exp = parseRelationalExpression();
@@ -265,47 +235,55 @@ public class MyIrParser {
         }
     }
 
+    private CallExp parseCallExpression(){
+        match(IrTokenType.CALL);
+
+        IrToken callName = match(IrTokenType.ID);
+        match(IrTokenType.LPAR);
+
+        List<String> args = new LinkedList<>();
+        do{
+            IrToken arg = match(IrTokenType.ID);
+            args.add(arg.getLexeme());
+        } while(skipIfYummy(IrTokenType.COMMA));
+
+        match(IrTokenType.RPAR);
+        return new CallExp(callName.getLexeme(), args);
+    }
+
+    private Exp parseExpression(){
+        if(willMatch(IrTokenType.CALL)){
+            return parseCallExpression();
+        } else if(willMatch(IrTokenType.NEG) || willMatch(IrTokenType.BNOT)) {
+            return parseUnaryExpression();
+        } else {
+            Exp exp1 = parsePrimaryExpression();
+
+            if(willMatch(IrTokenType.LT) || willMatch(IrTokenType.ADD) 
+            || willMatch(IrTokenType.LE) || willMatch(IrTokenType.GT)
+            || willMatch(IrTokenType.NE) || willMatch(IrTokenType.GE)
+            || willMatch(IrTokenType.BOR) || willMatch(IrTokenType.SUB)
+            || willMatch(IrTokenType.MUL) || willMatch(IrTokenType.DIV)
+            || willMatch(IrTokenType.MOD) || willMatch(IrTokenType.BAND)
+            || willMatch(IrTokenType.EQ)) {
+                IrToken op = skip();
+
+                Exp exp2 = parsePrimaryExpression();
+
+                return new BinExp(exp1, Utils.toBinOp(op.getType()), exp2);
+            }else {
+                return exp1;
+            }
+        }
+    }
+
     private ICode parseAssignment(){
         IrToken id = match(IrTokenType.ID);
         
         match(IrTokenType.ASSIGN);
 
-        if(willMatch(IrTokenType.NEG) || willMatch(IrTokenType.BNOT)){
-            UnExp unExpr = parseUnaryExpression();
-            return new LetUn(id.getLexeme(), unExpr);
-        } if(willMatch(IrTokenType.CALL)){
-            skip();
-            IrToken callName = match(IrTokenType.ID);
-            match(IrTokenType.LPAR);
+        Exp expression = parseExpression();
 
-            List<String> args = new LinkedList<>();
-            do{
-                IrToken arg = match(IrTokenType.ID);
-                args.add(arg.getLexeme());
-            } while(skipIfYummy(IrTokenType.COMMA));
-
-            match(IrTokenType.RPAR);
-
-            return new Call(id.getLexeme(), callName.getLexeme(), args);
-        } else if(willMatch(IrTokenType.FALSE)){
-            skip();
-            return new LetBool(id.getLexeme(), false);
-        } else if(willMatch(IrTokenType.TRUE)){
-            skip();
-            return new LetBool(id.getLexeme(), true);
-        } else if(willMatch(IrTokenType.STRING)){
-            IrToken str = skip();
-            return new LetString(id.getLexeme(), str.getLexeme());
-        } else if(willMatch(IrTokenType.NUMBER)){
-            IrToken num = skip();
-            if(num.getLexeme().contains(".")){
-                return new LetReal(id.getLexeme(), Double.parseDouble(num.getLexeme()));
-            } else {
-                return new LetInt(id.getLexeme(), Integer.parseInt(num.getLexeme()));
-            }
-        } else {
-            BinExp binExp = parseBinaryExpression();
-            return new LetBin(id.getLexeme(), binExp);
-        }
+        return new Assign(id.getLexeme(), expression);
     }
 }

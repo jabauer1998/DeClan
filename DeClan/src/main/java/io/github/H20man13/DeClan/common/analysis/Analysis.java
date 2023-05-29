@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
+import io.github.H20man13.DeClan.common.icode.ICode;
 
 public abstract class Analysis<SetType> {
     private FlowGraph flowGraph;
@@ -16,8 +17,11 @@ public abstract class Analysis<SetType> {
     private Meet symbol;
     private Set<SetType> semiLattice;
 
-    private Map<FlowGraphNode, Set<SetType>> outputs;
-    private Map<FlowGraphNode, Set<SetType>> inputs;
+    private Map<FlowGraphNode, Set<SetType>> blockOutputs;
+    private Map<FlowGraphNode, Set<SetType>> blockInputs;
+    private Map<ICode, Set<SetType>> instructionOutputs;
+    private Map<ICode, Set<SetType>> instructionInputs;
+    
 
     public enum Direction{
         BACKWARDS,
@@ -33,8 +37,10 @@ public abstract class Analysis<SetType> {
         this.flowGraph = flowGraph;
         this.direction = direction;
         this.symbol = symbol;
-        this.outputs = new HashMap<>();
-        this.inputs = new HashMap<>();
+        this.instructionInputs = new HashMap<ICode, Set<SetType>>();
+        this.instructionOutputs = new HashMap<ICode, Set<SetType>>();
+        this.blockInputs = new HashMap<FlowGraphNode, Set<SetType>>();
+        this.blockOutputs = new HashMap<FlowGraphNode, Set<SetType>>();
         this.semiLattice = semiLattice;
     }
 
@@ -42,73 +48,94 @@ public abstract class Analysis<SetType> {
         this(flowGraph, direction, symbol, new HashSet<SetType>());
     }
 
-    public Set<SetType> getInputSet(FlowGraphNode Node){
-        return inputs.get(Node);
+    public Set<SetType> getBlockInputSet(FlowGraphNode Node){
+        return blockInputs.get(Node);
     }
 
-    public Set<SetType> getOutputSet(FlowGraphNode Node){
-        return outputs.get(Node);
+    public Set<SetType> getBlockOutputSet(FlowGraphNode Node){
+        return blockOutputs.get(Node);
+    }
+
+    public Set<SetType> getInstructionInputSet(ICode instruction){
+        return instructionInputs.get(instruction);
+    }
+
+    public Set<SetType> getInstructionOutputSet(ICode instruction){
+        return instructionOutputs.get(instruction);
     }
 
     public void run(){
         if(this.direction == Direction.FORWARDS){
             Map<FlowGraphNode, Set<SetType>> outputCache = new HashMap<>();
-            outputs.put(this.flowGraph.getEntry(), new HashSet<SetType>());
+            blockOutputs.put(this.flowGraph.getEntry(), new HashSet<SetType>());
 
             for(BlockNode block : this.flowGraph.getBlocks()){
-                outputs.put(block, semiLattice);
+                blockOutputs.put(block, semiLattice);
             }
 
-            while(changesHaveOccured(this.outputs, outputCache)){
-                outputCache.putAll(outputs);
+            while(changesHaveOccured(this.blockOutputs, outputCache)){
+                outputCache.putAll(this.blockOutputs);
                 for(BlockNode block : this.flowGraph.getBlocks()){
-                    if(!inputs.containsKey(block)){
-                        inputs.put(block, new HashSet<SetType>());
+                    if(!blockInputs.containsKey(block)){
+                        blockInputs.put(block, new HashSet<SetType>());
                     }
 
-                    Set<SetType> inputSet = inputs.get(block);
+                    Set<SetType> inputSet = blockInputs.get(block);
 
                     if(this.symbol == Meet.UNION){
                         for(FlowGraphNode predecessor : block.getPredecessors()){
-                            inputSet.addAll(outputs.get(predecessor));
+                            inputSet.addAll(blockOutputs.get(predecessor));
                         }
                     } else {
                         for(FlowGraphNode predecessor : block.getPredecessors()){
-                            inputSet.retainAll(outputs.get(predecessor));
+                            inputSet.retainAll(blockOutputs.get(predecessor));
                         }
                     }
+                
+
+                    for(ICode instr : block.getICode()){
+                        instructionInputs.put(instr, inputSet);
+                        inputSet = transferFunction(instr, inputSet);
+                        instructionOutputs.put(instr, inputSet);
+                    }
                     
-                    outputs.put(block, transferFunction(block, inputSet));
+                    blockOutputs.put(block, inputSet);
                 }
             }
         } else {
             Map<FlowGraphNode, Set<SetType>> inputCache = new HashMap<FlowGraphNode, Set<SetType>>();
 
-            inputs.put(this.flowGraph.getExit(), new HashSet<SetType>());
+            blockInputs.put(this.flowGraph.getExit(), new HashSet<SetType>());
 
             for(BlockNode block : this.flowGraph.getBlocks()){
-                inputs.put(block, new HashSet<SetType>());
+                blockInputs.put(block, new HashSet<SetType>());
             }
 
-            while(changesHaveOccured(this.inputs, inputCache)){
-                inputCache.putAll(this.inputs);
+            while(changesHaveOccured(this.blockInputs, inputCache)){
+                inputCache.putAll(this.blockInputs);
                 for(BlockNode block : this.flowGraph.getBlocks()){
-                    if(!outputs.containsKey(block)){
-                        outputs.put(block, new HashSet<SetType>());
+                    if(!blockOutputs.containsKey(block)){
+                        blockOutputs.put(block, new HashSet<SetType>());
                     }
 
-                    Set<SetType> outputSet = outputs.get(block);
+                    Set<SetType> outputSet = blockOutputs.get(block);
                     if(this.symbol == Meet.UNION){
                         for(FlowGraphNode successor : block.getSuccessors()){
-                            outputSet.addAll(inputs.get(successor));
+                            outputSet.addAll(blockInputs.get(successor));
                         }
                     } else {
                         for(FlowGraphNode successor : block.getSuccessors()){
-                            outputSet.retainAll(inputs.get(successor));
+                            outputSet.retainAll(blockInputs.get(successor));
                         }
                     }
 
-                    inputs.put(block, transferFunction(block, outputSet));
+                    for(ICode icode : block.getICode()){
+                        instructionOutputs.put(icode, outputSet);
+                        outputSet = transferFunction(icode, outputSet);
+                        instructionInputs.put(icode, outputSet);
+                    }
+
+                    blockInputs.put(block, outputSet);
                 }
             }
         }
@@ -136,5 +163,5 @@ public abstract class Analysis<SetType> {
         return false;
     }
 
-    public abstract Set<SetType> transferFunction(FlowGraphNode Node, Set<SetType> inputSet);
+    public abstract Set<SetType> transferFunction(ICode instr, Set<SetType> inputSet);
 }

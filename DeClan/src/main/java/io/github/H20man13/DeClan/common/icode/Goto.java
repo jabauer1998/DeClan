@@ -11,4 +11,14 @@ public class Goto implements ICode {
 	public String toString() {
 		return "GOTO " + label;
 	}
+
+	@Override
+	public boolean isConstant() {
+		return false;
+	}
+
+	@Override
+	public boolean isBranch() {
+		return true;
+	}
 }

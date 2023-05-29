@@ -5,4 +5,14 @@ public class End implements ICode {
 	public String toString() {
 		return "END";
 	}
+
+	@Override
+	public boolean isConstant() {
+		return false;
+	}
+
+	@Override
+	public boolean isBranch() {
+		return false;
+	}
 }

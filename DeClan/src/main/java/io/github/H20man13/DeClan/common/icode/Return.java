@@ -5,4 +5,14 @@ public class Return implements ICode {
 	public String toString() {
 		return "RETURN";
 	}
+
+	@Override
+	public boolean isConstant() {
+		return false;
+	}
+
+	@Override
+	public boolean isBranch() {
+		return true;
+	}
 }
