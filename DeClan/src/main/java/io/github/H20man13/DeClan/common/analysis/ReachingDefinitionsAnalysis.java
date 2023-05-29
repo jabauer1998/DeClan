@@ -10,54 +10,56 @@ import java.util.Set;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class ReachingDefinitionsAnalysis extends Analysis<ICode> {
-    private Map<FlowGraphNode, Set<ICode>> killSets;
-    private Map<FlowGraphNode, Set<ICode>> genSets;
+    private Map<ICode, Set<ICode>> killSets;
+    private Map<ICode, Set<ICode>> genSets;
 
     public ReachingDefinitionsAnalysis(FlowGraph flowGraph) {
         super(flowGraph, Direction.FORWARDS, Meet.UNION);
 
-        this.killSets = new HashMap<FlowGraphNode, Set<ICode>>();
-        this.genSets = new HashMap<FlowGraphNode, Set<ICode>>();
+        this.killSets = new HashMap<ICode, Set<ICode>>();
+        this.genSets = new HashMap<ICode, Set<ICode>>();
         
         Map<String, List<ICode>> declsDeclared = new HashMap<String, List<ICode>>();
         for(BlockNode block : flowGraph.getBlocks()){
             List<ICode> decls = block.getICode();
             for(ICode decl : decls){
-                String place = Utils.getPlace(decl);
+                if(decl instanceof Assign){
+                    Assign assDecl = (Assign)decl;
 
-                if(place != null){
-                    if(!declsDeclared.containsKey(place)){
-                        declsDeclared.put(place, new LinkedList<ICode>());
+                    if(declsDeclared.containsKey(assDecl.place)){
+                        declsDeclared.put(assDecl.place, new LinkedList<ICode>());
                     }
 
-                    List<ICode> declList = declsDeclared.get(place);
+                    List<ICode> declList = declsDeclared.get(assDecl.place);
                     declList.add(decl);
                 }
             }
         }
 
         for(BlockNode block : flowGraph.getBlocks()){
-            Set<ICode> blockGenSet = new HashSet<ICode>();
-            Set<ICode> blockKillSet = new HashSet<ICode>();
             for(ICode decl : block.getICode()){
-                String place = Utils.getPlace(decl);
+                Set<ICode> instructionGenSet = new HashSet<ICode>();
+                Set<ICode> instructionKillSet = new HashSet<ICode>();
+                if(decl instanceof Assign){
+                    Assign declAssign = (Assign)decl;
 
-                if(place != null){
-                    blockKillSet.addAll(Utils.stripFromListExcept(declsDeclared.get(place), decl));
-                    blockGenSet.add(decl);
+                    instructionKillSet.addAll(Utils.stripFromListExcept(declsDeclared.get(declAssign.place), decl));
+                    instructionGenSet.add(decl);
                 }
+
+                killSets.put(decl, instructionKillSet);
+                genSets.put(decl, instructionGenSet);
             }
-            killSets.put(block, blockKillSet);
-            genSets.put(block, blockGenSet);
         }
     }
 
     @Override
-    public Set<ICode> transferFunction(FlowGraphNode node, Set<ICode> inputSet){
+    public Set<ICode> transferFunction(FlowGraphNode block, ICode node, Set<ICode> inputSet){
         Set<ICode> result = new HashSet<>();
 
         Set<ICode> killSet = killSets.get(node);

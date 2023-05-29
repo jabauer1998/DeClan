@@ -8,13 +8,6 @@ import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.ICode;
-import io.github.H20man13.DeClan.common.icode.LetBin;
-import io.github.H20man13.DeClan.common.icode.LetBool;
-import io.github.H20man13.DeClan.common.icode.LetInt;
-import io.github.H20man13.DeClan.common.icode.LetReal;
-import io.github.H20man13.DeClan.common.icode.LetString;
-import io.github.H20man13.DeClan.common.icode.LetUn;
-import io.github.H20man13.DeClan.common.icode.LetVar;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -26,10 +19,10 @@ import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class PostponableExpressionsAnalysis extends Analysis<Exp> {
-    private Map<FlowGraphNode, Set<Exp>> usedSets;
+    private Map<ICode, Set<Exp>> usedSets;
     private Map<FlowGraphNode, Set<Exp>> earliest;
     
-    public PostponableExpressionsAnalysis(FlowGraph flowGraph, Set<Exp> globalFlowSet, Map<FlowGraphNode, Set<Exp>> earliest, Map<FlowGraphNode, Set<Exp>> usedSets) {
+    public PostponableExpressionsAnalysis(FlowGraph flowGraph, Set<Exp> globalFlowSet, Map<FlowGraphNode, Set<Exp>> earliest, Map<ICode, Set<Exp>> usedSets) {
         super(flowGraph, Direction.FORWARDS, Meet.INTERSECTION, globalFlowSet);
         this.earliest = earliest;
         this.usedSets = usedSets;
@@ -37,10 +30,10 @@ public class PostponableExpressionsAnalysis extends Analysis<Exp> {
     
 
     @Override
-    public Set<Exp> transferFunction(FlowGraphNode Node, Set<Exp> inputSet) {
+    public Set<Exp> transferFunction(FlowGraphNode block, ICode Node, Set<Exp> inputSet) {
         Set<Exp> resultSet = new HashSet<Exp>();
 
-        resultSet.addAll(earliest.get(Node));
+        resultSet.addAll(earliest.get(block));
         resultSet.addAll(inputSet);
         resultSet.removeAll(usedSets.get(Node));
 

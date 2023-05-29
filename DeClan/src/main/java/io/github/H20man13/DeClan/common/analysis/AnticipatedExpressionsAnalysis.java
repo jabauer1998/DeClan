@@ -9,8 +9,12 @@ import java.util.Set;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 
 public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
 
@@ -23,99 +27,73 @@ public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
         killSets =  new HashMap<ICode, Set<Exp>>();
 
         for(BlockNode block : flowGraph.getBlocks()){
-            Set<Exp> blockKill = new HashSet<Exp>();
-            Set<Exp> blockGen = new HashSet<Exp>();
             List<ICode> codeList = block.getICode();
             for(int i = codeList.size(); i >= 0; i--){
+                Set<Exp> instructionKill = new HashSet<Exp>();
+                Set<Exp> instructionGen = new HashSet<Exp>();
                 ICode icode = codeList.get(i);
-                if(icode instanceof LetVar){
-                    LetVar value = (LetVar)icode;
-                    
-                    int defIndex = searchForDefinition(codeList, i, value.var.toString());
-                    if(defIndex != -1){
-                        if(!searchForPreviousExpression(codeList, defIndex, value.var)){
-                            blockKill.add(value.var);
+                if(icode instanceof Assign){
+                    Assign assIcode = (Assign)icode;
+                    if(assIcode.value instanceof IdentExp){
+                        IdentExp exp = (IdentExp)assIcode.value;
+                        int defIndex = searchForDefinition(codeList, i, exp.ident);
+                        if(defIndex != -1){
+                            if(!searchForPreviousExpression(codeList, defIndex, exp)){
+                                instructionKill.add(exp);
+                            }
+                        } else {
+                                instructionGen.add(exp);
                         }
-                    } else {
-                        blockGen.add(value.var);
-                    }
-                } else if(icode instanceof LetUn){
-                    LetUn value = (LetUn)icode;
-                    int defIndex = searchForDefinition(codeList, i, value.unExp.right.toString());
+                    } else if(assIcode.value instanceof UnExp){
+                        UnExp exp = (UnExp)assIcode.value;
 
-                    if(defIndex != -1){
-                        if(!searchForPreviousExpression(codeList, defIndex, value.unExp)){
-                            blockKill.add(value.unExp);
-                        }
-                    } else {
-                        blockGen.add(value.unExp);
-                    }
-                } else if(icode instanceof LetBin){
-                    LetBin value = (LetBin)icode;
-                    
-                    int defIndex1 = searchForDefinition(codeList, i, value.exp.left.toString());
-                    int defIndex2 = searchForDefinition(codeList, i, value.exp.right.toString());
+                        if(!exp.right.isConstant()){
+                            int defIndex = searchForDefinition(codeList, i, exp.right.toString());
 
-                    if(defIndex1 != -1 || defIndex2 != -1){
-                        boolean shouldKill = false;
-                        if(defIndex1 != -1 && !searchForPreviousExpression(codeList, defIndex1, value.exp)){
-                            shouldKill = true;
+                            if(defIndex != -1){
+                                if(!searchForPreviousExpression(codeList, defIndex, exp)){
+                                    instructionKill.add(exp);
+                                }
+                            } else {
+                                instructionGen.add(exp);
+                            }
                         }
+                    } else if(assIcode.value instanceof BinExp){
+                        BinExp exp = (BinExp)assIcode.value;
 
-                        if(defIndex2 != -1 && !searchForPreviousExpression(codeList, defIndex2, value.exp)){
-                            shouldKill = true;
-                        }
+                        int defIndex1 = searchForDefinition(codeList, i, exp.left.toString());
+                        int defIndex2 = searchForDefinition(codeList, i, exp.right.toString());
 
-                        if(shouldKill){
-                            blockKill.add(value.exp);
+                        if(defIndex1 != -1 || defIndex2 != -1){
+                            boolean shouldKill = false;
+                            if(defIndex1 != -1 && !searchForPreviousExpression(codeList, defIndex1, exp)){
+                                shouldKill = true;
+                            }
+
+                            if(defIndex2 != -1 && !searchForPreviousExpression(codeList, defIndex2, exp)){
+                                shouldKill = true;
+                            }
+
+                            if(shouldKill){
+                                instructionKill.add(exp);
+                            }
+                        } else {
+                            instructionGen.add(exp);
                         }
-                    } else {
-                        blockGen.add(value.exp);
                     }
                 }
+                killSets.put(icode, instructionKill);
+                genSets.put(icode, instructionGen);
             }
-
-            killSets.put(block, blockKill);
-            genSets.put(block, blockGen);
         }
     }
 
     private boolean searchForPreviousExpression(List<ICode> codeList, int defIndex, Exp defIdent){
         for(int i = defIndex - 1; defIndex >= 0; i--){
             ICode icode = codeList.get(i);
-            if(icode instanceof LetBool){
-                LetBool icodeDef = (LetBool)icode;
-                if(defIdent.equals(icodeDef.value)){
-                    return true;
-                }
-            } else if(icode instanceof LetInt){
-                LetInt icodeDef = (LetInt)icode;
-                if(defIdent.equals(icodeDef.value)){
-                    return true;
-                }
-            } else if(icode instanceof LetString){
-                LetString icodeDef = (LetString)icode;
-                if(defIdent.equals(icodeDef.value)){
-                    return true;
-                }
-            } else if(icode instanceof LetReal){
-                LetReal icodeDef = (LetReal)icode;
-                if(defIdent.equals(icodeDef.value)){
-                    return true;
-                }
-            } else if(icode instanceof LetVar){
-                LetVar icodeDef = (LetVar)icode;
-                if(defIdent.equals(icodeDef.var)){
-                    return true;
-                }
-            } else if(icode instanceof LetUn){
-                LetUn icodeDef = (LetUn)icode;
-                if(defIdent.equals(icodeDef.unExp)){
-                    return true;
-                }
-            } else if(icode instanceof LetBin){
-                LetBin icodeDef = (LetBin)icode;
-                if(defIdent.equals(icodeDef.exp)){
+            if(icode instanceof Assign){
+                Assign assICode = (Assign)icode;
+                if(defIdent.equals(assICode.value)){
                     return true;
                 }
             }
@@ -127,45 +105,9 @@ public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
     private int searchForDefinition(List<ICode> codeList, int i, String var) {
         for(int x = i - 1; x >= 0; x--){
             ICode icode = codeList.get(x);
-            if(icode instanceof LetBool){
-                LetBool icodeBool = (LetBool)icode;
-                String defVal = icodeBool.place;
-                if(var.equals(defVal)){
-                    return x;
-                }
-            } else if (icode instanceof LetString){
-                LetString icodeString = (LetString)icode;
-                String defVal = icodeString.place;
-                if(var.equals(defVal)){
-                    return x;
-                }
-            } else if(icode instanceof LetInt){
-                LetInt icodeInt = (LetInt)icode;
-                String defVal = icodeInt.place;
-                if(var.equals(defVal)){
-                    return x;
-                }
-            } else if(icode instanceof LetReal){
-                LetReal icodeReal = (LetReal)icode;
-                String defVal = icodeReal.place;
-                if(var.equals(defVal)){
-                    return x;
-                }
-            } else if(icode instanceof LetVar){
-                LetVar icodeVar = (LetVar)icode;
-                String defVal = icodeVar.place;
-                if(var.equals(defVal)){
-                    return x;
-                }
-            } else if(icode instanceof LetUn){
-                LetUn icodeVar = (LetUn)icode;
-                String defVal = icodeVar.place;
-                if(var.equals(defVal)){
-                    return x;
-                }
-            } else if(icode instanceof LetBin){
-                LetBin icodeVar = (LetBin)icode;
-                String defVal = icodeVar.place;
+            if(icode instanceof Assign){
+                Assign icodeAss = (Assign)icode;
+                String defVal = icodeAss.place;
                 if(var.equals(defVal)){
                     return x;
                 }
@@ -176,12 +118,12 @@ public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
 
 
     @Override
-    public Set<Exp> transferFunction(FlowGraphNode Node, Set<Exp> inputSet) {
+    public Set<Exp> transferFunction(FlowGraphNode block, ICode instruction, Set<Exp> inputSet) {
         Set<Exp> result = new HashSet<Exp>();
         
         result.addAll(inputSet);
-        result.removeAll(killSets.get(Node));
-        result.addAll(genSets.get(Node));
+        result.removeAll(killSets.get(instruction));
+        result.addAll(genSets.get(instruction));
 
         return result;
     }

@@ -41,7 +41,7 @@ public class MyOptimizer {
     private ConstantPropogationAnalysis propAnal;
     private Map<FlowGraphNode, Set<Exp>> latest;
     private Map<FlowGraphNode, Set<Exp>> earliest;
-    private Map<FlowGraphNode, Set<Exp>> used;
+    private Map<ICode, Set<Exp>> used;
     private Set<Exp> globalFlowSet;
     
     private RegisterGenerator gen;
@@ -56,7 +56,7 @@ public class MyOptimizer {
         this.environment = new Environment<>();
         this.latest = new HashMap<FlowGraphNode, Set<Exp>>();
         this.earliest = new HashMap<FlowGraphNode, Set<Exp>>();
-        this.used = new HashMap<FlowGraphNode, Set<Exp>>();
+        this.used = new HashMap<ICode, Set<Exp>>();
         this.globalFlowSet = new HashSet<Exp>();
 
         List<Integer> firsts = findFirsts();
@@ -190,23 +190,25 @@ public class MyOptimizer {
 
             for(BlockNode block : this.globalFlowGraph.getBlocks()){
                 Set<Exp> earliest = new HashSet<Exp>();
-                earliest.addAll(this.anticipatedAnal.getInputSet(block));
-                earliest.removeAll(this.availableAnal.getInputSet(block));
+                for(ICode icode : block.getICode()){
+                    earliest.addAll(this.anticipatedAnal.getInstructionInputSet(icode));
+                    earliest.removeAll(this.availableAnal.getInstructionInputSet(icode));
+                }
                 this.earliest.put(block, earliest);
             }
             
 
             for(BlockNode block : this.globalFlowGraph.getBlocks()){
-                Set<Exp> blockUsed = new HashSet<Exp>();
                 for(ICode icode : block.getICode()){
+                    Set<Exp> blockUsed = new HashSet<Exp>();
                     if(icode instanceof Assign){
                         Assign utilICode = (Assign)icode;
                         if(!Utils.setContainsExp(blockUsed, utilICode.value)){
                             blockUsed.add(utilICode.value);
                         }
                     }
+                    this.used.put(icode, blockUsed);
                 }
-                this.used.put(block, blockUsed);
             }
 
             this.postponableAnal = new PostponableExpressionsAnalysis(this.globalFlowGraph, this.globalFlowSet, this.earliest, this.used);
@@ -219,8 +221,7 @@ public class MyOptimizer {
                 for (FlowGraphNode sucessor : block.getSuccessors()){
                     Set<Exp> earliestUnionPosponable = new HashSet<Exp>();
                     earliestUnionPosponable.addAll(earliest.get(sucessor));
-                    earliestUnionPosponable.addAll(postponableAnal.getInputSet(sucessor));
-
+                    earliestUnionPosponable.addAll(postponableAnal.getBlockInputSet(sucessor));
                     earliestUnionPosponableSaved.put(sucessor, earliestUnionPosponable);
                 }
 
@@ -243,7 +244,7 @@ public class MyOptimizer {
 
                 Set<Exp> earliestUnionPosponable = new HashSet<Exp>();
                 earliestUnionPosponable.addAll(this.earliest.get(block));
-                earliestUnionPosponable.addAll(this.postponableAnal.getInputSet(block));
+                earliestUnionPosponable.addAll(this.postponableAnal.getBlockInputSet(block));
 
                 latest.addAll(earliestUnionPosponable);
                 latest.retainAll(usedUnionCompliment);
@@ -263,7 +264,7 @@ public class MyOptimizer {
         for(BlockNode block : this.globalFlowGraph.getBlocks()){
             Set<Exp> latestInstructionUsedOutput = new HashSet<Exp>();
             latestInstructionUsedOutput.addAll(this.latest.get(block));
-            latestInstructionUsedOutput.retainAll(this.usedAnal.getOutputSet(block));
+            latestInstructionUsedOutput.retainAll(this.usedAnal.getBlockOutputSet(block));
 
             Map<Exp, String> identifierMap = new HashMap<Exp, String>();
             List<ICode> toPreAppendToBeginning = new LinkedList<ICode>();
@@ -278,7 +279,7 @@ public class MyOptimizer {
 
             Set<Exp> notLatestUnionUsedOut = new HashSet<Exp>();
             notLatestUnionUsedOut.addAll(notLatest);
-            notLatestUnionUsedOut.addAll(usedAnal.getOutputSet(block));
+            notLatestUnionUsedOut.addAll(usedAnal.getBlockOutputSet(block));
 
             Set<Exp> useIntersectionNotLatestUnionUsedOut = new HashSet<Exp>();
             useIntersectionNotLatestUnionUsedOut.addAll(this.used.get(block));
@@ -311,10 +312,10 @@ public class MyOptimizer {
 
     public void performConstantPropogation(){
         for(BlockNode block : this.globalFlowGraph.getBlocks()){
-            Set<Tuple<String, Object>> values = this.propAnal.getInputSet(block);
             List<ICode> icodeList = block.getICode();
             for(int i = 0; i < icodeList.size(); i++){
                 ICode icode = icodeList.get(i);
+                Set<Tuple<String, Object>> values = this.propAnal.getInstructionInputSet(icode);
                 if(icode instanceof Assign){
                     Assign varICode = (Assign)icode;
                     if(varICode.value instanceof IdentExp){

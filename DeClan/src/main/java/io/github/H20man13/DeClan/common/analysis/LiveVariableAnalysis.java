@@ -8,92 +8,65 @@ import java.util.Set;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
-import io.github.H20man13.DeClan.common.icode.LetBin;
-import io.github.H20man13.DeClan.common.icode.LetBool;
-import io.github.H20man13.DeClan.common.icode.LetInt;
-import io.github.H20man13.DeClan.common.icode.LetReal;
-import io.github.H20man13.DeClan.common.icode.LetString;
-import io.github.H20man13.DeClan.common.icode.LetUn;
-import io.github.H20man13.DeClan.common.icode.LetVar;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 
 public class LiveVariableAnalysis extends Analysis<String> {
 
-    private Map<FlowGraphNode, Set<String>> defSets;
-    private Map<FlowGraphNode, Set<String>> useSets;
+    private Map<ICode, Set<String>> defSets;
+    private Map<ICode, Set<String>> useSets;
 
     public LiveVariableAnalysis(FlowGraph flowGraph) {
         super(flowGraph, Direction.BACKWARDS, Meet.UNION);
 
-        this.defSets = new HashMap<FlowGraphNode, Set<String>>();
-        this.useSets = new HashMap<FlowGraphNode, Set<String>>();
+        this.defSets = new HashMap<ICode, Set<String>>();
+        this.useSets = new HashMap<ICode, Set<String>>();
         
         for(BlockNode block : flowGraph.getBlocks()){
-            Set<String> blockDef = new HashSet<String>();
-            Set<String> blockUse = new HashSet<String>();
             for(ICode code : block.getICode()){
-                if(code instanceof LetBool){
-                    LetBool defPlace = (LetBool)code;
-                    if(!blockUse.contains(defPlace.place)){
-                        blockDef.add(defPlace.place);
-                    }
-                } else if(code instanceof LetString){
-                    LetString defPlace = (LetString)code;
-                    if(!blockUse.contains(defPlace.place)){
-                        blockDef.add(defPlace.place);
-                    }
-                } else if(code instanceof LetInt){
-                    LetInt defPlace = (LetInt)code;
-                    if(!blockUse.contains(defPlace.place)){
-                        blockDef.add(defPlace.place);
-                    }
-                } else if(code instanceof LetReal){
-                    LetReal defPlace = (LetReal)code;
-                    if(!blockUse.contains(defPlace.place)){
-                        blockDef.add(defPlace.place);
-                    }
-                } else if(code instanceof LetVar){
-                    LetVar defPlace = (LetVar)code;
-                    if(!blockUse.contains(defPlace.place)){
-                        blockDef.add(defPlace.place);
-                    }
+                Set<String> instructionDef = new HashSet<String>();
+                Set<String> instructionUse = new HashSet<String>();
+                if(code instanceof Assign){
+                    Assign assCode = (Assign)code;
+                    instructionDef.add(assCode.place);
+                    if(!assCode.isConstant()){
+                        if(assCode.value instanceof BinExp){
+                            BinExp defPlace = (BinExp)code;
 
-                    if(!blockDef.contains(defPlace.var.toString())){
-                        blockUse.add(defPlace.var.toString());
-                    }
-                } else if(code instanceof LetBin){
-                    LetBin defPlace = (LetBin)code;
-                    if(!blockUse.contains(defPlace.place)){
-                        blockDef.add(defPlace.place);
-                    }
+                            if(!instructionDef.contains(defPlace.left.toString())){
+                                instructionUse.add(defPlace.left.toString());
+                            }
 
-                    if(!blockDef.contains(defPlace.exp.left.toString())){
-                        blockUse.add(defPlace.place);
-                    }
+                            if(!instructionDef.contains(defPlace.right.toString())){
+                                instructionUse.add(defPlace.right.toString());
+                            }
+                        } else if(assCode.value instanceof UnExp){
+                            UnExp defPlace = (UnExp)code;
 
-                    if(!blockDef.contains(defPlace.exp.right.toString())){
-                        blockUse.add(defPlace.exp.right.toString());
-                    }
-                } else if(code instanceof LetUn){
-                    LetUn defPlace = (LetUn)code;
-
-                    if(!blockUse.contains(defPlace.place)){
-                        blockDef.add(defPlace.place);
-                    }
-
-                    if(!blockDef.contains(defPlace.unExp.right.toString())){
-                        blockUse.add(defPlace.unExp.right.toString());
+                            if(!instructionDef.contains(defPlace.right.toString())){
+                                instructionUse.add(defPlace.right.toString());
+                            }
+                        } else if(assCode.value instanceof IdentExp){
+                            IdentExp defPlace = (IdentExp)assCode.value;
+                            if(!instructionUse.contains(defPlace.ident)){
+                                instructionDef.add(defPlace.ident);
+                            }
+                        }
                     }
                 }
+                defSets.put(code, instructionDef);
+                useSets.put(code, instructionUse);
             }
-            defSets.put(block, blockDef);
-            useSets.put(block, blockUse);
         }
 
     }
 
     @Override
-    public Set<String> transferFunction(FlowGraphNode Node, Set<String> inputSet) {
+    public Set<String> transferFunction(FlowGraphNode block, ICode Node, Set<String> inputSet) {
         Set<String> resultSet = new HashSet<String>();
 
         resultSet.addAll(inputSet);

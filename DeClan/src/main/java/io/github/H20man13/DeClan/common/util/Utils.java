@@ -135,4 +135,18 @@ public class Utils {
             return null;
         }
     }
+
+    public static Object getValue(Exp value) {
+        if(value instanceof BoolExp){
+            return ((BoolExp)value).trueFalse;
+        } else if(value instanceof IntExp){
+            return ((IntExp)value).value;
+        } else if(value instanceof RealExp){
+            return ((RealExp)value).realValue;
+        } else if(value instanceof StrExp){
+            return ((StrExp)value).value;
+        } else {
+            return null;
+        }
+    }
 }

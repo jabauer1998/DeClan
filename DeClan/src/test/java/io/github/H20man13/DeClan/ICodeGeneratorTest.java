@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Source;
-import edu.depauw.declan.common.ErrorLog.LogItem;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.main.MyIrLexer;

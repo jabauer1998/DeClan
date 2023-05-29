@@ -95,7 +95,7 @@ public abstract class Analysis<SetType> {
 
                     for(ICode instr : block.getICode()){
                         instructionInputs.put(instr, inputSet);
-                        inputSet = transferFunction(instr, inputSet);
+                        inputSet = transferFunction(block, instr, inputSet);
                         instructionOutputs.put(instr, inputSet);
                     }
                     
@@ -131,7 +131,7 @@ public abstract class Analysis<SetType> {
 
                     for(ICode icode : block.getICode()){
                         instructionOutputs.put(icode, outputSet);
-                        outputSet = transferFunction(icode, outputSet);
+                        outputSet = transferFunction(block, icode, outputSet);
                         instructionInputs.put(icode, outputSet);
                     }
 
@@ -163,5 +163,5 @@ public abstract class Analysis<SetType> {
         return false;
     }
 
-    public abstract Set<SetType> transferFunction(ICode instr, Set<SetType> inputSet);
+    public abstract Set<SetType> transferFunction(FlowGraphNode block, ICode instr, Set<SetType> inputSet);
 }
