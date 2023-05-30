@@ -77,20 +77,17 @@ public class MyOptimizer {
         HashMap<String, BlockNode> labeledNodes = new HashMap<String, BlockNode>();
         List<BlockNode> dagNodes = new LinkedList<BlockNode>();
 
-        for(int i = 0; i < intermediateCode.size(); i++){
-            ICode icodeAtIndex = intermediateCode.get(i);
-            if(icodeAtIndex instanceof BasicBlock){
-                BasicBlock blockAtIndex = (BasicBlock)icodeAtIndex;
-                BlockNode blockNode = new BlockNode(blockAtIndex);
+        for(int i = 0; i < basicBlocks.size(); i++){
+            BasicBlock blockAtIndex = basicBlocks.get(i);
+            BlockNode blockNode = new BlockNode(blockAtIndex);
                 
-                if(MyAnalysis.beginningOfBlockIsLabel(blockAtIndex)){
-                    Label firstLabel = (Label)blockAtIndex.getIcode().get(0);
-                    String labelName = firstLabel.label;
-                    labeledNodes.put(labelName, blockNode);
-                }
-
-                dagNodes.add(blockNode);
+            if(MyAnalysis.beginningOfBlockIsLabel(blockAtIndex)){
+                Label firstLabel = (Label)blockAtIndex.getIcode().get(0);
+                String labelName = firstLabel.label;
+                labeledNodes.put(labelName, blockNode);
             }
+
+            dagNodes.add(blockNode);
         }
 
         for(int i = 0; i < dagNodes.size(); i++){

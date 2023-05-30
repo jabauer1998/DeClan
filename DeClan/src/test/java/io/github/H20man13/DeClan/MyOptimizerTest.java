@@ -1,0 +1,49 @@
+package io.github.H20man13.DeClan;
+
+import static org.junit.Assert.assertTrue;
+
+import java.io.StringReader;
+import java.util.List;
+
+import org.junit.Test;
+
+import edu.depauw.declan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.ReaderSource;
+import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.main.MyIrLexer;
+import io.github.H20man13.DeClan.main.MyIrParser;
+import io.github.H20man13.DeClan.main.MyOptimizer;
+
+public class MyOptimizerTest {
+    private void comparePrograms(List<ICode> prog1, String prog){
+        StringBuilder sb = new StringBuilder();
+
+        for(ICode progCode : prog1){
+            sb.append(progCode.toString());
+            sb.append('\n');
+        }
+        assertTrue("The optimized program equals \n\n" + sb.toString() + "\n\n and the original equals \n\n" + prog, sb.toString().equals(prog));
+    }
+
+    @Test
+    public void testCommonSubExpressionElimination(){
+        String inputSource = "a := 1\n"
+                           + "b := 2\n" 
+                           + "i := a ADD b\n"
+                           + "z := a ADD b\n"
+                           + "f := z ADD i\n"
+                           + "END\n";
+
+        ErrorLog errLog = new ErrorLog();
+        ReaderSource source = new ReaderSource(new StringReader(inputSource));
+        MyIrLexer lexer = new MyIrLexer(source, errLog);
+        MyIrParser parser = new MyIrParser(lexer, errLog);
+        List<ICode> prog = parser.parseProgram();
+        MyOptimizer optimizer = new MyOptimizer(prog);
+        //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
+        //It is called within the Optimizers constructor
+        List<ICode> optimizedProg = optimizer.getICode();
+
+        comparePrograms(optimizedProg, inputSource);
+    }
+}

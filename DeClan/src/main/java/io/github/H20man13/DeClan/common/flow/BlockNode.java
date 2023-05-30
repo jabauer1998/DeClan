@@ -45,6 +45,7 @@ public class BlockNode implements FlowGraphNode {
         this.successors = new ArrayList<FlowGraphNode>();
         this.predecessors = new ArrayList<FlowGraphNode>();
         this.lifeInformation = new Environment<String, LiveInfo>();
+        this.lifeInformation.addScope();
         this.dag = new DagGraph();
         this.factory = new DagNodeFactory();
         this.updateLivelinessInformation();
