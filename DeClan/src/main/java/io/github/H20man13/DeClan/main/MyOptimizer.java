@@ -27,12 +27,10 @@ import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class MyOptimizer {
     private List<ICode> intermediateCode;
-    private Environment<String, Object> environment;
     private FlowGraph globalFlowGraph;
     private AnticipatedExpressionsAnalysis anticipatedAnal;
     private AvailableExpressionsAnalysis availableAnal;
@@ -53,7 +51,6 @@ public class MyOptimizer {
     public MyOptimizer(List<ICode> intermediateCode, RegisterGenerator gen){
         this.gen = gen;
         this.intermediateCode = intermediateCode;
-        this.environment = new Environment<>();
         this.latest = new HashMap<FlowGraphNode, Set<Exp>>();
         this.earliest = new HashMap<FlowGraphNode, Set<Exp>>();
         this.used = new HashMap<ICode, Set<Exp>>();
@@ -239,7 +236,9 @@ public class MyOptimizer {
                 compliment.addAll(this.globalFlowSet);
                 compliment.removeAll(intersectionOfAllSucessors);
 
-                usedUnionCompliment.addAll(this.used.get(block));
+                for(ICode icode : block.getICode()){
+                    usedUnionCompliment.addAll(this.used.get(icode));
+                }
                 usedUnionCompliment.addAll(compliment);
 
                 Set<Exp> earliestUnionPosponable = new HashSet<Exp>();
