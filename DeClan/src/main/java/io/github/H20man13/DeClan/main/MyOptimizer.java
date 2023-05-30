@@ -282,8 +282,13 @@ public class MyOptimizer {
             notLatestUnionUsedOut.addAll(usedAnal.getBlockOutputSet(block));
 
             Set<Exp> useIntersectionNotLatestUnionUsedOut = new HashSet<Exp>();
-            useIntersectionNotLatestUnionUsedOut.addAll(this.used.get(block));
+
+            for(ICode icode : block.getICode()){
+                useIntersectionNotLatestUnionUsedOut.addAll(this.used.get(icode));
+            }
+
             useIntersectionNotLatestUnionUsedOut.retainAll(notLatestUnionUsedOut);
+            
 
             List<ICode> icodeList = block.getICode();
             for(int i = 0; i < icodeList.size(); i++){
