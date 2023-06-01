@@ -61,6 +61,7 @@ public class MyOptimizer {
         List<Integer> firsts = findFirsts();
         List<BasicBlock> basicBlocks = new LinkedList<BasicBlock>();
         for(int leaderIndex = 0; leaderIndex < firsts.size(); leaderIndex++){
+            int beginIndex = firsts.get(leaderIndex);
             int endIndex;
             if(leaderIndex + 1 < firsts.size()){
                 endIndex = firsts.get(leaderIndex + 1) - 1;
@@ -69,7 +70,7 @@ public class MyOptimizer {
             }
 
             List<ICode> basicBlockList = new LinkedList<ICode>();
-            for(int i = leaderIndex; i <= endIndex; i++){
+            for(int i = beginIndex; i <= endIndex; i++){
                 basicBlockList.add(intermediateCode.get(i));
             }
 
