@@ -34,6 +34,13 @@ public class MyOptimizerTest {
                            + "f := z ADD i\n"
                            + "END\n";
 
+        String targetSource = "a := 1\n"
+                            + "b := 2\n"
+                            + "i := a ADD b\n"
+                            + "z := i\n"
+                            + "f := i ADD i\n"
+                            + "END\n";
+
         ErrorLog errLog = new ErrorLog();
         ReaderSource source = new ReaderSource(new StringReader(inputSource));
         MyIrLexer lexer = new MyIrLexer(source, errLog);
@@ -44,6 +51,112 @@ public class MyOptimizerTest {
         //It is called within the Optimizers constructor
         List<ICode> optimizedProg = optimizer.getICode();
 
-        comparePrograms(optimizedProg, inputSource);
+        comparePrograms(optimizedProg, targetSource);
+    }
+
+    @Test 
+    public void testDeadCodeElimination(){
+        String inputSource = "a := 1\n"
+                           + "b := 60\n" 
+                           + "i := a ADD a\n"
+                           + "g := i ADD i\n"
+                           + "END\n";
+
+        String targetSource = "a := 1\n"
+                            + "i := a ADD a\n"
+                            + "END\n";
+
+        ErrorLog errLog = new ErrorLog();
+        ReaderSource source = new ReaderSource(new StringReader(inputSource));
+        MyIrLexer lexer = new MyIrLexer(source, errLog);
+        MyIrParser parser = new MyIrParser(lexer, errLog);
+        List<ICode> prog = parser.parseProgram();
+        MyOptimizer optimizer = new MyOptimizer(prog);
+        optimizer.removeDeadCode();
+        //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
+        //It is called within the Optimizers constructor
+        List<ICode> optimizedProg = optimizer.getICode();
+
+        comparePrograms(optimizedProg, targetSource);
+    }
+
+    @Test
+    public void testConstantPropogation(){
+        String inputSource = "a := 1\n"
+                           + "b := 2\n" 
+                           + "i := a ADD b\n"
+                           + "z := a ADD i\n"
+                           + "f := z ADD i\n"
+                           + "END\n";
+
+        String targetSource = "a := 1\n"
+                            + "b := 2\n"
+                            + "i := 1 ADD 2\n"
+                            + "z := 1 ADD i\n"
+                            + "f := z ADD i\n"
+                            + "END\n";
+
+        ErrorLog errLog = new ErrorLog();
+        ReaderSource source = new ReaderSource(new StringReader(inputSource));
+        MyIrLexer lexer = new MyIrLexer(source, errLog);
+        MyIrParser parser = new MyIrParser(lexer, errLog);
+        List<ICode> prog = parser.parseProgram();
+        
+        MyOptimizer optimizer = new MyOptimizer(prog);
+        optimizer.runDataFlowAnalysis();
+        optimizer.performConstantPropogation();
+        //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
+        //It is called within the Optimizers constructor
+        List<ICode> optimizedProg = optimizer.getICode();
+
+        comparePrograms(optimizedProg, targetSource);
+    }
+
+    @Test
+    public void testPartialRedundancyElimination(){
+        String inputSource = "LABEL block1\n"
+                           + "a := 1\n"
+                           + "b := 2\n"
+                           + "i := 1 ADD 2\n"
+                           + "z := 1 ADD i\n"
+                           + "f := z ADD i\n"
+                           + "LABEL block2\n"
+                           + "f := b ADD z\n"
+                           + "g := h ADD f\n"
+                           + "z := u ADD g\n"
+                           + "r := y ADD z\n"
+                           + "GOTO block1\n"
+                           + "IF TRUE EQ TRUE THEN block1 ELSE block2\n"
+                           + "END\n";
+
+        String targetSource = "LABEL block1\n"
+                            + "a := 1\n"
+                            + "b := 2\n"
+                            + "i := 1 ADD 2\n"
+                            + "z := 1 ADD i\n"
+                            + "f := z ADD i\n"
+                            + "LABEL block2\n"
+                            + "f := b ADD z\n"
+                            + "g := h ADD f\n"
+                            + "z := u ADD g\n"
+                            + "r := y ADD z\n"
+                            + "GOTO block1\n"
+                            + "IF TRUE EQ TRUE THEN block1 ELSE block2\n"
+                            + "END\n";
+
+        ErrorLog errLog = new ErrorLog();
+        ReaderSource source = new ReaderSource(new StringReader(inputSource));
+        MyIrLexer lexer = new MyIrLexer(source, errLog);
+        MyIrParser parser = new MyIrParser(lexer, errLog);
+        List<ICode> prog = parser.parseProgram();
+        
+        MyOptimizer optimizer = new MyOptimizer(prog);
+        optimizer.runDataFlowAnalysis();
+        optimizer.performPartialRedundancyElimination();
+        //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
+        //It is called within the Optimizers constructor
+        List<ICode> optimizedProg = optimizer.getICode();
+
+        comparePrograms(optimizedProg, targetSource);
     }
 }

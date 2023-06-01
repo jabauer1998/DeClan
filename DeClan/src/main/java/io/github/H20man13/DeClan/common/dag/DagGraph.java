@@ -12,7 +12,7 @@ public class DagGraph {
     }
 
     public DagNode searchForLatestChild(String identifier){
-        for(int i = dagNodes.size(); i >= 0; i--){
+        for(int i = dagNodes.size() - 1; i >= 0; i--){
             DagNode child = dagNodes.get(i);
             if(child.containsId(identifier)){
                 return child;
@@ -49,7 +49,7 @@ public class DagGraph {
     }
 
     public DagNode getDagNode(DagNode node){
-        for(int i = dagNodes.size(); i >= 0; i--){
+        for(int i = dagNodes.size() - 1; i >= 0; i--){
             DagNode nodeAtI = dagNodes.get(i);
             if(nodeAtI.equals(node)){
                 return nodeAtI;

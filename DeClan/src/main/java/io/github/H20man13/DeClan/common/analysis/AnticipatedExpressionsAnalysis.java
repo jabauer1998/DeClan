@@ -28,7 +28,7 @@ public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
 
         for(BlockNode block : flowGraph.getBlocks()){
             List<ICode> codeList = block.getICode();
-            for(int i = codeList.size(); i >= 0; i--){
+            for(int i = codeList.size() - 1; i >= 0; i--){
                 Set<Exp> instructionKill = new HashSet<Exp>();
                 Set<Exp> instructionGen = new HashSet<Exp>();
                 ICode icode = codeList.get(i);
@@ -89,7 +89,7 @@ public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
     }
 
     private boolean searchForPreviousExpression(List<ICode> codeList, int defIndex, Exp defIdent){
-        for(int i = defIndex - 1; defIndex >= 0; i--){
+        for(int i = defIndex - 1; i >= 0; i--){
             ICode icode = codeList.get(i);
             if(icode instanceof Assign){
                 Assign assICode = (Assign)icode;

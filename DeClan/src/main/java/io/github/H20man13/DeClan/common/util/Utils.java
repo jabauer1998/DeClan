@@ -7,14 +7,19 @@ import java.util.Set;
 
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.model.SymbolTable;
+import io.github.H20man13.DeClan.common.BasicBlock;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.dag.DagNode;
+import io.github.H20man13.DeClan.common.dag.DagNodeFactory;
 import io.github.H20man13.DeClan.common.dag.DagNullNode;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.dag.DagValueNode;
 import io.github.H20man13.DeClan.common.dag.DagVariableNode;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -29,6 +34,8 @@ import io.github.H20man13.DeClan.common.symboltable.LiveInfo;
 import io.github.H20man13.DeClan.common.token.IrTokenType;
 
 public class Utils {
+    private static DagNodeFactory factory = new DagNodeFactory();
+
     public static List<ICode> stripFromListExcept(List<ICode> list, ICode item){
         List<ICode> linkedList = new LinkedList<ICode>();
 
@@ -88,6 +95,7 @@ public class Utils {
             case BAND: return BinExp.Operator.BAND;
             case BOR: return BinExp.Operator.BOR;
             case EQ: return BinExp.Operator.EQ;
+            case NE: return BinExp.Operator.NE;
             case GE: return BinExp.Operator.GE;
             case GT: return BinExp.Operator.GT;
             case LE: return BinExp.Operator.LE;
@@ -147,6 +155,63 @@ public class Utils {
             return ((StrExp)value).value;
         } else {
             return null;
+        }
+    }
+
+    public static DagNode createBinaryNode(BinExp.Operator op, String place, DagNode left, DagNode right) {
+        switch(op){
+            case ADD: return factory.createAdditionNode(place, left, right);
+            case SUB: return factory.createSubtractionNode(place, left, right);
+            case MUL: return factory.createMultiplicationNode(place, left, right);
+            case DIV: return factory.createDivisionNode(place, left, right);
+            case BAND: return factory.createAndNode(place, left, right);
+            case MOD: return factory.createModuleNode(place, left, right);
+            case BOR: return factory.createOrNode(place, left, right);
+            case GT: return factory.createGreaterThanNode(place, left, right);
+            case GE: return factory.createGreaterThanOrEqualNode(place, left, right);
+            case LT: return factory.createLessThanNode(place, left, right);
+            case LE: return factory.createLessThanOrEqualNode(place, left, right);
+            case EQ: return factory.createEqualsNode(place, left, right);
+            case NE: return factory.createNotEqualsNode(place, left, right);
+            default: return null;
+        }
+    }
+
+    public static DagNode createUnaryNode(UnExp.Operator op, String place, DagNode right){
+        switch(op){
+            case NEG: return factory.createNegationNode(place, right);
+            case BNOT: return factory.createNotNode(place, right);
+            default: return null;
+        }
+    }
+
+    public static boolean beginningOfBlockIsLabel(BasicBlock block){
+        List<ICode> codeInBlock = block.getIcode();
+        if(codeInBlock.size() > 0){
+            ICode firstICode = codeInBlock.get(0);
+            if(firstICode instanceof Label){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean endOfBlockIsJump(BasicBlock block){
+        List<ICode> codeInBlock = block.getIcode();
+        if(codeInBlock.size() > 0){
+            ICode lastICode = codeInBlock.get(codeInBlock.size() - 1);
+            if(lastICode instanceof If){
+                return true;
+            } else if(lastICode instanceof Goto){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 }

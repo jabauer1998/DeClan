@@ -21,12 +21,15 @@ import io.github.H20man13.DeClan.common.flow.ExitNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Label;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class MyOptimizer {
@@ -41,7 +44,6 @@ public class MyOptimizer {
     private Map<FlowGraphNode, Set<Exp>> earliest;
     private Map<ICode, Set<Exp>> used;
     private Set<Exp> globalFlowSet;
-    
     private RegisterGenerator gen;
 
     public MyOptimizer(List<ICode> intermediateCode){
@@ -81,7 +83,7 @@ public class MyOptimizer {
             BasicBlock blockAtIndex = basicBlocks.get(i);
             BlockNode blockNode = new BlockNode(blockAtIndex);
                 
-            if(MyAnalysis.beginningOfBlockIsLabel(blockAtIndex)){
+            if(Utils.beginningOfBlockIsLabel(blockAtIndex)){
                 Label firstLabel = (Label)blockAtIndex.getIcode().get(0);
                 String labelName = firstLabel.label;
                 labeledNodes.put(labelName, blockNode);
@@ -93,7 +95,7 @@ public class MyOptimizer {
         for(int i = 0; i < dagNodes.size(); i++){
             BlockNode node = dagNodes.get(i);
             BasicBlock block = node.getBlock();
-            if(MyAnalysis.endOfBlockIsJump(block)){
+            if(Utils.endOfBlockIsJump(block)){
                 ICode lastCode = block.getIcode().get(block.getIcode().size() - 1);
                 if(lastCode instanceof If){
                     If lastIf = (If)lastCode;
@@ -132,6 +134,7 @@ public class MyOptimizer {
             for(BlockNode block : this.globalFlowGraph.getBlocks()){
                 result.addAll(block.getICode());
             }
+            result.add(new End());
             return result;
         }
     }
@@ -214,8 +217,16 @@ public class MyOptimizer {
                 Map<FlowGraphNode, Set<Exp>> earliestUnionPosponableSaved = new HashMap<FlowGraphNode, Set<Exp>>();
                 for (FlowGraphNode sucessor : block.getSuccessors()){
                     Set<Exp> earliestUnionPosponable = new HashSet<Exp>();
-                    earliestUnionPosponable.addAll(earliest.get(sucessor));
-                    earliestUnionPosponable.addAll(postponableAnal.getBlockInputSet(sucessor));
+
+                    Set<Exp> earliestOfSuccessor = earliest.get(sucessor);
+                    if(earliestOfSuccessor != null)
+                        earliestUnionPosponable.addAll(earliestOfSuccessor);
+
+                    Set<Exp> postponableInput = postponableAnal.getBlockInputSet(sucessor);
+
+                    if(postponableInput != null)
+                        earliestUnionPosponable.addAll(postponableInput);
+
                     earliestUnionPosponableSaved.put(sucessor, earliestUnionPosponable);
                 }
 
@@ -323,7 +334,39 @@ public class MyOptimizer {
                         IdentExp identVal = (IdentExp)varICode.value;
                         Object result = Utils.getValueFromSet(values, identVal.ident);
                         Exp resultExp = Utils.valueToExp(result);
-                        varICode.value = resultExp;
+                        if(resultExp != null){
+                            varICode.value = resultExp;
+                        }
+                    } else if(varICode.value instanceof BinExp){
+                        BinExp binExpVal = (BinExp)varICode.value;
+
+                        if(binExpVal.left instanceof IdentExp){
+                            IdentExp identLeft = (IdentExp)binExpVal.left;
+                            Object result = Utils.getValueFromSet(values, identLeft.ident);
+                            Exp resultExp = Utils.valueToExp(result);
+                            if(resultExp != null)
+                                binExpVal.left = resultExp;
+                        }
+
+                        if(binExpVal.right instanceof IdentExp){
+                            IdentExp identRight = (IdentExp)binExpVal.right;
+                            Object result = Utils.getValueFromSet(values, identRight.ident);
+                            Exp resultExp = Utils.valueToExp(result);
+                            if(resultExp != null){
+                                binExpVal.right = resultExp;
+                            }
+                        }
+                    } else if(varICode.value instanceof UnExp){
+                        UnExp unExpVal = (UnExp)varICode.value;
+
+                        if(unExpVal.right instanceof IdentExp){
+                            IdentExp identRight = (IdentExp)unExpVal.right;
+                            Object result = Utils.getValueFromSet(values, identRight.ident);
+                            Exp resultExp = Utils.valueToExp(result);
+                            if(resultExp != null){
+                                unExpVal.right = resultExp;
+                            }
+                        }
                     }
                 }
             }

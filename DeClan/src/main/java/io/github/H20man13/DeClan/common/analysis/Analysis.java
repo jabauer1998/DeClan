@@ -70,17 +70,15 @@ public abstract class Analysis<SetType> {
             blockOutputs.put(this.flowGraph.getEntry(), new HashSet<SetType>());
 
             for(BlockNode block : this.flowGraph.getBlocks()){
-                blockOutputs.put(block, semiLattice);
+                Set<SetType> semilatticeCopy = new HashSet<SetType>();
+                semilatticeCopy.addAll(semiLattice);
+                blockOutputs.put(block, semilatticeCopy);
             }
 
             while(changesHaveOccured(this.blockOutputs, outputCache)){
-                outputCache.putAll(this.blockOutputs);
+                outputCache = deepCopyMap(this.blockOutputs);
                 for(BlockNode block : this.flowGraph.getBlocks()){
-                    if(!blockInputs.containsKey(block)){
-                        blockInputs.put(block, new HashSet<SetType>());
-                    }
-
-                    Set<SetType> inputSet = blockInputs.get(block);
+                    Set<SetType> inputSet = new HashSet<SetType>();
 
                     if(this.symbol == Meet.UNION){
                         for(FlowGraphNode predecessor : block.getPredecessors()){
@@ -91,7 +89,8 @@ public abstract class Analysis<SetType> {
                             inputSet.retainAll(blockOutputs.get(predecessor));
                         }
                     }
-                
+
+                    blockInputs.put(block, inputSet);
 
                     for(ICode instr : block.getICode()){
                         instructionInputs.put(instr, inputSet);
@@ -108,17 +107,15 @@ public abstract class Analysis<SetType> {
             blockInputs.put(this.flowGraph.getExit(), new HashSet<SetType>());
 
             for(BlockNode block : this.flowGraph.getBlocks()){
-                blockInputs.put(block, new HashSet<SetType>());
+                Set<SetType> semilatticeCopy = new HashSet<SetType>();
+                semilatticeCopy.addAll(semiLattice);
+                blockInputs.put(block, semilatticeCopy);
             }
 
             while(changesHaveOccured(this.blockInputs, inputCache)){
-                inputCache.putAll(this.blockInputs);
+                inputCache = deepCopyMap(this.blockInputs);
                 for(BlockNode block : this.flowGraph.getBlocks()){
-                    if(!blockOutputs.containsKey(block)){
-                        blockOutputs.put(block, new HashSet<SetType>());
-                    }
-
-                    Set<SetType> outputSet = blockOutputs.get(block);
+                    Set<SetType> outputSet = new HashSet<SetType>();
                     if(this.symbol == Meet.UNION){
                         for(FlowGraphNode successor : block.getSuccessors()){
                             outputSet.addAll(blockInputs.get(successor));
@@ -128,6 +125,8 @@ public abstract class Analysis<SetType> {
                             outputSet.retainAll(blockInputs.get(successor));
                         }
                     }
+
+                    blockOutputs.put(block, outputSet);
 
                     for(ICode icode : block.getICode()){
                         instructionOutputs.put(icode, outputSet);
@@ -139,6 +138,16 @@ public abstract class Analysis<SetType> {
                 }
             }
         }
+    }
+
+    private Map<FlowGraphNode, Set<SetType>> deepCopyMap(Map<FlowGraphNode, Set<SetType>> blockOutputsOrInputs) {
+        Map<FlowGraphNode, Set<SetType>> result = new HashMap<FlowGraphNode, Set<SetType>>();
+        for(FlowGraphNode key : blockOutputsOrInputs.keySet()){
+            Set<SetType> resultSet = new HashSet<SetType>();
+            resultSet.addAll(blockOutputsOrInputs.get(key));
+            result.put(key, resultSet);
+        }
+        return result;
     }
 
     public boolean changesHaveOccured(Map<FlowGraphNode, Set<SetType>> actual, Map<FlowGraphNode, Set<SetType>> cached){

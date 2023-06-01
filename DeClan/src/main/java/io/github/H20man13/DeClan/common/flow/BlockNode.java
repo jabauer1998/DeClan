@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.naming.LinkException;
+
+import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.model.SymbolTable;
 import io.github.H20man13.DeClan.common.BasicBlock;
 import io.github.H20man13.DeClan.common.dag.DagGraph;
@@ -62,6 +65,7 @@ public class BlockNode implements FlowGraphNode {
                 result.add(firstElem);
             }
         }
+
         for(DagNode node : this.dag.getDagNodes()){
 
             List<String> isAlive = new LinkedList<String>();
@@ -118,14 +122,11 @@ public class BlockNode implements FlowGraphNode {
                 }
             } else if(node instanceof DagValueNode){
                 DagValueNode valNode = (DagValueNode)node;
-
-                DagValueNode.ValueType type = valNode.getType();
                 Object value = valNode.getValue();
-                Exp resultExp = Utils.valueToExp(result);
+                Exp resultExp = Utils.valueToExp(value);
                 result.add(new Assign(identifier, resultExp));
             } else if(node instanceof DagVariableNode){
                 DagVariableNode varNode = (DagVariableNode)node;
-
                 DagNode child = varNode.getChild();
                 String identifier1 = Utils.getIdentifier(child, lifeInformation);
                 IdentExp ident1 = new IdentExp(identifier1);
@@ -133,7 +134,7 @@ public class BlockNode implements FlowGraphNode {
             }
 
             for(String ident : isAlive){
-                IdentExp ident1 = new IdentExp(ident);
+                IdentExp ident1 = new IdentExp(identifier);
                 result.add(new Assign(ident, ident1));
             }
         }
@@ -208,22 +209,7 @@ public class BlockNode implements FlowGraphNode {
                         this.dag.addDagNode(right);
                     }
 
-                    DagNode newNode = null;
-                    switch(exp.op){
-                        case ADD: newNode = factory.createAdditionNode(assignICode.place, left, right);
-                        case SUB: newNode = factory.createSubtractionNode(assignICode.place, left, right);
-                        case MUL: newNode = factory.createMultiplicationNode(assignICode.place, left, right);
-                        case DIV: newNode = factory.createDivisionNode(assignICode.place, left, right);
-                        case BAND: newNode = factory.createAndNode(assignICode.place, left, right);
-                        case MOD: newNode = factory.createModuleNode(assignICode.place, left, right);
-                        case BOR: newNode = factory.createOrNode(assignICode.place, left, right);
-                        case GT: newNode = factory.createGreaterThanNode(assignICode.place, left, right);
-                        case GE: newNode = factory.createGreaterThanOrEqualNode(assignICode.place, left, right);
-                        case LT: newNode = factory.createLessThanNode(assignICode.place, left, right);
-                        case LE: newNode = factory.createLessThanOrEqualNode(assignICode.place, left, right);
-                        case EQ: newNode = factory.createEqualsNode(assignICode.place, left, right);
-                        case NE: newNode = factory.createNotEqualsNode(assignICode.place, left, right);
-                    }
+                    DagNode newNode = Utils.createBinaryNode(exp.op, assignICode.place, left, right);
 
                     DagNode exists = this.dag.getDagNode(newNode);
                     if(exists == null){
@@ -241,11 +227,7 @@ public class BlockNode implements FlowGraphNode {
                         this.dag.addDagNode(right);
                     }
 
-                    DagNode newNode = null;
-                    switch(exp.op){
-                        case BNOT: newNode = factory.createNotNode(assignICode.place, right);
-                        case NEG: newNode = factory.createNegationNode(assignICode.place, right);
-                    }
+                    DagNode newNode = Utils.createUnaryNode(exp.op, assignICode.place, right);
 
                     DagNode exists = this.dag.getDagNode(newNode);
                     if(exists == null){
@@ -253,7 +235,7 @@ public class BlockNode implements FlowGraphNode {
                     } else {
                         exists.addIdentifier(assignICode.place);
                     }
-                } else if(icode instanceof IdentExp){
+                } else if(assignICode.value instanceof IdentExp){
                     IdentExp exp = (IdentExp)icode;
 
                     DagNode right = this.dag.searchForLatestChild(exp.ident.toString());
@@ -271,20 +253,20 @@ public class BlockNode implements FlowGraphNode {
                     } else {
                         exists.addIdentifier(assignICode.place);
                     }
-                } else if(icode instanceof BoolExp){
-                    BoolExp boolICode = (BoolExp)icode;
+                } else if(assignICode.value instanceof BoolExp){
+                    BoolExp boolICode = (BoolExp)assignICode.value;
                     DagNode newNode = factory.createBooleanNode(assignICode.place, boolICode.trueFalse);
                     this.dag.addDagNode(newNode);
-                } else if(icode instanceof IntExp){
-                    IntExp intICode = (IntExp)icode;
+                } else if(assignICode.value instanceof IntExp){
+                    IntExp intICode = (IntExp)assignICode.value;
                     DagNode newNode = factory.createIntNode(assignICode.place, intICode.value);
                     this.dag.addDagNode(newNode);
-                } else if(icode instanceof RealExp){
-                    RealExp realICode = (RealExp)icode;
+                } else if(assignICode.value instanceof RealExp){
+                    RealExp realICode = (RealExp)assignICode.value;
                     DagNode newNode = factory.createRealNode(assignICode.place, realICode.realValue);
                     this.dag.addDagNode(newNode);
-                } else if(icode instanceof StrExp){
-                    StrExp strICode = (StrExp)icode;
+                } else if(assignICode.value instanceof StrExp){
+                    StrExp strICode = (StrExp)assignICode.value;
                     DagNode newNode = factory.createStringNode(assignICode.place, strICode.value);
                     this.dag.addDagNode(newNode);
                 }
@@ -309,11 +291,30 @@ public class BlockNode implements FlowGraphNode {
     public void removeDeadCode() {
         while(true){
             List<DagNode> roots = this.dag.getRoots();
-            if(roots.size() <= 0){
+
+            List<DagNode> rootsNoLife = new LinkedList<DagNode>();
+            for(DagNode root: roots){
+                boolean rootContainsLife = false;
+                for(String ident : root.getIdentifiers()){
+                    if(this.lifeInformation.entryExists(ident)){
+                        LiveInfo life = this.lifeInformation.getEntry(ident);
+                        if(life.isAlive){
+                            rootContainsLife = true;
+                            break;
+                        }
+                    }
+                }
+
+                if(!rootContainsLife){
+                    rootsNoLife.add(root);
+                }
+            }
+
+            if(rootsNoLife.size() == 0){
                 break;
             }
 
-            for(DagNode root: roots){
+            for(DagNode root: rootsNoLife){
                 this.dag.deleteDagNode(root);
             }
         }
