@@ -2,6 +2,8 @@ package io.github.H20man13.DeClan.common.analysis;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -67,6 +69,8 @@ public abstract class Analysis<SetType> {
     public void run(){
         if(this.direction == Direction.FORWARDS){
             Map<FlowGraphNode, Set<SetType>> outputCache = new HashMap<>();
+            
+            blockInputs.put(this.flowGraph.getEntry(), new HashSet<SetType>());
             blockOutputs.put(this.flowGraph.getEntry(), new HashSet<SetType>());
 
             for(BlockNode block : this.flowGraph.getBlocks()){
@@ -101,10 +105,14 @@ public abstract class Analysis<SetType> {
                     blockOutputs.put(block, inputSet);
                 }
             }
+
+            blockInputs.put(this.flowGraph.getExit(), new HashSet<SetType>());
+            blockOutputs.put(this.flowGraph.getExit(), new HashSet<SetType>());
         } else {
             Map<FlowGraphNode, Set<SetType>> inputCache = new HashMap<FlowGraphNode, Set<SetType>>();
 
             blockInputs.put(this.flowGraph.getExit(), new HashSet<SetType>());
+            blockOutputs.put(this.flowGraph.getExit(), new HashSet<SetType>());
 
             for(BlockNode block : this.flowGraph.getBlocks()){
                 Set<SetType> semilatticeCopy = new HashSet<SetType>();
@@ -114,7 +122,9 @@ public abstract class Analysis<SetType> {
 
             while(changesHaveOccured(this.blockInputs, inputCache)){
                 inputCache = deepCopyMap(this.blockInputs);
-                for(BlockNode block : this.flowGraph.getBlocks()){
+                List<BlockNode> blocks = flowGraph.getBlocks();
+                for(int b = blocks.size() - 1; b >= 0; b--){
+                    BlockNode block = blocks.get(b);
                     Set<SetType> outputSet = new HashSet<SetType>();
                     if(this.symbol == Meet.UNION){
                         for(FlowGraphNode successor : block.getSuccessors()){
@@ -128,7 +138,9 @@ public abstract class Analysis<SetType> {
 
                     blockOutputs.put(block, outputSet);
 
-                    for(ICode icode : block.getICode()){
+                    List<ICode> icodeList = block.getICode();
+                    for(int i = icodeList.size() - 1; i >= 0; i--){
+                        ICode icode = icodeList.get(i);
                         instructionOutputs.put(icode, outputSet);
                         outputSet = transferFunction(block, icode, outputSet);
                         instructionInputs.put(icode, outputSet);
@@ -137,6 +149,9 @@ public abstract class Analysis<SetType> {
                     blockInputs.put(block, outputSet);
                 }
             }
+
+            blockOutputs.put(this.flowGraph.getEntry(), new HashSet<SetType>());
+            blockInputs.put(this.flowGraph.getEntry(), new HashSet<SetType>());
         }
     }
 

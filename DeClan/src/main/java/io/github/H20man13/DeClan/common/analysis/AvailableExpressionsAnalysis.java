@@ -90,7 +90,7 @@ public class AvailableExpressionsAnalysis extends Analysis<Exp> {
     }
 
     private boolean searchForSubsequentExpression(List<ICode> codeList, int defIndex, Exp defIdent){
-        for(int i = defIndex + 1; defIndex < codeList.size(); i++){
+        for(int i = defIndex + 1; i < codeList.size(); i++){
             ICode icode = codeList.get(i);
             if(icode instanceof Assign){
                 Assign icodeDef = (Assign)icode;

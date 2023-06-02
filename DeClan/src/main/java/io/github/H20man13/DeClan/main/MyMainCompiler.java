@@ -32,10 +32,9 @@ public class MyMainCompiler {
 
             List<ICode> generatedICode = codeGen.getICode();
             MyOptimizer optimizer = new MyOptimizer(generatedICode, gen);
-
-            optimizer.removeDeadCode();
+            
             optimizer.runDataFlowAnalysis();
-            optimizer.performPartialRedundancyElimination();
+            optimizer.performDeadCodeElimination();
             optimizer.performConstantPropogation();
 
             List<ICode> optimizedICode = optimizer.getICode();

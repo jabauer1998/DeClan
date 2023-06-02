@@ -13,6 +13,7 @@ import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.AnticipatedExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.AvailableExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.ConstantPropogationAnalysis;
+import io.github.H20man13.DeClan.common.analysis.LiveVariableAnalysis;
 import io.github.H20man13.DeClan.common.analysis.PostponableExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.UsedExpressionAnalysis;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
@@ -40,6 +41,7 @@ public class MyOptimizer {
     private PostponableExpressionsAnalysis postponableAnal;
     private UsedExpressionAnalysis usedAnal;
     private ConstantPropogationAnalysis propAnal;
+    private LiveVariableAnalysis liveAnal;
     private Map<FlowGraphNode, Set<Exp>> latest;
     private Map<FlowGraphNode, Set<Exp>> earliest;
     private Map<ICode, Set<Exp>> used;
@@ -160,114 +162,144 @@ public class MyOptimizer {
     }
 
     public void removeDeadCode(){
-        if(this.globalFlowGraph != null){
-            for(BlockNode block : this.globalFlowGraph.getBlocks()){
-                block.removeDeadCode();
+
+    }
+
+    private void buildGlobalExpressionSemilattice(){
+        for(BlockNode block : this.globalFlowGraph.getBlocks()){
+            for(ICode icode : block.getICode()){
+                if(icode instanceof Assign){
+                    Assign ident = (Assign)icode;
+                    if(!Utils.setContainsExp(this.globalFlowSet, ident.value)){
+                        this.globalFlowSet.add(ident.value);
+                    }
+                }
             }
         }
+    }
+
+    private void buildEarliest(){
+        this.earliest.put(this.globalFlowGraph.getExit(), new HashSet<Exp>());
+        this.earliest.put(this.globalFlowGraph.getEntry(), new HashSet<Exp>());
+        for(BlockNode block : this.globalFlowGraph.getBlocks()){
+            Set<Exp> earliest = new HashSet<Exp>();
+            for(ICode icode : block.getICode()){
+                earliest.addAll(this.anticipatedAnal.getInstructionInputSet(icode));
+                earliest.removeAll(this.availableAnal.getInstructionInputSet(icode));
+            }
+            this.earliest.put(block, earliest);
+        }
+    }
+
+    private void buildUsedExpressions(){
+        for(BlockNode block : this.globalFlowGraph.getBlocks()){
+            for(ICode icode : block.getICode()){
+                Set<Exp> blockUsed = new HashSet<Exp>();
+                if(icode instanceof Assign){
+                    Assign utilICode = (Assign)icode;
+                    blockUsed.add(utilICode.value);
+                } else if(icode instanceof If){
+                    If ifICode = (If)icode;
+                    blockUsed.add(ifICode.exp);
+                }
+                this.used.put(icode, blockUsed);
+            }
+        }
+    }
+
+    private void runAvailableExpressionAnalysis(){
+        this.availableAnal = new AvailableExpressionsAnalysis(this.globalFlowGraph, this.globalFlowSet);
+        this.availableAnal.run();
+    }
+
+    private void runAnticipatedExpressionAnalysis(){
+        this.anticipatedAnal = new AnticipatedExpressionsAnalysis(this.globalFlowGraph, this.globalFlowSet);    
+        this.anticipatedAnal.run();
+    }
+
+    private void runPosponableExpressionAnalysis(){
+        this.postponableAnal = new PostponableExpressionsAnalysis(this.globalFlowGraph, this.globalFlowSet, this.earliest, this.used);
+        this.postponableAnal.run();
+    }
+
+    private void buildLatest(){
+        for(BlockNode block : this.globalFlowGraph.getBlocks()){
+            Set<Exp> latest = new HashSet<Exp>();
+            
+            Map<FlowGraphNode, Set<Exp>> earliestUnionPosponableSaved = new HashMap<FlowGraphNode, Set<Exp>>();
+            for (FlowGraphNode sucessor : block.getSuccessors()){
+                Set<Exp> earliestUnionPosponable = new HashSet<Exp>();
+
+                Set<Exp> earliestOfSuccessor = earliest.get(sucessor);
+                earliestUnionPosponable.addAll(earliestOfSuccessor);
+
+                Set<Exp> postponableInput = postponableAnal.getBlockInputSet(sucessor);
+                earliestUnionPosponable.addAll(postponableInput);
+
+                earliestUnionPosponableSaved.put(sucessor, earliestUnionPosponable);
+            }
+
+            Set<Exp> intersectionOfAllSucessors = new HashSet<Exp>();
+            intersectionOfAllSucessors.addAll(this.globalFlowSet);
+
+            for(FlowGraphNode sucessor : block.getSuccessors()){
+                Set<Exp> earliestUnionPosponable = earliestUnionPosponableSaved.get(sucessor);
+                intersectionOfAllSucessors.retainAll(earliestUnionPosponable);
+            }
+
+            Set<Exp> usedUnionCompliment = new HashSet<Exp>();
+
+            Set<Exp> compliment = new HashSet<Exp>();
+            compliment.addAll(this.globalFlowSet);
+            compliment.removeAll(intersectionOfAllSucessors);
+
+            for(ICode icode : block.getICode()){
+                usedUnionCompliment.addAll(this.used.get(icode));
+            }
+            usedUnionCompliment.addAll(compliment);
+
+            Set<Exp> earliestUnionPosponable = new HashSet<Exp>();
+            earliestUnionPosponable.addAll(this.earliest.get(block));
+            earliestUnionPosponable.addAll(this.postponableAnal.getBlockInputSet(block));
+
+            latest.addAll(earliestUnionPosponable);
+            latest.retainAll(usedUnionCompliment);
+
+            this.latest.put(block, latest);
+        }
+    }
+
+    private void runUsedExpressionAnalysis(){
+        this.usedAnal = new UsedExpressionAnalysis(this.globalFlowGraph, this.used, this.latest);
+        this.usedAnal.run();
+    }
+
+    private void runConstantPropogationAnalysis(){
+        this.propAnal = new ConstantPropogationAnalysis(this.globalFlowGraph);
+        this.propAnal.run();
+    }
+
+    private void runLiveVariableAnalysis(){
+        this.liveAnal = new LiveVariableAnalysis(this.globalFlowGraph);
+        this.liveAnal.run();
     }
 
     public void runDataFlowAnalysis(){
         if(this.globalFlowGraph != null){
-            for(BlockNode block : this.globalFlowGraph.getBlocks()){
-                for(ICode icode : block.getICode()){
-                    if(icode instanceof Assign){
-                        Assign ident = (Assign)icode;
-                        if(!Utils.setContainsExp(this.globalFlowSet, ident.value)){
-                            this.globalFlowSet.add(ident.value);
-                        }
-                    }
-                }
-            }
-
-            this.availableAnal = new AvailableExpressionsAnalysis(this.globalFlowGraph, this.globalFlowSet);
-            this.anticipatedAnal = new AnticipatedExpressionsAnalysis(this.globalFlowGraph, this.globalFlowSet);
-            
-            this.availableAnal.run();
-            this.anticipatedAnal.run();
-
-            for(BlockNode block : this.globalFlowGraph.getBlocks()){
-                Set<Exp> earliest = new HashSet<Exp>();
-                for(ICode icode : block.getICode()){
-                    earliest.addAll(this.anticipatedAnal.getInstructionInputSet(icode));
-                    earliest.removeAll(this.availableAnal.getInstructionInputSet(icode));
-                }
-                this.earliest.put(block, earliest);
-            }
-            
-
-            for(BlockNode block : this.globalFlowGraph.getBlocks()){
-                for(ICode icode : block.getICode()){
-                    Set<Exp> blockUsed = new HashSet<Exp>();
-                    if(icode instanceof Assign){
-                        Assign utilICode = (Assign)icode;
-                        if(!Utils.setContainsExp(blockUsed, utilICode.value)){
-                            blockUsed.add(utilICode.value);
-                        }
-                    }
-                    this.used.put(icode, blockUsed);
-                }
-            }
-
-            this.postponableAnal = new PostponableExpressionsAnalysis(this.globalFlowGraph, this.globalFlowSet, this.earliest, this.used);
-            this.postponableAnal.run();
-
-            for(BlockNode block : this.globalFlowGraph.getBlocks()){
-                Set<Exp> latest = new HashSet<Exp>();
-                
-                Map<FlowGraphNode, Set<Exp>> earliestUnionPosponableSaved = new HashMap<FlowGraphNode, Set<Exp>>();
-                for (FlowGraphNode sucessor : block.getSuccessors()){
-                    Set<Exp> earliestUnionPosponable = new HashSet<Exp>();
-
-                    Set<Exp> earliestOfSuccessor = earliest.get(sucessor);
-                    if(earliestOfSuccessor != null)
-                        earliestUnionPosponable.addAll(earliestOfSuccessor);
-
-                    Set<Exp> postponableInput = postponableAnal.getBlockInputSet(sucessor);
-
-                    if(postponableInput != null)
-                        earliestUnionPosponable.addAll(postponableInput);
-
-                    earliestUnionPosponableSaved.put(sucessor, earliestUnionPosponable);
-                }
-
-                Set<Exp> intersectionOfAllSucessors = new HashSet<Exp>();
-                intersectionOfAllSucessors.addAll(this.globalFlowSet);
-
-                for(FlowGraphNode sucessor : block.getSuccessors()){
-                    Set<Exp> earliestUnionPosponable = earliestUnionPosponableSaved.get(sucessor);
-                    intersectionOfAllSucessors.retainAll(earliestUnionPosponable);
-                }
-
-                Set<Exp> usedUnionCompliment = new HashSet<Exp>();
-
-                Set<Exp> compliment = new HashSet<Exp>();
-                compliment.addAll(this.globalFlowSet);
-                compliment.removeAll(intersectionOfAllSucessors);
-
-                for(ICode icode : block.getICode()){
-                    usedUnionCompliment.addAll(this.used.get(icode));
-                }
-                usedUnionCompliment.addAll(compliment);
-
-                Set<Exp> earliestUnionPosponable = new HashSet<Exp>();
-                earliestUnionPosponable.addAll(this.earliest.get(block));
-                earliestUnionPosponable.addAll(this.postponableAnal.getBlockInputSet(block));
-
-                latest.addAll(earliestUnionPosponable);
-                latest.retainAll(usedUnionCompliment);
-
-                this.latest.put(block, latest);
-            }
-
-            this.usedAnal = new UsedExpressionAnalysis(this.globalFlowGraph, this.used, this.latest);
-            this.usedAnal.run();
-
-            this.propAnal = new ConstantPropogationAnalysis(this.globalFlowGraph);
-            this.propAnal.run();
+            //buildGlobalExpressionSemilattice();
+            runLiveVariableAnalysis();
+            //runAvailableExpressionAnalysis();
+            //runAnticipatedExpressionAnalysis();
+            //buildEarliest();
+            //buildUsedExpressions();  
+            //runPosponableExpressionAnalysis();
+            //buildLatest();
+            //runUsedExpressionAnalysis();
+            runConstantPropogationAnalysis();
         }
     }
 
+    /*
     public void performPartialRedundancyElimination(){
         for(BlockNode block : this.globalFlowGraph.getBlocks()){
             Set<Exp> latestInstructionUsedOutput = new HashSet<Exp>();
@@ -279,6 +311,7 @@ public class MyOptimizer {
             for(Exp latestInstructionOutput : latestInstructionUsedOutput){
                 String register = gen.genNextRegister();
                 toPreAppendToBeginning.add(new Assign(register, latestInstructionOutput));
+                identifierMap.put(latestInstructionOutput, register);
             }
 
             Set<Exp> notLatest = new HashSet<Exp>();
@@ -308,8 +341,10 @@ public class MyOptimizer {
                     if(codeExp != null && place != null){
                         if(Utils.setContainsExp(useIntersectionNotLatestUnionUsedOut, codeExp)){
                             String value = identifierMap.get(codeExp);
-                            Assign var = new Assign(place, new IdentExp(value));
-                            icodeList.set(i, var);
+                            if(value != null){
+                                Assign var = new Assign(place, new IdentExp(value));
+                                icodeList.set(i, var);
+                            }
                         }
                     }
                 }
@@ -320,6 +355,25 @@ public class MyOptimizer {
             resultList.addAll(icodeList);
 
             block.getBlock().setICode(resultList);
+        }
+    }
+    */
+
+    public void performDeadCodeElimination(){
+        for(BlockNode block : this.globalFlowGraph.getBlocks()){
+            List<ICode> result = new LinkedList<ICode>();
+            for(ICode icode : block.getICode()){
+                if(icode instanceof Assign){
+                    Assign assICode = (Assign)icode;
+                    Set<String> liveVariables = this.liveAnal.getInstructionOutputSet(icode);
+                    if(liveVariables.contains(assICode.place)){
+                        result.add(assICode);
+                    }
+                } else {
+                    result.add(icode);
+                }
+            }
+            block.getBlock().setICode(result);
         }
     }
 

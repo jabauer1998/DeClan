@@ -10,8 +10,10 @@ import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
+import io.github.H20man13.DeClan.common.icode.exp.CallExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 
@@ -35,27 +37,40 @@ public class LiveVariableAnalysis extends Analysis<String> {
                     instructionDef.add(assCode.place);
                     if(!assCode.isConstant()){
                         if(assCode.value instanceof BinExp){
-                            BinExp defPlace = (BinExp)code;
+                            BinExp defPlace = (BinExp)assCode.value;
 
-                            if(!instructionDef.contains(defPlace.left.toString())){
+                            if(defPlace.left instanceof IdentExp){
                                 instructionUse.add(defPlace.left.toString());
                             }
 
-                            if(!instructionDef.contains(defPlace.right.toString())){
+                            if(defPlace.right instanceof IdentExp){
                                 instructionUse.add(defPlace.right.toString());
                             }
                         } else if(assCode.value instanceof UnExp){
-                            UnExp defPlace = (UnExp)code;
+                            UnExp defPlace = (UnExp)assCode.value;
 
-                            if(!instructionDef.contains(defPlace.right.toString())){
+                            if(defPlace.right instanceof IdentExp){
                                 instructionUse.add(defPlace.right.toString());
                             }
                         } else if(assCode.value instanceof IdentExp){
                             IdentExp defPlace = (IdentExp)assCode.value;
-                            if(!instructionUse.contains(defPlace.ident)){
-                                instructionDef.add(defPlace.ident);
+                            instructionUse.add(defPlace.ident);
+                        } else if(assCode.value instanceof CallExp){
+                            CallExp defCall = (CallExp)assCode.value;
+                            for(String arg : defCall.paramaters){
+                                instructionUse.add(arg);
                             }
                         }
+                    }
+                } else if(code instanceof If){
+                    BinExp exp = ((If)code).exp;
+
+                    if(exp.left instanceof IdentExp){
+                        instructionUse.add(exp.left.toString());
+                    }
+
+                    if(exp.right instanceof IdentExp){
+                        instructionUse.add(exp.right.toString());
                     }
                 }
                 defSets.put(code, instructionDef);
@@ -66,12 +81,12 @@ public class LiveVariableAnalysis extends Analysis<String> {
     }
 
     @Override
-    public Set<String> transferFunction(FlowGraphNode block, ICode Node, Set<String> inputSet) {
+    public Set<String> transferFunction(FlowGraphNode block, ICode instruction, Set<String> inputSet) {
         Set<String> resultSet = new HashSet<String>();
 
         resultSet.addAll(inputSet);
-        resultSet.removeAll(defSets.get(Node));
-        resultSet.addAll(useSets.get(Node));
+        resultSet.removeAll(defSets.get(instruction));
+        resultSet.addAll(useSets.get(instruction));
 
         return resultSet;
     }
