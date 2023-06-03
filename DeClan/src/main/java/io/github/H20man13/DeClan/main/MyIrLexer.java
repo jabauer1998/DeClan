@@ -141,16 +141,16 @@ public class MyIrLexer {
                         return;
                     }
                 case OP:
-                    if(!Character.isWhitespace(c)){
-                        lexeme.append(c);
-                        source.advance();
-                        continue;
-                    } else if(IrTokenType.contDualOpToken(lexeme.toString())) {
+                    if(IrTokenType.contDualOpToken(lexeme.toString())) {
                         nextToken = IrToken.create(IrTokenType.getDualOpToken(lexeme.toString()), lexeme.toString(), position);
                         return;
                     } else if(IrTokenType.contSingleOpToken(lexeme.toString().charAt(0))){
                         nextToken = IrToken.create(IrTokenType.getSingleOpToken(lexeme.toString()), lexeme.toString(), position);
                         return;
+                    } else if(!Character.isWhitespace(c)){
+                        lexeme.append(c);
+                        source.advance();
+                        continue;
                     } else {
                         nextToken = null;
                         errorLog.add("Error: Invalid operator with lexeme " + lexeme.toString(), position);

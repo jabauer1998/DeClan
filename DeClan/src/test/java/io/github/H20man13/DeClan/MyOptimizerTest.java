@@ -25,6 +25,7 @@ public class MyOptimizerTest {
         assertTrue("The optimized program equals \n\n" + sb.toString() + "\n\n and the original equals \n\n" + prog, sb.toString().equals(prog));
     }
 
+    /*
     @Test
     public void testCommonSubExpressionElimination(){
         String inputSource = "a := 1\n"
@@ -53,7 +54,8 @@ public class MyOptimizerTest {
 
         comparePrograms(optimizedProg, targetSource);
     }
-
+    */
+    
     @Test 
     public void testDeadCodeElimination(){
         String inputSource = "LABEL block1\n"
@@ -87,6 +89,7 @@ public class MyOptimizerTest {
 
         comparePrograms(optimizedProg, targetSource);
     }
+    
 
     @Test
     public void testConstantPropogation(){

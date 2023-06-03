@@ -137,7 +137,6 @@ public class MyOptimizer {
             for(BlockNode block : this.globalFlowGraph.getBlocks()){
                 result.addAll(block.getICode());
             }
-            result.add(new End());
             return result;
         }
     }

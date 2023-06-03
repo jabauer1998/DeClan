@@ -52,7 +52,6 @@ public class BlockNode implements FlowGraphNode {
         this.dag = new DagGraph();
         this.factory = new DagNodeFactory();
         this.updateLivelinessInformation();
-        this.buildDag();
     }
 
     private void buildCodeFromDag(){
