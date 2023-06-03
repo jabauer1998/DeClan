@@ -1,6 +1,9 @@
 package io.github.H20man13.DeClan.common.symboltable;
 
 import java.util.Stack;
+
+import io.github.H20man13.DeClan.common.Copyable;
+
 import java.util.HashMap;
 
 import static io.github.H20man13.DeClan.main.MyIO.*;
@@ -15,7 +18,7 @@ import java.lang.StringBuilder;
  *The keys must allways be strings however the entries are an object of your choice
  *@author Jacob Bauer
  */
-public class Environment <KeyType, TableType> {
+public class Environment <KeyType, TableType extends Copyable<TableType>> implements Copyable<Environment<KeyType, TableType>> {
     /**
      *The environment stack is how scopes are implemented
      *@author Jacob Bauer
@@ -27,7 +30,7 @@ public class Environment <KeyType, TableType> {
      *@author Jacob Bauer
      */ 
     public Environment(){
-	environment = new Stack<>();
+	    environment = new Stack<>();
     }
 
     /**
@@ -102,14 +105,29 @@ public class Environment <KeyType, TableType> {
     public String toString(){
       StringBuilder mystring = new StringBuilder();
       for(int i = environment.size() - 1; i >= 0; i--){
-	mystring.append("STACK LEVEL -> " + i + '\n');
-	HashMap<KeyType, TableType> list = environment.get(i);
-	for(KeyType key : list.keySet()){
-	  mystring.append("KEY: " + key + " VALUE: ");
-	  mystring.append(list.get(key).toString());
-	  mystring.append('\n');
-	}
+	    mystring.append("STACK LEVEL -> " + i + '\n');
+	    HashMap<KeyType, TableType> list = environment.get(i);
+	    for(KeyType key : list.keySet()){
+	      mystring.append("KEY: " + key + " VALUE: ");
+	      mystring.append(list.get(key).toString());
+	      mystring.append('\n');
+	    }
       }
       return mystring.toString();
+    }
+
+    @Override
+    public Environment<KeyType, TableType> copy(){
+        Environment<KeyType, TableType> result = new Environment<KeyType, TableType>();
+        for(HashMap<KeyType, TableType> map : this.environment){
+            HashMap<KeyType, TableType> newMap = new HashMap<KeyType, TableType>();
+            for(KeyType key: map.keySet()){
+                TableType value = map.get(key);
+                TableType valueCopy = value.copy();
+                newMap.put(key, valueCopy);
+            }
+            result.environment.add(newMap);
+        }
+        return result;
     }
 }

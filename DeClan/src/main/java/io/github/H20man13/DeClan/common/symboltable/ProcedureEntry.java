@@ -11,12 +11,14 @@ import edu.depauw.declan.common.ast.Declaration;
 import edu.depauw.declan.common.ast.Expression;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.VariableDeclaration;
+import io.github.H20man13.DeClan.common.Copyable;
 
 import java.util.ArrayList;
 
-public class ProcedureEntry{
+public class ProcedureEntry implements Copyable<ProcedureEntry>{
 
     private final ProcType Type;
+    private final String typeStr;
     private final List<VariableDeclaration> arguments;
     private final List<Declaration> local;
     private final List<Statement> ExecutionStats;
@@ -24,24 +26,25 @@ public class ProcedureEntry{
   
     public ProcedureEntry(List<VariableDeclaration> arguments, String type, List<Declaration> local, List<Statement> ExecutionStats, Expression ReturnStatement){
         if(arguments == null){
-	  arguments = new ArrayList<>();
+	        arguments = new ArrayList<>();
         }
-	this.arguments = arguments;
+        this.typeStr = type;
+	      this.arguments = arguments;
         if(type.equals("REAL")){
-	    Type = ProcType.REAL;
-	} else if(type.equals("INTEGER")){
-	    Type = ProcType.INTEGER;
-	} else if(type.equals("BOOLEAN")){
-	    Type = ProcType.BOOLEAN;
-	} else {
-	    Type = ProcType.VOID;
-	}
-	this.local = local;
-	if(ExecutionStats == null){
-	  ExecutionStats = new ArrayList<>();
-	}
-	this.ExecutionStats = ExecutionStats;
-	this.ReturnStatement = ReturnStatement;
+	          Type = ProcType.REAL;
+        } else if(type.equals("INTEGER")){
+            Type = ProcType.INTEGER;
+        } else if(type.equals("BOOLEAN")){
+            Type = ProcType.BOOLEAN;
+        } else {
+            Type = ProcType.VOID;
+        }
+	      this.local = local;
+        if(ExecutionStats == null){
+          ExecutionStats = new ArrayList<>();
+        }
+        this.ExecutionStats = ExecutionStats;
+        this.ReturnStatement = ReturnStatement;
     }
   
     @Override
@@ -111,5 +114,10 @@ public class ProcedureEntry{
       } else {
 	return "void";
       }
+    }
+
+    @Override
+    public ProcedureEntry copy() {
+      return new ProcedureEntry(arguments, typeStr, local, ExecutionStats, ReturnStatement);
     }
 }

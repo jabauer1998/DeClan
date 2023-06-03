@@ -6,12 +6,12 @@ import java.lang.String;
 import java.lang.StringBuilder;
 
 import edu.depauw.declan.common.Position;
+import io.github.H20man13.DeClan.common.Copyable;
 
-public class VariableEntry{
+public class VariableEntry implements Copyable<VariableEntry>{
     
     private Boolean isConst; //variable to store the type or CONST
     private Object value; //variable to store the current value of the variable
-    private Position declPosition; //where variable was declared
 
     public VariableEntry(Boolean isConst, Object value){
         this.isConst = isConst;
@@ -28,5 +28,10 @@ public class VariableEntry{
     
     public void setValue(Object value){
 	this.value = value;
+    }
+
+    @Override
+    public VariableEntry copy() {
+        return new VariableEntry(isConst, value);
     }
 }

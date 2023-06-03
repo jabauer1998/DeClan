@@ -2,6 +2,7 @@ package io.github.H20man13.DeClan.main;
 
 import io.github.H20man13.DeClan.common.symboltable.VariableEntry;
 import io.github.H20man13.DeClan.common.symboltable.ProcedureEntry;
+import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 
 
@@ -58,8 +59,13 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
     private Environment <String, TypeCheckerTypes> varEnvironment;
     private Environment <String, ProcedureEntry> procEnvironment;
 
-    public static enum TypeCheckerTypes {
-	VOID, INTEGER, BOOLEAN, STRING, REAL
+    public static enum TypeCheckerTypes implements Copyable<TypeCheckerTypes> {
+		VOID, INTEGER, BOOLEAN, STRING, REAL;
+
+		@Override
+		public TypeCheckerTypes copy() {
+			return this;
+		}
     }
     
     // TODO declare any data structures needed by the interpreter

@@ -8,13 +8,14 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.Proc;
-import io.github.H20man13.DeClan.common.RegisterGenerator;
+import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 
 import io.github.H20man13.DeClan.common.symboltable.VariableEntry;
 import io.github.H20man13.DeClan.common.symboltable.ProcedureEntry;
+import io.github.H20man13.DeClan.common.symboltable.StringEntry;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 
-import static io.github.H20man13.DeClan.common.RegisterGenerator.*;
+import static io.github.H20man13.DeClan.common.IrRegisterGenerator.*;
 import static io.github.H20man13.DeClan.main.MyIO.*;
 
 import java.lang.String;
@@ -58,15 +59,15 @@ import java.util.ArrayList;
 
 public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   private ErrorLog errorLog;
-  private Environment<String, String> varEnvironment;
-  private Environment<String, String> procEnvironment;
+  private Environment<String, StringEntry> varEnvironment;
+  private Environment<String, StringEntry> procEnvironment;
   private MyIrBuilder builder;
 
   public MyICodeGenerator(ErrorLog errorLog){
-    this(errorLog, new RegisterGenerator());
+    this(errorLog, new IrRegisterGenerator());
   }
 
-  public MyICodeGenerator(ErrorLog errorLog, RegisterGenerator Gen) {
+  public MyICodeGenerator(ErrorLog errorLog, IrRegisterGenerator Gen) {
     this.errorLog = errorLog;
     this.builder = new MyIrBuilder(errorLog, Gen);
     this.varEnvironment = new Environment<>();
@@ -108,14 +109,14 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
     Expression valueExpr = constDecl.getValue();
     String value = valueExpr.acceptResult(this);
     String place = builder.buildVariableAssignment(value);
-    varEnvironment.addEntry(id.getLexeme(), place);
+    varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
   }
 
   @Override
   public void visit(VariableDeclaration varDecl) {
     Identifier id = varDecl.getIdentifier();
     String place = builder.buildNumAssignment("0");
-    varEnvironment.addEntry(id.getLexeme(), place);
+    varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
   }
 
   @Override
@@ -138,7 +139,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
     Expression retExp = procDecl.getReturnStatement();
     if(retExp != null){
       String retPlace = retExp.acceptResult(this);
-      procEnvironment.addEntry(procedureName, retPlace);
+      procEnvironment.addEntry(procedureName, new StringEntry(retPlace));
       builder.buildReturnStatement();
     }
     varEnvironment.removeScope();
@@ -227,8 +228,8 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
         forbranch.getInitAssignment().accept(this);
         String target = forbranch.getTargetExpression().acceptResult(this);
         IdentExp targetIdent = new IdentExp(target);
-        String curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-        IdentExp curValueIdent = new IdentExp(curvalue);
+        StringEntry curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+        IdentExp curValueIdent = new IdentExp(curvalue.toString());
         builder.buildForLoopBeginning(curValueIdent, targetIdent);
         for(int i = 0; i < toExec.size(); i++){
             toExec.get(i).accept(this);
@@ -238,8 +239,8 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
       forbranch.getInitAssignment().accept(this);
       String target = forbranch.getTargetExpression().acceptResult(this);
       IdentExp targetIdent = new IdentExp(target);
-      String curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-      IdentExp curvalueIdent = new IdentExp(curvalue);
+      StringEntry curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+      IdentExp curvalueIdent = new IdentExp(curvalue.toString());
       builder.buildForLoopBeginning(curvalueIdent, targetIdent);
       for(int i = 0; i < toExec.size(); i++){
           toExec.get(i).accept(this);
@@ -250,9 +251,9 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
         
   @Override
   public void visit(Assignment assignment) {
-    String place = varEnvironment.getEntry(assignment.getVariableName().getLexeme());
+    StringEntry place = varEnvironment.getEntry(assignment.getVariableName().getLexeme());
     String value = assignment.getVariableValue().acceptResult(this);
-    builder.buildVariableAssignment(place, value);
+    builder.buildVariableAssignment(place.toString());
   }
   
   @Override
@@ -346,8 +347,8 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
     
   @Override
   public String visitResult(Identifier identifier){
-    String place = varEnvironment.getEntry(identifier.getLexeme());
-    return place;
+    StringEntry place = varEnvironment.getEntry(identifier.getLexeme());
+    return place.toString();
   }
 
   @Override

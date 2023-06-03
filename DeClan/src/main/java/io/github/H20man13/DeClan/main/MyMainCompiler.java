@@ -8,7 +8,7 @@ import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.ReaderSource;
-import io.github.H20man13.DeClan.common.RegisterGenerator;
+import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.ICode;
 
 public class MyMainCompiler {
@@ -25,7 +25,7 @@ public class MyMainCompiler {
             prog.accept(typeChecker);
         }
         
-        RegisterGenerator gen = new RegisterGenerator();
+        IrRegisterGenerator gen = new IrRegisterGenerator();
         if(prog != null){
             MyICodeGenerator codeGen = new MyICodeGenerator(errLog, gen);
             prog.accept(codeGen);

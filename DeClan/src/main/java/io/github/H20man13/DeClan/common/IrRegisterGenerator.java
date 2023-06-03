@@ -1,6 +1,6 @@
 package io.github.H20man13.DeClan.common;
 
-public class RegisterGenerator {
+public class IrRegisterGenerator {
     private char startLetter = 'a';
     private char endLetter = 'z';
     private char currentLetter = 'a';

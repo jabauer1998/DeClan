@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.depauw.declan.common.ErrorLog;
-import io.github.H20man13.DeClan.common.RegisterGenerator;
+import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -14,7 +14,7 @@ import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 
 public class MyIrBuilder {
     private MyIrFactory factory;
-    private RegisterGenerator gen;
+    private IrRegisterGenerator gen;
     private List<ICode> output;
 
     private int forLoopNumber;
@@ -27,10 +27,10 @@ public class MyIrBuilder {
     private int whileLoopSeqNumber;
 
     public MyIrBuilder(ErrorLog errLog){
-        this(errLog, new RegisterGenerator());
+        this(errLog, new IrRegisterGenerator());
     }
 
-    public MyIrBuilder(ErrorLog errLog, RegisterGenerator generator){
+    public MyIrBuilder(ErrorLog errLog, IrRegisterGenerator generator){
         this.factory = new MyIrFactory(errLog);
         this.gen = generator;
         this.output = new LinkedList<>();

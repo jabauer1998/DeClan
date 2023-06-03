@@ -2,13 +2,15 @@ package edu.depauw.declan.common;
 
 import java.util.Objects;
 
+import io.github.H20man13.DeClan.common.Copyable;
+
 /**
  * A Position records a combination of line:column numbers (each starting from
  * 1) in a Source.
  * 
  * @author bhoward
  */
-public class Position implements Comparable<Position> {
+public class Position implements Comparable<Position>, Copyable<Position> {
 	private final int line, column;
 
 	/**
@@ -65,5 +67,10 @@ public class Position implements Comparable<Position> {
 		} else {
 			return 0;
 		}
+	}
+
+	@Override
+	public Position copy() {
+		return new Position(line, column);
 	}
 }

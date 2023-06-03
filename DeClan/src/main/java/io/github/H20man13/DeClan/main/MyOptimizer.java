@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.BasicBlock;
-import io.github.H20man13.DeClan.common.RegisterGenerator;
+import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.AnticipatedExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.AvailableExpressionsAnalysis;
@@ -46,13 +46,13 @@ public class MyOptimizer {
     private Map<FlowGraphNode, Set<Exp>> earliest;
     private Map<ICode, Set<Exp>> used;
     private Set<Exp> globalFlowSet;
-    private RegisterGenerator gen;
+    private IrRegisterGenerator gen;
 
     public MyOptimizer(List<ICode> intermediateCode){
-        this(intermediateCode, new RegisterGenerator());
+        this(intermediateCode, new IrRegisterGenerator());
     }
 
-    public MyOptimizer(List<ICode> intermediateCode, RegisterGenerator gen){
+    public MyOptimizer(List<ICode> intermediateCode, IrRegisterGenerator gen){
         this.gen = gen;
         this.intermediateCode = intermediateCode;
         this.latest = new HashMap<FlowGraphNode, Set<Exp>>();
