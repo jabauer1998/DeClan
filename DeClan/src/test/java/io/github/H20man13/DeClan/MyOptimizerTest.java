@@ -25,9 +25,8 @@ public class MyOptimizerTest {
         assertTrue("The optimized program equals \n\n" + sb.toString() + "\n\n and the original equals \n\n" + prog, sb.toString().equals(prog));
     }
 
-    /*
     @Test
-    public void testCommonSubExpressionElimination(){
+    public void testSimpleCommonSubExpressionElimination(){
         String inputSource = "a := 1\n"
                            + "b := 2\n" 
                            + "i := a ADD b\n"
@@ -38,7 +37,6 @@ public class MyOptimizerTest {
         String targetSource = "a := 1\n"
                             + "b := 2\n"
                             + "i := a ADD b\n"
-                            + "z := i\n"
                             + "f := i ADD i\n"
                             + "END\n";
 
@@ -54,7 +52,41 @@ public class MyOptimizerTest {
 
         comparePrograms(optimizedProg, targetSource);
     }
-    */
+
+    @Test
+    public void testComplexCommonSubExpressionElimination(){
+        String inputSource = "LABEL block1\n"
+                           + "a := 1\n"
+                           + "b := 2\n" 
+                           + "i := a ADD b\n"
+                           + "z := a ADD b\n"
+                           + "f := z ADD i\n"
+                           + "LABEL block2\n"
+                           + "IF z EQ TRUE THEN block1 ELSE block2\n"
+                           + "END\n";
+
+        String targetSource = "LABEL block1\n"
+                            + "a := 1\n"
+                            + "b := 2\n"
+                            + "i := a ADD b\n"
+                            + "z := i\n"
+                            + "f := i ADD i\n"
+                            + "LABEL block2\n"
+                            + "IF z EQ TRUE THEN block1 ELSE block2\n"
+                            + "END\n";
+
+        ErrorLog errLog = new ErrorLog();
+        ReaderSource source = new ReaderSource(new StringReader(inputSource));
+        MyIrLexer lexer = new MyIrLexer(source, errLog);
+        MyIrParser parser = new MyIrParser(lexer, errLog);
+        List<ICode> prog = parser.parseProgram();
+        MyOptimizer optimizer = new MyOptimizer(prog);
+        //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
+        //It is called within the Optimizers constructor
+        List<ICode> optimizedProg = optimizer.getICode();
+
+        comparePrograms(optimizedProg, targetSource);
+    }
     
     @Test 
     public void testDeadCodeElimination(){

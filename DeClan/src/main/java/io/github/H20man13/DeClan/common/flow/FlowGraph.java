@@ -22,10 +22,6 @@ public class FlowGraph {
         this.blockNodes.add(node);
     }
 
-    public void removeDeadCode(){
-        this.entryNode.removeDeadCode();
-    }
-
     public EntryNode getEntry(){
         return entryNode;
     }

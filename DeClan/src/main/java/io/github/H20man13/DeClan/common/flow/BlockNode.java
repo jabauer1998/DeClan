@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.naming.LinkException;
@@ -39,38 +40,38 @@ public class BlockNode implements FlowGraphNode {
     protected BasicBlock block;
     protected List<FlowGraphNode> successors;
     protected List<FlowGraphNode> predecessors;
-    protected Environment<String, LiveInfo> lifeInformation;
     protected DagNodeFactory factory;
     protected DagGraph dag;
 
-    public BlockNode(BasicBlock block){
+    public BlockNode(BasicBlock block, Map<ICode, Environment<String, LiveInfo>> liveInfo){
         this.block = block;
         this.successors = new ArrayList<FlowGraphNode>();
         this.predecessors = new ArrayList<FlowGraphNode>();
-        this.lifeInformation = new Environment<String, LiveInfo>();
-        this.lifeInformation.addScope();
         this.dag = new DagGraph();
         this.factory = new DagNodeFactory();
-        this.updateLivelinessInformation();
+        this.buildDag(liveInfo);
     }
 
-    private void buildCodeFromDag(){
+    private void buildCodeFromDag(Map<ICode, Environment<String, LiveInfo>> liveInfo){
         List<ICode> result = new LinkedList<ICode>();
         List<ICode> initialList = this.getICode();
+        int initialListSize = initialList.size();
 
-        if(initialList.size() > 0){
+        if(initialListSize > 0){
             ICode firstElem = initialList.get(0);
             if(firstElem instanceof Label){
                 result.add(firstElem);
             }
         }
 
+        Environment<String, LiveInfo> liveAtEndOfBlock = liveInfo.get(initialList.get(initialListSize - 1));
+
         for(DagNode node : this.dag.getDagNodes()){
 
             List<String> isAlive = new LinkedList<String>();
             for(String identifier: node.getIdentifiers()){
-                if(this.lifeInformation.entryExists(identifier)){
-                    LiveInfo info = this.lifeInformation.getEntry(identifier);
+                if(liveAtEndOfBlock.entryExists(identifier)){
+                    LiveInfo info = liveAtEndOfBlock.getEntry(identifier);
                     if(info.isAlive){
                         isAlive.add(identifier);
                     }
@@ -95,8 +96,8 @@ public class BlockNode implements FlowGraphNode {
                     DagNode child1 = node2.getChildren().get(0);
                     DagNode child2 = node2.getChildren().get(1);
 
-                    String identifier1 = Utils.getIdentifier(child1, lifeInformation);
-                    String identifier2 = Utils.getIdentifier(child2, lifeInformation);
+                    String identifier1 = Utils.getIdentifier(child1, liveAtEndOfBlock);
+                    String identifier2 = Utils.getIdentifier(child2, liveAtEndOfBlock);
 
                     IdentExp exp1 = new IdentExp(identifier1);
                     IdentExp exp2 = new IdentExp(identifier2);
@@ -111,7 +112,7 @@ public class BlockNode implements FlowGraphNode {
 
                     DagNode child1 = node2.getChildren().get(0);
 
-                    String identifier1 = Utils.getIdentifier(child1, lifeInformation);
+                    String identifier1 = Utils.getIdentifier(child1, liveAtEndOfBlock);
 
                     IdentExp exp1 = new IdentExp(identifier1);
 
@@ -127,7 +128,7 @@ public class BlockNode implements FlowGraphNode {
             } else if(node instanceof DagVariableNode){
                 DagVariableNode varNode = (DagVariableNode)node;
                 DagNode child = varNode.getChild();
-                String identifier1 = Utils.getIdentifier(child, lifeInformation);
+                String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
                 IdentExp ident1 = new IdentExp(identifier1);
                 result.add(new Assign(identifier, ident1));
             }
@@ -149,44 +150,7 @@ public class BlockNode implements FlowGraphNode {
         block.setICode(result);
     }
 
-    private void updateLivelinessInformation(){
-        List<ICode> icode = this.block.getIcode();
-        for(int i = icode.size() - 1; i >= 0; i--){
-            ICode threeAddressInstr = icode.get(i);
-            if(threeAddressInstr instanceof Assign){
-                Assign assignInstr = (Assign)threeAddressInstr;
-                String place = assignInstr.place;
-
-                if(!this.lifeInformation.entryExists(place)){
-                    // -1 means no next use
-                    this.lifeInformation.addEntry(place, new LiveInfo(false, -1));
-                }
-
-                if(assignInstr.value instanceof BinExp){
-                    BinExp binExp = (BinExp)assignInstr.value;
-    
-                    if(!binExp.left.isConstant()){
-                        String left = binExp.left.toString();
-                        this.lifeInformation.addEntry(left, new LiveInfo(true, i));
-                    }
-    
-                    if(!binExp.right.isConstant()){
-                        String right = binExp.right.toString();
-                        this.lifeInformation.addEntry(right, new LiveInfo(true, i));
-                    }
-                } else if(assignInstr.value instanceof UnExp){
-                    UnExp unExp = (UnExp)assignInstr.value;
-
-                    if(!unExp.right.isConstant()){
-                        String right = unExp.right.toString();
-                        this.lifeInformation.addEntry(place, new LiveInfo(true, i));
-                    }
-                }
-            }
-        }
-    }
-
-    private void buildDag(){
+    private void buildDag(Map<ICode, Environment<String, LiveInfo>> liveInfo){
         List<ICode> icodes = this.block.getIcode();
         for(ICode icode : icodes){
             if(icode instanceof Assign){
@@ -271,7 +235,7 @@ public class BlockNode implements FlowGraphNode {
                 }
             }
         }
-        buildCodeFromDag();
+        buildCodeFromDag(liveInfo);
     }
 
     public BasicBlock getBlock(){
@@ -284,40 +248,6 @@ public class BlockNode implements FlowGraphNode {
 
     public void addPredecessor(FlowGraphNode predecessor){
         this.predecessors.add(predecessor);
-    }
-
-    @Override
-    public void removeDeadCode() {
-        while(true){
-            List<DagNode> roots = this.dag.getRoots();
-
-            List<DagNode> rootsNoLife = new LinkedList<DagNode>();
-            for(DagNode root: roots){
-                boolean rootContainsLife = false;
-                for(String ident : root.getIdentifiers()){
-                    if(this.lifeInformation.entryExists(ident)){
-                        LiveInfo life = this.lifeInformation.getEntry(ident);
-                        if(life.isAlive){
-                            rootContainsLife = true;
-                            break;
-                        }
-                    }
-                }
-
-                if(!rootContainsLife){
-                    rootsNoLife.add(root);
-                }
-            }
-
-            if(rootsNoLife.size() == 0){
-                break;
-            }
-
-            for(DagNode root: rootsNoLife){
-                this.dag.deleteDagNode(root);
-            }
-        }
-        buildCodeFromDag();
     }
 
     public void removePredecessor(FlowGraphNode node){

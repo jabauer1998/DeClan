@@ -16,9 +16,6 @@ public class ExitNode implements FlowGraphNode{
     }
 
     @Override
-    public void removeDeadCode() {}
-
-    @Override
     public List<ICode> getICode() {
         return new LinkedList<ICode>();
     }

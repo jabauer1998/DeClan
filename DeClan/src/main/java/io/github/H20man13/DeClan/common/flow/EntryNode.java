@@ -17,11 +17,6 @@ public class EntryNode implements FlowGraphNode {
     }
 
     @Override
-    public void removeDeadCode() {
-        entry.removeDeadCode();
-    }
-
-    @Override
     public List<ICode> getICode() {
         return new LinkedList<ICode>();
     }

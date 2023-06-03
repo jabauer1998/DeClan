@@ -9,6 +9,5 @@ import io.github.H20man13.DeClan.common.BasicBlock;
 import io.github.H20man13.DeClan.common.icode.ICode;
 
 public interface FlowGraphNode {
-    public void removeDeadCode();
     public List<ICode> getICode();
 }

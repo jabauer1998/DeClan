@@ -27,10 +27,15 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Label;
+import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
+import io.github.H20man13.DeClan.common.icode.exp.CallExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.symboltable.Environment;
+import io.github.H20man13.DeClan.common.symboltable.LiveInfo;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class MyOptimizer {
@@ -42,6 +47,7 @@ public class MyOptimizer {
     private UsedExpressionAnalysis usedAnal;
     private ConstantPropogationAnalysis propAnal;
     private LiveVariableAnalysis liveAnal;
+    private Map<ICode, Environment<String, LiveInfo>> livelinessInformation;
     private Map<FlowGraphNode, Set<Exp>> latest;
     private Map<FlowGraphNode, Set<Exp>> earliest;
     private Map<ICode, Set<Exp>> used;
@@ -59,7 +65,12 @@ public class MyOptimizer {
         this.earliest = new HashMap<FlowGraphNode, Set<Exp>>();
         this.used = new HashMap<ICode, Set<Exp>>();
         this.globalFlowSet = new HashSet<Exp>();
+        this.livelinessInformation = new HashMap<ICode, Environment<String, LiveInfo>>();
+        this.updateLiveLinessInformation();
+        this.buildFlowGraph();
+    }
 
+    private void buildFlowGraph() {
         List<Integer> firsts = findFirsts();
         List<BasicBlock> basicBlocks = new LinkedList<BasicBlock>();
         for(int leaderIndex = 0; leaderIndex < firsts.size(); leaderIndex++){
@@ -84,7 +95,7 @@ public class MyOptimizer {
 
         for(int i = 0; i < basicBlocks.size(); i++){
             BasicBlock blockAtIndex = basicBlocks.get(i);
-            BlockNode blockNode = new BlockNode(blockAtIndex);
+            BlockNode blockNode = new BlockNode(blockAtIndex, this.livelinessInformation);
                 
             if(Utils.beginningOfBlockIsLabel(blockAtIndex)){
                 Label firstLabel = (Label)blockAtIndex.getIcode().get(0);
@@ -129,6 +140,68 @@ public class MyOptimizer {
         this.globalFlowGraph = flowGraph;
     }
 
+    private void updateLiveLinessInformation() {
+        Environment<String, LiveInfo> symbolTable = new Environment<String, LiveInfo>();
+        symbolTable.addScope();
+        for(int i = this.intermediateCode.size() - 1; i >= 0; i--){
+            ICode icode = this.intermediateCode.get(i);
+            if(icode instanceof Assign){
+                Assign icodeAssign = (Assign)icode;
+                symbolTable.addEntry(icodeAssign.place, new LiveInfo(false, -1));
+
+                if(icodeAssign.value instanceof IdentExp){
+                    IdentExp identExp = (IdentExp)icodeAssign.value;
+                    symbolTable.addEntry(identExp.ident, new LiveInfo(true, i));
+                } else if(icodeAssign.value instanceof BinExp){
+                    BinExp binExp = (BinExp)icodeAssign.value;
+
+                    if(binExp.right instanceof IdentExp){
+                        IdentExp rightExp = (IdentExp)binExp.right;
+                        symbolTable.addEntry(rightExp.ident, new LiveInfo(true, i));
+                    }
+
+                    if(binExp.left instanceof IdentExp){
+                        IdentExp leftExp = (IdentExp)binExp.left;
+                        symbolTable.addEntry(leftExp.ident, new LiveInfo(true, i));
+                    }
+                } else if(icodeAssign.value instanceof UnExp){
+                    UnExp unExp = (UnExp)icodeAssign.value;
+
+                    if(unExp.right instanceof IdentExp){
+                        IdentExp rightExp = (IdentExp)unExp.right;
+                        symbolTable.addEntry(rightExp.ident, new LiveInfo(true, i));
+                    }
+                } else if(icodeAssign.value instanceof CallExp){
+                    CallExp callExp = (CallExp)icodeAssign.value;
+                    
+                    for(String param : callExp.paramaters){
+                        symbolTable.addEntry(param, new LiveInfo(true, i));
+                    }
+                }
+            } else if(icode instanceof If){
+                If ifStat = (If)icode;
+
+                BinExp binExp = ifStat.exp;
+
+                if(binExp.left instanceof IdentExp){
+                    IdentExp leftIdent = (IdentExp)binExp.left;
+                    symbolTable.addEntry(leftIdent.ident, new LiveInfo(true, i));
+                }
+
+                if(binExp.right instanceof IdentExp){
+                    IdentExp rightIdent = (IdentExp)binExp.right;
+                    symbolTable.addEntry(rightIdent.ident, new LiveInfo(true, i));
+                }
+            } else if(icode instanceof Proc){
+                for(String param : ((Proc)icode).params){
+                    symbolTable.addEntry(param, new LiveInfo(true, i));
+                }
+            }
+
+            livelinessInformation.put(icode, symbolTable.copy());
+        }
+    }
+
     public List<ICode> getICode(){
         if(this.globalFlowGraph == null){
             return this.intermediateCode;
@@ -137,6 +210,7 @@ public class MyOptimizer {
             for(BlockNode block : this.globalFlowGraph.getBlocks()){
                 result.addAll(block.getICode());
             }
+            result.add(new End());
             return result;
         }
     }
