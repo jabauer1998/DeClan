@@ -1,6 +1,7 @@
 package io.github.H20man13.DeClan.common.icode;
 
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.pat.P;
 
 public class If implements ICode {
 	public BinExp exp;
@@ -25,5 +26,10 @@ public class If implements ICode {
 	@Override
 	public boolean isBranch() {
 		return true;
+	}
+
+	@Override
+	public P asPattern() {
+		return P.PAT(P.IF(), exp.asPattern(true), P.THEN(), P.ID(), P.ELSE(), P.ID());
 	}
 }

@@ -1,5 +1,8 @@
 package io.github.H20man13.DeClan.common.icode.exp;
 
+import io.github.H20man13.DeClan.common.pat.P;
+import io.github.H20man13.DeClan.common.util.Utils;
+
 public class UnExp implements Exp {
     public Exp right;
     public Operator op;
@@ -39,5 +42,14 @@ public class UnExp implements Exp {
     @Override
     public boolean isConstant() {
         return false;
+    }
+
+    @Override
+    public P asPattern(boolean hasContainer) {
+        if(hasContainer){
+            return P.PAT(Utils.unOpToPattern(op), right.asPattern(false));
+        } else {
+            return null;
+        }
     }
 }

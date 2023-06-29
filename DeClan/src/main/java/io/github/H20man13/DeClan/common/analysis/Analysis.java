@@ -2,9 +2,12 @@ package io.github.H20man13.DeClan.common.analysis;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
@@ -14,7 +17,7 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 public abstract class Analysis<SetType> {
     private FlowGraph flowGraph;
     private Direction direction;
-    private Meet symbol;
+    private Function<List<Set<SetType>>, Set<SetType>> meetOperation;
     private Set<SetType> semiLattice;
 
     private Map<FlowGraphNode, Set<SetType>> blockOutputs;
@@ -33,10 +36,39 @@ public abstract class Analysis<SetType> {
         INTERSECTION
     }
     
-    public Analysis(FlowGraph flowGraph, Direction direction, Meet symbol, Set<SetType> semiLattice){
+    private Function<List<Set<SetType>>, Set<SetType>> unionOperation;
+    private Function<List<Set<SetType>>, Set<SetType>> intersectionOperation;
+
+    public Analysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, Set<SetType> semiLattice){
         this.flowGraph = flowGraph;
         this.direction = direction;
-        this.symbol = symbol;
+        this.unionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
+            @Override
+            public Set<SetType> apply(List<Set<SetType>> t) {
+                Set<SetType> result = new HashSet<SetType>();
+                for(Set<SetType> set : t){
+                    result.addAll(set);
+                }
+                return result;
+            } 
+        };
+        this.intersectionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
+            @Override
+            public Set<SetType> apply(List<Set<SetType>> t) {
+                Set<SetType> result = unionOperation.apply(t);
+                for(Set<SetType> set : t){
+                    result.retainAll(set);
+                }
+                return result;
+            }
+        };
+
+        if(meetOperation == Meet.UNION){
+            this.meetOperation = unionOperation;
+        } else {
+            this.meetOperation = intersectionOperation;
+        }
+
         this.instructionInputs = new HashMap<ICode, Set<SetType>>();
         this.instructionOutputs = new HashMap<ICode, Set<SetType>>();
         this.blockInputs = new HashMap<FlowGraphNode, Set<SetType>>();
@@ -44,8 +76,44 @@ public abstract class Analysis<SetType> {
         this.semiLattice = semiLattice;
     }
 
-    public Analysis(FlowGraph flowGraph, Direction direction, Meet symbol){
-        this(flowGraph, direction, symbol, new HashSet<SetType>());
+    public Analysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semilattice){
+        this.flowGraph = flowGraph;
+        this.direction = direction;
+        this.unionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
+            @Override
+            public Set<SetType> apply(List<Set<SetType>> t) {
+                Set<SetType> result = new HashSet<SetType>();
+                for(Set<SetType> set : t){
+                    result.addAll(set);
+                }
+                return result;
+            } 
+        };
+        this.intersectionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
+            @Override
+            public Set<SetType> apply(List<Set<SetType>> t) {
+                Set<SetType> result = unionOperation.apply(t);
+                for(Set<SetType> set : t){
+                    result.retainAll(set);
+                }
+                return result;
+            }
+        };
+
+        this.meetOperation = meetOperation;
+        this.semiLattice = semilattice;
+        this.instructionInputs = new HashMap<ICode, Set<SetType>>();
+        this.instructionOutputs = new HashMap<ICode, Set<SetType>>();
+        this.blockInputs = new HashMap<FlowGraphNode, Set<SetType>>();
+        this.blockOutputs = new HashMap<FlowGraphNode, Set<SetType>>();
+    }
+
+    public Analysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation){
+        this(flowGraph, direction, meetOperation, new HashSet<SetType>());
+    }
+
+    public Analysis(FlowGraph flowGraph, Direction direction, Meet meetOperation){
+        this(flowGraph, direction, meetOperation, new HashSet<SetType>());
     }
 
     public Set<SetType> getBlockInputSet(FlowGraphNode Node){
@@ -82,15 +150,12 @@ public abstract class Analysis<SetType> {
                 for(BlockNode block : this.flowGraph.getBlocks()){
                     Set<SetType> inputSet = new HashSet<SetType>();
 
-                    if(this.symbol == Meet.UNION){
-                        for(FlowGraphNode predecessor : block.getPredecessors()){
-                            inputSet.addAll(blockOutputs.get(predecessor));
-                        }
-                    } else {
-                        for(FlowGraphNode predecessor : block.getPredecessors()){
-                            inputSet.retainAll(blockOutputs.get(predecessor));
-                        }
+                    List<Set<SetType>> predecessorsLists = new LinkedList<Set<SetType>>();
+                    for(FlowGraphNode node : block.getPredecessors()){
+                        predecessorsLists.add(this.getBlockOutputSet(node));
                     }
+
+                    inputSet = meetOperation.apply(predecessorsLists);
 
                     blockInputs.put(block, inputSet);
 
@@ -124,15 +189,12 @@ public abstract class Analysis<SetType> {
                 for(int b = blocks.size() - 1; b >= 0; b--){
                     BlockNode block = blocks.get(b);
                     Set<SetType> outputSet = new HashSet<SetType>();
-                    if(this.symbol == Meet.UNION){
-                        for(FlowGraphNode successor : block.getSuccessors()){
-                            outputSet.addAll(blockInputs.get(successor));
-                        }
-                    } else {
-                        for(FlowGraphNode successor : block.getSuccessors()){
-                            outputSet.retainAll(blockInputs.get(successor));
-                        }
+
+                    List<Set<SetType>> sucessorLists = new LinkedList<Set<SetType>>();
+                    for(FlowGraphNode node : block.getSuccessors()){
+                        sucessorLists.add(this.getBlockInputSet(node));
                     }
+                    outputSet = meetOperation.apply(sucessorLists);
 
                     blockOutputs.put(block, outputSet);
 

@@ -29,6 +29,7 @@ import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
+import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.LiveInfo;
 import io.github.H20man13.DeClan.common.token.IrTokenType;
@@ -212,6 +213,33 @@ public class Utils {
             }
         } else {
             return false;
+        }
+    }
+
+    public static P binOpToPattern(BinExp.Operator op){
+        switch(op){
+            case ADD: return P.ADD();
+            case SUB: return P.SUB();
+            case MUL: return P.MUL();
+            case DIV: return P.DIV();
+            case BAND: return P.BAND();
+            case MOD: return P.MOD();
+            case BOR: return P.BOR();
+            case GT: return P.GT();
+            case GE: return P.GE();
+            case LT: return P.LT();
+            case LE: return P.LE();
+            case EQ: return P.EQ();
+            case NE: return P.NE();
+            default: return null;
+        }
+    }
+
+    public static P unOpToPattern(UnExp.Operator op){
+        switch(op){
+            case NEG: return P.NEG();
+            case BNOT: return P.BNOT();
+            default: return null;
         }
     }
 }

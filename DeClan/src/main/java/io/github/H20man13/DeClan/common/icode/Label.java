@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import io.github.H20man13.DeClan.common.pat.P;
+
 public class Label implements ICode {
 	public String label;
 
@@ -20,5 +22,10 @@ public class Label implements ICode {
 	@Override
 	public boolean isBranch() {
 		return false;
+	}
+
+	@Override
+	public P asPattern() {
+		return P.PAT(P.LABEL(), P.ID());
 	}
 }

@@ -2,6 +2,9 @@ package io.github.H20man13.DeClan.common.icode.exp;
 
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.pat.P;
+import io.github.H20man13.DeClan.common.pat.P.ID;
+
 public class CallExp implements Exp {
     public String functionName;
     public List<String> paramaters;
@@ -38,5 +41,14 @@ public class CallExp implements Exp {
     @Override
     public boolean isConstant() {
         return false;
+    }
+
+    @Override
+    public P asPattern(boolean hasContainer) {
+        if(hasContainer){
+            return P.PAT(P.CALL(), P.ID());
+        } else {
+            return null;
+        }
     }
 }

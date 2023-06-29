@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.icode.exp;
 
+import io.github.H20man13.DeClan.common.pat.P;
+
 public class IdentExp implements Exp{
     public String ident;
 
@@ -30,5 +32,14 @@ public class IdentExp implements Exp{
     @Override
     public boolean isConstant() {
         return false;
+    }
+
+    @Override
+    public P asPattern(boolean hasContainer) {
+        if(hasContainer){
+            return P.PAT(P.ID());
+        } else {
+            return P.ID();
+        }
     }
 }

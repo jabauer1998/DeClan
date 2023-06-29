@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.icode.exp;
 
+import io.github.H20man13.DeClan.common.pat.P;
+
 public class StrExp implements Exp{
     public String value;
 
@@ -30,6 +32,15 @@ public class StrExp implements Exp{
     @Override
     public boolean isConstant() {
         return true;
+    }
+
+    @Override
+    public P asPattern(boolean hasContainer) {
+        if(hasContainer){
+            return P.PAT(P.STR());
+        } else {
+            return P.STR();
+        }
     }
     
 }

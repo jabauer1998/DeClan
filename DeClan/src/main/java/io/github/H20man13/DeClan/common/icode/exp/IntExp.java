@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.icode.exp;
 
+import io.github.H20man13.DeClan.common.pat.P;
+
 public class IntExp implements Exp {
     public int value;
 
@@ -30,5 +32,14 @@ public class IntExp implements Exp {
     @Override
     public boolean isConstant() {
         return true;
+    }
+
+    @Override
+    public P asPattern(boolean hasContainer) {
+        if(hasContainer){
+            return P.PAT(P.INT());
+        } else {
+            return P.INT();
+        }
     }
 }

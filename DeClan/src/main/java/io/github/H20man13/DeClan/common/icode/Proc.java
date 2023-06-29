@@ -2,6 +2,8 @@ package io.github.H20man13.DeClan.common.icode;
 
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.pat.P;
+
 public class Proc implements ICode {
 	public String pname;
 	public List<String> params;
@@ -36,5 +38,10 @@ public class Proc implements ICode {
 	@Override
 	public boolean isBranch() {
 		return true;
+	}
+
+	@Override
+	public P asPattern() {
+		return P.PAT(P.PROC(), P.ID());
 	}
 }
