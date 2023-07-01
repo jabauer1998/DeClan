@@ -17,6 +17,7 @@ import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.pat.Pattern;
 import io.github.H20man13.DeClan.common.arm.ArmRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Label;
@@ -208,6 +209,16 @@ public class MyCodeGenerator {
         initIf21();
         initIf22();
 
+        initIf23();
+        initIf24();
+        initIf25();
+        initIf26();
+        initIf27();
+        initIf28();
+        initIf29();
+
+        //Init Goto Pattern
+        initGoto0();
 
     }
 
@@ -3507,6 +3518,30 @@ public class MyCodeGenerator {
                 cGen.addInstruction("B NE " + ifStatement.ifTrue);
                 cGen.addInstruction("B EQ " + ifStatement.ifFalse);
 
+                return null;
+            }
+        });
+    }
+
+    public void initGoto0(){
+        codeGenFunctions.put(Pattern.goto0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Goto gotoICode = (Goto)icode;
+                cGen.addInstruction("B " + gotoICode.label);
+                return null;
+            }
+        });
+    }
+
+    public void initLebel0(){
+        codeGenFunctions.put(Pattern.label, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Label labelICode = (Label)icode;
+                cGen.setLabel(labelICode.label);
                 return null;
             }
         });
