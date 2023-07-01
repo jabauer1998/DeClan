@@ -26,6 +26,7 @@ import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.IntExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 
 public class MyCodeGenerator {
     private List<ICode> intermediateCode;
@@ -146,6 +147,68 @@ public class MyCodeGenerator {
         initLe1();
         initLe2();
         initLe3();
+
+        //Init eq Patterns
+        initEq0();
+        initEq1();
+        initEq2();
+        initEq3();
+        initEq4();
+        initEq5();
+        initEq6();
+
+        //Initialize the ne Patterns
+        initNe0();
+        initNe1();
+        initNe2();
+        initNe3();
+        initNe4();
+        initNe5();
+        initNe6();
+
+        //Initialize the Neg patterns
+        initNeg0();
+        initNeg1();
+
+        //Initiaize the BNot patterns
+        initBnot0();
+        initBnot1();
+
+        //Initialize Bool Constnat Patterns
+        initBool0();
+        //Initialize Int Constant Patterns
+        initInt0();
+
+        //Initialize If Statement Patterns
+        initIf0();
+        initIf1();
+        initIf2();
+        initIf3();
+
+        initIf4();
+        initIf5();
+        initIf6();
+        initIf7();
+
+        initIf8();
+        initIf9();
+        initIf10();
+        initIf11();
+        
+        initIf12();
+        initIf13();
+        initIf14();
+        initIf15();
+
+        initIf16();
+        initIf17();
+        initIf18();
+        initIf19();
+        initIf20();
+        initIf21();
+        initIf22();
+
+
     }
 
     private void initMultiplyAndAccumulate0(){
@@ -1994,4 +2057,1459 @@ public class MyCodeGenerator {
             }
         });
     }
+
+    private void initEq0(){
+        codeGenFunctions.put(Pattern.eq0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+
+                return null;
+            }
+        });
+    }
+
+    private void initEq1(){
+        codeGenFunctions.put(Pattern.eq1, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IntExp leftInt = (IntExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getReg(temp, assignICode);
+                cGen.addVariable(temp, ".WORD " + leftInt.value);
+
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+
+                return null;
+            }
+        });
+    }
+
+    private void initEq2(){
+        codeGenFunctions.put(Pattern.eq2, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                IntExp rightInt = (IntExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, assignICode);
+                cGen.addVariable(temp, ".WORD " + rightInt.value);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                return null;
+            }
+        });
+    }
+
+    private void initEq3(){
+        codeGenFunctions.put(Pattern.eq3, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IntExp leftInt = (IntExp)assignExp.left;
+                IntExp rightInt = (IntExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getReg(tempLeft, assignICode);
+                cGen.addVariable(tempLeft, ".WORD " + leftInt.value);
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getReg(tempRight, assignICode);
+                cGen.addVariable(tempRight, ".WORD " + rightInt.value);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                return null;
+            }
+        });
+    }
+
+    private void initEq4(){
+        codeGenFunctions.put(Pattern.eq4, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                BoolExp leftBool = (BoolExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getReg(temp, assignICode);
+                if(leftBool.trueFalse){
+                    cGen.addVariable(temp, ".BYTE " + 1);
+                } else {
+                    cGen.addVariable(temp, ".BYTE " + 0);
+                }
+
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+
+                return null;
+            }
+        });
+    }
+
+    private void initEq5(){
+        codeGenFunctions.put(Pattern.eq5, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                BoolExp rightBool = (BoolExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, assignICode);
+                if(rightBool.trueFalse){
+                    cGen.addVariable(temp, ".BYTE " + 1);
+                } else {
+                    cGen.addVariable(temp, ".BYTE " + 0);
+                }
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                return null;
+            }
+        });
+    }
+
+    private void initEq6(){
+        codeGenFunctions.put(Pattern.eq6, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                BoolExp leftBool = (BoolExp)assignExp.left;
+                BoolExp rightBool = (BoolExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getReg(tempLeft, assignICode);
+                if(leftBool.trueFalse){
+                    cGen.addVariable(tempLeft, ".BYTE " + 1);
+                } else {
+                    cGen.addVariable(tempLeft, ".BYTE " + 0);
+                }
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getReg(tempRight, assignICode);
+                if(rightBool.trueFalse){
+                    cGen.addVariable(tempRight, ".BYTE " + 1);
+                } else {
+                    cGen.addVariable(tempRight, ".BYTE " + 0);
+                }
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                return null;
+            }
+        });
+    }
+
+    private void initNe0(){
+        codeGenFunctions.put(Pattern.ne0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("MOV NE " + finalPlace + ", #1");
+                cGen.addInstruction("MOV EQ " + finalPlace + ", #0");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+
+                return null;
+            }
+        });
+    }
+
+    private void initNe1(){
+        codeGenFunctions.put(Pattern.ne1, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IntExp leftInt = (IntExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getReg(temp, assignICode);
+                cGen.addVariable(temp, ".WORD " + leftInt.value);
+
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("MOV NE " + finalPlace + ", #1");
+                cGen.addInstruction("MOV EQ " + finalPlace + ", #0");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+
+                return null;
+            }
+        });
+    }
+
+    private void initNe2(){
+        codeGenFunctions.put(Pattern.ne2, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                IntExp rightInt = (IntExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, assignICode);
+                cGen.addVariable(temp, ".WORD " + rightInt.value);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("MOV NE " + finalPlace + ", #1");
+                cGen.addInstruction("MOV EQ " + finalPlace + ", #0");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                return null;
+            }
+        });
+    }
+
+    private void initNe3(){
+        codeGenFunctions.put(Pattern.ne3, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IntExp leftInt = (IntExp)assignExp.left;
+                IntExp rightInt = (IntExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getReg(tempLeft, assignICode);
+                cGen.addVariable(tempLeft, ".WORD " + leftInt.value);
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getReg(tempRight, assignICode);
+                cGen.addVariable(tempRight, ".WORD " + rightInt.value);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("MOV NE " + finalPlace + ", #1");
+                cGen.addInstruction("MOV EQ " + finalPlace + ", #0");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                return null;
+            }
+        });
+    }
+
+    private void initNe4(){
+        codeGenFunctions.put(Pattern.ne4, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                BoolExp leftBool = (BoolExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getReg(temp, assignICode);
+                if(leftBool.trueFalse){
+                    cGen.addVariable(temp, ".BYTE " + 1);
+                } else {
+                    cGen.addVariable(temp, ".BYTE " + 0);
+                }
+
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("MOV NE " + finalPlace + ", #1");
+                cGen.addInstruction("MOV EQ " + finalPlace + ", #0");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+
+                return null;
+            }
+        });
+    }
+
+    private void initNe5(){
+        codeGenFunctions.put(Pattern.ne5, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                BoolExp rightBool = (BoolExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, assignICode);
+                if(rightBool.trueFalse){
+                    cGen.addVariable(temp, ".BYTE " + 1);
+                } else {
+                    cGen.addVariable(temp, ".BYTE " + 0);
+                }
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("MOV NE " + finalPlace + ", #1");
+                cGen.addInstruction("MOV EQ " + finalPlace + ", #0");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                return null;
+            }
+        });
+    }
+
+    private void initNe6(){
+        codeGenFunctions.put(Pattern.eq6, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                BoolExp leftBool = (BoolExp)assignExp.left;
+                BoolExp rightBool = (BoolExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getReg(tempLeft, assignICode);
+                if(leftBool.trueFalse){
+                    cGen.addVariable(tempLeft, ".BYTE " + 1);
+                } else {
+                    cGen.addVariable(tempLeft, ".BYTE " + 0);
+                }
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getReg(tempRight, assignICode);
+                if(rightBool.trueFalse){
+                    cGen.addVariable(tempRight, ".BYTE " + 1);
+                } else {
+                    cGen.addVariable(tempRight, ".BYTE " + 0);
+                }
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("MOV NE " + finalPlace + ", #1");
+                cGen.addInstruction("MOV EQ " + finalPlace + ", #0");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                return null;
+            }
+        });
+    }
+
+    private void initNeg0(){
+        codeGenFunctions.put(Pattern.neg0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                UnExp assignExp = (UnExp)assignICode.value;
+                
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                cGen.addVariable(assignICode.place);
+
+                String reg = rGen.getReg(rightIdent.ident, assignICode);
+                
+                String holderForNeg1 = iGen.genNextRegister();
+                String tempReg = rGen.getReg(holderForNeg1, assignICode);
+                cGen.addVariable(holderForNeg1, ".WORD " + -1);
+                cGen.addInstruction("LDR " + tempReg + ", " + holderForNeg1);
+                cGen.addInstruction("LDR " + reg + ", " + rightIdent.ident);
+                cGen.addInstruction("MUL " + reg + ", " + reg + ", " + tempReg);
+                cGen.addInstruction("STR " + reg + ", " + assignICode.place);
+                return null;
+            }
+        });
+    }
+
+    private void initNeg1(){
+        codeGenFunctions.put(Pattern.neg1, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                UnExp assignExp = (UnExp)assignICode.value;
+                
+                IntExp rightInt = (IntExp)assignExp.right;
+
+                cGen.addVariable(assignICode.place);
+
+
+                String temp = iGen.genNextRegister();
+                String rReg = rGen.getReg(temp, assignICode);
+                cGen.addVariable(temp, ".WORD " + rightInt.value);
+
+                
+                String holderForNeg1 = iGen.genNextRegister();
+                String tempReg = rGen.getReg(holderForNeg1, assignICode);
+                cGen.addVariable(holderForNeg1, ".WORD " + -1);
+
+                cGen.addInstruction("LDR " + tempReg + ", " + holderForNeg1);
+                cGen.addInstruction("LDR " + rReg + ", " + temp);
+                cGen.addInstruction("MUL " + rReg + ", " + rReg + ", " + tempReg);
+                cGen.addInstruction("STR " + rReg + ", " + assignICode.place);
+                return null;
+            }
+        });
+    }
+
+    private void initBnot0(){
+        codeGenFunctions.put(Pattern.bnot0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                UnExp assignExp = (UnExp)assignICode.value;
+                
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                cGen.addVariable(assignICode.place);
+
+                String reg = rGen.getReg(rightIdent.ident, assignICode);
+
+                cGen.addInstruction("LDR " + reg + ", " + rightIdent.ident);
+                cGen.addInstruction("TST " + reg + ", #0");
+                cGen.addInstruction("MOV EQ " + reg + ", #1");
+                cGen.addInstruction("MOV NE " + reg + ", #0");
+                cGen.addInstruction("STR " + reg + ", " + assignICode.place);
+                return null;
+            }
+        });
+    }
+
+    private void initBnot1(){
+        codeGenFunctions.put(Pattern.bnot1, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                UnExp assignExp = (UnExp)assignICode.value;
+                
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                cGen.addVariable(assignICode.place);
+
+                String reg = rGen.getReg(rightIdent.ident, assignICode);
+
+                cGen.addInstruction("LDR " + reg + ", " + rightIdent.ident);
+                cGen.addInstruction("TST " + reg + ", #0");
+                cGen.addInstruction("MOV EQ " + reg + ", #1");
+                cGen.addInstruction("MOV NE " + reg + ", #0");
+                cGen.addInstruction("STR " + reg + ", " + assignICode.place);
+                return null;
+            }
+        });
+    }
+
+    private void initBool0(){
+        codeGenFunctions.put(Pattern.bool0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BoolExp assignExp = (BoolExp)assignICode.value;
+
+                if(assignExp.trueFalse){
+                    cGen.addVariable(assignICode.place, ".BYTE " + 1);
+                } else {
+                    cGen.addVariable(assignICode.place, ".BYTE " + 0);
+                }
+
+                return null;
+            }
+        });
+    }
+
+    private void initInt0(){
+        codeGenFunctions.put(Pattern.int0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                IntExp assignExp = (IntExp)assignICode.value;
+
+                cGen.addVariable(assignICode.place, ".WORD " + assignExp.value);
+                return null;
+            }
+        });
+    }
+
+    public void initIf0(){
+        codeGenFunctions.put(Pattern.if0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IdentExp left = (IdentExp)exp.left;
+                IdentExp right = (IdentExp)exp.right;
+
+                String leftReg = rGen.getReg(left.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B LT " + ifStatement.ifTrue);
+                cGen.addInstruction("B GE " + ifStatement.ifFalse);
+                return null;
+            }
+        });
+    }
+
+    public void initIf1(){
+        codeGenFunctions.put(Pattern.if1, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IntExp left = (IntExp)exp.left;
+                IdentExp right = (IdentExp)exp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + left.value);
+                String rightReg = rGen.getReg(right.ident, icode);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B LT " + ifStatement.ifTrue);
+                cGen.addInstruction("B GE " + ifStatement.ifFalse);
+                return null;
+            }
+        });
+    }
+
+    public void initIf2(){
+        codeGenFunctions.put(Pattern.if2, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IdentExp left = (IdentExp)exp.left;
+                IntExp right = (IntExp)exp.right;
+
+                String leftReg = rGen.getReg(left.ident, icode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + right.value);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B LT " + ifStatement.ifTrue);
+                cGen.addInstruction("B GE " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf3(){
+        codeGenFunctions.put(Pattern.if3, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IntExp left = (IntExp)exp.left;
+                IntExp right = (IntExp)exp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getReg(tempLeft, icode);
+                cGen.addVariable(tempLeft, ".WORD " + left.value);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + right.value);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B LT " + ifStatement.ifTrue);
+                cGen.addInstruction("B GE " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf4(){
+        codeGenFunctions.put(Pattern.if4, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IdentExp left = (IdentExp)exp.left;
+                IdentExp right = (IdentExp)exp.right;
+
+                String leftReg = rGen.getReg(left.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B GT " + ifStatement.ifTrue);
+                cGen.addInstruction("B LE " + ifStatement.ifFalse);
+                return null;
+            }
+        });
+    }
+
+    public void initIf5(){
+        codeGenFunctions.put(Pattern.if5, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IntExp left = (IntExp)exp.left;
+                IdentExp right = (IdentExp)exp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + left.value);
+                String rightReg = rGen.getReg(right.ident, icode);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B GT " + ifStatement.ifTrue);
+                cGen.addInstruction("B LE " + ifStatement.ifFalse);
+                return null;
+            }
+        });
+    }
+
+    public void initIf6(){
+        codeGenFunctions.put(Pattern.if6, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IdentExp left = (IdentExp)exp.left;
+                IntExp right = (IntExp)exp.right;
+
+                String leftReg = rGen.getReg(left.ident, icode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + right.value);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B GT " + ifStatement.ifTrue);
+                cGen.addInstruction("B LE " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf7(){
+        codeGenFunctions.put(Pattern.if7, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IntExp left = (IntExp)exp.left;
+                IntExp right = (IntExp)exp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getReg(tempLeft, icode);
+                cGen.addVariable(tempLeft, ".WORD " + left.value);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + right.value);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B GT " + ifStatement.ifTrue);
+                cGen.addInstruction("B LE " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf8(){
+        codeGenFunctions.put(Pattern.if8, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IdentExp left = (IdentExp)exp.left;
+                IdentExp right = (IdentExp)exp.right;
+
+                String leftReg = rGen.getReg(left.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B LE " + ifStatement.ifTrue);
+                cGen.addInstruction("B GT " + ifStatement.ifFalse);
+                return null;
+            }
+        });
+    }
+
+    public void initIf9(){
+        codeGenFunctions.put(Pattern.if9, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IntExp left = (IntExp)exp.left;
+                IdentExp right = (IdentExp)exp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + left.value);
+                String rightReg = rGen.getReg(right.ident, icode);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B LE " + ifStatement.ifTrue);
+                cGen.addInstruction("B GT " + ifStatement.ifFalse);
+                return null;
+            }
+        });
+    }
+
+    public void initIf10(){
+        codeGenFunctions.put(Pattern.if10, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IdentExp left = (IdentExp)exp.left;
+                IntExp right = (IntExp)exp.right;
+
+                String leftReg = rGen.getReg(left.ident, icode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + right.value);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B LE " + ifStatement.ifTrue);
+                cGen.addInstruction("B GT " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf11(){
+        codeGenFunctions.put(Pattern.if11, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IntExp left = (IntExp)exp.left;
+                IntExp right = (IntExp)exp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getReg(tempLeft, icode);
+                cGen.addVariable(tempLeft, ".WORD " + left.value);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + right.value);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B LE " + ifStatement.ifTrue);
+                cGen.addInstruction("B GT " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf12(){
+        codeGenFunctions.put(Pattern.if12, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IdentExp left = (IdentExp)exp.left;
+                IdentExp right = (IdentExp)exp.right;
+
+                String leftReg = rGen.getReg(left.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B GE " + ifStatement.ifTrue);
+                cGen.addInstruction("B LT " + ifStatement.ifFalse);
+                return null;
+            }
+        });
+    }
+
+    public void initIf13(){
+        codeGenFunctions.put(Pattern.if13, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IntExp left = (IntExp)exp.left;
+                IdentExp right = (IdentExp)exp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + left.value);
+                String rightReg = rGen.getReg(right.ident, icode);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B GE " + ifStatement.ifTrue);
+                cGen.addInstruction("B LT " + ifStatement.ifFalse);
+                return null;
+            }
+        });
+    }
+
+    public void initIf14(){
+        codeGenFunctions.put(Pattern.if14, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IdentExp left = (IdentExp)exp.left;
+                IntExp right = (IntExp)exp.right;
+
+                String leftReg = rGen.getReg(left.ident, icode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + right.value);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B GE " + ifStatement.ifTrue);
+                cGen.addInstruction("B LT " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf15(){
+        codeGenFunctions.put(Pattern.if15, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IntExp left = (IntExp)exp.left;
+                IntExp right = (IntExp)exp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getReg(tempLeft, icode);
+                cGen.addVariable(tempLeft, ".WORD " + left.value);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + right.value);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B GE " + ifStatement.ifTrue);
+                cGen.addInstruction("B LT " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf16(){
+        codeGenFunctions.put(Pattern.if16, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IdentExp left = (IdentExp)exp.left;
+                IdentExp right = (IdentExp)exp.right;
+
+                String leftReg = rGen.getReg(left.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B EQ " + ifStatement.ifTrue);
+                cGen.addInstruction("B NE " + ifStatement.ifFalse);
+                return null;
+            }
+        });
+    }
+
+    public void initIf17(){
+        codeGenFunctions.put(Pattern.if17, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IntExp left = (IntExp)exp.left;
+                IdentExp right = (IdentExp)exp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + left.value);
+                String rightReg = rGen.getReg(right.ident, icode);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B EQ " + ifStatement.ifTrue);
+                cGen.addInstruction("B NE " + ifStatement.ifFalse);
+                return null;
+            }
+        });
+    }
+
+    public void initIf18(){
+        codeGenFunctions.put(Pattern.if18, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IdentExp left = (IdentExp)exp.left;
+                IntExp right = (IntExp)exp.right;
+
+                String leftReg = rGen.getReg(left.ident, icode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + right.value);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B EQ " + ifStatement.ifTrue);
+                cGen.addInstruction("B NE " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf19(){
+        codeGenFunctions.put(Pattern.if19, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IntExp left = (IntExp)exp.left;
+                IntExp right = (IntExp)exp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getReg(tempLeft, icode);
+                cGen.addVariable(tempLeft, ".WORD " + left.value);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + right.value);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B EQ " + ifStatement.ifTrue);
+                cGen.addInstruction("B NE " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf20(){
+        codeGenFunctions.put(Pattern.if20, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                BoolExp left = (BoolExp)exp.left;
+                IdentExp right = (IdentExp)exp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getReg(temp, icode);
+                if(left.trueFalse){
+                    cGen.addVariable(temp, ".WORD " + 1);
+                } else {
+                    cGen.addVariable(temp, ".WORD " + 0);
+                }
+                String rightReg = rGen.getReg(right.ident, icode);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B EQ " + ifStatement.ifTrue);
+                cGen.addInstruction("B NE " + ifStatement.ifFalse);
+                return null;
+            }
+        });
+    }
+
+    public void initIf21(){
+        codeGenFunctions.put(Pattern.if21, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IdentExp left = (IdentExp)exp.left;
+                BoolExp right = (BoolExp)exp.right;
+
+                String leftReg = rGen.getReg(left.ident, icode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                if(right.trueFalse){
+                    cGen.addVariable(temp, ".WORD " + 1);
+                } else {
+                    cGen.addVariable(temp, ".WORD " + 0);
+                }
+
+                cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B EQ " + ifStatement.ifTrue);
+                cGen.addInstruction("B NE " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf22(){
+        codeGenFunctions.put(Pattern.if22, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                BoolExp left = (BoolExp)exp.left;
+                BoolExp right = (BoolExp)exp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getReg(tempLeft, icode);
+                if(left.trueFalse){
+                    cGen.addVariable(tempLeft, ".WORD " + 1);
+                } else {
+                    cGen.addVariable(tempLeft, ".WORD " + 0);
+                }
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                if(right.trueFalse){
+                    cGen.addVariable(temp, ".WORD " + 1);
+                } else {
+                    cGen.addVariable(temp, ".WORD " + 0);
+                }
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B EQ " + ifStatement.ifTrue);
+                cGen.addInstruction("B NE " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf23(){
+        codeGenFunctions.put(Pattern.if23, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IdentExp left = (IdentExp)exp.left;
+                IdentExp right = (IdentExp)exp.right;
+
+                String leftReg = rGen.getReg(left.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B NE " + ifStatement.ifTrue);
+                cGen.addInstruction("B EQ " + ifStatement.ifFalse);
+                return null;
+            }
+        });
+    }
+
+    public void initIf24(){
+        codeGenFunctions.put(Pattern.if24, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IntExp left = (IntExp)exp.left;
+                IdentExp right = (IdentExp)exp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + left.value);
+                String rightReg = rGen.getReg(right.ident, icode);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B NE " + ifStatement.ifTrue);
+                cGen.addInstruction("B EQ " + ifStatement.ifFalse);
+                return null;
+            }
+        });
+    }
+
+    public void initIf25(){
+        codeGenFunctions.put(Pattern.if25, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IdentExp left = (IdentExp)exp.left;
+                IntExp right = (IntExp)exp.right;
+
+                String leftReg = rGen.getReg(left.ident, icode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + right.value);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B NE " + ifStatement.ifTrue);
+                cGen.addInstruction("B EQ " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf26(){
+        codeGenFunctions.put(Pattern.if26, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IntExp left = (IntExp)exp.left;
+                IntExp right = (IntExp)exp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getReg(tempLeft, icode);
+                cGen.addVariable(tempLeft, ".WORD " + left.value);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                cGen.addVariable(temp, ".WORD " + right.value);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B NE " + ifStatement.ifTrue);
+                cGen.addInstruction("B EQ " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf27(){
+        codeGenFunctions.put(Pattern.if27, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                BoolExp left = (BoolExp)exp.left;
+                IdentExp right = (IdentExp)exp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getReg(temp, icode);
+                if(left.trueFalse){
+                    cGen.addVariable(temp, ".WORD " + 1);
+                } else {
+                    cGen.addVariable(temp, ".WORD " + 0);
+                }
+                String rightReg = rGen.getReg(right.ident, icode);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B NE " + ifStatement.ifTrue);
+                cGen.addInstruction("B EQ " + ifStatement.ifFalse);
+                return null;
+            }
+        });
+    }
+
+    public void initIf28(){
+        codeGenFunctions.put(Pattern.if28, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                IdentExp left = (IdentExp)exp.left;
+                BoolExp right = (BoolExp)exp.right;
+
+                String leftReg = rGen.getReg(left.ident, icode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                if(right.trueFalse){
+                    cGen.addVariable(temp, ".WORD " + 1);
+                } else {
+                    cGen.addVariable(temp, ".WORD " + 0);
+                }
+
+                cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B NE " + ifStatement.ifTrue);
+                cGen.addInstruction("B EQ " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
+    public void initIf29(){
+        codeGenFunctions.put(Pattern.if22, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                If ifStatement = (If)icode;
+                BinExp exp = ifStatement.exp;
+
+                BoolExp left = (BoolExp)exp.left;
+                BoolExp right = (BoolExp)exp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getReg(tempLeft, icode);
+                if(left.trueFalse){
+                    cGen.addVariable(tempLeft, ".WORD " + 1);
+                } else {
+                    cGen.addVariable(tempLeft, ".WORD " + 0);
+                }
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getReg(temp, icode);
+                if(right.trueFalse){
+                    cGen.addVariable(temp, ".WORD " + 1);
+                } else {
+                    cGen.addVariable(temp, ".WORD " + 0);
+                }
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("B NE " + ifStatement.ifTrue);
+                cGen.addInstruction("B EQ " + ifStatement.ifFalse);
+
+                return null;
+            }
+        });
+    }
+
 }

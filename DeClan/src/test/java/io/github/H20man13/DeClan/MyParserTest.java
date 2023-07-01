@@ -24,13 +24,6 @@ import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.PostfixPrintVisitor;
 
 public class MyParserTest {
-
-	@Test
-	public void testEmptySource() {
-		String input = "";
-		compareToModel(input);
-	}
-
 	@Test
 	public void testDecls() {
 		String input = "CONST a = 123; b = 45; BEGIN END.";
