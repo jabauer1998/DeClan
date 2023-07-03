@@ -29,6 +29,7 @@ import edu.depauw.declan.common.ast.FunctionCall;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.IfElifBranch;
 import edu.depauw.declan.common.ast.NumValue;
+import edu.depauw.declan.common.ast.ParamaterDeclaration;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.ProcedureDeclaration;
 import edu.depauw.declan.common.ast.Program;
@@ -118,7 +119,7 @@ public class MyIndexer implements ASTVisitor {
 	public void visit(ProcedureDeclaration procDecl) {
 	  Identifier procedName = procDecl.getProcedureName();
 	  String procedureName = procedName.getLexeme();
-          List <VariableDeclaration> args = procDecl.getArguments();
+      List <ParamaterDeclaration> args = procDecl.getArguments();
 	  Identifier retType = procDecl.getReturnType();
           String returnType = retType.getLexeme();
           List <Declaration> localVars = procDecl.getLocalVariables();
@@ -279,5 +280,17 @@ public class MyIndexer implements ASTVisitor {
 	    } else {
 		errorLog.add("Entry " + id.getLexeme() + " doesnt exist", id.getStart());
 	    }
+	}
+
+	@Override
+	public void visit(ParamaterDeclaration declaration) {
+		Identifier id = declaration.getIdentifier();
+	  	Identifier type = declaration.getType();
+	  	varEnvironment.addEntry(id.getLexeme(), id.getStart());
+	  	if(ParTrue){
+	    	printIndexMessage("DECL", id.getStart(), "PARAM " + id.getLexeme());
+	  	} else {
+	    	printIndexMessage("DECL", id.getStart(), "VAR " + id.getLexeme());
+	  	}
 	}
 }

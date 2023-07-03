@@ -2,13 +2,14 @@ package io.github.H20man13.DeClan.common.icode;
 
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Proc implements ICode {
 	public String pname;
-	public List<String> params;
+	public List<Tuple<String, String>> params;
 
-	public Proc(String pname, List<String> params) {
+	public Proc(String pname, List<Tuple<String, String>> params) {
 		this.pname = pname;
 		this.params = params;
 	}
@@ -18,13 +19,15 @@ public class Proc implements ICode {
 		StringBuilder sb = new StringBuilder();
 		sb.append("PROC " + pname + " ( ");
 		boolean first = true;
-		for (String param : params) {
+		for (Tuple<String, String> param : params) {
 			if (first) {
 				first = false;
 			} else {
 				sb.append(" , ");
 			}
-			sb.append(param);
+			sb.append(param.source);
+			sb.append(" -> ");
+			sb.append(param.dest);
 		}
 		sb.append(" )");
 		return sb.toString();

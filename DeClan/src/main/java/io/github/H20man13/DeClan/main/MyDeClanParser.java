@@ -5,6 +5,7 @@ import static io.github.H20man13.DeClan.main.MyIO.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import edu.depauw.declan.common.Token;
@@ -23,6 +24,7 @@ import edu.depauw.declan.common.ast.FunctionCall;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.IfElifBranch;
 import edu.depauw.declan.common.ast.NumValue;
+import edu.depauw.declan.common.ast.ParamaterDeclaration;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.ProcedureDeclaration;
 import edu.depauw.declan.common.ast.Program;
@@ -133,13 +135,24 @@ public class MyDeClanParser implements Parser {
   @Override
   public Program parseProgram() {
     Position start = currentPosition;
-    List<Declaration> Decls = parseDeclarationSequence();
+    List<Declaration> constDeclarations = new LinkedList<Declaration>();
+    if(willMatch(TokenType.CONST)){
+      skip();
+      constDeclarations.addAll(parseConstDeclSequence());
+    }
+    List<Declaration> varDeclarations = new LinkedList<Declaration>();
+    if(willMatch(TokenType.VAR)){
+      skip();
+      varDeclarations.addAll(parseVariableDeclSequence());
+    }
+    List<Declaration> procDeclarations = new LinkedList<Declaration>();
+    procDeclarations.addAll(parseProcedureDeclSequence());
     match(TokenType.BEGIN);
     List<Statement> statements = parseStatementSequence();
     match(TokenType.END);
     match(TokenType.PERIOD);
     matchEOF();
-    return new Program(start, Decls, statements);
+    return new Program(start, constDeclarations, varDeclarations, procDeclarations, statements);
   }
   // DeclSequence -> CONST ConstDeclSequence VAR VariableDeclSequence ProcedureDeclSequence
   // DeclSequence -> CONST ConstDeclSequence ProcedureDeclSequence
@@ -204,7 +217,7 @@ public class MyDeClanParser implements Parser {
     // ProcedureHead -> PROCEDURE ident
     match(TokenType.PROCEDURE);
     Identifier procName = parseIdentifier();
-    List<VariableDeclaration> fpSequence = new ArrayList<>();
+    List<ParamaterDeclaration> fpSequence = new ArrayList<>();
     Identifier returnType = new Identifier(start, "VOID"); //defualt is no return Type
     // FormalParameters -> ( FPSection FPSectionSequence ) : Type
     // FormalParameters -> ( FPSection FPSectionSequence )
@@ -220,14 +233,14 @@ public class MyDeClanParser implements Parser {
 	if(willMatch(TokenType.VAR)){
 	  skip();
 	}
-	List<VariableDeclaration> aSequence = parseVariableDecl();
+	List<ParamaterDeclaration> aSequence = parseParamDecl();
 	fpSequence.addAll(aSequence);
 	while(willMatch(TokenType.SEMI)){
 	  skip();
 	  if(willMatch(TokenType.VAR)){
 	    skip();
 	  }
-	  aSequence = parseVariableDecl();
+	  aSequence = parseParamDecl();
 	  fpSequence.addAll(aSequence);
 	}
       }
@@ -256,19 +269,40 @@ public class MyDeClanParser implements Parser {
     match(TokenType.END);
     Identifier nameCheck = parseIdentifier();
     if(!nameCheck.getLexeme().equals(procName.getLexeme())){
-	errorLog.add("Expected -> Identity Given at the end of Procedure Declaration ( " + nameCheck.getLexeme() + " ) is not equal to the Expected Procedure Declaration Name ( " + procName.getLexeme() + " )", start);
+	    errorLog.add("Expected -> Identity Given at the end of Procedure Declaration ( " + nameCheck.getLexeme() + " ) is not equal to the Expected Procedure Declaration Name ( " + procName.getLexeme() + " )", start);
     }
     return new ProcedureDeclaration(start, procName, fpSequence, returnType, procDeclSequence, toExecute, retExpression);
   }
-        
-        
-  
-  // ConstDecl -> ident = number
+
+ // ConstDecl -> ident = number
   private ConstDeclaration parseConstDecl() {
     Identifier id = parseIdentifier();
     match(TokenType.EQ);
     Expression exp = parseExpression();
     return new ConstDeclaration(id.getStart(), id, exp);
+  }
+
+  private List<ParamaterDeclaration> parseParamDecl(){
+    List<Identifier> identList = new ArrayList<>();
+    //IdentList -> ident IdentListRest
+    //IdentListRest -> , ident IdentListRest
+    //IdentListRest ->
+    Token varname = match(TokenType.ID);
+    identList.add(new Identifier(varname.getPosition(), varname.getLexeme()));
+    while(willMatch(TokenType.COMMA)){
+      skip();
+      varname = match(TokenType.ID);
+      identList.add(new Identifier(varname.getPosition(), varname.getLexeme()));
+    }
+    match(TokenType.COLON);
+    Token type = match(TokenType.ID);
+    Identifier typeid = new Identifier(type.getPosition(), type.getLexeme());
+    List <ParamaterDeclaration> varDecl = new ArrayList<>();
+    for(int i = 0; i < identList.size(); i++){
+      Identifier elem = identList.get(i);
+      varDecl.add(new ParamaterDeclaration(elem.getStart(), elem, typeid));
+    }
+    return Collections.unmodifiableList(varDecl);
   }
 
   //VariableDecl -> IdentList : Type

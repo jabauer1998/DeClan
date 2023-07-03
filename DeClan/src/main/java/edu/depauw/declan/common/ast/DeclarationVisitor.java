@@ -14,4 +14,5 @@ public interface DeclarationVisitor<R> {
 	R visitResult(ConstDeclaration constDeclaration);
         R visitResult(VariableDeclaration varDeclaration);
         R visitResult(ProcedureDeclaration varDeclaration);
+        R visitResult(ParamaterDeclaration parDeclaration);
 }

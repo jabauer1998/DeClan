@@ -13,6 +13,7 @@ import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.symboltable.VariableEntry;
 import io.github.H20man13.DeClan.common.symboltable.ProcedureEntry;
 import io.github.H20man13.DeClan.common.symboltable.StringEntry;
+import io.github.H20man13.DeClan.common.symboltable.StringEntryList;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 
 import static io.github.H20man13.DeClan.common.IrRegisterGenerator.*;
@@ -61,6 +62,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   private ErrorLog errorLog;
   private Environment<String, StringEntry> varEnvironment;
   private Environment<String, StringEntry> procEnvironment;
+  private Environment<String, StringEntryList> procArgs;
   private MyIrBuilder builder;
 
   public MyICodeGenerator(ErrorLog errorLog){
@@ -72,6 +74,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
     this.builder = new MyIrBuilder(errorLog, Gen);
     this.varEnvironment = new Environment<>();
     this.procEnvironment = new Environment<>();
+    this.procArgs = new Environment<>();
   }
 
   public List<ICode> getICode(){
@@ -82,9 +85,17 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   public void visit(Program program) {
     procEnvironment.addScope();
     varEnvironment.addScope();
-    for (Declaration decl : program.getDecls()) {
+    for(Declaration decl : program.getConstDecls()){
       decl.accept(this);
     }
+    for (Declaration decl : program.getVarDecls()) {
+      decl.accept(this);
+    }
+    builder.buildGoto("begin");
+    for (Declaration decl : program.getProcDecls()){
+      decl.accept(this);
+    }
+    builder.buildLabel("begin");
     for (Statement statement : program.getStatements()) {
       statement.accept(this);
     }
@@ -140,8 +151,8 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
     if(retExp != null){
       String retPlace = retExp.acceptResult(this);
       procEnvironment.addEntry(procedureName, new StringEntry(retPlace));
-      builder.buildReturnStatement();
     }
+    builder.buildReturnStatement();
     varEnvironment.removeScope();
   }
         
@@ -253,7 +264,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   public void visit(Assignment assignment) {
     StringEntry place = varEnvironment.getEntry(assignment.getVariableName().getLexeme());
     String value = assignment.getVariableValue().acceptResult(this);
-    builder.buildVariableAssignment(place.toString());
+    builder.buildVariableAssignment(place.toString(), value);
   }
   
   @Override

@@ -70,6 +70,10 @@ public class MyOptimizer {
         this.buildFlowGraph();
     }
 
+    public LiveVariableAnalysis getLiveVariableAnalysis(){
+        return this.liveAnal;
+    }
+
     private void buildFlowGraph() {
         List<Integer> firsts = findFirsts();
         List<BasicBlock> basicBlocks = new LinkedList<BasicBlock>();
@@ -174,8 +178,8 @@ public class MyOptimizer {
                 } else if(icodeAssign.value instanceof CallExp){
                     CallExp callExp = (CallExp)icodeAssign.value;
                     
-                    for(String param : callExp.paramaters){
-                        symbolTable.addEntry(param, new LiveInfo(true, i));
+                    for(Tuple<String, String> param : callExp.paramaters){
+                        symbolTable.addEntry(param.source, new LiveInfo(true, i));
                     }
                 }
             } else if(icode instanceof If){
@@ -193,8 +197,8 @@ public class MyOptimizer {
                     symbolTable.addEntry(rightIdent.ident, new LiveInfo(true, i));
                 }
             } else if(icode instanceof Proc){
-                for(String param : ((Proc)icode).params){
-                    symbolTable.addEntry(param, new LiveInfo(true, i));
+                for(Tuple<String, String> param : ((Proc)icode).params){
+                    symbolTable.addEntry(param.source, new LiveInfo(true, i));
                 }
             }
 

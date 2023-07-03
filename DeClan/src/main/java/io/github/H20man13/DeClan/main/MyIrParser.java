@@ -6,6 +6,7 @@ import java.util.List;
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ParseException;
 import edu.depauw.declan.common.Position;
+import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
@@ -210,10 +211,12 @@ public class MyIrParser {
         IrToken procName = match(IrTokenType.ID);
         match(IrTokenType.LPAR);
         
-        List<String> args = new LinkedList<>();
+        List<Tuple<String, String>> args = new LinkedList<>();
         do{
-            IrToken type = match(IrTokenType.ID);
-            args.add(type.getLexeme());
+            IrToken from = match(IrTokenType.ID);
+            match(IrTokenType.MAP);
+            IrToken to = match(IrTokenType.ID);
+            args.add(new Tuple<String, String>(from.getLexeme(), to.getLexeme()));
         } while(skipIfYummy(IrTokenType.COMMA));
 
         match(IrTokenType.RPAR);
@@ -241,10 +244,13 @@ public class MyIrParser {
         IrToken callName = match(IrTokenType.ID);
         match(IrTokenType.LPAR);
 
-        List<String> args = new LinkedList<>();
+        List<Tuple<String, String>> args = new LinkedList<>();
         do{
-            IrToken arg = match(IrTokenType.ID);
-            args.add(arg.getLexeme());
+            IrToken from = match(IrTokenType.ID);
+            match(IrTokenType.MAP);
+            IrToken to = match(IrTokenType.ID);
+
+            args.add(new Tuple<String, String>(from.getLexeme(), to.getLexeme()));
         } while(skipIfYummy(IrTokenType.COMMA));
 
         match(IrTokenType.RPAR);

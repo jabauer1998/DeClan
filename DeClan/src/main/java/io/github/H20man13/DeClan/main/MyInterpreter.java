@@ -29,6 +29,7 @@ import edu.depauw.declan.common.ast.FunctionCall;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.IfElifBranch;
 import edu.depauw.declan.common.ast.NumValue;
+import edu.depauw.declan.common.ast.ParamaterDeclaration;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.ProcedureDeclaration;
 import edu.depauw.declan.common.ast.Program;
@@ -110,7 +111,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   @Override
   public void visit(ProcedureDeclaration procDecl){
     String procedureName = procDecl.getProcedureName().getLexeme();
-    List <VariableDeclaration> args = procDecl.getArguments();
+    List <ParamaterDeclaration> args = procDecl.getArguments();
     String returnType = procDecl.getReturnType().getLexeme();
     List <Declaration> localVars = procDecl.getLocalVariables();
     List <Statement> Exec = procDecl.getExecutionStatements();
@@ -141,7 +142,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     } else {
 	String funcName = procedureCall.getProcedureName().getLexeme();
 	ProcedureEntry pentry = procEnvironment.getEntry(funcName);
-	List<VariableDeclaration> args = pentry.getArguments();
+	List<ParamaterDeclaration> args = pentry.getArguments();
 	List<Expression> valArgs = procedureCall.getArguments();
 	List<Object> valArgResults = new ArrayList<>();
 	for(Expression valArg : valArgs){
@@ -372,12 +373,12 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   public Object visitResult(FunctionCall funcCall) {
     String funcName = funcCall.getFunctionName().getLexeme();
     ProcedureEntry fentry = procEnvironment.getEntry(funcName);
-    List<VariableDeclaration> args = fentry.getArguments();
+    List<ParamaterDeclaration> args = fentry.getArguments();
     List<Expression> valArgs = funcCall.getArguments();
     List<Object> valArgResults = new ArrayList<>();
     for(Expression valArg : valArgs){
-	Object result = valArg.acceptResult(this);
-	valArgResults.add(result);
+	    Object result = valArg.acceptResult(this);
+	    valArgResults.add(result);
     }
     varEnvironment.addScope();
     for(Integer i = 0; i < args.size(); i++){
@@ -440,5 +441,19 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   @Override
   public Object visitResult(StrValue strValue){
     return strValue.getLexeme();
+  }
+
+
+  @Override
+  public void visit(ParamaterDeclaration declaration) {
+    Identifier id = declaration.getIdentifier();
+    String type = declaration.getType().getLexeme();
+    if(type.equals("BOOLEAN")){
+	      varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, false));
+    } else if (type.equals("REAL")){
+	      varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, (Double)0.0));
+    } else {
+	      varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, 0));
+    }
   }
 }

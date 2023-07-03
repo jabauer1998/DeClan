@@ -18,6 +18,7 @@ C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20ma
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\ElseBranch.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\main\PostfixPrintVisitor.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\symboltable\Environment.java
+C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\arm\ArmCodeGenerator.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\BasicBlock.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\flow\ExitNode.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\Parser.java
@@ -33,9 +34,11 @@ C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20ma
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\util\OpUtil.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\FunctionCall.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\icode\Label.java
+C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\main\MyCodeGenerator.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\icode\exp\BoolExp.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\Branch.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\analysis\LiveVariableAnalysis.java
+C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\symboltable\StringEntry.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\analysis\Analysis.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\token\IrToken.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\main\MyOptimizer.java
@@ -58,10 +61,11 @@ C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\decl
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\BoolValue.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\DeclarationVisitor.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\icode\exp\IntExp.java
+C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\pat\P.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\icode\exp\IdentExp.java
+C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\IrRegisterGenerator.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\NumValue.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\main\StackSolver.java
-C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\RegisterGenerator.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\EmptyStatement.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\dag\DagNullNode.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\main\MyMainCompiler.java
@@ -79,6 +83,7 @@ C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\decl
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\TokenType.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\main\MyIrBuilder.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\Statement.java
+C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\pat\Pattern.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\Expression.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\dag\DagValueNode.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\main\MyDeClanParser.java
@@ -90,10 +95,13 @@ C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\decl
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\icode\End.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\flow\FlowGraphNode.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\analysis\AvailableExpressionsAnalysis.java
+C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\arm\ArmRegisterGenerator.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\icode\ICode.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\ReaderSource.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\dag\DagOperationNode.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\icode\exp\StrExp.java
+C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\main\MyStandardLibrary.java
+C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\Copyable.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\InterpreterException.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\AbstractASTNode.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\icode\Goto.java

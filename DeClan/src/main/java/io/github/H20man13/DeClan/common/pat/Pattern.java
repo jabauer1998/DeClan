@@ -136,5 +136,6 @@ public class Pattern {
     public static PAT if29 = P.PAT(P.IF(), P.PAT(P.BOOL(), P.NE(), P.BOOL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
 
     public static PAT goto0 = P.PAT(P.GOTO(), P.ID());
-    public static PAT label = P.PAT(P.LABEL(), P.ID());
+    public static PAT label0 = P.PAT(P.LABEL(), P.ID());
+    public static PAT end0 = P.PAT(P.END());
 }

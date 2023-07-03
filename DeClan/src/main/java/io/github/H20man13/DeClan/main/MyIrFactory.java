@@ -3,6 +3,7 @@ package io.github.H20man13.DeClan.main;
 import java.util.List;
 
 import edu.depauw.declan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
@@ -33,7 +34,7 @@ public class MyIrFactory {
     }
 
     public Assign produceVariableAssignment(String place, String variableName){
-        return new Assign(place, new StrExp(variableName));
+        return new Assign(place, new IdentExp(variableName));
     }
 
     public Assign produceBooleanAssignment(String place, boolean trueOrFalse){
@@ -60,7 +61,7 @@ public class MyIrFactory {
         return new Goto(name);
     }
 
-    public Proc produceProcedure(String funcName, List<String> argResults){
+    public Proc produceProcedure(String funcName, List<Tuple<String, String>> argResults){
         return new Proc(funcName, argResults);
     }
 
@@ -86,7 +87,7 @@ public class MyIrFactory {
         return new Assign(place, value);
     }
 
-    public Assign produceProcedureCall(String place, String procedureName, List<String> arguments){
+    public Assign produceProcedureCall(String place, String procedureName, List<Tuple<String, String>> arguments){
         return new Assign(place, new CallExp(procedureName, arguments));
     }
 }

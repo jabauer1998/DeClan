@@ -1,6 +1,7 @@
 package edu.depauw.declan.common.ast;
 
 
+import java.util.LinkedList;
 import java.util.List;
 
 import edu.depauw.declan.common.Position;
@@ -17,7 +18,9 @@ import java.lang.StringBuilder;
  * @author bhoward
  */
 public class Program extends AbstractASTNode {
-	private final List<Declaration> Decls;
+	private final List<Declaration> constDecls;
+	private final List<Declaration> varDecls;
+	private final List<Declaration> procDecls;
 	private final List<Statement> statements;
 
 	/**
@@ -30,13 +33,15 @@ public class Program extends AbstractASTNode {
 	 * @param constDecls
 	 * @param statements
 	 */
-	public Program(Position start, List<Declaration> Decls, List<Statement> statements) {
+	public Program(Position start, List<Declaration> constDecls, List<Declaration> varDecls, List<Declaration> procDecls, List<Statement> statements) {
 		super(start);
-		this.Decls = Decls;
+		this.constDecls = constDecls;
+		this.procDecls = procDecls;
+		this.varDecls = varDecls;
 		this.statements = statements;
 	}
         @Override
-        public String toString(){
+    public String toString(){
 	  StringBuilder mystring = new StringBuilder();
 	  mystring.append("Program Decls:\n");
 	  List<Declaration> decl = getDecls();
@@ -54,12 +59,28 @@ public class Program extends AbstractASTNode {
 	  return mystring.toString();
 	}
   
-	public List<Declaration> getDecls() {
-		return Decls;
+	public List<Declaration> getConstDecls() {
+		return constDecls;
+	}
+
+	public List<Declaration> getVarDecls(){
+		return varDecls;
+	}
+
+	public List<Declaration> getProcDecls(){
+		return procDecls;
 	}
 
 	public List<Statement> getStatements() {
 		return statements;
+	}
+
+	public List<Declaration> getDecls(){
+		List<Declaration> result = new LinkedList<Declaration>();
+		result.addAll(constDecls);
+		result.addAll(varDecls);
+		result.addAll(procDecls);
+		return result;
 	}
 
 	@Override

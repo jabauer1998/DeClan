@@ -33,6 +33,7 @@ import edu.depauw.declan.common.ast.FunctionCall;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.IfElifBranch;
 import edu.depauw.declan.common.ast.NumValue;
+import edu.depauw.declan.common.ast.ParamaterDeclaration;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.ProcedureDeclaration;
 import edu.depauw.declan.common.ast.Program;
@@ -142,17 +143,17 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	String procedureName = procDecl.getProcedureName().getLexeme();
 	if(!procEnvironment.entryExists(procedureName)){
 	    varEnvironment.addScope();
-	    List <VariableDeclaration> args = procDecl.getArguments();
-	    for(VariableDeclaration decl : args){
-		decl.accept(this);
+	    List <ParamaterDeclaration> args = procDecl.getArguments();
+	    for(ParamaterDeclaration decl : args){
+			decl.accept(this);
 	    }
 	    List <Declaration> localVars = procDecl.getLocalVariables();
 	    for(Declaration decl : localVars){
-		decl.accept(this);
+			decl.accept(this);
 	    }
 	    List <Statement> Exec = procDecl.getExecutionStatements();
 	    for(Statement exe : Exec){
-		exe.accept(this);
+			exe.accept(this);
 	    }
 	    Expression retExp = procDecl.getReturnStatement();
 	    String returnType = procDecl.getReturnType().getLexeme();
@@ -192,7 +193,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	    String funcName = procedureCall.getProcedureName().getLexeme();
 	    if(procEnvironment.entryExists(funcName)){
 		ProcedureEntry pentry = procEnvironment.getEntry(funcName);
-		List<VariableDeclaration> args = pentry.getArguments();
+		List<ParamaterDeclaration> args = pentry.getArguments();
 		List<Expression> valArgs = procedureCall.getArguments();
 		List<TypeCheckerTypes> exprValues = new ArrayList<>();
 		for(Expression expr : valArgs){
@@ -398,7 +399,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	String funcName = funcCall.getFunctionName().getLexeme();
 	if(procEnvironment.entryExists(funcName)){
 	    ProcedureEntry pentry = procEnvironment.getEntry(funcName);
-	    List<VariableDeclaration> args = pentry.getArguments();
+	    List<ParamaterDeclaration> args = pentry.getArguments();
 	    List<Expression> valArgs = funcCall.getArguments();
 	    List<TypeCheckerTypes> exprValues = new ArrayList<>();
 	    for(Expression expr : valArgs){
@@ -464,4 +465,22 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
     public TypeCheckerTypes visitResult(StrValue strValue){
 	return TypeCheckerTypes.STRING;
     }
+
+	@Override
+	public void visit(ParamaterDeclaration declaration) {
+		Identifier id = declaration.getIdentifier();
+		String type = declaration.getType().getLexeme();
+		if(!varEnvironment.inScope(id.getLexeme())){
+			switch(StringToType(type)){
+				case STRING:
+					errorLog.add("Variable " + id.getLexeme() + "is of invalid type " + type, id.getStart());
+				case VOID:
+					errorLog.add("Variable " + id.getLexeme() + "is of invalid type " + type, id.getStart());
+				default:
+					varEnvironment.addEntry(id.getLexeme(), StringToType(type));
+			}
+		} else {
+			errorLog.add("Multiple Declaration of Variable " + id.getLexeme(), id.getStart());
+		}
+	}
 }

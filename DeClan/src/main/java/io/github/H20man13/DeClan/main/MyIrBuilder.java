@@ -1,10 +1,13 @@
 package io.github.H20man13.DeClan.main;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import edu.depauw.declan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
+import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -26,6 +29,8 @@ public class MyIrBuilder {
     private int whileLoopNumber;
     private int whileLoopSeqNumber;
 
+    private Map<String, String> discovered;
+
     public MyIrBuilder(ErrorLog errLog){
         this(errLog, new IrRegisterGenerator());
     }
@@ -40,6 +45,7 @@ public class MyIrBuilder {
         this.ifStatementSeqNumber = 0;
         this.whileLoopNumber = 0;
         this.whileLoopSeqNumber = 0;
+        this.discovered = new HashMap<String, String>();
     }
 
     public List<ICode> getOutput(){
@@ -72,7 +78,7 @@ public class MyIrBuilder {
         ICode result = null;
         String place = gen.genNextRegister();
         if(value.contains(".")){
-            result = factory.produceRealAssignment(value, Double.parseDouble(value));
+            result = factory.produceRealAssignment(place, Double.parseDouble(value));
         } else {
             result = factory.produceIntAssignment(place, Integer.parseInt(value));
         }
@@ -94,7 +100,7 @@ public class MyIrBuilder {
         return place;
     }
 
-    public String buildProcedureCall(String funcName, List<String> arguments){
+    public String buildProcedureCall(String funcName, List<Tuple<String, String>> arguments){
         String place = gen.genNextRegister();
         output.add(factory.produceProcedureCall(place, funcName, arguments));
         return place;
@@ -267,7 +273,7 @@ public class MyIrBuilder {
         whileLoopSeqNumber = 0;
     }
 
-    public void buildProcedure(String name, List<String> args){
+    public void buildProcedure(String name, List<Tuple<String, String>> args){
         output.add(factory.produceProcedure(name, args));
     }
 
@@ -277,5 +283,13 @@ public class MyIrBuilder {
 
     public void buildReturnStatement(){
         output.add(factory.produceReturnStatement());
+    }
+
+    public void buildLabel(String label){
+        output.add(factory.produceLabel(label));
+    }
+
+    public void buildGoto(String label){
+        output.add(factory.produceGoto(label));
     }
 }

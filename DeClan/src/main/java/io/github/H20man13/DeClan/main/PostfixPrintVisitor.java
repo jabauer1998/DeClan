@@ -19,6 +19,7 @@ import edu.depauw.declan.common.ast.FunctionCall;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.IfElifBranch;
 import edu.depauw.declan.common.ast.NumValue;
+import edu.depauw.declan.common.ast.ParamaterDeclaration;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.ProcedureDeclaration;
 import edu.depauw.declan.common.ast.Program;
@@ -212,5 +213,9 @@ public class PostfixPrintVisitor implements ASTVisitor {
 		// identifier has not been declared.
 		String value = environment.getOrDefault(identifier.getLexeme(), "0");
 		out.println(value);
+	}
+
+	@Override
+	public void visit(ParamaterDeclaration declaration) {
 	}
 }

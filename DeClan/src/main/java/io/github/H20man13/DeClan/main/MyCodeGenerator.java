@@ -39,7 +39,7 @@ public class MyCodeGenerator {
 
     private int i;
 
-    public MyCodeGenerator(File outputFile, LiveVariableAnalysis analysis, List<ICode> intermediateCode, IrRegisterGenerator iGen, ErrorLog errorLog){
+    public MyCodeGenerator(LiveVariableAnalysis analysis, List<ICode> intermediateCode, IrRegisterGenerator iGen, ErrorLog errorLog){
         this.intermediateCode = intermediateCode;
         this.cGen = new ArmCodeGenerator();
         this.rGen = new ArmRegisterGenerator(cGen, analysis);
@@ -50,33 +50,38 @@ public class MyCodeGenerator {
         initCodeGenFunctions();
     }
 
-    public void codeGen() throws Exception{
-        for(i = 0; i < intermediateCode.size(); i++){
-            P possibleMultiplicationAndAdditionPattern = null;
-            if(i + 1 < intermediateCode.size()){
-                possibleMultiplicationAndAdditionPattern = P.PAT(intermediateCode.get(i).asPattern(), intermediateCode.get(i + 1).asPattern());
-            }
-
-            P defaultInstructionPattern = intermediateCode.get(i).asPattern();
-
-
-            if(possibleMultiplicationAndAdditionPattern != null){
-                if(codeGenFunctions.containsKey(possibleMultiplicationAndAdditionPattern)){
-                    codeGenFunctions.get(possibleMultiplicationAndAdditionPattern).call();
-                } else if(codeGenFunctions.containsKey(defaultInstructionPattern)) {
-                    codeGenFunctions.get(defaultInstructionPattern).call();
-                } else {
-                    errorLog.add("Pattern \n\n" + defaultInstructionPattern.toString() + "\n\n" + "not found", new Position(i, 0));
-                    break;
+    public void codeGen(File file){
+        try{
+            for(i = 0; i < intermediateCode.size(); i++){
+                P possibleMultiplicationAndAdditionPattern = null;
+                if(i + 1 < intermediateCode.size()){
+                    possibleMultiplicationAndAdditionPattern = P.PAT(intermediateCode.get(i).asPattern(), intermediateCode.get(i + 1).asPattern());
                 }
-            } else {
-                if(codeGenFunctions.containsKey(defaultInstructionPattern)){
-                    codeGenFunctions.get(defaultInstructionPattern).call();
+
+                P defaultInstructionPattern = intermediateCode.get(i).asPattern();
+
+
+                if(possibleMultiplicationAndAdditionPattern != null){
+                    if(codeGenFunctions.containsKey(possibleMultiplicationAndAdditionPattern)){
+                        codeGenFunctions.get(possibleMultiplicationAndAdditionPattern).call();
+                    } else if(codeGenFunctions.containsKey(defaultInstructionPattern)) {
+                        codeGenFunctions.get(defaultInstructionPattern).call();
+                    } else {
+                        errorLog.add("Pattern \n\n" + defaultInstructionPattern.toString() + "\n\n" + "not found", new Position(i, 0));
+                        break;
+                    }
                 } else {
-                    errorLog.add("Pattern \n\n" + defaultInstructionPattern.toString() + "\n\n" + "not found", new Position(i, 0));
-                    break;
+                    if(codeGenFunctions.containsKey(defaultInstructionPattern)){
+                        codeGenFunctions.get(defaultInstructionPattern).call();
+                    } else {
+                        errorLog.add("Pattern \n\n" + defaultInstructionPattern.toString() + "\n\n" + "not found", new Position(i, 0));
+                        break;
+                    }
                 }
             }
+            cGen.writeToFile(new FileWriter(file));
+        } catch(Exception exp) {
+            errorLog.add(exp.toString(), new Position(0, 0));
         }
     }
 
@@ -220,6 +225,11 @@ public class MyCodeGenerator {
         //Init Goto Pattern
         initGoto0();
 
+        //Init Label Pattern
+        initLabel0();
+
+        //Init End Pattern
+        initEnd0();
     }
 
     private void initMultiplyAndAccumulate0(){
@@ -3485,7 +3495,7 @@ public class MyCodeGenerator {
         });
     }
 
-    public void initIf29(){
+    private void initIf29(){
         codeGenFunctions.put(Pattern.if22, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
@@ -3523,7 +3533,7 @@ public class MyCodeGenerator {
         });
     }
 
-    public void initGoto0(){
+    private void initGoto0(){
         codeGenFunctions.put(Pattern.goto0, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
@@ -3535,8 +3545,8 @@ public class MyCodeGenerator {
         });
     }
 
-    public void initLebel0(){
-        codeGenFunctions.put(Pattern.label, new Callable<Void>() {
+    private void initLabel0(){
+        codeGenFunctions.put(Pattern.label0, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                 ICode icode = intermediateCode.get(i);
@@ -3546,5 +3556,17 @@ public class MyCodeGenerator {
             }
         });
     }
+
+    private void initEnd0(){
+        codeGenFunctions.put(Pattern.end0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                cGen.addInstruction("STOP");
+                return null;
+            }
+        });
+    }
+
+    
 
 }

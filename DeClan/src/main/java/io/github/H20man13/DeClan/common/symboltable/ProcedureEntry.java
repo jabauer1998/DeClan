@@ -9,6 +9,7 @@ import java.util.List;
 import edu.depauw.declan.common.Position;
 import edu.depauw.declan.common.ast.Declaration;
 import edu.depauw.declan.common.ast.Expression;
+import edu.depauw.declan.common.ast.ParamaterDeclaration;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.VariableDeclaration;
 import io.github.H20man13.DeClan.common.Copyable;
@@ -19,12 +20,12 @@ public class ProcedureEntry implements Copyable<ProcedureEntry>{
 
     private final ProcType Type;
     private final String typeStr;
-    private final List<VariableDeclaration> arguments;
+    private final List<ParamaterDeclaration> arguments;
     private final List<Declaration> local;
     private final List<Statement> ExecutionStats;
     private final Expression ReturnStatement;
   
-    public ProcedureEntry(List<VariableDeclaration> arguments, String type, List<Declaration> local, List<Statement> ExecutionStats, Expression ReturnStatement){
+    public ProcedureEntry(List<ParamaterDeclaration> arguments, String type, List<Declaration> local, List<Statement> ExecutionStats, Expression ReturnStatement){
         if(arguments == null){
 	        arguments = new ArrayList<>();
         }
@@ -54,28 +55,28 @@ public class ProcedureEntry implements Copyable<ProcedureEntry>{
       mystring.append(typeToString(getType()));
       mystring.append(" ARGUMENTS: ");
       mystring.append("( ");
-      List<VariableDeclaration> argments = getArguments();
+      List<ParamaterDeclaration> argments = getArguments();
       for(int i = 0; i < argments.size(); i++){
-	mystring.append(argments.get(i).toString());
-	mystring.append(' ');
+        mystring.append(argments.get(i).toString());
+        mystring.append(' ');
       }
       mystring.append(")\n");
       List<Declaration> local = getLocalVariables();
       for(int i = 0; i < local.size(); i++){
-	mystring.append('\t');
-	mystring.append(local.get(i).toString());
-	mystring.append('\n');
+        mystring.append('\t');
+        mystring.append(local.get(i).toString());
+        mystring.append('\n');
       }
       List<Statement> exec = getExecList();
       for(int i = 0; i < exec.size(); i++){
-	mystring.append("\tStatement " + i + ": ");
-	mystring.append(exec.get(i).toString());
-	mystring.append('\n');
+        mystring.append("\tStatement " + i + ": ");
+        mystring.append(exec.get(i).toString());
+        mystring.append('\n');
       }
       if(getReturnStatement() != null){
-	mystring.append("\treturn ");
-	mystring.append(getReturnStatement().toString());
-	mystring.append(";\n");
+        mystring.append("\treturn ");
+        mystring.append(getReturnStatement().toString());
+        mystring.append(";\n");
       }
       return mystring.toString();
     }
@@ -84,7 +85,7 @@ public class ProcedureEntry implements Copyable<ProcedureEntry>{
       return ExecutionStats;
     }
 
-    public List<VariableDeclaration> getArguments(){
+    public List<ParamaterDeclaration> getArguments(){
       return arguments;
     }
 

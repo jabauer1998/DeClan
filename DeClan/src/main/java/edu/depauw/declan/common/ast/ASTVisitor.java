@@ -50,4 +50,6 @@ public interface ASTVisitor {
 	void visit(Identifier identifier);
 
         void visit(FunctionCall functionCall);
+
+        void visit(ParamaterDeclaration declaration);
 }

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
@@ -57,8 +58,8 @@ public class LiveVariableAnalysis extends Analysis<String> {
                             instructionUse.add(defPlace.ident);
                         } else if(assCode.value instanceof CallExp){
                             CallExp defCall = (CallExp)assCode.value;
-                            for(String arg : defCall.paramaters){
-                                instructionUse.add(arg);
+                            for(Tuple<String, String> arg : defCall.paramaters){
+                                instructionUse.add(arg.source);
                             }
                         }
                     }

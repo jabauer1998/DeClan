@@ -17,7 +17,7 @@ import java.lang.StringBuilder;
  */
 public class ProcedureDeclaration extends AbstractASTNode implements Declaration {
 	private final Identifier procedureName;
-        private final List<VariableDeclaration> arguments;
+        private final List<ParamaterDeclaration> arguments;
         private final Identifier returnType;
         private final List<Declaration> localVariables;
         private final List<Statement> toExec;
@@ -31,7 +31,7 @@ public class ProcedureDeclaration extends AbstractASTNode implements Declaration
 	 * @param identifier
 	 * @param number
 	 */
-        public ProcedureDeclaration(Position start, Identifier procedureName, List<VariableDeclaration> arguments, Identifier returnType, List<Declaration> localVariables, List<Statement> toExec, Expression returnStatement){
+        public ProcedureDeclaration(Position start, Identifier procedureName, List<ParamaterDeclaration> arguments, Identifier returnType, List<Declaration> localVariables, List<Statement> toExec, Expression returnStatement){
 	    super(start);
 	    this.procedureName = procedureName;
 	    if(arguments == null){
@@ -51,20 +51,20 @@ public class ProcedureDeclaration extends AbstractASTNode implements Declaration
 		return procedureName;
 	}
 
-        public Identifier getReturnType() {
+    public Identifier getReturnType() {
 		return returnType;
 	}
 
-        public List<VariableDeclaration> getArguments(){
-	  return arguments;
-        }
+    public List<ParamaterDeclaration> getArguments(){
+	  	return arguments;
+    }
 
-        public List<Declaration> getLocalVariables(){
-	  return localVariables;
-        }
+    public List<Declaration> getLocalVariables(){
+		return localVariables;
+    }
 
         public List<Statement> getExecutionStatements(){
-	  return toExec;
+	  		return toExec;
         }
 
         public Expression getReturnStatement(){
@@ -79,7 +79,7 @@ public class ProcedureDeclaration extends AbstractASTNode implements Declaration
 	  mystring.append(getReturnType().toString());
 	  mystring.append(" ARGUMENTS: ");
 	  mystring.append("( ");
-	  List<VariableDeclaration> argu = getArguments();
+	  List<ParamaterDeclaration> argu = getArguments();
 	  for(int i = 0; i < arguments.size(); i++){
 	    mystring.append(argu.get(i).toString());
 	    mystring.append(' ');

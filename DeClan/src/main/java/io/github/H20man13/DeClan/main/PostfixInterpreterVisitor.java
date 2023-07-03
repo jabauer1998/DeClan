@@ -22,6 +22,7 @@ import edu.depauw.declan.common.ast.FunctionCall;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.IfElifBranch;
 import edu.depauw.declan.common.ast.NumValue;
+import edu.depauw.declan.common.ast.ParamaterDeclaration;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.ProcedureDeclaration;
 import edu.depauw.declan.common.ast.Program;
@@ -44,7 +45,7 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	 * constants.
 	 */
         private Map<String, VariableEntry> environment;
-	private PrintWriter out;
+		private PrintWriter out;
         private Stack<Integer> accumulator;
 
 	/**
@@ -204,5 +205,10 @@ public class PostfixInterpreterVisitor implements ASTVisitor {
 	public void visit(Identifier identifier) {
 	    int value = (int)environment.get(identifier.getLexeme()).getValue();
 	    accumulator.push(value);
+	}
+
+	@Override
+	public void visit(ParamaterDeclaration declaration) {
+		
 	}
 }
