@@ -15,7 +15,7 @@ public class VariableEntry implements Copyable<VariableEntry>{
 
     public VariableEntry(Boolean isConst, Object value){
         this.isConst = isConst;
-	this.value = value;
+	    this.value = value;
     }
     
     public Object getValue(){
