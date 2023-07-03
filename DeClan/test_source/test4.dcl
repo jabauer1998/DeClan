@@ -1,8 +1,7 @@
 (* Hofstadter Male-Female Sequences: https://mathworld.wolfram.com/HofstadterMale-FemaleSequences.html *)
 VAR n, i, result: INTEGER;
 PROCEDURE M(n: INTEGER);
-VAR temp: INTEGER;
-VAR result: INTEGER;
+VAR temp, result: INTEGER;
 BEGIN
   IF n = 0
   THEN result := 0
@@ -14,8 +13,7 @@ BEGIN
   RETURN result
 END M;
 PROCEDURE F(n: INTEGER);
-VAR temp: INTEGER;
-VAR result: INTEGER;
+VAR temp, result: INTEGER;
 BEGIN
   IF n = 0
   THEN result := 1
@@ -27,15 +25,15 @@ BEGIN
   RETURN result
 END F;
 PROCEDURE Fact(n: INTEGER);
-VAR temp: INTEGER;
-VAR result: INTEGER;
+VAR temp, result: INTEGER;
 BEGIN
   IF n = 0
   THEN result := 1
   ELSE
     temp := Fact(n - 1);
-    RETURN n * temp
+    result := n * temp
   END
+  RETURN result
 END Fact;
 BEGIN
   ReadInt(n);

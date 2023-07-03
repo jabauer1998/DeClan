@@ -187,45 +187,68 @@ public class ICodeGeneratorTest {
     public void testDeclanConversions(){
         String programName = "test_source/conversions.dcl";
         
-        String expectedICode = "a := 0\r\n" + //
-                               "b := 0\r\n" + //
-                               "LABEL p\r\n" + //
-                               "c := 0\r\n" + //
-                               "d := 0\r\n" + //
-                               "e := 0\r\n" + //
-                               "f := 0\r\n" + //
-                               "g := a ADD b\r\n" + //
-                               "PROC Round ( g , f )\r\n" + //
-                               "h := e ADD f\r\n" + //
-                               "i := \"e\"\r\n" + //
-                               "j := 1\r\n" + //
-                               "k := \"b\"\r\n" + //
-                               "l := 2\r\n" + //
-                               "m := \"a\"\r\n" + //
-                               "PROC WriteInt ( b )\r\n" + //
-                               "PROC WriteReal ( b )\r\n" + //
-                               "PROC WriteReal ( a )\r\n" + //
-                               "PROC WriteLn (  )\r\n" + //
-                               "n := b DIV a\r\n" + //
-                               "PROC WriteReal ( n )\r\n" + //
-                               "o := 5\r\n" + //
-                               "p := b ADD o\r\n" + //
-                               "q := 6\r\n" + //
-                               "r := b ADD q\r\n" + //
-                               "s := p MUL r\r\n" + //
-                               "PROC WriteInt ( s )\r\n" + //
-                               "t := 4\r\n" + //
-                               "u := a ADD t\r\n" + //
-                               "5. := 5.0\r\n" + //
-                               "w := a ADD v\r\n" + //
-                               "x := u MUL w\r\n" + //
-                               "PROC WriteReal ( x )\r\n" + //
-                               "PROC WriteLn (  )\r\n" + //
-                               "3.1415 := 3.1415\r\n" + //
-                               "PROC p ( b , y , a )\r\n" + //
-                               "PROC WriteReal ( a )\r\n" + //
-                               "PROC WriteLn (  )\r\n" + //
-                               "END\r\n";
+        String expectedICode = "a := 1\n" +
+                               "b := NEG a\n" +
+                               "c := b\n" +
+                               "LABEL WriteLn\n" +
+                               "RETURN\n" +
+                               "LABEL WriteInt\n" +
+                               "RETURN\n" +
+                               "LABEL WriteReal\n" +
+                               "RETURN\n" +
+                               "f := 1\n" +
+                               "g := NEG f\n" +
+                               "h := g\n" +
+                               "LABEL Round\n" +
+                               "k := 5.0\n" +
+                               "l := i ADD k\n" +
+                               "RETURN\n" +
+                               "LABEL Floor\n" +
+                               "o := 5.0\n" +
+                               "p := m SUB o\n" +
+                               "RETURN\n" +
+                               "q := 0.0\n" +
+                               "r := 0\n" +
+                               "GOTO begin\n"+
+                               "LABEL p\n"+
+                               "u := 0\n"+
+                               "v := q ADD r\n" +
+                               "PROC Round ( v -> i )\n" +
+                               "w <- l\n" +
+                               "u := w\n" +
+                               "RETURN\n" +
+                               "LABEL begin\n" +
+                               "x := 1\n" +
+                               "r := x\n" +
+                               "y := 2\n" +
+                               "q := y\n" +
+                               "PROC WriteInt ( r -> d )\n" +
+                               "PROC WriteReal ( r -> e )\n" +
+                               "PROC WriteReal ( q -> e )\n" +
+                               "PROC WriteLn (  )\n" +
+                               "z := r DIV q\n" +
+                               "PROC WriteReal ( z -> e )\n" +
+                               "A := 5\n" +
+                               "B := r ADD A\n" +
+                               "C := 6\n" +
+                               "D := r ADD C\n" +
+                               "E := B MUL D\n" +
+                               "PROC WriteInt ( E -> d )\n" + 
+                               "F := 4\n" +
+                               "G := q ADD F\n" +
+                               "H := 5.0\n" +
+                               "I := q ADD H\n" +
+                               "J := G MUL I\n" +
+                               "PROC WriteReal ( J -> e )\n" +
+                               "PROC WriteLn (  )\n" +
+                               "K := 3.1415\n" + 
+                               "PROC p ( r -> s , K -> t )\n" + 
+                               "L <- u\n" + 
+                               "q := L\n" + 
+                               "PROC WriteReal ( q -> e )\n" + 
+                               "PROC WriteLn (  )\n" + 
+                               "END\n";
+
 
         try{
             Source mySource = new ReaderSource(new FileReader(programName));
