@@ -52,4 +52,6 @@ public interface ASTVisitor {
         void visit(FunctionCall functionCall);
 
         void visit(ParamaterDeclaration declaration);
+
+        void visit(Library library);
 }

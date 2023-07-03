@@ -1,0 +1,16 @@
+CONST dummy = -1;
+
+PROCEDURE WriteLn();
+    BEGIN
+        RETURN dummy
+    END WriteLn;
+
+PROCEDURE WriteInt(i: INTEGER);
+    BEGIN
+        RETURN dummy
+    END WriteInt;
+
+PROCEDURE WriteReal(r: REAL);
+    BEGIN
+        RETURN dummy
+    END WriteReal;

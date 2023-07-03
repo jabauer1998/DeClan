@@ -23,6 +23,7 @@ import edu.depauw.declan.common.ast.ForBranch;
 import edu.depauw.declan.common.ast.FunctionCall;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.IfElifBranch;
+import edu.depauw.declan.common.ast.Library;
 import edu.depauw.declan.common.ast.NumValue;
 import edu.depauw.declan.common.ast.ParamaterDeclaration;
 import edu.depauw.declan.common.ast.ProcedureCall;
@@ -131,6 +132,25 @@ public class MyDeClanParser implements Parser {
     }
     return token;
   }
+  // Library -> DeclDequence
+  public Library parseLibrary(){
+    Position start = currentPosition;
+    List<Declaration> constDeclarations = new LinkedList<Declaration>();
+    if(willMatch(TokenType.CONST)){
+      skip();
+      constDeclarations.addAll(parseConstDeclSequence());
+    }
+    List<Declaration> varDeclarations = new LinkedList<Declaration>();
+    if(willMatch(TokenType.VAR)){
+      skip();
+      varDeclarations.addAll(parseVariableDeclSequence());
+    }
+    List<Declaration> procDeclarations = new LinkedList<Declaration>();
+    procDeclarations.addAll(parseProcedureDeclSequence());
+
+    return new Library(start, constDeclarations, varDeclarations, procDeclarations);
+  }
+  
   // Program -> DeclSequence BEGIN StatementSequence END
   @Override
   public Program parseProgram() {
@@ -230,19 +250,19 @@ public class MyDeClanParser implements Parser {
       // FPSection -> VAR IdentList : Type
       // FPSection -> IdentList : Type
       if(willMatch(TokenType.ID) || willMatch(TokenType.VAR)){
-	if(willMatch(TokenType.VAR)){
-	  skip();
-	}
-	List<ParamaterDeclaration> aSequence = parseParamDecl();
-	fpSequence.addAll(aSequence);
-	while(willMatch(TokenType.SEMI)){
-	  skip();
-	  if(willMatch(TokenType.VAR)){
-	    skip();
-	  }
-	  aSequence = parseParamDecl();
-	  fpSequence.addAll(aSequence);
-	}
+	      if(willMatch(TokenType.VAR)){
+	        skip();
+	      }
+	      List<ParamaterDeclaration> aSequence = parseParamDecl();
+	      fpSequence.addAll(aSequence);
+        while(willMatch(TokenType.SEMI)){
+          skip();
+          if(willMatch(TokenType.VAR)){
+            skip();
+          }
+          aSequence = parseParamDecl();
+          fpSequence.addAll(aSequence);
+        }
       }
       match(TokenType.RPAR);
       if(willMatch(TokenType.COLON)){

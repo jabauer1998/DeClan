@@ -1,0 +1,9 @@
+CONST dummy = -1;
+PROCEDURE Round(n: INTEGER; dummy: INTEGER);
+    BEGIN
+        RETURN n + 5.
+    END round;
+PROCEDURE Floor(n: INTEGER; dummy: INTEGER);
+    BEGIN
+        RETURN n - 5.
+    END floor;

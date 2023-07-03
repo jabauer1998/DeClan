@@ -40,6 +40,24 @@ public class Program extends AbstractASTNode {
 		this.varDecls = varDecls;
 		this.statements = statements;
 	}
+
+	public Program(Position start, List<Declaration> decls, List<Statement> statements){
+		super(start);
+		this.constDecls = new LinkedList<Declaration>();
+		this.procDecls = new LinkedList<Declaration>();
+		this.varDecls = new LinkedList<Declaration>();
+
+		for(Declaration decl : decls){
+			if(decl instanceof ProcedureDeclaration){
+				procDecls.add(decl);
+			} else if(decl instanceof VariableDeclaration){
+				varDecls.add(decl);
+			} else if(decl instanceof ConstDeclaration){
+				constDecls.add(decl);
+			}
+		}
+		this.statements = statements;
+	}
         @Override
     public String toString(){
 	  StringBuilder mystring = new StringBuilder();

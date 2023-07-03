@@ -20,6 +20,7 @@ import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.MyICodeGenerator;
 import io.github.H20man13.DeClan.main.MyIrLexer;
 import io.github.H20man13.DeClan.main.MyIrParser;
+import io.github.H20man13.DeClan.main.MyStandardLibrary;
 
 public class ICodeGeneratorTest {
     
@@ -130,8 +131,8 @@ public class ICodeGeneratorTest {
                        + "y := 79\n"
                        + "z := 48\n"
                        + "RETURN\n"
-                       + "PROC func ( t , g , f )\n"
-                       + "x := CALL func ( g , t , g )\n"
+                       + "PROC func ( t -> x , g -> y , f -> z )\n"
+                       + "x := CALL func ( g -> x , t -> y , g -> z )\n"
                        + "END\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
@@ -231,10 +232,13 @@ public class ICodeGeneratorTest {
             ErrorLog errLog = new ErrorLog();
             MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
             MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
+            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
             Program prog = parser.parseProgram();
             
             IrRegisterGenerator gen = new IrRegisterGenerator();
             MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
+            stdLib.ioLibrary().accept(igen);
+            stdLib.mathLibrary().accept(igen);
             prog.accept(igen);
             List<ICode> icode = igen.getICode();
 

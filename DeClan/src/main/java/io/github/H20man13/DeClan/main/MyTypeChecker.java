@@ -32,6 +32,7 @@ import edu.depauw.declan.common.ast.ForBranch;
 import edu.depauw.declan.common.ast.FunctionCall;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.IfElifBranch;
+import edu.depauw.declan.common.ast.Library;
 import edu.depauw.declan.common.ast.NumValue;
 import edu.depauw.declan.common.ast.ParamaterDeclaration;
 import edu.depauw.declan.common.ast.ProcedureCall;
@@ -482,5 +483,9 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 		} else {
 			errorLog.add("Multiple Declaration of Variable " + id.getLexeme(), id.getStart());
 		}
+	}
+
+	@Override
+	public void visit(Library library) {
 	}
 }

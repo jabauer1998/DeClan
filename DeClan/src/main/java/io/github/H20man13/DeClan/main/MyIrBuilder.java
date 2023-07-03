@@ -292,4 +292,8 @@ public class MyIrBuilder {
     public void buildGoto(String label){
         output.add(factory.produceGoto(label));
     }
+
+    public String buildAlias(){
+        return gen.genNextRegister();
+    }
 }

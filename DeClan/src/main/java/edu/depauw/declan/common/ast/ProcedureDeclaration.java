@@ -31,7 +31,7 @@ public class ProcedureDeclaration extends AbstractASTNode implements Declaration
 	 * @param identifier
 	 * @param number
 	 */
-        public ProcedureDeclaration(Position start, Identifier procedureName, List<ParamaterDeclaration> arguments, Identifier returnType, List<Declaration> localVariables, List<Statement> toExec, Expression returnStatement){
+    public ProcedureDeclaration(Position start, Identifier procedureName, List<ParamaterDeclaration> arguments, Identifier returnType, List<Declaration> localVariables, List<Statement> toExec, Expression returnStatement){
 	    super(start);
 	    this.procedureName = procedureName;
 	    if(arguments == null){

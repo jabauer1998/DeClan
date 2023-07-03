@@ -18,6 +18,7 @@ import edu.depauw.declan.common.ast.ForBranch;
 import edu.depauw.declan.common.ast.FunctionCall;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.IfElifBranch;
+import edu.depauw.declan.common.ast.Library;
 import edu.depauw.declan.common.ast.NumValue;
 import edu.depauw.declan.common.ast.ParamaterDeclaration;
 import edu.depauw.declan.common.ast.ProcedureCall;
@@ -217,5 +218,9 @@ public class PostfixPrintVisitor implements ASTVisitor {
 
 	@Override
 	public void visit(ParamaterDeclaration declaration) {
+	}
+
+	@Override
+	public void visit(Library library) {
 	}
 }

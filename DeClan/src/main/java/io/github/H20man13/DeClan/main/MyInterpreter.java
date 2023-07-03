@@ -28,6 +28,7 @@ import edu.depauw.declan.common.ast.ForBranch;
 import edu.depauw.declan.common.ast.FunctionCall;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.IfElifBranch;
+import edu.depauw.declan.common.ast.Library;
 import edu.depauw.declan.common.ast.NumValue;
 import edu.depauw.declan.common.ast.ParamaterDeclaration;
 import edu.depauw.declan.common.ast.ProcedureCall;
@@ -62,7 +63,14 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     this.procEnvironment = new Environment<>();
   }
 
-  
+  @Override
+  public void visit(Library library){
+    procEnvironment.addScope();
+    varEnvironment.addScope();
+    for(Declaration decl : library.getDecls()){
+      decl.accept(this);
+    }
+  }
   @Override
   public void visit(Program program) {
     procEnvironment.addScope();

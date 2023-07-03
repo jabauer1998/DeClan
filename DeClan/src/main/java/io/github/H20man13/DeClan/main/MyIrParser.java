@@ -13,6 +13,7 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Label;
+import io.github.H20man13.DeClan.common.icode.Place;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -285,11 +286,15 @@ public class MyIrParser {
 
     private ICode parseAssignment(){
         IrToken id = match(IrTokenType.ID);
-        
-        match(IrTokenType.ASSIGN);
 
-        Exp expression = parseExpression();
-
-        return new Assign(id.getLexeme(), expression);
+        if(willMatch(IrTokenType.PLACE)){
+            skip();
+            IrToken id2 = match(IrTokenType.ID);
+            return new Place(id.getLexeme(), id2.getLexeme());
+        } else {
+            match(IrTokenType.ASSIGN);
+            Exp expression = parseExpression();
+            return new Assign(id.getLexeme(), expression);
+        }
     }
 }

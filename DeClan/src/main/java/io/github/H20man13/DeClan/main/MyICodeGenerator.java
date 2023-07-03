@@ -9,7 +9,7 @@ import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
-
+import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.symboltable.VariableEntry;
 import io.github.H20man13.DeClan.common.symboltable.ProcedureEntry;
 import io.github.H20man13.DeClan.common.symboltable.StringEntry;
@@ -31,6 +31,7 @@ import edu.depauw.declan.common.ast.BoolValue;
 import edu.depauw.declan.common.ast.Branch;
 import edu.depauw.declan.common.ast.ConstDeclaration;
 import edu.depauw.declan.common.ast.Declaration;
+import edu.depauw.declan.common.ast.DeclarationVisitor;
 import edu.depauw.declan.common.ast.ElseBranch;
 import edu.depauw.declan.common.ast.EmptyStatement;
 import edu.depauw.declan.common.ast.Expression;
@@ -40,9 +41,11 @@ import edu.depauw.declan.common.ast.FunctionCall;
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.common.ast.IfElifBranch;
 import edu.depauw.declan.common.ast.NumValue;
+import edu.depauw.declan.common.ast.ParamaterDeclaration;
 import edu.depauw.declan.common.ast.ProcedureCall;
 import edu.depauw.declan.common.ast.ProcedureDeclaration;
 import edu.depauw.declan.common.ast.Program;
+import edu.depauw.declan.common.ast.Library;
 import edu.depauw.declan.common.ast.RepeatBranch;
 import edu.depauw.declan.common.ast.Statement;
 import edu.depauw.declan.common.ast.StrValue;
@@ -51,6 +54,7 @@ import edu.depauw.declan.common.ast.VariableDeclaration;
 import edu.depauw.declan.common.ast.WhileElifBranch;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  *The my interpreter class is a visitor object that can interpret the entire DeClan Language
@@ -58,7 +62,7 @@ import java.util.ArrayList;
  *@author Jacob Bauer
  */
 
-public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
+public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, DeclarationVisitor<String> {
   private ErrorLog errorLog;
   private Environment<String, StringEntry> varEnvironment;
   private Environment<String, StringEntry> procEnvironment;
@@ -82,9 +86,28 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   }
 
   @Override
+  public void visit(Library lib){
+    procEnvironment.addScope();
+    varEnvironment.addScope();
+    procArgs.addScope();
+    for(Declaration decl : lib.getConstDecls()){
+      decl.accept(this);
+    }
+
+    for(Declaration decl : lib.getVarDecls()){
+      decl.accept(this);
+    }
+
+    for(Declaration decl : lib.getProcDecls()){
+      decl.accept(this);
+    }
+  }
+
+  @Override
   public void visit(Program program) {
     procEnvironment.addScope();
     varEnvironment.addScope();
+    procArgs.addScope();
     for(Declaration decl : program.getConstDecls()){
       decl.accept(this);
     }
@@ -101,6 +124,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
     }
     varEnvironment.removeScope();
     procEnvironment.removeScope();
+    procArgs.removeScope();
     builder.buildEnd();
   }
 
@@ -126,7 +150,16 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   @Override
   public void visit(VariableDeclaration varDecl) {
     Identifier id = varDecl.getIdentifier();
-    String place = builder.buildNumAssignment("0");
+    Identifier type = varDecl.getType();
+    String argVal = null;
+    if(type.getLexeme().equals("INTEGER")){
+      argVal = "0";
+    } else if(type.getLexeme().equals("STRING")){
+      argVal = "\0";
+    } else {
+      argVal = "0.0";
+    }
+    String place = builder.buildNumAssignment(argVal);
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
   }
 
@@ -135,10 +168,17 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
     String procedureName = procDecl.getProcedureName().getLexeme();
     builder.buildProcedureDeclaration(procedureName);
     varEnvironment.addScope();
-    List <VariableDeclaration> args = procDecl.getArguments();
+    
+    List <ParamaterDeclaration> args = procDecl.getArguments();
+    
+    StringEntryList alias = new StringEntryList();
     for(int i = 0; i < args.size(); i++){
-	    args.get(i).accept(this);
+	    String argAlias = args.get(i).acceptResult(this);
+      alias.add(argAlias);
     }
+
+    procArgs.addEntry(procedureName, alias);
+
     List <Declaration> localVars = procDecl.getLocalVariables();
     for(int i = 0; i < localVars.size(); i++){
 	    localVars.get(i).accept(this);
@@ -160,10 +200,13 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   public void visit(ProcedureCall procedureCall) {
     String funcName = procedureCall.getProcedureName().getLexeme();
     List<Expression> valArgs = procedureCall.getArguments();
-    List<String> valArgResults = new ArrayList<>();
-    for(Expression valArg : valArgs){
+    List<Tuple<String, String>> valArgResults = new ArrayList<>();
+
+    StringEntryList argsToMap = procArgs.getEntry(funcName);
+    for(int i = 0; i < valArgs.size(); i++){
+      Expression valArg = valArgs.get(i);
       String result = valArg.acceptResult(this);
-      valArgResults.add(result);
+      valArgResults.add(new Tuple<String, String>(result, argsToMap.get(i)));
     }
     builder.buildProcedure(funcName, valArgResults);
   }
@@ -335,10 +378,12 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   public String visitResult(FunctionCall funcCall) {
     String funcName = funcCall.getFunctionName().getLexeme();
     List<Expression> valArgs = funcCall.getArguments();
-    List<String> valArgResults = new ArrayList<>();
-    for(Expression valArg : valArgs){
+    List<Tuple<String, String>> valArgResults = new ArrayList<>();
+    StringEntryList argsToMap = procArgs.getEntry(funcName);
+    for(int i = 0; i < valArgs.size(); i++){
+      Expression valArg = valArgs.get(i);
 	    String result = valArg.acceptResult(this);
-	    valArgResults.add(result);
+	    valArgResults.add(new Tuple<String, String>(result, argsToMap.get(i)));
     }
     return builder.buildProcedureCall(funcName, valArgResults);
   }
@@ -377,5 +422,32 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String> {
   @Override
   public String visitResult(StrValue strValue){
       return builder.buildStringAssignment(strValue.getLexeme());
+  }
+
+  @Override
+  public String visitResult(ConstDeclaration constDeclaration) {
+    return null;
+  }
+
+  @Override
+  public String visitResult(VariableDeclaration varDeclaration) {
+    return null;
+  }
+
+  @Override
+  public String visitResult(ProcedureDeclaration varDeclaration) {
+    return null;
+  }
+
+  @Override
+  public String visitResult(ParamaterDeclaration parDeclaration) {
+    Identifier id = parDeclaration.getIdentifier();
+    String alias = builder.buildAlias();
+    varEnvironment.addEntry(id.getLexeme(), new StringEntry(alias));
+    return alias;
+  }
+
+  @Override
+  public void visit(ParamaterDeclaration declaration) {
   }
 }

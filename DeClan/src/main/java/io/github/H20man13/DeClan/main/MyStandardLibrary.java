@@ -1,54 +1,52 @@
 package io.github.H20man13.DeClan.main;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
 
 import edu.depauw.declan.common.ErrorLog;
+import edu.depauw.declan.common.Position;
 import edu.depauw.declan.common.Source;
+import edu.depauw.declan.common.ast.Library;
+import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.icode.ICode;
 
 public class MyStandardLibrary {
-    private List<ICode> myStandardLibrary;
-    private ErrorLog errorLog;
+    private ErrorLog errLog;
 
     public MyStandardLibrary(ErrorLog errLog){
-        this.errorLog = errLog;
-        this.myStandardLibrary = new LinkedList<ICode>();
-        initLibraryRoutines();
+        this.errLog = errLog;
     }
 
-    private void initLibraryRoutines(){
-        initLibraryRoutine("total := 0\n"
-                          +"dividend := 0\n"
-                          +"result := 0\n"
-                          +"LABEL div\n"
-                          +"total := total SUB dividend\n"
-                          +"result := result ADD 1\n"
-                          +"IF total GT 0 THEN div ELSE endDiv\n"
-                          +"LABEL endDiv\n"
-                          +"RETURN\n");
-                          
-        initLibraryRoutine("modTotal := 0\n"
-                          +"ModDividend := 0\n"
-                          +"modResult := 0\n"
-                          +"LABEL mod\n" 
-                          +"modTotal := modTotal SUB modDividend\n"
-                          +"IF modTotal GE modDividend THEN mod ELSE endMod\n"
-                          +"LABEL endMod\n"
-                          +"modResult := modTotal\n"
-                          +"RETURN\n");
+    public Library mathLibrary(){
+        return parseLibrarySource("declan_libraries/Math.declib");
     }
 
-    private void initLibraryRoutine(String routine){
-        StringReader reader = new StringReader(routine);
-        Source source = new ReaderSource(reader);
-        MyIrLexer lexer = new MyIrLexer(source, errorLog);
-        MyIrParser parser = new MyIrParser(lexer, errorLog);
-        List<ICode> icode = parser.parseProgram();
-        this.myStandardLibrary.addAll(icode);
+    public Library ioLibrary(){
+        return parseLibrarySource("declan_libraries/Io.declib");
+    }
 
+    private Library parseLibrarySource(String sourceName){
+        try{
+            File file = new File(sourceName);
+            if(file.exists()){
+                FileReader reader = new FileReader(file);
+                Source readerSource = new ReaderSource(reader);
+                MyDeClanLexer lexer = new MyDeClanLexer(readerSource, errLog);
+                MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
+                return parser.parseLibrary();
+            } else {
+                errLog.add("Could not create file reader with source name " + sourceName, new Position(0, 0));
+                return null;
+            }
+        } catch(FileNotFoundException exp) {
+            errLog.add("Could not create file reader with source name " + sourceName, new Position(0, 0));
+            return null;
+        }
     }
 
 }
