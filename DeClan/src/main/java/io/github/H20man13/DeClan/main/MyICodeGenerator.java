@@ -385,7 +385,9 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
 	    String result = valArg.acceptResult(this);
 	    valArgResults.add(new Tuple<String, String>(result, argsToMap.get(i)));
     }
-    return builder.buildProcedureCall(funcName, valArgResults);
+    builder.buildProcedure(funcName, valArgResults);
+    StringEntry returnPlace = procEnvironment.getEntry(funcName);
+    return builder.buildReturnPlacement(returnPlace.toString());
   }
 
   @Override

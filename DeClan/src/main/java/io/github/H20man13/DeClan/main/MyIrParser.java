@@ -18,7 +18,6 @@ import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
-import io.github.H20man13.DeClan.common.icode.exp.CallExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.IntExp;
@@ -109,7 +108,9 @@ public class MyIrParser {
 
     public List<ICode> parseInstructions(){
         List<ICode> toRet = new LinkedList<ICode>();
-        while(willMatch(IrTokenType.LABEL) || willMatch(IrTokenType.IF) || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) || willMatch(IrTokenType.PROC) || willMatch(IrTokenType.RETURN)){
+        while(willMatch(IrTokenType.LABEL) || willMatch(IrTokenType.IF) 
+        || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) 
+        || willMatch(IrTokenType.PROC) || willMatch(IrTokenType.RETURN)){
             ICode instr = parseInstruction();
             toRet.add(instr);
         }
@@ -239,29 +240,8 @@ public class MyIrParser {
         }
     }
 
-    private CallExp parseCallExpression(){
-        match(IrTokenType.CALL);
-
-        IrToken callName = match(IrTokenType.ID);
-        match(IrTokenType.LPAR);
-
-        List<Tuple<String, String>> args = new LinkedList<>();
-        do{
-            IrToken from = match(IrTokenType.ID);
-            match(IrTokenType.MAP);
-            IrToken to = match(IrTokenType.ID);
-
-            args.add(new Tuple<String, String>(from.getLexeme(), to.getLexeme()));
-        } while(skipIfYummy(IrTokenType.COMMA));
-
-        match(IrTokenType.RPAR);
-        return new CallExp(callName.getLexeme(), args);
-    }
-
     private Exp parseExpression(){
-        if(willMatch(IrTokenType.CALL)){
-            return parseCallExpression();
-        } else if(willMatch(IrTokenType.NEG) || willMatch(IrTokenType.BNOT)) {
+        if(willMatch(IrTokenType.NEG) || willMatch(IrTokenType.BNOT)) {
             return parseUnaryExpression();
         } else {
             Exp exp1 = parsePrimaryExpression();

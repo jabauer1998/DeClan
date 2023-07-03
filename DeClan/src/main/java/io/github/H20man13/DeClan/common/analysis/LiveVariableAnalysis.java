@@ -12,9 +12,10 @@ import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Place;
+import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
-import io.github.H20man13.DeClan.common.icode.exp.CallExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 
@@ -56,11 +57,6 @@ public class LiveVariableAnalysis extends Analysis<String> {
                         } else if(assCode.value instanceof IdentExp){
                             IdentExp defPlace = (IdentExp)assCode.value;
                             instructionUse.add(defPlace.ident);
-                        } else if(assCode.value instanceof CallExp){
-                            CallExp defCall = (CallExp)assCode.value;
-                            for(Tuple<String, String> arg : defCall.paramaters){
-                                instructionUse.add(arg.source);
-                            }
                         }
                     }
                 } else if(code instanceof If){
@@ -72,6 +68,16 @@ public class LiveVariableAnalysis extends Analysis<String> {
 
                     if(exp.right instanceof IdentExp){
                         instructionUse.add(exp.right.toString());
+                    }
+                } else if(code instanceof Place){
+                    Place placement = (Place)code;
+                    instructionUse.add(placement.retPlace);
+
+                    instructionDef.add(placement.place);
+                } else if(code instanceof Proc){
+                    Proc placement = (Proc)code;
+                    for(Tuple<String, String> arg : placement.params){
+                        instructionUse.add(arg.source);
                     }
                 }
                 defSets.put(code, instructionDef);

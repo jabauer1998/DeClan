@@ -16,7 +16,7 @@ BEGIN
   WriteInt(m);
   WriteReal(z);
   WriteLn();
-  Round(c, n);
+  n := Round(c);
   WriteInt(n);
   IF e THEN WriteInt(2 * 2) ELSE WriteReal(d / 10) END;
   WriteLn();

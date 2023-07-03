@@ -100,12 +100,6 @@ public class MyIrBuilder {
         return place;
     }
 
-    public String buildProcedureCall(String funcName, List<Tuple<String, String>> arguments){
-        String place = gen.genNextRegister();
-        output.add(factory.produceProcedureCall(place, funcName, arguments));
-        return place;
-    }
-
     public String buildAdditionAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
         BinExp binExp = new BinExp(left, BinExp.Operator.ADD ,right);
@@ -295,5 +289,11 @@ public class MyIrBuilder {
 
     public String buildAlias(){
         return gen.genNextRegister();
+    }
+
+    public String buildReturnPlacement(String dest){
+        String reg = gen.genNextRegister();
+        output.add(factory.procuceReturnPlacement(reg, dest));
+        return reg;
     }
 }

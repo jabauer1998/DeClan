@@ -1,43 +1,48 @@
 (* Hofstadter Male-Female Sequences: https://mathworld.wolfram.com/HofstadterMale-FemaleSequences.html *)
 VAR n, i, result: INTEGER;
-PROCEDURE M(n: INTEGER; VAR result: INTEGER);
+PROCEDURE M(n: INTEGER);
 VAR temp: INTEGER;
+VAR result: INTEGER;
 BEGIN
   IF n = 0
   THEN result := 0
   ELSE
-    M(n - 1, temp);
-    F(temp, result);
+    temp := M(n - 1);
+    result := F(temp);
     result := n - result
   END
+  RETURN result
 END M;
-PROCEDURE F(n: INTEGER; VAR result: INTEGER);
+PROCEDURE F(n: INTEGER);
 VAR temp: INTEGER;
+VAR result: INTEGER;
 BEGIN
   IF n = 0
   THEN result := 1
   ELSE
-    F(n - 1, temp);
-    M(temp, result);
+    temp := F(n - 1);
+    result := M(temp);
     result := n - result
   END
+  RETURN result
 END F;
-PROCEDURE Fact(n: INTEGER; VAR result: INTEGER);
+PROCEDURE Fact(n: INTEGER);
 VAR temp: INTEGER;
+VAR result: INTEGER;
 BEGIN
   IF n = 0
   THEN result := 1
   ELSE
-    Fact(n - 1, temp);
-    result := n * temp
+    temp := Fact(n - 1);
+    RETURN n * temp
   END
 END Fact;
 BEGIN
   ReadInt(n);
   FOR i := 0 TO n DO
-    F(i, result);
+    result := F(i);
     WriteInt(result);
-    Fact(i, result);
+    result := Fact(i);
     WriteInt(result);
     WriteLn()
   END

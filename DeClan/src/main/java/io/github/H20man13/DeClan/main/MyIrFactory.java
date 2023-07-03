@@ -9,11 +9,11 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Label;
+import io.github.H20man13.DeClan.common.icode.Place;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
-import io.github.H20man13.DeClan.common.icode.exp.CallExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.IntExp;
@@ -87,7 +87,7 @@ public class MyIrFactory {
         return new Assign(place, value);
     }
 
-    public Assign produceProcedureCall(String place, String procedureName, List<Tuple<String, String>> arguments){
-        return new Assign(place, new CallExp(procedureName, arguments));
+    public Place procuceReturnPlacement(String place, String returnPlace){
+        return new Place(place, returnPlace);
     }
 }

@@ -132,7 +132,7 @@ public class ICodeGeneratorTest {
                        + "z := 48\n"
                        + "RETURN\n"
                        + "PROC func ( t -> x , g -> y , f -> z )\n"
-                       + "x := CALL func ( g -> x , t -> y , g -> z )\n"
+                       + "x <- z\n"
                        + "END\n";
 
         Source mySource = new ReaderSource(new StringReader(program));

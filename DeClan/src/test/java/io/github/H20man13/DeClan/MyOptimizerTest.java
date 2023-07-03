@@ -95,7 +95,8 @@ public class MyOptimizerTest {
                            + "b := 60\n" 
                            + "i := a ADD a\n"
                            + "g := i ADD a\n"
-                           + "f := CALL func ( g -> x )\n"
+                           + "PROC func ( g -> x )\n"
+                           + "f <- g\n"
                            + "IF f EQ TRUE THEN block1 ELSE block1\n"
                            + "END\n";
 
@@ -103,7 +104,7 @@ public class MyOptimizerTest {
                             + "a := 1\n"
                             + "i := a ADD a\n"
                             + "g := i ADD a\n"
-                            + "f := CALL func ( g -> x )\n"
+                            + "PROC func ( g -> x )\n"
                             + "IF f EQ TRUE THEN block1 ELSE block1\n"
                             + "END\n";
 

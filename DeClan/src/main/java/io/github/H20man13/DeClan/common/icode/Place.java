@@ -3,8 +3,8 @@ package io.github.H20man13.DeClan.common.icode;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Place implements ICode {
-    private String place;
-    private String retPlace;
+    public String place;
+    public String retPlace;
 
     public Place(String place, String retPlace){
         this.place = place;

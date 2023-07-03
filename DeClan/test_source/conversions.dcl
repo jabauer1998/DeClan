@@ -1,9 +1,9 @@
 VAR x : REAL; n : INTEGER;
-PROCEDURE p(n: INTEGER; x: REAL; VAR r: REAL);
+PROCEDURE p(n: INTEGER; x: REAL);
   VAR m : INTEGER;
   BEGIN
-    Round(x + n, m);
-    r := r + m;
+    m := Round(x + n);
+    RETURN m
   END p;
 BEGIN
   n := 1;
@@ -16,7 +16,7 @@ BEGIN
   WriteInt((n + 5) * (n + 6));
   WriteReal((x + 4) * (x + 5.));
   WriteLn();
-  p(n, 3.1415, x);
+  x := p(n, 3.1415);
   WriteReal(x);
   WriteLn();
 END.

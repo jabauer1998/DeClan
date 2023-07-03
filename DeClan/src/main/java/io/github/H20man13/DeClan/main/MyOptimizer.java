@@ -27,10 +27,10 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Label;
+import io.github.H20man13.DeClan.common.icode.Place;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
-import io.github.H20man13.DeClan.common.icode.exp.CallExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
@@ -128,6 +128,11 @@ public class MyOptimizer {
                     BlockNode labeledNode = labeledNodes.get(lastGoto.label);
                     node.addSuccessor(labeledNode);
                     labeledNode.addPredecessor(node);
+                } else if(lastCode instanceof Proc){
+                    Proc lastProc = (Proc)lastCode;
+                    BlockNode labeledNode = labeledNodes.get(lastProc.pname);
+                    node.addSuccessor(labeledNode);
+                    labeledNode.addPredecessor(node);
                 }
             } else if(i + 1 < dagNodes.size()){
                 BlockNode nextNode = dagNodes.get(i + 1);
@@ -175,12 +180,6 @@ public class MyOptimizer {
                         IdentExp rightExp = (IdentExp)unExp.right;
                         symbolTable.addEntry(rightExp.ident, new LiveInfo(true, i));
                     }
-                } else if(icodeAssign.value instanceof CallExp){
-                    CallExp callExp = (CallExp)icodeAssign.value;
-                    
-                    for(Tuple<String, String> param : callExp.paramaters){
-                        symbolTable.addEntry(param.source, new LiveInfo(true, i));
-                    }
                 }
             } else if(icode instanceof If){
                 If ifStat = (If)icode;
@@ -200,6 +199,9 @@ public class MyOptimizer {
                 for(Tuple<String, String> param : ((Proc)icode).params){
                     symbolTable.addEntry(param.source, new LiveInfo(true, i));
                 }
+            } else if(icode instanceof Place){
+                Place place = (Place)icode;
+                symbolTable.addEntry(place.retPlace, new LiveInfo(true, i));
             }
 
             livelinessInformation.put(icode, symbolTable.copy());
@@ -236,10 +238,6 @@ public class MyOptimizer {
         }
 
         return firsts;
-    }
-
-    public void removeDeadCode(){
-
     }
 
     private void buildGlobalExpressionSemilattice(){
@@ -446,6 +444,12 @@ public class MyOptimizer {
                     if(liveVariables.contains(assICode.place)){
                         result.add(assICode);
                     }
+                } else if(icode instanceof Place){
+                    Place assICode = (Place)icode;
+                    Set<String> liveVariables = this.liveAnal.getInstructionOutputSet(icode);
+                    if(liveVariables.contains(assICode.place)){
+                        result.add(assICode);
+                    }  
                 } else {
                     result.add(icode);
                 }
