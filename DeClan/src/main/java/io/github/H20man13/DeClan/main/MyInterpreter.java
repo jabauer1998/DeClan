@@ -7,6 +7,8 @@ import io.github.H20man13.DeClan.common.symboltable.Environment;
 
 import java.lang.Number;
 import java.lang.Object;
+import java.io.IOException;
+import java.io.Writer;
 import java.lang.Math;
 import java.lang.String;
 import java.lang.StringBuilder;
@@ -55,10 +57,13 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   private ErrorLog errorLog;
   private Environment <String, VariableEntry> varEnvironment;
   private Environment <String, ProcedureEntry> procEnvironment;
-  // TODO declare any data structures needed by the Integererpreter
+  private Writer standardOutput;
+  private Writer standardError;
 
-  public MyInterpreter(ErrorLog errorLog) {
+  public MyInterpreter(ErrorLog errorLog, Writer standardOutput, Writer standardError) {
     this.errorLog = errorLog;
+    this.standardOutput = standardOutput;
+    this.standardError = standardError;
     this.varEnvironment = new Environment<>();
     this.procEnvironment = new Environment<>();
   }
@@ -129,50 +134,61 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         
   @Override
   public void visit(ProcedureCall procedureCall) {
-    if (procedureCall.getProcedureName().getLexeme().equals("PrintInt")) {
-      Integer value = (Integer)procedureCall.getArguments().get(0).acceptResult(this);
-      System.out.print(value);
-    } else if (procedureCall.getProcedureName().getLexeme().equals("PrintDouble") || procedureCall.getProcedureName().getLexeme().equals("PrintReal")) {
-      Double value = (Double)procedureCall.getArguments().get(0).acceptResult(this);
-      System.out.print(value);
-    } else if(procedureCall.getProcedureName().getLexeme().equals("PrintString")) {
-      String value = (String)procedureCall.getArguments().get(0).acceptResult(this);
-      System.out.print(value);
-    } else if(procedureCall.getProcedureName().getLexeme().equals("ASSERT")){
-      Boolean value = (Boolean)procedureCall.getArguments().get(0).acceptResult(this);
-      String toPrint = (String)procedureCall.getArguments().get(1).acceptResult(this);
-      if(!value){
-	  System.out.print(toPrint);
-	  System.exit(1);
+    String procName = procedureCall.getProcedureName().getLexeme();
+    if (procName.equals("WriteInt") || procName.equals("PrintInt")) {
+      Object value = procedureCall.getArguments().get(0).acceptResult(this);
+      try{
+        standardOutput.append("" + value);
+      } catch(IOException exp){}
+    } else if (procName.equals("WriteReal") || procName.equals("PrintReal")) {
+      Object value = procedureCall.getArguments().get(0).acceptResult(this);
+      try{
+        standardOutput.append("" + value);
+      } catch(IOException exp){}
+    } else if(procName.equals("WriteLn") || procName.equals("PrintLn")) {
+       try{
+        standardOutput.append("\n");
+       } catch(IOException exp){}
+    } else if(procName.equals("WriteString") || procName.equals("PrintString")) {
+      Object value = (Object)procedureCall.getArguments().get(0).acceptResult(this);
+      try{
+        standardOutput.append("" + value);
+       } catch(IOException exp){}
+    } else if(procName.equals("ASSERT")){
+      boolean value = (boolean)procedureCall.getArguments().get(0).acceptResult(this);
+      Object toPrint = (Object)procedureCall.getArguments().get(1).acceptResult(this);
+        if(!value){
+        try{
+          standardError.append("" + toPrint);
+        } catch(IOException exp){}
+	      System.exit(1);
       }
-    } else if(procedureCall.getProcedureName().getLexeme().equals("PrintLn")){
-	System.out.println("");
     } else {
-	String funcName = procedureCall.getProcedureName().getLexeme();
-	ProcedureEntry pentry = procEnvironment.getEntry(funcName);
-	List<ParamaterDeclaration> args = pentry.getArguments();
-	List<Expression> valArgs = procedureCall.getArguments();
-	List<Object> valArgResults = new ArrayList<>();
-	for(Expression valArg : valArgs){
-	    Object result = valArg.acceptResult(this);
-	    valArgResults.add(result);
-	}
-	varEnvironment.addScope();
-	for(Integer i = 0; i < args.size(); i++){
-	    args.get(i).accept(this); //declare parameter variables 
-	    VariableEntry toChange = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
-	    Object variableValue = valArgResults.get(i);
-	    toChange.setValue(variableValue);
-	}
-	List<Declaration> LocalDecl = pentry.getLocalVariables();
-	for(Declaration decl : LocalDecl){
-	    decl.accept(this);
-	}
-	List<Statement> toExec = pentry.getExecList();
-	for(Statement toDo : toExec){
-	    toDo.accept(this);
-	}
-	varEnvironment.removeScope(); //clean up local declarations as well as parameters	
+        String funcName = procedureCall.getProcedureName().getLexeme();
+        ProcedureEntry pentry = procEnvironment.getEntry(funcName);
+        List<ParamaterDeclaration> args = pentry.getArguments();
+        List<Expression> valArgs = procedureCall.getArguments();
+        List<Object> valArgResults = new ArrayList<>();
+        for(Expression valArg : valArgs){
+            Object result = valArg.acceptResult(this);
+            valArgResults.add(result);
+        }
+        varEnvironment.addScope();
+        for(Integer i = 0; i < args.size(); i++){
+            args.get(i).accept(this); //declare parameter variables 
+            VariableEntry toChange = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
+            Object variableValue = valArgResults.get(i);
+            toChange.setValue(variableValue);
+        }
+        List<Declaration> LocalDecl = pentry.getLocalVariables();
+        for(Declaration decl : LocalDecl){
+            decl.accept(this);
+        }
+        List<Statement> toExec = pentry.getExecList();
+        for(Statement toDo : toExec){
+            toDo.accept(this);
+        }
+	      varEnvironment.removeScope(); //clean up local declarations as well as parameters	
     }
   }
 
@@ -183,9 +199,9 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     if((Boolean)toCheck.acceptResult(this)){
       List<Statement> toExec = whilebranch.getExecStatements();
       do {
-	for(Integer i = 0; i < toExec.size(); i++){
-	  toExec.get(i).accept(this);
-	}
+        for(Integer i = 0; i < toExec.size(); i++){
+          toExec.get(i).accept(this);
+        }
       } while((Boolean)toCheck.acceptResult(this));
     } else if (whilebranch.getNextBranch() != null){
       whilebranch.getNextBranch().accept(this);
@@ -198,7 +214,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     if((Boolean)toCheck.acceptResult(this)){
       List<Statement> toExec = ifbranch.getExecStatements();
       for(Integer i = 0; i < toExec.size(); i++){
-	toExec.get(i).accept(this);
+	      toExec.get(i).accept(this);
       }
     } else if(ifbranch.getNextBranch() != null) {
       ifbranch.getNextBranch().accept(this);
@@ -219,7 +235,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     List<Statement> toExec = repeatbranch.getExecStatements();
     do {
       for(Integer i = 0; i < toExec.size(); i++){
-	toExec.get(i).accept(this);
+	      toExec.get(i).accept(this);
       }
     } while (!(Boolean)toCheck.acceptResult(this)); //keep going until statement is true
   }
@@ -289,12 +305,12 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	      }
 	  }
       } else {
-	  forbranch.getInitAssignment().accept(this);
-	  while((Integer)curvalue > (Integer)target){
-	      for(Integer i = 0; i < toExec.size(); i++){
-		  toExec.get(i).accept(this);
-	      }
-	  }
+	    forbranch.getInitAssignment().accept(this);
+      while((Integer)curvalue > (Integer)target){
+        for(Integer i = 0; i < toExec.size(); i++){
+          toExec.get(i).accept(this);
+        }
+      }
       }
     }
   }
@@ -305,16 +321,16 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     if(varEnvironment.entryExists(name)){
       VariableEntry entry = varEnvironment.getEntry(name);
       if(entry.isConst()){
-	  errorLog.add("Variable " + assignment.getVariableName().getLexeme() + " declared as const", assignment.getVariableName().getStart());
+	      errorLog.add("Variable " + assignment.getVariableName().getLexeme() + " declared as const ", assignment.getVariableName().getStart());
       } else if(entry.getValue() instanceof Double){
-	  Double value = (Double)assignment.getVariableValue().acceptResult(this);
-	  entry.setValue(value);
+        Object value = assignment.getVariableValue().acceptResult(this);
+        entry.setValue(value);
       } else if(entry.getValue() instanceof Integer){
-	  Integer value = (Integer)assignment.getVariableValue().acceptResult(this);
-	  entry.setValue(value);
+        Object value = (Object)assignment.getVariableValue().acceptResult(this);
+        entry.setValue(value);
       } else {
-	  Boolean value = (Boolean)assignment.getVariableValue().acceptResult(this);
-	  entry.setValue(value);
+        Object value = (Object)assignment.getVariableValue().acceptResult(this);
+        entry.setValue(value);
       }
     }
   }

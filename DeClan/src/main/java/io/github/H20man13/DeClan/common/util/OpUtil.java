@@ -29,25 +29,33 @@ public class OpUtil {
     }
 
     public static Object plus(Object val1, Object val2){
-        if(val1 instanceof Double || val2 instanceof Double) return (Double)val1 + (Double)val2;
+        if(val1 instanceof Double && val2 instanceof Double) return (Double)val1 + (Double)val2;
+        else if(val1 instanceof Integer && val2 instanceof Double) return (Integer)val1 + (Double)val2;
+        else if(val1 instanceof Double && val2 instanceof Integer) return (Double)val1 + (Integer)val2;
         else if(val1 instanceof Integer || val2 instanceof Integer) return (Integer)val1 + (Integer)val2;
         else return null;
     }
 
     public static Object minus(Object val1, Object val2){
-        if(val1 instanceof Double || val2 instanceof Double) return (Double)val1 - (Double)val2;
+        if(val1 instanceof Double && val2 instanceof Double) return (Double)val1 - (Double)val2;
+        else if(val1 instanceof Integer && val2 instanceof Double) return (Integer)val1 - (Double)val2;
+        else if(val1 instanceof Double && val2 instanceof Integer) return (Double)val1 - (Integer)val2;
         else if(val1 instanceof Integer || val2 instanceof Integer) return (Integer)val1 - (Integer)val2;
         else return null;
     }
 
     public static Object times(Object val1, Object val2){
-        if(val1 instanceof Double || val2 instanceof Double) return (Double)val1 * (Double)val2;
+        if(val1 instanceof Double && val2 instanceof Double) return (Double)val1 * (Double)val2;
+        else if(val1 instanceof Integer && val2 instanceof Double) return (Integer)val1 * (Double)val2;
+        else if(val1 instanceof Double && val2 instanceof Integer) return (Double)val1 * (Integer)val2;
         else if(val1 instanceof Integer || val2 instanceof Integer) return (Integer)val1 * (Integer)val2;
         else return null;
     }
 
     public static Object divide(Object val1, Object val2){
-        if(val1 instanceof Double || val2 instanceof Double) return (Double)val1 / (Double)val2;
+        if(val1 instanceof Double && val2 instanceof Double) return (Double)val1 / (Double)val2;
+        else if(val1 instanceof Integer && val2 instanceof Double) return (Integer)val1 / (Double)val2;
+        else if(val1 instanceof Double && val2 instanceof Integer) return (Double)val1 / (Integer)val2;
         else if(val1 instanceof Integer || val2 instanceof Integer) return (Integer)val1 / (Integer)val2;
         else return null;
     }

@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.main;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,8 +36,10 @@ public class MyICodeMachine {
     private int programCounter;
     private State machineState;
     private ErrorLog errLog;
+    private Writer standardOutput;
+    private Writer standardError;
 
-    public MyICodeMachine(ErrorLog errLog){
+    public MyICodeMachine(ErrorLog errLog, Writer standardOutput, Writer standardError){
         this.labelAddresses = new Environment<String, IntEntry>();
         this.returnStack = new Stack<Integer>();
         this.variableValues = new Environment<String, VariableEntry>();
@@ -44,6 +48,8 @@ public class MyICodeMachine {
         this.machineState = State.INIT;
         this.labelAddresses.addScope();
         this.variableValues.addScope();
+        this.standardError = standardError;
+        this.standardOutput = standardOutput;
     }
 
     private enum State{
@@ -147,24 +153,52 @@ public class MyICodeMachine {
     }
 
     private void interpretProcedureCall(Proc procedure){
-        this.returnStack.push(this.programCounter);
+        if(procedure.pname.equals("WriteInt")){
+            Tuple<String, String> arg1 = procedure.params.get(0);
+            VariableEntry entry = variableValues.getEntry(arg1.source);
+
+            try{
+                int val = (int)entry.getValue();
+                standardOutput.append("" + val);
+            } catch(IOException exp){
+                errorAndExit(exp.toString(), programCounter, 999);
+            }
+        } else if(procedure.pname.equals("WriteLn")){
+            try{
+                standardOutput.append("\n");
+            } catch(IOException exp){
+                errorAndExit(exp.toString(), programCounter, 999);
+            }
+        } else if(procedure.pname.equals("WriteReal")){
+            Tuple<String, String> arg1 = procedure.params.get(0);
+            VariableEntry entry = variableValues.getEntry(arg1.source);
+
+            try{
+                double val = (double)entry.getValue();
+                standardOutput.append("" + val);
+            } catch(IOException exp){
+                errorAndExit(exp.toString(), programCounter, 999);
+            }
+        } else {
+            this.returnStack.push(this.programCounter);
         
-        List<VariableEntry> argVals = new ArrayList<VariableEntry>();
-        for(Tuple<String, String> arg : procedure.params){
-            VariableEntry argSource = this.variableValues.getEntry(arg.source);
-            argVals.add(argSource);
+            List<VariableEntry> argVals = new ArrayList<VariableEntry>();
+            for(Tuple<String, String> arg : procedure.params){
+                VariableEntry argSource = this.variableValues.getEntry(arg.source);
+                argVals.add(argSource);
+            }
+
+            this.variableValues.addScope();
+
+            for(int i = 0; i < procedure.params.size(); i++){
+                Tuple<String, String> newArg = procedure.params.get(i);
+                VariableEntry sourceVal = argVals.get(i);
+                this.variableValues.addEntry(newArg.dest, sourceVal);
+            }
+
+            IntEntry newAddress = this.labelAddresses.getEntry(procedure.pname);
+            this.programCounter = newAddress.getValue();
         }
-
-        this.variableValues.addScope();
-
-        for(int i = 0; i < procedure.params.size(); i++){
-            Tuple<String, String> newArg = procedure.params.get(i);
-            VariableEntry sourceVal = argVals.get(i);
-            this.variableValues.addEntry(newArg.dest, sourceVal);
-        }
-
-        IntEntry newAddress = this.labelAddresses.getEntry(procedure.pname);
-        this.programCounter = newAddress.getValue();
     }
 
     private Object interpretExpression(Exp expression){
