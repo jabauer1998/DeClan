@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Source;
+import edu.depauw.declan.common.ErrorLog.LogItem;
 import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.ReaderSource;
@@ -46,17 +47,20 @@ public class InterpreterICodeTest {
             MyICodeGenerator iGen = new MyICodeGenerator(errLog, gen);
             lib.ioLibrary().accept(iGen);
             lib.mathLibrary().accept(iGen);
-
             prog.accept(iGen);
 
             List<ICode> generatedICode = iGen.getICode();
 
             MyICodeMachine vm = new MyICodeMachine(errLog, icodeOut, errOut);
             vm.interpretICode(generatedICode);
+
+            for(LogItem errItem : errLog){
+                assertTrue(errItem.toString(), false);
+            }
         } catch(FileNotFoundException exp){
             assertTrue(exp.toString(), false);
         }
-        assertTrue("Expected icode output to be the same as the interpreter output \n\n Interpreter Output is \n\n " + intOut.toString() + " \n\n while icode output is " + icodeOut.toString(), icodeOut.toString().equals(intOut.toString()));
+        assertTrue("Expected icode output to be the same as the interpreter output \n\n Interpreter Output is \n\n " + intOut.toString() + " \n\n while icode output is \n\n " + icodeOut.toString(), icodeOut.toString().equals(intOut.toString()));
     }
 
     @Test

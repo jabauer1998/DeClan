@@ -227,10 +227,14 @@ public class MyIrParser {
     }
 
     private UnExp parseUnaryExpression(){
-        if(willMatch(IrTokenType.NEG)){
+        if(willMatch(IrTokenType.INEG)){
             skip();
             Exp right = parsePrimaryExpression();
-            return new UnExp(UnExp.Operator.NEG, right);
+            return new UnExp(UnExp.Operator.INEG, right);
+        } else if(willMatch(IrTokenType.RNEG)){
+            skip();
+            Exp right = parsePrimaryExpression();
+            return new UnExp(UnExp.Operator.RNEG, right);
         } else if(willMatch(IrTokenType.BNOT)){
             skip();
             Exp right = parsePrimaryExpression();
@@ -241,18 +245,20 @@ public class MyIrParser {
     }
 
     private Exp parseExpression(){
-        if(willMatch(IrTokenType.NEG) || willMatch(IrTokenType.BNOT)) {
+        if(willMatch(IrTokenType.INEG) || willMatch(IrTokenType.RNEG) || willMatch(IrTokenType.BNOT)) {
             return parseUnaryExpression();
         } else {
             Exp exp1 = parsePrimaryExpression();
 
-            if(willMatch(IrTokenType.LT) || willMatch(IrTokenType.ADD) 
+            if(willMatch(IrTokenType.LT) || willMatch(IrTokenType.IADD) 
             || willMatch(IrTokenType.LE) || willMatch(IrTokenType.GT)
             || willMatch(IrTokenType.NE) || willMatch(IrTokenType.GE)
-            || willMatch(IrTokenType.BOR) || willMatch(IrTokenType.SUB)
-            || willMatch(IrTokenType.MUL) || willMatch(IrTokenType.DIV)
-            || willMatch(IrTokenType.MOD) || willMatch(IrTokenType.BAND)
-            || willMatch(IrTokenType.EQ)) {
+            || willMatch(IrTokenType.BOR) || willMatch(IrTokenType.ISUB)
+            || willMatch(IrTokenType.IMUL) || willMatch(IrTokenType.IDIV)
+            || willMatch(IrTokenType.IMOD) || willMatch(IrTokenType.BAND)
+            || willMatch(IrTokenType.EQ) || willMatch(IrTokenType.RADD)
+            || willMatch(IrTokenType.RSUB) || willMatch(IrTokenType.RMUL)
+            || willMatch(IrTokenType.RDIV)) {
                 IrToken op = skip();
 
                 Exp exp2 = parsePrimaryExpression();

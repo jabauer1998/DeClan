@@ -15,11 +15,15 @@ public class BinExp implements Exp {
     }
     
     public enum Operator{
-        ADD,
-        SUB,
-        MUL,
-        MOD,
-        DIV,
+        IADD,
+        ISUB,
+        IMUL,
+        IMOD,
+        IDIV,
+        RADD,
+        RSUB,
+        RMUL,
+        RDIV,
         BAND,
         BOR,
         GE,

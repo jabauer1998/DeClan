@@ -1,9 +1,9 @@
 CONST dummy = -1;
-PROCEDURE Round(n: INTEGER; dummy: INTEGER);
+PROCEDURE Round(n: INTEGER);
     BEGIN
         RETURN n + 5.
     END Round;
-PROCEDURE Floor(n: INTEGER; dummy: INTEGER);
+PROCEDURE Floor(n: INTEGER);
     BEGIN
         RETURN n - 5.
     END Floor;

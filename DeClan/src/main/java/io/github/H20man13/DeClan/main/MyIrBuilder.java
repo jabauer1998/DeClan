@@ -29,7 +29,7 @@ public class MyIrBuilder {
     private int whileLoopNumber;
     private int whileLoopSeqNumber;
 
-    private Map<String, String> discovered;
+    private int beginSeqNumber;
 
     public MyIrBuilder(ErrorLog errLog){
         this(errLog, new IrRegisterGenerator());
@@ -45,7 +45,6 @@ public class MyIrBuilder {
         this.ifStatementSeqNumber = 0;
         this.whileLoopNumber = 0;
         this.whileLoopSeqNumber = 0;
-        this.discovered = new HashMap<String, String>();
     }
 
     public List<ICode> getOutput(){
@@ -86,9 +85,16 @@ public class MyIrBuilder {
         return place;
     }
 
-    public String buildNegationAssignment(Exp value){
+    public String buildRealNegationAssignment(Exp value){
         String place = gen.genNextRegister();
-        UnExp unaryExp = new UnExp(UnExp.Operator.NEG, value);
+        UnExp unaryExp = new UnExp(UnExp.Operator.RNEG, value);
+        output.add(factory.produceUnaryOperation(place, unaryExp));
+        return place;
+    }
+
+    public String buildIntegerNegationAssignment(Exp value){
+        String place = gen.genNextRegister();
+        UnExp unaryExp = new UnExp(UnExp.Operator.INEG, value);
         output.add(factory.produceUnaryOperation(place, unaryExp));
         return place;
     }
@@ -100,37 +106,65 @@ public class MyIrBuilder {
         return place;
     }
 
-    public String buildAdditionAssignment(Exp left, Exp right){
+    public String buildIntegerAdditionAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.ADD ,right);
+        BinExp binExp = new BinExp(left, BinExp.Operator.IADD ,right);
         output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildSubtractionAssignment(Exp left, Exp right){
+    public String buildRealAdditionAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.SUB, right);
+        BinExp binExp = new BinExp(left, BinExp.Operator.RADD ,right);
         output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildMultiplicationAssignment(Exp left, Exp right){
+    public String buildIntegerSubtractionAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.MUL, right);
+        BinExp binExp = new BinExp(left, BinExp.Operator.ISUB, right);
         output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildDivisionAssignment(Exp left, Exp right){
+    public String buildRealSubtractionAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.DIV, right);
+        BinExp binExp = new BinExp(left, BinExp.Operator.RSUB, right);
         output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildModuloAssignment(Exp left, Exp right){
+    public String buildIntegerMultiplicationAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.MOD, right);
+        BinExp binExp = new BinExp(left, BinExp.Operator.IMUL, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
+        return place;
+    }
+
+    public String buildRealMultiplicationAssignment(Exp left, Exp right){
+        String place = gen.genNextRegister();
+        BinExp binExp = new BinExp(left, BinExp.Operator.RMUL, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
+        return place;
+    }
+
+    public String buildIntegerDivisionAssignment(Exp left, Exp right){
+        String place = gen.genNextRegister();
+        BinExp binExp = new BinExp(left, BinExp.Operator.IDIV, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
+        return place;
+    }
+
+    public String buildRealDivisionAssignment(Exp left, Exp right){
+        String place = gen.genNextRegister();
+        BinExp binExp = new BinExp(left, BinExp.Operator.RDIV, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
+        return place;
+    }
+
+    public String buildIntegerModuloAssignment(Exp left, Exp right){
+        String place = gen.genNextRegister();
+        BinExp binExp = new BinExp(left, BinExp.Operator.IMOD, right);
         output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
@@ -295,5 +329,16 @@ public class MyIrBuilder {
         String reg = gen.genNextRegister();
         output.add(factory.procuceReturnPlacement(reg, dest));
         return reg;
+    }
+
+    public void buildBeginLabel(){
+        String begin = "begin_" + beginSeqNumber; 
+        output.add(factory.produceLabel(begin));
+        beginSeqNumber++;
+    }
+
+    public void buildBeginGoto(){
+        String begin = "begin_" + beginSeqNumber;
+        output.add(factory.produceGoto(begin));
     }
 }

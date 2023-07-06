@@ -2,6 +2,7 @@ package io.github.H20man13.DeClan.main;
 
 import io.github.H20man13.DeClan.common.symboltable.VariableEntry;
 import io.github.H20man13.DeClan.common.util.OpUtil;
+import io.github.H20man13.DeClan.common.util.Utils;
 import io.github.H20man13.DeClan.common.symboltable.ProcedureEntry;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 
@@ -137,13 +138,15 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     String procName = procedureCall.getProcedureName().getLexeme();
     if (procName.equals("WriteInt") || procName.equals("PrintInt")) {
       Object value = procedureCall.getArguments().get(0).acceptResult(this);
+      Integer intVal = Utils.toInt(value);
       try{
-        standardOutput.append("" + value);
+        standardOutput.append("" + intVal);
       } catch(IOException exp){}
     } else if (procName.equals("WriteReal") || procName.equals("PrintReal")) {
       Object value = procedureCall.getArguments().get(0).acceptResult(this);
+      Double doubleVal = Utils.toDouble(value);
       try{
-        standardOutput.append("" + value);
+        standardOutput.append("" + doubleVal);
       } catch(IOException exp){}
     } else if(procName.equals("WriteLn") || procName.equals("PrintLn")) {
        try{
@@ -211,7 +214,9 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   @Override
   public void visit(IfElifBranch ifbranch){
     Expression toCheck = ifbranch.getExpression();
-    if((Boolean)toCheck.acceptResult(this)){
+    Object res = toCheck.acceptResult(this);
+    Boolean boolRes = Utils.toBool(res);
+    if(boolRes){
       List<Statement> toExec = ifbranch.getExecStatements();
       for(Integer i = 0; i < toExec.size(); i++){
 	      toExec.get(i).accept(this);
@@ -324,10 +329,16 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	      errorLog.add("Variable " + assignment.getVariableName().getLexeme() + " declared as const ", assignment.getVariableName().getStart());
       } else if(entry.getValue() instanceof Double){
         Object value = assignment.getVariableValue().acceptResult(this);
-        entry.setValue(value);
+        Double ivalue = Utils.toDouble(value);
+        entry.setValue(ivalue);
       } else if(entry.getValue() instanceof Integer){
         Object value = (Object)assignment.getVariableValue().acceptResult(this);
-        entry.setValue(value);
+        Integer ivalue = Utils.toInt(value);
+        entry.setValue(ivalue);
+      } else if(entry.getValue() instanceof Boolean){
+        Object value = (Object)assignment.getVariableValue().acceptResult(this);
+        Boolean ivalue = Utils.toBool(value);
+        entry.setValue(ivalue);
       } else {
         Object value = (Object)assignment.getVariableValue().acceptResult(this);
         entry.setValue(value);
@@ -384,6 +395,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         case MINUS: return OpUtil.minus(leftValue, rightValue);
         case TIMES: return OpUtil.times(leftValue, rightValue);
         case DIVIDE: return OpUtil.divide(leftValue, rightValue);
+        case DIV: return OpUtil.divide(leftValue, rightValue);
         case LT: return OpUtil.lessThan(leftValue, rightValue);
         case GT: return OpUtil.greaterThan(leftValue, rightValue);
         case EQ: return OpUtil.equal(leftValue, rightValue);
@@ -409,7 +421,18 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       args.get(i).accept(this); //declare parameter variable
       VariableEntry toChange = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
       Object variableValue = valArgResults.get(i);
-      toChange.setValue(variableValue);
+      if(toChange.getValue() instanceof Integer){
+         Integer varVal = Utils.toInt(variableValue);
+         toChange.setValue(varVal);
+      } else if(toChange.getValue() instanceof Double){
+        Double varVal = Utils.toDouble(variableValue);
+        toChange.setValue(varVal);
+      } else if(toChange.getValue() instanceof Boolean){
+        Boolean varVal = Utils.toBool(variableValue);
+        toChange.setValue(varVal);
+      } else {
+        toChange.setValue(variableValue);
+      }
     }
     List<Declaration> LocalDecl = fentry.getLocalVariables();
     for(Declaration decl : LocalDecl){

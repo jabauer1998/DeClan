@@ -17,14 +17,19 @@ public enum IrTokenType {
     GOTO,
     CALL,
     PROC,
-    ADD,
-    SUB,
-    MUL,
-    DIV,
-    MOD,
+    IADD,
+    ISUB,
+    IMUL,
+    IDIV,
+    IMOD,
+    RADD,
+    RSUB,
+    RMUL,
+    RDIV,
     BOR,
     BAND,
-    NEG,
+    INEG,
+    RNEG,
     BNOT,
     LT,
     GT,
@@ -88,13 +93,18 @@ public enum IrTokenType {
         addKeyword(GOTO);
         addKeyword(CALL);
         addKeyword(PROC);
-        addKeyword(NEG);
+        addKeyword(INEG);
+        addKeyword(RNEG);
         addKeyword(BNOT);
-        addKeyword(SUB);
-        addKeyword(MUL);
-        addKeyword(DIV);
-        addKeyword(MOD);
-        addKeyword(ADD);
+        addKeyword(ISUB);
+        addKeyword(IMUL);
+        addKeyword(IDIV);
+        addKeyword(IMOD);
+        addKeyword(IADD);
+        addKeyword(RSUB);
+        addKeyword(RMUL);
+        addKeyword(RDIV);
+        addKeyword(RADD);
         addKeyword(BAND);
         addKeyword(BOR);
         addKeyword(LT);

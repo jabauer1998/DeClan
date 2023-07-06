@@ -81,7 +81,7 @@ public class MyICodeMachine {
                     else if(instruction instanceof Return) interpretReturnStatement((Return)instruction);
                     else if(instruction instanceof Label) interpretLabelStatement((Label)instruction);
                     else {
-                        errorAndExit("Unexpected icode instruction found" + this.getClass(), this.programCounter, instructions.size());
+                        errorAndExit("Unexpected icode instruction found" + instruction.getClass(), this.programCounter, instructions.size());
                     }
                     continue;
                 case RETURN:
@@ -97,8 +97,7 @@ public class MyICodeMachine {
                             errorAndExit("Return variable " + placement.retPlace + "was not allocated correctly", this.programCounter, instructions.size());
                         }
                     } else {
-                        //De incriment the program counter in order to have the same icode but in the init state
-                        this.programCounter--;
+                        //Deincriment the program counter in order to have the same icode but in the init state
                         variableValues.removeScope();
                     }
                     this.machineState = State.INIT;
@@ -128,6 +127,7 @@ public class MyICodeMachine {
     private void interpretReturnStatement(Return returnV){
         int returnAddress = returnStack.pop();
         this.programCounter = returnAddress;
+        this.machineState = State.RETURN;
     }
 
     private void interpretGotoStatement(Goto stat){
@@ -158,8 +158,9 @@ public class MyICodeMachine {
             VariableEntry entry = variableValues.getEntry(arg1.source);
 
             try{
-                int val = (int)entry.getValue();
-                standardOutput.append("" + val);
+                Object val = entry.getValue();
+                Integer toInt = Utils.toInt(val);
+                standardOutput.append("" + toInt);
             } catch(IOException exp){
                 errorAndExit(exp.toString(), programCounter, 999);
             }
@@ -174,8 +175,9 @@ public class MyICodeMachine {
             VariableEntry entry = variableValues.getEntry(arg1.source);
 
             try{
-                double val = (double)entry.getValue();
-                standardOutput.append("" + val);
+                Object val = entry.getValue();
+                Double dVal = Utils.toDouble(val);
+                standardOutput.append("" + dVal);
             } catch(IOException exp){
                 errorAndExit(exp.toString(), programCounter, 999);
             }
@@ -227,7 +229,8 @@ public class MyICodeMachine {
 
         switch(expression.op){
             case BNOT: return OpUtil.not(right);
-            case NEG: return OpUtil.negate(right);
+            case INEG: return OpUtil.iNegate(right);
+            case RNEG: return OpUtil.rNegate(right);
             default: return null;
         }
     }
@@ -250,17 +253,21 @@ public class MyICodeMachine {
         }
 
         switch(expression.op){
-            case ADD: return OpUtil.plus(left, right);
-            case SUB: return OpUtil.minus(left, right);
-            case MUL: return OpUtil.times(left, right);
-            case DIV: return OpUtil.divide(left, right);
+            case IADD: return OpUtil.iAdd(left, right);
+            case RADD: return OpUtil.rAdd(left, right);
+            case ISUB: return OpUtil.iSub(left, right);
+            case RSUB: return OpUtil.rSub(left, right);
+            case IMUL: return OpUtil.iMul(left, right);
+            case RMUL: return OpUtil.rMul(left, right);
+            case IDIV: return OpUtil.iDiv(left, right);
+            case RDIV: return OpUtil.rDiv(left, right);
+            case IMOD: return OpUtil.iMod(left, right);
             case EQ: return OpUtil.equal(left, right);
             case NE: return OpUtil.notEqual(left, right);
             case GE: return OpUtil.greaterThanOrEqualTo(left, right);
             case GT: return OpUtil.greaterThan(left, right);
             case LE: return OpUtil.lessThanOrEqualTo(left, right);
             case LT: return OpUtil.lessThan(left, right);
-            case MOD: return OpUtil.divide(left, right);
             case BAND: return OpUtil.and(left, right);
             case BOR: return OpUtil.or(left, right);
             default: return null;

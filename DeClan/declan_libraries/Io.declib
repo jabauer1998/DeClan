@@ -1,5 +1,4 @@
 CONST dummy = -1;
-
 PROCEDURE WriteLn();
     BEGIN
         RETURN dummy

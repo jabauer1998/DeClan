@@ -8,9 +8,10 @@ import java.util.Set;
 
 public class DagOperationNode implements DagNode {
     public enum Op{
-        ADD, SUB, DIV, MOD, BAND, 
-        BOR, NEG, BNOT, GE, LE, 
-        LT, GT, NE, EQ, MUL
+        IADD, ISUB, IDIV, IMOD, BAND, 
+        BOR, INEG, RNEG, BNOT, GE, LE, 
+        LT, GT, NE, EQ, IMUL, RADD, RSUB, RDIV,
+        RMUL
     }
 
     private List<DagNode> children;

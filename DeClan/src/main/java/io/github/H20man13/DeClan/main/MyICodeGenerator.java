@@ -11,6 +11,7 @@ import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.symboltable.VariableEntry;
+import io.github.H20man13.DeClan.main.MyTypeChecker.TypeCheckerTypes;
 import io.github.H20man13.DeClan.common.symboltable.ProcedureEntry;
 import io.github.H20man13.DeClan.common.symboltable.StringEntry;
 import io.github.H20man13.DeClan.common.symboltable.StringEntryList;
@@ -68,6 +69,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
   private Environment<String, StringEntry> procEnvironment;
   private Environment<String, StringEntryList> procArgs;
   private MyIrBuilder builder;
+  private MyTypeChecker typeChecker;
 
   public MyICodeGenerator(ErrorLog errorLog){
     this(errorLog, new IrRegisterGenerator());
@@ -79,6 +81,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     this.varEnvironment = new Environment<>();
     this.procEnvironment = new Environment<>();
     this.procArgs = new Environment<>();
+    this.typeChecker = new MyTypeChecker(errorLog);
   }
 
   public List<ICode> getICode(){
@@ -90,6 +93,8 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     procEnvironment.addScope();
     varEnvironment.addScope();
     procArgs.addScope();
+
+    builder.buildBeginLabel();
     for(Declaration decl : lib.getConstDecls()){
       decl.accept(this);
     }
@@ -97,6 +102,8 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     for(Declaration decl : lib.getVarDecls()){
       decl.accept(this);
     }
+
+    builder.buildBeginGoto();
 
     for(Declaration decl : lib.getProcDecls()){
       decl.accept(this);
@@ -108,17 +115,20 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     procEnvironment.addScope();
     varEnvironment.addScope();
     procArgs.addScope();
+    builder.buildBeginLabel();
     for(Declaration decl : program.getConstDecls()){
       decl.accept(this);
     }
     for (Declaration decl : program.getVarDecls()) {
       decl.accept(this);
     }
-    builder.buildGoto("begin");
+
+    builder.buildBeginGoto();
     for (Declaration decl : program.getProcDecls()){
       decl.accept(this);
     }
-    builder.buildLabel("begin");
+    
+    builder.buildBeginLabel();
     for (Statement statement : program.getStatements()) {
       statement.accept(this);
     }
@@ -140,6 +150,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
   
   @Override
   public void visit(ConstDeclaration constDecl) {
+    constDecl.accept(typeChecker);
     Identifier id = constDecl.getIdentifier();
     Expression valueExpr = constDecl.getValue();
     String value = valueExpr.acceptResult(this);
@@ -152,6 +163,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     Identifier id = varDecl.getIdentifier();
     Identifier type = varDecl.getType();
     String argVal = null;
+    varDecl.accept(typeChecker);
     if(type.getLexeme().equals("INTEGER")){
       argVal = "0";
     } else if(type.getLexeme().equals("STRING")){
@@ -168,6 +180,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     String procedureName = procDecl.getProcedureName().getLexeme();
     builder.buildProcedureDeclaration(procedureName);
     varEnvironment.addScope();
+    procDecl.accept(typeChecker);
     
     List <ParamaterDeclaration> args = procDecl.getArguments();
     
@@ -353,15 +366,38 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
   public String visitResult(BinaryOperation binaryOperation) {
       String leftValue = binaryOperation.getLeft().acceptResult(this);
       IdentExp leftIdent = new IdentExp(leftValue);
+      TypeCheckerTypes leftType = binaryOperation.getLeft().acceptResult(typeChecker);
+      
       String rightValue = binaryOperation.getRight().acceptResult(this);
       IdentExp rightIdent = new IdentExp(rightValue);
+      TypeCheckerTypes rightType = binaryOperation.getRight().acceptResult(typeChecker);
+
+      if(leftType == TypeCheckerTypes.REAL || rightType == TypeCheckerTypes.REAL){
+        switch (binaryOperation.getOperator()){
+          case PLUS: return builder.buildRealAdditionAssignment(leftIdent, rightIdent);
+          case MINUS: return builder.buildRealSubtractionAssignment(leftIdent, rightIdent);
+          case TIMES: return builder.buildRealMultiplicationAssignment(leftIdent, rightIdent);
+          case DIV: return builder.buildIntegerDivisionAssignment(leftIdent, rightIdent);
+          case DIVIDE: return builder.buildRealDivisionAssignment(leftIdent, rightIdent);
+          case MOD: return builder.buildIntegerModuloAssignment(leftIdent, rightIdent);
+          case LE: return builder.buildLessThanOrEqualAssignment(leftIdent, rightIdent);
+          case LT: return builder.buildLessThanAssignment(leftIdent, rightIdent);
+          case GE: return builder.buildGreaterThanOrEqualToAssignment(leftIdent, rightIdent);
+          case GT: return builder.buildGreaterThanAssignment(leftIdent, rightIdent);
+          case AND: return builder.buildAndAssignment(leftIdent, rightIdent);
+          case OR: return builder.buildOrAssignment(leftIdent, rightIdent);
+          case EQ: return builder.buildEqualityAssignment(leftIdent, rightIdent);
+          case NE: return builder.buildInequalityAssignment(leftIdent, rightIdent);
+          default: return leftValue;
+      }
+    } else {
       switch (binaryOperation.getOperator()){
-        case PLUS: return builder.buildAdditionAssignment(leftIdent, rightIdent);
-        case MINUS: return builder.buildSubtractionAssignment(leftIdent, rightIdent);
-        case TIMES: return builder.buildMultiplicationAssignment(leftIdent, rightIdent);
-        case DIV: return builder.buildDivisionAssignment(leftIdent, rightIdent);
-        case DIVIDE: return builder.buildDivisionAssignment(leftIdent, rightIdent);
-        case MOD: return builder.buildModuloAssignment(leftIdent, rightIdent);
+        case PLUS: return builder.buildIntegerAdditionAssignment(leftIdent, rightIdent);
+        case MINUS: return builder.buildIntegerSubtractionAssignment(leftIdent, rightIdent);
+        case TIMES: return builder.buildIntegerMultiplicationAssignment(leftIdent, rightIdent);
+        case DIV: return builder.buildIntegerDivisionAssignment(leftIdent, rightIdent);
+        case DIVIDE: return builder.buildIntegerDivisionAssignment(leftIdent, rightIdent);
+        case MOD: return builder.buildIntegerModuloAssignment(leftIdent, rightIdent);
         case LE: return builder.buildLessThanOrEqualAssignment(leftIdent, rightIdent);
         case LT: return builder.buildLessThanAssignment(leftIdent, rightIdent);
         case GE: return builder.buildGreaterThanOrEqualToAssignment(leftIdent, rightIdent);
@@ -372,6 +408,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
         case NE: return builder.buildInequalityAssignment(leftIdent, rightIdent);
         default: return leftValue;
       }
+    }
   }
 
   @Override
@@ -393,14 +430,22 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
   @Override
   public String visitResult(UnaryOperation unaryOperation) {
     String value = unaryOperation.getExpression().acceptResult(this);
-
     IdentExp valueIdent = new IdentExp(value);
-    
-	  switch(unaryOperation.getOperator()){
-	    case MINUS: return builder.buildNegationAssignment(valueIdent);
-	    case NOT: return builder.buildNotAssignment(valueIdent);
-	    default: return value;
-	  }
+    TypeCheckerTypes rightType = unaryOperation.getExpression().acceptResult(typeChecker);
+
+    if(rightType == TypeCheckerTypes.REAL){
+      switch(unaryOperation.getOperator()){
+        case MINUS: return builder.buildRealNegationAssignment(valueIdent);
+        case NOT: return builder.buildNotAssignment(valueIdent);
+        default: return value;
+	    }
+    } else {
+      switch(unaryOperation.getOperator()){
+        case MINUS: return builder.buildIntegerNegationAssignment(valueIdent);
+        case NOT: return builder.buildNotAssignment(valueIdent);
+        default: return value;
+	    }
+    }
   }
     
   @Override
@@ -443,6 +488,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
 
   @Override
   public String visitResult(ParamaterDeclaration parDeclaration) {
+    parDeclaration.accept(typeChecker);
     Identifier id = parDeclaration.getIdentifier();
     String alias = builder.buildAlias();
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(alias));

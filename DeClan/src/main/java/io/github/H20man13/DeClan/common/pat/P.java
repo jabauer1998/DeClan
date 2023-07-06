@@ -6,10 +6,10 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 
 public abstract class P {
-    private static class ADD extends P{
+    private static class IADD extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof ADD){
+            if(obj instanceof IADD){
                 return true;
             } else {
                 return false;
@@ -18,13 +18,13 @@ public abstract class P {
 
         @Override
         public String toString(){
-            return "ADD";
+            return "IADD";
         }
     }
-    private static class SUB extends P{
+    private static class ISUB extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof SUB){
+            if(obj instanceof ISUB){
                 return true;
             } else {
                 return false;
@@ -33,14 +33,14 @@ public abstract class P {
 
         @Override
         public String toString() {
-            return "SUB";
+            return "ISUB";
         }
         
     }
-    private static class MUL extends P{
+    private static class IMUL extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof MUL){
+            if(obj instanceof IMUL){
                 return true;
             } else {
                 return false;
@@ -49,14 +49,14 @@ public abstract class P {
 
         @Override
         public String toString() {
-            return "MUL";
+            return "IMUL";
         }
         
     }
-    private static class DIV extends P{
+    private static class IDIV extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof DIV){
+            if(obj instanceof IDIV){
                 return true;
             } else {
                 return false;
@@ -65,13 +65,13 @@ public abstract class P {
 
         @Override
         public String toString() {
-            return "DIV";
+            return "IDIV";
         }
     }
-    private static class MOD extends P{
+    private static class IMOD extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof MOD){
+            if(obj instanceof IMOD){
                 return true;
             } else {
                 return false;
@@ -80,7 +80,7 @@ public abstract class P {
 
         @Override
         public String toString() {
-            return "MOD";
+            return "IMOD";
         }
     }
     public static class GE extends P{
@@ -187,10 +187,10 @@ public abstract class P {
             return "ASSIGN";
         }  
     }
-    public static class NEG extends P{
+    public static class INEG extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof NEG){
+            if(obj instanceof INEG){
                 return true;
             } else {
                 return false;
@@ -199,7 +199,7 @@ public abstract class P {
 
         @Override
         public String toString() {
-            return "NEG";
+            return "INEG";
         }
     }
     public static class BNOT extends P{
@@ -510,20 +510,20 @@ public abstract class P {
         }
     }
 
-    public static ADD ADD(){
-        return new ADD();
+    public static IADD IADD(){
+        return new IADD();
     }
-    public static SUB SUB(){
-        return new SUB();
+    public static ISUB ISUB(){
+        return new ISUB();
     }
-    public static MUL MUL(){
-        return new MUL();
+    public static IMUL IMUL(){
+        return new IMUL();
     }
-    public static DIV DIV(){
-        return new DIV();
+    public static IDIV IDIV(){
+        return new IDIV();
     }
-    public static MOD MOD(){
-        return new MOD();
+    public static IMOD IMOD(){
+        return new IMOD();
     }
     public static GE GE(){
         return new GE();
@@ -546,8 +546,8 @@ public abstract class P {
     public static ASSIGN ASSIGN(){
         return new ASSIGN();
     }
-    public static NEG NEG(){
-        return new NEG();
+    public static INEG INEG(){
+        return new INEG();
     }
     public static BNOT BNOT(){
         return new BNOT();

@@ -4,55 +4,55 @@ import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.pat.P.PAT;
 
 public class Pattern {
-    public static PAT multiplyAndAccumulate0 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.MUL(), P.ID())),
-                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.ADD(), P.ID())));
-    public static PAT multiplyAndAccumulate1 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.MUL(), P.ID())),
-                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.ADD(), P.ID())));
-    public static PAT multiplyAndAccumulate2 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.MUL(), P.INT())),
-                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.ADD(), P.ID())));
-    public static PAT multiplyAndAccumulate3 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.MUL(), P.INT())),
-                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.ADD(), P.ID())));
-    public static PAT multiplyAndAccumulate4 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.MUL(), P.ID())),
-                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.ADD(), P.ID())));
-    public static PAT multiplyAndAccumulate5 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.MUL(), P.ID())),
-                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.ADD(), P.ID())));
-    public static PAT multiplyAndAccumulate6 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.MUL(), P.INT())),
-                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.ADD(), P.ID())));
-    public static PAT multiplyAndAccumulate7 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.MUL(), P.INT())),
-                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.ADD(), P.ID())));
-    public static PAT multiplyAndAccumulate8 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.MUL(), P.ID())),
-                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.ADD(), P.INT())));
-    public static PAT multiplyAndAccumulate9 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.MUL(), P.ID())),
-                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.ADD(), P.INT())));
-    public static PAT multiplyAndAccumulate10 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.MUL(), P.INT())),
-                                                      P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.ADD(), P.INT())));
-    public static PAT multiplyAndAccumulate11 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.MUL(), P.INT())),
-                                                      P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.ADD(), P.INT())));
+    public static PAT multiplyAndAccumulate0 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMUL(), P.ID())),
+                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.ID())));
+    public static PAT multiplyAndAccumulate1 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMUL(), P.ID())),
+                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.ID())));
+    public static PAT multiplyAndAccumulate2 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMUL(), P.INT())),
+                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.ID())));
+    public static PAT multiplyAndAccumulate3 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMUL(), P.INT())),
+                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.ID())));
+    public static PAT multiplyAndAccumulate4 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMUL(), P.ID())),
+                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IADD(), P.ID())));
+    public static PAT multiplyAndAccumulate5 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMUL(), P.ID())),
+                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IADD(), P.ID())));
+    public static PAT multiplyAndAccumulate6 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMUL(), P.INT())),
+                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IADD(), P.ID())));
+    public static PAT multiplyAndAccumulate7 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMUL(), P.INT())),
+                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IADD(), P.ID())));
+    public static PAT multiplyAndAccumulate8 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMUL(), P.ID())),
+                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.INT())));
+    public static PAT multiplyAndAccumulate9 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMUL(), P.ID())),
+                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.INT())));
+    public static PAT multiplyAndAccumulate10 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMUL(), P.INT())),
+                                                      P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.INT())));
+    public static PAT multiplyAndAccumulate11 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMUL(), P.INT())),
+                                                      P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.INT())));
 
-    public static PAT add0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.ADD(), P.ID()));
-    public static PAT add1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.ADD(), P.ID()));
-    public static PAT add2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.ADD(), P.INT()));
-    public static PAT add3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.ADD(), P.INT()));
+    public static PAT add0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.ID()));
+    public static PAT add1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IADD(), P.ID()));
+    public static PAT add2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.INT()));
+    public static PAT add3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IADD(), P.INT()));
 
-    public static PAT sub0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.SUB(), P.ID()));
-    public static PAT sub1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.SUB(), P.ID()));
-    public static PAT sub2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.SUB(), P.INT()));
-    public static PAT sub3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.SUB(), P.INT()));
+    public static PAT sub0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.ISUB(), P.ID()));
+    public static PAT sub1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.ISUB(), P.ID()));
+    public static PAT sub2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.ISUB(), P.INT()));
+    public static PAT sub3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.ISUB(), P.INT()));
 
-    public static PAT mul0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.MUL(), P.ID()));
-    public static PAT mul1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.MUL(), P.ID()));
-    public static PAT mul2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.MUL(), P.INT()));
-    public static PAT mul3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.MUL(), P.INT()));
+    public static PAT mul0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMUL(), P.ID()));
+    public static PAT mul1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMUL(), P.ID()));
+    public static PAT mul2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMUL(), P.INT()));
+    public static PAT mul3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMUL(), P.INT()));
 
-    public static PAT div0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.DIV(), P.ID()));
-    public static PAT div1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.DIV(), P.ID()));
-    public static PAT div2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.DIV(), P.INT()));
-    public static PAT div3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.DIV(), P.INT()));
+    public static PAT div0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IDIV(), P.ID()));
+    public static PAT div1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IDIV(), P.ID()));
+    public static PAT div2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IDIV(), P.INT()));
+    public static PAT div3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IDIV(), P.INT()));
 
-    public static PAT mod0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.MOD(), P.ID()));
-    public static PAT mod1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.MOD(), P.ID()));
-    public static PAT mod2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.MOD(), P.INT()));
-    public static PAT mod3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.MOD(), P.INT()));
+    public static PAT mod0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMOD(), P.ID()));
+    public static PAT mod1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMOD(), P.ID()));
+    public static PAT mod2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMOD(), P.INT()));
+    public static PAT mod3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMOD(), P.INT()));
 
     public static PAT ge0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.GE(), P.ID()));
     public static PAT ge1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.GE(), P.ID()));
@@ -90,8 +90,8 @@ public class Pattern {
     public static PAT ne5 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.NE(), P.BOOL()));
     public static PAT ne6 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.BOOL(), P.NE(), P.BOOL()));
 
-    public static PAT neg0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.NEG(), P.ID()));
-    public static PAT neg1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.NEG(), P.INT()));
+    public static PAT neg0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INEG(), P.ID()));
+    public static PAT neg1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INEG(), P.INT()));
 
     public static PAT bnot1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.BNOT(), P.ID()));
     public static PAT bnot0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.BNOT(), P.BOOL()));

@@ -77,13 +77,23 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>>
                             Object val2 = Utils.getValue(exp.right);
                             Object result = null;
                             switch (exp.op){
-                                case ADD: result = OpUtil.plus(val1, val2);
+                                case IADD: result = OpUtil.iAdd(val1, val2);
                                     break;
-                                case SUB: result = OpUtil.minus(val1, val2);
+                                case RADD: result = OpUtil.rAdd(val1, val2);
                                     break;
-                                case MUL: result = OpUtil.times(val1, val2);
+                                case ISUB: result = OpUtil.iSub(val1, val2);
                                     break;
-                                case DIV: result = OpUtil.divide(val1, val2);
+                                case RSUB: result = OpUtil.rSub(val1, val2);
+                                    break;
+                                case IMUL: result = OpUtil.iMul(val1, val2);
+                                    break;
+                                case RMUL: result = OpUtil.rMul(val1, val2);
+                                    break;
+                                case IDIV: result = OpUtil.iDiv(val1, val2);
+                                    break;
+                                case RDIV: result = OpUtil.rDiv(val1, val2);
+                                    break;
+                                case IMOD: result = OpUtil.iMod(val1, val2);
                                     break;
                                 case GE: result = OpUtil.greaterThanOrEqualTo(val1, val2);
                                     break;
@@ -115,7 +125,9 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>>
                             Object result = null;
                             
                             switch(exp.op){
-                                case NEG: result = OpUtil.negate(right);
+                                case INEG: result = OpUtil.iNegate(right);
+                                    break;
+                                case RNEG: result = OpUtil.rNegate(right);
                                     break;
                                 case BNOT: result = OpUtil.not(right);
                                     break;

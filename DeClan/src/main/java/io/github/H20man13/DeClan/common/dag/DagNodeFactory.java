@@ -5,39 +5,67 @@ import java.util.LinkedList;
 public class DagNodeFactory {
     public DagNodeFactory(){}
 
-    public DagNode createAdditionNode(String nodeName, DagNode node1, DagNode node2){
+    public DagNode createRealAdditionNode(String nodeName, DagNode node1, DagNode node2){
         LinkedList<DagNode> childNodes = new LinkedList<>();
         childNodes.add(node1);
         childNodes.add(node2);
-        return new DagOperationNode(nodeName, DagOperationNode.Op.ADD, childNodes);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.RADD, childNodes);
     }
 
-    public DagNode createSubtractionNode(String nodeName, DagNode left, DagNode right){
+    public DagNode createIntegerAdditionNode(String nodeName, DagNode node1, DagNode node2){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(node1);
+        childNodes.add(node2);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.IADD, childNodes);
+    }
+
+    public DagNode createRealSubtractionNode(String nodeName, DagNode left, DagNode right){
         LinkedList<DagNode> childNodes = new LinkedList<>();
         childNodes.add(left);
         childNodes.add(right);
-        return new DagOperationNode(nodeName, DagOperationNode.Op.SUB, childNodes);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.RSUB, childNodes);
     }
 
-    public DagNode createMultiplicationNode(String nodeName, DagNode left, DagNode right){
+    public DagNode createIntegerSubtractionNode(String nodeName, DagNode left, DagNode right){
         LinkedList<DagNode> childNodes = new LinkedList<>();
         childNodes.add(left);
         childNodes.add(right);
-        return new DagOperationNode(nodeName, DagOperationNode.Op.MUL, childNodes);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.ISUB, childNodes);
     }
 
-    public DagNode createDivisionNode(String nodeName, DagNode node1, DagNode node2){
+    public DagNode createRealMultiplicationNode(String nodeName, DagNode left, DagNode right){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(left);
+        childNodes.add(right);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.RMUL, childNodes);
+    }
+
+    public DagNode createIntegerMultiplicationNode(String nodeName, DagNode left, DagNode right){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(left);
+        childNodes.add(right);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.IMUL, childNodes);
+    }
+
+    public DagNode createRealDivisionNode(String nodeName, DagNode node1, DagNode node2){
         LinkedList<DagNode> childNodes = new LinkedList<>();
         childNodes.add(node1);
         childNodes.add(node2);
-        return new DagOperationNode(nodeName, DagOperationNode.Op.DIV, childNodes);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.RDIV, childNodes);
     }
 
-    public DagNode createModuleNode(String nodeName, DagNode node1, DagNode node2){
+    public DagNode createIntegerDivisionNode(String nodeName, DagNode node1, DagNode node2){
         LinkedList<DagNode> childNodes = new LinkedList<>();
         childNodes.add(node1);
         childNodes.add(node2);
-        return new DagOperationNode(nodeName, DagOperationNode.Op.MOD, childNodes);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.IDIV, childNodes);
+    }
+
+    public DagNode createIntegerModuleNode(String nodeName, DagNode node1, DagNode node2){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(node1);
+        childNodes.add(node2);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.IMOD, childNodes);
     }
 
     public DagNode createAndNode(String nodeName, DagNode node1, DagNode node2){
@@ -102,12 +130,17 @@ public class DagNodeFactory {
         return new DagOperationNode(nodeName, DagOperationNode.Op.BNOT, childNodes);
     }
 
-    public DagNode createNegationNode(String nodeName, DagNode node1){
+    public DagNode createIntegerNegationNode(String nodeName, DagNode node1){
         LinkedList<DagNode> childNodes = new LinkedList<>();
         childNodes.add(node1);
-        return new DagOperationNode(nodeName, DagOperationNode.Op.NEG, childNodes);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.INEG, childNodes);
     }
-    
+
+    public DagNode createRealNegationNode(String nodeName, DagNode node1){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(node1);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.RNEG, childNodes);
+    }
 
     public DagNode createNullNode(String nodeName){
         return new DagNullNode(nodeName);
