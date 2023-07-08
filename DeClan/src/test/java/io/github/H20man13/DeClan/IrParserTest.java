@@ -21,12 +21,16 @@ public class IrParserTest {
     public void testBinaryOp(){
         String program = "x := 456\n"
                        + "z := 48393\n"
-                       + "v := x ADD z\n"
-                       + "y := v SUB v\n"
-                       + "g := v MOD y\n"
-                       + "e := y MUL g\n"
+                       + "v := x IADD z\n"
+                       + "y := v ISUB v\n"
+                       + "g := v IMOD y\n"
+                       + "e := y IMUL g\n"
+                       + "y := v RADD g\n"
+                       + "z := v RSUB g\n"
+                       + "t := x RMUL x\n"
                        + "y := z BOR x\n"
-                       + "z := v DIV y\n"
+                       + "z := r IDIV r\n"
+                       + "z := v RDIV y\n"
                        + "g := v BAND z\n"
                        + "e := v LT x\n"
                        + "e := i GT g\n"
@@ -54,7 +58,8 @@ public class IrParserTest {
     @Test
     public void testUnaryOp(){
         String program = "x := 38393\n"
-                       + "y := NEG x\n"
+                       + "y := INEG x\n"
+                       + "y := RNEG x\n"
                        + "z := BNOT y\n"
                        + "END";
         Source mySource = new ReaderSource(new StringReader(program));

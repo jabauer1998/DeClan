@@ -31,7 +31,7 @@ import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
-import io.github.H20man13.DeClan.common.symboltable.LiveInfo;
+import io.github.H20man13.DeClan.common.symboltable.entry.LiveInfo;
 import io.github.H20man13.DeClan.common.token.IrTokenType;
 
 public class Utils {

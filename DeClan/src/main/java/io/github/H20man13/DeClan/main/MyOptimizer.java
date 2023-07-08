@@ -35,7 +35,7 @@ import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
-import io.github.H20man13.DeClan.common.symboltable.LiveInfo;
+import io.github.H20man13.DeClan.common.symboltable.entry.LiveInfo;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class MyOptimizer {

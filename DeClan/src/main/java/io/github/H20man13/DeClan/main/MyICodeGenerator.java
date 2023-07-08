@@ -10,12 +10,12 @@ import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
-import io.github.H20man13.DeClan.common.symboltable.VariableEntry;
 import io.github.H20man13.DeClan.main.MyTypeChecker.TypeCheckerTypes;
-import io.github.H20man13.DeClan.common.symboltable.ProcedureEntry;
-import io.github.H20man13.DeClan.common.symboltable.StringEntry;
-import io.github.H20man13.DeClan.common.symboltable.StringEntryList;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
+import io.github.H20man13.DeClan.common.symboltable.entry.ProcedureEntry;
+import io.github.H20man13.DeClan.common.symboltable.entry.StringEntry;
+import io.github.H20man13.DeClan.common.symboltable.entry.StringEntryList;
+import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 
 import static io.github.H20man13.DeClan.common.IrRegisterGenerator.*;
 import static io.github.H20man13.DeClan.main.MyIO.*;
@@ -93,6 +93,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     procEnvironment.addScope();
     varEnvironment.addScope();
     procArgs.addScope();
+    lib.accept(typeChecker);
 
     builder.buildBeginLabel();
     for(Declaration decl : lib.getConstDecls()){
@@ -115,17 +116,21 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     procEnvironment.addScope();
     varEnvironment.addScope();
     procArgs.addScope();
+    typeChecker.addScope();
     builder.buildBeginLabel();
     for(Declaration decl : program.getConstDecls()){
       decl.accept(this);
+      decl.accept(typeChecker);
     }
     for (Declaration decl : program.getVarDecls()) {
       decl.accept(this);
+      decl.accept(typeChecker);
     }
 
     builder.buildBeginGoto();
     for (Declaration decl : program.getProcDecls()){
       decl.accept(this);
+      decl.accept(typeChecker);
     }
     
     builder.buildBeginLabel();
@@ -150,7 +155,6 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
   
   @Override
   public void visit(ConstDeclaration constDecl) {
-    constDecl.accept(typeChecker);
     Identifier id = constDecl.getIdentifier();
     Expression valueExpr = constDecl.getValue();
     String value = valueExpr.acceptResult(this);
@@ -163,7 +167,6 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     Identifier id = varDecl.getIdentifier();
     Identifier type = varDecl.getType();
     String argVal = null;
-    varDecl.accept(typeChecker);
     if(type.getLexeme().equals("INTEGER")){
       argVal = "0";
     } else if(type.getLexeme().equals("STRING")){
@@ -180,7 +183,6 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     String procedureName = procDecl.getProcedureName().getLexeme();
     builder.buildProcedureDeclaration(procedureName);
     varEnvironment.addScope();
-    procDecl.accept(typeChecker);
     
     List <ParamaterDeclaration> args = procDecl.getArguments();
     
@@ -488,7 +490,6 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
 
   @Override
   public String visitResult(ParamaterDeclaration parDeclaration) {
-    parDeclaration.accept(typeChecker);
     Identifier id = parDeclaration.getIdentifier();
     String alias = builder.buildAlias();
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(alias));

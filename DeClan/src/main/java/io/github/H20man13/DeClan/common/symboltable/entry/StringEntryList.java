@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common.symboltable;
+package io.github.H20man13.DeClan.common.symboltable.entry;
 
 import java.util.Collection;
 import java.util.Iterator;

@@ -1,10 +1,10 @@
 package io.github.H20man13.DeClan.main;
 
-import io.github.H20man13.DeClan.common.symboltable.VariableEntry;
 import io.github.H20man13.DeClan.common.util.OpUtil;
 import io.github.H20man13.DeClan.common.util.Utils;
-import io.github.H20man13.DeClan.common.symboltable.ProcedureEntry;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
+import io.github.H20man13.DeClan.common.symboltable.entry.ProcedureEntry;
+import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 
 import java.lang.Number;
 import java.lang.Object;

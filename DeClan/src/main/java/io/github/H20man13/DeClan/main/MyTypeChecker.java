@@ -1,10 +1,10 @@
 package io.github.H20man13.DeClan.main;
 
-import io.github.H20man13.DeClan.common.symboltable.VariableEntry;
-import io.github.H20man13.DeClan.common.symboltable.ProcedureEntry;
 import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
-
+import io.github.H20man13.DeClan.common.symboltable.entry.ProcedureEntry;
+import io.github.H20man13.DeClan.common.symboltable.entry.ProcedureTypeEntry;
+import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 
 import java.lang.Number;
 import java.lang.Object;
@@ -46,6 +46,7 @@ import edu.depauw.declan.common.ast.VariableDeclaration;
 import edu.depauw.declan.common.ast.WhileElifBranch;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -59,7 +60,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
     private ErrorLog errorLog;
     
     private Environment <String, TypeCheckerTypes> varEnvironment;
-    private Environment <String, ProcedureEntry> procEnvironment;
+    private Environment <String, ProcedureTypeEntry> procEnvironment;
 
     public static enum TypeCheckerTypes implements Copyable<TypeCheckerTypes> {
 		VOID, INTEGER, BOOLEAN, STRING, REAL;
@@ -73,10 +74,15 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
     // TODO declare any data structures needed by the interpreter
 
     public MyTypeChecker(ErrorLog errorLog) {
-	this.errorLog = errorLog;
-	this.varEnvironment = new Environment<>();
-	this.procEnvironment = new Environment<>();
+		this.errorLog = errorLog;
+		this.varEnvironment = new Environment<>();
+		this.procEnvironment = new Environment<>();
     }
+
+	public void addScope(){
+		this.procEnvironment.addScope();
+		this.varEnvironment.addScope();
+	}
 
     private static TypeCheckerTypes StringToType(String str){
 	if(str.equals("STRING")){
@@ -97,46 +103,46 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
     
     @Override
     public void visit(Program program) {
-	procEnvironment.addScope();
-	varEnvironment.addScope();
-	for (Declaration Decl : program.getDecls()) {
-	    Decl.accept(this);
-	}
-	for (Statement statement : program.getStatements()) {
-	    statement.accept(this);
-	}
-	varEnvironment.removeScope();
-	procEnvironment.removeScope();
+		procEnvironment.addScope();
+		varEnvironment.addScope();
+		for (Declaration Decl : program.getDecls()) {
+			Decl.accept(this);
+		}
+		for (Statement statement : program.getStatements()) {
+			statement.accept(this);
+		}
+		varEnvironment.removeScope();
+		procEnvironment.removeScope();
     }
   
     @Override
     public void visit(ConstDeclaration constDecl) {
-	Identifier id = constDecl.getIdentifier();
-	Expression valueExpr = constDecl.getValue();
-	TypeCheckerTypes value = valueExpr.acceptResult(this);
-	if(!varEnvironment.inScope(id.getLexeme())){
-	    varEnvironment.addEntry(id.getLexeme(), value);
-	} else {
-	    errorLog.add("Constant " + id.getLexeme() + " within scope already declared", id.getStart());
-	}
+		Identifier id = constDecl.getIdentifier();
+		Expression valueExpr = constDecl.getValue();
+		TypeCheckerTypes value = valueExpr.acceptResult(this);
+		if(!varEnvironment.inScope(id.getLexeme())){
+			varEnvironment.addEntry(id.getLexeme(), value);
+		} else {
+			errorLog.add("Constant " + id.getLexeme() + " within scope already declared", id.getStart());
+		}
     }
 
     @Override
     public void visit(VariableDeclaration varDecl) {
-	Identifier id = varDecl.getIdentifier();
-	String type = varDecl.getType().getLexeme();
-	if(!varEnvironment.inScope(id.getLexeme())){
-	    switch(StringToType(type)){
-	    case STRING:
-		errorLog.add("Variable " + id.getLexeme() + "is of invalid type " + type, id.getStart());
-	    case VOID:
-		errorLog.add("Variable " + id.getLexeme() + "is of invalid type " + type, id.getStart());
-	    default:
-		varEnvironment.addEntry(id.getLexeme(), StringToType(type));
-	    }
-	} else {
-	    errorLog.add("Multiple Declaration of Variable " + id.getLexeme(), id.getStart());
-	}
+		Identifier id = varDecl.getIdentifier();
+		String type = varDecl.getType().getLexeme();
+		if(!varEnvironment.inScope(id.getLexeme())){
+			switch(StringToType(type)){
+			case STRING:
+				errorLog.add("Variable " + id.getLexeme() + "is of invalid type " + type, id.getStart());
+			case VOID:
+				errorLog.add("Variable " + id.getLexeme() + "is of invalid type " + type, id.getStart());
+			default:
+				varEnvironment.addEntry(id.getLexeme(), StringToType(type));
+			}
+		} else {
+			errorLog.add("Multiple Declaration of Variable " + id.getLexeme(), id.getStart());
+		}
     }
 
     @Override
@@ -145,8 +151,11 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	if(!procEnvironment.entryExists(procedureName)){
 	    varEnvironment.addScope();
 	    List <ParamaterDeclaration> args = procDecl.getArguments();
+		List <TypeCheckerTypes> argTypes = new LinkedList<TypeCheckerTypes>();
 	    for(ParamaterDeclaration decl : args){
 			decl.accept(this);
+			TypeCheckerTypes type = varEnvironment.getEntry(decl.getIdentifier().getLexeme());
+			argTypes.add(type);
 	    }
 	    List <Declaration> localVars = procDecl.getLocalVariables();
 	    for(Declaration decl : localVars){
@@ -158,14 +167,15 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	    }
 	    Expression retExp = procDecl.getReturnStatement();
 	    String returnType = procDecl.getReturnType().getLexeme();
-	    if(!returnType.equals("VOID")){
-		TypeCheckerTypes type = retExp.acceptResult(this);
-		if(StringToType(returnType) != type){
-		    errorLog.add("Return Expression is not of type " + returnType, procDecl.getStart());
-		}
+		TypeCheckerTypes myType = StringToType(returnType);
+	    if(!(myType == TypeCheckerTypes.VOID)){
+			TypeCheckerTypes type = retExp.acceptResult(this);
+			if(StringToType(returnType) != type){
+				errorLog.add("Return Expression is not of type " + returnType, procDecl.getStart());
+			}
 	    }
 	    varEnvironment.removeScope();
-	    procEnvironment.addEntry(procedureName, new ProcedureEntry(args, returnType, localVars, Exec, retExp));
+	    procEnvironment.addEntry(procedureName, new ProcedureTypeEntry(myType, argTypes));
 	} else {
 	    errorLog.add("Procedure " + procedureName + " within scope already declared", procDecl.getStart());
 	}
@@ -193,18 +203,16 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	} else {
 	    String funcName = procedureCall.getProcedureName().getLexeme();
 	    if(procEnvironment.entryExists(funcName)){
-		ProcedureEntry pentry = procEnvironment.getEntry(funcName);
-		List<ParamaterDeclaration> args = pentry.getArguments();
+		ProcedureTypeEntry pentry = procEnvironment.getEntry(funcName);
+		List<TypeCheckerTypes> args = pentry.getArgumentTypes();
 		List<Expression> valArgs = procedureCall.getArguments();
 		List<TypeCheckerTypes> exprValues = new ArrayList<>();
 		for(Expression expr : valArgs){
 		    exprValues.add(expr.acceptResult(this));
 		}
-		varEnvironment.addScope();
 		if(args.size() == valArgs.size()){
 		    for(int i = 0; i < args.size(); i++){
-			args.get(i).accept(this); //declare parameter variables 
-			TypeCheckerTypes toChangeType = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
+			TypeCheckerTypes toChangeType = args.get(i);
 			TypeCheckerTypes argumentType = exprValues.get(i);
 			if(toChangeType != argumentType){
 			    errorLog.add("In function " + funcName + " type mismatch at parameter " + (i + 1), procedureCall.getStart());
@@ -213,7 +221,6 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 		} else {
 		    errorLog.add("Unexpected amount of arguments provided from Caller to Callie in Function " + procedureCall.getProcedureName().getLexeme(), procedureCall.getStart());
 		}
-		varEnvironment.removeScope(); //clean up local declarations as well as parameters
 	    }
 	}
     }	
@@ -299,16 +306,16 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
         
     @Override
     public void visit(Assignment assignment) {
-	String name = assignment.getVariableName().getLexeme();
-	if(varEnvironment.entryExists(name)){
-	    TypeCheckerTypes entry = varEnvironment.getEntry(name);
-	    TypeCheckerTypes expression  = assignment.getVariableValue().acceptResult(this);
-	    if(entry != expression){
-		errorLog.add("Variable in Assignment " + name + " is of unknown DeClan type?", assignment.getStart());
-	    }
-	} else {
-	    errorLog.add("Undeclared Variable " , assignment.getVariableName().getStart());
-	}
+		String name = assignment.getVariableName().getLexeme();
+		if(varEnvironment.entryExists(name)){
+			TypeCheckerTypes entry = varEnvironment.getEntry(name);
+			TypeCheckerTypes expression = assignment.getVariableValue().acceptResult(this);
+			if(entry != expression){
+				errorLog.add("Variable in Assignment " + name + " is of unknown DeClan type?", assignment.getStart());
+			}
+		} else {
+			errorLog.add("Undeclared Variable " , assignment.getVariableName().getStart());
+		}
     }
   
     @Override
@@ -361,16 +368,6 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 		errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
 	    }
 	    return null;
-	case DIVIDE:
-	    if(leftValue != TypeCheckerTypes.REAL || rightValue != TypeCheckerTypes.REAL){
-		errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
-	    }
-	    return null;
-	case DIV:
-	    if(leftValue != TypeCheckerTypes.INTEGER || rightValue != TypeCheckerTypes.INTEGER){
-		errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
-	    }
-	    return null;
 	case AND:
 	    if(leftValue != TypeCheckerTypes.BOOLEAN || rightValue != TypeCheckerTypes.BOOLEAN){
 		errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
@@ -382,15 +379,12 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	    }
 	    return null;
 	default:
-	    if(leftValue != rightValue){
-		errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
-		return null;
-	    } else {
 		if(op == BinaryOperation.OpType.EQ || op == BinaryOperation.OpType.NE || op == BinaryOperation.OpType.LT || op == BinaryOperation.OpType.LE || op == BinaryOperation.OpType.GT || op == BinaryOperation.OpType.GE){
-		    return TypeCheckerTypes.BOOLEAN;
-		} else {
-		    return leftValue;
-		}
+			return TypeCheckerTypes.BOOLEAN;
+	    } else if(leftValue == TypeCheckerTypes.REAL || rightValue == TypeCheckerTypes.REAL){
+			return TypeCheckerTypes.REAL;
+	    } else {
+			return leftValue;
 	    }
 	}
     }
@@ -399,28 +393,25 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
     public TypeCheckerTypes visitResult(FunctionCall funcCall) {
 	String funcName = funcCall.getFunctionName().getLexeme();
 	if(procEnvironment.entryExists(funcName)){
-	    ProcedureEntry pentry = procEnvironment.getEntry(funcName);
-	    List<ParamaterDeclaration> args = pentry.getArguments();
+	    ProcedureTypeEntry pentry = procEnvironment.getEntry(funcName);
+	    List<TypeCheckerTypes> args = pentry.getArgumentTypes();
 	    List<Expression> valArgs = funcCall.getArguments();
 	    List<TypeCheckerTypes> exprValues = new ArrayList<>();
 	    for(Expression expr : valArgs){
-		exprValues.add(expr.acceptResult(this));
+			exprValues.add(expr.acceptResult(this));
 	    }
-	    varEnvironment.addScope();
 	    if(args.size() == valArgs.size()){
 		for(int i = 0; i < args.size(); i++){
-		    args.get(i).accept(this); //declare parameter variables 
-		    TypeCheckerTypes toChangeType = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
+		    TypeCheckerTypes toChangeType = args.get(i);
 		    TypeCheckerTypes argumentType = exprValues.get(i);
 		    if(toChangeType != argumentType){
-			errorLog.add("In function " + funcName + " type mismatch at parameter " + (i + 1), funcCall.getStart());
+				errorLog.add("In function " + funcName + " type mismatch at parameter " + (i + 1), funcCall.getStart());
 		    }
 		}
 	    } else {
-		errorLog.add("Unexpected amount of arguments provided from Caller to Callie in Function " + funcName, funcCall.getStart());
+			errorLog.add("Unexpected amount of arguments provided from Caller to Callie in Function " + funcName, funcCall.getStart());
 	    }
-	    TypeCheckerTypes retValue = pentry.getReturnStatement().acceptResult(this);
-	    varEnvironment.removeScope(); //clean up local declarations as well as parameters
+	    TypeCheckerTypes retValue = pentry.getReturnType();
 	    return retValue;
 	} else {
 	    errorLog.add("Couldnt find entry for " + funcName, funcCall.getStart());
@@ -441,20 +432,20 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
     
     @Override
     public TypeCheckerTypes visitResult(Identifier ident){
-	if(!varEnvironment.entryExists(ident.getLexeme())){
-	    errorLog.add("Couldnt find entry for " + ident.getLexeme(), ident.getStart());
-	}
-	return varEnvironment.getEntry(ident.getLexeme());
+		if(!varEnvironment.entryExists(ident.getLexeme())){
+			errorLog.add("Couldnt find entry for " + ident.getLexeme(), ident.getStart());
+		}
+		return varEnvironment.getEntry(ident.getLexeme());
     }
 
     @Override
     public TypeCheckerTypes visitResult(NumValue numValue){
-	String lexeme = numValue.getLexeme(); //change to hex if you need to otherwise unchanged
-	if(lexeme.contains(".")){
-	    return TypeCheckerTypes.REAL;
-	} else {
-	    return TypeCheckerTypes.INTEGER;
-	}
+		String lexeme = numValue.getLexeme(); //change to hex if you need to otherwise unchanged
+		if(lexeme.contains(".")){
+			return TypeCheckerTypes.REAL;
+		} else {
+			return TypeCheckerTypes.INTEGER;
+		}
     }
 
     @Override
@@ -487,5 +478,10 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 
 	@Override
 	public void visit(Library library) {
+		procEnvironment.addScope();
+		varEnvironment.addScope();
+		for (Declaration Decl : library.getDecls()) {
+			Decl.accept(this);
+		}
 	}
 }

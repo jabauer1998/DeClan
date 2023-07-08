@@ -1,4 +1,4 @@
-VAR x : REAL; n : INTEGER;
+VAR x : REAL; n: INTEGER;
 PROCEDURE p(n: INTEGER; x: REAL);
   VAR m : INTEGER;
   BEGIN

@@ -24,8 +24,8 @@ import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
-import io.github.H20man13.DeClan.common.symboltable.IntEntry;
-import io.github.H20man13.DeClan.common.symboltable.VariableEntry;
+import io.github.H20man13.DeClan.common.symboltable.entry.IntEntry;
+import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 import io.github.H20man13.DeClan.common.util.OpUtil;
 import io.github.H20man13.DeClan.common.util.Utils;
 

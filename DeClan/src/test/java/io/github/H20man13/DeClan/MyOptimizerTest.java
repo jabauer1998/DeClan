@@ -29,15 +29,15 @@ public class MyOptimizerTest {
     public void testSimpleCommonSubExpressionElimination(){
         String inputSource = "a := 1\n"
                            + "b := 2\n" 
-                           + "i := a ADD b\n"
-                           + "z := a ADD b\n"
-                           + "f := z ADD i\n"
+                           + "i := a IADD b\n"
+                           + "z := a IADD b\n"
+                           + "f := z IADD i\n"
                            + "END\n";
 
         String targetSource = "a := 1\n"
                             + "b := 2\n"
-                            + "i := a ADD b\n"
-                            + "f := i ADD i\n"
+                            + "i := a IADD b\n"
+                            + "f := i IADD i\n"
                             + "END\n";
 
         ErrorLog errLog = new ErrorLog();
@@ -58,9 +58,9 @@ public class MyOptimizerTest {
         String inputSource = "LABEL block1\n"
                            + "a := 1\n"
                            + "b := 2\n" 
-                           + "i := a ADD b\n"
-                           + "z := a ADD b\n"
-                           + "f := z ADD i\n"
+                           + "i := a IADD b\n"
+                           + "z := a IADD b\n"
+                           + "f := z IADD i\n"
                            + "LABEL block2\n"
                            + "IF z EQ TRUE THEN block1 ELSE block2\n"
                            + "END\n";
@@ -68,9 +68,9 @@ public class MyOptimizerTest {
         String targetSource = "LABEL block1\n"
                             + "a := 1\n"
                             + "b := 2\n"
-                            + "i := a ADD b\n"
+                            + "i := a IADD b\n"
                             + "z := i\n"
-                            + "f := i ADD i\n"
+                            + "f := i IADD i\n"
                             + "LABEL block2\n"
                             + "IF z EQ TRUE THEN block1 ELSE block2\n"
                             + "END\n";
@@ -93,8 +93,8 @@ public class MyOptimizerTest {
         String inputSource = "LABEL block1\n"
                            + "a := 1\n"
                            + "b := 60\n" 
-                           + "i := a ADD a\n"
-                           + "g := i ADD a\n"
+                           + "i := a IADD a\n"
+                           + "g := i IADD a\n"
                            + "PROC func ( g -> x )\n"
                            + "f <- g\n"
                            + "IF f EQ TRUE THEN block1 ELSE block1\n"
@@ -102,8 +102,8 @@ public class MyOptimizerTest {
 
         String targetSource = "LABEL block1\n"
                             + "a := 1\n"
-                            + "i := a ADD a\n"
-                            + "g := i ADD a\n"
+                            + "i := a IADD a\n"
+                            + "g := i IADD a\n"
                             + "PROC func ( g -> x )\n"
                             + "IF f EQ TRUE THEN block1 ELSE block1\n"
                             + "END\n";
@@ -128,16 +128,16 @@ public class MyOptimizerTest {
     public void testConstantPropogation(){
         String inputSource = "a := 1\n"
                            + "b := 2\n" 
-                           + "i := a ADD b\n"
-                           + "z := a ADD i\n"
-                           + "f := z ADD i\n"
+                           + "i := a IADD b\n"
+                           + "z := a IADD i\n"
+                           + "f := z IADD i\n"
                            + "END\n";
 
         String targetSource = "a := 1\n"
                             + "b := 2\n"
-                            + "i := 1 ADD 2\n"
-                            + "z := 1 ADD i\n"
-                            + "f := z ADD i\n"
+                            + "i := 1 IADD 2\n"
+                            + "z := 1 IADD i\n"
+                            + "f := z IADD i\n"
                             + "END\n";
 
         ErrorLog errLog = new ErrorLog();

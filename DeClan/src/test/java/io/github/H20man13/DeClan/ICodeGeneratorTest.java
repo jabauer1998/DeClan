@@ -15,6 +15,7 @@ import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.pat.P.LABEL;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.MyICodeGenerator;
@@ -39,12 +40,16 @@ public class ICodeGeneratorTest {
     public void testBinaryOp(){
         String program = "x := 456\n"
                        + "z := 48393\n"
-                       + "v := x ADD z\n"
-                       + "y := v SUB v\n"
-                       + "g := v MOD y\n"
-                       + "e := y MUL g\n"
+                       + "v := x IADD z\n"
+                       + "y := v ISUB v\n"
+                       + "g := v IMOD y\n"
+                       + "e := y IMUL g\n"
+                       + "v := x RADD z\n"
+                       + "y := v RSUB v\n"
+                       + "e := y RMUL g\n"
                        + "y := z BOR x\n"
-                       + "z := v DIV y\n"
+                       + "z := v IDIV y\n"
+                       + "z := v RDIV y\n"
                        + "g := v BAND z\n"
                        + "e := v LT x\n"
                        + "e := i GT g\n"
@@ -187,72 +192,73 @@ public class ICodeGeneratorTest {
     public void testDeclanConversions(){
         String programName = "test_source/conversions.dcl";
         
-        String expectedICode = "LABEL begin_0\n" +
-                               "a := 1\n" +
-                               "b := NEG a\n" +
-                               "c := b\n" +
-                               "GOTO begin_1\n" +
-                               "LABEL WriteLn\n" +
-                               "RETURN\n" +
-                               "LABEL WriteInt\n" +
-                               "RETURN\n" +
-                               "LABEL WriteReal\n" +
-                               "RETURN\n" +
-                               "LABEL begin_1\n" +
-                               "f := 1\n" +
-                               "g := NEG f\n" +
-                               "h := g\n" +
-                               "GOTO begin_2\n" +
-                               "LABEL Round\n" +
-                               "j := 5.0\n" +
-                               "k := i ADD j\n" +
-                               "RETURN\n" +
-                               "LABEL Floor\n" +
-                               "m := 5.0\n" +
-                               "n := l SUB m\n" +
-                               "RETURN\n" +
-                               "LABEL begin_2\n" +
-                               "o := 0.0\n" +
-                               "p := 0\n" +
-                               "GOTO begin_3\n" +
-                               "LABEL p\n" +
-                               "s := 0\n" +
-                               "t := o ADD p\n" +
-                               "PROC Round ( t -> i )\n" +
-                               "u <- k\n" +
-                               "s := u\n" +
-                               "RETURN\n" +
-                               "LABEL begin_3\n" +
-                               "v := 1\n" +
-                               "p := v\n" +
-                               "w := 2\n" +
-                               "o := w\n" +
-                               "PROC WriteInt ( p -> d )\n" +
-                               "PROC WriteReal ( p -> e )\n" +
-                               "PROC WriteReal ( o -> e )\n" +
-                               "PROC WriteLn (  )\n" +
-                               "x := p DIV o\n" +
+        String expectedICode = "LABEL begin_0\n"+
+                               "a := 1\n"+
+                               "b := INEG a\n"+
+                               "c := b\n"+
+                               "GOTO begin_1\n"+
+                               "LABEL WriteLn\n"+
+                               "RETURN\n"+
+                               "LABEL WriteInt\n"+
+                               "RETURN\n"+
+                               "LABEL WriteReal\n"+
+                               "RETURN\n"+
+                               "LABEL begin_1\n"+
+                               "f := 1\n"+
+                               "g := INEG f\n"+
+                               "h := g\n"+
+                               "GOTO begin_2\n"+
+                               "LABEL Round\n"+
+                               "j := 5.0\n"+
+                               "k := i RADD j\n"+
+                               "RETURN\n"+
+                               "LABEL Floor\n"+
+                               "m := 5.0\n"+
+                               "n := l RSUB m\n"+
+                               "RETURN\n"+
+                               "LABEL begin_2\n"+
+                               "o := 0.0\n"+
+                               "p := 0\n"+
+                               "GOTO begin_3\n"+
+                               "LABEL p\n"+
+                               "s := 0\n"+
+                               "t := o RADD p\n"+
+                               "PROC Round ( t -> i )\n"+
+                               "u <- k\n"+
+                               "s := u\n"+
+                               "RETURN\n"+
+                               "LABEL begin_3\n"+
+                               "v := 1\n"+
+                               "p := v\n"+
+                               "w := 2\n"+
+                               "o := w\n"+
+                               "PROC WriteInt ( p -> d )\n"+
+                               "PROC WriteReal ( p -> e )\n"+
+                               "PROC WriteReal ( o -> e )\n"+
+                               "PROC WriteLn (  )\n"+
+                               "x := p RDIV o\n"+
                                "PROC WriteReal ( x -> e )\n"+
                                "y := 5\n"+
-                               "z := p ADD y\n"+
-                               "A := 6\n" +
-                               "B := p ADD A\n" +
-                               "C := z MUL B\n" +
+                               "z := p IADD y\n"+
+                               "A := 6\n"+
+                               "B := p IADD A\n" +
+                               "C := z IMUL B\n" +
                                "PROC WriteInt ( C -> d )\n" +
-                               "D := 4\n" +
-                               "E := o ADD D\n" +
-                               "F := 5.0\n" +
-                               "G := o ADD F\n" +
-                               "H := E MUL G\n" +
-                               "PROC WriteReal ( H -> e )\n" +
-                               "PROC WriteLn (  )\n" +
-                               "I := 3.1415\n" +
-                               "PROC p ( p -> q , I -> r )\n" +
-                               "J <- s\n" +
-                               "o := J\n" +
-                               "PROC WriteReal ( o -> e )\n" +
-                               "PROC WriteLn (  )\n" +
+                               "D := 4\n" + 
+                               "E := o RADD D\n" + 
+                               "F := 5.0\n" + 
+                               "G := o RADD F\n" +
+                               "H := E RMUL G\n" + 
+                               "PROC WriteReal ( H -> e )\n"+
+                               "PROC WriteLn (  )\n"+
+                               "I := 3.1415\n"+
+                               "PROC p ( p -> q , I -> r )\n"+
+                               "J <- s\n"+
+                               "o := J\n"+
+                               "PROC WriteReal ( o -> e )\n"+
+                               "PROC WriteLn (  )\n"+
                                "END\n";
+
 
 
         try{

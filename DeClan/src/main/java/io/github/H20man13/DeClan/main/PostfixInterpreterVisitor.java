@@ -1,7 +1,5 @@
 package io.github.H20man13.DeClan.main;
 
-import io.github.H20man13.DeClan.common.symboltable.VariableEntry;
-
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +31,7 @@ import edu.depauw.declan.common.ast.StrValue;
 import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.VariableDeclaration;
 import edu.depauw.declan.common.ast.WhileElifBranch;
+import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 
 /**
  * This is an implementation of the ASTVisitor that encapsulates the algorithm
