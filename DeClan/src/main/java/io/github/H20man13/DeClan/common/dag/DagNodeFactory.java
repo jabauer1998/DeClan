@@ -51,10 +51,24 @@ public class DagNodeFactory {
         LinkedList<DagNode> childNodes = new LinkedList<>();
         childNodes.add(node1);
         childNodes.add(node2);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.RDIVIDE, childNodes);
+    }
+
+    public DagNode createRealDivNode(String nodeName, DagNode node1, DagNode node2){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(node1);
+        childNodes.add(node2);
         return new DagOperationNode(nodeName, DagOperationNode.Op.RDIV, childNodes);
     }
 
     public DagNode createIntegerDivisionNode(String nodeName, DagNode node1, DagNode node2){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(node1);
+        childNodes.add(node2);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.IDIVIDE, childNodes);
+    }
+
+    public DagNode createIntegerDivNode(String nodeName, DagNode node1, DagNode node2){
         LinkedList<DagNode> childNodes = new LinkedList<>();
         childNodes.add(node1);
         childNodes.add(node2);

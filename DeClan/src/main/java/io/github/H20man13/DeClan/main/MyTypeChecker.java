@@ -44,6 +44,7 @@ import edu.depauw.declan.common.ast.StrValue;
 import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.VariableDeclaration;
 import edu.depauw.declan.common.ast.WhileElifBranch;
+import edu.depauw.declan.common.ast.BinaryOperation.OpType;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -63,7 +64,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
     private Environment <String, ProcedureTypeEntry> procEnvironment;
 
     public static enum TypeCheckerTypes implements Copyable<TypeCheckerTypes> {
-		VOID, INTEGER, BOOLEAN, STRING, REAL;
+		VOID, INTEGER, BOOLEAN, STRING, REAL, NA;
 
 		@Override
 		public TypeCheckerTypes copy() {
@@ -84,7 +85,11 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 		this.varEnvironment.addScope();
 	}
 
-    private static TypeCheckerTypes StringToType(String str){
+	public void removeVarScope(){
+		this.varEnvironment.removeScope();
+	}
+
+    private TypeCheckerTypes StringToType(String str){
 	if(str.equals("STRING")){
 	    return TypeCheckerTypes.STRING;
 	} else if (str.equals("INTEGER")) {
@@ -96,8 +101,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	} else if (str.equals("VOID")){
 	    return TypeCheckerTypes.VOID;
 	} else {
-	    System.err.println("Unknown String Type" + str);
-	    return null;
+	    return TypeCheckerTypes.NA;
 	}
     }
     
@@ -105,9 +109,19 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
     public void visit(Program program) {
 		procEnvironment.addScope();
 		varEnvironment.addScope();
-		for (Declaration Decl : program.getDecls()) {
+		for (Declaration Decl : program.getConstDecls()) {
 			Decl.accept(this);
 		}
+
+		for(Declaration Decl : program.getVarDecls()){
+			Decl.accept(this);
+		}
+
+		for(Declaration Decl : program.getProcDecls()){
+			Decl.accept(this);
+			varEnvironment.removeScope();
+		}
+		
 		for (Statement statement : program.getStatements()) {
 			statement.accept(this);
 		}
@@ -168,13 +182,16 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	    Expression retExp = procDecl.getReturnStatement();
 	    String returnType = procDecl.getReturnType().getLexeme();
 		TypeCheckerTypes myType = StringToType(returnType);
-	    if(!(myType == TypeCheckerTypes.VOID)){
+		if(myType == TypeCheckerTypes.NA && retExp != null){
+			myType = retExp.acceptResult(this);
+		} else if(myType != TypeCheckerTypes.VOID && retExp != null){
 			TypeCheckerTypes type = retExp.acceptResult(this);
-			if(StringToType(returnType) != type){
+			if(myType != type){
 				errorLog.add("Return Expression is not of type " + returnType, procDecl.getStart());
 			}
-	    }
-	    varEnvironment.removeScope();
+		} else {
+			myType = TypeCheckerTypes.VOID;
+		}
 	    procEnvironment.addEntry(procedureName, new ProcedureTypeEntry(myType, argTypes));
 	} else {
 	    errorLog.add("Procedure " + procedureName + " within scope already declared", procDecl.getStart());
@@ -212,12 +229,16 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 		}
 		if(args.size() == valArgs.size()){
 		    for(int i = 0; i < args.size(); i++){
-			TypeCheckerTypes toChangeType = args.get(i);
-			TypeCheckerTypes argumentType = exprValues.get(i);
-			if(toChangeType != argumentType){
-			    errorLog.add("In function " + funcName + " type mismatch at parameter " + (i + 1), procedureCall.getStart());
+				TypeCheckerTypes toChangeType = args.get(i);
+				TypeCheckerTypes argumentType = exprValues.get(i);
+				if(argumentType == TypeCheckerTypes.VOID || argumentType == TypeCheckerTypes.NA
+				||(argumentType == TypeCheckerTypes.STRING && toChangeType != TypeCheckerTypes.STRING)
+				||(toChangeType == TypeCheckerTypes.STRING && argumentType != TypeCheckerTypes.STRING)
+				||(toChangeType == TypeCheckerTypes.BOOLEAN && argumentType != TypeCheckerTypes.BOOLEAN)
+				||(argumentType == TypeCheckerTypes.BOOLEAN && toChangeType != TypeCheckerTypes.BOOLEAN)){
+					errorLog.add("In function " + funcName + " type mismatch at parameter " + (i + 1), procedureCall.getStart());
+				}
 			}
-		    }
 		} else {
 		    errorLog.add("Unexpected amount of arguments provided from Caller to Callie in Function " + procedureCall.getProcedureName().getLexeme(), procedureCall.getStart());
 		}
@@ -310,8 +331,12 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 		if(varEnvironment.entryExists(name)){
 			TypeCheckerTypes entry = varEnvironment.getEntry(name);
 			TypeCheckerTypes expression = assignment.getVariableValue().acceptResult(this);
-			if(entry != expression){
-				errorLog.add("Variable in Assignment " + name + " is of unknown DeClan type?", assignment.getStart());
+			if(expression == TypeCheckerTypes.VOID || expression == TypeCheckerTypes.NA
+			||(expression == TypeCheckerTypes.STRING && entry != TypeCheckerTypes.STRING)
+			||(entry == TypeCheckerTypes.STRING && expression != TypeCheckerTypes.STRING)
+			||(entry == TypeCheckerTypes.BOOLEAN && expression != TypeCheckerTypes.BOOLEAN)
+			||(expression == TypeCheckerTypes.BOOLEAN && entry != TypeCheckerTypes.BOOLEAN)){
+				errorLog.add("Variable in Assignment " + name + " is of type " + entry + " but expression is of type " + expression, assignment.getStart());
 			}
 		} else {
 			errorLog.add("Undeclared Variable " , assignment.getVariableName().getStart());
@@ -383,7 +408,11 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 			return TypeCheckerTypes.BOOLEAN;
 	    } else if(leftValue == TypeCheckerTypes.REAL || rightValue == TypeCheckerTypes.REAL){
 			return TypeCheckerTypes.REAL;
-	    } else {
+	    } else if(op == BinaryOperation.OpType.DIV){
+			return TypeCheckerTypes.INTEGER;	
+		} else if(op == BinaryOperation.OpType.DIVIDE){
+			return TypeCheckerTypes.REAL;	
+		} else {
 			return leftValue;
 	    }
 	}
@@ -404,7 +433,11 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 		for(int i = 0; i < args.size(); i++){
 		    TypeCheckerTypes toChangeType = args.get(i);
 		    TypeCheckerTypes argumentType = exprValues.get(i);
-		    if(toChangeType != argumentType){
+			if(argumentType == TypeCheckerTypes.VOID || argumentType == TypeCheckerTypes.NA
+			||(argumentType == TypeCheckerTypes.STRING && toChangeType != TypeCheckerTypes.STRING)
+			||(toChangeType == TypeCheckerTypes.STRING && argumentType != TypeCheckerTypes.STRING)
+			||(toChangeType == TypeCheckerTypes.BOOLEAN && argumentType != TypeCheckerTypes.BOOLEAN)
+			||(argumentType == TypeCheckerTypes.BOOLEAN && toChangeType != TypeCheckerTypes.BOOLEAN)){
 				errorLog.add("In function " + funcName + " type mismatch at parameter " + (i + 1), funcCall.getStart());
 		    }
 		}
@@ -480,8 +513,17 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<MyTypeChecke
 	public void visit(Library library) {
 		procEnvironment.addScope();
 		varEnvironment.addScope();
-		for (Declaration Decl : library.getDecls()) {
+		for (Declaration Decl : library.getConstDecls()) {
 			Decl.accept(this);
+		}
+
+		for(Declaration Decl : library.getVarDecls()){
+			Decl.accept(this);
+		}
+
+		for(Declaration Decl : library.getProcDecls()){
+			Decl.accept(this);
+			varEnvironment.removeScope();
 		}
 	}
 }

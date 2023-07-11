@@ -19,15 +19,27 @@ public class VariableEntry implements Copyable<VariableEntry>{
     }
     
     public Object getValue(){
-	return value;
+	    return value;
     }
 
     public boolean isConst(){
-	return isConst;
+	    return isConst;
     }
     
     public void setValue(Object value){
-	this.value = value;
+	    this.value = value;
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(value.toString());
+        if(isConst){
+            sb.append(": CONST");
+        } else {
+            sb.append(": VAR");
+        }
+        return sb.toString();
     }
 
     @Override

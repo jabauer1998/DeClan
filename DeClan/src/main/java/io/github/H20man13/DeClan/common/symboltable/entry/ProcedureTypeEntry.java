@@ -26,4 +26,21 @@ public class ProcedureTypeEntry implements Copyable<ProcedureTypeEntry> {
     public ProcedureTypeEntry copy() {
         return new ProcedureTypeEntry(this.returnType, this.argumentTypes);
     }
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("(");
+        for(int i = 0; i < argumentTypes.size(); i++){
+            TypeCheckerTypes argumentType = argumentTypes.get(i);
+            sb.append(argumentType.toString());
+            if(i < argumentTypes.size() - 1){
+                sb.append(", ");
+            }
+        }
+        sb.append("): ");
+        sb.append(returnType.toString());
+        return sb.toString();
+    }
 }

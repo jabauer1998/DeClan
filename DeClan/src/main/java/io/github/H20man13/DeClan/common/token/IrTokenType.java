@@ -21,11 +21,13 @@ public enum IrTokenType {
     ISUB,
     IMUL,
     IDIV,
+    IDIVIDE,
     IMOD,
     RADD,
     RSUB,
     RMUL,
     RDIV,
+    RDIVIDE,
     BOR,
     BAND,
     INEG,
@@ -99,11 +101,13 @@ public enum IrTokenType {
         addKeyword(ISUB);
         addKeyword(IMUL);
         addKeyword(IDIV);
+        addKeyword(IDIVIDE);
         addKeyword(IMOD);
         addKeyword(IADD);
         addKeyword(RSUB);
         addKeyword(RMUL);
         addKeyword(RDIV);
+        addKeyword(RDIVIDE);
         addKeyword(RADD);
         addKeyword(BAND);
         addKeyword(BOR);

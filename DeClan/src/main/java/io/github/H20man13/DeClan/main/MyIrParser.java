@@ -258,7 +258,8 @@ public class MyIrParser {
             || willMatch(IrTokenType.IMOD) || willMatch(IrTokenType.BAND)
             || willMatch(IrTokenType.EQ) || willMatch(IrTokenType.RADD)
             || willMatch(IrTokenType.RSUB) || willMatch(IrTokenType.RMUL)
-            || willMatch(IrTokenType.RDIV)) {
+            || willMatch(IrTokenType.RDIV) || willMatch(IrTokenType.RDIVIDE)
+            || willMatch(IrTokenType.IDIVIDE)) {
                 IrToken op = skip();
 
                 Exp exp2 = parsePrimaryExpression();

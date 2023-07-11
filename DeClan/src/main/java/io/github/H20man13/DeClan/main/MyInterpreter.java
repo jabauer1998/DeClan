@@ -158,7 +158,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         standardOutput.append("" + value);
        } catch(IOException exp){}
     } else if(procName.equals("ASSERT")){
-      boolean value = (boolean)procedureCall.getArguments().get(0).acceptResult(this);
+      boolean value = Utils.toBool(procedureCall.getArguments().get(0).acceptResult(this));
       Object toPrint = (Object)procedureCall.getArguments().get(1).acceptResult(this);
         if(!value){
         try{
@@ -199,13 +199,13 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   @Override
   public void visit(WhileElifBranch whilebranch){
     Expression toCheck = whilebranch.getExpression();
-    if((Boolean)toCheck.acceptResult(this)){
+    if(Utils.toBool(toCheck.acceptResult(this))){
       List<Statement> toExec = whilebranch.getExecStatements();
       do {
         for(Integer i = 0; i < toExec.size(); i++){
           toExec.get(i).accept(this);
         }
-      } while((Boolean)toCheck.acceptResult(this));
+      } while(Utils.toBool(toCheck.acceptResult(this)));
     } else if (whilebranch.getNextBranch() != null){
       whilebranch.getNextBranch().accept(this);
     }
@@ -332,15 +332,15 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         Double ivalue = Utils.toDouble(value);
         entry.setValue(ivalue);
       } else if(entry.getValue() instanceof Integer){
-        Object value = (Object)assignment.getVariableValue().acceptResult(this);
+        Object value = assignment.getVariableValue().acceptResult(this);
         Integer ivalue = Utils.toInt(value);
         entry.setValue(ivalue);
       } else if(entry.getValue() instanceof Boolean){
-        Object value = (Object)assignment.getVariableValue().acceptResult(this);
+        Object value = assignment.getVariableValue().acceptResult(this);
         Boolean ivalue = Utils.toBool(value);
         entry.setValue(ivalue);
       } else {
-        Object value = (Object)assignment.getVariableValue().acceptResult(this);
+        Object value = assignment.getVariableValue().acceptResult(this);
         entry.setValue(value);
       }
     }
@@ -395,7 +395,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         case MINUS: return OpUtil.minus(leftValue, rightValue);
         case TIMES: return OpUtil.times(leftValue, rightValue);
         case DIVIDE: return OpUtil.divide(leftValue, rightValue);
-        case DIV: return OpUtil.divide(leftValue, rightValue);
+        case DIV: return OpUtil.div(leftValue, rightValue);
+        case AND: return OpUtil.and(leftValue, rightValue);
+        case MOD: return OpUtil.rMul(leftValue, rightValue);
+        case OR: return OpUtil.or(leftValue, rightValue);
         case LT: return OpUtil.lessThan(leftValue, rightValue);
         case GT: return OpUtil.greaterThan(leftValue, rightValue);
         case EQ: return OpUtil.equal(leftValue, rightValue);
@@ -408,43 +411,55 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   @Override
   public Object visitResult(FunctionCall funcCall) {
     String funcName = funcCall.getFunctionName().getLexeme();
-    ProcedureEntry fentry = procEnvironment.getEntry(funcName);
-    List<ParamaterDeclaration> args = fentry.getArguments();
-    List<Expression> valArgs = funcCall.getArguments();
-    List<Object> valArgResults = new ArrayList<>();
-    for(Expression valArg : valArgs){
-	    Object result = valArg.acceptResult(this);
-	    valArgResults.add(result);
-    }
-    varEnvironment.addScope();
-    for(Integer i = 0; i < args.size(); i++){
-      args.get(i).accept(this); //declare parameter variable
-      VariableEntry toChange = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
-      Object variableValue = valArgResults.get(i);
-      if(toChange.getValue() instanceof Integer){
-         Integer varVal = Utils.toInt(variableValue);
-         toChange.setValue(varVal);
-      } else if(toChange.getValue() instanceof Double){
-        Double varVal = Utils.toDouble(variableValue);
-        toChange.setValue(varVal);
-      } else if(toChange.getValue() instanceof Boolean){
-        Boolean varVal = Utils.toBool(variableValue);
-        toChange.setValue(varVal);
-      } else {
-        toChange.setValue(variableValue);
+    if(funcName.equals("round") || funcName.equals("Round")){
+      double argument = Utils.toDouble(funcCall.getArguments().get(0).acceptResult(this));
+      return (int)Math.round(argument);
+    } else if(funcName.equals("floor") || funcName.equals("Floor")) {
+      double argument = Utils.toDouble(funcCall.getArguments().get(0).acceptResult(this));
+      return (int)Math.floor(argument);
+    } else if(funcName.equals("ceil") || funcName.equals("Ceil")) {
+      double argument = Utils.toDouble(funcCall.getArguments().get(0).acceptResult(this));
+      return (int)Math.ceil(argument);
+    } else {
+      ProcedureEntry fentry = procEnvironment.getEntry(funcName);
+      List<ParamaterDeclaration> args = fentry.getArguments();
+      List<Expression> valArgs = funcCall.getArguments();
+      List<Object> valArgResults = new ArrayList<>();
+      for(Expression valArg : valArgs){
+        Object result = valArg.acceptResult(this);
+        valArgResults.add(result);
       }
+      varEnvironment.addScope();
+      for(Integer i = 0; i < args.size(); i++){
+        args.get(i).accept(this); //declare parameter variable
+        VariableEntry toChange = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
+        Object variableValue = valArgResults.get(i);
+        if(toChange.getValue() instanceof Integer){
+          Integer varVal = Utils.toInt(variableValue);
+          toChange.setValue(varVal);
+        } else if(toChange.getValue() instanceof Double){
+          Double varVal = Utils.toDouble(variableValue);
+          toChange.setValue(varVal);
+        } else if(toChange.getValue() instanceof Boolean){
+          Boolean varVal = Utils.toBool(variableValue);
+          toChange.setValue(varVal);
+        } else {
+          toChange.setValue(variableValue);
+        }
+      }
+      List<Declaration> LocalDecl = fentry.getLocalVariables();
+      for(Declaration decl : LocalDecl){
+        decl.accept(this);
+      }
+      List<Statement> toExec = fentry.getExecList();
+      for(Statement toDo : toExec){
+        toDo.accept(this);
+      }
+      Object retValue = fentry.getReturnStatement().acceptResult(this);
+      varEnvironment.removeScope(); //clean up local declarations as well as parameters
+      return retValue;
     }
-    List<Declaration> LocalDecl = fentry.getLocalVariables();
-    for(Declaration decl : LocalDecl){
-      decl.accept(this);
-    }
-    List<Statement> toExec = fentry.getExecList();
-    for(Statement toDo : toExec){
-      toDo.accept(this);
-    }
-    Object retValue = fentry.getReturnStatement().acceptResult(this);
-    varEnvironment.removeScope(); //clean up local declarations as well as parameters
-    return retValue;
+    
   }
 
   @Override

@@ -1,8 +1,12 @@
-PROCEDURE Round(n: INTEGER);
+PROCEDURE Round(n: REAL);
     BEGIN
-        RETURN n + 5.
+    RETURN -1
     END Round;
-PROCEDURE Floor(n: INTEGER);
+PROCEDURE Floor(n: REAL);
     BEGIN
-        RETURN n - 5.
+    RETURN -1
     END Floor;
+PROCEDURE Ceil(n: REAL);
+    BEGIN
+    RETURN -1
+    END Ceil;

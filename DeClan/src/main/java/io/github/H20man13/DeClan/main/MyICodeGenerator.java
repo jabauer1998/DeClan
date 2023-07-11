@@ -93,21 +93,25 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     procEnvironment.addScope();
     varEnvironment.addScope();
     procArgs.addScope();
-    lib.accept(typeChecker);
+    typeChecker.addScope();
 
     builder.buildBeginLabel();
     for(Declaration decl : lib.getConstDecls()){
+      decl.accept(typeChecker);
       decl.accept(this);
     }
 
     for(Declaration decl : lib.getVarDecls()){
+      decl.accept(typeChecker);
       decl.accept(this);
     }
 
     builder.buildBeginGoto();
 
     for(Declaration decl : lib.getProcDecls()){
+      decl.accept(typeChecker);
       decl.accept(this);
+      typeChecker.removeVarScope();
     }
   }
 
@@ -119,18 +123,19 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     typeChecker.addScope();
     builder.buildBeginLabel();
     for(Declaration decl : program.getConstDecls()){
-      decl.accept(this);
       decl.accept(typeChecker);
+      decl.accept(this);
     }
     for (Declaration decl : program.getVarDecls()) {
-      decl.accept(this);
       decl.accept(typeChecker);
+      decl.accept(this);
     }
 
     builder.buildBeginGoto();
     for (Declaration decl : program.getProcDecls()){
-      decl.accept(this);
       decl.accept(typeChecker);
+      decl.accept(this);
+      typeChecker.removeVarScope();
     }
     
     builder.buildBeginLabel();
@@ -379,7 +384,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
           case PLUS: return builder.buildRealAdditionAssignment(leftIdent, rightIdent);
           case MINUS: return builder.buildRealSubtractionAssignment(leftIdent, rightIdent);
           case TIMES: return builder.buildRealMultiplicationAssignment(leftIdent, rightIdent);
-          case DIV: return builder.buildIntegerDivisionAssignment(leftIdent, rightIdent);
+          case DIV: return builder.buildRealDivAssignment(leftIdent, rightIdent);
           case DIVIDE: return builder.buildRealDivisionAssignment(leftIdent, rightIdent);
           case MOD: return builder.buildIntegerModuloAssignment(leftIdent, rightIdent);
           case LE: return builder.buildLessThanOrEqualAssignment(leftIdent, rightIdent);
@@ -397,7 +402,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
         case PLUS: return builder.buildIntegerAdditionAssignment(leftIdent, rightIdent);
         case MINUS: return builder.buildIntegerSubtractionAssignment(leftIdent, rightIdent);
         case TIMES: return builder.buildIntegerMultiplicationAssignment(leftIdent, rightIdent);
-        case DIV: return builder.buildIntegerDivisionAssignment(leftIdent, rightIdent);
+        case DIV: return builder.buildIntegerDivAssignment(leftIdent, rightIdent);
         case DIVIDE: return builder.buildIntegerDivisionAssignment(leftIdent, rightIdent);
         case MOD: return builder.buildIntegerModuloAssignment(leftIdent, rightIdent);
         case LE: return builder.buildLessThanOrEqualAssignment(leftIdent, rightIdent);

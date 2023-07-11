@@ -75,7 +75,7 @@ public class ICodeGeneratorTest {
     @Test
     public void testUnaryOp(){
         String program = "x := 38393\n"
-                       + "y := NEG x\n"
+                       + "y := INEG x\n"
                        + "z := BNOT y\n"
                        + "END\n";
         Source mySource = new ReaderSource(new StringReader(program));
@@ -193,9 +193,6 @@ public class ICodeGeneratorTest {
         String programName = "test_source/conversions.dcl";
         
         String expectedICode = "LABEL begin_0\n"+
-                               "a := 1\n"+
-                               "b := INEG a\n"+
-                               "c := b\n"+
                                "GOTO begin_1\n"+
                                "LABEL WriteLn\n"+
                                "RETURN\n"+
@@ -204,63 +201,62 @@ public class ICodeGeneratorTest {
                                "LABEL WriteReal\n"+
                                "RETURN\n"+
                                "LABEL begin_1\n"+
-                               "f := 1\n"+
-                               "g := INEG f\n"+
-                               "h := g\n"+
                                "GOTO begin_2\n"+
                                "LABEL Round\n"+
-                               "j := 5.0\n"+
-                               "k := i RADD j\n"+
+                               "d := 1\n"+
+                               "e := INEG d\n"+
                                "RETURN\n"+
                                "LABEL Floor\n"+
-                               "m := 5.0\n"+
-                               "n := l RSUB m\n"+
+                               "g := 1\n"+
+                               "h := INEG g\n"+
+                               "RETURN\n"+
+                               "LABEL Ceil\n"+
+                               "j := 1\n"+
+                               "k := INEG j\n"+
                                "RETURN\n"+
                                "LABEL begin_2\n"+
-                               "o := 0.0\n"+
-                               "p := 0\n"+
+                               "l := 0.0\n"+
+                               "m := 0\n"+
                                "GOTO begin_3\n"+
                                "LABEL p\n"+
-                               "s := 0\n"+
-                               "t := o RADD p\n"+
-                               "PROC Round ( t -> i )\n"+
-                               "u <- k\n"+
-                               "s := u\n"+
+                               "p := 0\n" +
+                               "q := n RADD o\n"+
+                               "PROC Round ( q -> c )\n"+
+                               "r <- e\n"+
+                               "p := r\n"+
                                "RETURN\n"+
                                "LABEL begin_3\n"+
-                               "v := 1\n"+
-                               "p := v\n"+
-                               "w := 2\n"+
-                               "o := w\n"+
-                               "PROC WriteInt ( p -> d )\n"+
-                               "PROC WriteReal ( p -> e )\n"+
-                               "PROC WriteReal ( o -> e )\n"+
+                               "s := 1\n"+
+                               "m := s\n"+
+                               "t := 2\n"+
+                               "l := t\n"+
+                               "PROC WriteInt ( m -> a )\n"+
+                               "PROC WriteReal ( m -> b )\n"+
+                               "PROC WriteReal ( l -> b )\n"+
                                "PROC WriteLn (  )\n"+
-                               "x := p RDIV o\n"+
-                               "PROC WriteReal ( x -> e )\n"+
-                               "y := 5\n"+
-                               "z := p IADD y\n"+
-                               "A := 6\n"+
-                               "B := p IADD A\n" +
-                               "C := z IMUL B\n" +
-                               "PROC WriteInt ( C -> d )\n" +
-                               "D := 4\n" + 
-                               "E := o RADD D\n" + 
-                               "F := 5.0\n" + 
-                               "G := o RADD F\n" +
-                               "H := E RMUL G\n" + 
-                               "PROC WriteReal ( H -> e )\n"+
+                               "u := m RDIVIDE l\n"+
+                               "PROC WriteReal ( u -> b )\n"+
+                               "v := 5\n"+
+                               "w := m IADD v\n"+
+                               "x := 6\n"+
+                               "y := m IADD x\n"+
+                               "z := w IMUL y\n"+
+                               "PROC WriteInt ( z -> a )\n"+
+                               "A := 4\n"+
+                               "B := l RADD A\n"+
+                               "C := 5.0\n"+
+                               "D := l RADD C\n"+
+                               "E := B RMUL D\n"+
+                               "PROC WriteReal ( E -> b )\n"+
                                "PROC WriteLn (  )\n"+
-                               "I := 3.1415\n"+
-                               "PROC p ( p -> q , I -> r )\n"+
-                               "J <- s\n"+
-                               "o := J\n"+
-                               "PROC WriteReal ( o -> e )\n"+
+                               "F := 3.1415\n"+
+                               "PROC p ( m -> n , F -> o )\n"+
+                               "G <- p\n"+
+                               "l := G\n"+
+                               "PROC WriteReal ( l -> b )\n"+
                                "PROC WriteLn (  )\n"+
                                "END\n";
-
-
-
+        
         try{
             Source mySource = new ReaderSource(new FileReader(programName));
             ErrorLog errLog = new ErrorLog();
@@ -274,6 +270,7 @@ public class ICodeGeneratorTest {
             stdLib.ioLibrary().accept(igen);
             stdLib.mathLibrary().accept(igen);
             prog.accept(igen);
+            
             List<ICode> icode = igen.getICode();
 
             testReaderSource(icode, expectedICode);

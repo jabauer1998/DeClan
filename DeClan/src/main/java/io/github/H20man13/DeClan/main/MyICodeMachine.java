@@ -38,6 +38,7 @@ public class MyICodeMachine {
     private ErrorLog errLog;
     private Writer standardOutput;
     private Writer standardError;
+    private Object tempReturnValue;
 
     public MyICodeMachine(ErrorLog errLog, Writer standardOutput, Writer standardError){
         this.labelAddresses = new Environment<String, IntEntry>();
@@ -50,6 +51,7 @@ public class MyICodeMachine {
         this.variableValues.addScope();
         this.standardError = standardError;
         this.standardOutput = standardOutput;
+        this.tempReturnValue = null;
     }
 
     private enum State{
@@ -88,7 +90,10 @@ public class MyICodeMachine {
                     if(instruction instanceof Place){
                         //Then we need to perform this assignment before deallocating the stacks
                         Place placement = (Place)instruction;
-                        if(variableValues.entryExists(placement.retPlace)){
+                        if(tempReturnValue != null){
+                            variableValues.addEntry(placement.place, new VariableEntry(false, tempReturnValue));
+                            tempReturnValue = null;
+                        }else if(variableValues.entryExists(placement.retPlace)){
                             VariableEntry entry = variableValues.getEntry(placement.retPlace);
                             //Now we need to Deallocate the Top of the Stack
                             variableValues.removeScope();
@@ -181,6 +186,24 @@ public class MyICodeMachine {
             } catch(IOException exp){
                 errorAndExit(exp.toString(), programCounter, 999);
             }
+        } else if(procedure.pname.equals("round") || procedure.pname.equals("Round")){
+            Tuple<String, String> arg1 = procedure.params.get(0);
+            VariableEntry entry = variableValues.getEntry(arg1.source);
+
+            this.tempReturnValue = (int)Math.round(Utils.toDouble(entry.getValue()));
+            this.machineState = State.RETURN;
+        } else if(procedure.pname.equals("floor") || procedure.pname.equals("Floor")){
+            Tuple<String, String> arg1 = procedure.params.get(0);
+            VariableEntry entry = variableValues.getEntry(arg1.source);
+
+            this.tempReturnValue = (int)Math.floor(Utils.toDouble(entry.getValue()));
+            this.machineState = State.RETURN;
+        } else if(procedure.pname.equals("ceil") || procedure.pname.equals("Ceil")){
+            Tuple<String, String> arg1 = procedure.params.get(0);
+            VariableEntry entry = variableValues.getEntry(arg1.source);
+
+            this.tempReturnValue = (int)Math.ceil(Utils.toDouble(entry.getValue()));
+            this.machineState = State.RETURN;
         } else {
             this.returnStack.push(this.programCounter);
         
@@ -260,7 +283,9 @@ public class MyICodeMachine {
             case IMUL: return OpUtil.iMul(left, right);
             case RMUL: return OpUtil.rMul(left, right);
             case IDIV: return OpUtil.iDiv(left, right);
+            case IDIVIDE : return OpUtil.iDivide(left, right);
             case RDIV: return OpUtil.rDiv(left, right);
+            case RDIVIDE: return OpUtil.rDivide(left, right);
             case IMOD: return OpUtil.iMod(left, right);
             case EQ: return OpUtil.equal(left, right);
             case NE: return OpUtil.notEqual(left, right);

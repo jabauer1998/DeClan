@@ -66,10 +66,10 @@ public class Environment <KeyType, TableType extends Copyable<TableType>> implem
      * @author Jacob Bauer
      */
     public boolean inScope(KeyType symbolName){
-	HashMap<KeyType, TableType> list = environment.pop();
-	boolean tf = list.containsKey(symbolName);
-	environment.push(list);
-	return tf;
+        HashMap<KeyType, TableType> list = environment.pop();
+        boolean tf = list.containsKey(symbolName);
+        environment.push(list);
+        return tf;
     }
   
     /**
@@ -79,12 +79,13 @@ public class Environment <KeyType, TableType extends Copyable<TableType>> implem
      */
     
     public TableType getEntry(KeyType symbolName){
-	for(HashMap<KeyType, TableType> current : environment){
-	    if(current.containsKey(symbolName)){
-		return current.get(symbolName);
-	    }
-	}
-	return null;
+        for(int i = environment.size() - 1; i >= 0; i--){
+            HashMap<KeyType, TableType> current = environment.get(i);
+            if(current.containsKey(symbolName)){
+                return current.get(symbolName);
+            }
+        }
+        return null;
     }
 
     /** 

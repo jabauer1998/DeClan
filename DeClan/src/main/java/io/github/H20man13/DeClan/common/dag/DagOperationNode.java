@@ -11,7 +11,7 @@ public class DagOperationNode implements DagNode {
         IADD, ISUB, IDIV, IMOD, BAND, 
         BOR, INEG, RNEG, BNOT, GE, LE, 
         LT, GT, NE, EQ, IMUL, RADD, RSUB, RDIV,
-        RMUL
+        RMUL, IDIVIDE, RDIVIDE
     }
 
     private List<DagNode> children;

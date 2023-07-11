@@ -68,6 +68,22 @@ public abstract class P {
             return "IDIV";
         }
     }
+
+    private static class IDIVIDE extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof IDIVIDE){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "IDIVIDE";
+        }
+    }
     private static class IMOD extends P{
         @Override
         public boolean equals(Object obj) {
@@ -521,6 +537,9 @@ public abstract class P {
     }
     public static IDIV IDIV(){
         return new IDIV();
+    }
+    public static IDIVIDE IDIVIDE(){
+        return new IDIVIDE();
     }
     public static IMOD IMOD(){
         return new IMOD();

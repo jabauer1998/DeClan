@@ -49,6 +49,11 @@ public class Pattern {
     public static PAT div2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IDIV(), P.INT()));
     public static PAT div3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IDIV(), P.INT()));
 
+    public static PAT divide0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IDIVIDE(), P.ID()));
+    public static PAT divide1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IDIVIDE(), P.ID()));
+    public static PAT divide2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IDIVIDE(), P.INT()));
+    public static PAT divide3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IDIVIDE(), P.INT()));
+
     public static PAT mod0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMOD(), P.ID()));
     public static PAT mod1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMOD(), P.ID()));
     public static PAT mod2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMOD(), P.INT()));

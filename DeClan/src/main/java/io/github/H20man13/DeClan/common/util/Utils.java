@@ -177,7 +177,9 @@ public class Utils {
             case RADD: return factory.createRealAdditionNode(place, left, right);
             case RSUB: return factory.createRealSubtractionNode(place, left, right);
             case RMUL: return factory.createRealMultiplicationNode(place, left, right);
-            case RDIV: return factory.createRealDivisionNode(place, left, right);
+            case RDIV: return factory.createRealDivNode(place, left, right);
+            case IDIVIDE: return factory.createIntegerDivNode(place, left, right);
+            case RDIVIDE: return factory.createRealDivisionNode(place, left, right);
             case BAND: return factory.createAndNode(place, left, right);
             case IMOD: return factory.createIntegerModuleNode(place, left, right);
             case BOR: return factory.createOrNode(place, left, right);
