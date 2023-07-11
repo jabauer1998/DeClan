@@ -397,7 +397,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         case DIVIDE: return OpUtil.divide(leftValue, rightValue);
         case DIV: return OpUtil.div(leftValue, rightValue);
         case AND: return OpUtil.and(leftValue, rightValue);
-        case MOD: return OpUtil.rMul(leftValue, rightValue);
+        case MOD: return OpUtil.mod(leftValue, rightValue);
         case OR: return OpUtil.or(leftValue, rightValue);
         case LT: return OpUtil.lessThan(leftValue, rightValue);
         case GT: return OpUtil.greaterThan(leftValue, rightValue);
