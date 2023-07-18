@@ -6,14 +6,15 @@ import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.ProcedureEntry;
 import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 
-import java.lang.Number;
 import java.lang.Object;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.lang.Math;
 import java.lang.String;
 import java.lang.StringBuilder;
 import java.util.Map;
+import java.util.Scanner;
 
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ast.ASTVisitor;
@@ -60,11 +61,13 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   private Environment <String, ProcedureEntry> procEnvironment;
   private Writer standardOutput;
   private Writer standardError;
+  private Reader standardIn;
 
-  public MyInterpreter(ErrorLog errorLog, Writer standardOutput, Writer standardError) {
+  public MyInterpreter(ErrorLog errorLog, Writer standardOutput, Writer standardError, Reader standardIn) {
     this.errorLog = errorLog;
     this.standardOutput = standardOutput;
     this.standardError = standardError;
+    this.standardIn = standardIn;
     this.varEnvironment = new Environment<>();
     this.procEnvironment = new Environment<>();
   }
@@ -114,11 +117,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     Identifier id = varDecl.getIdentifier();
     String type = varDecl.getType().getLexeme();
     if(type.equals("BOOLEAN")){
-	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, false));
+	    varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, false));
     } else if (type.equals("REAL")){
-	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, (Double)0.0));
+	    varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, (Double)0.0));
     } else {
-	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, 0));
+	    varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, 0));
     }
   }
 
@@ -254,69 +257,108 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       Object incriment = toMod.acceptResult(this);
       Object target = forbranch.getTargetExpression().acceptResult(this);
       Object curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme()).getValue();
-      if(incriment instanceof Double){
-	  if((Double)curvalue >= (Double)target && (Double)incriment < 0.0){
-	      while((Double)curvalue > (Double)target){
-		  for(Integer i = 0; i < toExec.size(); i++){
-		      toExec.get(i).accept(this);
-		  }
-		  VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-		  entry.setValue((Double)curvalue - (Double)incriment);
-		  curvalue = entry.getValue();
-	      }
-	  } else if ((Double)curvalue <= (Double)target && (Double)incriment > 0.0){
-	      while((Double)curvalue < (Double)target){
-		  for(Integer i = 0; i < toExec.size(); i++){
-		      toExec.get(i).accept(this);
-		  }
-		  VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-		  entry.setValue((Double)curvalue + (Double)incriment);
-		  curvalue = entry.getValue();
-	      }
-	  } else {
-	      errorLog.add("Possible infinite forloop in for loop ", forbranch.getStart());
-	  }
-      } else {
-	  if((Integer)curvalue >= (Integer)target && (Integer)incriment < 0){
-	      while((Integer)curvalue > (Integer)target){
-		  for(Integer i = 0; i < toExec.size(); i++){
-		      toExec.get(i).accept(this);
-		  }
-		  VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-		  entry.setValue((Integer)curvalue - (Integer)curvalue);
-		  curvalue = entry.getValue();
-	      }
-	  } else if ((Integer)curvalue <= (Integer)target && (Integer)incriment > 0){
-	      while((Integer)curvalue < (Integer)target){
-		  for(Integer i = 0; i < toExec.size(); i++){
-		      toExec.get(i).accept(this);
-		  }
-		  VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-		  entry.setValue((Integer)curvalue + (Integer)incriment);
-		  curvalue = entry.getValue();
-	      }
-	  } else {
-	      errorLog.add("Possible infinite forloop in for loop ", forbranch.getStart());
-	  }
-      }
-    } else {
-      forbranch.getInitAssignment().accept(this);
-      Object target = forbranch.getTargetExpression().acceptResult(this);
-      Object curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme()).getValue();
-      if(target instanceof Double){
-	  while((Double)curvalue > (Double)target){
-	      for(Integer i = 0; i < toExec.size(); i++){
-		  toExec.get(i).accept(this);
-	      }
-	  }
-      } else {
-	    forbranch.getInitAssignment().accept(this);
-      while((Integer)curvalue > (Integer)target){
-        for(Integer i = 0; i < toExec.size(); i++){
-          toExec.get(i).accept(this);
+      if(curvalue instanceof Double){
+        Double doubleCurValue = Utils.toDouble(curvalue);
+        Double doubleTarget = Utils.toDouble(target);
+        Double doubleIncriment = Utils.toDouble(incriment);
+        if(doubleIncriment < 0 && doubleCurValue > doubleTarget){
+            do{
+              for(Integer i = 0; i < toExec.size(); i++){
+                  toExec.get(i).accept(this);
+              }
+              VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+              entry.setValue(doubleCurValue + doubleIncriment);
+              curvalue = entry.getValue();
+              doubleCurValue = Utils.toDouble(curvalue);
+	          } while(doubleCurValue > doubleTarget);
+        } else if(doubleIncriment > 0 && doubleCurValue < doubleTarget){
+           do{
+              for(Integer i = 0; i < toExec.size(); i++){
+                toExec.get(i).accept(this);
+              }
+              VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+              entry.setValue(doubleCurValue + doubleIncriment);
+              curvalue = entry.getValue();
+              doubleCurValue = Utils.toDouble(curvalue);
+	          }while(doubleCurValue < doubleTarget);
+        }
+      } else if(curvalue instanceof Integer) {
+        Integer intTarget = Utils.toInt(target);
+        Integer intCurVal = Utils.toInt(curvalue);
+        Integer intIncriment = Utils.toInt(incriment);
+        if(intCurVal > intTarget && intIncriment < 0){
+            do{
+              for(Integer i = 0; i < toExec.size(); i++){
+                  toExec.get(i).accept(this);
+              }
+              VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+              entry.setValue(intCurVal + intIncriment);
+              curvalue = entry.getValue();
+              intCurVal = Utils.toInt(curvalue);
+            } while(intCurVal > intTarget);
+        } else if (intCurVal < intTarget && intIncriment > 0){
+          do{
+            for(Integer i = 0; i < toExec.size(); i++){
+                toExec.get(i).accept(this);
+            }
+            VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+            entry.setValue(intCurVal + intIncriment);
+            curvalue = entry.getValue();
+            intCurVal = Utils.toInt(curvalue);
+          } while(intCurVal < intTarget);
+        } else if(intCurVal != intTarget) {
+          errorLog.add("Possible infinite forloop in for loop ", forbranch.getStart());
         }
       }
-      }
+    } else {
+        forbranch.getInitAssignment().accept(this);
+        Object target = forbranch.getTargetExpression().acceptResult(this);
+        Object curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme()).getValue();
+        if(curvalue instanceof Double){
+          Double doubleTarget = Utils.toDouble(target);
+          Double doubleCurVal = Utils.toDouble(curvalue);
+          if(doubleTarget < doubleCurVal){
+            do{
+              for(int i = 0; i < toExec.size(); i++){
+                toExec.get(i).accept(this);
+              }
+              VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+              curvalue = entry.getValue();
+              doubleCurVal = Utils.toDouble(curvalue);
+            }while(doubleTarget < doubleCurVal);
+          } else if(doubleTarget > doubleCurVal){
+            do{
+              for(int i = 0; i < toExec.size(); i++){
+                toExec.get(i).accept(this);
+              }
+              VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+              curvalue = entry.getValue();
+              doubleCurVal = Utils.toDouble(curvalue);
+            } while(doubleTarget > doubleCurVal);
+          }
+        } else if(curvalue instanceof Integer){
+          Integer intTarget = Utils.toInt(target);
+          Integer intCurVal = Utils.toInt(curvalue);
+          if(intTarget < intCurVal){
+            do{
+              for(int i = 0; i < toExec.size(); i++){
+                toExec.get(i).accept(this);
+              }
+              VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+              curvalue = entry.getValue();
+              intCurVal = Utils.toInt(curvalue);
+            }while(intTarget < intCurVal);
+          } else if(intTarget > intCurVal){
+            do{
+              for(int i = 0; i < toExec.size(); i++){
+                toExec.get(i).accept(this);
+              }
+              VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+              curvalue = entry.getValue();
+              intCurVal = Utils.toInt(curvalue);
+            } while(intTarget > intCurVal);
+          }
+        }
     }
   }
         
@@ -420,6 +462,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     } else if(funcName.equals("ceil") || funcName.equals("Ceil")) {
       double argument = Utils.toDouble(funcCall.getArguments().get(0).acceptResult(this));
       return (int)Math.ceil(argument);
+    } else if (funcName.equals("readInt") || funcName.equals("ReadInt")) {
+      Scanner scanner = new Scanner(standardIn);
+      String line = scanner.nextLine();
+      scanner.close();
+      return Integer.parseInt(line);
     } else {
       ProcedureEntry fentry = procEnvironment.getEntry(funcName);
       List<ParamaterDeclaration> args = fentry.getArguments();

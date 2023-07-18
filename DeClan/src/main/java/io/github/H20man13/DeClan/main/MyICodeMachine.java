@@ -1,10 +1,12 @@
 package io.github.H20man13.DeClan.main;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Stack;
 
 import edu.depauw.declan.common.ErrorLog;
@@ -38,9 +40,10 @@ public class MyICodeMachine {
     private ErrorLog errLog;
     private Writer standardOutput;
     private Writer standardError;
+    private Reader standardIn;
     private Object tempReturnValue;
 
-    public MyICodeMachine(ErrorLog errLog, Writer standardOutput, Writer standardError){
+    public MyICodeMachine(ErrorLog errLog, Writer standardOutput, Writer standardError, Reader standardIn){
         this.labelAddresses = new Environment<String, IntEntry>();
         this.returnStack = new Stack<Integer>();
         this.variableValues = new Environment<String, VariableEntry>();
@@ -51,6 +54,7 @@ public class MyICodeMachine {
         this.variableValues.addScope();
         this.standardError = standardError;
         this.standardOutput = standardOutput;
+        this.standardIn = standardIn;
         this.tempReturnValue = null;
     }
 
@@ -204,6 +208,11 @@ public class MyICodeMachine {
 
             this.tempReturnValue = (int)Math.ceil(Utils.toDouble(entry.getValue()));
             this.machineState = State.RETURN;
+        } else if(procedure.pname.equals("readInt") || procedure.pname.equals("ReadInt")){
+            Scanner scanner = new Scanner(standardIn);
+            this.tempReturnValue = Integer.parseInt(scanner.nextLine());
+            scanner.close();
+            this.machineState = State.RETURN;  
         } else {
             this.returnStack.push(this.programCounter);
         

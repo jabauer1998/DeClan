@@ -9,3 +9,8 @@ PROCEDURE WriteInt(i: INTEGER);
 PROCEDURE WriteReal(r: REAL);
     BEGIN
     END WriteReal;
+
+PROCEDURE ReadInt();
+    BEGIN
+        RETURN -1
+    END ReadInt;

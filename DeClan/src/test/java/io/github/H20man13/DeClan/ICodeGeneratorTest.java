@@ -15,7 +15,12 @@ import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.pat.P.ELSE;
+import io.github.H20man13.DeClan.common.pat.P.GOTO;
+import io.github.H20man13.DeClan.common.pat.P.IF;
+import io.github.H20man13.DeClan.common.pat.P.INEG;
 import io.github.H20man13.DeClan.common.pat.P.LABEL;
+import io.github.H20man13.DeClan.common.pat.P.THEN;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.MyICodeGenerator;
@@ -256,6 +261,291 @@ public class ICodeGeneratorTest {
                                "PROC WriteReal ( l -> b )\n"+
                                "PROC WriteLn (  )\n"+
                                "END\n";
+        
+        try{
+            Source mySource = new ReaderSource(new FileReader(programName));
+            ErrorLog errLog = new ErrorLog();
+            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
+            MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
+            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
+            Program prog = parser.parseProgram();
+            
+            IrRegisterGenerator gen = new IrRegisterGenerator();
+            MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
+            stdLib.ioLibrary().accept(igen);
+            stdLib.mathLibrary().accept(igen);
+            prog.accept(igen);
+            
+            List<ICode> icode = igen.getICode();
+
+            testReaderSource(icode, expectedICode);
+        } catch(FileNotFoundException exp) {
+            assertTrue("Error File not found...", false);
+        }
+    }
+
+    @Test
+    public void testIfStatementAdvanced(){
+        String programName = "test_source/IfStatementAdvanced.dcl";
+        String expectedICodee = "LABEL begin_0\r\n" + //
+                                "GOTO begin_1\r\n" + //
+                                "LABEL WriteLn\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL WriteInt\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL WriteReal\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL ReadInt\r\n" + //
+                                "g := 1\r\n" + //
+                                "h := INEG g\r\n" + //
+                                "f := h\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL begin_1\r\n" + //
+                                "GOTO begin_2\r\n" + //
+                                "LABEL Round\r\n" + //
+                                "o := 1\r\n" + //
+                                "p := INEG o\r\n" + //
+                                "j := p\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL Floor\r\n" + //
+                                "q := 1\r\n" + //
+                                "r := INEG q\r\n" + //
+                                "l := r\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL Ceil\r\n" + //
+                                "s := 1\r\n" + //
+                                "t := INEG s\r\n" + //
+                                "n := t\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL begin_2\r\n" + //
+                                "u := TRUE\r\n" + //
+                                "v := u\r\n" + //
+                                "w := FALSE\r\n" + //
+                                "x := w\r\n" + //
+                                "GOTO begin_3\r\n" + //
+                                "LABEL begin_3\r\n" + //
+                                "IF v EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "LABEL IFSTAT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "IF x EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_1 ELSE IFNEXT_0_SEQ_0_LEVEL_1\r\n" + //
+                                "LABEL IFSTAT_0_SEQ_0_LEVEL_1\r\n" + //
+                                "y := 5\r\n" + //
+                                "PROC WriteInt ( y -> b )\r\n" + //
+                                "GOTO IFEND_0_LEVEL_1\r\n" + //
+                                "LABEL IFNEXT_0_SEQ_0_LEVEL_1\r\n" + //
+                                "z := 6\r\n" + //
+                                "PROC WriteInt ( z -> b )\r\n" + //
+                                "GOTO IFEND_0_LEVEL_1\r\n" + //
+                                "LABEL IFNEXT_0_SEQ_1_LEVEL_1\r\n" + //
+                                "LABEL IFEND_0_LEVEL_1\r\n" + //
+                                "GOTO IFEND_0_LEVEL_0\r\n" + //
+                                "LABEL IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "IF x EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_1 ELSE IFNEXT_0_SEQ_0_LEVEL_1\r\n" + //
+                                "LABEL IFSTAT_0_SEQ_0_LEVEL_1\r\n" + //
+                                "A := 7\r\n" + //
+                                "PROC WriteInt ( A -> b )\r\n" + //
+                                "GOTO IFEND_0_LEVEL_1\r\n" + //
+                                "LABEL IFNEXT_0_SEQ_0_LEVEL_1\r\n" + //
+                                "B := 8\r\n" + //
+                                "PROC WriteInt ( B -> b )\r\n" + //
+                                "GOTO IFEND_0_LEVEL_1\r\n" + //
+                                "LABEL IFNEXT_0_SEQ_1_LEVEL_1\r\n" + //
+                                "LABEL IFEND_0_LEVEL_1\r\n" + //
+                                "GOTO IFEND_0_LEVEL_0\r\n" + //
+                                "LABEL IFNEXT_0_SEQ_1_LEVEL_0\r\n" + //
+                                "LABEL IFEND_0_LEVEL_0\r\n" + //
+                                "END\r\n";
+
+        
+        try{
+            Source mySource = new ReaderSource(new FileReader(programName));
+            ErrorLog errLog = new ErrorLog();
+            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
+            MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
+            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
+            Program prog = parser.parseProgram();
+            
+            IrRegisterGenerator gen = new IrRegisterGenerator();
+            MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
+            stdLib.ioLibrary().accept(igen);
+            stdLib.mathLibrary().accept(igen);
+            prog.accept(igen);
+            
+            List<ICode> icode = igen.getICode();
+
+            testReaderSource(icode, expectedICodee);
+        } catch(FileNotFoundException exp) {
+            assertTrue("Error File not found...", false);
+        }
+    }
+
+
+    @Test
+    public void testWhileLoopBasic(){
+        String programName = "test_source/WhileLoopBasic.dcl";
+        String expectedICode = "LABEL begin_0\r\n" + //
+                                "GOTO begin_1\r\n" + //
+                                "LABEL WriteLn\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL WriteInt\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL WriteReal\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL ReadInt\r\n" + //
+                                "g := 1\r\n" + //
+                                "h := INEG g\r\n" + //
+                                "f := h\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL begin_1\r\n" + //
+                                "GOTO begin_2\r\n" + //
+                                "LABEL Round\r\n" + //
+                                "o := 1\r\n" + //
+                                "p := INEG o\r\n" + //
+                                "j := p\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL Floor\r\n" + //
+                                "q := 1\r\n" + //
+                                "r := INEG q\r\n" + //
+                                "l := r\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL Ceil\r\n" + //
+                                "s := 1\r\n" + //
+                                "t := INEG s\r\n" + //
+                                "n := t\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL begin_2\r\n" + //
+                                "u := 10\r\n" + //
+                                "v := u\r\n" + //
+                                "w := 0\r\n" + //
+                                "GOTO begin_3\r\n" + //
+                                "LABEL begin_3\r\n" + //
+                                "x := 0\r\n" + //
+                                "w := x\r\n" + //
+                                "y := w LT v\r\n" + //
+                                "IF y EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "LABEL WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
+                                "IF y EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0\r\n" + //
+                                "LABEL WHILESTAT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "PROC WriteInt ( w -> b )\r\n" + //
+                                "z := 1\r\n" + //
+                                "A := w IADD z\r\n" + //
+                                "w := A\r\n" + //
+                                "GOTO WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
+                                "LABEL WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "LABEL WHILEEND_0_LEVEL_0\r\n" + //
+                                "END\r\n";
+
+        
+        try{
+            Source mySource = new ReaderSource(new FileReader(programName));
+            ErrorLog errLog = new ErrorLog();
+            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
+            MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
+            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
+            Program prog = parser.parseProgram();
+            
+            IrRegisterGenerator gen = new IrRegisterGenerator();
+            MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
+            stdLib.ioLibrary().accept(igen);
+            stdLib.mathLibrary().accept(igen);
+            prog.accept(igen);
+            
+            List<ICode> icode = igen.getICode();
+
+            testReaderSource(icode, expectedICode);
+        } catch(FileNotFoundException exp) {
+            assertTrue("Error File not found...", false);
+        }
+    }
+
+    @Test
+    public void testWhileLoopAdvanced(){
+        String programName = "test_source/WhileLoopAdvanced.dcl";
+        String expectedICode = "LABEL begin_0\r\n" + //
+                               "GOTO begin_1\r\n" + //
+                               "LABEL WriteLn\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL WriteInt\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL WriteReal\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL ReadInt\r\n" + //
+                                "g := 1\r\n" + //
+                                "h := INEG g\r\n" + //
+                                "f := h\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL begin_1\r\n" + //
+                                "GOTO begin_2\r\n" + //
+                                "LABEL Round\r\n" + //
+                                "o := 1\r\n" + //
+                                "p := INEG o\r\n" + //
+                                "j := p\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL Floor\r\n" + //
+                                "q := 1\r\n" + //
+                                "r := INEG q\r\n" + //
+                                "l := r\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL Ceil\r\n" + //
+                                "s := 1\r\n" + //
+                                "t := INEG s\r\n" + //
+                                "n := t\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL begin_2\r\n" + //
+                                "u := 10\r\n" + //
+                                "v := u\r\n" + //
+                                "w := 0\r\n" + //
+                                "x := w\r\n" + //
+                                "y := 0\r\n" + //
+                                "z := 0\r\n" + //
+                                "GOTO begin_3\r\n" + //
+                                "LABEL begin_3\r\n" + //
+                                "y := x\r\n" + //
+                                "A := y GT v\r\n" + //
+                                "IF A EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "LABEL WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
+                                "IF A EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0\r\n" + //
+                                "LABEL WHILESTAT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "PROC WriteInt ( y -] b )\r\n" + //
+                                "B := 1\r\n" + //
+                                "C := y IADD B\r\n" + //
+                                "y := C\r\n" + //
+                                "D := y GT v\r\n" + //
+                                "A := D\r\n" + //
+                                "GOTO WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
+                                "LABEL WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "E := y LT v\r\n" + //
+                                "IF E EQ TRUE THEN WHILESTAT_0_SEQ_1_LEVEL_0 ELSE WHILENEXT_0_SEQ_1_LEVEL_0\r\n" + //
+                                "LABEL WHILECOND_0_SEQ_1_LEVEL_0\r\n" + //
+                                "IF E EQ TRUE THEN WHILESTAT_0_SEQ_1_LEVEL_0 ELSE WHILEEND_0_LEVEL_0\r\n" + //
+                                "LABEL WHILESTAT_0_SEQ_1_LEVEL_0\r\n" + //
+                                "z := x\r\n" + //
+                                "F := z LT v\r\n" + //
+                                "IF F EQ TRUE THEN WHILESTAT_0_SEQ_1_LEVEL_0 ELSE WHILENEXT_0_SEQ_1_LEVEL_0\r\n" + //
+                                "LABEL WHILECOND_0_SEQ_1_LEVEL_0\r\n" + //
+                                "IF F EQ TRUE THEN WHILESTAT_0_SEQ_1_LEVEL_0 ELSE WHILEEND_0_LEVEL_0\r\n" + //
+                                "LABEL WHILESTAT_0_SEQ_1_LEVEL_0\r\n" + //
+                                "PROC WriteInt ( z -] b )\r\n" + //
+                                "G := 1\r\n" + //
+                                "H := z IADD G\r\n" + //
+                                "z := H\r\n" + //
+                                "I := z LT v\r\n" + //
+                                "F := I\r\n" + //
+                                "GOTO WHILECOND_0_SEQ_1_LEVEL_0\r\n" + //
+                                "LABEL WHILENEXT_0_SEQ_1_LEVEL_0\r\n" + //
+                                "LABEL WHILEEND_0_LEVEL_0\r\n" + //
+                                "PROC WriteLn (  )\r\n" + //
+                                "PROC WriteInt ( y -] b )\r\n" + //
+                                "PROC WriteLn (  )\r\n" + //
+                                "J := 1\r\n" + //
+                                "K := y IADD J\r\n" + //
+                                "y := K\r\n" + //
+                                "L := y LT v\r\n" + //
+                                "E := L\r\n" + //
+                                "GOTO WHILECOND_1_SEQ_0_LEVEL_0\r\n" + //
+                                "LABEL WHILENEXT_1_SEQ_0_LEVEL_0\r\n" + //
+                                "LABEL WHILEEND_1_LEVEL_0\r\n" + //
+                                "END\r\n";
+
         
         try{
             Source mySource = new ReaderSource(new FileReader(programName));

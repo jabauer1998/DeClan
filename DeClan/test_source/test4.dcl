@@ -36,7 +36,7 @@ BEGIN
   RETURN result
 END Fact;
 BEGIN
-  ReadInt(n);
+  n := ReadInt();
   FOR i := 0 TO n DO
     result := F(i);
     WriteInt(result);

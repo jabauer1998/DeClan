@@ -18,10 +18,7 @@ public class OpUtil {
     }
 
     public static Object not(Object val){
-        if(val instanceof Boolean) return !(Boolean)val;
-        else if(val instanceof Integer) return !((Integer)val != 0);
-        else if(val instanceof Double) return !((Double) val != 0);
-        else return null;
+        return !Utils.toBool(val);
     }
 
     public static Object notEqual(Object val1, Object val2){
@@ -153,8 +150,8 @@ public class OpUtil {
     }
 
     public static Object lessThan(Object val1, Object val2){
-        if(val1 instanceof Double && val2 instanceof Double) return Utils.toDouble(val1) < Utils.toDouble(val2);
-        else if(val1 instanceof Integer && val2 instanceof Integer) return Utils.toInt(val1) < Utils.toInt(val2);
+        if(val1 instanceof Double || val2 instanceof Double) return Utils.toDouble(val1) < Utils.toDouble(val2);
+        else if(val1 instanceof Integer || val2 instanceof Integer) return Utils.toInt(val1) < Utils.toInt(val2);
         else return null;
     }
 

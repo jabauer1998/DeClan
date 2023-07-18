@@ -4,6 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
 
@@ -24,7 +26,9 @@ import io.github.H20man13.DeClan.main.MyInterpreter;
 import io.github.H20man13.DeClan.main.MyStandardLibrary;
 
 public class InterpreterICodeTest {
-    private void testInterpreterWithICode(String sourceFile){
+    private static StringReader nullReader = new StringReader("");
+
+    private void testInterpreterWithICode(String sourceFile, Reader standardInInt, Reader standardInICode){
         StringWriter intOut = new StringWriter();
         StringWriter icodeOut = new StringWriter();
         StringWriter errOut = new StringWriter();
@@ -38,7 +42,7 @@ public class InterpreterICodeTest {
 
             MyStandardLibrary lib = new MyStandardLibrary(errLog);
         
-            MyInterpreter interpreter = new MyInterpreter(errLog, intOut, errOut);
+            MyInterpreter interpreter = new MyInterpreter(errLog, intOut, errOut, standardInInt);
             lib.ioLibrary().accept(interpreter);
             lib.mathLibrary().accept(interpreter);
             prog.accept(interpreter);
@@ -51,7 +55,7 @@ public class InterpreterICodeTest {
 
             List<ICode> generatedICode = iGen.getICode();
 
-            MyICodeMachine vm = new MyICodeMachine(errLog, icodeOut, errOut);
+            MyICodeMachine vm = new MyICodeMachine(errLog, icodeOut, errOut, standardInICode);
             vm.interpretICode(generatedICode);
 
             for(LogItem errItem : errLog){
@@ -65,41 +69,73 @@ public class InterpreterICodeTest {
 
     @Test
     public void testConversions(){
-        testInterpreterWithICode("test_source/conversions.dcl");
+        testInterpreterWithICode("test_source/conversions.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testExpressions(){
-        testInterpreterWithICode("test_source/expressions.dcl");
+        testInterpreterWithICode("test_source/expressions.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testIfStatementBasic(){
+        testInterpreterWithICode("test_source/IfStatementBasic.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testIfStatementAdvanced(){
+        testInterpreterWithICode("test_source/IfStatementAdvanced.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testLoops(){
-        testInterpreterWithICode("test_source/loops.dcl");
+        testInterpreterWithICode("test_source/loops.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testWhileLoopBasic(){
+        testInterpreterWithICode("test_source/WhileLoopBasic.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testWhileLoopAdvanced(){
+        testInterpreterWithICode("test_source/WhileLoopAdvanced.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testForLoopBasic(){
+        testInterpreterWithICode("test_source/ForLoopBasic.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testForLoopBasic2(){
+        testInterpreterWithICode("test_source/ForLoopBasic2.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testSample(){
-        testInterpreterWithICode("test_source/sample.dcl");
+        testInterpreterWithICode("test_source/sample.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testTest(){
-        testInterpreterWithICode("test_source/test.dcl");
+        testInterpreterWithICode("test_source/test.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testTest2(){
-        testInterpreterWithICode("test_source/test2.dcl");
+        testInterpreterWithICode("test_source/test2.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testTest3(){
-        testInterpreterWithICode("test_source/test3.dcl");
+        testInterpreterWithICode("test_source/test3.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testTest4(){
-        testInterpreterWithICode("test_source/test4.dcl");
+        StringReader intReader = new StringReader("2\n");
+        StringReader icodeReader = new StringReader("2\n");
+        testInterpreterWithICode("test_source/test4.dcl", intReader, icodeReader);
     }
 }

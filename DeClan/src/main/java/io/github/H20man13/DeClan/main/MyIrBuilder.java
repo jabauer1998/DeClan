@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import edu.depauw.declan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
@@ -21,13 +22,27 @@ public class MyIrBuilder {
     private List<ICode> output;
 
     private int forLoopNumber;
-    private int repeatLoopNumber;
+    private int forLoopLevel;
+    private Stack<Integer> forLoopNumberStack;
     
+    private int repeatLoopNumber;
+    private int repeatLoopLevel;
+    private Stack<Integer> repeatLoopNumberStack;
+    
+    private int nextIfStatementNumber;
     private int ifStatementNumber;
     private int ifStatementSeqNumber;
+    private int ifStatementLevel;
+    private Stack<Integer> ifStatementNumberStack;
+    private Stack<Integer> ifStatementSeqNumberStack;
 
+    private int nextWhileLoopNumber;
     private int whileLoopNumber;
     private int whileLoopSeqNumber;
+    private int whileLoopLevel;
+    private Stack<Integer> whileLoopNumberStack;
+    private Stack<Integer> whileLoopSeqNumberStack;
+
 
     private int beginSeqNumber;
 
@@ -45,6 +60,18 @@ public class MyIrBuilder {
         this.ifStatementSeqNumber = 0;
         this.whileLoopNumber = 0;
         this.whileLoopSeqNumber = 0;
+        this.ifStatementLevel = 0;
+        this.whileLoopLevel = 0;
+        this.forLoopLevel = 0;
+        this.repeatLoopLevel = 0;
+        this.nextIfStatementNumber = 1;
+        this.nextWhileLoopNumber = 1;
+        this.forLoopNumberStack = new Stack<Integer>();
+        this.repeatLoopNumberStack = new Stack<Integer>();
+        this.ifStatementNumberStack = new Stack<Integer>();
+        this.ifStatementSeqNumberStack = new Stack<Integer>();
+        this.whileLoopNumberStack = new Stack<Integer>();
+        this.whileLoopSeqNumberStack = new Stack<Integer>();
     }
 
     public List<ICode> getOutput(){
@@ -251,25 +278,47 @@ public class MyIrBuilder {
         return place;
     }
 
+    public void incrimentForLoopLevel(){
+        this.forLoopNumberStack.push(forLoopNumber);
+        this.forLoopNumber = 0;
+        forLoopLevel++;
+    }
+
+    public void deIncrimentForLoopLevel(){
+        this.forLoopNumber = this.forLoopNumberStack.pop();
+        forLoopLevel--;
+    }
+
     public void buildForLoopBeginning(Exp currentValue, Exp target){
-        output.add(factory.produceLabel("FORBEG_" + forLoopNumber));
+        output.add(factory.produceLabel("FORBEG_" + forLoopNumber + "_LEVEL_" + forLoopLevel));
         BinExp bExp = new BinExp(currentValue, BinExp.Operator.NE, target);
-        output.add(factory.produceIfStatement(bExp, "FORLOOP_" + forLoopNumber, "FOREND_" + forLoopNumber));
-        output.add(factory.produceLabel("FORLOOP_" + forLoopNumber));
+        output.add(factory.produceIfStatement(bExp, "FORLOOP_" + forLoopNumber + "_LEVEL_" + forLoopLevel, "FOREND_" + forLoopNumber + "_LEVEL_" + forLoopLevel));
+        output.add(factory.produceLabel("FORLOOP_" + forLoopNumber + "_LEVEL_" + forLoopLevel));
     }
 
     public void buildForLoopEnd(){
-        output.add(factory.produceGoto("FORBEG_" + forLoopNumber));
-        output.add(factory.produceLabel("FOREND_" + forLoopNumber));
+        output.add(factory.produceGoto("FORBEG_" + forLoopNumber + "_LEVEL_" + forLoopLevel));
+        output.add(factory.produceLabel("FOREND_" + forLoopNumber + "_LEVEL_" + forLoopLevel));
         forLoopNumber++;
+    }
+
+    public void incrimentRepeatLoopLevel(){
+        this.repeatLoopNumberStack.push(repeatLoopNumber);
+        repeatLoopNumber = 0;
+        repeatLoopLevel++;
+    }
+
+    public void deIncrimentRepeatLoopLevel(){
+        this.repeatLoopNumber = repeatLoopNumberStack.pop();
+        repeatLoopLevel--;
     }
 
     public void buildRepeatLoopBeginning(String exprResult){
         String exprPlace = this.buildNumAssignment("0");
         IdentExp identExp = new IdentExp(exprPlace);
-        output.add(factory.produceLabel("REPEATBEG_" + repeatLoopNumber));
-        output.add(factory.produceIfStatement(identExp, "REPEATLOOP_" + repeatLoopNumber, "REPEATEND_" + repeatLoopNumber));
-        output.add(factory.produceLabel("REPEATLOOP_" + repeatLoopNumber));
+        output.add(factory.produceLabel("REPEATBEG_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
+        output.add(factory.produceIfStatement(identExp, "REPEATLOOP_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel, "REPEATEND_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
+        output.add(factory.produceLabel("REPEATLOOP_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
     }
 
     public void buildRepeatLoopEnd(){
@@ -277,43 +326,91 @@ public class MyIrBuilder {
         repeatLoopNumber++;
     }
 
+    public void incrimentIfStatementLevel(){
+        this.ifStatementNumberStack.push(ifStatementNumber);
+        this.ifStatementSeqNumberStack.push(ifStatementSeqNumber);
+        this.ifStatementNumber = nextIfStatementNumber;
+        this.nextIfStatementNumber++;
+        this.ifStatementSeqNumber = 0;
+        ifStatementLevel++;
+    }
+
+    public void deIncrimentIfStatementLevel(){
+        this.ifStatementNumber = this.ifStatementNumberStack.pop();
+        this.ifStatementSeqNumber = this.ifStatementSeqNumberStack.pop();
+        if((this.ifStatementNumber + 2) == nextIfStatementNumber){
+            this.nextIfStatementNumber--;
+        }
+        ifStatementLevel--;
+    }
+
     public void buildIfStatementBeginning(IdentExp test){
-        output.add(factory.produceIfStatement(test, "IFSTAT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber, "IFNEXT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber));
-        output.add(factory.produceLabel("IFSTAT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber));
+        output.add(factory.produceIfStatement(test, "IFSTAT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber + "_LEVEL_" + ifStatementLevel, "IFNEXT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber + "_LEVEL_" + ifStatementLevel));
+        output.add(factory.produceLabel("IFSTAT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber + "_LEVEL_" + ifStatementLevel));
     }
 
     public void buildElseIfStatementBeginning(){
-        output.add(factory.produceGoto("IFEND_" + ifStatementNumber));
-        output.add(factory.produceLabel("IFNEXT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber));
+        output.add(factory.produceGoto("IFEND_" + ifStatementNumber + "_LEVEL_" + ifStatementLevel));
+        output.add(factory.produceLabel("IFNEXT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber + "_LEVEL_" + ifStatementLevel));
         ifStatementSeqNumber++;
     }
 
     public void buildIfStatementEnd(){
-        output.add(factory.produceGoto("IFEND_" + ifStatementNumber));
-        output.add(factory.produceLabel("IFNEXT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber));
-        output.add(factory.produceLabel("IFEND_" + ifStatementNumber));
-        ifStatementNumber++;
+        output.add(factory.produceGoto("IFEND_" + ifStatementNumber + "_LEVEL_" + ifStatementLevel));
+        output.add(factory.produceLabel("IFNEXT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber + "_LEVEL_" + ifStatementLevel));
+        output.add(factory.produceLabel("IFEND_" + ifStatementNumber + "_LEVEL_" + ifStatementLevel));
+        if(nextIfStatementNumber > ifStatementNumber+1){
+            ifStatementNumber = nextIfStatementNumber;
+            nextIfStatementNumber++;
+        } else {
+            ifStatementNumber++;
+            nextIfStatementNumber++;
+        }
         ifStatementSeqNumber = 0;
     }
 
+    public void incrimentWhileLoopLevel(){
+        this.whileLoopNumberStack.push(this.whileLoopNumber);
+        this.whileLoopSeqNumberStack.push(this.whileLoopSeqNumber);
+        this.whileLoopNumber = this.nextWhileLoopNumber;
+        this.nextWhileLoopNumber++;
+        this.whileLoopSeqNumber = 0;
+        whileLoopLevel++;
+    }
+
+    public void deIncrimentWhileLoopLevel(){
+        this.whileLoopNumber = this.whileLoopNumberStack.pop();
+        this.whileLoopSeqNumber = this.whileLoopSeqNumberStack.pop();
+        if((this.whileLoopNumber + 2) == this.whileLoopNumber){
+            this.nextWhileLoopNumber--;
+        }
+        whileLoopLevel--;
+    }
+
     public void buildWhileLoopBeginning(Exp test){
-        output.add(factory.produceIfStatement(test, "WHILESTAT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber, "WHILENEXT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber));
-        output.add(factory.produceLabel("WHILECOND_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber));
-        output.add(factory.produceIfStatement(test, "WHILESTAT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber, "WHILEEND_" + whileLoopNumber));
-        output.add(factory.produceLabel("WHILESTAT_" +  whileLoopNumber + "_SEQ_" + whileLoopSeqNumber));
+        output.add(factory.produceIfStatement(test, "WHILESTAT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel, "WHILENEXT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
+        output.add(factory.produceLabel("WHILECOND_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
+        output.add(factory.produceIfStatement(test, "WHILESTAT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel, "WHILEEND_" + whileLoopNumber + "_LEVEL_" + whileLoopLevel));
+        output.add(factory.produceLabel("WHILESTAT_" +  whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
     }
 
     public void buildElseWhileLoopBeginning(){
-        output.add(factory.produceGoto("WHILECOND_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber));
-        output.add(factory.produceLabel("WHILENEXT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber));
+        output.add(factory.produceGoto("WHILECOND_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
+        output.add(factory.produceLabel("WHILENEXT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
         whileLoopSeqNumber++;
     }
 
     public void buildWhileLoopEnd(){
-        output.add(factory.produceGoto("WHILECOND_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber));
-        output.add(factory.produceLabel("WHILENEXT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber));
-        output.add(factory.produceLabel("WHILEEND_" + whileLoopNumber));
-        whileLoopNumber++;
+        output.add(factory.produceGoto("WHILECOND_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
+        output.add(factory.produceLabel("WHILENEXT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
+        output.add(factory.produceLabel("WHILEEND_" + whileLoopNumber + "_LEVEL_" + whileLoopLevel));
+        if(nextWhileLoopNumber > whileLoopNumber+1){
+            whileLoopNumber = nextWhileLoopNumber;
+            nextWhileLoopNumber++;
+        } else {
+            whileLoopNumber++;
+            nextWhileLoopNumber++;
+        }
         whileLoopSeqNumber = 0;
     }
 

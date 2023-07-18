@@ -3,22 +3,21 @@ package io.github.H20man13.DeClan.common.symboltable.entry;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.Copyable;
-import io.github.H20man13.DeClan.main.MyTypeChecker.TypeCheckerTypes;
 
 public class ProcedureTypeEntry implements Copyable<ProcedureTypeEntry> {
-    private TypeCheckerTypes returnType;
-    private List<TypeCheckerTypes> argumentTypes;
+    private TypeCheckerQualities returnType;
+    private List<TypeCheckerQualities> argumentTypes;
     
-    public ProcedureTypeEntry(TypeCheckerTypes returnType, List<TypeCheckerTypes> argumentTypes){
+    public ProcedureTypeEntry(TypeCheckerQualities returnType, List<TypeCheckerQualities> argumentTypes){
         this.returnType = returnType;
         this.argumentTypes = argumentTypes;
     }
 
-    public TypeCheckerTypes getReturnType(){
+    public TypeCheckerQualities getReturnType(){
         return this.returnType;
     }
 
-    public List<TypeCheckerTypes> getArgumentTypes(){
+    public List<TypeCheckerQualities> getArgumentTypes(){
         return this.argumentTypes;
     }
 
@@ -33,7 +32,7 @@ public class ProcedureTypeEntry implements Copyable<ProcedureTypeEntry> {
 
         sb.append("(");
         for(int i = 0; i < argumentTypes.size(); i++){
-            TypeCheckerTypes argumentType = argumentTypes.get(i);
+            TypeCheckerQualities argumentType = argumentTypes.get(i);
             sb.append(argumentType.toString());
             if(i < argumentTypes.size() - 1){
                 sb.append(", ");

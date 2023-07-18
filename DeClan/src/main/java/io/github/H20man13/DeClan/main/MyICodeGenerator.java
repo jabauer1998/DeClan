@@ -10,11 +10,11 @@ import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
-import io.github.H20man13.DeClan.main.MyTypeChecker.TypeCheckerTypes;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.ProcedureEntry;
 import io.github.H20man13.DeClan.common.symboltable.entry.StringEntry;
 import io.github.H20man13.DeClan.common.symboltable.entry.StringEntryList;
+import io.github.H20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
 import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 
 import static io.github.H20man13.DeClan.common.IrRegisterGenerator.*;
@@ -108,6 +108,8 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
 
     builder.buildBeginGoto();
 
+    loadFunctions(lib.getProcDecls());
+
     for(Declaration decl : lib.getProcDecls()){
       decl.accept(typeChecker);
       decl.accept(this);
@@ -132,6 +134,9 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     }
 
     builder.buildBeginGoto();
+
+    loadFunctions(program.getProcDecls());
+
     for (Declaration decl : program.getProcDecls()){
       decl.accept(typeChecker);
       decl.accept(this);
@@ -183,35 +188,62 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
   }
 
+  private void loadFunctions(List<Declaration> decls){
+    for(Declaration decl : decls){
+      loadFunction((ProcedureDeclaration)decl);
+    }
+  }
+
+  public void loadFunction(ProcedureDeclaration procDecl){
+    String procedureName = procDecl.getProcedureName().getLexeme();
+    List <ParamaterDeclaration> args = procDecl.getArguments();
+    
+    StringEntryList alias = new StringEntryList();
+    for(int i = 0; i < args.size(); i++){
+	    String argAlias = builder.buildAlias();
+      alias.add(argAlias);
+    }
+
+    procArgs.addEntry(procedureName, alias);
+  
+    String returnPlace = builder.buildAlias();
+    Expression retExp = procDecl.getReturnStatement();
+    if(retExp != null){
+      procEnvironment.addEntry(procedureName, new StringEntry(returnPlace));
+    }
+  } 
+
   @Override
   public void visit(ProcedureDeclaration procDecl){
     String procedureName = procDecl.getProcedureName().getLexeme();
     builder.buildProcedureDeclaration(procedureName);
     varEnvironment.addScope();
-    
-    List <ParamaterDeclaration> args = procDecl.getArguments();
-    
-    StringEntryList alias = new StringEntryList();
-    for(int i = 0; i < args.size(); i++){
-	    String argAlias = args.get(i).acceptResult(this);
-      alias.add(argAlias);
-    }
 
-    procArgs.addEntry(procedureName, alias);
+    StringEntryList list = procArgs.getEntry(procedureName);
+    for(int i = 0; i < procDecl.getArguments().size(); i++){
+      ParamaterDeclaration decl = procDecl.getArguments().get(i);
+      String actual = decl.getIdentifier().getLexeme();
+      String alias = list.get(i);
+      varEnvironment.addEntry(actual, new StringEntry(alias));
+    }
 
     List <Declaration> localVars = procDecl.getLocalVariables();
     for(int i = 0; i < localVars.size(); i++){
 	    localVars.get(i).accept(this);
     }
+
     List <Statement> exec = procDecl.getExecutionStatements();
     for(int i = 0; i < exec.size(); i++){
 	    exec.get(i).accept(this);
     }
+
     Expression retExp = procDecl.getReturnStatement();
     if(retExp != null){
       String retPlace = retExp.acceptResult(this);
-      procEnvironment.addEntry(procedureName, new StringEntry(retPlace));
+      String returnPlace = procEnvironment.getEntry(procedureName).toString();
+      builder.buildVariableAssignment(returnPlace, retPlace);
     }
+    
     builder.buildReturnStatement();
     varEnvironment.removeScope();
   }
@@ -239,9 +271,16 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     
     IdentExp ident = new IdentExp(test);
     builder.buildWhileLoopBeginning(ident);
+
+    builder.incrimentWhileLoopLevel();
     for(int i = 0; i < toExec.size(); i++){
       toExec.get(i).accept(this);
     }
+
+    String test2 = toCheck.acceptResult(this);
+    builder.buildVariableAssignment(test, test2);
+
+    builder.deIncrimentWhileLoopLevel();
 
     if(whilebranch.getNextBranch() != null) {
       builder.buildElseWhileLoopBeginning();
@@ -258,10 +297,12 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     IdentExp ident = new IdentExp(test);
     builder.buildIfStatementBeginning(ident);
 
+    builder.incrimentIfStatementLevel();
     List<Statement> toExec = ifbranch.getExecStatements();
     for(int i = 0; i < toExec.size(); i++){
       toExec.get(i).accept(this);
     }
+    builder.deIncrimentIfStatementLevel();
 
     if(ifbranch.getNextBranch() != null) {
       builder.buildElseIfStatementBeginning();
@@ -274,9 +315,11 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
   @Override
   public void visit(ElseBranch elsebranch){
     List<Statement> toExec = elsebranch.getExecStatements();
+    builder.incrimentIfStatementLevel();
     for(int i = 0; i < toExec.size(); i++){
       toExec.get(i).accept(this);
     }
+    builder.deIncrimentIfStatementLevel();
     builder.buildIfStatementEnd();
   }
 
@@ -287,9 +330,13 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     String test = toCheck.acceptResult(this);
 
     builder.buildRepeatLoopBeginning(test);
+
+    builder.incrimentRepeatLoopLevel();
     for(int i = 0; i < toExec.size(); i++){
 	    toExec.get(i).accept(this);
     }
+    builder.deIncrimentForLoopLevel();
+
     builder.buildRepeatLoopEnd();
   }
 
@@ -298,16 +345,29 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     Expression toMod = forbranch.getModifyExpression();
     List<Statement> toExec = forbranch.getExecStatements();
     if(toMod != null){
-        String incriment = toMod.acceptResult(this);
         forbranch.getInitAssignment().accept(this);
         String target = forbranch.getTargetExpression().acceptResult(this);
         IdentExp targetIdent = new IdentExp(target);
         StringEntry curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
         IdentExp curValueIdent = new IdentExp(curvalue.toString());
         builder.buildForLoopBeginning(curValueIdent, targetIdent);
+        
+        builder.incrimentForLoopLevel();
         for(int i = 0; i < toExec.size(); i++){
             toExec.get(i).accept(this);
         }
+        builder.deIncrimentForLoopLevel();
+
+        String incriment = toMod.acceptResult(this);
+        TypeCheckerQualities qual = toMod.acceptResult(typeChecker);
+        if(qual.containsQualities(TypeCheckerQualities.REAL)){
+          String result = builder.buildRealAdditionAssignment(new IdentExp(curvalue.toString()), new IdentExp(incriment));
+          builder.buildVariableAssignment(curvalue.toString(), result);
+        } else {
+          String result = builder.buildIntegerAdditionAssignment(new IdentExp(curvalue.toString()), new IdentExp(incriment));
+          builder.buildVariableAssignment(curvalue.toString(), result);
+        }
+
         builder.buildForLoopEnd();
     } else {
       forbranch.getInitAssignment().accept(this);
@@ -316,9 +376,11 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
       StringEntry curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
       IdentExp curvalueIdent = new IdentExp(curvalue.toString());
       builder.buildForLoopBeginning(curvalueIdent, targetIdent);
+      builder.incrimentForLoopLevel();
       for(int i = 0; i < toExec.size(); i++){
           toExec.get(i).accept(this);
       }
+      builder.deIncrimentForLoopLevel();
       builder.buildForLoopEnd();
     }
   }
@@ -373,13 +435,13 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
   public String visitResult(BinaryOperation binaryOperation) {
       String leftValue = binaryOperation.getLeft().acceptResult(this);
       IdentExp leftIdent = new IdentExp(leftValue);
-      TypeCheckerTypes leftType = binaryOperation.getLeft().acceptResult(typeChecker);
+      TypeCheckerQualities leftType = binaryOperation.getLeft().acceptResult(typeChecker);
       
       String rightValue = binaryOperation.getRight().acceptResult(this);
       IdentExp rightIdent = new IdentExp(rightValue);
-      TypeCheckerTypes rightType = binaryOperation.getRight().acceptResult(typeChecker);
+      TypeCheckerQualities rightType = binaryOperation.getRight().acceptResult(typeChecker);
 
-      if(leftType == TypeCheckerTypes.REAL || rightType == TypeCheckerTypes.REAL){
+      if(leftType.containsQualities(TypeCheckerQualities.REAL) || rightType.containsQualities(TypeCheckerQualities.REAL)){
         switch (binaryOperation.getOperator()){
           case PLUS: return builder.buildRealAdditionAssignment(leftIdent, rightIdent);
           case MINUS: return builder.buildRealSubtractionAssignment(leftIdent, rightIdent);
@@ -438,9 +500,9 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
   public String visitResult(UnaryOperation unaryOperation) {
     String value = unaryOperation.getExpression().acceptResult(this);
     IdentExp valueIdent = new IdentExp(value);
-    TypeCheckerTypes rightType = unaryOperation.getExpression().acceptResult(typeChecker);
+    TypeCheckerQualities rightType = unaryOperation.getExpression().acceptResult(typeChecker);
 
-    if(rightType == TypeCheckerTypes.REAL){
+    if(rightType.containsQualities(TypeCheckerQualities.REAL)){
       switch(unaryOperation.getOperator()){
         case MINUS: return builder.buildRealNegationAssignment(valueIdent);
         case NOT: return builder.buildNotAssignment(valueIdent);
