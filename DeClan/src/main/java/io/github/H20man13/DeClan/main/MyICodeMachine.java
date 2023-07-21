@@ -106,7 +106,8 @@ public class MyICodeMachine {
                             errorAndExit("Return variable " + placement.retPlace + "was not allocated correctly", this.programCounter, instructions.size());
                         }
                     } else {
-                        //Deincriment the program counter in order to have the same icode but in the init state
+                        //Deincriment the program counter in order to have the same icode but in the init state\
+                        this.programCounter--;
                         variableValues.removeScope();
                     }
                     this.machineState = State.INIT;

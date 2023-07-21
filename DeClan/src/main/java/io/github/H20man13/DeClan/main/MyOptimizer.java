@@ -234,6 +234,7 @@ public class MyOptimizer {
             } else if(i + 1 < intermediateCode.size() && intermediateInstruction.isBranch()){
                 //First instruction following an If/Goto/Proc/Call are leaders
                 firsts.add(i + 1);
+                i++;
             }
         }
 

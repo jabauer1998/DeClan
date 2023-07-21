@@ -152,20 +152,21 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>>
     @Override
     public Set<Tuple<String, Object>> transferFunction(FlowGraphNode block, ICode instruction, Set<Tuple<String, Object>> inputSet){
         Set<Tuple<String, Object>> result = new HashSet<Tuple<String, Object>>();
-
         result.addAll(inputSet);
+
+        Set<Tuple<String, Object>> finalResult = new HashSet<Tuple<String, Object>>();
 
         for(Tuple<String, Object> killTuple : killDefinitions.get(instruction)){
             String killText = killTuple.source;
             for(Tuple<String, Object> singleResult : result){
-                if(killText.equals(singleResult.source)){
-                    result.remove(singleResult);
+                if(!killText.equals(singleResult.source)){
+                    finalResult.add(singleResult);
                 }
             }
         }
 
-        result.addAll(constDefinitions.get(instruction));
+        finalResult.addAll(constDefinitions.get(instruction));
         
-        return result;
+        return finalResult;
     }
 }

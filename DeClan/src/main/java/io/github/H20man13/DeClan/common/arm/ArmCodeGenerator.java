@@ -2,6 +2,7 @@ package io.github.H20man13.DeClan.common.arm;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,17 +38,13 @@ public class ArmCodeGenerator {
         this.label = label;
     }
 
-    public void writeToFile(FileWriter writer) throws IOException{
-        writer.append("B begin\n");
-        
+    public void writeToStream(Writer writer) throws IOException{
         for(String dataValue : dataSection){
-            writer.append((dataValue + '\n'));
+            writer.append(dataValue + '\n');
         }
 
-        writer.append("begin: ");
-
         for(String instruction : instructions){
-            writer.append((instruction) + '\n');
+            writer.append(instruction + '\n');
         }
     }
 }

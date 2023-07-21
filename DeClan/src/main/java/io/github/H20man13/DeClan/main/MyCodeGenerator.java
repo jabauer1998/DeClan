@@ -3,6 +3,7 @@ package io.github.H20man13.DeClan.main;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.concurrent.Callable;
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Position;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
+import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.LiveVariableAnalysis;
 import io.github.H20man13.DeClan.common.arm.ArmCodeGenerator;
 import io.github.H20man13.DeClan.common.pat.P;
@@ -21,6 +23,7 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Label;
+import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
@@ -50,7 +53,7 @@ public class MyCodeGenerator {
         initCodeGenFunctions();
     }
 
-    public void codeGen(File file){
+    public void codeGen(Writer writer){
         try{
             for(i = 0; i < intermediateCode.size(); i++){
                 P possibleMultiplicationAndAdditionPattern = null;
@@ -63,9 +66,11 @@ public class MyCodeGenerator {
 
                 if(possibleMultiplicationAndAdditionPattern != null){
                     if(codeGenFunctions.containsKey(possibleMultiplicationAndAdditionPattern)){
-                        codeGenFunctions.get(possibleMultiplicationAndAdditionPattern).call();
+                        Callable<Void> codeGenFunction = codeGenFunctions.get(possibleMultiplicationAndAdditionPattern);
+                        codeGenFunction.call();
                     } else if(codeGenFunctions.containsKey(defaultInstructionPattern)) {
-                        codeGenFunctions.get(defaultInstructionPattern).call();
+                        Callable<Void> codeGenFunction = codeGenFunctions.get(defaultInstructionPattern);
+                        codeGenFunction.call();
                     } else {
                         errorLog.add("Pattern \n\n" + defaultInstructionPattern.toString() + "\n\n" + "not found", new Position(i, 0));
                         break;
@@ -79,9 +84,9 @@ public class MyCodeGenerator {
                     }
                 }
             }
-            cGen.writeToFile(new FileWriter(file));
+            cGen.writeToStream(writer);
         } catch(Exception exp) {
-            errorLog.add(exp.toString(), new Position(0, 0));
+            errorLog.add(exp.toString(), new Position(i, 0));
         }
     }
 
@@ -184,6 +189,8 @@ public class MyCodeGenerator {
         initBool0();
         //Initialize Int Constant Patterns
         initInt0();
+        //Initialize Id Patterns
+        initId0();
 
         //Initialize If Statement Patterns
         initIf0();
@@ -230,6 +237,12 @@ public class MyCodeGenerator {
 
         //Init End Pattern
         initEnd0();
+
+        //Init Return Pattern
+        initReturn0();
+
+        //Init Proc Pattern
+        initProc0();
     }
 
     private void initMultiplyAndAccumulate0(){
@@ -1058,7 +1071,7 @@ public class MyCodeGenerator {
                 cGen.addVariable(temp, ".WORD " + rightInt.value);
 
                 String finalPlace = rGen.getReg(assignICode.place, assignICode);
-                cGen.addVariable(assignICode.place);
+                cGen.addVariable(".WORD " + assignICode.place);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
@@ -2685,6 +2698,22 @@ public class MyCodeGenerator {
         });
     }
 
+    private void initId0(){
+        codeGenFunctions.put(Pattern.id0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                IdentExp exp = (IdentExp)assignICode.value;
+
+                String tempReg = rGen.getReg(exp.ident, assignICode);
+                cGen.addInstruction("LDR " + tempReg + ", " + exp.ident);
+                cGen.addInstruction("STR " + tempReg + ", " + assignICode.place); 
+                return null;
+            }            
+        });
+    }
+
     public void initIf0(){
         codeGenFunctions.put(Pattern.if0, new Callable<Void>() {
             @Override
@@ -3562,6 +3591,44 @@ public class MyCodeGenerator {
             @Override
             public Void call() throws Exception {
                 cGen.addInstruction("STOP");
+                return null;
+            }
+        });
+    }
+
+    private void initReturn0(){
+        codeGenFunctions.put(Pattern.return0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode instruction = intermediateCode.get(i);
+                String register = iGen.genNextRegister();
+                String literalRegister = rGen.getReg(register, instruction);
+                cGen.addInstruction("LDR " + literalRegister + ", [R14]");
+                cGen.addInstruction("SUB R14, R14, #2");
+                return null;
+            }
+        });
+    }
+
+    private void initProc0(){
+        codeGenFunctions.put(Pattern.proc0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Proc procICode = (Proc)icode;
+                int totalLength = procICode.params.size();
+                int totalReturnStackLength = totalLength + 2;
+                cGen.addInstruction("ADD R14, R14, #" + totalReturnStackLength);
+                for(int x = 0; x < totalLength; x++){
+                    Tuple<String, String> sourceDest = procICode.params.get(x);
+                    String reg = rGen.getReg(sourceDest.source, procICode); 
+                    cGen.addInstruction("LDR " + reg + ", " + sourceDest.source);
+                    String offSetRegister = iGen.genNextRegister();
+                    String offReg = rGen.getReg(offSetRegister, procICode);
+                    cGen.addInstruction("LDR " + offReg + ", " + sourceDest.dest);
+                    cGen.addInstruction("STR " + reg +  ", [R14,-" + offReg + "]");
+                }
+                cGen.addInstruction("BL " + procICode.pname);
                 return null;
             }
         });

@@ -335,7 +335,10 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     for(int i = 0; i < toExec.size(); i++){
 	    toExec.get(i).accept(this);
     }
-    builder.deIncrimentForLoopLevel();
+    builder.deIncrimentRepeatLoopLevel();
+
+    String test2 = toCheck.acceptResult(this);
+    builder.buildVariableAssignment(test, test2);
 
     builder.buildRepeatLoopEnd();
   }

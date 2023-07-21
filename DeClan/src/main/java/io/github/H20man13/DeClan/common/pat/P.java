@@ -509,6 +509,17 @@ public abstract class P {
         }
 
         @Override
+        public int hashCode(){
+            int hashCode = 0;
+            
+            for(P pat : pattern){
+                hashCode += pat.hashCode();
+            }
+
+            return hashCode;
+        }
+
+        @Override
         public String toString(){
             StringBuilder builder = new StringBuilder();
             builder.append(" PAT");
@@ -623,7 +634,14 @@ public abstract class P {
         return new PAT(inputs);
     }
 
+    @Override
     public abstract boolean equals(Object obj);
 
+    @Override
     public abstract String toString();
+
+    @Override
+    public int hashCode(){
+        return 1;
+    }
 }

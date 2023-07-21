@@ -21,10 +21,12 @@ public class MyIrBuilder {
     private IrRegisterGenerator gen;
     private List<ICode> output;
 
+    private int nextForLoopNumber;
     private int forLoopNumber;
     private int forLoopLevel;
     private Stack<Integer> forLoopNumberStack;
     
+    private int nextRepeatLoopNumber;
     private int repeatLoopNumber;
     private int repeatLoopLevel;
     private Stack<Integer> repeatLoopNumberStack;
@@ -66,6 +68,8 @@ public class MyIrBuilder {
         this.repeatLoopLevel = 0;
         this.nextIfStatementNumber = 1;
         this.nextWhileLoopNumber = 1;
+        this.nextForLoopNumber = 1;
+        this.nextRepeatLoopNumber = 1;
         this.forLoopNumberStack = new Stack<Integer>();
         this.repeatLoopNumberStack = new Stack<Integer>();
         this.ifStatementNumberStack = new Stack<Integer>();
@@ -280,12 +284,16 @@ public class MyIrBuilder {
 
     public void incrimentForLoopLevel(){
         this.forLoopNumberStack.push(forLoopNumber);
-        this.forLoopNumber = 0;
+        this.forLoopNumber = nextForLoopNumber;
+        this.nextForLoopNumber++;
         forLoopLevel++;
     }
 
     public void deIncrimentForLoopLevel(){
         this.forLoopNumber = this.forLoopNumberStack.pop();
+        if((this.forLoopNumber + 2) == nextForLoopNumber){
+            this.nextForLoopNumber--;
+        } 
         forLoopLevel--;
     }
 
@@ -299,31 +307,47 @@ public class MyIrBuilder {
     public void buildForLoopEnd(){
         output.add(factory.produceGoto("FORBEG_" + forLoopNumber + "_LEVEL_" + forLoopLevel));
         output.add(factory.produceLabel("FOREND_" + forLoopNumber + "_LEVEL_" + forLoopLevel));
-        forLoopNumber++;
+        if(nextForLoopNumber > forLoopNumber+1){
+            forLoopNumber = nextForLoopNumber;
+            nextForLoopNumber++;
+        } else {
+            forLoopNumber++;
+            nextForLoopNumber++;
+        }
     }
 
     public void incrimentRepeatLoopLevel(){
         this.repeatLoopNumberStack.push(repeatLoopNumber);
-        repeatLoopNumber = 0;
+        this.repeatLoopNumber = nextRepeatLoopNumber;
+        this.nextRepeatLoopNumber++;
         repeatLoopLevel++;
     }
 
     public void deIncrimentRepeatLoopLevel(){
         this.repeatLoopNumber = repeatLoopNumberStack.pop();
+        if((this.repeatLoopNumber + 2) == nextRepeatLoopNumber){
+            this.nextRepeatLoopNumber--;
+        } 
         repeatLoopLevel--;
     }
 
     public void buildRepeatLoopBeginning(String exprResult){
-        String exprPlace = this.buildNumAssignment("0");
-        IdentExp identExp = new IdentExp(exprPlace);
+        IdentExp identExp = new IdentExp(exprResult);
         output.add(factory.produceLabel("REPEATBEG_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
-        output.add(factory.produceIfStatement(identExp, "REPEATLOOP_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel, "REPEATEND_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
+        output.add(factory.produceIfStatement(identExp, "REPEATEND_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel, "REPEATLOOP_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
         output.add(factory.produceLabel("REPEATLOOP_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
     }
 
     public void buildRepeatLoopEnd(){
-        output.add(factory.produceLabel("REPEATEND_" + repeatLoopNumber));
-        repeatLoopNumber++;
+        output.add(factory.produceGoto("REPEATBEG_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
+        output.add(factory.produceLabel("REPEATEND_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
+        if(nextRepeatLoopNumber > repeatLoopNumber+1){
+            repeatLoopNumber = nextRepeatLoopNumber;
+            nextRepeatLoopNumber++;
+        } else {
+            repeatLoopNumber++;
+            nextRepeatLoopNumber++;
+        }
     }
 
     public void incrimentIfStatementLevel(){

@@ -199,7 +199,7 @@ public class BlockNode implements FlowGraphNode {
                         exists.addIdentifier(assignICode.place);
                     }
                 } else if(assignICode.value instanceof IdentExp){
-                    IdentExp exp = (IdentExp)icode;
+                    IdentExp exp = (IdentExp)assignICode.value;
 
                     DagNode right = this.dag.searchForLatestChild(exp.ident.toString());
 

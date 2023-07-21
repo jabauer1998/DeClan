@@ -113,6 +113,21 @@ public class InterpreterICodeTest {
     }
 
     @Test
+    public void testForLoopBasic3(){
+        testInterpreterWithICode("test_source/ForLoopBasic3.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testForLoopAdvanced(){
+        testInterpreterWithICode("test_source/ForLoopAdvanced.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testRepeatLoopBasic(){
+        testInterpreterWithICode("test_source/RepeatLoopBasic.dcl", nullReader, nullReader);
+    }
+
+    @Test
     public void testSample(){
         testInterpreterWithICode("test_source/sample.dcl", nullReader, nullReader);
     }

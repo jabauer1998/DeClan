@@ -241,11 +241,13 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   public void visit(RepeatBranch repeatbranch){
     Expression toCheck = repeatbranch.getExpression();
     List<Statement> toExec = repeatbranch.getExecStatements();
-    do {
+    boolean result = Utils.toBool(toCheck.acceptResult(this));
+    while(!result){
       for(Integer i = 0; i < toExec.size(); i++){
 	      toExec.get(i).accept(this);
       }
-    } while (!(Boolean)toCheck.acceptResult(this)); //keep going until statement is true
+      result = Utils.toBool(toCheck.acceptResult(this));
+    }
   }
 
   @Override
