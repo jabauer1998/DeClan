@@ -7,6 +7,7 @@ import java.util.Set;
 
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.LiveVariableAnalysis;
+import io.github.H20man13.DeClan.common.arm.ArmCodeGenerator.VariableLength;
 import io.github.H20man13.DeClan.common.icode.ICode;
 
 public class ArmRegisterGenerator {
@@ -113,7 +114,7 @@ public class ArmRegisterGenerator {
             return firstAvailable;
         } else {
             String spillLabel = "spill" + spillNumber;
-            generator.addVariable(spillLabel, ".WORD 0");
+            generator.addVariable(spillLabel, VariableLength.WORD);
             generator.addInstruction("STR R0, " + spillLabel);
             spillNumber++;
             return "R0";

@@ -11,18 +11,39 @@ public class ArmCodeGenerator {
     private List<String> instructions;
     private String label;
 
+    public enum VariableLength{
+        BYTE,
+        WORD
+    }
+
     public ArmCodeGenerator(){
         this.dataSection = new LinkedList<String>();
         this.instructions = new LinkedList<String>();
         this.label = null;
     }
 
-    public void addVariable(String varName, String variableValue){
-        this.dataSection.add(varName + ": " + variableValue);
+    public void addVariable(String varName, VariableLength length, int variableValue){
+        if(length == VariableLength.BYTE){
+            this.dataSection.add(varName + ": .BYTE " + variableValue);
+        } else {
+            this.dataSection.add(varName + ": .WORD " + variableValue);
+        }
     }
 
-    public void addVariable(String variableValue){
-        this.dataSection.add(variableValue);
+    public void addVariable(VariableLength length, int variableValue){
+        if(length == VariableLength.BYTE){
+            this.dataSection.add(".BYTE " + variableValue);
+        } else {
+            this.dataSection.add(".WORD " + variableValue);
+        }
+    }
+
+    public void addVariable(String variableName, VariableLength length){
+        if(length == VariableLength.BYTE){
+            this.dataSection.add(variableName + ": .BYTE 0");
+        } else {
+            this.dataSection.add(variableName + ": .WORD 0");
+        }
     }
 
     public void addInstruction(String instr){
