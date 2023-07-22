@@ -60,6 +60,7 @@ public class ArmCodeGenerator {
     }
 
     public void writeToStream(Writer writer) throws IOException{
+        writer.append("B begin_0\n");
         for(String dataValue : dataSection){
             writer.append(dataValue + '\n');
         }
