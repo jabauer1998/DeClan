@@ -41,6 +41,7 @@ public enum IrTokenType {
     EQ,
     END,
     RETURN,
+    INLINE,
     
     //Operators
     ASSIGN,
@@ -119,6 +120,7 @@ public enum IrTokenType {
         addKeyword(EQ);
         addKeyword(END);
         addKeyword(RETURN);
+        addKeyword(INLINE);
 
         dualOperators = new HashMap<>();
         addDualOp(":=", ASSIGN);

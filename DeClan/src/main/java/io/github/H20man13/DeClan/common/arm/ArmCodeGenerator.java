@@ -56,6 +56,10 @@ public class ArmCodeGenerator {
     }
 
     public void setLabel(String label){
+        if(this.label != null){
+            addInstruction("ADD R0, R0, #0");
+            this.label = null;
+        }
         this.label = label;
     }
 

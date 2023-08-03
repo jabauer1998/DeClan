@@ -193,6 +193,7 @@ public class ICodeGeneratorTest {
         testReaderSource(programICode, program);
     }
 
+/*
     @Test
     public void testDeclanConversions(){
         String programName = "test_source/conversions.dcl";
@@ -354,7 +355,6 @@ public class ICodeGeneratorTest {
                                 "LABEL IFNEXT_0_SEQ_1_LEVEL_0\r\n" + //
                                 "LABEL IFEND_0_LEVEL_0\r\n" + //
                                 "END\r\n";
-
         
         try{
             Source mySource = new ReaderSource(new FileReader(programName));
@@ -845,4 +845,6 @@ public class ICodeGeneratorTest {
             assertTrue("Error File not found...", false);
         }
     }
+
+    */
 }

@@ -12,6 +12,7 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.Place;
 import io.github.H20man13.DeClan.common.icode.Proc;
@@ -120,9 +121,11 @@ public class MyIrParser {
     public ICode parseInstruction(){
         Position start = currentPosition;
         if(willMatch(IrTokenType.IF)){
-            return parseIfStatement();
+           return parseIfStatement();
+        } else if(willMatch(IrTokenType.INLINE)){
+           return parseInlineAssembly();   
         } else if(willMatch(IrTokenType.LABEL)){
-            return parseLabel();
+           return parseLabel();
         } else if(willMatch(IrTokenType.GOTO)){
             return parseGoto();
         } else if(willMatch(IrTokenType.PROC)){
@@ -132,6 +135,13 @@ public class MyIrParser {
         } else {
             return parseAssignment();
         }
+    }
+
+    private Inline parseInlineAssembly(){
+        match(IrTokenType.INLINE);
+        IrToken inlineAssembly = match(IrTokenType.STRING);
+        String lexeme = inlineAssembly.getLexeme();
+        return new Inline(lexeme.substring(1, lexeme.length() - 1));
     }
 
     private Exp parsePrimaryExpression(){

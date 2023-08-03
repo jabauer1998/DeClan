@@ -6,7 +6,7 @@
 
   <groupId>io.github.H20man13.DeClan</groupId>
   <artifactId>DeClan</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.3-SNAPSHOT</version>
 
   <name>${project.groupId}:${project.artifactId}</name>
   <description>The Depauw Compilers language is a language built in the Compilers class at Depauw University</description>

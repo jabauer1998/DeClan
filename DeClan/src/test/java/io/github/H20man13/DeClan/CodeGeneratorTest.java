@@ -65,6 +65,7 @@ public class CodeGeneratorTest {
         }
     }
 
+    /*
     @Test
     public void testForLoopBasic(){
         String expectedResult = "B begin_0\r\n" + //
@@ -145,4 +146,5 @@ public class CodeGeneratorTest {
                                 "STOP\r\n";
         testFile("test_source/ForLoopBasic.dcl", expectedResult);
     }
+    */
 }

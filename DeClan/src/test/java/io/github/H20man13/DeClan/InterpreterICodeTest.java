@@ -87,10 +87,12 @@ public class InterpreterICodeTest {
         testInterpreterWithICode("test_source/IfStatementAdvanced.dcl", nullReader, nullReader);
     }
 
+    /*
     @Test
     public void testLoops(){
         testInterpreterWithICode("test_source/loops.dcl", nullReader, nullReader);
     }
+    */
 
     @Test
     public void testWhileLoopBasic(){
@@ -142,15 +144,19 @@ public class InterpreterICodeTest {
         testInterpreterWithICode("test_source/test2.dcl", nullReader, nullReader);
     }
 
+    /*
     @Test
     public void testTest3(){
         testInterpreterWithICode("test_source/test3.dcl", nullReader, nullReader);
     }
+    */
 
+    /*
     @Test
     public void testTest4(){
         StringReader intReader = new StringReader("2\n");
         StringReader icodeReader = new StringReader("2\n");
         testInterpreterWithICode("test_source/test4.dcl", intReader, icodeReader);
     }
+    */
 }

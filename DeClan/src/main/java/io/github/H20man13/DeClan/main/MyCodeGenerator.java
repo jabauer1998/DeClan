@@ -24,6 +24,7 @@ import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -245,6 +246,9 @@ public class MyCodeGenerator {
 
         //Init Proc Pattern
         initProc0();
+
+        //Init Inline Assembly Pattern
+        initInline0();
     }
 
     private void initMultiplyAndAccumulate0(){
@@ -3631,6 +3635,18 @@ public class MyCodeGenerator {
                     cGen.addInstruction("STR " + reg +  ", [R14,-" + offReg + "]");
                 }
                 cGen.addInstruction("BL " + procICode.pname);
+                return null;
+            }
+        });
+    }
+
+    private void initInline0(){
+        codeGenFunctions.put(Pattern.inline0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Inline inline = (Inline)icode;
+                cGen.addInstruction(inline.inlineAssembly);
                 return null;
             }
         });

@@ -146,4 +146,5 @@ public class Pattern {
     public static P end0 = P.END();
     public static P return0 = P.RETURN();
     public static P proc0 = P.PAT(P.PROC(), P.ID());
+    public static P inline0 = P.INLINE();
 }

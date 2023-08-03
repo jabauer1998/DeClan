@@ -480,6 +480,24 @@ public abstract class P {
         }
     }
 
+    public static class INLINE extends P{
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof INLINE){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "INLINE";
+        }
+        
+    }
+
     public static class PAT extends P{
         private P[] pattern;
 
@@ -629,6 +647,9 @@ public abstract class P {
     }
     public static CALL CALL(){
         return new CALL();
+    }
+    public static INLINE INLINE(){
+        return new INLINE();
     }
     public static PAT PAT(P... inputs){
         return new PAT(inputs);
