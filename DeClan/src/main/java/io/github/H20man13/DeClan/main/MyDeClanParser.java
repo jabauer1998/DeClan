@@ -10,6 +10,7 @@ import java.util.List;
 
 import edu.depauw.declan.common.Token;
 import edu.depauw.declan.common.TokenType;
+import edu.depauw.declan.common.ast.Asm;
 import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.BinaryOperation;
 import edu.depauw.declan.common.ast.BoolValue;
@@ -389,13 +390,25 @@ public class MyDeClanParser implements Parser {
   }
     
   //ProcedureCall -> ident ActualParameters
-  private ProcedureCall parseProcedureCall(Identifier nameOfProcedure){
+  private Statement parseProcedureCall(Identifier nameOfProcedure){
     Position start = currentPosition;
-    if(willMatch(TokenType.LPAR)){
+    if(nameOfProcedure.getLexeme().equals("asm")){
+      return parseInlineAssembly();
+    } else if(willMatch(TokenType.LPAR)){
       List<Expression> expList = parseActualParameters();
       return new ProcedureCall(start, nameOfProcedure, expList);
+    } else {
+      return new ProcedureCall(start, nameOfProcedure);
     }
-    return new ProcedureCall(start, nameOfProcedure);
+  }
+
+  private Asm parseInlineAssembly(){
+    Position start = currentPosition;
+    match(TokenType.LPAR);
+    Token inlineAssembly = match(TokenType.STRING);
+    match(TokenType.RPAR);
+    String inlineLexeme = inlineAssembly.getLexeme();
+    return new Asm(start, inlineLexeme.substring(1, inlineLexeme.length() - 1));
   }
    
   //ElsifThenSequence -> ELSIF Expression THEN StatementSequence ElsifThenSequence

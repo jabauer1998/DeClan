@@ -14,6 +14,7 @@ import java.util.Map;
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Position;
 import edu.depauw.declan.common.ast.ASTVisitor;
+import edu.depauw.declan.common.ast.Asm;
 import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.BinaryOperation;
 import edu.depauw.declan.common.ast.BoolValue;
@@ -298,5 +299,11 @@ public class MyIndexer implements ASTVisitor {
 	@Override
 	public void visit(Library library) {
 		
+	}
+
+	@Override
+	public void visit(Asm asm) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'visit'");
 	}
 }

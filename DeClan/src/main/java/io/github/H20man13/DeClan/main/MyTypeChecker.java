@@ -19,6 +19,7 @@ import java.util.Map;
 
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ast.ASTVisitor;
+import edu.depauw.declan.common.ast.Asm;
 import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.BinaryOperation;
 import edu.depauw.declan.common.ast.BoolValue;
@@ -530,5 +531,9 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 			Decl.accept(this);
 			varEnvironment.removeScope();
 		}
+	}
+
+	@Override
+	public void visit(Asm asm) {
 	}
 }

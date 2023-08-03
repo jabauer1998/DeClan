@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.depauw.declan.common.ast.ASTVisitor;
+import edu.depauw.declan.common.ast.Asm;
 import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.BinaryOperation;
 import edu.depauw.declan.common.ast.BoolValue;
@@ -222,5 +223,9 @@ public class PostfixPrintVisitor implements ASTVisitor {
 
 	@Override
 	public void visit(Library library) {
+	}
+
+	@Override
+	public void visit(Asm asm) {
 	}
 }

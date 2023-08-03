@@ -8,6 +8,7 @@ import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.Place;
 import io.github.H20man13.DeClan.common.icode.Proc;
@@ -89,5 +90,9 @@ public class MyIrFactory {
 
     public Place procuceReturnPlacement(String place, String returnPlace){
         return new Place(place, returnPlace);
+    }
+
+    public Inline produceInlineAssembly(String asm){
+        return new Inline(asm);
     }
 }

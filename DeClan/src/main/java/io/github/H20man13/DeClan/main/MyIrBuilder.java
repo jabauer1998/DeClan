@@ -478,4 +478,8 @@ public class MyIrBuilder {
         String begin = "begin_" + beginSeqNumber;
         output.add(factory.produceGoto(begin));
     }
+
+    public void buildInlineAssembly(String inlineAssembly){
+        output.add(factory.produceInlineAssembly(inlineAssembly));
+    }
 }

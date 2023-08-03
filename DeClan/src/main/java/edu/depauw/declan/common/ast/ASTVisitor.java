@@ -54,4 +54,6 @@ public interface ASTVisitor {
         void visit(ParamaterDeclaration declaration);
 
         void visit(Library library);
+
+        void visit(Asm asm);
 }

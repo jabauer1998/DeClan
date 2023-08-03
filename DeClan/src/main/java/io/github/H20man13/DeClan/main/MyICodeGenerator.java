@@ -26,6 +26,7 @@ import java.util.List;
 
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ast.ASTVisitor;
+import edu.depauw.declan.common.ast.Asm;
 import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.BinaryOperation;
 import edu.depauw.declan.common.ast.BoolValue;
@@ -568,5 +569,10 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
 
   @Override
   public void visit(ParamaterDeclaration declaration) {
+  }
+
+  @Override
+  public void visit(Asm asm) {
+     builder.buildInlineAssembly(asm.getInlineAssembly());
   }
 }

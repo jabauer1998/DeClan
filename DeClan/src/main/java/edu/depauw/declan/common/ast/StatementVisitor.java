@@ -27,4 +27,6 @@ public interface StatementVisitor<R> {
         R visitResult(ElseBranch ebranch);
 
         R visitResult(RepeatBranch repeatbranch);
+
+        R visitResult(Asm asm);
 }

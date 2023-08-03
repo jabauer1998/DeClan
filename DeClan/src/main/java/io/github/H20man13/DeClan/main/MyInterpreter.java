@@ -18,6 +18,7 @@ import java.util.Scanner;
 
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ast.ASTVisitor;
+import edu.depauw.declan.common.ast.Asm;
 import edu.depauw.declan.common.ast.Assignment;
 import edu.depauw.declan.common.ast.BinaryOperation;
 import edu.depauw.declan.common.ast.BoolValue;
@@ -566,5 +567,9 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     } else {
 	      varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, 0));
     }
+  }
+
+  @Override
+  public void visit(Asm asm) {
   }
 }
