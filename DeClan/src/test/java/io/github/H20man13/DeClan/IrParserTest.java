@@ -182,4 +182,25 @@ public class IrParserTest {
 
         assertTrue(!parser.containsErrors());
     }
+
+    @Test
+    public void testInlineAssembly(){
+        String program = "IPARAM x\n"
+                       + "IPARAM z\n"
+                       + "IASM \"LDR %r, %a\"\n"
+                       + "END\n";
+
+        Source mySource = new ReaderSource(new StringReader(program));
+        ErrorLog errorLog = new ErrorLog();
+        MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
+        MyIrParser parser = new MyIrParser(lexer, errorLog);
+
+        List<ICode> programICode = parser.parseProgram();
+
+        for(LogItem item : errorLog){
+            assertTrue(item.toString(), false);
+        }
+
+        assertTrue(!parser.containsErrors());
+    }
 }

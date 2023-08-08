@@ -244,16 +244,44 @@ public class MyIrBuilder {
         return place;
     }
 
-    public String buildAndAssignment(Exp left, Exp right){
+    public String buildLogicalAndAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.BAND, right);
+        BinExp binExp = new BinExp(left, BinExp.Operator.LAND, right);
         output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
-    public String buildOrAssignment(Exp left, Exp right){
+    public String buildIntegerOrAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.BOR, right);
+        BinExp binExp = new BinExp(left, BinExp.Operator.IOR, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
+        return place;
+    }
+
+    public String buildIntegerAndAssignment(Exp left, Exp right){
+        String place = gen.genNextRegister();
+        BinExp binExp = new BinExp(left, BinExp.Operator.IAND, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
+        return place;
+    }
+
+    public String buildLogicalOrAssignment(Exp left, Exp right){
+        String place = gen.genNextRegister();
+        BinExp binExp = new BinExp(left, BinExp.Operator.LOR, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
+        return place;
+    }
+
+    public String buildLeftShiftAssignment(Exp left, Exp right){
+        String place = gen.genNextRegister();
+        BinExp binExp = new BinExp(left, BinExp.Operator.ILSHIFT, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
+        return place;
+    }
+
+    public String buildRightShiftAssignment(Exp left, Exp right){
+        String place = gen.genNextRegister();
+        BinExp binExp = new BinExp(left, BinExp.Operator.IRSHIFT, right);
         output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
@@ -479,7 +507,7 @@ public class MyIrBuilder {
         output.add(factory.produceGoto(begin));
     }
 
-    public void buildInlineAssembly(String inlineAssembly){
-        output.add(factory.produceInlineAssembly(inlineAssembly));
+    public void buildInlineAssembly(String inlineAssembly, List<String> param){
+        output.add(factory.produceInlineAssembly(inlineAssembly, param));
     }
 }

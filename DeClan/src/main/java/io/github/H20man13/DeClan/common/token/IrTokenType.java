@@ -28,8 +28,12 @@ public enum IrTokenType {
     RMUL,
     RDIV,
     RDIVIDE,
-    BOR,
-    BAND,
+    LOR,
+    LAND,
+    IAND,
+    IOR,
+    IRSHIFT,
+    ILSHIFT,
     INEG,
     RNEG,
     BNOT,
@@ -41,7 +45,8 @@ public enum IrTokenType {
     EQ,
     END,
     RETURN,
-    INLINE,
+    IASM,
+    IPARAM,
     
     //Operators
     ASSIGN,
@@ -110,8 +115,12 @@ public enum IrTokenType {
         addKeyword(RDIV);
         addKeyword(RDIVIDE);
         addKeyword(RADD);
-        addKeyword(BAND);
-        addKeyword(BOR);
+        addKeyword(LAND);
+        addKeyword(LOR);
+        addKeyword(IAND);
+        addKeyword(IOR);
+        addKeyword(ILSHIFT);
+        addKeyword(IRSHIFT);
         addKeyword(LT);
         addKeyword(GT);
         addKeyword(GE);
@@ -120,7 +129,8 @@ public enum IrTokenType {
         addKeyword(EQ);
         addKeyword(END);
         addKeyword(RETURN);
-        addKeyword(INLINE);
+        addKeyword(IASM);
+        addKeyword(IPARAM);
 
         dualOperators = new HashMap<>();
         addDualOp(":=", ASSIGN);

@@ -75,10 +75,10 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 	 * @author bhoward
 	 */
 	public enum OpType {
-	  PLUS, MINUS, TIMES, DIV, MOD, DIVIDE, OR, AND, LT, LE, GT, GE, NE, EQ
+	  PLUS, MINUS, TIMES, DIV, MOD, DIVIDE, OR, AND, LT, LE, GT, GE, NE, EQ, LSHIFT, RSHIFT, BAND, BOR
 	}
 
-        private static String opToString(OpType op){
+    private static String opToString(OpType op){
 	  if(op == OpType.PLUS){
 	    return "+";
 	  } else if (op == OpType.MINUS){
@@ -103,6 +103,14 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 	    return ">=";
 	  } else if (op == OpType.NE){
 	    return "!=";
+	  } else if (op == OpType.BAND){
+		return "BAND";
+	  } else if (op == OpType.BOR){
+		return "BOR";
+	  } else if (op == OpType.LSHIFT){
+		return "<<";
+	  } else if (op == OpType.RSHIFT){
+		return ">>";
 	  } else {
 	    return "==";
 	  }

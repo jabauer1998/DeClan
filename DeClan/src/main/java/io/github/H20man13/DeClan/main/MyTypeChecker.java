@@ -18,6 +18,7 @@ import java.lang.StringBuilder;
 import java.util.Map;
 
 import edu.depauw.declan.common.ErrorLog;
+import edu.depauw.declan.common.ErrorLog.LogItem;
 import edu.depauw.declan.common.ast.ASTVisitor;
 import edu.depauw.declan.common.ast.Asm;
 import edu.depauw.declan.common.ast.Assignment;
@@ -47,6 +48,8 @@ import edu.depauw.declan.common.ast.UnaryOperation;
 import edu.depauw.declan.common.ast.VariableDeclaration;
 import edu.depauw.declan.common.ast.WhileElifBranch;
 import edu.depauw.declan.common.ast.BinaryOperation.OpType;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -535,5 +538,18 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 
 	@Override
 	public void visit(Asm asm) {
+		List<String> actualParam = asm.getParamaters();
+		Pattern pat = Pattern.compile("%a|%r", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pat.matcher(asm.getInlineAssembly());
+		int found = 0;
+		int startIndex = 0;
+		while(matcher.find(startIndex)){
+			found++;
+			startIndex = matcher.start() + 1;
+		}
+		
+		if(actualParam.size() != found){
+			errorLog.add("Error: Expected " + found + " Inline Assembly paramaters " + " but found " + actualParam.size(), asm.getStart());
+		}
 	}
 }

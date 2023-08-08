@@ -133,6 +133,15 @@ public class MyDeClanParser implements Parser {
     }
     return token;
   }
+
+  private boolean skipIfYummy(TokenType type){
+    if(willMatch(type)){
+      skip();
+      return true;
+    } else {
+      return false;
+    }
+  }
   // Library -> DeclDequence
   public Library parseLibrary(){
     Position start = currentPosition;
@@ -356,26 +365,25 @@ public class MyDeClanParser implements Parser {
   private List<Statement> parseStatementSequence() {
     // TODO Auto-generated method stub
     List<Statement> statements = new ArrayList<>();
-    Statement s = parseStatement();
-    statements.add(s);
-    while(willMatch(TokenType.SEMI)){
-      skip();
-      s = parseStatement();
+    
+    do{
+      Statement s = parseStatement();
       statements.add(s);
-    }
+    } while(skipIfYummy(TokenType.SEMI));
+    
     return Collections.unmodifiableList(statements);
   }
   //Statement -> Assignment | ProcedureCall | IfStatement | WhileStatement | RepeatStatement | ForStatement
-  //Statement ->
+  //Statement -> 
   private Statement parseStatement(){
     Position start = currentPosition;
     Statement statement = new EmptyStatement(start);
     if(willMatch(TokenType.ID)) {
       Identifier ident = parseIdentifier();
       if(willMatch(TokenType.ASSIGN)) {
-	statement = parseAssignment(ident);
+	      statement = parseAssignment(ident);
       } else {
-	statement = parseProcedureCall(ident);
+	      statement = parseProcedureCall(ident);
       }
     } else if(willMatch(TokenType.IF)){
       statement = parseIfStatement();
@@ -406,9 +414,30 @@ public class MyDeClanParser implements Parser {
     Position start = currentPosition;
     match(TokenType.LPAR);
     Token inlineAssembly = match(TokenType.STRING);
-    match(TokenType.RPAR);
-    String inlineLexeme = inlineAssembly.getLexeme();
-    return new Asm(start, inlineLexeme.substring(1, inlineLexeme.length() - 1));
+    if(willMatch(TokenType.COLON)){
+       skip();
+       List<String> inlineArgs = parseInlineAssemblyArguments();
+       match(TokenType.RPAR);
+       return new Asm(start, null, inlineArgs);
+    } else {
+      match(TokenType.RPAR);
+      String inlineLexeme = inlineAssembly.getLexeme();
+      return new Asm(start, inlineLexeme.substring(1, inlineLexeme.length() - 1));
+    }
+  }
+
+  private List<String> parseInlineAssemblyArguments(){
+    List<String> arguments = new LinkedList<String>();
+    do{
+        String arg = parseInlineAssemblyArgument();
+        arguments.add(arg);
+    }while(skipIfYummy(TokenType.COMMA));
+    return arguments;
+  }
+
+  private String parseInlineAssemblyArgument(){
+     Token ident = match(TokenType.ID);
+     return ident.getLexeme();
   }
    
   //ElsifThenSequence -> ELSIF Expression THEN StatementSequence ElsifThenSequence
@@ -519,13 +548,12 @@ public class MyDeClanParser implements Parser {
   //ExpListRest ->
   private List<Expression> parseExpressionList(){
     List<Expression> expList = new ArrayList<Expression>();
-    Expression exp = parseExpression();
-    expList.add(exp);
-    while(willMatch(TokenType.COMMA)){
-      skip();
-      exp = parseExpression();
+    
+    do{
+      Expression exp = parseExpression();
       expList.add(exp);
-    }
+    } while(skipIfYummy(TokenType.COMMA));
+
     return Collections.unmodifiableList(expList);
   }
   //ActualParameters -> ( ExpList )
@@ -586,7 +614,9 @@ public class MyDeClanParser implements Parser {
     } else {
       left = parseTerm();
     }
-    while(willMatch(TokenType.PLUS) || willMatch(TokenType.MINUS) || willMatch(TokenType.OR)){
+    while(willMatch(TokenType.PLUS) || willMatch(TokenType.MINUS) || willMatch(TokenType.OR) 
+    || willMatch(TokenType.BAND) || willMatch(TokenType.BOR)
+    || willMatch(TokenType.LSHIFT) || willMatch(TokenType.RSHIFT)){
       BinaryOperation.OpType op = parseAddOp();
       Expression right = parseTerm();
       left = new BinaryOperation(start, left, op, right);
@@ -611,6 +641,18 @@ public class MyDeClanParser implements Parser {
     if(willMatch(TokenType.PLUS)){
       skip();
       return BinaryOperation.OpType.PLUS;
+    } else if(willMatch(TokenType.BOR)){
+      skip();
+      return BinaryOperation.OpType.BOR;
+    } else if(willMatch(TokenType.BAND)){
+      skip();
+      return BinaryOperation.OpType.BAND; 
+    } else if(willMatch(TokenType.LSHIFT)){
+      skip();
+      return BinaryOperation.OpType.LSHIFT;
+    } else if (willMatch(TokenType.RSHIFT)){
+      skip();
+      return BinaryOperation.OpType.RSHIFT;
     } else if(willMatch(TokenType.OR)){
       skip();
       return BinaryOperation.OpType.OR;

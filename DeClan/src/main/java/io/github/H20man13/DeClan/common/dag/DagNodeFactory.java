@@ -82,18 +82,46 @@ public class DagNodeFactory {
         return new DagOperationNode(nodeName, DagOperationNode.Op.IMOD, childNodes);
     }
 
-    public DagNode createAndNode(String nodeName, DagNode node1, DagNode node2){
+    public DagNode createLogicalAndNode(String nodeName, DagNode node1, DagNode node2){
         LinkedList<DagNode> childNodes = new LinkedList<>();
         childNodes.add(node1);
         childNodes.add(node2);
-        return new DagOperationNode(nodeName, DagOperationNode.Op.BAND, childNodes);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.LAND, childNodes);
     }
 
-    public DagNode createOrNode(String nodeName, DagNode node1, DagNode node2){
+    public DagNode createBitwiseAndNode(String nodeName, DagNode node1, DagNode node2){
         LinkedList<DagNode> childNodes = new LinkedList<>();
         childNodes.add(node1);
         childNodes.add(node2);
-        return new DagOperationNode(nodeName, DagOperationNode.Op.BOR, childNodes);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.IAND, childNodes);
+    }
+
+    public DagNode createLogicalOrNode(String nodeName, DagNode node1, DagNode node2){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(node1);
+        childNodes.add(node2);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.LOR, childNodes);
+    }
+
+    public DagNode createBitwiseOrNode(String nodeName, DagNode node1, DagNode node2){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(node1);
+        childNodes.add(node2);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.IOR, childNodes);
+    }
+
+    public DagNode createLeftShiftNode(String nodeName, DagNode node1, DagNode node2){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(node1);
+        childNodes.add(node2);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.ILSHIFT, childNodes);
+    }
+
+     public DagNode createRightShiftNode(String nodeName, DagNode node1, DagNode node2){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(node1);
+        childNodes.add(node2);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.IRSHIFT, childNodes);
     }
 
     public DagNode createLessThanOrEqualNode(String nodeName, DagNode node1, DagNode node2){

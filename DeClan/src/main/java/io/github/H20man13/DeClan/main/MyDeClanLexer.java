@@ -223,7 +223,31 @@ public class MyDeClanLexer implements Lexer {
 					return;
 			    }
 			case OP:
-			    if (c == '<' || c == '>' || c == ':'){
+			    if (c == '<'){
+					source.advance();
+					c = source.current(); //see if c is =
+					if(c == '=' || c == '<') {
+						lexeme.append(c);
+						nextToken = Token.create(getDualOpToken(lexeme.toString()), position);
+						source.advance();
+						return;
+					} else {
+						nextToken = Token.create(getSingleOpToken(lexeme.toString()), position);
+						return;
+					}
+                } else if(c == '>'){
+					source.advance();
+					c = source.current(); //see if c is =
+					if(c == '=' || c == '>') {
+						lexeme.append(c);
+						nextToken = Token.create(getDualOpToken(lexeme.toString()), position);
+						source.advance();
+						return;
+					} else {
+						nextToken = Token.create(getSingleOpToken(lexeme.toString()), position);
+						return;
+					}
+				} else if(c == ':'){
 					source.advance();
 					c = source.current(); //see if c is =
 					if(c == '=') {
@@ -235,7 +259,7 @@ public class MyDeClanLexer implements Lexer {
 						nextToken = Token.create(getSingleOpToken(lexeme.toString()), position);
 						return;
 					}
-                } else if(c == '(') {
+				} else if(c == '(') {
 				  source.advance();
 				  c = source.current();
 				  if(c == '*') {

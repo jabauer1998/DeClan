@@ -303,8 +303,8 @@ public class MyICodeMachine {
             case GT: return OpUtil.greaterThan(left, right);
             case LE: return OpUtil.lessThanOrEqualTo(left, right);
             case LT: return OpUtil.lessThan(left, right);
-            case BAND: return OpUtil.and(left, right);
-            case BOR: return OpUtil.or(left, right);
+            case LAND: return OpUtil.and(left, right);
+            case LOR: return OpUtil.or(left, right);
             default: return null;
         }
     }

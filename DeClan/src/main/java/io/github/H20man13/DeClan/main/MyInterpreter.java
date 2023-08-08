@@ -449,6 +449,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         case EQ: return OpUtil.equal(leftValue, rightValue);
         case GE: return OpUtil.greaterThanOrEqualTo(leftValue, rightValue);
         case LE: return OpUtil.lessThanOrEqualTo(leftValue, rightValue);
+        case BAND: return OpUtil.bitwiseAnd(leftValue, rightValue);
+        case BOR: return OpUtil.bitwiseOr(leftValue, rightValue);
+        case LSHIFT: return OpUtil.leftShift(leftValue, rightValue);
+        case RSHIFT: return OpUtil.rightShift(leftValue, rightValue);
         default: return null;
     }
   }

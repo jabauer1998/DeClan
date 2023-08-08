@@ -177,6 +177,31 @@ public class OpUtil {
         return Utils.toBool(val1) && Utils.toBool(val2);
     }
 
+    public static Object bitwiseAnd(Object val1, Object val2){
+        Integer int1 = Utils.toInt(val1);
+        Integer int2 = Utils.toInt(val2);
+
+        return int1 & int2;
+    }
+
+    public static Object bitwiseOr(Object val1, Object val2){
+        Integer int1 = Utils.toInt(val1);
+        Integer int2 = Utils.toInt(val2);
+        return int1 | int2;
+    }
+
+    public static Object leftShift(Object val1, Object val2){
+        Integer int1 = Utils.toInt(val1);
+        Integer int2 = Utils.toInt(val2);
+        return int1 << int2;
+    }
+
+    public static Object rightShift(Object val1, Object val2){
+        Integer int1 = Utils.toInt(val1);
+        Integer int2 = Utils.toInt(val2);
+        return int1 >> int2;
+    }
+
     public static Object or(Object val1, Object val2){
         return Utils.toBool(val1) || Utils.toBool(val2);
     }

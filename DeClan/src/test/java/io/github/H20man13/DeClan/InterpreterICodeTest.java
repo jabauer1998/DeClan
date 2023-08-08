@@ -87,12 +87,11 @@ public class InterpreterICodeTest {
         testInterpreterWithICode("test_source/IfStatementAdvanced.dcl", nullReader, nullReader);
     }
 
-    /*
+    
     @Test
     public void testLoops(){
         testInterpreterWithICode("test_source/loops.dcl", nullReader, nullReader);
     }
-    */
 
     @Test
     public void testWhileLoopBasic(){

@@ -40,7 +40,7 @@ public class IrLexerTest {
 
     @Test
     public void testKeywords(){
-        String keywords = "LABEL IF TRUE FALSE THEN ELSE GOTO CALL PROC IADD RADD ISUB RSUB BNOT IMUL RMUL IDIV RDIV IMOD LT GT GE LE NE EQ";
+        String keywords = "LABEL IF TRUE FALSE THEN ELSE GOTO CALL PROC IADD RADD ISUB RSUB BNOT IMUL RMUL IDIV RDIV IMOD LT GT GE LE NE EQ IASM IPARAM";
         Source source = new ReaderSource(new StringReader(keywords));
         ErrorLog errLog = new ErrorLog();
         MyIrLexer lex = new MyIrLexer(source, errLog);
@@ -71,6 +71,8 @@ public class IrLexerTest {
         tokTypes.add(IrTokenType.LE);
         tokTypes.add(IrTokenType.NE);
         tokTypes.add(IrTokenType.EQ);
+        tokTypes.add(IrTokenType.IASM);
+        tokTypes.add(IrTokenType.IPARAM);
 
         for(LogItem item : errLog){
             assertTrue(item.toString(), false);

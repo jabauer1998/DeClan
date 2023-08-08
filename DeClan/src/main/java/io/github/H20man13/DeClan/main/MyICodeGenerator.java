@@ -457,8 +457,8 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
           case LT: return builder.buildLessThanAssignment(leftIdent, rightIdent);
           case GE: return builder.buildGreaterThanOrEqualToAssignment(leftIdent, rightIdent);
           case GT: return builder.buildGreaterThanAssignment(leftIdent, rightIdent);
-          case AND: return builder.buildAndAssignment(leftIdent, rightIdent);
-          case OR: return builder.buildOrAssignment(leftIdent, rightIdent);
+          case AND: return builder.buildLogicalAndAssignment(leftIdent, rightIdent);
+          case OR: return builder.buildLogicalOrAssignment(leftIdent, rightIdent);
           case EQ: return builder.buildEqualityAssignment(leftIdent, rightIdent);
           case NE: return builder.buildInequalityAssignment(leftIdent, rightIdent);
           default: return leftValue;
@@ -475,8 +475,12 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
         case LT: return builder.buildLessThanAssignment(leftIdent, rightIdent);
         case GE: return builder.buildGreaterThanOrEqualToAssignment(leftIdent, rightIdent);
         case GT: return builder.buildGreaterThanAssignment(leftIdent, rightIdent);
-        case AND: return builder.buildAndAssignment(leftIdent, rightIdent);
-        case OR: return builder.buildOrAssignment(leftIdent, rightIdent);
+        case AND: return builder.buildLogicalAndAssignment(leftIdent, rightIdent);
+        case BAND: return builder.buildIntegerAndAssignment(leftIdent, rightIdent);
+        case BOR: return builder.buildIntegerOrAssignment(leftIdent, rightIdent);
+        case LSHIFT: return builder.buildLeftShiftAssignment(leftIdent, rightIdent);
+        case RSHIFT: return builder.buildRightShiftAssignment(leftIdent, rightIdent);
+        case OR: return builder.buildLogicalOrAssignment(leftIdent, rightIdent);
         case EQ: return builder.buildEqualityAssignment(leftIdent, rightIdent);
         case NE: return builder.buildInequalityAssignment(leftIdent, rightIdent);
         default: return leftValue;
@@ -573,6 +577,6 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
 
   @Override
   public void visit(Asm asm) {
-     builder.buildInlineAssembly(asm.getInlineAssembly());
+     builder.buildInlineAssembly(asm.getInlineAssembly(), asm.getParamaters());
   }
 }

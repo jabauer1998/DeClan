@@ -75,8 +75,12 @@ public class Utils {
             case IMUL: return BinExp.Operator.IMUL;
             case IDIV: return BinExp.Operator.IDIV;
             case IMOD: return BinExp.Operator.IMOD;
-            case BOR: return BinExp.Operator.BOR;
-            case BAND: return BinExp.Operator.BAND;
+            case LOR: return BinExp.Operator.LOR;
+            case LAND: return BinExp.Operator.LAND;
+            case IAND: return BinExp.Operator.IAND;
+            case IOR: return BinExp.Operator.IOR;
+            case IRSHIFT: return BinExp.Operator.IRSHIFT;
+            case ILSHIFT: return BinExp.Operator.ILSHIFT;
             default: return null;
         }
     }
@@ -101,8 +105,12 @@ public class Utils {
             case RMUL: return BinExp.Operator.RMUL;
             case RDIV: return BinExp.Operator.RDIV;
             case IMOD: return BinExp.Operator.IMOD;
-            case BAND: return BinExp.Operator.BAND;
-            case BOR: return BinExp.Operator.BOR;
+            case LAND: return BinExp.Operator.LAND;
+            case LOR: return BinExp.Operator.LOR;
+            case IAND: return BinExp.Operator.IAND;
+            case IOR: return BinExp.Operator.IOR;
+            case ILSHIFT: return BinExp.Operator.ILSHIFT;
+            case IRSHIFT: return BinExp.Operator.IRSHIFT;
             case EQ: return BinExp.Operator.EQ;
             case NE: return BinExp.Operator.NE;
             case GE: return BinExp.Operator.GE;
@@ -180,9 +188,13 @@ public class Utils {
             case RDIV: return factory.createRealDivNode(place, left, right);
             case IDIVIDE: return factory.createIntegerDivNode(place, left, right);
             case RDIVIDE: return factory.createRealDivisionNode(place, left, right);
-            case BAND: return factory.createAndNode(place, left, right);
+            case LAND: return factory.createLogicalAndNode(place, left, right);
+            case IAND: return factory.createBitwiseAndNode(place, left, right);
+            case IOR: return factory.createBitwiseOrNode(place, left, right);
+            case ILSHIFT: return factory.createLeftShiftNode(place, left, right);
+            case IRSHIFT: return factory.createRightShiftNode(place, left, right);
             case IMOD: return factory.createIntegerModuleNode(place, left, right);
-            case BOR: return factory.createOrNode(place, left, right);
+            case LOR: return factory.createLogicalOrNode(place, left, right);
             case GT: return factory.createGreaterThanNode(place, left, right);
             case GE: return factory.createGreaterThanOrEqualNode(place, left, right);
             case LT: return factory.createLessThanNode(place, left, right);
@@ -238,9 +250,9 @@ public class Utils {
             case ISUB: return P.ISUB();
             case IMUL: return P.IMUL();
             case IDIV: return P.IDIV();
-            case BAND: return P.BAND();
+            case LAND: return P.BAND();
             case IMOD: return P.IMOD();
-            case BOR: return P.BOR();
+            case LOR: return P.BOR();
             case GT: return P.GT();
             case GE: return P.GE();
             case LT: return P.LT();

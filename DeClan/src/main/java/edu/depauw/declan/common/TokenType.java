@@ -28,7 +28,7 @@ public enum TokenType {
 	COMMA, // comma ","
 	PERIOD, // period "."
 	// the rest are reserved words whose lexeme matches their name
-	BEGIN, BY, CONST, DIV, DO, ELSE, ELSIF, END, FALSE, FOR, IF, MOD, OR, PROCEDURE, REPEAT, RETURN, THEN, TO, TRUE, UNTIL, VAR, WHILE;
+	BEGIN, BY, CONST, DIV, DO, ELSE, ELSIF, END, FALSE, FOR, IF, MOD, OR, PROCEDURE, REPEAT, RETURN, THEN, TO, TRUE, UNTIL, VAR, WHILE, BAND, BOR, LSHIFT, RSHIFT;
 
 	public static final Map<String, TokenType> reserved; 
 	private static final Map<Character, TokenType> singleOperators; //all 1 character long operators
@@ -120,6 +120,8 @@ public enum TokenType {
 		addKeyword(UNTIL);
 		addKeyword(VAR);
 		addKeyword(WHILE);
+		addKeyword(BAND);
+		addKeyword(BOR);
 
 		singleOperators = new HashMap<>();
 		addSingleOp('<', LT);
@@ -144,5 +146,7 @@ public enum TokenType {
 		addDualOp(">=", GE);
 		addDualOp("<=", LE);
 		addDualOp(":=", ASSIGN);
+		addDualOp(">>", RSHIFT);
+		addDualOp("<<", LSHIFT);
 	}
 }

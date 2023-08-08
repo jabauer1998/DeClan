@@ -92,7 +92,7 @@ public class MyIrFactory {
         return new Place(place, returnPlace);
     }
 
-    public Inline produceInlineAssembly(String asm){
-        return new Inline(asm);
+    public Inline produceInlineAssembly(String asm, List<String> param){
+        return new Inline(asm, param);
     }
 }

@@ -107,10 +107,18 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>>
                                     break;
                                 case NE: result = OpUtil.notEqual(val1, val2);
                                     break;
-                                case BAND: result = OpUtil.and(val1, val2);
+                                case LAND: result = OpUtil.and(val1, val2);
                                     break;
-                                case BOR: result = OpUtil.or(val1, val2);
+                                case LOR: result = OpUtil.or(val1, val2);
                                     break;
+                                case IAND: result = OpUtil.bitwiseAnd(val1, val2);
+                                    break;
+                                case IOR: result = OpUtil.bitwiseOr(val1, val2);
+                                    break;
+                                case ILSHIFT: result = OpUtil.leftShift(val1, val2);
+                                    break;
+                                case IRSHIFT: result = OpUtil.rightShift(val1, val2);
+                                    break; 
                                 default:
                                     result = null;
                             }

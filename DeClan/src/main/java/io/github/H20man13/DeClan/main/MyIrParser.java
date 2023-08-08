@@ -111,7 +111,8 @@ public class MyIrParser {
         List<ICode> toRet = new LinkedList<ICode>();
         while(willMatch(IrTokenType.LABEL) || willMatch(IrTokenType.IF) 
         || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) 
-        || willMatch(IrTokenType.PROC) || willMatch(IrTokenType.RETURN)){
+        || willMatch(IrTokenType.PROC) || willMatch(IrTokenType.RETURN) 
+        || willMatch(IrTokenType.IASM) || willMatch(IrTokenType.IPARAM)){
             ICode instr = parseInstruction();
             toRet.add(instr);
         }
@@ -122,8 +123,8 @@ public class MyIrParser {
         Position start = currentPosition;
         if(willMatch(IrTokenType.IF)){
            return parseIfStatement();
-        } else if(willMatch(IrTokenType.INLINE)){
-           return parseInlineAssembly();   
+        } else if(willMatch(IrTokenType.IASM) || willMatch(IrTokenType.IPARAM)){
+           return parseInlineAssembly();
         } else if(willMatch(IrTokenType.LABEL)){
            return parseLabel();
         } else if(willMatch(IrTokenType.GOTO)){
@@ -138,10 +139,16 @@ public class MyIrParser {
     }
 
     private Inline parseInlineAssembly(){
-        match(IrTokenType.INLINE);
+        List<String> params = new LinkedList<String>();
+        while(willMatch(IrTokenType.IPARAM)){
+            skip();
+            IrToken param = match(IrTokenType.ID);
+            params.add(param.getLexeme());
+        }
+        match(IrTokenType.IASM);
         IrToken inlineAssembly = match(IrTokenType.STRING);
         String lexeme = inlineAssembly.getLexeme();
-        return new Inline(lexeme.substring(1, lexeme.length() - 1));
+        return new Inline(lexeme, params);
     }
 
     private Exp parsePrimaryExpression(){
@@ -263,9 +270,11 @@ public class MyIrParser {
             if(willMatch(IrTokenType.LT) || willMatch(IrTokenType.IADD) 
             || willMatch(IrTokenType.LE) || willMatch(IrTokenType.GT)
             || willMatch(IrTokenType.NE) || willMatch(IrTokenType.GE)
-            || willMatch(IrTokenType.BOR) || willMatch(IrTokenType.ISUB)
+            || willMatch(IrTokenType.LOR) || willMatch(IrTokenType.ISUB)
             || willMatch(IrTokenType.IMUL) || willMatch(IrTokenType.IDIV)
-            || willMatch(IrTokenType.IMOD) || willMatch(IrTokenType.BAND)
+            || willMatch(IrTokenType.IMOD) || willMatch(IrTokenType.LAND)
+            || willMatch(IrTokenType.IAND) || willMatch(IrTokenType.IOR)
+            || willMatch(IrTokenType.ILSHIFT) || willMatch(IrTokenType.IRSHIFT)
             || willMatch(IrTokenType.EQ) || willMatch(IrTokenType.RADD)
             || willMatch(IrTokenType.RSUB) || willMatch(IrTokenType.RMUL)
             || willMatch(IrTokenType.RDIV) || willMatch(IrTokenType.RDIVIDE)
