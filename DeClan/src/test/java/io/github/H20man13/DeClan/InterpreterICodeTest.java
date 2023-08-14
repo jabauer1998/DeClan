@@ -45,13 +45,23 @@ public class InterpreterICodeTest {
             MyInterpreter interpreter = new MyInterpreter(errLog, intOut, errOut, standardInInt);
             lib.ioLibrary().accept(interpreter);
             lib.mathLibrary().accept(interpreter);
+            lib.conversionsLibrary().accept(interpreter);
             prog.accept(interpreter);
+
+            for(LogItem errItem : errLog){
+                assertTrue(errItem.toString(), false);
+            }
 
             IrRegisterGenerator gen = new IrRegisterGenerator();
             MyICodeGenerator iGen = new MyICodeGenerator(errLog, gen);
             lib.ioLibrary().accept(iGen);
             lib.mathLibrary().accept(iGen);
+            lib.conversionsLibrary().accept(iGen);
             prog.accept(iGen);
+
+            for(LogItem errItem : errLog){
+                assertTrue(errItem.toString(), false);
+            }
 
             List<ICode> generatedICode = iGen.getICode();
 

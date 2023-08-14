@@ -414,15 +414,15 @@ public class MyDeClanParser implements Parser {
     Position start = currentPosition;
     match(TokenType.LPAR);
     Token inlineAssembly = match(TokenType.STRING);
+    String inlineLexeme = inlineAssembly.getLexeme();
     if(willMatch(TokenType.COLON)){
        skip();
        List<String> inlineArgs = parseInlineAssemblyArguments();
        match(TokenType.RPAR);
-       return new Asm(start, null, inlineArgs);
+       return new Asm(start, inlineLexeme, inlineArgs);
     } else {
       match(TokenType.RPAR);
-      String inlineLexeme = inlineAssembly.getLexeme();
-      return new Asm(start, inlineLexeme.substring(1, inlineLexeme.length() - 1));
+      return new Asm(start, inlineLexeme);
     }
   }
 

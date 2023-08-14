@@ -445,6 +445,16 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
       IdentExp rightIdent = new IdentExp(rightValue);
       TypeCheckerQualities rightType = binaryOperation.getRight().acceptResult(typeChecker);
 
+      if(leftType == null){
+        errorLog.add("Error: rightHand side of expression equals null value " + binaryOperation.getLeft(), binaryOperation.getLeft().getStart());
+        return "";
+      }
+
+      if(rightType == null){
+        errorLog.add("Error: leftHand side of expression equals null value " + binaryOperation.getRight(), binaryOperation.getRight().getStart());
+        return "";
+      }
+
       if(leftType.containsQualities(TypeCheckerQualities.REAL) || rightType.containsQualities(TypeCheckerQualities.REAL)){
         switch (binaryOperation.getOperator()){
           case PLUS: return builder.buildRealAdditionAssignment(leftIdent, rightIdent);
@@ -528,7 +538,12 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
   @Override
   public String visitResult(Identifier identifier){
     StringEntry place = varEnvironment.getEntry(identifier.getLexeme());
-    return place.toString();
+    if(place != null){
+      return place.toString();
+    } else {
+      errorLog.add("WHen generating ICode could not find place associated with identifier " + identifier.getLexeme(), identifier.getStart());
+      return "";
+    }
   }
 
   @Override

@@ -39,7 +39,7 @@ public class MyLexerBasicTest {
 	
 	@Test
 	public void testOperators() {
-		String input = "<<=>>=:=:()=#+-*/&~;,.";
+		String input = "<=<>=>:=:()=#+-*/&~;,.";
 		compareToModel(input);
 	}
 	

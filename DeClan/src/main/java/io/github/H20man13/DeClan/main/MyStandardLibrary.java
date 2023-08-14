@@ -53,6 +53,16 @@ public class MyStandardLibrary {
         }
     }
 
+    public Library conversionsLibrary(){
+        if(libDirFound){
+            String libSource = libDir + "/Conversions.declib";
+            return parseLibrarySource(libSource);
+        } else {
+            String libSource = "Conversions.declib";
+            return parseLibrarySource(libSource);
+        }
+    }
+
     private Library parseLibrarySource(String sourceName){
         try{
             File file = new File(sourceName);

@@ -31,4 +31,15 @@ public class MyStandardLibTest {
             assertTrue(err.toString(), false);
         }
     }
+
+    @Test
+    public void parseConversionsLib(){
+        ErrorLog errLog = new ErrorLog();
+        MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
+        Library lib = stdLib.conversionsLibrary();
+
+        for(LogItem err: errLog){
+            assertTrue(err.toString(), false);
+        }
+    }
 }

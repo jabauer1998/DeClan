@@ -8,7 +8,7 @@ public class MyLexerOptionalTest {
 	// The following test optional features
 	@Test
 	public void testHexIntegers() {
-		String input = "0H 9H 0ABCDEFH";
+		String input = "0H 9H 0ABCDEFH 0FFH";
 		compareToModel(input);
 	}
 	

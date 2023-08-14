@@ -61,14 +61,14 @@ public class MyIrLexer {
                         position = source.getPosition();
                         source.advance();
                         continue;
-                    } else if(Character.isLetter(c)){
-                        state = state.IDENT;
+                    } else if(Character.isDigit(c)){
+                        state = state.NUM;
                         lexeme.append(c);
                         position = source.getPosition();
                         source.advance();
                         continue;
-                    } else if(Character.isDigit(c)){
-                        state = state.NUM;
+                    } else if(Character.isLetter(c)){
+                        state = state.IDENT;
                         lexeme.append(c);
                         position = source.getPosition();
                         source.advance();

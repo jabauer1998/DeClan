@@ -332,7 +332,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 				||(expression.containsQualities(TypeCheckerQualities.STRING) && entry.missingQualities(TypeCheckerQualities.STRING))
 				||(entry.containsQualities(TypeCheckerQualities.STRING) && expression.missingQualities(TypeCheckerQualities.STRING))
 				||(entry.containsQualities(TypeCheckerQualities.BOOLEAN) && expression.missingQualities(TypeCheckerQualities.BOOLEAN))
-				||(expression.containsQualities(TypeCheckerQualities.BOOLEAN)&& entry.missingQualities(TypeCheckerQualities.BOOLEAN))){
+				||(expression.containsQualities(TypeCheckerQualities.BOOLEAN) && entry.missingQualities(TypeCheckerQualities.BOOLEAN))){
 					errorLog.add("Variable in Assignment " + name + " is of type " + entry + " but expression is of type " + expression, assignment.getStart());
 			}
 		} else {
@@ -409,7 +409,8 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 		default:
 			if(op == BinaryOperation.OpType.EQ || op == BinaryOperation.OpType.NE || op == BinaryOperation.OpType.LT || op == BinaryOperation.OpType.LE || op == BinaryOperation.OpType.GT || op == BinaryOperation.OpType.GE){
 				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
-			} else if(op == BinaryOperation.OpType.DIV){
+			} else if(op == BinaryOperation.OpType.DIV || op == BinaryOperation.OpType.BAND 
+			|| op == BinaryOperation.OpType.BOR || op == BinaryOperation.OpType.LSHIFT || op == BinaryOperation.OpType.RSHIFT){
 				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);	
 			} else if(op == BinaryOperation.OpType.DIVIDE){
 				return new TypeCheckerQualities(TypeCheckerQualities.REAL);	

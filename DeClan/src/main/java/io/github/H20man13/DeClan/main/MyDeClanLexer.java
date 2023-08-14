@@ -147,28 +147,28 @@ public class MyDeClanLexer implements Lexer {
 			    }
 			case EXP:
 			    if(Character.isDigit(c)){
-				lexeme.append(c);
-				source.advance();
-				continue;
+					lexeme.append(c);
+					source.advance();
+					continue;
 			    } else {
-				nextToken = Token.createNum(lexeme.toString(), position);
-				return;
+					nextToken = Token.createNum(lexeme.toString(), position);
+					return;
 			    }
 			case HEX:
 			    if(c == 'H'){
 			        lexeme.append(c);
-				nextToken = Token.createNum(lexeme.toString(), position);
-				source.advance();
-				return;
+					nextToken = Token.createNum(lexeme.toString(), position);
+					source.advance();
+					return;
 			    } else if (Character.toLowerCase(c) >= 'a' && Character.toLowerCase(c) <= 'f' || Character.isDigit(c)) {
-				lexeme.append(c);
-				source.advance();
-				continue;
+					lexeme.append(c);
+					source.advance();
+					continue;
 			    } else {
-				errorLog.add("Unterminated hex literal " + lexeme.toString(), position);
-				lexeme.setLength(0); //clear string builder buffer
-				state = State.INIT;
-				continue;
+					errorLog.add("Unterminated hex literal " + lexeme.toString(), position);
+					lexeme.setLength(0); //clear string builder buffer
+					state = State.INIT;
+					continue;
 			    }
 			case REAL:
 			    if(c == 'E') {
@@ -211,7 +211,7 @@ public class MyDeClanLexer implements Lexer {
 					lexeme.append(c);
 					source.advance();
 					continue;
-			    } else if(c <= 'F' && c >= 'A' || c == 'H'){
+			    } else if(Character.toUpperCase(c) <= 'F' && Character.toUpperCase(c) >= 'A' || c == 'H'){
 					state = State.HEX;
 					continue;
 			    } else if (Character.isDigit(c)){
