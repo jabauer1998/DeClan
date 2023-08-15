@@ -1,12 +1,12 @@
 VAR i: INTEGER;
 BEGIN
-  FOR i := 1 TO 10 DO WriteInt(i) END;
+  FOR i := 1 TO 10 BY 1 DO WriteInt(i); END;
   WriteLn();
   FOR i := 1 TO 10 BY 2 DO WriteInt(i) END;
   WriteLn();
   FOR i := 10 TO 1 BY -2 DO WriteInt(i) END;
   WriteLn();
-  FOR i := 10 TO 1 DO WriteInt(i) END;
+  FOR i := 10 TO 1 BY -1 DO WriteInt(i) END;
   WriteLn();
   
   i := 1;

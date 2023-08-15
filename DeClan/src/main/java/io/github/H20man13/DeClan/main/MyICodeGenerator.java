@@ -6,6 +6,7 @@ import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Return;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
@@ -16,10 +17,12 @@ import io.github.H20man13.DeClan.common.symboltable.entry.StringEntry;
 import io.github.H20man13.DeClan.common.symboltable.entry.StringEntryList;
 import io.github.H20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
 import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
+import io.github.H20man13.DeClan.common.util.Utils;
 
 import static io.github.H20man13.DeClan.common.IrRegisterGenerator.*;
 import static io.github.H20man13.DeClan.main.MyIO.*;
 
+import java.io.Writer;
 import java.lang.String;
 
 import java.util.List;
@@ -71,6 +74,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
   private Environment<String, StringEntryList> procArgs;
   private MyIrBuilder builder;
   private MyTypeChecker typeChecker;
+  private MyInterpreter interpreter;
 
   public MyICodeGenerator(ErrorLog errorLog){
     this(errorLog, new IrRegisterGenerator());
@@ -83,6 +87,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     this.procEnvironment = new Environment<>();
     this.procArgs = new Environment<>();
     this.typeChecker = new MyTypeChecker(errorLog);
+    this.interpreter = new MyInterpreter(errorLog, null, null, null);
   }
 
   public List<ICode> getICode(){
@@ -110,6 +115,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     builder.buildBeginGoto();
 
     loadFunctions(lib.getProcDecls());
+    typeChecker.loadFunctions(lib.getProcDecls());
 
     for(Declaration decl : lib.getProcDecls()){
       decl.accept(typeChecker);
@@ -137,6 +143,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     builder.buildBeginGoto();
 
     loadFunctions(program.getProcDecls());
+    typeChecker.loadFunctions(program.getProcDecls());
 
     for (Declaration decl : program.getProcDecls()){
       decl.accept(typeChecker);
@@ -351,10 +358,36 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     if(toMod != null){
         forbranch.getInitAssignment().accept(this);
         String target = forbranch.getTargetExpression().acceptResult(this);
+        
         IdentExp targetIdent = new IdentExp(target);
         StringEntry curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
         IdentExp curValueIdent = new IdentExp(curvalue.toString());
-        builder.buildForLoopBeginning(curValueIdent, targetIdent);
+
+        Object actualIncriment = forbranch.getModifyExpression().acceptResult(interpreter);
+
+        if(actualIncriment instanceof Integer){
+          Integer intActualIncriment = Utils.toInt(actualIncriment);
+          if(intActualIncriment < 0){
+            builder.buildForLoopBeginning(curValueIdent, BinExp.Operator.GT, targetIdent);
+          } else if(intActualIncriment > 0){
+            builder.buildForLoopBeginning(curValueIdent, BinExp.Operator.LT, targetIdent);
+          } else {
+            builder.buildForLoopBeginning(curValueIdent, BinExp.Operator.NE, targetIdent);
+          }
+        } else if(actualIncriment instanceof Double){
+          Double doubleActualIncriment = Utils.toDouble(actualIncriment);
+          if(doubleActualIncriment < 0){
+            builder.buildForLoopBeginning(curValueIdent, BinExp.Operator.GT, targetIdent);
+          } else if(doubleActualIncriment > 0){
+            builder.buildForLoopBeginning(curValueIdent, BinExp.Operator.LT, targetIdent);
+          } else {
+            builder.buildForLoopBeginning(curValueIdent, BinExp.Operator.NE, targetIdent);
+          }
+        } else {
+          builder.buildForLoopBeginning(curValueIdent, BinExp.Operator.NE, targetIdent);
+        }
+
+        
         
         builder.incrimentForLoopLevel();
         for(int i = 0; i < toExec.size(); i++){
@@ -379,7 +412,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
       IdentExp targetIdent = new IdentExp(target);
       StringEntry curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
       IdentExp curvalueIdent = new IdentExp(curvalue.toString());
-      builder.buildForLoopBeginning(curvalueIdent, targetIdent);
+      builder.buildForLoopBeginning(curvalueIdent, BinExp.Operator.NE, targetIdent);
       builder.incrimentForLoopLevel();
       for(int i = 0; i < toExec.size(); i++){
           toExec.get(i).accept(this);

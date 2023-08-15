@@ -18,6 +18,7 @@ import java.lang.StringBuilder;
 import java.util.Map;
 
 import edu.depauw.declan.common.ErrorLog;
+import edu.depauw.declan.common.Position;
 import edu.depauw.declan.common.ErrorLog.LogItem;
 import edu.depauw.declan.common.ast.ASTVisitor;
 import edu.depauw.declan.common.ast.Asm;
@@ -100,6 +101,44 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 	    return new TypeCheckerQualities(TypeCheckerQualities.NA);
 	}
     }
+
+	public void loadFunctions(List<Declaration> functions){
+		for(Declaration decl : functions){
+			loadFunction(decl);
+		}
+	}
+
+	private void loadFunction(Declaration decl){
+		if(decl instanceof ProcedureDeclaration){
+			ProcedureDeclaration procDecl = (ProcedureDeclaration)decl;
+			if(!procEnvironment.entryExists(procDecl.getProcedureName().getLexeme())){
+	    		varEnvironment.addScope();
+	    		List <ParamaterDeclaration> args = procDecl.getArguments();
+				List <TypeCheckerQualities> argTypes = new LinkedList<TypeCheckerQualities>();
+	    		for(ParamaterDeclaration argDecl : args){
+					argDecl.accept(this);
+					TypeCheckerQualities type = varEnvironment.getEntry(argDecl.getIdentifier().getLexeme());
+					argTypes.add(type);
+	    		}
+	    		List <Declaration> localVars = procDecl.getLocalVariables();
+	    		for(Declaration varDecl : localVars){
+					varDecl.accept(this);
+	    		}
+
+				Expression retExp = procDecl.getReturnStatement();
+	    		String returnType = procDecl.getReturnType().getLexeme();
+				TypeCheckerQualities myType = StringToType(returnType);
+				if(myType.containsQualities(TypeCheckerQualities.NA) && retExp != null){
+					myType = retExp.acceptResult(this);
+				} else if(myType.containsQualities(TypeCheckerQualities.VOID) || retExp == null) {
+					myType = new TypeCheckerQualities(TypeCheckerQualities.VOID);
+				}
+
+				procEnvironment.addEntry(procDecl.getProcedureName().getLexeme(), new ProcedureTypeEntry(myType, argTypes));
+				varEnvironment.removeScope();
+			}
+		}
+	}
     
     @Override
     public void visit(Program program) {
@@ -112,6 +151,8 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 		for(Declaration Decl : program.getVarDecls()){
 			Decl.accept(this);
 		}
+
+		loadFunctions(program.getProcDecls());
 
 		for(Declaration Decl : program.getProcDecls()){
 			Decl.accept(this);
@@ -157,41 +198,21 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 
     @Override
     public void visit(ProcedureDeclaration procDecl){
-	String procedureName = procDecl.getProcedureName().getLexeme();
-	if(!procEnvironment.entryExists(procedureName)){
-	    varEnvironment.addScope();
-	    List <ParamaterDeclaration> args = procDecl.getArguments();
-		List <TypeCheckerQualities> argTypes = new LinkedList<TypeCheckerQualities>();
-	    for(ParamaterDeclaration decl : args){
+		String procedureName = procDecl.getProcedureName().getLexeme();
+		varEnvironment.addScope();
+		List <ParamaterDeclaration> args = procDecl.getArguments();
+		for(ParamaterDeclaration decl : args){
 			decl.accept(this);
-			TypeCheckerQualities type = varEnvironment.getEntry(decl.getIdentifier().getLexeme());
-			argTypes.add(type);
-	    }
-	    List <Declaration> localVars = procDecl.getLocalVariables();
-	    for(Declaration decl : localVars){
-			decl.accept(this);
-	    }
-	    List <Statement> Exec = procDecl.getExecutionStatements();
-	    for(Statement exe : Exec){
-			exe.accept(this);
-	    }
-	    Expression retExp = procDecl.getReturnStatement();
-	    String returnType = procDecl.getReturnType().getLexeme();
-		TypeCheckerQualities myType = StringToType(returnType);
-		if(myType.containsQualities(TypeCheckerQualities.NA) && retExp != null){
-			myType = retExp.acceptResult(this);
-		} else if(myType.containsQualities(TypeCheckerQualities.VOID) && retExp != null){
-			TypeCheckerQualities type = retExp.acceptResult(this);
-			if(myType != type){
-				errorLog.add("Return Expression is not of type " + returnType, procDecl.getStart());
-			}
-		} else {
-			myType = new TypeCheckerQualities(TypeCheckerQualities.VOID);
 		}
-	    procEnvironment.addEntry(procedureName, new ProcedureTypeEntry(myType, argTypes));
-	} else {
-	    errorLog.add("Procedure " + procedureName + " within scope already declared", procDecl.getStart());
-	}
+		List <Declaration> localVars = procDecl.getLocalVariables();
+		for(Declaration decl : localVars){
+			decl.accept(this);
+		}
+
+		List <Statement> Exec = procDecl.getExecutionStatements();
+		for(Statement exe : Exec){
+			exe.accept(this);
+		}
     }
         
     @Override
@@ -302,8 +323,11 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 	    TypeCheckerQualities incriment = toMod.acceptResult(this);
 	    TypeCheckerQualities target = forbranch.getTargetExpression().acceptResult(this);
 	    TypeCheckerQualities curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-	    if(incriment != target || incriment != curvalue){
-		errorLog.add("Type Mismatch in head of For Loop", forbranch.getStart());
+	    if((incriment.containsQualities(TypeCheckerQualities.INTEGER) && incriment.missingQualities(TypeCheckerQualities.INTEGER)) 
+		|| (incriment.containsQualities(TypeCheckerQualities.REAL) && incriment.missingQualities(TypeCheckerQualities.REAL))
+		|| (incriment.containsQualities(TypeCheckerQualities.INTEGER) && curvalue.missingQualities(TypeCheckerQualities.INTEGER))
+		|| (incriment.containsQualities(TypeCheckerQualities.REAL) && curvalue.missingQualities(TypeCheckerQualities.REAL))){
+			errorLog.add("Type Mismatch in head of For Loop", forbranch.getStart());
 	    }
 	    for(int i = 0; i < toExec.size(); i++){
 	       toExec.get(i).accept(this);
@@ -329,11 +353,11 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 			TypeCheckerQualities expression = assignment.getVariableValue().acceptResult(this);
 			
 			if(expression.containsQualities(TypeCheckerQualities.VOID) || expression.containsQualities(TypeCheckerQualities.NA)
-				||(expression.containsQualities(TypeCheckerQualities.STRING) && entry.missingQualities(TypeCheckerQualities.STRING))
-				||(entry.containsQualities(TypeCheckerQualities.STRING) && expression.missingQualities(TypeCheckerQualities.STRING))
-				||(entry.containsQualities(TypeCheckerQualities.BOOLEAN) && expression.missingQualities(TypeCheckerQualities.BOOLEAN))
-				||(expression.containsQualities(TypeCheckerQualities.BOOLEAN) && entry.missingQualities(TypeCheckerQualities.BOOLEAN))){
-					errorLog.add("Variable in Assignment " + name + " is of type " + entry + " but expression is of type " + expression, assignment.getStart());
+			|| (expression.containsQualities(TypeCheckerQualities.STRING) && entry.missingQualities(TypeCheckerQualities.STRING))
+			|| (entry.containsQualities(TypeCheckerQualities.STRING) && expression.missingQualities(TypeCheckerQualities.STRING))
+			|| (entry.containsQualities(TypeCheckerQualities.BOOLEAN) && expression.missingQualities(TypeCheckerQualities.BOOLEAN))
+			|| (expression.containsQualities(TypeCheckerQualities.BOOLEAN) && entry.missingQualities(TypeCheckerQualities.BOOLEAN))){
+				errorLog.add("Variable in Assignment " + name + " is of type " + entry + " but expression is of type " + expression, assignment.getStart());
 			}
 		} else {
 			errorLog.add("Undeclared Variable " , assignment.getVariableName().getStart());
@@ -530,6 +554,8 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 		for(Declaration Decl : library.getVarDecls()){
 			Decl.accept(this);
 		}
+
+		loadFunctions(library.getProcDecls());
 
 		for(Declaration Decl : library.getProcDecls()){
 			Decl.accept(this);

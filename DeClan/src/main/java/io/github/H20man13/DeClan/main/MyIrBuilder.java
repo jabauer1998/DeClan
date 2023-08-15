@@ -325,9 +325,9 @@ public class MyIrBuilder {
         forLoopLevel--;
     }
 
-    public void buildForLoopBeginning(Exp currentValue, Exp target){
+    public void buildForLoopBeginning(Exp currentValue, BinExp.Operator op, Exp target){
         output.add(factory.produceLabel("FORBEG_" + forLoopNumber + "_LEVEL_" + forLoopLevel));
-        BinExp bExp = new BinExp(currentValue, BinExp.Operator.NE, target);
+        BinExp bExp = new BinExp(currentValue, op, target);
         output.add(factory.produceIfStatement(bExp, "FORLOOP_" + forLoopNumber + "_LEVEL_" + forLoopLevel, "FOREND_" + forLoopNumber + "_LEVEL_" + forLoopLevel));
         output.add(factory.produceLabel("FORLOOP_" + forLoopNumber + "_LEVEL_" + forLoopLevel));
     }
