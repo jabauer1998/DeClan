@@ -3,7 +3,7 @@ CONST a = 42;
 VAR c, d: INTEGER;
   e, f: REAL;
   g: BOOLEAN;
-PROCEDURE Foo(VAR arg1: INTEGER; arg2, arg3: REAL; VAR arg4: BOOLEAN);
+PROCEDURE Foo(VAR arg1: INTEGER; arg2, arg3: REAL);
   CONST h = a = b;
     i = 355 / 113;
   VAR j: INTEGER;
@@ -11,15 +11,15 @@ PROCEDURE Foo(VAR arg1: INTEGER; arg2, arg3: REAL; VAR arg4: BOOLEAN);
     FOR j := a TO arg1 BY -20 DO
       Bar();
     END;
-    arg4 := h & (i > 3.14159265);
+    RETURN h & (i > 3.14159265)
   END Foo;
 PROCEDURE Bar();
   VAR k: BOOLEAN;
   BEGIN
     c := c + 1;
-    IF ~g THEN g := TRUE; Foo(d, 0, 0, k) END
+    IF ~g THEN g := TRUE; k := Foo(d, 0, 0) END
   END Bar;
 BEGIN
-  Foo(c, e, a * f, g);
+  g := Foo(c, e, a * f);
   IF g THEN WriteInt(c) ELSE WriteReal(b - a) END
 END.
