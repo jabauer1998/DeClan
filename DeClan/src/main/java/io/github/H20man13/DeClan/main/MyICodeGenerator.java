@@ -625,6 +625,11 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
 
   @Override
   public void visit(Asm asm) {
-     builder.buildInlineAssembly(asm.getInlineAssembly(), asm.getParamaters());
+     List<String> icodeParams = new LinkedList<String>();
+     for(String param : asm.getParamaters()){
+       StringEntry icodeParam = varEnvironment.getEntry(param);
+       icodeParams.add(icodeParam.toString());
+     }
+     builder.buildInlineAssembly(asm.getInlineAssembly(), icodeParams);
   }
 }
