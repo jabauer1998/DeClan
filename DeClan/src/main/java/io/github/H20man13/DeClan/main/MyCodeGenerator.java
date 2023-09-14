@@ -2711,6 +2711,7 @@ public class MyCodeGenerator {
                 ICode icode = intermediateCode.get(i);
                 Assign assignICode = (Assign)icode;
                 IdentExp exp = (IdentExp)assignICode.value;
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 String tempReg = rGen.getReg(exp.ident, assignICode);
                 cGen.addInstruction("LDR " + tempReg + ", " + exp.ident);
