@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-19\bin"/>
-    <property name="sun.java.command" value="C:\Users\Owner\AppData\Local\Temp\surefire2641656081463915171\surefirebooter16890653558844886808.jar C:\Users\Owner\AppData\Local\Temp\surefire2641656081463915171 2023-09-13T19-14-04_056-jvmRun1 surefire18012564479351283485tmp surefire_02873924500592265555tmp"/>
+    <property name="sun.java.command" value="C:\Users\Owner\AppData\Local\Temp\surefire4054054274655794300\surefirebooter10408554568638288003.jar C:\Users\Owner\AppData\Local\Temp\surefire4054054274655794300 2023-09-13T19-29-25_695-jvmRun1 surefire4715108325371229837tmp surefire_04382907334726675887tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\target\test-classes;C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\target\classes;C:\Users\Owner\.m2\repository\junit\junit\4.11\junit-4.11.jar;C:\Users\Owner\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\libs\DeCLanModel-6x.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -30,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\Owner\AppData\Local\Temp\surefire2641656081463915171\surefirebooter16890653558844886808.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\Owner\AppData\Local\Temp\surefire4054054274655794300\surefirebooter10408554568638288003.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="19.0.2+7-44"/>

@@ -14,6 +14,7 @@ public class ArmRegisterGenerator {
     private Set<String> registers;
     private Set<String> availableRegisters;
     private Set<Tuple<String, String>> variablesToRegister;
+    private Set<Tuple<String, String>> variablesToTempRegisters;
     private LiveVariableAnalysis liveAnal;
     private ArmCodeGenerator generator;
     private int spillNumber;
@@ -41,11 +42,18 @@ public class ArmRegisterGenerator {
         this.liveAnal = liveAnal;
         this.spillNumber = 0;
         this.variablesToRegister = new HashSet<Tuple<String, String>>();
+        this.variablesToTempRegisters = new HashSet<Tuple<String, String>>();
     }
 
     private Set<String> getRegs(String var){
         Set<String> vars = new HashSet<String>();
         for(Tuple<String, String> tuple : variablesToRegister){
+            if(tuple.source.equals(var)){
+                vars.add(tuple.dest);
+            }
+        }
+
+        for(Tuple<String, String> tuple : variablesToTempRegisters){
             if(tuple.source.equals(var)){
                 vars.add(tuple.dest);
             }
@@ -67,12 +75,31 @@ public class ArmRegisterGenerator {
         return regs;
     }
 
+    private Set<String> removeTempRegs(String var){
+        Set<String> regs = new HashSet<String>();
+        Set<Tuple<String, String>> resultSet = new HashSet<Tuple<String, String>>();
+        for(Tuple<String, String> sourceDest : variablesToTempRegisters){
+            if(!sourceDest.source.equals(var)){
+                regs.add(sourceDest.dest);
+            } else {
+                resultSet.add(sourceDest);
+            }
+        }
+        this.variablesToTempRegisters = resultSet;
+        return regs;
+    }
+
     private boolean containsReg(String var){
-        for(Tuple<String, String> tuple : variablesToRegister){
+        Set<Tuple<String, String>> allRegs = new HashSet<Tuple<String, String>>();
+        allRegs.addAll(variablesToRegister);
+        allRegs.addAll(variablesToTempRegisters);
+
+        for(Tuple<String, String> tuple : allRegs){
             if(tuple.source.equals(var)){
                 return true;
             }
         }
+
         return false;
     }
 
@@ -81,12 +108,48 @@ public class ArmRegisterGenerator {
         this.variablesToRegister.add(tup);
     }
 
+    private void addTempReg(String var, String reg){
+        Tuple<String, String> tup = new Tuple<String, String>(var, reg);
+        this.variablesToTempRegisters.add(tup);
+    }
+
     private Set<String> getVars(){
         Set<String> var = new HashSet<String>();
         for(Tuple<String, String> varsToReg : this.variablesToRegister){
             var.add(varsToReg.source);
         }
         return var;
+    }
+
+    public String getTempReg(String place, ICode icode){
+        Set<String> vars = liveAnal.getInstructionInputSet(icode);
+        for(String key : getVars()){
+            if(!vars.contains(key)){
+                Set<String> value = removeRegs(key);
+                for(String regVal : value){
+                    availableRegisters.add(regVal);
+                }
+            }
+        }
+
+        if(containsReg(place)){
+            Set<String> regs = getRegs(place);
+            for(String reg : regs){
+                return reg;
+            }
+            return null;
+        } else if(!this.availableRegisters.isEmpty()){
+            String firstAvailable = (String)this.availableRegisters.toArray()[0];
+            this.availableRegisters.remove(firstAvailable);
+            addTempReg(place, firstAvailable);
+            return firstAvailable;
+        } else {
+            String spillLabel = "spill" + spillNumber;
+            generator.addVariable(spillLabel, VariableLength.WORD);
+            generator.addInstruction("STR R0, " + spillLabel);
+            spillNumber++;
+            return "R0";
+        }
     }
 
     public String getReg(String place, ICode icode){
@@ -119,5 +182,15 @@ public class ArmRegisterGenerator {
             spillNumber++;
             return "R0";
         }
+    }
+
+    public void freeTempRegs(){
+        Set<String> regs = new HashSet<String>();
+        for(Tuple<String, String> varToReg: variablesToTempRegisters){
+            String reg = varToReg.dest;
+            regs.add(reg);
+        }
+        variablesToTempRegisters = new HashSet<Tuple<String, String>>();
+        this.availableRegisters.addAll(regs);
     }
 }
