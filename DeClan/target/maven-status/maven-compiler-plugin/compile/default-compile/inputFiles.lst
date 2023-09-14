@@ -18,6 +18,7 @@ C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20ma
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\flow\FlowGraph.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\VariableDeclaration.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\main\MyIO.java
+C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\icode\Inline.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\ElseBranch.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\main\PostfixPrintVisitor.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\symboltable\Environment.java
@@ -52,6 +53,7 @@ C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20ma
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\IfElifBranch.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\dag\DagVariableNode.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\util\Utils.java
+C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\Asm.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\Declaration.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\UnaryOperation.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ParseException.java

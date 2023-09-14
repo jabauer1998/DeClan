@@ -118,21 +118,29 @@ public class MyOptimizer {
                 if(lastCode instanceof If){
                     If lastIf = (If)lastCode;
                     BlockNode trueNode = labeledNodes.get(lastIf.ifTrue);
-                    node.addSuccessor(trueNode);
-                    trueNode.addPredecessor(node);
+                    if(trueNode != null){
+                        node.addSuccessor(trueNode);
+                        trueNode.addPredecessor(node);
+                    }
                     BlockNode falseNode = labeledNodes.get(lastIf.ifFalse);
-                    node.addSuccessor(falseNode);
-                    falseNode.addPredecessor(node);
+                    if(falseNode != null){
+                        node.addSuccessor(falseNode);
+                        falseNode.addPredecessor(node);
+                    }
                 } else if(lastCode instanceof Goto){
                     Goto lastGoto = (Goto)lastCode;
                     BlockNode labeledNode = labeledNodes.get(lastGoto.label);
-                    node.addSuccessor(labeledNode);
-                    labeledNode.addPredecessor(node);
+                    if(labeledNode != null){
+                        node.addSuccessor(labeledNode);
+                        labeledNode.addPredecessor(node);
+                    }
                 } else if(lastCode instanceof Proc){
                     Proc lastProc = (Proc)lastCode;
                     BlockNode labeledNode = labeledNodes.get(lastProc.pname);
-                    node.addSuccessor(labeledNode);
-                    labeledNode.addPredecessor(node);
+                    if(labeledNode != null){
+                        node.addSuccessor(labeledNode);
+                        labeledNode.addPredecessor(node);
+                    }
                 }
             } else if(i + 1 < dagNodes.size()){
                 BlockNode nextNode = dagNodes.get(i + 1);

@@ -13,6 +13,7 @@ import org.junit.Test;
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.ErrorLog.LogItem;
+import edu.depauw.declan.common.ast.Library;
 import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.ReaderSource;
@@ -25,7 +26,7 @@ import io.github.H20man13.DeClan.main.MyOptimizer;
 import io.github.H20man13.DeClan.main.MyStandardLibrary;
 
 public class CodeGeneratorTest {
-    public void testFile(String fileName, String expectedResult){
+    private void testFile(String fileName, String expectedResult){
         try {
             StringWriter outputWriter = new StringWriter();
             Source mySource = new ReaderSource(new FileReader(fileName));
@@ -65,86 +66,58 @@ public class CodeGeneratorTest {
         }
     }
 
-    /*
     @Test
-    public void testForLoopBasic(){
-        String expectedResult = "B begin_0\r\n" + //
-                                "g: .WORD 1\r\n" + //
-                                "h: .WORD 0\r\n" + //
-                                "C: .WORD 1\r\n" + //
-                                "D: .WORD -1\r\n" + //
-                                "o: .WORD 1\r\n" + //
-                                "p: .WORD 0\r\n" + //
-                                "F: .WORD 1\r\n" + //
-                                "G: .WORD -1\r\n" + //
-                                "q: .WORD 1\r\n" + //
-                                "r: .WORD 0\r\n" + //
-                                "I: .WORD 1\r\n" + //
-                                "J: .WORD -1\r\n" + //
-                                "s: .WORD 1\r\n" + //
-                                "t: .WORD 0\r\n" + //
-                                "L: .WORD 1\r\n" + //
-                                "M: .WORD -1\r\n" + //
-                                "v: .WORD 1\r\n" + //
-                                "u: .WORD 1\r\n" + //
-                                "w: .WORD 10\r\n" + //
-                                "x: .WORD 1\r\n" + //
-                                "P: .WORD 1\r\n" + //
-                                "y: .WORD 0\r\n" + //
-                                "begin_0: B begin_1\r\n" + //
-                                "WriteLn: LDR R2, [R14]\r\n" + //
-                                "SUB R14, R14, #2\r\n" + //
-                                "WriteInt: LDR R3, [R14]\r\n" + //
-                                "SUB R14, R14, #2\r\n" + //
-                                "WriteReal: LDR R2, [R14]\r\n" + //
-                                "SUB R14, R14, #2\r\n" + //
-                                "ReadInt: LDR R2, D\r\n" + //
-                                "LDR R3, C\r\n" + //
-                                "MUL R3, R3, R2\r\n" + //
-                                "STR R3, h\r\n" + //
-                                "LDR R3, [R14]\r\n" + //
-                                "SUB R14, R14, #2\r\n" + //
-                                "begin_1: B begin_2\r\n" + //
-                                "Round: LDR R3, G\r\n" + //
-                                "LDR R2, F\r\n" + //
-                                "MUL R2, R2, R3\r\n" + //
-                                "STR R2, p\r\n" + //
-                                "LDR R2, [R14]\r\n" + //
-                                "SUB R14, R14, #2\r\n" + //
-                                "Floor: LDR R2, J\r\n" + //
-                                "LDR R3, I\r\n" + //
-                                "MUL R3, R3, R2\r\n" + //
-                                "STR R3, r\r\n" + //
-                                "LDR R3, [R14]\r\n" + //
-                                "SUB R14, R14, #2\r\n" + //
-                                "Ceil: LDR R3, M\r\n" + //
-                                "LDR R2, L\r\n" + //
-                                "MUL R2, R2, R3\r\n" + //
-                                "STR R2, t\r\n" + //
-                                "LDR R2, [R14]\r\n" + //
-                                "SUB R14, R14, #2\r\n" + //
-                                "begin_2: B begin_3\r\n" + //
-                                "FORBEG_0_LEVEL_0: LDR R3, u\r\n" + //
-                                "LDR R3, w\r\n" + //
-                                "TST R3, R3\r\n" + //
-                                "B NE FORLOOP_0_LEVEL_0\r\n" + //
-                                "B EQ FOREND_0_LEVEL_0\r\n" + //
-                                "FORLOOP_0_LEVEL_0: ADD R14, R14, #3\r\n" + //
-                                "LDR R3, u\r\n" + //
-                                "LDR R3, b\r\n" + //
-                                "STR R3, [R14,-R3]\r\n" + //
-                                "BL WriteInt\r\n" + //
-                                "LDR R2, u\r\n" + //
-                                "LDR R3, P\r\n" + //
-                                "ADD R2, R2, R3\r\n" + //
-                                "STR R2, y\r\n" + //
-                                "LDR R2, y\r\n" + //
-                                "STR R2, u\r\n" + //
-                                "B FORBEG_0_LEVEL_0\r\n" + //
-                                "FOREND_0_LEVEL_0: ADD R14, R14, #2\r\n" + //
-                                "BL WriteLn\r\n" + //
-                                "STOP\r\n";
-        testFile("test_source/ForLoopBasic.dcl", expectedResult);
+    public void testIoLib(){
+        String expected = "B begin_0\n" + //
+                          "h: .WORD 0\n" + //
+                          "begin_0: B begin_1\n" + //
+                          "WriteLn: SWI 4\n" + //
+                          "LDR R2, [R13]\n" + //
+                          "SUB R13, R13, #2\n" + //
+                          "MOV R15, R14\n" + //
+                          "WriteInt: LDR R0, c\n" + //
+                          "SWI 1\n" + //
+                          "LDR R3, [R13]\n" + //
+                          "SUB R13, R13, #2\n" + //
+                          "MOV R15, R14\n" + //
+                          "WriteReal: LDR R0, e\n" + //
+                          "SWI 2\n" + //
+                          "LDR R2, [R13]\n" + //
+                          "SUB R13, R13, #2\n" + //
+                          "MOV R15, R14\n" + //
+                          "ReadInt: SWI 3\n" + //
+                          "STR R0, h\n" + //
+                          "LDR R3, [R13]\n" + //
+                          "SUB R13, R13, #2\n" + //
+                          "MOV R15, R14\n" + //
+                          "STP\n";
+
+        ErrorLog errLog = new ErrorLog();
+        MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
+        Library ioLib = stdLib.ioLibrary();
+        IrRegisterGenerator gen = new IrRegisterGenerator();
+        
+        MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
+        ioLib.accept(igen);
+
+        List<ICode> icode = igen.getICode();
+
+        MyOptimizer optimizer = new MyOptimizer(icode, gen);
+        optimizer.runDataFlowAnalysis();
+        optimizer.performDeadCodeElimination();
+
+        icode = optimizer.getICode();
+
+        StringWriter writer = new StringWriter();
+        MyCodeGenerator codeGen = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), icode, gen, errLog);
+        codeGen.codeGen(writer);
+
+        for(LogItem item : errLog){
+            assertTrue(item.toString(), false);
+        }
+
+        assertTrue("Error expected...\n " + expected + " \n but found... \n " + writer.toString(), writer.toString().equals(expected));
     }
-    */
+
+    
 }

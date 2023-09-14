@@ -9,10 +9,13 @@ import java.util.Set;
 
 import javax.naming.LinkException;
 
+import org.jcp.xml.dsig.internal.DigesterOutputStream;
+
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.model.SymbolTable;
 import io.github.H20man13.DeClan.common.BasicBlock;
 import io.github.H20man13.DeClan.common.dag.DagGraph;
+import io.github.H20man13.DeClan.common.dag.DagInlineAssemblyNode;
 import io.github.H20man13.DeClan.common.dag.DagNode;
 import io.github.H20man13.DeClan.common.dag.DagNodeFactory;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
@@ -22,6 +25,7 @@ import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -131,6 +135,15 @@ public class BlockNode implements FlowGraphNode {
                 String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
                 IdentExp ident1 = new IdentExp(identifier1);
                 result.add(new Assign(identifier, ident1));
+            } else if(node instanceof DagInlineAssemblyNode){
+                DagInlineAssemblyNode dagNode = (DagInlineAssemblyNode)node;
+                List<String> children = new LinkedList<String>();
+                for(DagNode child : dagNode.getChildren()){
+                    String ident = Utils.getIdentifier(child, liveAtEndOfBlock);
+                    children.add(ident);
+                }
+                List<String> operationList = dagNode.getIdentifiers();
+                result.add(new Inline(operationList.get(0), children));
             }
 
             for(String ident : isAlive){
@@ -231,6 +244,25 @@ public class BlockNode implements FlowGraphNode {
                 } else if(assignICode.value instanceof StrExp){
                     StrExp strICode = (StrExp)assignICode.value;
                     DagNode newNode = factory.createStringNode(assignICode.place, strICode.value);
+                    this.dag.addDagNode(newNode);
+                }
+            } else if(icode instanceof Inline){
+                Inline inline = (Inline)icode;
+                LinkedList<DagNode> children = new LinkedList<DagNode>();
+                for(String param : inline.param){
+                    DagNode child = this.dag.searchForLatestChild(param);
+                    if(child == null){
+                        child = factory.createNullNode(param);
+                        this.dag.addDagNode(child);
+                    }
+
+                    children.add(child);
+                }
+
+                DagNode newNode = new DagInlineAssemblyNode(inline.inlineAssembly, children);
+                
+                DagNode exists = this.dag.getDagNode(newNode);
+                if(exists == null){
                     this.dag.addDagNode(newNode);
                 }
             }

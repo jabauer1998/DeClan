@@ -207,4 +207,12 @@ public class DagNodeFactory {
     public DagNode createVariableNode(String nodeName, DagNode child){
         return new DagVariableNode(nodeName, child);
     }
+
+    public DagNode createInlineAssemblyNode(String nodeName, DagNode... children){
+        LinkedList<DagNode> childs = new LinkedList<DagNode>();
+        for(DagNode child : children){
+            childs.add(child);
+        }
+        return new DagInlineAssemblyNode(nodeName, childs);
+    }
 }

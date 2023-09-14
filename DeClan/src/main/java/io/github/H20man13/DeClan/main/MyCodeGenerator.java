@@ -2213,8 +2213,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
-                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 return null;
             }
@@ -2247,8 +2247,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
-                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
 
                 return null;
@@ -2283,8 +2283,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
-                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 return null;
             }
@@ -2324,8 +2324,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
-                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 return null;
             }
@@ -2351,8 +2351,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV NE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #0");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
 
                 return null;
@@ -2382,8 +2382,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV NE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #0");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
 
                 return null;
@@ -2414,8 +2414,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV NE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #0");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 return null;
             }
@@ -2447,8 +2447,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV NE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #0");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 return null;
             }
@@ -2481,8 +2481,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV NE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #0");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
 
                 return null;
@@ -2517,8 +2517,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV NE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #0");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 return null;
             }
@@ -2558,8 +2558,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV NE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #0");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 return null;
             }
@@ -2639,8 +2639,8 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + reg + ", " + rightIdent.ident);
                 cGen.addInstruction("TST " + reg + ", #0");
-                cGen.addInstruction("MOV EQ " + reg + ", #1");
-                cGen.addInstruction("MOV NE " + reg + ", #0");
+                cGen.addInstruction("MOVEQ " + reg + ", #1");
+                cGen.addInstruction("MOVNE " + reg + ", #0");
                 cGen.addInstruction("STR " + reg + ", " + assignICode.place);
                 return null;
             }
@@ -2663,8 +2663,8 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + reg + ", " + rightIdent.ident);
                 cGen.addInstruction("TST " + reg + ", #0");
-                cGen.addInstruction("MOV EQ " + reg + ", #1");
-                cGen.addInstruction("MOV NE " + reg + ", #0");
+                cGen.addInstruction("MOVEQ " + reg + ", #1");
+                cGen.addInstruction("MOVNE " + reg + ", #0");
                 cGen.addInstruction("STR " + reg + ", " + assignICode.place);
                 return null;
             }
@@ -2737,8 +2737,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B LT " + ifStatement.ifTrue);
-                cGen.addInstruction("B GE " + ifStatement.ifFalse);
+                cGen.addInstruction("BLT " + ifStatement.ifTrue);
+                cGen.addInstruction("BGE " + ifStatement.ifFalse);
                 return null;
             }
         });
@@ -2763,8 +2763,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B LT " + ifStatement.ifTrue);
-                cGen.addInstruction("B GE " + ifStatement.ifFalse);
+                cGen.addInstruction("BLT " + ifStatement.ifTrue);
+                cGen.addInstruction("BGE " + ifStatement.ifFalse);
                 return null;
             }
         });
@@ -2790,8 +2790,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B LT " + ifStatement.ifTrue);
-                cGen.addInstruction("B GE " + ifStatement.ifFalse);
+                cGen.addInstruction("BLT " + ifStatement.ifTrue);
+                cGen.addInstruction("BGE " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -2820,8 +2820,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B LT " + ifStatement.ifTrue);
-                cGen.addInstruction("B GE " + ifStatement.ifFalse);
+                cGen.addInstruction("BLT " + ifStatement.ifTrue);
+                cGen.addInstruction("BGE " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -2845,8 +2845,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B GT " + ifStatement.ifTrue);
-                cGen.addInstruction("B LE " + ifStatement.ifFalse);
+                cGen.addInstruction("BGT " + ifStatement.ifTrue);
+                cGen.addInstruction("BLE " + ifStatement.ifFalse);
                 return null;
             }
         });
@@ -2871,8 +2871,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B GT " + ifStatement.ifTrue);
-                cGen.addInstruction("B LE " + ifStatement.ifFalse);
+                cGen.addInstruction("BGT " + ifStatement.ifTrue);
+                cGen.addInstruction("BLE " + ifStatement.ifFalse);
                 return null;
             }
         });
@@ -2898,8 +2898,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B GT " + ifStatement.ifTrue);
-                cGen.addInstruction("B LE " + ifStatement.ifFalse);
+                cGen.addInstruction("BGT " + ifStatement.ifTrue);
+                cGen.addInstruction("BLE " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -2928,8 +2928,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B GT " + ifStatement.ifTrue);
-                cGen.addInstruction("B LE " + ifStatement.ifFalse);
+                cGen.addInstruction("BGT " + ifStatement.ifTrue);
+                cGen.addInstruction("BLE " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -2953,8 +2953,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B LE " + ifStatement.ifTrue);
-                cGen.addInstruction("B GT " + ifStatement.ifFalse);
+                cGen.addInstruction("BLE " + ifStatement.ifTrue);
+                cGen.addInstruction("BGT " + ifStatement.ifFalse);
                 return null;
             }
         });
@@ -2979,8 +2979,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B LE " + ifStatement.ifTrue);
-                cGen.addInstruction("B GT " + ifStatement.ifFalse);
+                cGen.addInstruction("BLE " + ifStatement.ifTrue);
+                cGen.addInstruction("BGT " + ifStatement.ifFalse);
                 return null;
             }
         });
@@ -3006,8 +3006,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B LE " + ifStatement.ifTrue);
-                cGen.addInstruction("B GT " + ifStatement.ifFalse);
+                cGen.addInstruction("BLE " + ifStatement.ifTrue);
+                cGen.addInstruction("BGT " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -3036,8 +3036,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B LE " + ifStatement.ifTrue);
-                cGen.addInstruction("B GT " + ifStatement.ifFalse);
+                cGen.addInstruction("BLE " + ifStatement.ifTrue);
+                cGen.addInstruction("BGT " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -3061,8 +3061,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B GE " + ifStatement.ifTrue);
-                cGen.addInstruction("B LT " + ifStatement.ifFalse);
+                cGen.addInstruction("BGE " + ifStatement.ifTrue);
+                cGen.addInstruction("BLT " + ifStatement.ifFalse);
                 return null;
             }
         });
@@ -3087,8 +3087,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B GE " + ifStatement.ifTrue);
-                cGen.addInstruction("B LT " + ifStatement.ifFalse);
+                cGen.addInstruction("BGE " + ifStatement.ifTrue);
+                cGen.addInstruction("BLT " + ifStatement.ifFalse);
                 return null;
             }
         });
@@ -3114,8 +3114,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B GE " + ifStatement.ifTrue);
-                cGen.addInstruction("B LT " + ifStatement.ifFalse);
+                cGen.addInstruction("BGE " + ifStatement.ifTrue);
+                cGen.addInstruction("BLT " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -3144,8 +3144,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B GE " + ifStatement.ifTrue);
-                cGen.addInstruction("B LT " + ifStatement.ifFalse);
+                cGen.addInstruction("BGE " + ifStatement.ifTrue);
+                cGen.addInstruction("BLT " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -3169,8 +3169,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B EQ " + ifStatement.ifTrue);
-                cGen.addInstruction("B NE " + ifStatement.ifFalse);
+                cGen.addInstruction("BEQ " + ifStatement.ifTrue);
+                cGen.addInstruction("BNE " + ifStatement.ifFalse);
                 return null;
             }
         });
@@ -3195,8 +3195,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B EQ " + ifStatement.ifTrue);
-                cGen.addInstruction("B NE " + ifStatement.ifFalse);
+                cGen.addInstruction("BEQ " + ifStatement.ifTrue);
+                cGen.addInstruction("BNE " + ifStatement.ifFalse);
                 return null;
             }
         });
@@ -3222,8 +3222,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B EQ " + ifStatement.ifTrue);
-                cGen.addInstruction("B NE " + ifStatement.ifFalse);
+                cGen.addInstruction("BEQ " + ifStatement.ifTrue);
+                cGen.addInstruction("BNE " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -3252,8 +3252,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B EQ " + ifStatement.ifTrue);
-                cGen.addInstruction("B NE " + ifStatement.ifFalse);
+                cGen.addInstruction("BEQ " + ifStatement.ifTrue);
+                cGen.addInstruction("BNE " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -3283,8 +3283,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B EQ " + ifStatement.ifTrue);
-                cGen.addInstruction("B NE " + ifStatement.ifFalse);
+                cGen.addInstruction("BEQ " + ifStatement.ifTrue);
+                cGen.addInstruction("BNE " + ifStatement.ifFalse);
                 return null;
             }
         });
@@ -3314,8 +3314,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B EQ " + ifStatement.ifTrue);
-                cGen.addInstruction("B NE " + ifStatement.ifFalse);
+                cGen.addInstruction("BEQ " + ifStatement.ifTrue);
+                cGen.addInstruction("BNE " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -3352,8 +3352,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B EQ " + ifStatement.ifTrue);
-                cGen.addInstruction("B NE " + ifStatement.ifFalse);
+                cGen.addInstruction("BEQ " + ifStatement.ifTrue);
+                cGen.addInstruction("BNE " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -3377,8 +3377,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B NE " + ifStatement.ifTrue);
-                cGen.addInstruction("B EQ " + ifStatement.ifFalse);
+                cGen.addInstruction("BNE " + ifStatement.ifTrue);
+                cGen.addInstruction("BEQ " + ifStatement.ifFalse);
                 return null;
             }
         });
@@ -3403,8 +3403,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B NE " + ifStatement.ifTrue);
-                cGen.addInstruction("B EQ " + ifStatement.ifFalse);
+                cGen.addInstruction("BNE " + ifStatement.ifTrue);
+                cGen.addInstruction("BEQ " + ifStatement.ifFalse);
                 return null;
             }
         });
@@ -3430,8 +3430,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B NE " + ifStatement.ifTrue);
-                cGen.addInstruction("B EQ " + ifStatement.ifFalse);
+                cGen.addInstruction("BNE " + ifStatement.ifTrue);
+                cGen.addInstruction("BEQ " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -3460,8 +3460,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B NE " + ifStatement.ifTrue);
-                cGen.addInstruction("B EQ " + ifStatement.ifFalse);
+                cGen.addInstruction("BNE " + ifStatement.ifTrue);
+                cGen.addInstruction("BEQ " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -3491,8 +3491,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B NE " + ifStatement.ifTrue);
-                cGen.addInstruction("B EQ " + ifStatement.ifFalse);
+                cGen.addInstruction("BNE " + ifStatement.ifTrue);
+                cGen.addInstruction("BEQ " + ifStatement.ifFalse);
                 return null;
             }
         });
@@ -3522,8 +3522,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B NE " + ifStatement.ifTrue);
-                cGen.addInstruction("B EQ " + ifStatement.ifFalse);
+                cGen.addInstruction("BNE " + ifStatement.ifTrue);
+                cGen.addInstruction("BEQ " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -3560,8 +3560,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("B NE " + ifStatement.ifTrue);
-                cGen.addInstruction("B EQ " + ifStatement.ifFalse);
+                cGen.addInstruction("BNE " + ifStatement.ifTrue);
+                cGen.addInstruction("BEQ " + ifStatement.ifFalse);
 
                 return null;
             }
@@ -3596,7 +3596,7 @@ public class MyCodeGenerator {
         codeGenFunctions.put(Pattern.end0, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-                cGen.addInstruction("STOP");
+                cGen.addInstruction("STP");
                 return null;
             }
         });
@@ -3609,8 +3609,9 @@ public class MyCodeGenerator {
                 ICode instruction = intermediateCode.get(i);
                 String register = iGen.genNextRegister();
                 String literalRegister = rGen.getReg(register, instruction);
-                cGen.addInstruction("LDR " + literalRegister + ", [R14]");
-                cGen.addInstruction("SUB R14, R14, #2");
+                cGen.addInstruction("LDR " + literalRegister + ", [R13]");
+                cGen.addInstruction("SUB R13, R13, #2");
+                cGen.addInstruction("MOV R15, R14");
                 return null;
             }
         });
@@ -3623,8 +3624,18 @@ public class MyCodeGenerator {
                 ICode icode = intermediateCode.get(i);
                 Proc procICode = (Proc)icode;
                 int totalLength = procICode.params.size();
-                int totalReturnStackLength = totalLength + 2;
-                cGen.addInstruction("ADD R14, R14, #" + totalReturnStackLength);
+                int totalReturnStackLength = totalLength;
+
+                //Add the Return Address to the Stack
+                cGen.addInstruction("ADD R13, R13, #4");
+                cGen.addInstruction("STR R14, [R13, #-4]");
+                //The First thing we need to do is allocate all the code we can for the Paramaters
+                int offset = 0;
+                for(Tuple<String, String> param: procICode.params){
+                    cGen.addVariable(param.dest, VariableLength.WORD, offset);
+                    offset = offset + 4;
+                }
+                cGen.addInstruction("ADD R13, R13, #" + (4 * totalReturnStackLength));
                 for(int x = 0; x < totalLength; x++){
                     Tuple<String, String> sourceDest = procICode.params.get(x);
                     String reg = rGen.getReg(sourceDest.source, procICode); 
@@ -3632,7 +3643,7 @@ public class MyCodeGenerator {
                     String offSetRegister = iGen.genNextRegister();
                     String offReg = rGen.getReg(offSetRegister, procICode);
                     cGen.addInstruction("LDR " + offReg + ", " + sourceDest.dest);
-                    cGen.addInstruction("STR " + reg +  ", [R14,-" + offReg + "]");
+                    cGen.addInstruction("STR " + reg +  ", [R13,-" + offReg + "]");
                 }
                 cGen.addInstruction("BL " + procICode.pname);
                 return null;
@@ -3646,7 +3657,49 @@ public class MyCodeGenerator {
             public Void call() throws Exception {
                 ICode icode = intermediateCode.get(i);
                 Inline inline = (Inline)icode;
-                cGen.addInstruction(inline.inlineAssembly);
+
+                String instruction = inline.inlineAssembly;
+
+                StringBuilder resultInstruction = new StringBuilder();
+                int index = 0;
+                int paramIndex = 0;
+                List<String> params = inline.param;
+                while(index < instruction.length()){
+                    char letterAtFirstIndex = instruction.charAt(index);
+                    if(letterAtFirstIndex == '%'){
+                        index++;
+                        if(index >= instruction.length()){
+                            break;
+                        }
+                        char formatSpecifierLetter = instruction.charAt(index);
+                        if(formatSpecifierLetter == 'A' || formatSpecifierLetter == 'a'){
+                            if(paramIndex < params.size()){
+                                String addressParam = params.get(paramIndex);
+                                resultInstruction.append(addressParam);
+                                paramIndex++;
+                            } else {
+                                errorLog.add("No paramater to substite %a found at " + paramIndex, new Position(i, index));
+                            }
+                        } else if(formatSpecifierLetter == 'R' || formatSpecifierLetter == 'r'){
+                            if(paramIndex < params.size()){
+                                String addresParam = params.get(paramIndex);
+                                String regParam = rGen.getReg(addresParam, icode);
+                                resultInstruction.append(regParam);
+                                paramIndex++;
+                            } else {
+                                errorLog.add("No paramater to substite %r found at " + paramIndex, new Position(i, index));
+                            }
+                        } else {
+                            errorLog.add("Invalid adress or paramater specifier found expected %r or %a", new Position(i, index));
+                        }
+                    } else {
+                        resultInstruction.append(letterAtFirstIndex);
+                    }
+
+                    index++;
+                }
+
+                cGen.addInstruction(resultInstruction.toString());
                 return null;
             }
         });

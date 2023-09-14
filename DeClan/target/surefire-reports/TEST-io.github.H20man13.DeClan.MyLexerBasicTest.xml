@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="io.github.H20man13.DeClan.MyLexerBasicTest" time="0.006" tests="9" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="io.github.H20man13.DeClan.MyLexerBasicTest" time="0" tests="9" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="19"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-19\bin"/>
-    <property name="sun.java.command" value="C:\Users\Owner\AppData\Local\Temp\surefire14319560670637503531\surefirebooter2807179360949919983.jar C:\Users\Owner\AppData\Local\Temp\surefire14319560670637503531 2023-08-02T18-27-25_691-jvmRun1 surefire18068224480327276053tmp surefire_09580861047776602121tmp"/>
+    <property name="sun.java.command" value="C:\Users\Owner\AppData\Local\Temp\surefire18342446225847338377\surefirebooter12437128058547218318.jar C:\Users\Owner\AppData\Local\Temp\surefire18342446225847338377 2023-08-16T19-38-01_985-jvmRun1 surefire3347292474248443162tmp surefire_012779036421672281868tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\target\test-classes;C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\target\classes;C:\Users\Owner\.m2\repository\junit\junit\4.11\junit-4.11.jar;C:\Users\Owner\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\libs\DeCLanModel-6x.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -30,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\Owner\AppData\Local\Temp\surefire14319560670637503531\surefirebooter2807179360949919983.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\Owner\AppData\Local\Temp\surefire18342446225847338377\surefirebooter12437128058547218318.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="19.0.2+7-44"/>
@@ -58,12 +58,12 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="63.0"/>
   </properties>
-  <testcase name="testErrorRecovery2" classname="io.github.H20man13.DeClan.MyLexerBasicTest" time="0.002"/>
+  <testcase name="testErrorRecovery2" classname="io.github.H20man13.DeClan.MyLexerBasicTest" time="0"/>
   <testcase name="testOperators" classname="io.github.H20man13.DeClan.MyLexerBasicTest" time="0"/>
   <testcase name="testCombinations" classname="io.github.H20man13.DeClan.MyLexerBasicTest" time="0"/>
   <testcase name="testComments" classname="io.github.H20man13.DeClan.MyLexerBasicTest" time="0"/>
   <testcase name="testErrorRecovery" classname="io.github.H20man13.DeClan.MyLexerBasicTest" time="0"/>
-  <testcase name="testIdentifiers" classname="io.github.H20man13.DeClan.MyLexerBasicTest" time="0.001"/>
+  <testcase name="testIdentifiers" classname="io.github.H20man13.DeClan.MyLexerBasicTest" time="0"/>
   <testcase name="testIntegers" classname="io.github.H20man13.DeClan.MyLexerBasicTest" time="0"/>
   <testcase name="testReservedWords" classname="io.github.H20man13.DeClan.MyLexerBasicTest" time="0"/>
   <testcase name="testStrings" classname="io.github.H20man13.DeClan.MyLexerBasicTest" time="0"/>
