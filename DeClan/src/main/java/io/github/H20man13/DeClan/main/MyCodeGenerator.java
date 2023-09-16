@@ -270,38 +270,38 @@ public class MyCodeGenerator {
                 IdentExp ident2Left = (IdentExp)exp2.left;
                 IdentExp ident2Right = (IdentExp)exp2.right;
 
-                String place1Left = rGen.getTempReg(ident1Left.ident, icode1);
-                String place1Right = rGen.getTempReg(ident1Right.ident, icode1);
+                String place1Left = rGen.getReg(ident1Left.ident, icode1);
+                String place1Right = rGen.getReg(ident1Right.ident, icode1);
 
                 cGen.addInstruction("LDR " + place1Left + ", " + ident1Left.ident);
                 cGen.addInstruction("LDR " + place1Right +  ", " + ident1Right.ident);
 
                 if(ass1.place.equals(ident2Left.ident) || ass1.place.equals(ident2Right.ident)){
-                    String finalPlace = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
 
                     if(ass1.place.equals(ident2Left.ident)){
-                        String place2Right = rGen.getTempReg(ident2Right.ident, icode2);
+                        String place2Right = rGen.getReg(ident2Right.ident, icode2);
                         cGen.addInstruction("LDR " + place2Right + ", " + ident2Right.ident);
                         cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Right);
                         cGen.addVariable(ass2.place, VariableLength.WORD);
                         cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                     } else {
-                         String place2Left = rGen.getTempReg(ident2Left.ident, icode2);
+                         String place2Left = rGen.getReg(ident2Left.ident, icode2);
                          cGen.addInstruction("LDR " + place2Left + ", " + ident2Left.ident);
                          cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Left);
                          cGen.addVariable(ass2.place, VariableLength.WORD);
                          cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                     }
                 } else {
-                    String finalPlace1 = rGen.getTempReg(ass1.place, icode1);
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
                     cGen.addVariable(ass1.place, VariableLength.WORD);
                     cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
                     cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
 
-                    String place2Left = rGen.getTempReg(ident2Left.ident, icode2);
-                    String place2Right = rGen.getTempReg(ident2Right.ident, icode2);
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
 
-                    String finalPlace2 = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
                     cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
@@ -337,37 +337,37 @@ public class MyCodeGenerator {
                 String place1Left = rGen.getTempReg(temp, icode1);
                 cGen.addVariable(temp, VariableLength.WORD, int1Left.value);
 
-                String place1Right = rGen.getTempReg(ident1Right.ident, icode1);
+                String place1Right = rGen.getReg(ident1Right.ident, icode1);
 
                 cGen.addInstruction("LDR " + place1Left + ", " + temp);
                 cGen.addInstruction("LDR " + place1Right +  ", " + ident2Right.ident);
 
                 if(ass1.place.equals(ident2Left.ident) || ass1.place.equals(ident2Right.ident)){
-                    String finalPlace = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
 
                     if(ass1.place.equals(ident2Left.ident)){
-                        String place2Right = rGen.getTempReg(ident2Right.ident, icode2);
+                        String place2Right = rGen.getReg(ident2Right.ident, icode2);
                         cGen.addInstruction("LDR " + place2Right + ", " + ident2Right.ident);
                         cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Right);
                         cGen.addVariable(ass2.place, VariableLength.WORD);
                         cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                     } else {
-                         String place2Left = rGen.getTempReg(ident2Left.ident, icode2);
+                         String place2Left = rGen.getReg(ident2Left.ident, icode2);
                          cGen.addInstruction("LDR " + place2Left + ", " + ident2Left.ident);
                          cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Left);
                          cGen.addVariable(ass2.place, VariableLength.WORD);
                          cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                     }
                 } else {
-                    String finalPlace1 = rGen.getTempReg(ass1.place, icode1);
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
                     cGen.addVariable(ass1.place, VariableLength.WORD);
                     cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
                     cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
 
-                    String place2Left = rGen.getTempReg(ident2Left.ident, icode2);
-                    String place2Right = rGen.getTempReg(ident2Right.ident, icode2);
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
 
-                    String finalPlace2 = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
                     cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
@@ -398,7 +398,7 @@ public class MyCodeGenerator {
                 IdentExp ident2Left = (IdentExp)exp2.left;
                 IdentExp ident2Right = (IdentExp)exp2.right;
 
-                String place1Left = rGen.getTempReg(ident1Left.ident, icode1);
+                String place1Left = rGen.getReg(ident1Left.ident, icode1);
 
                 String temp = iGen.genNextRegister();
                 String place1Right = rGen.getTempReg(temp, icode1);
@@ -409,31 +409,31 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + place1Right +  ", " + temp);
 
                 if(ass1.place.equals(ident2Left.ident) || ass1.place.equals(ident2Right.ident)){
-                    String finalPlace = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
 
                     if(ass1.place.equals(ident2Left.ident)){
-                        String place2Right = rGen.getTempReg(ident2Right.ident, icode2);
+                        String place2Right = rGen.getReg(ident2Right.ident, icode2);
                         cGen.addInstruction("LDR " + place2Right + ", " + ident2Right.ident);
                         cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Right);
                         cGen.addVariable(ass2.place, VariableLength.WORD);
                         cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                     } else {
-                         String place2Left = rGen.getTempReg(ident2Left.ident, icode2);
+                         String place2Left = rGen.getReg(ident2Left.ident, icode2);
                          cGen.addInstruction("LDR " + place2Left + ", " + ident2Left.ident);
                          cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Left);
                          cGen.addVariable(ass2.place, VariableLength.WORD);
                          cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                     }
                 } else {
-                    String finalPlace1 = rGen.getTempReg(ass1.place, icode1);
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
                     cGen.addVariable(ass1.place, VariableLength.WORD);
                     cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
                     cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
 
-                    String place2Left = rGen.getTempReg(ident2Left.ident, icode2);
-                    String place2Right = rGen.getTempReg(ident2Right.ident, icode2);
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
 
-                    String finalPlace2 = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
                     cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
@@ -479,31 +479,31 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + place1Right +  ", " + tempRight);
 
                 if(ass1.place.equals(ident2Left.ident) || ass1.place.equals(ident2Right.ident)){
-                    String finalPlace = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
 
                     if(ass1.place.equals(ident2Left.ident)){
-                        String place2Right = rGen.getTempReg(ident2Right.ident, icode2);
+                        String place2Right = rGen.getReg(ident2Right.ident, icode2);
                         cGen.addInstruction("LDR " + place2Right + ", " + ident2Right.ident);
                         cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Right);
                         cGen.addVariable(ass2.place, VariableLength.WORD);
                         cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                     } else {
-                         String place2Left = rGen.getTempReg(ident2Left.ident, icode2);
+                         String place2Left = rGen.getReg(ident2Left.ident, icode2);
                          cGen.addInstruction("LDR " + place2Left + ", " + ident2Left.ident);
                          cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Left);
                          cGen.addVariable(ass2.place, VariableLength.WORD);
                          cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                     }
                 } else {
-                    String finalPlace1 = rGen.getTempReg(ass1.place, icode1);
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
                     cGen.addVariable(ass1.place, VariableLength.WORD);
                     cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
                     cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
 
-                    String place2Left = rGen.getTempReg(ident2Left.ident, icode2);
-                    String place2Right = rGen.getTempReg(ident2Right.ident, icode2);
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
 
-                    String finalPlace2 = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
                     cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
@@ -535,14 +535,14 @@ public class MyCodeGenerator {
                 IntExp int2Left = (IntExp)exp2.left;
                 IdentExp ident2Right = (IdentExp)exp2.right;
 
-                String place1Left = rGen.getTempReg(ident1Left.ident, icode1);
-                String place1Right = rGen.getTempReg(ident1Right.ident, icode1);
+                String place1Left = rGen.getReg(ident1Left.ident, icode1);
+                String place1Right = rGen.getReg(ident1Right.ident, icode1);
 
                 cGen.addInstruction("LDR " + place1Left + ", " + ident1Left.ident);
                 cGen.addInstruction("LDR " + place1Right +  ", " + ident1Right.ident);
 
                 if(ass1.place.equals(ident2Right.ident)){
-                    String finalPlace = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
                     String temp = iGen.genNextRegister();
                     String place2Left = rGen.getTempReg(temp, icode2);
                     cGen.addVariable(temp, VariableLength.WORD, int2Left.value);
@@ -551,7 +551,7 @@ public class MyCodeGenerator {
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                 } else {
-                    String finalPlace1 = rGen.getTempReg(ass1.place, icode1);
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
                     cGen.addVariable(ass1.place, VariableLength.WORD);
                     cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
                     cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
@@ -561,9 +561,9 @@ public class MyCodeGenerator {
                     cGen.addVariable(temp, VariableLength.WORD, int2Left.value);
                     cGen.addInstruction("LDR " + place2Left + ", " + temp);
 
-                    String place2Right = rGen.getTempReg(ident2Right.ident, icode2);
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
 
-                    String finalPlace2 = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
                     cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
@@ -598,13 +598,13 @@ public class MyCodeGenerator {
                 String place1Left = rGen.getTempReg(temp, icode1);
                 cGen.addVariable(temp, VariableLength.WORD, int1Left.value);
 
-                String place1Right = rGen.getTempReg(ident1Right.ident, icode1);
+                String place1Right = rGen.getReg(ident1Right.ident, icode1);
 
                 cGen.addInstruction("LDR " + place1Left + ", " + temp);
                 cGen.addInstruction("LDR " + place1Right +  ", " + ident2Right.ident);
 
                 if(ass1.place.equals(ident2Right.ident)){
-                    String finalPlace = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
 
                     String temp2Left = iGen.genNextRegister();
                     String place2Left = rGen.getTempReg(temp2Left, icode2);
@@ -615,7 +615,7 @@ public class MyCodeGenerator {
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                 } else {
-                    String finalPlace1 = rGen.getTempReg(ass1.place, icode1);
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
                     cGen.addVariable(ass1.place, VariableLength.WORD);
                     cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
                     cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
@@ -625,9 +625,9 @@ public class MyCodeGenerator {
                     cGen.addVariable(temp2Left, VariableLength.WORD, int2Left.value);
                     cGen.addInstruction("LDR " + place2Left + ", " + temp2Left);
 
-                    String place2Right = rGen.getTempReg(ident2Right.ident, icode2);
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
 
-                    String finalPlace2 = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
                     cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
@@ -658,7 +658,7 @@ public class MyCodeGenerator {
                 IntExp int2Left = (IntExp)exp2.left;
                 IdentExp ident2Right = (IdentExp)exp2.right;
 
-                String place1Left = rGen.getTempReg(ident1Left.ident, icode1);
+                String place1Left = rGen.getReg(ident1Left.ident, icode1);
 
                 String temp = iGen.genNextRegister();
                 String place1Right = rGen.getTempReg(temp, icode1);
@@ -669,7 +669,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + place1Right +  ", " + temp);
 
                 if(ass1.place.equals(ident2Right.ident)){
-                    String finalPlace = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
 
                     String temp2Left = iGen.genNextRegister();
                     String place2Left = rGen.getTempReg(temp2Left, icode2);
@@ -680,7 +680,7 @@ public class MyCodeGenerator {
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                 } else {
-                    String finalPlace1 = rGen.getTempReg(ass1.place, icode1);
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
                     cGen.addVariable(ass1.place, VariableLength.WORD);
                     cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
                     cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
@@ -690,9 +690,9 @@ public class MyCodeGenerator {
                     cGen.addVariable(temp2Left, VariableLength.WORD, int2Left.value);
                     cGen.addInstruction("LDR " + place2Left + ", " + temp2Left);
 
-                    String place2Right = rGen.getTempReg(ident2Right.ident, icode2);
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
 
-                    String finalPlace2 = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
                     cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
@@ -737,7 +737,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + place1Right +  ", " + tempRight);
 
                 if(ass1.place.equals(ident2Right.ident)){
-                    String finalPlace = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
 
                     String temp2Place = iGen.genNextRegister();
                     String place2Left = rGen.getTempReg(temp2Place, icode2);
@@ -747,7 +747,7 @@ public class MyCodeGenerator {
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                 } else {
-                    String finalPlace1 = rGen.getTempReg(ass1.place, icode1);
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
                     cGen.addVariable(ass1.place, VariableLength.WORD);
                     cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
                     cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
@@ -757,9 +757,9 @@ public class MyCodeGenerator {
                     cGen.addVariable(temp2Place, VariableLength.WORD, int2Left.value);
                     cGen.addInstruction("LDR " + place2Left + ", " + temp2Place);
 
-                    String place2Right = rGen.getTempReg(ident2Right.ident, icode2);
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
 
-                    String finalPlace2 = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
                     cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
@@ -790,33 +790,33 @@ public class MyCodeGenerator {
                 IdentExp ident2Left = (IdentExp)exp2.left;
                 IntExp int2Right = (IntExp)exp2.right;
 
-                String place1Left = rGen.getTempReg(ident1Left.ident, icode1);
-                String place1Right = rGen.getTempReg(ident1Right.ident, icode1);
+                String place1Left = rGen.getReg(ident1Left.ident, icode1);
+                String place1Right = rGen.getReg(ident1Right.ident, icode1);
 
                 cGen.addInstruction("LDR " + place1Left + ", " + ident1Left.ident);
                 cGen.addInstruction("LDR " + place1Right +  ", " + ident1Right.ident);
 
                 if(ass1.place.equals(ident2Left.ident)){
-                    String finalPlace = rGen.getTempReg(ass2.place, icode2);
-                    String place2Left = rGen.getTempReg(ident2Left.ident, icode2);
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
                     cGen.addInstruction("LDR " + place2Left + ", " + ident2Left.ident);
                     cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Left);
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                 } else {
-                    String finalPlace1 = rGen.getTempReg(ass1.place, icode1);
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
                     cGen.addVariable(ass1.place, VariableLength.WORD);
                     cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
                     cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
 
-                    String place2Left = rGen.getTempReg(ident2Left.ident, icode2);
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
 
                     String temp = iGen.genNextRegister();
                     String place2Right = rGen.getTempReg(temp, icode2);
                     cGen.addVariable(temp, VariableLength.WORD, int2Right.value);
                     cGen.addInstruction("LDR " + place2Right + ", " + temp);
 
-                    String finalPlace2 = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
                     cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
@@ -852,13 +852,13 @@ public class MyCodeGenerator {
                 String place1Left = rGen.getTempReg(temp, icode1);
                 cGen.addVariable(temp, VariableLength.WORD, int1Left.value);
 
-                String place1Right = rGen.getTempReg(ident1Right.ident, icode1);
+                String place1Right = rGen.getReg(ident1Right.ident, icode1);
 
                 cGen.addInstruction("LDR " + place1Left + ", " + temp);
                 cGen.addInstruction("LDR " + place1Right +  ", " + ident1Right.ident);
 
                 if(ass1.place.equals(ident2Left.ident)){
-                    String finalPlace = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
 
                     String temp2Right = iGen.genNextRegister();
                     String place2Right = rGen.getTempReg(temp2Right, icode2);
@@ -868,18 +868,18 @@ public class MyCodeGenerator {
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                 } else {
-                    String finalPlace1 = rGen.getTempReg(ass1.place, icode1);
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
                     cGen.addVariable(ass1.place, VariableLength.WORD);
                     cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
                     cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
 
-                    String place2Left = rGen.getTempReg(ident2Left.ident, icode2);
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
 
                     String temp2Right = iGen.genNextRegister(); 
                     String place2Right = rGen.getTempReg(temp2Right, icode2);
                     cGen.addVariable(temp2Right, VariableLength.WORD, int2Right.value);
 
-                    String finalPlace2 = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
                     cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
@@ -910,7 +910,7 @@ public class MyCodeGenerator {
                 IdentExp ident2Left = (IdentExp)exp2.left;
                 IntExp int2Right = (IntExp)exp2.right;
 
-                String place1Left = rGen.getTempReg(ident1Left.ident, icode1);
+                String place1Left = rGen.getReg(ident1Left.ident, icode1);
 
                 String temp = iGen.genNextRegister();
                 String place1Right = rGen.getTempReg(temp, icode1);
@@ -921,7 +921,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + place1Right +  ", " + temp);
 
                 if(ass1.place.equals(ident2Left.ident)){
-                    String finalPlace = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
 
                     String temp2Right = iGen.genNextRegister();
                     String place2Right = rGen.getTempReg(temp2Right, icode2);
@@ -931,19 +931,19 @@ public class MyCodeGenerator {
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                 } else {
-                    String finalPlace1 = rGen.getTempReg(ass1.place, icode1);
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
                     cGen.addVariable(ass1.place, VariableLength.WORD);
                     cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
                     cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
 
-                    String place2Left = rGen.getTempReg(ident2Left.ident, icode2);
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
 
                     String temp2Right = iGen.genNextRegister();
                     String place2Right = rGen.getTempReg(temp2Right, icode2);
                     cGen.addVariable(temp2Right, VariableLength.WORD, int2Right.value);
                     cGen.addInstruction("LDR " + place2Right + ", " + temp2Right);
 
-                    String finalPlace2 = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
                     cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
@@ -989,7 +989,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + place1Right +  ", " + tempRight);
 
                 if(ass1.place.equals(ident2Left.ident)){
-                    String finalPlace = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
 
                     String temp2Right = iGen.genNextRegister();
                     String place2Right = rGen.getTempReg(temp2Right, icode2);
@@ -1000,19 +1000,19 @@ public class MyCodeGenerator {
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
                 } else {
-                    String finalPlace1 = rGen.getTempReg(ass1.place, icode1);
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
                     cGen.addVariable(ass1.place, VariableLength.WORD);
                     cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
                     cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
 
-                    String place2Left = rGen.getTempReg(ident2Left.ident, icode2);
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
 
                     String temp2Right = iGen.genNextRegister();
                     String place2Right = rGen.getTempReg(temp2Right, icode2);
                     cGen.addVariable(temp2Right, VariableLength.WORD, int2Right.value);
                     cGen.addInstruction("LDR " + place2Right + ", " + temp2Right);
 
-                    String finalPlace2 = rGen.getTempReg(ass2.place, icode2);
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
                     cGen.addVariable(ass2.place, VariableLength.WORD);
                     cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
                     cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
@@ -1036,9 +1036,9 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IdentExp rightIdent = (IdentExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1067,8 +1067,8 @@ public class MyCodeGenerator {
                 String leftReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, leftInt.value);
 
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
@@ -1093,13 +1093,13 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IntExp rightInt = (IntExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1132,7 +1132,7 @@ public class MyCodeGenerator {
                 String rightReg = rGen.getTempReg(tempRight, assignICode);
                 cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
@@ -1156,9 +1156,9 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IdentExp rightIdent = (IdentExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1186,8 +1186,8 @@ public class MyCodeGenerator {
                 String leftReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, leftInt.value);
 
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
@@ -1211,13 +1211,13 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IntExp rightInt = (IntExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place,  VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1250,7 +1250,7 @@ public class MyCodeGenerator {
                 String rightReg = rGen.getTempReg(tempRight, assignICode);
                 cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
@@ -1274,9 +1274,9 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IdentExp rightIdent = (IdentExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1304,8 +1304,8 @@ public class MyCodeGenerator {
                 String leftReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, leftInt.value);
 
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
@@ -1329,13 +1329,13 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IntExp rightInt = (IntExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1368,7 +1368,7 @@ public class MyCodeGenerator {
                 String rightReg = rGen.getTempReg(tempRight, assignICode);
                 cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
@@ -1392,9 +1392,9 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IdentExp rightIdent = (IdentExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1425,8 +1425,8 @@ public class MyCodeGenerator {
                 String leftReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp,  VariableLength.WORD, leftInt.value);
 
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
@@ -1453,13 +1453,13 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IntExp rightInt = (IntExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1494,7 +1494,7 @@ public class MyCodeGenerator {
                 String rightReg = rGen.getTempReg(tempRight, assignICode);
                 cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
@@ -1521,9 +1521,9 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IdentExp rightIdent = (IdentExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1554,8 +1554,8 @@ public class MyCodeGenerator {
                 String leftReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, leftInt.value);
 
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
@@ -1582,13 +1582,13 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IntExp rightInt = (IntExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1623,7 +1623,7 @@ public class MyCodeGenerator {
                 String rightReg = rGen.getTempReg(tempRight, assignICode);
                 cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
@@ -1650,9 +1650,9 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IdentExp rightIdent = (IdentExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1682,8 +1682,8 @@ public class MyCodeGenerator {
                 String leftReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, leftInt.value);
 
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
@@ -1709,13 +1709,13 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IntExp rightInt = (IntExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1749,7 +1749,7 @@ public class MyCodeGenerator {
                 String rightReg = rGen.getTempReg(tempRight, assignICode);
                 cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
@@ -1775,9 +1775,9 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IdentExp rightIdent = (IdentExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1808,8 +1808,8 @@ public class MyCodeGenerator {
                 String leftReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, leftInt.value);
 
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
@@ -1836,13 +1836,13 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IntExp rightInt = (IntExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1877,7 +1877,7 @@ public class MyCodeGenerator {
                 String rightReg = rGen.getTempReg(tempRight, assignICode);
                 cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
@@ -1904,9 +1904,9 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IdentExp rightIdent = (IdentExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -1937,8 +1937,8 @@ public class MyCodeGenerator {
                 String leftReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, leftInt.value);
 
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
@@ -1965,13 +1965,13 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IntExp rightInt = (IntExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -2006,7 +2006,7 @@ public class MyCodeGenerator {
                 String rightReg = rGen.getTempReg(tempRight, assignICode);
                 cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
@@ -2032,9 +2032,9 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IdentExp rightIdent = (IdentExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -2065,8 +2065,8 @@ public class MyCodeGenerator {
                 String leftReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, leftInt.value);
 
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
@@ -2093,13 +2093,13 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IntExp rightInt = (IntExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -2134,7 +2134,7 @@ public class MyCodeGenerator {
                 String rightReg = rGen.getTempReg(tempRight, assignICode);
                 cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
@@ -2161,9 +2161,9 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IdentExp rightIdent = (IdentExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -2194,8 +2194,8 @@ public class MyCodeGenerator {
                 String leftReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, leftInt.value);
 
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
@@ -2222,13 +2222,13 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IntExp rightInt = (IntExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -2263,7 +2263,7 @@ public class MyCodeGenerator {
                 String rightReg = rGen.getTempReg(tempRight, assignICode);
                 cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
@@ -2298,8 +2298,8 @@ public class MyCodeGenerator {
                     cGen.addVariable(temp, VariableLength.BYTE, 0);
                 }
 
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
@@ -2326,7 +2326,7 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 BoolExp rightBool = (BoolExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, assignICode);
@@ -2336,7 +2336,7 @@ public class MyCodeGenerator {
                     cGen.addVariable(temp, VariableLength.BYTE, 0);
                 }
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -2379,7 +2379,7 @@ public class MyCodeGenerator {
                     cGen.addVariable(tempRight, VariableLength.BYTE, 0);
                 }
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
@@ -2406,9 +2406,9 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IdentExp rightIdent = (IdentExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -2439,8 +2439,8 @@ public class MyCodeGenerator {
                 String leftReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, leftInt.value);
 
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
@@ -2466,13 +2466,13 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 IntExp rightInt = (IntExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, assignICode);
                 cGen.addVariable(temp, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -2505,7 +2505,7 @@ public class MyCodeGenerator {
                 String rightReg = rGen.getTempReg(tempRight, assignICode);
                 cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
@@ -2540,8 +2540,8 @@ public class MyCodeGenerator {
                     cGen.addVariable(temp, VariableLength.BYTE, 0);
                 }
 
-                String rightReg = rGen.getTempReg(rightIdent.ident, assignICode);
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.BYTE);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
@@ -2568,7 +2568,7 @@ public class MyCodeGenerator {
                 IdentExp leftIdent = (IdentExp)assignExp.left;
                 BoolExp rightBool = (BoolExp)assignExp.right;
 
-                String leftReg = rGen.getTempReg(leftIdent.ident, assignICode);
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, assignICode);
@@ -2578,7 +2578,7 @@ public class MyCodeGenerator {
                     cGen.addVariable(temp, VariableLength.BYTE, 0);
                 }
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
@@ -2621,7 +2621,7 @@ public class MyCodeGenerator {
                     cGen.addVariable(tempRight, VariableLength.BYTE, 0);
                 }
 
-                String finalPlace = rGen.getTempReg(assignICode.place, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
@@ -2649,7 +2649,7 @@ public class MyCodeGenerator {
 
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
-                String reg = rGen.getTempReg(rightIdent.ident, assignICode);
+                String reg = rGen.getReg(rightIdent.ident, assignICode);
                 
                 String holderForNeg1 = iGen.genNextRegister();
                 String tempReg = rGen.getTempReg(holderForNeg1, assignICode);
@@ -2710,7 +2710,7 @@ public class MyCodeGenerator {
 
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
-                String reg = rGen.getTempReg(rightIdent.ident, assignICode);
+                String reg = rGen.getReg(rightIdent.ident, assignICode);
 
                 cGen.addInstruction("LDR " + reg + ", " + rightIdent.ident);
                 cGen.addInstruction("TST " + reg + ", #0");
@@ -2736,7 +2736,7 @@ public class MyCodeGenerator {
 
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
-                String reg = rGen.getTempReg(rightIdent.ident, assignICode);
+                String reg = rGen.getReg(rightIdent.ident, assignICode);
 
                 cGen.addInstruction("LDR " + reg + ", " + rightIdent.ident);
                 cGen.addInstruction("TST " + reg + ", #0");
@@ -2795,7 +2795,7 @@ public class MyCodeGenerator {
                 IdentExp exp = (IdentExp)assignICode.value;
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
-                String tempReg = rGen.getTempReg(exp.ident, assignICode);
+                String tempReg = rGen.getReg(exp.ident, assignICode);
                 cGen.addInstruction("LDR " + tempReg + ", " + exp.ident);
                 cGen.addInstruction("STR " + tempReg + ", " + assignICode.place); 
                 rGen.freeTempRegs();
@@ -2816,8 +2816,8 @@ public class MyCodeGenerator {
                 IdentExp left = (IdentExp)exp.left;
                 IdentExp right = (IdentExp)exp.right;
 
-                String leftReg = rGen.getTempReg(left.ident, icode);
-                String rightReg = rGen.getTempReg(right.ident, icode);
+                String leftReg = rGen.getReg(left.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
@@ -2845,7 +2845,7 @@ public class MyCodeGenerator {
                 String temp = iGen.genNextRegister();
                 String leftReg = rGen.getTempReg(temp, icode);
                 cGen.addVariable(temp, VariableLength.WORD, left.value);
-                String rightReg = rGen.getTempReg(right.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
@@ -2870,7 +2870,7 @@ public class MyCodeGenerator {
                 IdentExp left = (IdentExp)exp.left;
                 IntExp right = (IntExp)exp.right;
 
-                String leftReg = rGen.getTempReg(left.ident, icode);
+                String leftReg = rGen.getReg(left.ident, icode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, icode);
@@ -2930,8 +2930,8 @@ public class MyCodeGenerator {
                 IdentExp left = (IdentExp)exp.left;
                 IdentExp right = (IdentExp)exp.right;
 
-                String leftReg = rGen.getTempReg(left.ident, icode);
-                String rightReg = rGen.getTempReg(right.ident, icode);
+                String leftReg = rGen.getReg(left.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
@@ -2959,7 +2959,7 @@ public class MyCodeGenerator {
                 String temp = iGen.genNextRegister();
                 String leftReg = rGen.getTempReg(temp, icode);
                 cGen.addVariable(temp, VariableLength.WORD, left.value);
-                String rightReg = rGen.getTempReg(right.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
@@ -2984,7 +2984,7 @@ public class MyCodeGenerator {
                 IdentExp left = (IdentExp)exp.left;
                 IntExp right = (IntExp)exp.right;
 
-                String leftReg = rGen.getTempReg(left.ident, icode);
+                String leftReg = rGen.getReg(left.ident, icode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, icode);
@@ -3045,8 +3045,8 @@ public class MyCodeGenerator {
                 IdentExp left = (IdentExp)exp.left;
                 IdentExp right = (IdentExp)exp.right;
 
-                String leftReg = rGen.getTempReg(left.ident, icode);
-                String rightReg = rGen.getTempReg(right.ident, icode);
+                String leftReg = rGen.getReg(left.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
@@ -3074,7 +3074,7 @@ public class MyCodeGenerator {
                 String temp = iGen.genNextRegister();
                 String leftReg = rGen.getTempReg(temp, icode);
                 cGen.addVariable(temp, VariableLength.WORD, left.value);
-                String rightReg = rGen.getTempReg(right.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
@@ -3099,7 +3099,7 @@ public class MyCodeGenerator {
                 IdentExp left = (IdentExp)exp.left;
                 IntExp right = (IntExp)exp.right;
 
-                String leftReg = rGen.getTempReg(left.ident, icode);
+                String leftReg = rGen.getReg(left.ident, icode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, icode);
@@ -3159,8 +3159,8 @@ public class MyCodeGenerator {
                 IdentExp left = (IdentExp)exp.left;
                 IdentExp right = (IdentExp)exp.right;
 
-                String leftReg = rGen.getTempReg(left.ident, icode);
-                String rightReg = rGen.getTempReg(right.ident, icode);
+                String leftReg = rGen.getReg(left.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
@@ -3188,7 +3188,7 @@ public class MyCodeGenerator {
                 String temp = iGen.genNextRegister();
                 String leftReg = rGen.getTempReg(temp, icode);
                 cGen.addVariable(temp, VariableLength.WORD, left.value);
-                String rightReg = rGen.getTempReg(right.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
@@ -3213,7 +3213,7 @@ public class MyCodeGenerator {
                 IdentExp left = (IdentExp)exp.left;
                 IntExp right = (IntExp)exp.right;
 
-                String leftReg = rGen.getTempReg(left.ident, icode);
+                String leftReg = rGen.getReg(left.ident, icode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, icode);
@@ -3273,8 +3273,8 @@ public class MyCodeGenerator {
                 IdentExp left = (IdentExp)exp.left;
                 IdentExp right = (IdentExp)exp.right;
 
-                String leftReg = rGen.getTempReg(left.ident, icode);
-                String rightReg = rGen.getTempReg(right.ident, icode);
+                String leftReg = rGen.getReg(left.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
@@ -3302,7 +3302,7 @@ public class MyCodeGenerator {
                 String temp = iGen.genNextRegister();
                 String leftReg = rGen.getTempReg(temp, icode);
                 cGen.addVariable(temp, VariableLength.WORD, left.value);
-                String rightReg = rGen.getTempReg(right.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
@@ -3327,7 +3327,7 @@ public class MyCodeGenerator {
                 IdentExp left = (IdentExp)exp.left;
                 IntExp right = (IntExp)exp.right;
 
-                String leftReg = rGen.getTempReg(left.ident, icode);
+                String leftReg = rGen.getReg(left.ident, icode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, icode);
@@ -3394,7 +3394,7 @@ public class MyCodeGenerator {
                 } else {
                     cGen.addVariable(temp, VariableLength.BYTE, 0);
                 }
-                String rightReg = rGen.getTempReg(right.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
@@ -3419,7 +3419,7 @@ public class MyCodeGenerator {
                 IdentExp left = (IdentExp)exp.left;
                 BoolExp right = (BoolExp)exp.right;
 
-                String leftReg = rGen.getTempReg(left.ident, icode);
+                String leftReg = rGen.getReg(left.ident, icode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, icode);
@@ -3491,8 +3491,8 @@ public class MyCodeGenerator {
                 IdentExp left = (IdentExp)exp.left;
                 IdentExp right = (IdentExp)exp.right;
 
-                String leftReg = rGen.getTempReg(left.ident, icode);
-                String rightReg = rGen.getTempReg(right.ident, icode);
+                String leftReg = rGen.getReg(left.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
@@ -3520,7 +3520,7 @@ public class MyCodeGenerator {
                 String temp = iGen.genNextRegister();
                 String leftReg = rGen.getTempReg(temp, icode);
                 cGen.addVariable(temp, VariableLength.WORD, left.value);
-                String rightReg = rGen.getTempReg(right.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
@@ -3545,7 +3545,7 @@ public class MyCodeGenerator {
                 IdentExp left = (IdentExp)exp.left;
                 IntExp right = (IntExp)exp.right;
 
-                String leftReg = rGen.getTempReg(left.ident, icode);
+                String leftReg = rGen.getReg(left.ident, icode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, icode);
@@ -3613,7 +3613,7 @@ public class MyCodeGenerator {
                 } else {
                     cGen.addVariable(temp, VariableLength.BYTE, 0);
                 }
-                String rightReg = rGen.getTempReg(right.ident, icode);
+                String rightReg = rGen.getReg(right.ident, icode);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
@@ -3638,7 +3638,7 @@ public class MyCodeGenerator {
                 IdentExp left = (IdentExp)exp.left;
                 BoolExp right = (BoolExp)exp.right;
 
-                String leftReg = rGen.getTempReg(left.ident, icode);
+                String leftReg = rGen.getReg(left.ident, icode);
 
                 String temp = iGen.genNextRegister();
                 String rightReg = rGen.getTempReg(temp, icode);
@@ -3773,7 +3773,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("ADD R13, R13, #" + (4 * totalReturnStackLength));
                 for(int x = 0; x < totalLength; x++){
                     Tuple<String, String> sourceDest = procICode.params.get(x);
-                    String reg = rGen.getTempReg(sourceDest.source, procICode); 
+                    String reg = rGen.getReg(sourceDest.source, procICode); 
                     cGen.addInstruction("LDR " + reg + ", " + sourceDest.source);
                     String offSetRegister = iGen.genNextRegister();
                     String offReg = rGen.getTempReg(offSetRegister, procICode);
@@ -3819,7 +3819,7 @@ public class MyCodeGenerator {
                         } else if(formatSpecifierLetter == 'R' || formatSpecifierLetter == 'r'){
                             if(paramIndex < params.size()){
                                 String addresParam = params.get(paramIndex);
-                                String regParam = rGen.getTempReg(addresParam, icode);
+                                String regParam = rGen.getReg(addresParam, icode);
                                 resultInstruction.append(regParam);
                                 paramIndex++;
                             } else {
