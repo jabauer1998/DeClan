@@ -100,13 +100,14 @@ public class MyOptimizerTest {
                            + "IF f EQ TRUE THEN block1 ELSE block1\n"
                            + "END\n";
 
-        String targetSource = "LABEL block1\n"
-                            + "a := 1\n"
-                            + "i := a IADD a\n"
-                            + "g := i IADD a\n"
-                            + "PROC func ( g -> x )\n"
-                            + "IF f EQ TRUE THEN block1 ELSE block1\n"
-                            + "END\n";
+        String targetSource = "LABEL block1\n" + //
+                              "a := 1\n" + //
+                              "i := a IADD a\n" + //
+                              "g := i IADD a\n" + //
+                              "PROC func ( g -> x )\n" + //
+                              "f <- g\n" + //
+                              "IF f EQ TRUE THEN block1 ELSE block1\n" + //
+                              "END\n";
 
         ErrorLog errLog = new ErrorLog();
         ReaderSource source = new ReaderSource(new StringReader(inputSource));

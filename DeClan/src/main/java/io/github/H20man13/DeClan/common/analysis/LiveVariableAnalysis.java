@@ -12,6 +12,7 @@ import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.Place;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -72,8 +73,11 @@ public class LiveVariableAnalysis extends Analysis<String> {
                 } else if(code instanceof Place){
                     Place placement = (Place)code;
                     instructionUse.add(placement.retPlace);
-
                     instructionDef.add(placement.place);
+                } else if(code instanceof ParamAssign){
+                    ParamAssign assign = (ParamAssign)code;
+                    instructionDef.add(assign.newPlace);
+                    instructionUse.add(assign.paramPlace);
                 } else if(code instanceof Proc){
                     Proc placement = (Proc)code;
                     for(Tuple<String, String> arg : placement.params){
