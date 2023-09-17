@@ -8,13 +8,21 @@ public class DagVariableNode implements DagNode {
     private List<String> identifiers;
     private DagNode child;
     private List<DagNode> ancestors;
+    private VariableType varType;
 
-    public DagVariableNode(String ident, DagNode child){
+    public enum VariableType {
+        DEFAULT,
+        PARAM,
+        RET
+    }
+
+    public DagVariableNode(String ident, VariableType type, DagNode child){
         this.identifiers = new LinkedList<>();
         this.ancestors = new ArrayList<>();
         child.addAncestor(this);
         this.identifiers.add(ident);
         this.child = child;
+        this.varType = type;
     }
 
     public DagNode getChild(){
@@ -29,7 +37,9 @@ public class DagVariableNode implements DagNode {
     public boolean equals(Object dagNode) {
         if(dagNode instanceof DagVariableNode){
             DagVariableNode varNode = (DagVariableNode)dagNode;
-            return this.child.hashCode() == varNode.child.hashCode();
+            boolean typesEqual = this.varType == varNode.varType;
+            boolean childEqual = this.child.hashCode() == varNode.child.hashCode();
+            return typesEqual && childEqual;
         } else {
             return false;
         }
@@ -70,5 +80,9 @@ public class DagVariableNode implements DagNode {
     @Override
     public List<String> getIdentifiers() {
         return identifiers;
+    }
+
+    public VariableType getType(){
+        return this.varType;
     }
 }

@@ -26,6 +26,7 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Label;
+import io.github.H20man13.DeClan.common.icode.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
@@ -249,6 +250,9 @@ public class MyCodeGenerator {
 
         //Init Inline Assembly Pattern
         initInline0();
+
+        //Init Param Assign Pattern
+        initParamAssign0();
     }
 
     private void initMultiplyAndAccumulate0(){
@@ -3784,6 +3788,26 @@ public class MyCodeGenerator {
                 rGen.freeTempRegs();
                 return null;
             }
+        });
+    }
+
+    private void initParamAssign0(){
+        codeGenFunctions.put(Pattern.paramAssign0, new Callable<Void>() {
+           @Override
+           public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                ParamAssign paramAssign = (ParamAssign)icode;
+
+                cGen.addVariable(paramAssign.newPlace, VariableLength.WORD);
+                
+                String offSetPlace = rGen.getReg(paramAssign.paramPlace, icode);
+                cGen.addInstruction("LDR " + offSetPlace + ", " + paramAssign.paramPlace);
+                cGen.addInstruction("LDR " + offSetPlace + ", [R13, -"+ offSetPlace +"]");
+                cGen.addInstruction("STR " + offSetPlace + ", " + paramAssign.newPlace);
+
+                rGen.freeTempRegs();
+                return null;
+           } 
         });
     }
 

@@ -21,12 +21,15 @@ import io.github.H20man13.DeClan.common.dag.DagNodeFactory;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.dag.DagValueNode;
 import io.github.H20man13.DeClan.common.dag.DagVariableNode;
+import io.github.H20man13.DeClan.common.dag.DagVariableNode.VariableType;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Label;
+import io.github.H20man13.DeClan.common.icode.ParamAssign;
+import io.github.H20man13.DeClan.common.icode.Place;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
@@ -131,10 +134,21 @@ public class BlockNode implements FlowGraphNode {
                 result.add(new Assign(identifier, resultExp));
             } else if(node instanceof DagVariableNode){
                 DagVariableNode varNode = (DagVariableNode)node;
-                DagNode child = varNode.getChild();
-                String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
-                IdentExp ident1 = new IdentExp(identifier1);
-                result.add(new Assign(identifier, ident1));
+                VariableType type = varNode.getType();
+                if(type == VariableType.DEFAULT){
+                    DagNode child = varNode.getChild();
+                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
+                    IdentExp ident1 = new IdentExp(identifier1);
+                    result.add(new Assign(identifier, ident1));
+                } else if(type == VariableType.PARAM){
+                    DagNode child = varNode.getChild();
+                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
+                    result.add(new ParamAssign(identifier, identifier1));
+                } else if(type == VariableType.RET){
+                    DagNode child = varNode.getChild();
+                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
+                    result.add(new Place(identifier, identifier1));
+                }
             } else if(node instanceof DagInlineAssemblyNode){
                 DagInlineAssemblyNode dagNode = (DagInlineAssemblyNode)node;
                 List<String> children = new LinkedList<String>();
@@ -221,7 +235,7 @@ public class BlockNode implements FlowGraphNode {
                         this.dag.addDagNode(right);
                     }
 
-                    DagNode newNode = factory.createVariableNode(assignICode.place, right);
+                    DagNode newNode = factory.createDefaultVariableNode(assignICode.place, right);
 
                     DagNode exists = this.dag.getDagNode(newNode);
                     if(exists == null){
@@ -264,6 +278,40 @@ public class BlockNode implements FlowGraphNode {
                 DagNode exists = this.dag.getDagNode(newNode);
                 if(exists == null){
                     this.dag.addDagNode(newNode);
+                }
+            } else if(icode instanceof Place){
+                Place place = (Place)icode;
+                DagNode right = this.dag.searchForLatestChild(place.retPlace);
+
+                if(right == null){
+                    right = factory.createNullNode(place.retPlace);
+                    this.dag.addDagNode(right);
+                }
+
+                DagNode newNode = factory.createReturnVariableNode(place.place, right);
+
+                DagNode exists = this.dag.getDagNode(newNode);
+                if(exists == null){
+                    this.dag.addDagNode(newNode);
+                } else {
+                    exists.addIdentifier(place.place);
+                }
+            } else if(icode instanceof ParamAssign){
+                ParamAssign paramAssign = (ParamAssign)icode;
+                DagNode right = this.dag.searchForLatestChild(paramAssign.paramPlace);
+
+                if(right == null){
+                    right = factory.createNullNode(paramAssign.paramPlace);
+                    this.dag.addDagNode(right);
+                }
+
+                DagNode newNode = factory.createParamVariableNode(paramAssign.newPlace, right);
+
+                DagNode exists = this.dag.getDagNode(newNode);
+                if(exists == null){
+                    this.dag.addDagNode(newNode);
+                } else {
+                    exists.addIdentifier(paramAssign.newPlace);
                 }
             }
         }

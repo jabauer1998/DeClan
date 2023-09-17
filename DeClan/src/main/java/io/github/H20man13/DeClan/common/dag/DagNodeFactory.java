@@ -2,6 +2,8 @@ package io.github.H20man13.DeClan.common.dag;
 
 import java.util.LinkedList;
 
+import io.github.H20man13.DeClan.common.dag.DagVariableNode.VariableType;
+
 public class DagNodeFactory {
     public DagNodeFactory(){}
 
@@ -204,8 +206,16 @@ public class DagNodeFactory {
         return new DagValueNode(nodeName, DagValueNode.ValueType.STRING, value);
     }
 
-    public DagNode createVariableNode(String nodeName, DagNode child){
-        return new DagVariableNode(nodeName, child);
+    public DagNode createDefaultVariableNode(String nodeName, DagNode child){
+        return new DagVariableNode(nodeName, VariableType.DEFAULT, child);
+    }
+
+    public DagNode createParamVariableNode(String nodeName, DagNode child){
+        return new DagVariableNode(nodeName, VariableType.PARAM, child);
+    }
+
+    public DagNode createReturnVariableNode(String nodeName, DagNode child){
+        return new DagVariableNode(nodeName, VariableType.RET, child);
     }
 
     public DagNode createInlineAssemblyNode(String nodeName, DagNode... children){

@@ -197,6 +197,26 @@ public class ICodeGeneratorTest {
         testReaderSource(programICode, program);
     }
 
+    @Test
+    public void testParamaterPlacement(){
+        String program = "LABEL x\n"
+                       + "v << y\n"
+                       + "z << t\n"
+                       + "g := z IADD v\n"
+                       + "END\n";
+
+        Source mySource = new ReaderSource(new StringReader(program));
+        ErrorLog errorLog = new ErrorLog();
+        MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
+        MyIrParser parser = new MyIrParser(lexer, errorLog);
+
+        List<ICode> programICode = parser.parseProgram();
+
+        assertTrue(!parser.containsErrors());
+
+        testReaderSource(programICode, program);
+    }
+
 /*
     @Test
     public void testDeclanConversions(){

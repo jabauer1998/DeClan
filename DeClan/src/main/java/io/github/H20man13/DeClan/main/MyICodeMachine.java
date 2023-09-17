@@ -18,6 +18,7 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Label;
+import io.github.H20man13.DeClan.common.icode.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.Place;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.Return;
@@ -86,6 +87,7 @@ public class MyICodeMachine {
                     else if(instruction instanceof End) interpretEndStatement((End)instruction);
                     else if(instruction instanceof Return) interpretReturnStatement((Return)instruction);
                     else if(instruction instanceof Label) interpretLabelStatement((Label)instruction);
+                    else if(instruction instanceof ParamAssign) interpretParamAssignment((ParamAssign)instruction);
                     else {
                         errorAndExit("Unexpected icode instruction found" + instruction.getClass(), this.programCounter, instructions.size());
                     }
@@ -123,6 +125,12 @@ public class MyICodeMachine {
     private void interpretAssignment(Assign assign){
         String place = assign.place;
         Object result = interpretExpression(assign.value);
+        this.variableValues.addEntry(place, new VariableEntry(false, result));
+    }
+
+    private void interpretParamAssignment(ParamAssign assign){
+        String place = assign.newPlace;
+        VariableEntry result = this.variableValues.getEntry(assign.paramPlace);
         this.variableValues.addEntry(place, new VariableEntry(false, result));
     }
 

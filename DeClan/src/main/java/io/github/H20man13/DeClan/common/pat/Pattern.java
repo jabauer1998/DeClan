@@ -141,6 +141,7 @@ public class Pattern {
     public static P if28 = P.PAT(P.IF(), P.PAT(P.ID(), P.NE(), P.BOOL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if29 = P.PAT(P.IF(), P.PAT(P.BOOL(), P.NE(), P.BOOL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
 
+    public static P paramAssign0 = P.PAT(P.ID(), P.ASSIGN(), P.PARAM());
     public static P goto0 = P.PAT(P.GOTO(), P.ID());
     public static P label0 = P.PAT(P.LABEL(), P.ID());
     public static P end0 = P.END();
