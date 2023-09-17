@@ -304,6 +304,12 @@ public class MyIrBuilder {
         output.add(factory.produceVariableAssignment(place, value));
     }
 
+    public String buildParamaterAssignment(String value){
+        String newPlace = gen.genNextRegister();
+        output.add(factory.produceParamAssignment(newPlace, value));
+        return newPlace;
+    }
+
     public String buildVariableAssignment(String value){ 
         String place = gen.genNextRegister();
         output.add(factory.produceVariableAssignment(place, value));

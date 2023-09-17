@@ -498,6 +498,23 @@ public abstract class P {
         
     }
 
+    public static class PARAM extends P{
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof PARAM){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "PARAM";
+        }
+    }
+
     public static class PAT extends P{
         private P[] pattern;
 
@@ -653,6 +670,9 @@ public abstract class P {
     }
     public static PAT PAT(P... inputs){
         return new PAT(inputs);
+    }
+    public static PARAM PARAM(){
+        return new PARAM();
     }
 
     @Override

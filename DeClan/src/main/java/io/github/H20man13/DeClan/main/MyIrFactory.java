@@ -10,6 +10,7 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Label;
+import io.github.H20man13.DeClan.common.icode.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.Place;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.Return;
@@ -22,6 +23,7 @@ import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp.Operator;
+import io.github.H20man13.DeClan.common.pat.P;
 
 public class MyIrFactory {
     private ErrorLog errorLog;
@@ -36,6 +38,10 @@ public class MyIrFactory {
 
     public Assign produceVariableAssignment(String place, String variableName){
         return new Assign(place, new IdentExp(variableName));
+    }
+
+    public ParamAssign produceParamAssignment(String place, String value){
+        return new ParamAssign(place, value);
     }
 
     public Assign produceBooleanAssignment(String place, boolean trueOrFalse){

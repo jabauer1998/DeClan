@@ -70,6 +70,7 @@ import java.util.LinkedList;
 public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, DeclarationVisitor<String> {
   private ErrorLog errorLog;
   private Environment<String, StringEntry> varEnvironment;
+  private Environment<String, StringEntry> paramEnvironment;
   private Environment<String, StringEntry> procEnvironment;
   private Environment<String, StringEntryList> procArgs;
   private MyIrBuilder builder;
@@ -85,6 +86,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     this.builder = new MyIrBuilder(errorLog, Gen);
     this.varEnvironment = new Environment<>();
     this.procEnvironment = new Environment<>();
+    this.paramEnvironment = new Environment<>();
     this.procArgs = new Environment<>();
     this.typeChecker = new MyTypeChecker(errorLog);
     this.interpreter = new MyInterpreter(errorLog, null, null, null);
@@ -225,6 +227,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
   public void visit(ProcedureDeclaration procDecl){
     String procedureName = procDecl.getProcedureName().getLexeme();
     builder.buildProcedureDeclaration(procedureName);
+    paramEnvironment.addScope();
     varEnvironment.addScope();
 
     StringEntryList list = procArgs.getEntry(procedureName);
@@ -232,7 +235,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
       ParamaterDeclaration decl = procDecl.getArguments().get(i);
       String actual = decl.getIdentifier().getLexeme();
       String alias = list.get(i);
-      varEnvironment.addEntry(actual, new StringEntry(alias));
+      paramEnvironment.addEntry(actual, new StringEntry(alias));
     }
 
     List <Declaration> localVars = procDecl.getLocalVariables();
@@ -254,6 +257,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     
     builder.buildReturnStatement();
     varEnvironment.removeScope();
+    paramEnvironment.removeScope();
   }
         
   @Override
@@ -570,12 +574,17 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     
   @Override
   public String visitResult(Identifier identifier){
-    StringEntry place = varEnvironment.getEntry(identifier.getLexeme());
-    if(place != null){
-      return place.toString();
+    if(paramEnvironment.entryExists(identifier.getLexeme())){
+      StringEntry place = paramEnvironment.getEntry(identifier.toString());
+      return builder.buildParamaterAssignment(place.toString());
     } else {
-      errorLog.add("WHen generating ICode could not find place associated with identifier " + identifier.getLexeme(), identifier.getStart());
-      return "";
+      StringEntry place = varEnvironment.getEntry(identifier.getLexeme());
+      if(place != null){
+        return place.toString();
+      } else {
+        errorLog.add("WHen generating ICode could not find place associated with identifier " + identifier.getLexeme(), identifier.getStart());
+        return "";
+      }
     }
   }
 

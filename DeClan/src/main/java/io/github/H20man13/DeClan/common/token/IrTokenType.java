@@ -52,6 +52,7 @@ public enum IrTokenType {
     ASSIGN,
     PLACE,
     MAP,
+    PARAM_ASSIGN,
 
     //Other Misc Symbols
     COMMA,
@@ -136,6 +137,7 @@ public enum IrTokenType {
         addDualOp(":=", ASSIGN);
         addDualOp("->", MAP);
         addDualOp("<-", PLACE);
+        addDualOp("<<", PARAM_ASSIGN);
 
         singleOperators = new HashMap<>();
         addSingleOp(',', COMMA);
