@@ -646,12 +646,18 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
   public void visit(Asm asm) {
      List<String> icodeParams = new LinkedList<String>();
      for(String param : asm.getParamaters()){
-       if(paramEnvironment.entryExists(param)){
-        StringEntry icodeParam = paramEnvironment.getEntry(param);
-        icodeParams.add(icodeParam.toString());
+       if(varEnvironment.inScope(param)){
+          StringEntry icodeParam = varEnvironment.getEntry(param);
+          icodeParams.add(icodeParam.toString());
+       }
+       else if(paramEnvironment.entryExists(param)){
+          StringEntry icodeParam = paramEnvironment.getEntry(param);
+          String result = builder.buildParamaterAssignment(icodeParam.toString());
+          icodeParams.add(result);
+          varEnvironment.addEntry(param, new StringEntry(result));
        } else {
-        StringEntry icodeParam = varEnvironment.getEntry(param);
-        icodeParams.add(icodeParam.toString());
+         StringEntry icodeParam = varEnvironment.getEntry(param);
+         icodeParams.add(icodeParam.toString());
        }
      }
      builder.buildInlineAssembly(asm.getInlineAssembly(), icodeParams);

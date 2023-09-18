@@ -41,6 +41,29 @@ public class ICodeGeneratorTest {
         assertTrue("Expected \n...\n\n" + programInput + "\n\n but found \n\n" + sb.toString(), programInput.equals(sb.toString()));
     }
 
+    private void testDeclanFileOnICode(String programName, String expectedOutput){
+        try{
+            Source mySource = new ReaderSource(new FileReader(programName));
+            ErrorLog errLog = new ErrorLog();
+            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
+            MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
+            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
+            Program prog = parser.parseProgram();
+            
+            IrRegisterGenerator gen = new IrRegisterGenerator();
+            MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
+            stdLib.ioLibrary().accept(igen);
+            stdLib.mathLibrary().accept(igen);
+            prog.accept(igen);
+            
+            List<ICode> icode = igen.getICode();
+
+            testReaderSource(icode, expectedOutput);
+        } catch(FileNotFoundException exp) {
+            assertTrue("Error File not found...", false);
+        }
+    }
+
     @Test
     public void testBinaryOp(){
         String program = "x := 456\n"
@@ -217,11 +240,12 @@ public class ICodeGeneratorTest {
         testReaderSource(programICode, program);
     }
 
-/*
+    /* 
     @Test
     public void testDeclanConversions(){
         String programName = "test_source/conversions.dcl";
         
+        /*        
         String expectedICode = "LABEL begin_0\n"+
                                "GOTO begin_1\n"+
                                "LABEL WriteLn\n"+
@@ -286,27 +310,7 @@ public class ICodeGeneratorTest {
                                "PROC WriteReal ( l -> b )\n"+
                                "PROC WriteLn (  )\n"+
                                "END\n";
-        
-        try{
-            Source mySource = new ReaderSource(new FileReader(programName));
-            ErrorLog errLog = new ErrorLog();
-            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
-            MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
-            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
-            Program prog = parser.parseProgram();
-            
-            IrRegisterGenerator gen = new IrRegisterGenerator();
-            MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
-            stdLib.ioLibrary().accept(igen);
-            stdLib.mathLibrary().accept(igen);
-            prog.accept(igen);
-            
-            List<ICode> icode = igen.getICode();
-
-            testReaderSource(icode, expectedICode);
-        } catch(FileNotFoundException exp) {
-            assertTrue("Error File not found...", false);
-        }
+        testDeclanFileOnICode(programName, expectedICode);
     }
 
     @Test
@@ -380,26 +384,7 @@ public class ICodeGeneratorTest {
                                 "LABEL IFEND_0_LEVEL_0\r\n" + //
                                 "END\r\n";
         
-        try{
-            Source mySource = new ReaderSource(new FileReader(programName));
-            ErrorLog errLog = new ErrorLog();
-            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
-            MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
-            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
-            Program prog = parser.parseProgram();
-            
-            IrRegisterGenerator gen = new IrRegisterGenerator();
-            MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
-            stdLib.ioLibrary().accept(igen);
-            stdLib.mathLibrary().accept(igen);
-            prog.accept(igen);
-            
-            List<ICode> icode = igen.getICode();
-
-            testReaderSource(icode, expectedICodee);
-        } catch(FileNotFoundException exp) {
-            assertTrue("Error File not found...", false);
-        }
+        testDeclanFileOnICode(programName, expectedICodee);
     }
 
 
@@ -458,27 +443,7 @@ public class ICodeGeneratorTest {
                                 "LABEL WHILEEND_0_LEVEL_0\r\n" + //
                                 "END\r\n";
 
-        
-        try{
-            Source mySource = new ReaderSource(new FileReader(programName));
-            ErrorLog errLog = new ErrorLog();
-            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
-            MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
-            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
-            Program prog = parser.parseProgram();
-            
-            IrRegisterGenerator gen = new IrRegisterGenerator();
-            MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
-            stdLib.ioLibrary().accept(igen);
-            stdLib.mathLibrary().accept(igen);
-            prog.accept(igen);
-            
-            List<ICode> icode = igen.getICode();
-
-            testReaderSource(icode, expectedICode);
-        } catch(FileNotFoundException exp) {
-            assertTrue("Error File not found...", false);
-        }
+        testDeclanFileOnICode(programName, expectedICode);
     }
 
     @Test
@@ -570,27 +535,7 @@ public class ICodeGeneratorTest {
                                 "LABEL WHILEEND_1_LEVEL_0\r\n" + //
                                 "END\r\n";
 
-        
-        try{
-            Source mySource = new ReaderSource(new FileReader(programName));
-            ErrorLog errLog = new ErrorLog();
-            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
-            MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
-            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
-            Program prog = parser.parseProgram();
-            
-            IrRegisterGenerator gen = new IrRegisterGenerator();
-            MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
-            stdLib.ioLibrary().accept(igen);
-            stdLib.mathLibrary().accept(igen);
-            prog.accept(igen);
-            
-            List<ICode> icode = igen.getICode();
-
-            testReaderSource(icode, expectedICode);
-        } catch(FileNotFoundException exp) {
-            assertTrue("Error File not found...", false);
-        }
+        testDeclanFileOnICode(programName, expectedICode);
     }
 
     @Test
@@ -647,27 +592,7 @@ public class ICodeGeneratorTest {
                                 "LABEL REPEATEND_0_LEVEL_0\r\n" + //
                                 "PROC WriteLn (  )\r\n" + //
                                 "END\r\n";
-
-        try{
-            Source mySource = new ReaderSource(new FileReader(programName));
-            ErrorLog errLog = new ErrorLog();
-            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
-            MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
-            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
-            Program prog = parser.parseProgram();
-            
-            IrRegisterGenerator gen = new IrRegisterGenerator();
-            MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
-            stdLib.ioLibrary().accept(igen);
-            stdLib.mathLibrary().accept(igen);
-            prog.accept(igen);
-            
-            List<ICode> icode = igen.getICode();
-
-            testReaderSource(icode, expectedICode);
-        } catch(FileNotFoundException exp) {
-            assertTrue("Error File not found...", false);
-        }
+       testDeclanFileOnICode(programName, expectedICode);
     }
 
     @Test
@@ -769,105 +694,61 @@ public class ICodeGeneratorTest {
                 "LABEL IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
                 "LABEL IFEND_1_LEVEL_0\r\n" + //
                 "END\r\n";
-
-        try{
-            Source mySource = new ReaderSource(new FileReader(programName));
-            ErrorLog errLog = new ErrorLog();
-            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
-            MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
-            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
-            Program prog = parser.parseProgram();
-            
-            IrRegisterGenerator gen = new IrRegisterGenerator();
-            MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
-            stdLib.ioLibrary().accept(igen);
-            stdLib.mathLibrary().accept(igen);
-            prog.accept(igen);
-            
-            List<ICode> icode = igen.getICode();
-
-            testReaderSource(icode, expectedICode);
-        } catch(FileNotFoundException exp) {
-            assertTrue("Error File not found...", false);
-        }
+        testDeclanFileOnICode(programName, expectedICode);
     }
 
     @Test
     public void testForLoopBasic(){
         String programName = "test_source/ForLoopBasic.dcl";
         String expectedICode = "LABEL begin_0\r\n" + //
-                "GOTO begin_1\r\n" + //
-                "LABEL WriteLn\r\n" + //
-                "RETURN\r\n" + //
-                "LABEL WriteInt\r\n" + //
-                "RETURN\r\n" + //
-                "LABEL WriteReal\r\n" + //
-                "RETURN\r\n" + //
-                "LABEL ReadInt\r\n" + //
-                "g := 1\r\n" + //
-                "h := INEG g\r\n" + //
-                "f := h\r\n" + //
-                "RETURN\r\n" + //
-                "LABEL begin_1\r\n" + //
-                "GOTO begin_2\r\n" + //
-                "LABEL Round\r\n" + //
-                "o := 1\r\n" + //
-                "p := INEG o\r\n" + //
-                "j := p\r\n" + //
-                "RETURN\r\n" + //
-                "LABEL Floor\r\n" + //
-                "q := 1\r\n" + //
-                "r := INEG q\r\n" + //
-                "l := r\r\n" + //
-                "RETURN\r\n" + //
-                "LABEL Ceil\r\n" + //
-                "s := 1\r\n" + //
-                "t := INEG s\r\n" + //
-                "n := t\r\n" + //
-                "RETURN\r\n" + //
-                "LABEL begin_2\r\n" + //
-                "u := 0\r\n" + //
-                "GOTO begin_3\r\n" + //
-                "LABEL begin_3\r\n" + //
-                "v := 1\r\n" + //
-                "u := v\r\n" + //
-                "w := 10\r\n" + //
-                "LABEL FORBEG_0_LEVEL_0\r\n" + //
-                "IF u NE w THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0\r\n" + //
-                "LABEL FORLOOP_0_LEVEL_0\r\n" + //
-                "PROC WriteInt ( u -] b )\r\n" + //
-                "x := 1\r\n" + //
-                "y := u IADD x\r\n" + //
-                "u := y\r\n" + //
-                "GOTO FORBEG_0_LEVEL_0\r\n" + //
-                "LABEL FOREND_0_LEVEL_0\r\n" + //
-                "PROC WriteLn (  )\r\n" + //
-                "END\r\n" + //
-                "\r\n" + //
-                " at io.github.H20man13.DeClan.ICodeGeneratorTest.testReaderSource(ICodeGeneratorTest.java:41)\r\n" + //
-                " at io.github.H20man13.DeClan.ICodeGeneratorTest.testForLoopBasic(ICodeGeneratorTest.java:792)\r\n" + //
-                "";
-
-        try{
-            Source mySource = new ReaderSource(new FileReader(programName));
-            ErrorLog errLog = new ErrorLog();
-            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
-            MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
-            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
-            Program prog = parser.parseProgram();
-            
-            IrRegisterGenerator gen = new IrRegisterGenerator();
-            MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
-            stdLib.ioLibrary().accept(igen);
-            stdLib.mathLibrary().accept(igen);
-            prog.accept(igen);
-            
-            List<ICode> icode = igen.getICode();
-
-            testReaderSource(icode, expectedICode);
-        } catch(FileNotFoundException exp) {
-            assertTrue("Error File not found...", false);
-        }
+                                "GOTO begin_1\r\n" + //
+                                "LABEL WriteLn\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL WriteInt\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL WriteReal\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL ReadInt\r\n" + //
+                                "g := 1\r\n" + //
+                                "h := INEG g\r\n" + //
+                                "f := h\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL begin_1\r\n" + //
+                                "GOTO begin_2\r\n" + //
+                                "LABEL Round\r\n" + //
+                                "o := 1\r\n" + //
+                                "p := INEG o\r\n" + //
+                                "j := p\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL Floor\r\n" + //
+                                "q := 1\r\n" + //
+                                "r := INEG q\r\n" + //
+                                "l := r\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL Ceil\r\n" + //
+                                "s := 1\r\n" + //
+                                "t := INEG s\r\n" + //
+                                "n := t\r\n" + //
+                                "RETURN\r\n" + //
+                                "LABEL begin_2\r\n" + //
+                                "u := 0\r\n" + //
+                                "GOTO begin_3\r\n" + //
+                                "LABEL begin_3\r\n" + //
+                                "v := 1\r\n" + //
+                                "u := v\r\n" + //
+                                "w := 10\r\n" + //
+                                "LABEL FORBEG_0_LEVEL_0\r\n" + //
+                                "IF u NE w THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0\r\n" + //
+                                "LABEL FORLOOP_0_LEVEL_0\r\n" + //
+                                "PROC WriteInt ( u -] b )\r\n" + //
+                                "x := 1\r\n" + //
+                                "y := u IADD x\r\n" + //
+                                "u := y\r\n" + //
+                                "GOTO FORBEG_0_LEVEL_0\r\n" + //
+                                "LABEL FOREND_0_LEVEL_0\r\n" + //
+                                "PROC WriteLn (  )\r\n" + //
+                                "END\r\n";
+        testDeclanFileOnICode(programName, expectedICode);
     }
 
     */

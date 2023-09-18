@@ -2,6 +2,7 @@ C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\decl
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\main\MyDeClanLexer.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\ast\ForBranch.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\icode\Assign.java
+C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\icode\ParamAssign.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\edu\depauw\declan\common\Lexer.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\icode\exp\UnExp.java
 C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\src\main\java\io\github\H20man13\DeClan\common\symboltable\entry\StringEntry.java

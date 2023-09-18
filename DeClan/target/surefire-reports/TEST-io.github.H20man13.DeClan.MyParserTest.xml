@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="io.github.H20man13.DeClan.MyParserTest" time="0" tests="5" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="io.github.H20man13.DeClan.MyParserTest" time="0.004" tests="5" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="19"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-19\bin"/>
-    <property name="sun.java.command" value="C:\Users\Owner\AppData\Local\Temp\surefire14712625383448985041\surefirebooter1274138627148777063.jar C:\Users\Owner\AppData\Local\Temp\surefire14712625383448985041 2023-09-14T10-40-33_672-jvmRun1 surefire15676245478272409496tmp surefire_016073023478145053876tmp"/>
+    <property name="sun.java.command" value="C:\Users\Owner\AppData\Local\Temp\surefire8053044360894879929\surefirebooter13007681938319135947.jar C:\Users\Owner\AppData\Local\Temp\surefire8053044360894879929 2023-09-17T19-02-06_791-jvmRun1 surefire13304621799061136342tmp surefire_03433731324214959984tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\target\test-classes;C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\target\classes;C:\Users\Owner\.m2\repository\junit\junit\4.11\junit-4.11.jar;C:\Users\Owner\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\Owner\Source\Repos\DeClan-Compiler\DeClan\libs\DeCLanModel-6x.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -30,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\Owner\AppData\Local\Temp\surefire14712625383448985041\surefirebooter1274138627148777063.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\Owner\AppData\Local\Temp\surefire8053044360894879929\surefirebooter13007681938319135947.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="19.0.2+7-44"/>
@@ -59,8 +59,8 @@
     <property name="java.class.version" value="63.0"/>
   </properties>
   <testcase name="testDecls" classname="io.github.H20man13.DeClan.MyParserTest" time="0"/>
-  <testcase name="testExpressions" classname="io.github.H20man13.DeClan.MyParserTest" time="0"/>
+  <testcase name="testExpressions" classname="io.github.H20man13.DeClan.MyParserTest" time="0.001"/>
   <testcase name="testEmptyStatements" classname="io.github.H20man13.DeClan.MyParserTest" time="0"/>
-  <testcase name="testConstValues" classname="io.github.H20man13.DeClan.MyParserTest" time="0"/>
+  <testcase name="testConstValues" classname="io.github.H20man13.DeClan.MyParserTest" time="0.001"/>
   <testcase name="testNumValues" classname="io.github.H20man13.DeClan.MyParserTest" time="0"/>
 </testsuite>
