@@ -131,7 +131,7 @@ public class MyICodeMachine {
     private void interpretParamAssignment(ParamAssign assign){
         String place = assign.newPlace;
         VariableEntry result = this.variableValues.getEntry(assign.paramPlace);
-        this.variableValues.addEntry(place, new VariableEntry(false, result));
+        this.variableValues.addEntry(place, result);
     }
 
     private void interpretEndStatement(End end){

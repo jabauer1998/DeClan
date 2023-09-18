@@ -574,9 +574,19 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     
   @Override
   public String visitResult(Identifier identifier){
-    if(paramEnvironment.entryExists(identifier.getLexeme())){
-      StringEntry place = paramEnvironment.getEntry(identifier.toString());
-      return builder.buildParamaterAssignment(place.toString());
+    if(varEnvironment.inScope(identifier.getLexeme())){
+      StringEntry place = varEnvironment.getEntry(identifier.getLexeme());
+      if(place != null)
+        return place.toString();
+      else{
+        errorLog.add("WHen generating ICode could not find place associated with local identifier " + identifier.getLexeme(), identifier.getStart());
+        return "";
+      }
+    } else if(paramEnvironment.entryExists(identifier.getLexeme())){
+        StringEntry place = paramEnvironment.getEntry(identifier.toString());
+        String newPlace = builder.buildParamaterAssignment(place.toString());
+        varEnvironment.addEntry(identifier.getLexeme(), new StringEntry(newPlace));
+        return newPlace;
     } else {
       StringEntry place = varEnvironment.getEntry(identifier.getLexeme());
       if(place != null){
