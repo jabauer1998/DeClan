@@ -10,6 +10,8 @@ public class ArmCodeGenerator {
     private List<String> dataSection;
     private List<String> instructions;
     private String label;
+    private int totalBytes;
+    private boolean first;
 
     public enum VariableLength{
         BYTE,
@@ -20,29 +22,37 @@ public class ArmCodeGenerator {
         this.dataSection = new LinkedList<String>();
         this.instructions = new LinkedList<String>();
         this.label = null;
+        this.totalBytes = 0;
+        this.first = false;
     }
 
     public void addVariable(String varName, VariableLength length, int variableValue){
         if(length == VariableLength.BYTE){
             this.dataSection.add(varName + ": .BYTE " + variableValue);
+            totalBytes += 1;
         } else {
             this.dataSection.add(varName + ": .WORD " + variableValue);
+            totalBytes += 4;
         }
     }
 
     public void addVariable(VariableLength length, int variableValue){
         if(length == VariableLength.BYTE){
             this.dataSection.add(".BYTE " + variableValue);
+            totalBytes += 1;
         } else {
             this.dataSection.add(".WORD " + variableValue);
+            totalBytes += 4;
         }
     }
 
     public void addVariable(String variableName, VariableLength length){
         if(length == VariableLength.BYTE){
             this.dataSection.add(variableName + ": .BYTE 0");
+            totalBytes += 1;
         } else {
             this.dataSection.add(variableName + ": .WORD 0");
+            totalBytes += 4;
         }
     }
 
@@ -52,6 +62,7 @@ public class ArmCodeGenerator {
         } else {
             this.instructions.add(this.label + ": " + instr);
         }
+        this.totalBytes += 4;
         this.label = null;
     }
 
@@ -64,6 +75,11 @@ public class ArmCodeGenerator {
     }
 
     public void writeToStream(Writer writer) throws IOException{
+        if(first){
+            addVariable("totalBytes", VariableLength.WORD, totalBytes+12);
+        }
+
+        writer.append("LDR R13, totalBytes");
         writer.append("B begin_0\n");
         for(String dataValue : dataSection){
             writer.append(dataValue + '\n');

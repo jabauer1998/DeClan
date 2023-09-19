@@ -3769,7 +3769,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("ADD R13, R13, #4");
                 cGen.addInstruction("STR R14, [R13, #-4]");
                 //The First thing we need to do is allocate all the code we can for the Paramaters
-                int offset = 0;
+                int offset = 4;
                 for(Tuple<String, String> param: procICode.params){
                     cGen.addVariable(param.dest, VariableLength.WORD, offset);
                     offset = offset + 4;
@@ -3777,11 +3777,14 @@ public class MyCodeGenerator {
                 cGen.addInstruction("ADD R13, R13, #" + (4 * totalReturnStackLength));
                 for(int x = 0; x < totalLength; x++){
                     Tuple<String, String> sourceDest = procICode.params.get(x);
-                    String reg = rGen.getReg(sourceDest.source, procICode); 
-                    cGen.addInstruction("LDR " + reg + ", " + sourceDest.source);
+
                     String offSetRegister = iGen.genNextRegister();
                     String offReg = rGen.getTempReg(offSetRegister, procICode);
                     cGen.addInstruction("LDR " + offReg + ", " + sourceDest.dest);
+
+                    String reg = rGen.getReg(sourceDest.source, procICode); 
+                    cGen.addInstruction("LDR " + reg + ", " + sourceDest.source);
+                    
                     cGen.addInstruction("STR " + reg +  ", [R13,-" + offReg + "]");
                 }
                 cGen.addInstruction("BL " + procICode.pname);

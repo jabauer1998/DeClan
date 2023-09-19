@@ -81,6 +81,7 @@ public class LiveVariableAnalysis extends Analysis<String> {
                 } else if(code instanceof Proc){
                     Proc placement = (Proc)code;
                     for(Tuple<String, String> arg : placement.params){
+                        instructionDef.add(arg.dest);
                         instructionUse.add(arg.source);
                     }
                 }
