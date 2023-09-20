@@ -61,6 +61,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+     <groupId>org.antlr</groupId>
+     <artifactId>antlr4-runtime</artifactId>
+     <version>4.0</version>
+    </dependency>
+    <dependency>
       <groupId>edu.depauw.declan</groupId>
       <artifactId>model</artifactId>
       <version>1.0</version>
@@ -121,6 +126,25 @@
             <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
             <autoReleaseAfterClose>true</autoReleaseAfterClose>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.antlr</groupId>
+          <artifactId>antlr4-maven-plugin</artifactId>
+          <version>4.0</version>
+          <configuration>
+            <listener>true</listener>
+            <visitor>true</visitor>
+            <outputDirectory>${basedir}/src/main/java</outputDirectory>
+          </configuration>
+          <executions>
+            <execution>
+              <id>antlr-generate</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>antlr4</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

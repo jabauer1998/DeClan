@@ -23,7 +23,7 @@ public class ArmCodeGenerator {
         this.instructions = new LinkedList<String>();
         this.label = null;
         this.totalBytes = 0;
-        this.first = false;
+        this.first = true;
     }
 
     public void addVariable(String varName, VariableLength length, int variableValue){
@@ -79,7 +79,7 @@ public class ArmCodeGenerator {
             addVariable("totalBytes", VariableLength.WORD, totalBytes+12);
         }
 
-        writer.append("LDR R13, totalBytes");
+        writer.append("LDR R13, totalBytes\n");
         writer.append("B begin_0\n");
         for(String dataValue : dataSection){
             writer.append(dataValue + '\n');
