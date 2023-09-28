@@ -36,6 +36,11 @@ public class ArmCodeGenerator {
         }
     }
 
+    public void addVariable(String varName, double variableValue){
+        this.dataSection.add(varName + ": .WORD " + variableValue);
+        totalBytes += 4;
+    }
+
     public void addVariable(VariableLength length, int variableValue){
         if(length == VariableLength.BYTE){
             this.dataSection.add(".BYTE " + variableValue);

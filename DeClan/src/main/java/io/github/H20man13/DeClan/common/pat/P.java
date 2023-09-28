@@ -21,6 +21,22 @@ public abstract class P {
             return "IADD";
         }
     }
+
+    private static class RADD extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof RADD){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString(){
+            return "RADD";
+        }
+    }
     private static class ISUB extends P{
         @Override
         public boolean equals(Object obj) {
@@ -34,6 +50,23 @@ public abstract class P {
         @Override
         public String toString() {
             return "ISUB";
+        }
+        
+    }
+
+    private static class RSUB extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof RSUB){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "RSUB";
         }
         
     }
@@ -53,6 +86,23 @@ public abstract class P {
         }
         
     }
+
+    private static class RMUL extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof RMUL){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "RMUL";
+        }
+    }
+
     private static class IDIV extends P{
         @Override
         public boolean equals(Object obj) {
@@ -69,6 +119,22 @@ public abstract class P {
         }
     }
 
+    private static class RDIV extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof RDIV){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "RDIV";
+        }
+    }
+
     private static class IDIVIDE extends P{
         @Override
         public boolean equals(Object obj) {
@@ -82,6 +148,22 @@ public abstract class P {
         @Override
         public String toString() {
             return "IDIVIDE";
+        }
+    }
+
+    private static class RDIVIDE extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof RDIVIDE){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "RDIVIDE";
         }
     }
     private static class IMOD extends P{
@@ -216,6 +298,22 @@ public abstract class P {
         @Override
         public String toString() {
             return "INEG";
+        }
+    }
+
+    public static class RNEG extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof RNEG){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "RNEG";
         }
     }
     public static class BNOT extends P{
@@ -575,18 +673,43 @@ public abstract class P {
     public static IADD IADD(){
         return new IADD();
     }
+
+    public static RADD RADD(){
+        return new RADD();
+    }
+
     public static ISUB ISUB(){
         return new ISUB();
     }
+
+    public static RSUB RSUB(){
+        return new RSUB();
+    }
+
     public static IMUL IMUL(){
         return new IMUL();
     }
+
+    public static RMUL RMUL(){
+        return new RMUL();
+    }
+
     public static IDIV IDIV(){
         return new IDIV();
     }
+
+    public static RDIV RDIV(){
+        return new RDIV();
+    }
+
     public static IDIVIDE IDIVIDE(){
         return new IDIVIDE();
     }
+
+    public static RDIVIDE RDIVIDE(){
+        return new RDIVIDE();
+    }
+    
     public static IMOD IMOD(){
         return new IMOD();
     }

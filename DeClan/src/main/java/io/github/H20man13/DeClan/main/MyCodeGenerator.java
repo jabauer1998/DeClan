@@ -109,23 +109,53 @@ public class MyCodeGenerator {
         initMultiplyAndAccumulate10();
         initMultiplyAndAccumulate11();
 
+        initMultiplyAndAccumulate12();
+        initMultiplyAndAccumulate13();
+        initMultiplyAndAccumulate14();
+        initMultiplyAndAccumulate15();
+        initMultiplyAndAccumulate16();
+        initMultiplyAndAccumulate17();
+        initMultiplyAndAccumulate18();
+        initMultiplyAndAccumulate19();
+        initMultiplyAndAccumulate20();
+        initMultiplyAndAccumulate21();
+        initMultiplyAndAccumulate22();
+
         //Init Add Patterns
         initAdd0();
         initAdd1();
         initAdd2();
         initAdd3();
+        initAdd4();
+        initAdd5();
+        initAdd6();
+        initAdd7();
+        initAdd8();
+        initAdd9();
         
         //Init Sub Patterns
         initSub0();
         initSub1();
         initSub2();
         initSub3();
+        initSub4();
+        initSub5();
+        initSub6();
+        initSub7();
+        initSub8();
+        initSub9();
 
         //Init Mul Patterns
         initMul0();
         initMul1();
         initMul2();
         initMul3();
+        initMul4();
+        initMul5();
+        initMul6();
+        initMul7();
+        initMul8();
+        initMul9();
 
         //Init Div patterns
         initDiv0();
@@ -189,7 +219,7 @@ public class MyCodeGenerator {
         initBnot0();
         initBnot1();
 
-        //Initialize Bool Constnat Patterns
+        //Initialize Bool Constant Patterns
         initBool0();
         //Initialize Int Constant Patterns
         initInt0();
@@ -1029,6 +1059,920 @@ public class MyCodeGenerator {
         });
     }
 
+    private void initMultiplyAndAccumulate12(){
+        codeGenFunctions.put(Pattern.multiplyAndAccumulate12, new Callable<Void>(){
+            @Override
+            public Void call() throws Exception {
+                ICode icode1 = intermediateCode.get(i);
+                ICode icode2 = intermediateCode.get(i + 1);
+
+                Assign ass1 = (Assign)icode1;
+                Assign ass2 = (Assign)icode2;
+
+                BinExp exp1 = (BinExp)ass1.value;
+                BinExp exp2 = (BinExp)ass2.value;
+
+                RealExp real1Left = (RealExp)exp1.left;
+                IdentExp ident1Right = (IdentExp)exp1.right;
+
+                IdentExp ident2Left = (IdentExp)exp2.left;
+                IdentExp ident2Right = (IdentExp)exp2.right;
+
+                String temp = iGen.genNextRegister();
+                String place1Left = rGen.getTempReg(temp, icode1);
+                cGen.addVariable(temp, real1Left.realValue);
+
+                String place1Right = rGen.getReg(ident1Right.ident, icode1);
+
+                cGen.addInstruction("LDR " + place1Left + ", " + temp);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + place1Left + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + place1Left + "[R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+                
+                cGen.addInstruction("LDR " + place1Right +  ", " + ident2Right.ident);
+
+                if(ass1.place.equals(ident2Left.ident) || ass1.place.equals(ident2Right.ident)){
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
+
+                    if(ass1.place.equals(ident2Left.ident)){
+                        String place2Right = rGen.getReg(ident2Right.ident, icode2);
+                        cGen.addInstruction("LDR " + place2Right + ", " + ident2Right.ident);
+                        cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Right);
+                        cGen.addVariable(ass2.place, VariableLength.WORD);
+                        cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
+                    } else {
+                         String place2Left = rGen.getReg(ident2Left.ident, icode2);
+                         cGen.addInstruction("LDR " + place2Left + ", " + ident2Left.ident);
+                         cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Left);
+                         cGen.addVariable(ass2.place, VariableLength.WORD);
+                         cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
+                    }
+                } else {
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
+                    cGen.addVariable(ass1.place, VariableLength.WORD);
+                    cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
+                    cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
+
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
+
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
+                    cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
+                }
+
+                rGen.freeTempRegs();
+                return null;
+            } 
+        });
+    }
+
+    
+
+    private void initMultiplyAndAccumulate13(){
+        codeGenFunctions.put(Pattern.multiplyAndAccumulate13, new Callable<Void>(){
+            @Override
+            public Void call() throws Exception {
+                ICode icode1 = intermediateCode.get(i);
+                ICode icode2 = intermediateCode.get(i + 1);
+
+                Assign ass1 = (Assign)icode1;
+                Assign ass2 = (Assign)icode2;
+
+                BinExp exp1 = (BinExp)ass1.value;
+                BinExp exp2 = (BinExp)ass2.value;
+
+                IdentExp ident1Left = (IdentExp)exp1.left;
+                RealExp real1Right = (RealExp)exp1.right;
+
+                IdentExp ident2Left = (IdentExp)exp2.left;
+                IdentExp ident2Right = (IdentExp)exp2.right;
+
+                String place1Left = rGen.getReg(ident1Left.ident, icode1);
+
+                String temp = iGen.genNextRegister();
+                String place1Right = rGen.getTempReg(temp, icode1);
+                cGen.addVariable(temp, real1Right.realValue);
+
+
+                cGen.addInstruction("LDR " + place1Left + ", " + ident1Left.ident);
+
+                cGen.addInstruction("LDR " + place1Right +  ", " + temp);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + place1Right + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + place1Right + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                if(ass1.place.equals(ident2Left.ident) || ass1.place.equals(ident2Right.ident)){
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
+
+                    if(ass1.place.equals(ident2Left.ident)){
+                        String place2Right = rGen.getReg(ident2Right.ident, icode2);
+                        cGen.addInstruction("LDR " + place2Right + ", " + ident2Right.ident);
+                        cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Right);
+                        cGen.addVariable(ass2.place, VariableLength.WORD);
+                        cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
+                    } else {
+                         String place2Left = rGen.getReg(ident2Left.ident, icode2);
+                         cGen.addInstruction("LDR " + place2Left + ", " + ident2Left.ident);
+                         cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Left);
+                         cGen.addVariable(ass2.place, VariableLength.WORD);
+                         cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
+                    }
+                } else {
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
+                    cGen.addVariable(ass1.place, VariableLength.WORD);
+                    cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
+                    cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
+
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
+
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
+                    cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
+                }
+
+                rGen.freeTempRegs();
+
+                return null;
+            }
+        });
+    }
+
+    private void initMultiplyAndAccumulate14(){
+        codeGenFunctions.put(Pattern.multiplyAndAccumulate14, new Callable<Void>(){
+            @Override
+            public Void call() throws Exception {
+                ICode icode1 = intermediateCode.get(i);
+                ICode icode2 = intermediateCode.get(i + 1);
+
+                Assign ass1 = (Assign)icode1;
+                Assign ass2 = (Assign)icode2;
+
+                BinExp exp1 = (BinExp)ass1.value;
+                BinExp exp2 = (BinExp)ass2.value;
+
+                RealExp real1Left = (RealExp)exp1.left;
+                RealExp real1Right = (RealExp)exp1.right;
+
+                IdentExp ident2Left = (IdentExp)exp2.left;
+                IdentExp ident2Right = (IdentExp)exp2.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String place1Left = rGen.getTempReg(tempLeft, icode1);
+                cGen.addVariable(tempLeft, real1Left.realValue);
+
+                String tempRight = iGen.genNextRegister();
+                String place1Right = rGen.getTempReg(tempRight, icode1);
+                cGen.addVariable(tempRight, real1Right.realValue);
+
+
+                cGen.addInstruction("LDR " + place1Left + ", " + tempLeft);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + place1Left + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + place1Left + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("LDR " + place1Right +  ", " + tempRight);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + place1Right + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + place1Right + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                if(ass1.place.equals(ident2Left.ident) || ass1.place.equals(ident2Right.ident)){
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
+
+                    if(ass1.place.equals(ident2Left.ident)){
+                        String place2Right = rGen.getReg(ident2Right.ident, icode2);
+                        cGen.addInstruction("LDR " + place2Right + ", " + ident2Right.ident);
+                        cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Right);
+                        cGen.addVariable(ass2.place, VariableLength.WORD);
+                        cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
+                    } else {
+                         String place2Left = rGen.getReg(ident2Left.ident, icode2);
+                         cGen.addInstruction("LDR " + place2Left + ", " + ident2Left.ident);
+                         cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Left);
+                         cGen.addVariable(ass2.place, VariableLength.WORD);
+                         cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
+                    }
+                } else {
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
+                    cGen.addVariable(ass1.place, VariableLength.WORD);
+                    cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
+                    cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
+
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
+
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
+                    cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
+                }
+
+                rGen.freeTempRegs();
+
+                return null;
+            }
+        });
+    }
+
+    private void initMultiplyAndAccumulate15(){
+        codeGenFunctions.put(Pattern.multiplyAndAccumulate15, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode1 = intermediateCode.get(i);
+                ICode icode2 = intermediateCode.get(i + 1);
+
+                Assign ass1 = (Assign)icode1;
+                Assign ass2 = (Assign)icode2;
+
+                BinExp exp1 = (BinExp)ass1.value;
+                BinExp exp2 = (BinExp)ass2.value;
+
+                IdentExp ident1Left = (IdentExp)exp1.left;
+                IdentExp ident1Right = (IdentExp)exp1.right;
+
+                RealExp real2Left = (RealExp)exp2.left;
+                IdentExp ident2Right = (IdentExp)exp2.right;
+
+                String place1Left = rGen.getReg(ident1Left.ident, icode1);
+                String place1Right = rGen.getReg(ident1Right.ident, icode1);
+
+                cGen.addInstruction("LDR " + place1Left + ", " + ident1Left.ident);
+                cGen.addInstruction("LDR " + place1Right +  ", " + ident1Right.ident);
+
+                if(ass1.place.equals(ident2Right.ident)){
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
+                    
+                    String temp = iGen.genNextRegister();
+                    String place2Left = rGen.getTempReg(temp, icode2);
+                    cGen.addVariable(temp, real2Left.realValue);
+
+                    cGen.addInstruction("LDR " + place2Left + ", " + temp);
+                    cGen.addInstruction("ADD R13, R13, #12");
+                    cGen.addInstruction("STR " + place2Left + ", [R13, #-4]");
+                    cGen.addInstruction("STR R14, [R13, #-12]");
+                    cGen.addInstruction("BL RealToInt");
+                    cGen.addInstruction("LDR " + place2Left + ", [R13, #-8]");
+                    cGen.addInstruction("LDR R14, [R13, #-12]");
+                    cGen.addInstruction("SUB R13, R13, #12");
+
+                    cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Left);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
+                } else {
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
+                    cGen.addVariable(ass1.place, VariableLength.WORD);
+                    cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
+                    cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
+
+                    String temp = iGen.genNextRegister();
+                    String place2Left = rGen.getTempReg(temp, icode2);
+                    cGen.addVariable(temp, real2Left.realValue);
+
+                    cGen.addInstruction("LDR " + place2Left + ", " + temp);
+                    cGen.addInstruction("ADD R13, R13, #12");
+                    cGen.addInstruction("STR " + place2Left + ", [R13, #-4]");
+                    cGen.addInstruction("STR R14, [R13, #-12]");
+                    cGen.addInstruction("BL RealToInt");
+                    cGen.addInstruction("LDR " + place2Left + ", [R13, #-8]");
+                    cGen.addInstruction("LDR R14, [R13, #-12]");
+                    cGen.addInstruction("SUB R13, R13, #12");
+
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
+
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
+                    cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
+                }
+
+                rGen.freeTempRegs();
+                return null;
+            }  
+        });
+    }
+
+    private void initMultiplyAndAccumulate16(){
+        codeGenFunctions.put(Pattern.multiplyAndAccumulate16, new Callable<Void>(){
+            @Override
+            public Void call() throws Exception {
+                ICode icode1 = intermediateCode.get(i);
+                ICode icode2 = intermediateCode.get(i + 1);
+
+                Assign ass1 = (Assign)icode1;
+                Assign ass2 = (Assign)icode2;
+
+                BinExp exp1 = (BinExp)ass1.value;
+                BinExp exp2 = (BinExp)ass2.value;
+
+                RealExp real1Left = (RealExp)exp1.left;
+                IdentExp ident1Right = (IdentExp)exp1.right;
+
+                RealExp real2Left = (RealExp)exp2.left;
+                IdentExp ident2Right = (IdentExp)exp2.right;
+
+                String temp = iGen.genNextRegister();
+                String place1Left = rGen.getTempReg(temp, icode1);
+                cGen.addVariable(temp, real1Left.realValue);
+
+                String place1Right = rGen.getReg(ident1Right.ident, icode1);
+
+                cGen.addInstruction("LDR " + place1Left + ", " + temp);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + place1Left + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + place1Left + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("LDR " + place1Right +  ", " + ident2Right.ident);
+                
+                if(ass1.place.equals(ident2Right.ident)){
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
+
+                    String temp2Left = iGen.genNextRegister();
+                    String place2Left = rGen.getTempReg(temp2Left, icode2);
+                    cGen.addVariable(temp2Left, real2Left.realValue);
+                    cGen.addInstruction("LDR " + place2Left + ", " + temp2Left);
+                    cGen.addInstruction("ADD R13, R13, #12");
+                    cGen.addInstruction("STR " + place2Left + ", [R13, #-4]");
+                    cGen.addInstruction("STR R14, [R13, #-12]");
+                    cGen.addInstruction("BL RealToInt");
+                    cGen.addInstruction("LDR " + place2Left + ", [R13, #-8]");
+                    cGen.addInstruction("LDR R14, [R13, #-12]");
+                    cGen.addInstruction("SUB R13, R13, #12");
+
+                    cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Left);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
+                } else {
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
+                    cGen.addVariable(ass1.place, VariableLength.WORD);
+                    cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
+                    cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
+
+                    String temp2Left = iGen.genNextRegister(); 
+                    String place2Left = rGen.getTempReg(temp2Left, icode2);
+                    cGen.addVariable(temp2Left, real2Left.realValue);
+                    cGen.addInstruction("LDR " + place2Left + ", " + temp2Left);
+                    cGen.addInstruction("ADD R13, R13, #12");
+                    cGen.addInstruction("STR " + place2Left + ", [R13, #-4]");
+                    cGen.addInstruction("STR R14, [R13, #-12]");
+                    cGen.addInstruction("BL RealToInt");
+                    cGen.addInstruction("LDR " + place2Left + ", [R13, #-8]");
+                    cGen.addInstruction("LDR R14, [R13, #-12]");
+                    cGen.addInstruction("SUB R13, R13, #12");
+
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
+
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
+                    cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
+                }
+
+                rGen.freeTempRegs();
+                return null;
+            } 
+        });
+    }
+
+    private void initMultiplyAndAccumulate17(){
+        codeGenFunctions.put(Pattern.multiplyAndAccumulate17, new Callable<Void>(){
+            @Override
+            public Void call() throws Exception {
+                ICode icode1 = intermediateCode.get(i);
+                ICode icode2 = intermediateCode.get(i + 1);
+
+                Assign ass1 = (Assign)icode1;
+                Assign ass2 = (Assign)icode2;
+
+                BinExp exp1 = (BinExp)ass1.value;
+                BinExp exp2 = (BinExp)ass2.value;
+
+                IdentExp ident1Left = (IdentExp)exp1.left;
+                RealExp real1Right = (RealExp)exp1.right;
+
+                RealExp real2Left = (RealExp)exp2.left;
+                IdentExp ident2Right = (IdentExp)exp2.right;
+
+                String place1Left = rGen.getReg(ident1Left.ident, icode1);
+
+                String temp = iGen.genNextRegister();
+                String place1Right = rGen.getTempReg(temp, icode1);
+                cGen.addVariable(temp, real1Right.realValue);
+
+
+                cGen.addInstruction("LDR " + place1Left + ", " + ident1Left.ident);
+
+                cGen.addInstruction("LDR " + place1Right +  ", " + temp);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + place1Right + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + place1Right + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                if(ass1.place.equals(ident2Right.ident)){
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
+
+                    String temp2Left = iGen.genNextRegister();
+                    String place2Left = rGen.getTempReg(temp2Left, icode2);
+                    cGen.addVariable(temp2Left, real2Left.realValue);
+
+                    cGen.addInstruction("LDR " + place2Left + ", " + temp2Left);
+                    cGen.addInstruction("ADD R13, R13, #12");
+                    cGen.addInstruction("STR " + place2Left + ", [R13, #-4]");
+                    cGen.addInstruction("STR R14, [R13, #-12]");
+                    cGen.addInstruction("BL RealToInt");
+                    cGen.addInstruction("LDR " + place2Left + ", [R13, #-8]");
+                    cGen.addInstruction("LDR R14, [R13, #-12]");
+                    cGen.addInstruction("SUB R13, R13, #12");
+
+                    cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Left);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
+                } else {
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
+                    cGen.addVariable(ass1.place, VariableLength.WORD);
+                    cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
+                    cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
+
+                    String temp2Left = iGen.genNextRegister();
+                    String place2Left = rGen.getTempReg(temp2Left, icode2);
+                    cGen.addVariable(temp2Left, real2Left.realValue);
+                    cGen.addInstruction("LDR " + place2Left + ", " + temp2Left);
+                    cGen.addInstruction("ADD R13, R13, #12");
+                    cGen.addInstruction("STR " + place2Left + ", [R13, #-4]");
+                    cGen.addInstruction("STR R14, [R13, #-12]");
+                    cGen.addInstruction("BL RealToInt");
+                    cGen.addInstruction("LDR " + place2Left + ", [R13, #-8]");
+                    cGen.addInstruction("LDR R14, [R13, #-12]");
+                    cGen.addInstruction("SUB R13, R13, #12");
+
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
+
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
+                    cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
+                }
+
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    public void initMultiplyAndAccumulate18(){
+        codeGenFunctions.put(Pattern.multiplyAndAccumulate18, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode1 = intermediateCode.get(i);
+                ICode icode2 = intermediateCode.get(i + 1);
+
+                Assign ass1 = (Assign)icode1;
+                Assign ass2 = (Assign)icode2;
+
+                BinExp exp1 = (BinExp)ass1.value;
+                BinExp exp2 = (BinExp)ass2.value;
+
+                RealExp real1Left = (RealExp)exp1.left;
+                RealExp real1Right = (RealExp)exp1.right;
+
+                RealExp real2Left = (RealExp)exp2.left;
+                IdentExp ident2Right = (IdentExp)exp2.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String place1Left = rGen.getTempReg(tempLeft, icode1);
+                cGen.addVariable(tempLeft, real1Left.realValue);
+
+
+                String tempRight = iGen.genNextRegister();
+                String place1Right = rGen.getTempReg(tempRight, icode1);
+                cGen.addVariable(tempRight, real1Right.realValue);
+
+
+                cGen.addInstruction("LDR " + place1Left + ", " + tempLeft);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + place1Left + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + place1Left + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("LDR " + place1Right +  ", " + tempRight);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + place1Right + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + place1Right + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                if(ass1.place.equals(ident2Right.ident)){
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
+
+                    String temp2Place = iGen.genNextRegister();
+                    String place2Left = rGen.getTempReg(temp2Place, icode2);
+                    cGen.addVariable(temp2Place, real2Left.realValue);
+
+                    cGen.addInstruction("LDR " + place2Left + ", " + temp2Place);
+                    cGen.addInstruction("ADD R13, R13, #12");
+                    cGen.addInstruction("STR " + place2Left + ", [R13, #-4]");
+                    cGen.addInstruction("STR R14, [R13, #-12]");
+                    cGen.addInstruction("BL RealToInt");
+                    cGen.addInstruction("LDR " + place2Left + ", [R13, #-8]");
+                    cGen.addInstruction("LDR R14, [R13, #-12]");
+                    cGen.addInstruction("SUB R13, R13, #12");
+
+                    cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Left);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
+                } else {
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
+                    cGen.addVariable(ass1.place, VariableLength.WORD);
+                    cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
+                    cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
+
+                    String temp2Place = iGen.genNextRegister();
+                    String place2Left = rGen.getTempReg(temp2Place, icode2);
+                    cGen.addVariable(temp2Place, real2Left.realValue);
+
+                    cGen.addInstruction("LDR " + place2Left + ", " + temp2Place);
+                    cGen.addInstruction("ADD R13, R13, #12");
+                    cGen.addInstruction("STR " + place2Left + ", [R13, #-4]");
+                    cGen.addInstruction("STR R14, [R13, #-12]");
+                    cGen.addInstruction("BL RealToInt");
+                    cGen.addInstruction("LDR " + place2Left + ", [R13, #-8]");
+                    cGen.addInstruction("LDR R14, [R13, #-12]");
+                    cGen.addInstruction("SUB R13, R13, #12");
+
+                    String place2Right = rGen.getReg(ident2Right.ident, icode2);
+
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
+                    cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
+                }
+
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initMultiplyAndAccumulate19(){
+        codeGenFunctions.put(Pattern.multiplyAndAccumulate19, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode1 = intermediateCode.get(i);
+                ICode icode2 = intermediateCode.get(i + 1);
+
+                Assign ass1 = (Assign)icode1;
+                Assign ass2 = (Assign)icode2;
+
+                BinExp exp1 = (BinExp)ass1.value;
+                BinExp exp2 = (BinExp)ass2.value;
+
+                IdentExp ident1Left = (IdentExp)exp1.left;
+                IdentExp ident1Right = (IdentExp)exp1.right;
+
+                IdentExp ident2Left = (IdentExp)exp2.left;
+                RealExp real2Right = (RealExp)exp2.right;
+
+                String place1Left = rGen.getReg(ident1Left.ident, icode1);
+                String place1Right = rGen.getReg(ident1Right.ident, icode1);
+
+                cGen.addInstruction("LDR " + place1Left + ", " + ident1Left.ident);
+                cGen.addInstruction("LDR " + place1Right +  ", " + ident1Right.ident);
+
+                if(ass1.place.equals(ident2Left.ident)){
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
+                    cGen.addInstruction("LDR " + place2Left + ", " + ident2Left.ident);
+                    cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Left);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
+                } else {
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
+                    cGen.addVariable(ass1.place, VariableLength.WORD);
+                    cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
+                    cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
+
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
+
+                    String temp = iGen.genNextRegister();
+                    String place2Right = rGen.getTempReg(temp, icode2);
+                    cGen.addVariable(temp, real2Right.realValue);
+                    cGen.addInstruction("LDR " + place2Right + ", " + temp);
+                    cGen.addInstruction("ADD R13, R13, #12");
+                    cGen.addInstruction("STR " + place2Right + ", [R13, #-4]");
+                    cGen.addInstruction("STR R14, [R13, #-12]");
+                    cGen.addInstruction("BL RealToInt");
+                    cGen.addInstruction("LDR " + place2Right + ", [R13, #-8]");
+                    cGen.addInstruction("LDR R14, [R13, #-12]");
+                    cGen.addInstruction("SUB R13, R13, #12");
+
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
+                    cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
+                }
+
+                rGen.freeTempRegs();
+
+                return null;
+            }  
+        });
+    }
+
+    private void initMultiplyAndAccumulate20(){
+        codeGenFunctions.put(Pattern.multiplyAndAccumulate20, new Callable<Void>(){
+            @Override
+            public Void call() throws Exception {
+                ICode icode1 = intermediateCode.get(i);
+                ICode icode2 = intermediateCode.get(i + 1);
+
+                Assign ass1 = (Assign)icode1;
+                Assign ass2 = (Assign)icode2;
+
+                BinExp exp1 = (BinExp)ass1.value;
+                BinExp exp2 = (BinExp)ass2.value;
+
+                RealExp real1Left = (RealExp)exp1.left;
+                IdentExp ident1Right = (IdentExp)exp1.right;
+
+                IdentExp ident2Left = (IdentExp)exp2.left;
+                RealExp real2Right = (RealExp)exp2.right;
+
+                String temp = iGen.genNextRegister();
+                String place1Left = rGen.getTempReg(temp, icode1);
+                cGen.addVariable(temp, real1Left.realValue);
+
+                String place1Right = rGen.getReg(ident1Right.ident, icode1);
+
+                cGen.addInstruction("LDR " + place1Left + ", " + temp);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + place1Left + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + place1Left + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("LDR " + place1Right +  ", " + ident1Right.ident);
+
+                if(ass1.place.equals(ident2Left.ident)){
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
+
+                    String temp2Right = iGen.genNextRegister();
+                    String place2Right = rGen.getTempReg(temp2Right, icode2);
+                    cGen.addVariable(temp2Right, real2Right.realValue);
+                    
+                    cGen.addInstruction("LDR " + place2Right + ", " + temp2Right);
+                    cGen.addInstruction("ADD R13, R13, #12");
+                    cGen.addInstruction("STR " + place2Right + ", [R13, #-4]");
+                    cGen.addInstruction("STR R14, [R13, #-12]");
+                    cGen.addInstruction("BL RealToInt");
+                    cGen.addInstruction("LDR " + place2Right + ", [R13, #-8]");
+                    cGen.addInstruction("LDR R14, [R13, #-12]");
+                    cGen.addInstruction("SUB R13, R13, #12");
+
+                    cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Right);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
+                } else {
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
+                    cGen.addVariable(ass1.place, VariableLength.WORD);
+                    cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
+                    cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
+
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
+
+                    String temp2Right = iGen.genNextRegister(); 
+                    String place2Right = rGen.getTempReg(temp2Right, icode2);
+                    cGen.addVariable(temp2Right, real2Right.realValue);
+
+                    cGen.addInstruction("LDR " + place2Right + ", " + temp2Right);
+                    cGen.addInstruction("ADD R13, R13, #12");
+                    cGen.addInstruction("STR " + place2Right + ", [R13, #-4]");
+                    cGen.addInstruction("STR R14, [R13, #-12]");
+                    cGen.addInstruction("BL RealToInt");
+                    cGen.addInstruction("LDR " + place2Right + ", [R13, #-8]");
+                    cGen.addInstruction("LDR R14, [R13, #-12]");
+                    cGen.addInstruction("SUB R13, R13, #12");
+
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
+                    cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
+                }
+
+                rGen.freeTempRegs();
+                return null;
+            } 
+        });
+    }
+
+    private void initMultiplyAndAccumulate21(){
+        codeGenFunctions.put(Pattern.multiplyAndAccumulate21, new Callable<Void>(){
+            @Override
+            public Void call() throws Exception {
+                ICode icode1 = intermediateCode.get(i);
+                ICode icode2 = intermediateCode.get(i + 1);
+
+                Assign ass1 = (Assign)icode1;
+                Assign ass2 = (Assign)icode2;
+
+                BinExp exp1 = (BinExp)ass1.value;
+                BinExp exp2 = (BinExp)ass2.value;
+
+                IdentExp ident1Left = (IdentExp)exp1.left;
+                RealExp real1Right = (RealExp)exp1.right;
+
+                IdentExp ident2Left = (IdentExp)exp2.left;
+                RealExp real2Right = (RealExp)exp2.right;
+
+                String place1Left = rGen.getReg(ident1Left.ident, icode1);
+
+                String temp = iGen.genNextRegister();
+                String place1Right = rGen.getTempReg(temp, icode1);
+                cGen.addVariable(temp, real1Right.realValue);
+
+                cGen.addInstruction("LDR " + place1Left + ", " + ident1Left.ident);
+                
+                cGen.addInstruction("LDR " + place1Right +  ", " + temp);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + place1Right + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + place1Right + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                if(ass1.place.equals(ident2Left.ident)){
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
+
+                    String temp2Right = iGen.genNextRegister();
+                    String place2Right = rGen.getTempReg(temp2Right, icode2);
+
+                    cGen.addInstruction("LDR " + place2Right + ", " + temp2Right);
+                    cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Right);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
+                } else {
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
+                    cGen.addVariable(ass1.place, VariableLength.WORD);
+                    cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
+                    cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
+
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
+
+                    String temp2Right = iGen.genNextRegister();
+                    String place2Right = rGen.getTempReg(temp2Right, icode2);
+                    cGen.addVariable(temp2Right, real2Right.realValue);
+                    cGen.addInstruction("LDR " + place2Right + ", " + temp2Right);
+                    cGen.addInstruction("ADD R13, R13, #12");
+                    cGen.addInstruction("STR " + place2Right + ", [R13, #-4]");
+                    cGen.addInstruction("STR R14, [R13, #-12]");
+                    cGen.addInstruction("BL RealToInt");
+                    cGen.addInstruction("LDR " + place2Right + ", [R13, #-8]");
+                    cGen.addInstruction("LDR R14, [R13, #-12]");
+                    cGen.addInstruction("SUB R13, R13, #12");
+
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
+                    cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
+                }
+
+                rGen.freeTempRegs();
+
+                return null;
+            }
+        });
+    }
+
+    public void initMultiplyAndAccumulate22(){
+        codeGenFunctions.put(Pattern.multiplyAndAccumulate22, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode1 = intermediateCode.get(i);
+                ICode icode2 = intermediateCode.get(i + 1);
+
+                Assign ass1 = (Assign)icode1;
+                Assign ass2 = (Assign)icode2;
+
+                BinExp exp1 = (BinExp)ass1.value;
+                BinExp exp2 = (BinExp)ass2.value;
+
+                RealExp real1Left = (RealExp)exp1.left;
+                RealExp real1Right = (RealExp)exp1.right;
+
+                IdentExp ident2Left = (IdentExp)exp2.left;
+                RealExp real2Right = (RealExp)exp2.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String place1Left = rGen.getTempReg(tempLeft, icode1);
+                cGen.addVariable(tempLeft, real1Left.realValue);
+
+
+                String tempRight = iGen.genNextRegister();
+                String place1Right = rGen.getTempReg(tempRight, icode1);
+                cGen.addVariable(tempRight, real1Right.realValue);
+
+                cGen.addInstruction("LDR " + place1Left + ", " + tempLeft);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + place1Left + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + place1Left + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("LDR " + place1Right +  ", " + tempRight);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + place1Right + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + place1Right + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                if(ass1.place.equals(ident2Left.ident)){
+                    String finalPlace = rGen.getReg(ass2.place, icode2);
+
+                    String temp2Right = iGen.genNextRegister();
+                    String place2Right = rGen.getTempReg(temp2Right, icode2);
+                    cGen.addVariable(temp2Right, real2Right.realValue);
+
+                    cGen.addInstruction("LDR " + place2Right + ", " + temp2Right);
+                    cGen.addInstruction("ADD R13, R13, #12");
+                    cGen.addInstruction("STR " + place2Right + ", [R13, #-4]");
+                    cGen.addInstruction("STR R14, [R13, #-12]");
+                    cGen.addInstruction("BL RealToInt");
+                    cGen.addInstruction("LDR " + place2Right + ", [R13, #-8]");
+                    cGen.addInstruction("LDR R14, [R13, #-12]");
+                    cGen.addInstruction("SUB R13, R13, #12");
+
+                    cGen.addInstruction("MLA " + finalPlace + ", " + place1Left + ", " + place1Right + ", " + place2Right);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("STR " + finalPlace + ", " + ass2.place);
+                } else {
+                    String finalPlace1 = rGen.getReg(ass1.place, icode1);
+                    cGen.addVariable(ass1.place, VariableLength.WORD);
+                    cGen.addInstruction("ADD " + finalPlace1 + ", " + place1Left + ", " + place1Right);
+                    cGen.addInstruction("STR " + finalPlace1 + ", " + ass1.place);
+
+                    String place2Left = rGen.getReg(ident2Left.ident, icode2);
+
+                    String temp2Right = iGen.genNextRegister();
+                    String place2Right = rGen.getTempReg(temp2Right, icode2);
+                    cGen.addVariable(temp2Right, real2Right.realValue);
+                    cGen.addInstruction("LDR " + place2Right + ", " + temp2Right);
+                    cGen.addInstruction("ADD R13, R13, #12");
+                    cGen.addInstruction("STR " + place2Right + ", [R13, #-4]");
+                    cGen.addInstruction("STR R14, [R13, #-12]");
+                    cGen.addInstruction("BL RealToInt");
+                    cGen.addInstruction("LDR " + place2Right + ", [R13, #-8]");
+                    cGen.addInstruction("LDR R14, [R13, #-12]");
+                    cGen.addInstruction("SUB R13, R13, #12");
+
+                    String finalPlace2 = rGen.getReg(ass2.place, icode2);
+                    cGen.addVariable(ass2.place, VariableLength.WORD);
+                    cGen.addInstruction("MUL " + finalPlace2 + ", " + place2Left + ", " + place2Right);
+                    cGen.addInstruction("STR " + finalPlace2 + ", " + ass2.place);
+                }
+
+                rGen.freeTempRegs();
+
+                return null;
+            }
+        });
+    }
+
     private void initAdd0(){
         codeGenFunctions.put(Pattern.add0, new Callable<Void>() {
             @Override
@@ -1143,6 +2087,248 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
                 cGen.addInstruction("SUB " + finalPlace + ", " + leftReg + ", " + rightReg);
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initAdd4(){
+        codeGenFunctions.put(Pattern.add4, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                RealExp leftInt = (RealExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(temp, assignICode);
+                cGen.addVariable(temp, leftInt.realValue);
+
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + leftReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + leftReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("ADD " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initAdd5(){
+        codeGenFunctions.put(Pattern.add5, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                RealExp rightReal = (RealExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(temp, assignICode);
+                cGen.addVariable(temp, rightReal.realValue);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + rightReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + rightReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("ADD " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initAdd6(){
+        codeGenFunctions.put(Pattern.add6, new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                RealExp leftReal = (RealExp)assignExp.left;
+                RealExp rightReal = (RealExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(tempLeft, assignICode);
+                cGen.addVariable(tempLeft, leftReal.realValue);
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(tempRight, assignICode);
+                cGen.addVariable(tempRight, rightReal.realValue);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + leftReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + leftReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + rightReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + rightReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("SUB " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initAdd7(){
+        codeGenFunctions.put(Pattern.add7, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                RealExp leftReal = (RealExp)assignExp.left;
+                IntExp rightInt = (IntExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(tempLeft, assignICode);
+                cGen.addVariable(tempLeft, leftReal.realValue);
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(tempRight, assignICode);
+                cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + leftReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + leftReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("ADD " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initAdd8(){
+        codeGenFunctions.put(Pattern.add8, new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IntExp leftInt = (IntExp)assignExp.left;
+                RealExp rightReal = (RealExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(tempLeft, assignICode);
+                cGen.addVariable(tempLeft, VariableLength.WORD, leftInt.value);
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(tempRight, assignICode);
+                cGen.addVariable(tempRight, rightReal.realValue);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + rightReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + rightReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("SUB " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initAdd9(){
+        codeGenFunctions.put(Pattern.add9, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("ADD " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + finalPlace + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL IntToReal");
+                cGen.addInstruction("LDR " + finalPlace + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+
                 rGen.freeTempRegs();
                 return null;
             }
@@ -1267,6 +2453,241 @@ public class MyCodeGenerator {
         });
     }
 
+    private void initSub4(){
+        codeGenFunctions.put(Pattern.sub4, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                RealExp leftReal = (RealExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(temp, assignICode);
+                cGen.addVariable(temp, leftReal.realValue);
+
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + leftReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + leftReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("SUB " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initSub5(){
+        codeGenFunctions.put(Pattern.sub5, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                RealExp rightReal = (RealExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(temp, assignICode);
+                cGen.addVariable(temp, rightReal.realValue);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place,  VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + rightReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + rightReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("SUB " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initSub6(){
+        codeGenFunctions.put(Pattern.sub6, new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                RealExp leftReal = (RealExp)assignExp.left;
+                RealExp rightReal = (RealExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(tempLeft, assignICode);
+                cGen.addVariable(tempLeft, leftReal.realValue);
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(tempRight, assignICode);
+                cGen.addVariable(tempRight, rightReal.realValue);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + leftReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + leftReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + rightReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + rightReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("SUB " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initSub7(){
+        codeGenFunctions.put(Pattern.sub7, new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                RealExp leftReal = (RealExp)assignExp.left;
+                IntExp rightInt = (IntExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(tempLeft, assignICode);
+                cGen.addVariable(tempLeft, leftReal.realValue);
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(tempRight, assignICode);
+                cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + leftReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + leftReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+
+                cGen.addInstruction("SUB " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initSub8(){
+        codeGenFunctions.put(Pattern.sub8, new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IntExp leftInt = (IntExp)assignExp.left;
+                RealExp rightReal = (RealExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(tempLeft, assignICode);
+                cGen.addVariable(tempLeft, VariableLength.WORD, leftInt.value);
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(tempRight, assignICode);
+                cGen.addVariable(tempRight, rightReal.realValue);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + rightReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + rightReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("SUB " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initSub9(){
+        codeGenFunctions.put(Pattern.sub9, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("SUB " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
     private void initMul0(){
         codeGenFunctions.put(Pattern.mul0, new Callable<Void>() {
             @Override
@@ -1377,6 +2798,240 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("MUL " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initMul4(){
+        codeGenFunctions.put(Pattern.mul4, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                RealExp leftReal = (RealExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(temp, assignICode);
+                cGen.addVariable(temp, leftReal.realValue);
+
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + leftReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + leftReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("MUL " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initMul5(){
+        codeGenFunctions.put(Pattern.mul5, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                RealExp rightReal = (RealExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(temp, assignICode);
+                cGen.addVariable(temp, rightReal.realValue);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + rightReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + rightReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("MUL " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initMul6(){
+        codeGenFunctions.put(Pattern.mul6, new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                RealExp leftReal = (RealExp)assignExp.left;
+                RealExp rightReal = (RealExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(tempLeft, assignICode);
+                cGen.addVariable(tempLeft, leftReal.realValue);
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(tempRight, assignICode);
+                cGen.addVariable(tempRight, rightReal.realValue);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + leftReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + leftReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + rightReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + rightReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("MUL " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initMul7(){
+        codeGenFunctions.put(Pattern.mul7, new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                RealExp leftReal = (RealExp)assignExp.left;
+                IntExp rightInt = (IntExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(tempLeft, assignICode);
+                cGen.addVariable(tempLeft, leftReal.realValue);
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(tempRight, assignICode);
+                cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + leftReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + leftReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("MUL " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initMul8(){
+        codeGenFunctions.put(Pattern.mul8, new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IntExp leftInt = (IntExp)assignExp.left;
+                RealExp rightReal = (RealExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(tempLeft, assignICode);
+                cGen.addVariable(tempLeft, VariableLength.WORD, leftInt.value);
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(tempRight, assignICode);
+                cGen.addVariable(tempRight, rightReal.realValue);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("ADD R13, R13, #12");
+                cGen.addInstruction("STR " + rightReg + ", [R13, #-4]");
+                cGen.addInstruction("STR R14, [R13, #-12]");
+                cGen.addInstruction("BL RealToInt");
+                cGen.addInstruction("LDR " + rightReg + ", [R13, #-8]");
+                cGen.addInstruction("LDR R14, [R13, #-12]");
+                cGen.addInstruction("SUB R13, R13, #12");
+                
+                cGen.addInstruction("MUL " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initMul9(){
+        codeGenFunctions.put(Pattern.mul9, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("MUL " + finalPlace + ", " + leftReg + ", " + rightReg);
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
