@@ -39,7 +39,6 @@ public class CodeGeneratorTest {
 
             stdLib.ioLibrary().accept(gen);
             stdLib.mathLibrary().accept(gen);
-            stdLib.conversionsLibrary().accept(gen);
 
             prog.accept(gen);
 

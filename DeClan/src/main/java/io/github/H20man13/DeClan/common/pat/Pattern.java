@@ -81,7 +81,6 @@ public class Pattern {
     public static P mul1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMUL(), P.ID()));
     public static P mul2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMUL(), P.INT()));
     public static P mul3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMUL(), P.INT()));
-
     public static P mul4 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.REAL(), P.RMUL(), P.ID()));
     public static P mul5 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.RMUL(), P.REAL()));
     public static P mul6 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.REAL(), P.RMUL(), P.REAL()));
@@ -93,11 +92,24 @@ public class Pattern {
     public static P div1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IDIV(), P.ID()));
     public static P div2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IDIV(), P.INT()));
     public static P div3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IDIV(), P.INT()));
+    public static P div4 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.REAL(), P.RDIV(), P.ID()));
+    public static P div5 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.RDIV(), P.REAL()));
+    public static P div6 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.REAL(), P.RDIV(), P.REAL()));
+    public static P div7 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.REAL(), P.RDIV(), P.INT()));
+    public static P div8 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.RDIV(), P.REAL()));
+    public static P div9 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.RDIV(), P.ID()));
 
     public static P divide0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IDIVIDE(), P.ID()));
     public static P divide1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IDIVIDE(), P.ID()));
     public static P divide2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IDIVIDE(), P.INT()));
     public static P divide3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IDIVIDE(), P.INT()));
+    
+    public static P divide4 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.REAL(), P.RDIVIDE(), P.ID()));
+    public static P divide5 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.RDIVIDE(), P.REAL()));
+    public static P divide6 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.REAL(), P.RDIVIDE(), P.REAL()));
+    public static P divide7 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.REAL(), P.RDIVIDE(), P.INT()));
+    public static P divide8 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.RDIVIDE(), P.REAL()));
+    public static P divide9 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.RDIVIDE(), P.ID()));
 
     public static P mod0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMOD(), P.ID()));
     public static P mod1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMOD(), P.ID()));

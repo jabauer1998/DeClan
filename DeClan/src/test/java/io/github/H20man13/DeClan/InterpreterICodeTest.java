@@ -45,7 +45,6 @@ public class InterpreterICodeTest {
             MyInterpreter interpreter = new MyInterpreter(errLog, intOut, errOut, standardInInt);
             lib.ioLibrary().accept(interpreter);
             lib.mathLibrary().accept(interpreter);
-            lib.conversionsLibrary().accept(interpreter);
             prog.accept(interpreter);
 
             for(LogItem errItem : errLog){
@@ -56,7 +55,6 @@ public class InterpreterICodeTest {
             MyICodeGenerator iGen = new MyICodeGenerator(errLog, gen);
             lib.ioLibrary().accept(iGen);
             lib.mathLibrary().accept(iGen);
-            lib.conversionsLibrary().accept(iGen);
             prog.accept(iGen);
 
             for(LogItem errItem : errLog){
