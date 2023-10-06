@@ -301,8 +301,6 @@ public class MyICodeMachine {
             case IMUL: return OpUtil.iMul(left, right);
             case RMUL: return OpUtil.rMul(left, right);
             case IDIV: return OpUtil.iDiv(left, right);
-            case IDIVIDE : return OpUtil.iDivide(left, right);
-            case RDIV: return OpUtil.rDiv(left, right);
             case RDIVIDE: return OpUtil.rDivide(left, right);
             case IMOD: return OpUtil.iMod(left, right);
             case EQ: return OpUtil.equal(left, right);

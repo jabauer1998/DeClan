@@ -497,8 +497,8 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
           case PLUS: return builder.buildRealAdditionAssignment(leftIdent, rightIdent);
           case MINUS: return builder.buildRealSubtractionAssignment(leftIdent, rightIdent);
           case TIMES: return builder.buildRealMultiplicationAssignment(leftIdent, rightIdent);
-          case DIV: return builder.buildRealDivAssignment(leftIdent, rightIdent);
           case DIVIDE: return builder.buildRealDivisionAssignment(leftIdent, rightIdent);
+          case DIV: return builder.buildIntegerDivAssignment(leftIdent, rightIdent);
           case MOD: return builder.buildIntegerModuloAssignment(leftIdent, rightIdent);
           case LE: return builder.buildLessThanOrEqualAssignment(leftIdent, rightIdent);
           case LT: return builder.buildLessThanAssignment(leftIdent, rightIdent);
@@ -516,7 +516,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
         case MINUS: return builder.buildIntegerSubtractionAssignment(leftIdent, rightIdent);
         case TIMES: return builder.buildIntegerMultiplicationAssignment(leftIdent, rightIdent);
         case DIV: return builder.buildIntegerDivAssignment(leftIdent, rightIdent);
-        case DIVIDE: return builder.buildIntegerDivisionAssignment(leftIdent, rightIdent);
+        case DIVIDE: return builder.buildRealDivisionAssignment(leftIdent, rightIdent);
         case MOD: return builder.buildIntegerModuloAssignment(leftIdent, rightIdent);
         case LE: return builder.buildLessThanOrEqualAssignment(leftIdent, rightIdent);
         case LT: return builder.buildLessThanAssignment(leftIdent, rightIdent);

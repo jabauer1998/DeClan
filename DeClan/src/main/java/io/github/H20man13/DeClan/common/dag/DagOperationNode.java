@@ -10,8 +10,8 @@ public class DagOperationNode implements DagNode {
     public enum Op{
         IADD, ISUB, IDIV, IMOD, LAND, 
         LOR, INEG, RNEG, BNOT, GE, LE, 
-        LT, GT, NE, EQ, IMUL, RADD, RSUB, RDIV,
-        RMUL, IDIVIDE, RDIVIDE, IAND, IOR, ILSHIFT, IRSHIFT
+        LT, GT, NE, EQ, IMUL, RADD, RSUB,
+        RMUL, RDIVIDE, IAND, IOR, ILSHIFT, IRSHIFT
     }
 
     private List<DagNode> children;

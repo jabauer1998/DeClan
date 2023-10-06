@@ -119,38 +119,6 @@ public abstract class P {
         }
     }
 
-    private static class RDIV extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof RDIV){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "RDIV";
-        }
-    }
-
-    private static class IDIVIDE extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof IDIVIDE){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "IDIVIDE";
-        }
-    }
-
     private static class RDIVIDE extends P{
         @Override
         public boolean equals(Object obj) {
@@ -696,14 +664,6 @@ public abstract class P {
 
     public static IDIV IDIV(){
         return new IDIV();
-    }
-
-    public static RDIV RDIV(){
-        return new RDIV();
-    }
-
-    public static IDIVIDE IDIVIDE(){
-        return new IDIVIDE();
     }
 
     public static RDIVIDE RDIVIDE(){

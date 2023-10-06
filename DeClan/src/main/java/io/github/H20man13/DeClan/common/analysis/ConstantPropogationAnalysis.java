@@ -91,7 +91,7 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>>
                                     break;
                                 case IDIV: result = OpUtil.iDiv(val1, val2);
                                     break;
-                                case RDIV: result = OpUtil.rDiv(val1, val2);
+                                case RDIVIDE: result = OpUtil.rDivide(val1, val2);
                                     break;
                                 case IMOD: result = OpUtil.iMod(val1, val2);
                                     break;

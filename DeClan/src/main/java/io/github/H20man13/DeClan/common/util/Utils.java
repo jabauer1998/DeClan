@@ -69,7 +69,6 @@ public class Utils {
             case RADD: return BinExp.Operator.RADD;
             case RSUB: return BinExp.Operator.RSUB;
             case RMUL: return BinExp.Operator.RMUL;
-            case RDIV: return BinExp.Operator.RDIV;
             case IADD: return BinExp.Operator.IADD;
             case ISUB: return BinExp.Operator.ISUB;
             case IMUL: return BinExp.Operator.IMUL;
@@ -103,7 +102,6 @@ public class Utils {
             case RADD: return BinExp.Operator.RADD;
             case RSUB: return BinExp.Operator.RSUB;
             case RMUL: return BinExp.Operator.RMUL;
-            case RDIV: return BinExp.Operator.RDIV;
             case IMOD: return BinExp.Operator.IMOD;
             case LAND: return BinExp.Operator.LAND;
             case LOR: return BinExp.Operator.LOR;
@@ -181,12 +179,10 @@ public class Utils {
             case IADD: return factory.createIntegerAdditionNode(place, left, right);
             case ISUB: return factory.createIntegerSubtractionNode(place, left, right);
             case IMUL: return factory.createIntegerMultiplicationNode(place, left, right);
-            case IDIV: return factory.createIntegerDivisionNode(place, left, right);
+            case IDIV: return factory.createIntegerDivNode(place, left, right);
             case RADD: return factory.createRealAdditionNode(place, left, right);
             case RSUB: return factory.createRealSubtractionNode(place, left, right);
             case RMUL: return factory.createRealMultiplicationNode(place, left, right);
-            case RDIV: return factory.createRealDivNode(place, left, right);
-            case IDIVIDE: return factory.createIntegerDivNode(place, left, right);
             case RDIVIDE: return factory.createRealDivisionNode(place, left, right);
             case LAND: return factory.createLogicalAndNode(place, left, right);
             case IAND: return factory.createBitwiseAndNode(place, left, right);

@@ -179,13 +179,6 @@ public class MyIrBuilder {
         return place;
     }
 
-    public String buildIntegerDivisionAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.IDIVIDE, right);
-        output.add(factory.produceBinaryOperation(place, binExp));
-        return place;
-    }
-
     public String buildIntegerDivAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
         BinExp binExp = new BinExp(left, BinExp.Operator.IDIV, right);
@@ -198,13 +191,6 @@ public class MyIrBuilder {
     public String buildRealDivisionAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
         BinExp binExp = new BinExp(left, BinExp.Operator.RDIVIDE, right);
-        output.add(factory.produceBinaryOperation(place, binExp));
-        return place;
-    }
-
-    public String buildRealDivAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.RDIV, right);
         output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
