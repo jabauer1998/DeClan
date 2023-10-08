@@ -43,6 +43,8 @@ public class MyICodeTypeChecker {
         this.instructionNumber = 0;
         this.variableQualities = new Environment<String, TypeCheckerQualities>();
         this.labels = new Environment<String, IntEntry>();
+        this.variableQualities.addScope();
+        this.labels.addScope();
     }
 
     public void runTypeChecker(){
@@ -124,7 +126,7 @@ public class MyICodeTypeChecker {
     private boolean typeCheckPossibleAssignment(Assign assign){
         Assign assignICode = (Assign)assign;
         TypeCheckerQualities qual = typeCheckExpression(assignICode.value);
-        if(!qual.containsQualities(TypeCheckerQualities.NA)){
+        if(qual.missingQualities(TypeCheckerQualities.NA)){
             variableQualities.addEntry(assignICode.place, qual);
             return true;
         }
@@ -232,20 +234,20 @@ public class MyICodeTypeChecker {
 		case LAND:
 			if(leftQual.missingQualities(TypeCheckerQualities.BOOLEAN) || rightQual.missingQualities(TypeCheckerQualities.BOOLEAN)){
 				errLog.add("Type mismatch in binary opperation: " + leftQual + " " + expression.op + " " + rightQual, new Position(instructionNumber, 0));
-				return null;
+				return new TypeCheckerQualities(TypeCheckerQualities.NA);
 			} else {
 				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 			}
 		case LOR:
 			if(leftQual.missingQualities(TypeCheckerQualities.BOOLEAN) || rightQual.missingQualities(TypeCheckerQualities.BOOLEAN)){
 				errLog.add("Type mismatch in binary opperation: " + leftQual + " " + expression.op + " " + rightQual,  new Position(instructionNumber, 0));
-				return null;
+				return new TypeCheckerQualities(TypeCheckerQualities.NA);
 			} else {
 				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 			}
 		default:
 			if(expression.op == BinExp.Operator.EQ || expression.op == BinExp.Operator.NE 
-            || expression.op == BinExp.Operator.GT || expression.op == BinExp.Operator.LE 
+            || expression.op == BinExp.Operator.LT || expression.op == BinExp.Operator.LE 
             || expression.op == BinExp.Operator.GT || expression.op == BinExp.Operator.GE){
 				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 			} else if(expression.op == BinExp.Operator.IDIV || expression.op == BinExp.Operator.IAND 

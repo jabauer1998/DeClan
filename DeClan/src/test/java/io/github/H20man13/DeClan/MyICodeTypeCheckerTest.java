@@ -42,7 +42,9 @@ public class MyICodeTypeCheckerTest {
     public void testProg1(){
         String source = "a := 456\n"
                       + "b := 48393\n"
-                      + "c := 8.23"
+                      + "c := 8.23\n"
+                      + "c2 := TRUE\n"
+                      + "c3 := FALSE\n"
                       + "d := a IADD b\n"
                       + "e := b ISUB a\n"
                       + "f := d IMOD e\n"
@@ -50,11 +52,11 @@ public class MyICodeTypeCheckerTest {
                       + "h := c RADD f\n"
                       + "i := h RSUB c\n"
                       + "j := b RMUL i\n"
-                      + "k := b LOR j\n"
+                      + "k := c2 LOR c3\n"
                       + "l := b IOR g\n"
                       + "m := l IDIV a\n"
                       + "n := m RDIVIDE c\n"
-                      + "o := m LAND a\n"
+                      + "o := k LAND c3\n"
                       + "p := a IAND a\n"
                       + "q := p ILSHIFT b\n"
                       + "r := b IRSHIFT f\n"
@@ -69,6 +71,8 @@ public class MyICodeTypeCheckerTest {
         assertTypeCheckerQualities(tC, "a", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "b", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "c", TypeCheckerQualities.REAL);
+        assertTypeCheckerQualities(tC, "c2", TypeCheckerQualities.BOOLEAN);
+        assertTypeCheckerQualities(tC, "c3", TypeCheckerQualities.BOOLEAN);
         assertTypeCheckerQualities(tC, "d", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "e", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "f", TypeCheckerQualities.INTEGER);

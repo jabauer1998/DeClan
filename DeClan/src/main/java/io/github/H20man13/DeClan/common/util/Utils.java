@@ -73,6 +73,7 @@ public class Utils {
             case ISUB: return BinExp.Operator.ISUB;
             case IMUL: return BinExp.Operator.IMUL;
             case IDIV: return BinExp.Operator.IDIV;
+            case RDIVIDE: return BinExp.Operator.RDIVIDE;
             case IMOD: return BinExp.Operator.IMOD;
             case LOR: return BinExp.Operator.LOR;
             case LAND: return BinExp.Operator.LAND;
