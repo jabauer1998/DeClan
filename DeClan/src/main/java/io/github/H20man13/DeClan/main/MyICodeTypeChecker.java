@@ -41,6 +41,8 @@ public class MyICodeTypeChecker {
         this.inputICode = inputICode;
         this.errLog = errLog;
         this.instructionNumber = 0;
+        this.variableQualities = new Environment<String, TypeCheckerQualities>();
+        this.labels = new Environment<String, IntEntry>();
     }
 
     public void runTypeChecker(){
