@@ -2,12 +2,15 @@ package io.github.H20man13.DeClan;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.StringReader;
 import java.util.List;
 
 import org.junit.Test;
 
 import edu.depauw.declan.common.ErrorLog;
+import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.ErrorLog.LogItem;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -17,10 +20,27 @@ import io.github.H20man13.DeClan.main.MyIrLexer;
 import io.github.H20man13.DeClan.main.MyIrParser;
 
 public class MyICodeTypeCheckerTest {
-    private MyICodeTypeChecker runTypeCheckerOnSource(String source){
+
+    private MyICodeTypeChecker runTypeCheckerOnStringSource(String source){
         StringReader stringReader = new StringReader(source);
-        ErrorLog errLog = new ErrorLog();
         ReaderSource typeCheckerSource = new ReaderSource(stringReader);
+        return runTypeCheckerOnSource(typeCheckerSource);
+    }
+
+    private MyICodeTypeChecker runTypeCheckerOnFileSource(String path){
+        try{
+            FileReader fileReader = new FileReader(path);
+            ReaderSource typeCheckerSource = new ReaderSource(fileReader);
+            return runTypeCheckerOnSource(typeCheckerSource);
+        } catch(Exception exp){
+            assertTrue(exp.toString(), false);
+            return null;
+        }
+    }
+
+    private MyICodeTypeChecker runTypeCheckerOnSource(Source typeCheckerSource){
+        ErrorLog errLog = new ErrorLog();
+        
 
         MyIrLexer lexer = new MyIrLexer(typeCheckerSource, errLog);
         MyIrParser parser = new MyIrParser(lexer, errLog);
@@ -72,7 +92,7 @@ public class MyICodeTypeCheckerTest {
                       + "w := n NE n\n"
                       + "x := j EQ h\n"
                       + "END\n";
-        MyICodeTypeChecker tC = runTypeCheckerOnSource(source);
+        MyICodeTypeChecker tC = runTypeCheckerOnStringSource(source);
         assertTypeCheckerQualities(tC, "a", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "b", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "c", TypeCheckerQualities.REAL);
@@ -120,7 +140,7 @@ public class MyICodeTypeCheckerTest {
                       + "PROC func1 ( g -> param1 )\n"
                       + "h <- return1\n"
                       + "END\n";
-        MyICodeTypeChecker tC = runTypeCheckerOnSource(source);
+        MyICodeTypeChecker tC = runTypeCheckerOnStringSource(source);
         assertTypeCheckerQualities(tC, "a", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "b", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "param1", TypeCheckerQualities.INTEGER);
@@ -133,5 +153,77 @@ public class MyICodeTypeCheckerTest {
         assertTypeCheckerQualities(tC, "f", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "g", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "h", TypeCheckerQualities.REAL);
+    }
+
+    @Test
+    public void testConversions(){
+        String source = "test_source/conversions.dcl";
+        runTypeCheckerOnFileSource(source);
+    }
+
+    @Test
+    public void testExpressions(){
+        String source = "test_source/expressions.dcl";
+        runTypeCheckerOnFileSource(source);
+    }
+
+    @Test
+    public void testForLoopAdvanced(){
+        String source = "test_source/ForLoopAdvanced.dcl";
+        runTypeCheckerOnFileSource(source);
+    }
+
+    @Test
+    public void testForLoopBasic(){
+        String source = "test_source/ForLoopBasic.dcl";
+        runTypeCheckerOnFileSource(source);
+    }
+
+    @Test
+    public void testForLoopBasic2(){
+        String source = "test_source/ForLoopBasic2.dcl";
+        runTypeCheckerOnFileSource(source);
+    }
+
+    @Test
+    public void testForLoopBasic3(){
+        String source = "test_source/ForLoopBasic.dcl";
+        runTypeCheckerOnFileSource(source);
+    }
+
+    @Test
+    public void ifStatementAdvanced(){
+        String source = "test_source/IfStatementAdvanced.dcl";
+        runTypeCheckerOnFileSource(source);
+    }
+
+    @Test
+    public void ifStatementBasic(){
+        String source = "test_source/IfStatementBasic.dcl";
+        runTypeCheckerOnFileSource(source);
+    }
+
+    @Test
+    public void testLoops(){
+        String source = "test_source/loops.dcl";
+        runTypeCheckerOnFileSource(source);
+    }
+
+    @Test
+    public void testRepeatLoopBasic(){
+        String source = "test_source/RepeatLoopBasic.dcl";
+        runTypeCheckerOnFileSource(source);
+    }
+
+    @Test
+    public void testSample(){
+        String source = "test_source/sample.dcl";
+        runTypeCheckerOnFileSource(source);
+    }
+
+    @Test
+    public void testTest(){
+        String source = "test_source/test.dcl";
+        runTypeCheckerOnFileSource(source);
     }
 }
