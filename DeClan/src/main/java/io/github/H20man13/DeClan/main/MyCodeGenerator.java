@@ -244,7 +244,6 @@ public class MyCodeGenerator {
         initEq8();
         initEq9();
         initEq10();
-        initEq11();
 
         //Initialize the ne Patterns
         initNe0();

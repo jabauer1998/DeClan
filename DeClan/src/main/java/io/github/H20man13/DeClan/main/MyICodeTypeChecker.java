@@ -67,6 +67,16 @@ public class MyICodeTypeChecker {
         instructionNumber = 0;
         for(ICode icode : inputICode){
             typeCheckRestOfInstructions(icode);
+            instructionNumber++;
+        }
+    }
+
+    public boolean identContainsQualities(String ident, Integer integer){
+        if(variableQualities.entryExists(ident)){
+            TypeCheckerQualities qual = variableQualities.getEntry(ident);
+            return qual.containsQualities(integer);
+        } else {
+            return false;
         }
     }
 
@@ -238,26 +248,38 @@ public class MyICodeTypeChecker {
 				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 			} else if(expression.op == BinExp.Operator.IDIV || expression.op == BinExp.Operator.IAND 
 			|| expression.op == BinExp.Operator.IOR || expression.op == BinExp.Operator.ILSHIFT 
-            || expression.op == BinExp.Operator.IRSHIFT){
+            || expression.op == BinExp.Operator.IRSHIFT || expression.op == BinExp.Operator.IADD
+            || expression.op == BinExp.Operator.ISUB || expression.op == BinExp.Operator.IMUL){
 				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);	
-			} else if(expression.op == BinExp.Operator.RDIVIDE){
+			} else if(expression.op == BinExp.Operator.RDIVIDE || expression.op == BinExp.Operator.RADD
+                   || expression.op == BinExp.Operator.RSUB || expression.op == BinExp.Operator.RMUL){
 				return new TypeCheckerQualities(TypeCheckerQualities.REAL);	
-			} else if(leftQual.containsQualities(TypeCheckerQualities.REAL) || rightQual.containsQualities(TypeCheckerQualities.REAL)){
-				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
 			} else {
-				return leftQual;
+                errLog.add("Unknown Operation type " + expression.op, new Position(instructionNumber, 0));
+				return new TypeCheckerQualities(TypeCheckerQualities.NA);
 			}
 		}
     }
 
     private TypeCheckerQualities typeCheckUnaryExpression(UnExp expression){
         TypeCheckerQualities rightQual = typeCheckExpression(expression.right);
-		if (rightQual.containsQualities(TypeCheckerQualities.BOOLEAN) || rightQual.containsQualities(TypeCheckerQualities.INTEGER) || rightQual.containsQualities(TypeCheckerQualities.REAL)){
-			return rightQual;
-		} else {
-			errLog.add("Invalid Type for Unary Operation " + rightQual, new Position(instructionNumber, 0));
-			return new TypeCheckerQualities(TypeCheckerQualities.NA);
-		}
+        if(rightQual.containsQualities(TypeCheckerQualities.NA)){
+            return new TypeCheckerQualities(TypeCheckerQualities.NA);
+        }
+
+        if(rightQual.containsQualities(TypeCheckerQualities.STRING)){
+            errLog.add("Error in unary operation cant have string as input for expression " + expression, new Position(instructionNumber, 0));
+            return new TypeCheckerQualities(TypeCheckerQualities.NA);
+        }
+
+        switch(expression.op){
+            case RNEG: return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+            case INEG: return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+            case BNOT: return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+            default:
+                errLog.add("Error unknown Operation type " + expression.op, new Position(instructionNumber, 0));
+                return new TypeCheckerQualities(TypeCheckerQualities.NA);
+        }
     }
 
     private TypeCheckerQualities typeCheckIdentifier(IdentExp ident){
