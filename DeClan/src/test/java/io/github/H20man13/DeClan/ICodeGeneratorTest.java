@@ -78,7 +78,7 @@ public class ICodeGeneratorTest {
                        + "y := z LOR x\n"
                        + "Z := b IOR x\n"
                        + "z := v IDIV y\n"
-                       + "z := v RDIV y\n"
+                       + "z := v RDIVIDE y\n"
                        + "g := v LAND z\n"
                        + "d := v IAND z\n"
                        + "e := v ILSHIFT x\n"

@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.Test;
 
 import edu.depauw.declan.common.ErrorLog;
+import edu.depauw.declan.common.ErrorLog.LogItem;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
@@ -28,6 +29,10 @@ public class MyICodeTypeCheckerTest {
 
         MyICodeTypeChecker typeChecker = new MyICodeTypeChecker(prog, errLog);
         typeChecker.runTypeChecker();
+
+        for(LogItem item : errLog){
+            assertTrue(item.toString(), false);
+        }
 
         return typeChecker;
     }
@@ -94,5 +99,39 @@ public class MyICodeTypeCheckerTest {
         assertTypeCheckerQualities(tC, "v", TypeCheckerQualities.BOOLEAN);
         assertTypeCheckerQualities(tC, "w", TypeCheckerQualities.BOOLEAN);
         assertTypeCheckerQualities(tC, "x", TypeCheckerQualities.BOOLEAN);
+    }
+
+    @Test
+    public void testProg2(){
+        String source = "LABEL func1\n"
+                      + "a << param1\n"
+                      + "b := a IADD a\n"
+                      + "PROC func2 ( b -> param2 )\n"
+                      + "c <- return2\n"
+                      + "return1 := c RADD c\n"
+                      + "RETURN\n"
+                      + "LABEL func2\n"
+                      + "d << param2\n"
+                      + "e := d IMUL d\n"
+                      + "f := e IMOD d\n"
+                      + "return2 := f\n"
+                      + "RETURN\n"
+                      + "g := 30\n"
+                      + "PROC func1 ( g -> param1 )\n"
+                      + "h <- return1\n"
+                      + "END\n";
+        MyICodeTypeChecker tC = runTypeCheckerOnSource(source);
+        assertTypeCheckerQualities(tC, "a", TypeCheckerQualities.INTEGER);
+        assertTypeCheckerQualities(tC, "b", TypeCheckerQualities.INTEGER);
+        assertTypeCheckerQualities(tC, "param1", TypeCheckerQualities.INTEGER);
+        assertTypeCheckerQualities(tC, "param2", TypeCheckerQualities.INTEGER);
+        assertTypeCheckerQualities(tC, "c", TypeCheckerQualities.INTEGER);
+        assertTypeCheckerQualities(tC, "return2", TypeCheckerQualities.INTEGER);
+        assertTypeCheckerQualities(tC, "return1", TypeCheckerQualities.REAL);
+        assertTypeCheckerQualities(tC, "d", TypeCheckerQualities.INTEGER);
+        assertTypeCheckerQualities(tC, "e", TypeCheckerQualities.INTEGER);
+        assertTypeCheckerQualities(tC, "f", TypeCheckerQualities.INTEGER);
+        assertTypeCheckerQualities(tC, "g", TypeCheckerQualities.INTEGER);
+        assertTypeCheckerQualities(tC, "h", TypeCheckerQualities.REAL);
     }
 }
