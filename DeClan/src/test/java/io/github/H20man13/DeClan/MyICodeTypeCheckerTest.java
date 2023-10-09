@@ -12,33 +12,65 @@ import org.junit.Test;
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.ErrorLog.LogItem;
+import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
+import io.github.H20man13.DeClan.main.MyDeClanLexer;
+import io.github.H20man13.DeClan.main.MyDeClanParser;
+import io.github.H20man13.DeClan.main.MyICodeGenerator;
 import io.github.H20man13.DeClan.main.MyICodeTypeChecker;
 import io.github.H20man13.DeClan.main.MyIrLexer;
 import io.github.H20man13.DeClan.main.MyIrParser;
+import io.github.H20man13.DeClan.main.MyStandardLibrary;
 
 public class MyICodeTypeCheckerTest {
 
-    private MyICodeTypeChecker runTypeCheckerOnStringSource(String source){
+    private MyICodeTypeChecker runTypeCheckerOnIrStringSource(String source){
         StringReader stringReader = new StringReader(source);
         ReaderSource typeCheckerSource = new ReaderSource(stringReader);
-        return runTypeCheckerOnSource(typeCheckerSource);
+        return runTypeCheckerOnIrSource(typeCheckerSource);
     }
 
-    private MyICodeTypeChecker runTypeCheckerOnFileSource(String path){
+    private MyICodeTypeChecker runTypeCheckerOnDeClanFileSource(String path){
         try{
             FileReader fileReader = new FileReader(path);
             ReaderSource typeCheckerSource = new ReaderSource(fileReader);
-            return runTypeCheckerOnSource(typeCheckerSource);
+            return runTypeCheckerOnDeClanSource(typeCheckerSource);
         } catch(Exception exp){
             assertTrue(exp.toString(), false);
             return null;
         }
     }
 
-    private MyICodeTypeChecker runTypeCheckerOnSource(Source typeCheckerSource){
+    private MyICodeTypeChecker runTypeCheckerOnDeClanSource(Source typeCheckerSource){
+        ErrorLog errLog = new ErrorLog();
+        
+        MyDeClanLexer lexer = new MyDeClanLexer(typeCheckerSource, errLog);
+        MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
+        Program prog = parser.parseProgram();
+        parser.close();
+
+        MyStandardLibrary lib = new MyStandardLibrary(errLog);
+        MyICodeGenerator gen = new MyICodeGenerator(errLog);
+
+        lib.ioLibrary().accept(gen);
+        lib.mathLibrary().accept(gen);
+        prog.accept(gen);
+
+        List<ICode> icodeProg = gen.getICode();
+
+        MyICodeTypeChecker typeChecker = new MyICodeTypeChecker(icodeProg, errLog);
+        typeChecker.runTypeChecker();
+
+        for(LogItem item : errLog){
+            assertTrue(item.toString(), false);
+        }
+
+        return typeChecker;
+    }
+
+    private MyICodeTypeChecker runTypeCheckerOnIrSource(Source typeCheckerSource){
         ErrorLog errLog = new ErrorLog();
         
 
@@ -92,7 +124,7 @@ public class MyICodeTypeCheckerTest {
                       + "w := n NE n\n"
                       + "x := j EQ h\n"
                       + "END\n";
-        MyICodeTypeChecker tC = runTypeCheckerOnStringSource(source);
+        MyICodeTypeChecker tC = runTypeCheckerOnIrStringSource(source);
         assertTypeCheckerQualities(tC, "a", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "b", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "c", TypeCheckerQualities.REAL);
@@ -140,7 +172,7 @@ public class MyICodeTypeCheckerTest {
                       + "PROC func1 ( g -> param1 )\n"
                       + "h <- return1\n"
                       + "END\n";
-        MyICodeTypeChecker tC = runTypeCheckerOnStringSource(source);
+        MyICodeTypeChecker tC = runTypeCheckerOnIrStringSource(source);
         assertTypeCheckerQualities(tC, "a", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "b", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "param1", TypeCheckerQualities.INTEGER);
@@ -158,72 +190,72 @@ public class MyICodeTypeCheckerTest {
     @Test
     public void testConversions(){
         String source = "test_source/conversions.dcl";
-        runTypeCheckerOnFileSource(source);
+        runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testExpressions(){
         String source = "test_source/expressions.dcl";
-        runTypeCheckerOnFileSource(source);
+        runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testForLoopAdvanced(){
         String source = "test_source/ForLoopAdvanced.dcl";
-        runTypeCheckerOnFileSource(source);
+        runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testForLoopBasic(){
         String source = "test_source/ForLoopBasic.dcl";
-        runTypeCheckerOnFileSource(source);
+        runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testForLoopBasic2(){
         String source = "test_source/ForLoopBasic2.dcl";
-        runTypeCheckerOnFileSource(source);
+        runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testForLoopBasic3(){
         String source = "test_source/ForLoopBasic.dcl";
-        runTypeCheckerOnFileSource(source);
+        runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void ifStatementAdvanced(){
         String source = "test_source/IfStatementAdvanced.dcl";
-        runTypeCheckerOnFileSource(source);
+        runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void ifStatementBasic(){
         String source = "test_source/IfStatementBasic.dcl";
-        runTypeCheckerOnFileSource(source);
+        runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testLoops(){
         String source = "test_source/loops.dcl";
-        runTypeCheckerOnFileSource(source);
+        runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testRepeatLoopBasic(){
         String source = "test_source/RepeatLoopBasic.dcl";
-        runTypeCheckerOnFileSource(source);
+        runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testSample(){
         String source = "test_source/sample.dcl";
-        runTypeCheckerOnFileSource(source);
+        runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testTest(){
         String source = "test_source/test.dcl";
-        runTypeCheckerOnFileSource(source);
+        runTypeCheckerOnDeClanFileSource(source);
     }
 }

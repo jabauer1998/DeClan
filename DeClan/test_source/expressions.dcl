@@ -8,7 +8,7 @@ BEGIN
   y := -c - b*a;
   WriteInt(a);
   WriteReal(x);
-  WriteReal(l);
+  WriteReal(x);
   WriteReal(y);
   WriteLn();
   m := d DIV l;
@@ -16,8 +16,8 @@ BEGIN
   WriteInt(m);
   WriteReal(z);
   WriteLn();
-  n := Round(c);
-  WriteInt(n);
+  z := Round(c);
+  WriteReal(z);
   IF e THEN WriteInt(2 * 2) ELSE WriteReal(d / 10) END;
   WriteLn();
   p := ~e & (x > a);

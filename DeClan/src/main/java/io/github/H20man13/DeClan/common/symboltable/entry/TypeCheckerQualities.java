@@ -28,6 +28,61 @@ public class TypeCheckerQualities implements Copyable<TypeCheckerQualities> {
     }
 
     @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        if(this.containsQualities(TypeCheckerQualities.NA)){
+            sb.append("NA");
+        } else if(this.containsQualities(TypeCheckerQualities.STRING)){
+            sb.append("STRING");
+        } else if(this.containsQualities(TypeCheckerQualities.VOID)){
+            sb.append("VOID");  
+        } else if(this.containsQualities(TypeCheckerQualities.BOOLEAN)){
+            sb.append("BOOLEAN");  
+        } else {
+
+            boolean first = true;
+            if(this.containsQualities(TypeCheckerQualities.CONST)){
+                first = false;
+                sb.append("CONST");
+            }
+            
+            if(this.containsQualities(TypeCheckerQualities.NEG)){
+                if(first){
+                    first = false;
+                    sb.append("NEGATIVE");
+                } else {
+                    sb.append(" NEGATIVE");
+                }
+            } else if(this.containsQualities(TypeCheckerQualities.NULL)){
+                if(first){
+                    first = false;
+                    sb.append("NULL");
+                } else {
+                    sb.append(" NULL");
+                }
+            }
+
+            if(this.containsQualities(TypeCheckerQualities.REAL)){
+                if(first){
+                    first = false;
+                    sb.append("REAL");
+                } else {
+                    sb.append(" REAL");
+                }
+            } else if(this.containsQualities(TypeCheckerQualities.INTEGER)){
+                if(first){
+                    first = false;
+                    sb.append("INTEGER");
+                } else {
+                    sb.append(" INTEGER");
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+
+    @Override
     public TypeCheckerQualities copy() {
         return new TypeCheckerQualities(val);
     }

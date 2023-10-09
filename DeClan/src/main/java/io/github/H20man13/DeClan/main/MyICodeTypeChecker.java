@@ -54,7 +54,8 @@ public class MyICodeTypeChecker {
             instructionNumber++;
         }
         boolean notAllVariablesFound = true;
-        while(notAllVariablesFound){
+        int passes = 0;
+        while(notAllVariablesFound && passes < 10){
             instructionNumber = 0;
             boolean oneNotFound = false;
             for(ICode icode : inputICode){
@@ -67,6 +68,7 @@ public class MyICodeTypeChecker {
             if(!oneNotFound){
                 notAllVariablesFound = false;
             }
+            passes++;
         }
         instructionNumber = 0;
         for(ICode icode : inputICode){
@@ -143,7 +145,7 @@ public class MyICodeTypeChecker {
                     if(localQual.containsQualities(TypeCheckerQualities.BOOLEAN) && paramQual.missingQualities(TypeCheckerQualities.BOOLEAN)
                     || localQual.containsQualities(TypeCheckerQualities.INTEGER) && paramQual.missingQualities(TypeCheckerQualities.INTEGER)
                     || localQual.containsQualities(TypeCheckerQualities.REAL) && paramQual.missingQualities(TypeCheckerQualities.REAL)){
-                        errLog.add("Param " + param.dest + " takes in a paramater of type " + paramQual + "the first call but takes in a paramater of type " + localQual + "the next time", new Position(instructionNumber, 0));
+                        errLog.add("Error in function call " + proc.pname + ": param " + param.dest + " takes in a paramater of type " + paramQual + " the first call but takes in a paramater of type " + localQual + " the ext time from param " + param.source, new Position(instructionNumber, 0));
                     }
                 } else {
                     TypeCheckerQualities sourceQual = variableQualities.getEntry(param.source);
@@ -206,74 +208,39 @@ public class MyICodeTypeChecker {
         TypeCheckerQualities leftQual = typeCheckExpression(expression.left);
         TypeCheckerQualities rightQual = typeCheckExpression(expression.right);
 
-        if(leftQual.containsQualities(TypeCheckerQualities.NA)){
-            return leftQual;
-        }
-
-        if(rightQual.containsQualities(TypeCheckerQualities.NA)){
-            return rightQual;
-        }
-
         if(leftQual.containsQualities(TypeCheckerQualities.STRING)){
             errLog.add("Error the left hand side of the binary expression contains a String value", new Position(instructionNumber, 0));
-            return new TypeCheckerQualities(TypeCheckerQualities.NA);
         }
 
         if(rightQual.containsQualities(TypeCheckerQualities.STRING)){
             errLog.add("Error the right hand side of the binary expression contains a String value", new Position(instructionNumber, 0));
         }
-
-        switch(expression.op){
-		case IMOD:
-			if(leftQual.missingQualities(TypeCheckerQualities.INTEGER) || rightQual.missingQualities(TypeCheckerQualities.INTEGER)){
-				errLog.add("Type mismatch in binary opperation: " + leftQual + " " + expression.op + " " + rightQual,  new Position(instructionNumber, 0));
-				return null;
-			} else {
-				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
-			}
-		case LAND:
-			if(leftQual.missingQualities(TypeCheckerQualities.BOOLEAN) || rightQual.missingQualities(TypeCheckerQualities.BOOLEAN)){
-				errLog.add("Type mismatch in binary opperation: " + leftQual + " " + expression.op + " " + rightQual, new Position(instructionNumber, 0));
-				return new TypeCheckerQualities(TypeCheckerQualities.NA);
-			} else {
-				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
-			}
-		case LOR:
-			if(leftQual.missingQualities(TypeCheckerQualities.BOOLEAN) || rightQual.missingQualities(TypeCheckerQualities.BOOLEAN)){
-				errLog.add("Type mismatch in binary opperation: " + leftQual + " " + expression.op + " " + rightQual,  new Position(instructionNumber, 0));
-				return new TypeCheckerQualities(TypeCheckerQualities.NA);
-			} else {
-				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
-			}
-		default:
-			if(expression.op == BinExp.Operator.EQ || expression.op == BinExp.Operator.NE 
-            || expression.op == BinExp.Operator.LT || expression.op == BinExp.Operator.LE 
-            || expression.op == BinExp.Operator.GT || expression.op == BinExp.Operator.GE){
-				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
-			} else if(expression.op == BinExp.Operator.IDIV || expression.op == BinExp.Operator.IAND 
-			|| expression.op == BinExp.Operator.IOR || expression.op == BinExp.Operator.ILSHIFT 
-            || expression.op == BinExp.Operator.IRSHIFT || expression.op == BinExp.Operator.IADD
-            || expression.op == BinExp.Operator.ISUB || expression.op == BinExp.Operator.IMUL){
-				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);	
-			} else if(expression.op == BinExp.Operator.RDIVIDE || expression.op == BinExp.Operator.RADD
-                   || expression.op == BinExp.Operator.RSUB || expression.op == BinExp.Operator.RMUL){
-				return new TypeCheckerQualities(TypeCheckerQualities.REAL);	
-			} else {
-                errLog.add("Unknown Operation type " + expression.op, new Position(instructionNumber, 0));
-				return new TypeCheckerQualities(TypeCheckerQualities.NA);
-			}
-		}
+	
+        if(expression.op == BinExp.Operator.EQ || expression.op == BinExp.Operator.NE 
+        || expression.op == BinExp.Operator.LT || expression.op == BinExp.Operator.LE 
+        || expression.op == BinExp.Operator.GT || expression.op == BinExp.Operator.GE
+        || expression.op == BinExp.Operator.LAND || expression.op == BinExp.Operator.LOR){
+            return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+        } else if(expression.op == BinExp.Operator.IDIV || expression.op == BinExp.Operator.IAND 
+        || expression.op == BinExp.Operator.IOR || expression.op == BinExp.Operator.ILSHIFT 
+        || expression.op == BinExp.Operator.IRSHIFT || expression.op == BinExp.Operator.IADD
+        || expression.op == BinExp.Operator.ISUB || expression.op == BinExp.Operator.IMUL
+        || expression.op == BinExp.Operator.IMOD){
+            return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);	
+        } else if(expression.op == BinExp.Operator.RDIVIDE || expression.op == BinExp.Operator.RADD
+                || expression.op == BinExp.Operator.RSUB || expression.op == BinExp.Operator.RMUL){
+            return new TypeCheckerQualities(TypeCheckerQualities.REAL);	
+        } else {
+            errLog.add("Unknown Operation type " + expression.op, new Position(instructionNumber, 0));
+            return new TypeCheckerQualities(TypeCheckerQualities.NA);
+        }
     }
 
     private TypeCheckerQualities typeCheckUnaryExpression(UnExp expression){
         TypeCheckerQualities rightQual = typeCheckExpression(expression.right);
-        if(rightQual.containsQualities(TypeCheckerQualities.NA)){
-            return new TypeCheckerQualities(TypeCheckerQualities.NA);
-        }
 
         if(rightQual.containsQualities(TypeCheckerQualities.STRING)){
             errLog.add("Error in unary operation cant have string as input for expression " + expression, new Position(instructionNumber, 0));
-            return new TypeCheckerQualities(TypeCheckerQualities.NA);
         }
 
         switch(expression.op){
