@@ -99,7 +99,7 @@ public class OpUtil {
         if(val1 instanceof Double && val2 instanceof Double) return (Double)val1 / (Double)val2;
         else if(val1 instanceof Integer && val2 instanceof Double) return (Integer)val1 / (Double)val2;
         else if(val1 instanceof Double && val2 instanceof Integer) return (Double)val1 / (Integer)val2;
-        else if(val1 instanceof Integer && val2 instanceof Integer) return (Integer)val1 / (Integer)val2;
+        else if(val1 instanceof Integer && val2 instanceof Integer) return ((Integer)val1).doubleValue() / ((Integer)val2).doubleValue();
         else return null;
     }
 
@@ -109,12 +109,6 @@ public class OpUtil {
         else if(val1 instanceof Double && val2 instanceof Integer) return Utils.toInt((Double)val1 / (Integer)val2);
         else if(val1 instanceof Integer && val2 instanceof Integer) return Utils.toInt((Integer)val1 / (Integer)val2);
         else return null;
-    }
-
-    public static Object rDiv(Object val1, Object val2){
-        Double rVal1 = Utils.toDouble(val1);
-        Double rVal2 = Utils.toDouble(val2);
-        return Utils.toInt(rVal1 / rVal2);
     }
 
     public static Object iDiv(Object val1, Object val2){
@@ -127,12 +121,6 @@ public class OpUtil {
         Double rVal1 = Utils.toDouble(val1);
         Double rVal2 = Utils.toDouble(val2);
         return rVal1 / rVal2;
-    }
-
-    public static Object iDivide(Object val1, Object val2){
-        Integer iVal1 = Utils.toInt(val1);
-        Integer iVal2 = Utils.toInt(val2);
-        return iVal1 / iVal2;
     }
 
     public static Object mod(Object val1, Object val2){

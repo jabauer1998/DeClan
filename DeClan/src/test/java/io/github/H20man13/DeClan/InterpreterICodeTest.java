@@ -75,12 +75,10 @@ public class InterpreterICodeTest {
         assertTrue("Expected icode output to be the same as the interpreter output \n\n Interpreter Output is \n\n " + intOut.toString() + " \n\n while icode output is \n\n " + icodeOut.toString(), icodeOut.toString().equals(intOut.toString()));
     }
 
-    /*
     @Test
     public void testConversions(){
         testInterpreterWithICode("test_source/conversions.dcl", nullReader, nullReader);
     }
-    */
 
     @Test
     public void testExpressions(){
