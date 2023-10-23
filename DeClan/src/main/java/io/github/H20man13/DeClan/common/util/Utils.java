@@ -74,6 +74,7 @@ public class Utils {
             case IMUL: return BinExp.Operator.IMUL;
             case IDIV: return BinExp.Operator.IDIV;
             case RDIVIDE: return BinExp.Operator.RDIVIDE;
+            case IXOR: return BinExp.Operator.IXOR;
             case IMOD: return BinExp.Operator.IMOD;
             case LOR: return BinExp.Operator.LOR;
             case LAND: return BinExp.Operator.LAND;
@@ -108,6 +109,7 @@ public class Utils {
             case LOR: return BinExp.Operator.LOR;
             case IAND: return BinExp.Operator.IAND;
             case IOR: return BinExp.Operator.IOR;
+            case IXOR: return BinExp.Operator.IXOR;
             case ILSHIFT: return BinExp.Operator.ILSHIFT;
             case IRSHIFT: return BinExp.Operator.IRSHIFT;
             case EQ: return BinExp.Operator.EQ;
@@ -125,6 +127,7 @@ public class Utils {
             case INEG: return UnExp.Operator.INEG;
             case RNEG: return UnExp.Operator.RNEG;
             case BNOT: return UnExp.Operator.BNOT;
+            case INOT: return UnExp.Operator.INOT;
             default: return null;
         }
     }
@@ -188,6 +191,7 @@ public class Utils {
             case LAND: return factory.createLogicalAndNode(place, left, right);
             case IAND: return factory.createBitwiseAndNode(place, left, right);
             case IOR: return factory.createBitwiseOrNode(place, left, right);
+            case IXOR: return factory.createBitwiseXorNode(place, left, right);
             case ILSHIFT: return factory.createLeftShiftNode(place, left, right);
             case IRSHIFT: return factory.createRightShiftNode(place, left, right);
             case IMOD: return factory.createIntegerModuleNode(place, left, right);
@@ -207,6 +211,7 @@ public class Utils {
             case INEG: return factory.createIntegerNegationNode(place, right);
             case RNEG: return factory.createRealNegationNode(place, right);
             case BNOT: return factory.createNotNode(place, right);
+            case INOT: return factory.createBitwiseNotNode(place, right);
             default: return null;
         }
     }

@@ -67,16 +67,18 @@ public class UnaryOperation extends AbstractASTNode implements Expression {
 	 * @author bhoward
 	 */
 	public enum OpType {
-	    PLUS, MINUS, NOT
+	    PLUS, MINUS, NOT, BNOT
 	}
 
-        private String opToString(OpType op){
-	  if(op == OpType.PLUS){
-	    return "+";
-	  } else if (op == OpType.MINUS){
-	    return "-";
-	  } else {
-	    return "!";
-	  }
-        }
+    private String opToString(OpType op){
+		if(op == OpType.PLUS){
+			return "+";
+		} else if (op == OpType.MINUS){
+			return "-";
+		}  else if (op == OpType.BNOT){
+			return "BNOT";
+		} else {
+			return "!";
+		}
+    }
 }

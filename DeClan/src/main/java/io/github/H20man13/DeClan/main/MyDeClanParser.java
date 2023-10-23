@@ -615,7 +615,7 @@ public class MyDeClanParser implements Parser {
       left = parseTerm();
     }
     while(willMatch(TokenType.PLUS) || willMatch(TokenType.MINUS) || willMatch(TokenType.OR) 
-    || willMatch(TokenType.BAND) || willMatch(TokenType.BOR)
+    || willMatch(TokenType.BAND) || willMatch(TokenType.BOR) || willMatch(TokenType.BXOR)
     || willMatch(TokenType.LSHIFT) || willMatch(TokenType.RSHIFT)){
       BinaryOperation.OpType op = parseAddOp();
       Expression right = parseTerm();
@@ -631,6 +631,9 @@ public class MyDeClanParser implements Parser {
     } else if (willMatch(TokenType.MINUS)){
       skip();
       return UnaryOperation.OpType.MINUS;
+    } else if (willMatch(TokenType.BNOT)){
+      skip();
+      return UnaryOperation.OpType.BNOT;
     } else {
       match(TokenType.NOT);
       return UnaryOperation.OpType.NOT;
@@ -656,6 +659,9 @@ public class MyDeClanParser implements Parser {
     } else if(willMatch(TokenType.OR)){
       skip();
       return BinaryOperation.OpType.OR;
+    } else if(willMatch(TokenType.BXOR)){
+      skip();
+      return BinaryOperation.OpType.BXOR;
     } else {
       match(TokenType.MINUS);
       return BinaryOperation.OpType.MINUS;
@@ -711,7 +717,7 @@ public class MyDeClanParser implements Parser {
       }
     } else if (willMatch(TokenType.STRING)){
       return parseStrValue();
-    } else if (willMatch(TokenType.NOT)){
+    } else if (willMatch(TokenType.NOT) || willMatch(TokenType.BNOT)){
       Position start = currentPosition;
       UnaryOperation.OpType not = parseUnaryOp();
       Expression exp = parseFactor();

@@ -32,6 +32,8 @@ public enum IrTokenType {
     LAND,
     IAND,
     IOR,
+    IXOR,
+    INOT,
     IRSHIFT,
     ILSHIFT,
     INEG,
@@ -120,6 +122,8 @@ public enum IrTokenType {
         addKeyword(LOR);
         addKeyword(IAND);
         addKeyword(IOR);
+        addKeyword(IXOR);
+        addKeyword(INOT);
         addKeyword(ILSHIFT);
         addKeyword(IRSHIFT);
         addKeyword(LT);

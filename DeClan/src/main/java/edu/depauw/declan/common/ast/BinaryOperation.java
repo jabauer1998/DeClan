@@ -45,7 +45,7 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 		return right;
 	}
         @Override
-        public String toString(){
+    public String toString(){
 	  StringBuilder mystring = new StringBuilder();
 	  mystring.append("(( ");
 	  mystring.append(getLeft().toString());
@@ -75,7 +75,7 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 	 * @author bhoward
 	 */
 	public enum OpType {
-	  PLUS, MINUS, TIMES, DIV, MOD, DIVIDE, OR, AND, LT, LE, GT, GE, NE, EQ, LSHIFT, RSHIFT, BAND, BOR
+	  PLUS, MINUS, TIMES, DIV, MOD, DIVIDE, OR, AND, LT, LE, GT, GE, NE, EQ, LSHIFT, RSHIFT, BAND, BOR, BXOR
 	}
 
     private static String opToString(OpType op){
@@ -111,8 +111,10 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 		return "<<";
 	  } else if (op == OpType.RSHIFT){
 		return ">>";
+	  } else if(op == OpType.BXOR){
+		return "BXOR";
 	  } else {
 	    return "==";
 	  }
-        }
+    }
 }

@@ -84,6 +84,13 @@ public class DagNodeFactory {
         return new DagOperationNode(nodeName, DagOperationNode.Op.IAND, childNodes);
     }
 
+    public DagNode createBitwiseXorNode(String nodeName, DagNode node1, DagNode node2){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(node1);
+        childNodes.add(node2);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.IXOR, childNodes);
+    }
+
     public DagNode createLogicalOrNode(String nodeName, DagNode node1, DagNode node2){
         LinkedList<DagNode> childNodes = new LinkedList<>();
         childNodes.add(node1);
@@ -158,6 +165,12 @@ public class DagNodeFactory {
         LinkedList<DagNode> childNodes = new LinkedList<>();
         childNodes.add(node1);
         return new DagOperationNode(nodeName, DagOperationNode.Op.BNOT, childNodes);
+    }
+
+    public DagNode createBitwiseNotNode(String nodeName, DagNode node1){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(node1);
+        return new DagOperationNode(nodeName, DagOperationNode.Op.INOT, childNodes);
     }
 
     public DagNode createIntegerNegationNode(String nodeName, DagNode node1){

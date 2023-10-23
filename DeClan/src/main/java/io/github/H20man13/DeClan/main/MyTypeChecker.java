@@ -433,7 +433,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 		default:
 			if(op == BinaryOperation.OpType.EQ || op == BinaryOperation.OpType.NE || op == BinaryOperation.OpType.LT || op == BinaryOperation.OpType.LE || op == BinaryOperation.OpType.GT || op == BinaryOperation.OpType.GE){
 				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
-			} else if(op == BinaryOperation.OpType.DIV || op == BinaryOperation.OpType.BAND 
+			} else if(op == BinaryOperation.OpType.DIV || op == BinaryOperation.OpType.BAND || op == BinaryOperation.OpType.BXOR
 			|| op == BinaryOperation.OpType.BOR || op == BinaryOperation.OpType.LSHIFT || op == BinaryOperation.OpType.RSHIFT){
 				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);	
 			} else if(op == BinaryOperation.OpType.DIVIDE){

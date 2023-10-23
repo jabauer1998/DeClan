@@ -257,6 +257,10 @@ public class MyIrParser {
             skip();
             Exp right = parsePrimaryExpression();
             return new UnExp(UnExp.Operator.BNOT, right);
+        } else if(willMatch(IrTokenType.INOT)){
+            skip();
+            Exp right = parsePrimaryExpression();
+            return new UnExp(UnExp.Operator.INOT, right);  
         } else {
             return null;
         }
@@ -279,7 +283,7 @@ public class MyIrParser {
             || willMatch(IrTokenType.EQ) || willMatch(IrTokenType.RADD)
             || willMatch(IrTokenType.RSUB) || willMatch(IrTokenType.RMUL)
             || willMatch(IrTokenType.RDIV) || willMatch(IrTokenType.RDIVIDE)
-            || willMatch(IrTokenType.IDIVIDE)) {
+            || willMatch(IrTokenType.IDIVIDE) || willMatch(IrTokenType.IXOR)) {
                 IrToken op = skip();
 
                 Exp exp2 = parsePrimaryExpression();

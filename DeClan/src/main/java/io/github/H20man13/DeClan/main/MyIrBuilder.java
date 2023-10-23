@@ -15,6 +15,7 @@ import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
 
 public class MyIrBuilder {
     private MyIrFactory factory;
@@ -127,6 +128,13 @@ public class MyIrBuilder {
         String place = gen.genNextRegister();
         UnExp unaryExp = new UnExp(UnExp.Operator.INEG, value);
         output.add(factory.produceUnaryOperation(place, unaryExp));
+        return place;
+    }
+
+    public String buildIntegerNotAssignment(Exp value){
+        String place = gen.genNextRegister();
+        UnExp unExp = new UnExp(Operator.INOT, value);
+        output.add(factory.produceUnaryOperation(place, unExp));
         return place;
     }
 
@@ -247,6 +255,13 @@ public class MyIrBuilder {
     public String buildIntegerAndAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
         BinExp binExp = new BinExp(left, BinExp.Operator.IAND, right);
+        output.add(factory.produceBinaryOperation(place, binExp));
+        return place;
+    }
+
+    public String buildIntegerExclusiveOrAssignment(Exp left, Exp right){
+        String place = gen.genNextRegister();
+        BinExp binExp = new BinExp(left, BinExp.Operator.IXOR, right);
         output.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }

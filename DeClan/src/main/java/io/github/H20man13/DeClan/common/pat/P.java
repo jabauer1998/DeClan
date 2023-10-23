@@ -329,6 +329,70 @@ public abstract class P {
             return "BOR";
         }
     }
+
+    public static class IAND extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof IAND){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "IAND";
+        }
+    }
+
+    public static class IOR extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof IOR){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "IOR";
+        }
+    }
+
+    public static class IXOR extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof IXOR){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "IXOR";
+        }
+    }
+
+    public static class INOT extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof INOT){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "INOT";
+        }
+    }
     public static class IF extends P{
         @Override
         public boolean equals(Object obj) {
@@ -697,14 +761,30 @@ public abstract class P {
     public static INEG INEG(){
         return new INEG();
     }
+    public static RNEG RNEG(){
+        return new RNEG();
+    }
+    
     public static BNOT BNOT(){
         return new BNOT();
+    }
+    public static INOT INOT(){
+        return new INOT();
     }
     public static BAND BAND(){
         return new BAND();
     }
+    public static IAND IAND(){
+        return new IAND();
+    }
     public static BOR BOR(){
         return new BOR();
+    }
+    public static IOR IOR(){
+        return new IOR();
+    }
+    public static IXOR IXOR(){
+        return new IXOR();
     }
     public static IF IF(){
         return new IF();

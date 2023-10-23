@@ -525,6 +525,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
         case AND: return builder.buildLogicalAndAssignment(leftIdent, rightIdent);
         case BAND: return builder.buildIntegerAndAssignment(leftIdent, rightIdent);
         case BOR: return builder.buildIntegerOrAssignment(leftIdent, rightIdent);
+        case BXOR: return builder.buildIntegerExclusiveOrAssignment(leftIdent, rightIdent);
         case LSHIFT: return builder.buildLeftShiftAssignment(leftIdent, rightIdent);
         case RSHIFT: return builder.buildRightShiftAssignment(leftIdent, rightIdent);
         case OR: return builder.buildLogicalOrAssignment(leftIdent, rightIdent);
@@ -567,6 +568,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
       switch(unaryOperation.getOperator()){
         case MINUS: return builder.buildIntegerNegationAssignment(valueIdent);
         case NOT: return builder.buildNotAssignment(valueIdent);
+        case BNOT: return builder.buildIntegerNotAssignment(valueIdent);
         default: return value;
 	    }
     }

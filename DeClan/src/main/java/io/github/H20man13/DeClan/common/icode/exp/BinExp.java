@@ -21,6 +21,7 @@ public class BinExp implements Exp {
         IMOD,
         IAND,
         IOR,
+        IXOR,
         IDIV,
         IRSHIFT,
         ILSHIFT,
