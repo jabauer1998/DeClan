@@ -21,6 +21,10 @@ public class OpUtil {
         return !Utils.toBool(val);
     }
 
+    public static Object bitwiseNot(Object val1){
+        return ~Utils.toInt(val1);
+    }
+
     public static Object notEqual(Object val1, Object val2){
         if(val1 instanceof Double || val2 instanceof Double) return Utils.toDouble(val1) != Utils.toDouble(val2);
         else if(val1 instanceof Integer || val2 instanceof Integer) return Utils.toInt(val1) != Utils.toInt(val2);
@@ -176,6 +180,12 @@ public class OpUtil {
         Integer int1 = Utils.toInt(val1);
         Integer int2 = Utils.toInt(val2);
         return int1 | int2;
+    }
+
+    public static Object bitwiseXor(Object val1, Object val2){
+        Integer int1 = Utils.toInt(val1);
+        Integer int2 = Utils.toInt(val2);
+        return int1 ^ int2;
     }
 
     public static Object leftShift(Object val1, Object val2){

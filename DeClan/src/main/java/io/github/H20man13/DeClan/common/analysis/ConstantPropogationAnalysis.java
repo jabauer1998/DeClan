@@ -139,6 +139,7 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>>
                                     break;
                                 case BNOT: result = OpUtil.not(right);
                                     break;
+                                case INOT: result = OpUtil.bitwiseNot(right);
                                 default:
                                     result = null;
                             }

@@ -115,10 +115,20 @@ public class Pattern {
     public static P mod2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMOD(), P.INT()));
     public static P mod3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMOD(), P.INT()));
 
-    public static P and0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IAND(), P.ID()));
-    public static P and1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IAND(), P.ID()));
-    public static P and2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IAND(), P.INT()));
-    public static P and3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IAND(), P.INT()));
+    public static P bitwiseAnd0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IAND(), P.ID()));
+    public static P bitwiseAnd1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IAND(), P.ID()));
+    public static P bitiwseAnd2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IAND(), P.INT()));
+    public static P bitwiseAnd3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IAND(), P.INT()));
+
+    public static P bitwiseOr0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IOR(), P.ID()));
+    public static P bitwiseOr1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IOR(), P.ID()));
+    public static P bitiwseOr2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IOR(), P.INT()));
+    public static P bitwiseOr3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IOR(), P.INT()));
+
+    public static P bitwiseExclusiveOr0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IXOR(), P.ID()));
+    public static P bitwiseExclusiveOr1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IXOR(), P.ID()));
+    public static P bitiwseExclusiveOr2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IXOR(), P.INT()));
+    public static P bitwiseExclusiveOr3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IXOR(), P.INT()));
 
     public static P ge0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.GE(), P.ID()));
     public static P ge1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.GE(), P.ID()));
@@ -186,6 +196,16 @@ public class Pattern {
     public static P ne10 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.REAL(), P.NE(), P.INT()));
     public static P ne11 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.NE(), P.REAL()));
 
+    public static P and0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.BAND(), P.ID()));
+    public static P and1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.BOOL(), P.BAND(), P.ID()));
+    public static P and2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.BAND(), P.BOOL()));
+    public static P and3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.BOOL(), P.BAND(), P.BOOL()));
+
+    public static P or0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.BOR(), P.ID()));
+    public static P or1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.BOOL(), P.BOR(), P.ID()));
+    public static P or2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.BOR(), P.BOOL()));
+    public static P or3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.BOOL(), P.BOR(), P.BOOL()));
+
     public static P neg0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INEG(), P.ID()));
     public static P neg1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INEG(), P.INT()));
     public static P neg2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.RNEG(), P.ID()));
@@ -193,6 +213,9 @@ public class Pattern {
 
     public static P bnot1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.BNOT(), P.ID()));
     public static P bnot0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.BNOT(), P.BOOL()));
+
+    public static P bitwiseNot0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INOT(), P.ID()));
+    public static P bitwiseNot1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INOT(), P.INT()));
 
     public static P bool0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.BOOL()));
     public static P int0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT()));
