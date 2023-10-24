@@ -130,7 +130,15 @@ public class Pattern {
     public static P bitiwseExclusiveOr2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IXOR(), P.INT()));
     public static P bitwiseExclusiveOr3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IXOR(), P.INT()));
 
-    public static P leftShift0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IL))
+    public static P leftShift0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.LSHIFT(), P.ID()));
+    public static P leftShift1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.LSHIFT(), P.ID()));
+    public static P leftShift2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.LSHIFT(), P.INT()));
+    public static P leftShift3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.LSHIFT(), P.INT()));
+
+    public static P rightShift0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.RSHIFT(), P.ID()));
+    public static P rightShift1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.RSHIFT(), P.ID()));
+    public static P rightShift2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.RSHIFT(), P.INT()));
+    public static P rightShift3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.RSHIFT(), P.INT()));
 
     public static P ge0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.GE(), P.ID()));
     public static P ge1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.GE(), P.ID()));

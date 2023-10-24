@@ -256,6 +256,9 @@ public class Utils {
             case IMOD: return P.IMOD();
             case IAND: return P.IAND();
             case IOR: return P.IOR();
+            case IXOR: return P.IXOR();
+            case ILSHIFT: return P.LSHIFT();
+            case IRSHIFT: return P.RSHIFT();
             case LOR: return P.BOR();
             case GT: return P.GT();
             case GE: return P.GE();
