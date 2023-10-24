@@ -348,6 +348,42 @@ public class MyCodeGenerator {
         initIf28();
         initIf29();
 
+        initIf30();
+        initIf31();
+        initIf32();
+        initIf33();
+        initIf34();
+
+        initIf35();
+        initIf36();
+        initIf37();
+        initIf38();
+        initIf39();
+
+        initIf40();
+        initIf41();
+        initIf42();
+        initIf43();
+        initIf44();
+
+        initIf45();
+        initIf46();
+        initIf47();
+        initIf48();
+        initIf49();
+
+        initIf50();
+        initIf51();
+        initIf52();
+        initIf53();
+        initIf54();
+
+        initIf55();
+        initIf56();
+        initIf57();
+        initIf58();
+        initIf59();
+
         //Init Goto Pattern
         initGoto0();
 
