@@ -226,20 +226,44 @@ public class Pattern {
     public static P if2 = P.PAT(P.IF(), P.PAT(P.ID(), P.LT(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if3 = P.PAT(P.IF(), P.PAT(P.INT(), P.LT(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
 
+    public static P if30 = P.PAT(P.IF(), P.PAT(P.REAL(), P.LT(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if31 = P.PAT(P.IF(), P.PAT(P.ID(), P.LT(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if32 = P.PAT(P.IF(), P.PAT(P.REAL(), P.LT(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if33 = P.PAT(P.IF(), P.PAT(P.REAL(), P.LT(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if34 = P.PAT(P.IF(), P.PAT(P.INT(), P.LT(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+
     public static P if4 = P.PAT(P.IF(), P.PAT(P.ID(), P.GT(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if5 = P.PAT(P.IF(), P.PAT(P.INT(), P.GT(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if6 = P.PAT(P.IF(), P.PAT(P.ID(), P.GT(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if7 = P.PAT(P.IF(), P.PAT(P.INT(), P.GT(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+
+    public static P if35 = P.PAT(P.IF(), P.PAT(P.REAL(), P.GT(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if36 = P.PAT(P.IF(), P.PAT(P.ID(), P.GT(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if37 = P.PAT(P.IF(), P.PAT(P.REAL(), P.GT(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if38 = P.PAT(P.IF(), P.PAT(P.REAL(), P.GT(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if39 = P.PAT(P.IF(), P.PAT(P.INT(), P.GT(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
 
     public static P if8 = P.PAT(P.IF(), P.PAT(P.ID(), P.LE(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if9 = P.PAT(P.IF(), P.PAT(P.INT(), P.LE(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if10 = P.PAT(P.IF(), P.PAT(P.ID(), P.LE(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if11 = P.PAT(P.IF(), P.PAT(P.INT(), P.LE(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
 
+    public static P if40 = P.PAT(P.IF(), P.PAT(P.REAL(), P.LE(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if41 = P.PAT(P.IF(), P.PAT(P.ID(), P.LE(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if42 = P.PAT(P.IF(), P.PAT(P.REAL(), P.LE(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if43 = P.PAT(P.IF(), P.PAT(P.REAL(), P.LE(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if44 = P.PAT(P.IF(), P.PAT(P.INT(), P.LE(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+
     public static P if12 = P.PAT(P.IF(), P.PAT(P.ID(), P.GE(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if13 = P.PAT(P.IF(), P.PAT(P.INT(), P.GE(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if14 = P.PAT(P.IF(), P.PAT(P.ID(), P.GE(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if15 = P.PAT(P.IF(), P.PAT(P.INT(), P.GE(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+
+    public static P if45 = P.PAT(P.IF(), P.PAT(P.REAL(), P.GE(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if46 = P.PAT(P.IF(), P.PAT(P.ID(), P.GE(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if47 = P.PAT(P.IF(), P.PAT(P.REAL(), P.GE(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if48 = P.PAT(P.IF(), P.PAT(P.REAL(), P.GE(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if49 = P.PAT(P.IF(), P.PAT(P.INT(), P.GE(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
 
     public static P if16 = P.PAT(P.IF(), P.PAT(P.ID(), P.EQ(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if17 = P.PAT(P.IF(), P.PAT(P.INT(), P.EQ(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
@@ -249,6 +273,12 @@ public class Pattern {
     public static P if21 = P.PAT(P.IF(), P.PAT(P.ID(), P.EQ(), P.BOOL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if22 = P.PAT(P.IF(), P.PAT(P.BOOL(), P.EQ(), P.BOOL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
 
+    public static P if50 = P.PAT(P.IF(), P.PAT(P.REAL(), P.EQ(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if51 = P.PAT(P.IF(), P.PAT(P.ID(), P.EQ(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if52 = P.PAT(P.IF(), P.PAT(P.REAL(), P.EQ(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if53 = P.PAT(P.IF(), P.PAT(P.REAL(), P.EQ(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if54 = P.PAT(P.IF(), P.PAT(P.INT(), P.EQ(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+
     public static P if23 = P.PAT(P.IF(), P.PAT(P.ID(), P.NE(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if24 = P.PAT(P.IF(), P.PAT(P.INT(), P.NE(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if25 = P.PAT(P.IF(), P.PAT(P.ID(), P.NE(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
@@ -256,6 +286,12 @@ public class Pattern {
     public static P if27 = P.PAT(P.IF(), P.PAT(P.BOOL(), P.NE(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if28 = P.PAT(P.IF(), P.PAT(P.ID(), P.NE(), P.BOOL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if29 = P.PAT(P.IF(), P.PAT(P.BOOL(), P.NE(), P.BOOL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+
+    public static P if55 = P.PAT(P.IF(), P.PAT(P.REAL(), P.NE(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if56 = P.PAT(P.IF(), P.PAT(P.ID(), P.NE(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if57 = P.PAT(P.IF(), P.PAT(P.REAL(), P.NE(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if58 = P.PAT(P.IF(), P.PAT(P.REAL(), P.NE(), P.INT()), P.THEN(), P.ID(), P.ELSE(), P.ID());
+    public static P if59 = P.PAT(P.IF(), P.PAT(P.INT(), P.NE(), P.REAL()), P.THEN(), P.ID(), P.ELSE(), P.ID());
 
     public static P paramAssign0 = P.PAT(P.ID(), P.ASSIGN(), P.PARAM());
     public static P goto0 = P.PAT(P.GOTO(), P.ID());
