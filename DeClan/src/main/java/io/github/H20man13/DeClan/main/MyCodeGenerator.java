@@ -206,7 +206,17 @@ public class MyCodeGenerator {
         initBitwiseExclusiveOr2();
         initBitwiseExclusiveOr3();
 
-        //Init Bitshift right patterns
+        //Init Left Shift patterns
+        initBitShiftLeft0();
+        initBitShiftLeft1();
+        initBitShiftLeft2();
+        initBitShiftLeft3();
+
+        //Init Right Shift patterns
+        initBitShiftRight0();
+        initBitShiftRight1();
+        initBitShiftRight2();
+        initBitShiftRight3();
 
         //Init Ge patterns
         initGe0();
@@ -4486,6 +4496,246 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
                 cGen.addInstruction("EOR " + finalPlace + ", " + leftReg + ", " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initBitShiftLeft0(){
+        codeGenFunctions.put(Pattern.leftShift0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("MOV " + finalPlace + ", " + leftReg + ", LSL " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initBitShiftLeft1(){
+        codeGenFunctions.put(Pattern.leftShift1, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IntExp leftInt = (IntExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(temp, assignICode);
+                cGen.addVariable(temp, VariableLength.WORD, leftInt.value);
+
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("MOV " + finalPlace + ", " + leftReg + ", LSL " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initBitShiftLeft2(){
+        codeGenFunctions.put(Pattern.leftShift2, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                IntExp rightInt = (IntExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(temp, assignICode);
+                cGen.addVariable(temp, VariableLength.WORD, rightInt.value);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("MOV " + finalPlace + ", " + leftReg + ", LSL " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initBitShiftLeft3(){
+        codeGenFunctions.put(Pattern.leftShift3, new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IntExp leftInt = (IntExp)assignExp.left;
+                IntExp rightInt = (IntExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(tempLeft, assignICode);
+                cGen.addVariable(tempLeft, VariableLength.WORD, leftInt.value);
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(tempRight, assignICode);
+                cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("MOV " + finalPlace + ", " + leftReg + ", LSL " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initBitShiftRight0(){
+        codeGenFunctions.put(Pattern.rightShift0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("MOV " + finalPlace + ", " + leftReg + ", LSR " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initBitShiftRight1(){
+        codeGenFunctions.put(Pattern.rightShift1, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IntExp leftInt = (IntExp)assignExp.left;
+                IdentExp rightIdent = (IdentExp)assignExp.right;
+
+                String temp = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(temp, assignICode);
+                cGen.addVariable(temp, VariableLength.WORD, leftInt.value);
+
+                String rightReg = rGen.getReg(rightIdent.ident, assignICode);
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
+                cGen.addInstruction("MOV " + finalPlace + ", " + leftReg + ", LSR " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initBitShiftRight2(){
+        codeGenFunctions.put(Pattern.rightShift2, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IdentExp leftIdent = (IdentExp)assignExp.left;
+                IntExp rightInt = (IntExp)assignExp.right;
+
+                String leftReg = rGen.getReg(leftIdent.ident, assignICode);
+
+                String temp = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(temp, assignICode);
+                cGen.addVariable(temp, VariableLength.WORD, rightInt.value);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
+                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("MOV " + finalPlace + ", " + leftReg + ", LSR " + rightReg);
+                cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
+    private void initBitShiftRight3(){
+        codeGenFunctions.put(Pattern.rightShift3, new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                BinExp assignExp = (BinExp)assignICode.value;
+
+                IntExp leftInt = (IntExp)assignExp.left;
+                IntExp rightInt = (IntExp)assignExp.right;
+
+                String tempLeft = iGen.genNextRegister();
+                String leftReg = rGen.getTempReg(tempLeft, assignICode);
+                cGen.addVariable(tempLeft, VariableLength.WORD, leftInt.value);
+
+                String tempRight = iGen.genNextRegister();
+                String rightReg = rGen.getTempReg(tempRight, assignICode);
+                cGen.addVariable(tempRight, VariableLength.WORD, rightInt.value);
+
+                String finalPlace = rGen.getReg(assignICode.place, assignICode);
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
+
+                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("MOV " + finalPlace + ", " + leftReg + ", LSR " + rightReg);
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
                 return null;
