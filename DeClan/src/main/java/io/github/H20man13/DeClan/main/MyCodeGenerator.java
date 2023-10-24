@@ -206,6 +206,8 @@ public class MyCodeGenerator {
         initBitwiseExclusiveOr2();
         initBitwiseExclusiveOr3();
 
+        //Init Bitshift right patterns
+
         //Init Ge patterns
         initGe0();
         initGe1();

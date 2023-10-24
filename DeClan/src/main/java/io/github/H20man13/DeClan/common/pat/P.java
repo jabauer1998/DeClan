@@ -378,6 +378,40 @@ public abstract class P {
         }
     }
 
+    public static class LSHIFT extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof LSHIFT){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "LSHIFT";
+        }
+        
+    }
+
+    public static class RSHIFT extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof RSHIFT){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "RSHIFT";
+        }
+        
+    }
+
     public static class INOT extends P{
         @Override
         public boolean equals(Object obj) {
@@ -785,6 +819,12 @@ public abstract class P {
     }
     public static IXOR IXOR(){
         return new IXOR();
+    }
+    public static LSHIFT LSHIFT(){
+        return new LSHIFT();
+    }
+    public static RSHIFT RSHIFT(){
+        return new RSHIFT();
     }
     public static IF IF(){
         return new IF();

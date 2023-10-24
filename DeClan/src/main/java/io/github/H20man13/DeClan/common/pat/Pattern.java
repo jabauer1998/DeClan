@@ -130,6 +130,8 @@ public class Pattern {
     public static P bitiwseExclusiveOr2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IXOR(), P.INT()));
     public static P bitwiseExclusiveOr3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IXOR(), P.INT()));
 
+    public static P leftShift0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IL))
+
     public static P ge0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.GE(), P.ID()));
     public static P ge1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.GE(), P.ID()));
     public static P ge2 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.GE(), P.INT()));
