@@ -20,7 +20,6 @@ import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.MyICodeGenerator;
 import io.github.H20man13.DeClan.main.MyOptimizer;
 import io.github.H20man13.DeClan.main.MyStandardLibrary;
-import io.github.H20man13.DeClan.main.assembler.ArmAssemblerLexer;
 
 public class CodeGeneratorTest {
     private void testDeclanFile(String fileName){
