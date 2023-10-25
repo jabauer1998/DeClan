@@ -104,6 +104,7 @@ public class Utils {
             case RADD: return BinExp.Operator.RADD;
             case RSUB: return BinExp.Operator.RSUB;
             case RMUL: return BinExp.Operator.RMUL;
+            case RDIVIDE: return BinExp.Operator.RDIVIDE;
             case IMOD: return BinExp.Operator.IMOD;
             case LAND: return BinExp.Operator.LAND;
             case LOR: return BinExp.Operator.LOR;

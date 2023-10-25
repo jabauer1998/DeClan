@@ -236,6 +236,7 @@ public class Pattern {
     public static P bitwiseNot1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INOT(), P.INT()));
 
     public static P bool0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.BOOL()));
+    public static P real0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.REAL()));
     public static P int0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT()));
     public static P id0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID()));
 

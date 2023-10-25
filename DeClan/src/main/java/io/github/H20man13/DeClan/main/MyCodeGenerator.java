@@ -36,7 +36,6 @@ import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.IntExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
-import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 
 public class MyCodeGenerator {
@@ -324,6 +323,8 @@ public class MyCodeGenerator {
 
         //Initialize Bool Constant Patterns
         initBool0();
+        //Initialize Real Constant Patterns
+        initReal0();
         //Initialize Int Constant Patterns
         initInt0();
         //Initialize Id Patterns
@@ -7608,6 +7609,22 @@ public class MyCodeGenerator {
                 IntExp assignExp = (IntExp)assignICode.value;
 
                 cGen.addVariable(assignICode.place, VariableLength.WORD, assignExp.value);
+                rGen.freeTempRegs();
+
+                return null;
+            }
+        });
+    }
+
+    private void initReal0(){
+        codeGenFunctions.put(Pattern.real0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Assign assignICode = (Assign)icode;
+                RealExp assignExp = (RealExp)assignICode.value;
+
+                cGen.addVariable(assignICode.place, assignExp.realValue);
                 rGen.freeTempRegs();
 
                 return null;
