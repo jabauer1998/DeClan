@@ -13,7 +13,8 @@ public class DagVariableNode implements DagNode {
     public enum VariableType {
         DEFAULT,
         PARAM,
-        RET
+        INTERNAL_RET,
+        EXTERNAL_RET
     }
 
     public DagVariableNode(String ident, VariableType type, DagNode child){

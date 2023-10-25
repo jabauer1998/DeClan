@@ -26,6 +26,7 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.InternalPlace;
 import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.Proc;
@@ -209,6 +210,11 @@ public class MyOptimizer {
                 }
             } else if(icode instanceof ExternalPlace){
                 ExternalPlace place = (ExternalPlace)icode;
+                symbolTable.addEntry(place.retPlace, new LiveInfo(true, i));
+                symbolTable.addEntry(place.place, new LiveInfo(false, i));
+            } else if(icode instanceof InternalPlace){
+                InternalPlace place = (InternalPlace)icode;
+                symbolTable.addEntry(place.place, new LiveInfo(false, i));
                 symbolTable.addEntry(place.retPlace, new LiveInfo(true, i));
             }
 

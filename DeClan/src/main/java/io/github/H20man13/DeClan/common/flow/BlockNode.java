@@ -23,6 +23,7 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
+import io.github.H20man13.DeClan.common.icode.InternalPlace;
 import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.ExternalPlace;
@@ -140,10 +141,14 @@ public class BlockNode implements FlowGraphNode {
                     DagNode child = varNode.getChild();
                     String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
                     result.add(new ParamAssign(identifier, identifier1));
-                } else if(type == VariableType.RET){
+                } else if(type == VariableType.EXTERNAL_RET){
                     DagNode child = varNode.getChild();
                     String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
                     result.add(new ExternalPlace(identifier, identifier1));
+                } else if(type == VariableType.INTERNAL_RET){
+                    DagNode child = varNode.getChild();
+                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
+                    result.add(new InternalPlace(identifier, identifier1));
                 }
             } else if(node instanceof DagInlineAssemblyNode){
                 DagInlineAssemblyNode dagNode = (DagInlineAssemblyNode)node;
@@ -284,7 +289,7 @@ public class BlockNode implements FlowGraphNode {
                     this.dag.addDagNode(right);
                 }
 
-                DagNode newNode = factory.createReturnVariableNode(place.place, right);
+                DagNode newNode = factory.createExternalReturnVariableNode(place.place, right);
 
                 DagNode exists = this.dag.getDagNode(newNode);
                 if(exists == null){
@@ -292,7 +297,24 @@ public class BlockNode implements FlowGraphNode {
                 } else {
                     exists.addIdentifier(place.place);
                 }
-            } else if(icode instanceof ParamAssign){
+            } else if(icode instanceof InternalPlace){
+                InternalPlace place = (InternalPlace)icode;
+                DagNode right = this.dag.searchForLatestChild(place.retPlace);
+
+                if(right == null){
+                    right = factory.createNullNode(place.retPlace);
+                    this.dag.addDagNode(right);
+                }
+
+                DagNode newNode = factory.createInternalReturnVariableNode(place.place, right);
+
+                DagNode exists = this.dag.getDagNode(newNode);
+                if(exists == null){
+                    this.dag.addDagNode(newNode);
+                } else {
+                    exists.addIdentifier(place.place);
+                }
+            }else if(icode instanceof ParamAssign){
                 ParamAssign paramAssign = (ParamAssign)icode;
                 DagNode right = this.dag.searchForLatestChild(paramAssign.paramPlace);
 

@@ -213,8 +213,12 @@ public class DagNodeFactory {
         return new DagVariableNode(nodeName, VariableType.PARAM, child);
     }
 
-    public DagNode createReturnVariableNode(String nodeName, DagNode child){
-        return new DagVariableNode(nodeName, VariableType.RET, child);
+    public DagNode createInternalReturnVariableNode(String nodeName, DagNode child){
+        return new DagVariableNode(nodeName, VariableType.INTERNAL_RET, child);
+    }
+
+    public DagNode createExternalReturnVariableNode(String nodeName, DagNode child){
+        return new DagVariableNode(nodeName, VariableType.EXTERNAL_RET, child);
     }
 
     public DagNode createInlineAssemblyNode(String nodeName, DagNode... children){

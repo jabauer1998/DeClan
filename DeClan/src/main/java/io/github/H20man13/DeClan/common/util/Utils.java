@@ -278,6 +278,8 @@ public class Utils {
         switch(op){
             case INEG: return P.INEG();
             case BNOT: return P.BNOT();
+            case RNEG: return P.RNEG();
+            case INOT: return P.INOT();
             default: return null;
         }
     }
