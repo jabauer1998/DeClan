@@ -252,9 +252,8 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     if(retExp != null){
       String retPlace = retExp.acceptResult(this);
       String returnPlace = procEnvironment.getEntry(procedureName).toString();
-      builder.buildVariableAssignment(returnPlace, retPlace);
+      builder.buildInternalReturnPlacement(returnPlace, retPlace);
     }
-    
     builder.buildReturnStatement();
     varEnvironment.removeScope();
     paramEnvironment.removeScope();
@@ -549,7 +548,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     }
     builder.buildProcedure(funcName, valArgResults);
     StringEntry returnPlace = procEnvironment.getEntry(funcName);
-    return builder.buildReturnPlacement(returnPlace.toString());
+    return builder.buildExternalReturnPlacement(returnPlace.toString());
   }
 
   @Override

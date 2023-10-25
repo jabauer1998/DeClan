@@ -1,12 +1,13 @@
 package io.github.H20man13.DeClan.common.icode;
 
 import io.github.H20man13.DeClan.common.pat.P;
+import io.github.H20man13.DeClan.common.pat.P.PLACE;
 
-public class Place implements ICode {
+public class ExternalPlace implements ICode {
     public String place;
     public String retPlace;
 
-    public Place(String place, String retPlace){
+    public ExternalPlace(String place, String retPlace){
         this.place = place;
         this.retPlace = retPlace;
     }
@@ -15,7 +16,7 @@ public class Place implements ICode {
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append(place);
-        sb.append(" <- ");
+        sb.append(" <& ");
         sb.append(retPlace);
         return sb.toString();
     }
@@ -32,7 +33,7 @@ public class Place implements ICode {
 
     @Override
     public P asPattern() {
-        return P.PAT(P.ID(), P.RETURN(), P.ID());
+        return P.PAT(P.ID(), P.EXTERNAL(), P.PLACE(), P.ID());
     }
     
 }

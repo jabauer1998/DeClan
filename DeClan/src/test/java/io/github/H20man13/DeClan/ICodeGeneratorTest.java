@@ -223,8 +223,8 @@ public class ICodeGeneratorTest {
     @Test
     public void testParamaterPlacement(){
         String program = "LABEL x\n"
-                       + "v << y\n"
-                       + "z << t\n"
+                       + "v <- y\n"
+                       + "z <- t\n"
                        + "g := z IADD v\n"
                        + "END\n";
 

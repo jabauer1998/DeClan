@@ -156,21 +156,21 @@ public class MyICodeTypeCheckerTest {
     @Test
     public void testProg2(){
         String source = "LABEL func1\n"
-                      + "a << param1\n"
+                      + "a <- param1\n"
                       + "b := a IADD a\n"
                       + "PROC func2 ( b -> param2 )\n"
-                      + "c <- return2\n"
+                      + "c <& return2\n"
                       + "return1 := c RADD c\n"
                       + "RETURN\n"
                       + "LABEL func2\n"
-                      + "d << param2\n"
+                      + "d <- param2\n"
                       + "e := d IMUL d\n"
                       + "f := e IMOD d\n"
                       + "return2 := f\n"
                       + "RETURN\n"
                       + "g := 30\n"
                       + "PROC func1 ( g -> param1 )\n"
-                      + "h <- return1\n"
+                      + "h <& return1\n"
                       + "END\n";
         MyICodeTypeChecker tC = runTypeCheckerOnIrStringSource(source);
         assertTypeCheckerQualities(tC, "a", TypeCheckerQualities.INTEGER);

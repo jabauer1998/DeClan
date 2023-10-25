@@ -497,10 +497,14 @@ public class MyIrBuilder {
         return gen.genNextRegister();
     }
 
-    public String buildReturnPlacement(String dest){
+    public String buildExternalReturnPlacement(String dest){
         String reg = gen.genNextRegister();
-        output.add(factory.procuceReturnPlacement(reg, dest));
+        output.add(factory.procuceExternalReturnPlacement(reg, dest));
         return reg;
+    }
+
+    public void buildInternalReturnPlacement(String dest, String source){
+        output.add(factory.produceInternalReturnPlacement(dest, source));
     }
 
     public void buildBeginLabel(){

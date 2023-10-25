@@ -9,9 +9,10 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
+import io.github.H20man13.DeClan.common.icode.InternalPlace;
 import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.ParamAssign;
-import io.github.H20man13.DeClan.common.icode.Place;
+import io.github.H20man13.DeClan.common.icode.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -94,8 +95,12 @@ public class MyIrFactory {
         return new Assign(place, value);
     }
 
-    public Place procuceReturnPlacement(String place, String returnPlace){
-        return new Place(place, returnPlace);
+    public ExternalPlace procuceExternalReturnPlacement(String place, String returnPlace){
+        return new ExternalPlace(place, returnPlace);
+    }
+
+    public InternalPlace produceInternalReturnPlacement(String place, String returnPlace){
+        return new InternalPlace(place, returnPlace);
     }
 
     public Inline produceInlineAssembly(String asm, List<String> param){

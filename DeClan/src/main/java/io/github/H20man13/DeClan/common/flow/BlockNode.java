@@ -25,7 +25,7 @@ import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.ParamAssign;
-import io.github.H20man13.DeClan.common.icode.Place;
+import io.github.H20man13.DeClan.common.icode.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
@@ -143,7 +143,7 @@ public class BlockNode implements FlowGraphNode {
                 } else if(type == VariableType.RET){
                     DagNode child = varNode.getChild();
                     String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
-                    result.add(new Place(identifier, identifier1));
+                    result.add(new ExternalPlace(identifier, identifier1));
                 }
             } else if(node instanceof DagInlineAssemblyNode){
                 DagInlineAssemblyNode dagNode = (DagInlineAssemblyNode)node;
@@ -275,8 +275,8 @@ public class BlockNode implements FlowGraphNode {
                 if(exists == null){
                     this.dag.addDagNode(newNode);
                 }
-            } else if(icode instanceof Place){
-                Place place = (Place)icode;
+            } else if(icode instanceof ExternalPlace){
+                ExternalPlace place = (ExternalPlace)icode;
                 DagNode right = this.dag.searchForLatestChild(place.retPlace);
 
                 if(right == null){

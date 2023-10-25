@@ -13,9 +13,10 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
+import io.github.H20man13.DeClan.common.icode.InternalPlace;
 import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.ParamAssign;
-import io.github.H20man13.DeClan.common.icode.Place;
+import io.github.H20man13.DeClan.common.icode.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -298,10 +299,14 @@ public class MyIrParser {
     private ICode parseAssignment(){
         IrToken id = match(IrTokenType.ID);
 
-        if(willMatch(IrTokenType.PLACE)){
+        if(willMatch(IrTokenType.EPLACE)){
             skip();
             IrToken id2 = match(IrTokenType.ID);
-            return new Place(id.getLexeme(), id2.getLexeme());
+            return new ExternalPlace(id.getLexeme(), id2.getLexeme());
+        } else if(willMatch(IrTokenType.IPLACE)){
+            skip();
+            IrToken id2 = match(IrTokenType.ID);
+            return new InternalPlace(id.getLexeme(), id2.getLexeme());  
         } else if(willMatch(IrTokenType.PARAM_ASSIGN)) {
             skip();
             IrToken id2 = match(IrTokenType.ID);

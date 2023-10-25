@@ -52,7 +52,8 @@ public enum IrTokenType {
     
     //Operators
     ASSIGN,
-    PLACE,
+    IPLACE,
+    EPLACE,
     MAP,
     PARAM_ASSIGN,
 
@@ -140,8 +141,9 @@ public enum IrTokenType {
         dualOperators = new HashMap<>();
         addDualOp(":=", ASSIGN);
         addDualOp("->", MAP);
-        addDualOp("<-", PLACE);
-        addDualOp("<<", PARAM_ASSIGN);
+        addDualOp("<&", EPLACE);
+        addDualOp("&<", IPLACE);
+        addDualOp("<-", PARAM_ASSIGN);
 
         singleOperators = new HashMap<>();
         addSingleOp(',', COMMA);

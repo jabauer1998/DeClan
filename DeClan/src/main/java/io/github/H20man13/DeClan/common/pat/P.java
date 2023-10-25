@@ -679,6 +679,57 @@ public abstract class P {
         }
     }
 
+    public static class INTERNAL extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof INTERNAL){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString(){
+            return "INTERNAL";
+        }
+        
+    }
+
+    public static class EXTERNAL extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof EXTERNAL){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString(){
+            return "EXTERNAL";
+        }
+    }
+
+    public static class PLACE extends P{
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof PLACE){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "PLACE";
+        }
+        
+    }
+
     public static class PAT extends P{
         private P[] pattern;
 
@@ -876,6 +927,15 @@ public abstract class P {
     }
     public static PARAM PARAM(){
         return new PARAM();
+    }
+    public static INTERNAL INTERNAL(){
+        return new INTERNAL();
+    }
+    public static EXTERNAL EXTERNAL(){
+        return new EXTERNAL();
+    }
+    public static PLACE PLACE(){
+        return new PLACE();
     }
 
     @Override

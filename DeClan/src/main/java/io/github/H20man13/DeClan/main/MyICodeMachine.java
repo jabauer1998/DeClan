@@ -17,9 +17,10 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.InternalPlace;
 import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.ParamAssign;
-import io.github.H20man13.DeClan.common.icode.Place;
+import io.github.H20man13.DeClan.common.icode.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -88,14 +89,15 @@ public class MyICodeMachine {
                     else if(instruction instanceof Return) interpretReturnStatement((Return)instruction);
                     else if(instruction instanceof Label) interpretLabelStatement((Label)instruction);
                     else if(instruction instanceof ParamAssign) interpretParamAssignment((ParamAssign)instruction);
+                    else if(instruction instanceof InternalPlace) interpretInternalPlacement((InternalPlace)instruction);
                     else {
                         errorAndExit("Unexpected icode instruction found" + instruction.getClass(), this.programCounter, instructions.size());
                     }
                     continue;
                 case RETURN:
-                    if(instruction instanceof Place){
+                    if(instruction instanceof ExternalPlace){
                         //Then we need to perform this assignment before deallocating the stacks
-                        Place placement = (Place)instruction;
+                        ExternalPlace placement = (ExternalPlace)instruction;
                         if(tempReturnValue != null){
                             variableValues.addEntry(placement.place, new VariableEntry(false, tempReturnValue));
                             tempReturnValue = null;
@@ -132,6 +134,11 @@ public class MyICodeMachine {
         String place = assign.newPlace;
         VariableEntry result = this.variableValues.getEntry(assign.paramPlace);
         this.variableValues.addEntry(place, result);
+    }
+
+    private void interpretInternalPlacement(InternalPlace placement){
+        VariableEntry entry = variableValues.getEntry(placement.retPlace);
+        variableValues.addEntry(placement.place, entry);
     }
 
     private void interpretEndStatement(End end){

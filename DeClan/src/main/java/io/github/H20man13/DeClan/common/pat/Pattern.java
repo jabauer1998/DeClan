@@ -6,6 +6,9 @@ import io.github.H20man13.DeClan.common.pat.P.ID;
 import io.github.H20man13.DeClan.common.pat.P.PAT;
 
 public class Pattern {
+    //The First patterns we will initialize here are Two Step Patterns
+
+    //The First pattern is to identify possible use cases of the Multiply and Accumulate Function
     public static P multiplyAndAccumulate0 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMUL(), P.ID())),
                                                    P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.ID())));
     public static P multiplyAndAccumulate1 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IMUL(), P.ID())),
@@ -54,6 +57,11 @@ public class Pattern {
                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.REAL())));
     public static P multiplyAndAccumulate22 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.REAL(), P.IMUL(), P.REAL())),
                                                     P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.REAL())));
+
+    //The Next pattern we will initialize is a Function call followed by a return Placement
+    //There will be a pattern for just standard function Calls without a return as well
+    public static P procWithReturn0 = P.PAT(P.PAT(P.PROC(), P.ID()),
+                                            P.PAT(P.ID(), P.RETURN(), P.ID()));
 
     public static P add0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.ID()));
     public static P add1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT(), P.IADD(), P.ID()));

@@ -28,6 +28,7 @@ import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.ParamAssign;
+import io.github.H20man13.DeClan.common.icode.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
@@ -121,6 +122,9 @@ public class MyCodeGenerator {
         initMultiplyAndAccumulate20();
         initMultiplyAndAccumulate21();
         initMultiplyAndAccumulate22();
+
+        //Init Proc with Return Pattern
+        initProcWithReturn0();
 
         //Init Add Patterns
         initAdd0();
@@ -2101,6 +2105,50 @@ public class MyCodeGenerator {
 
                 rGen.freeTempRegs();
 
+                return null;
+            }
+        });
+    }
+
+    private void initProcWithReturn0(){
+        codeGenFunctions.put(Pattern.procWithReturn0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                Proc procICode = (Proc)icode;
+                int totalLength = procICode.params.size();
+                int totalReturnStackLength = totalLength;
+                int totalReturnStackLengthInBytes = totalReturnStackLength * 4;
+
+                ICode retICode = intermediateCode.get(i + 1);
+                ExternalPlace returnPlacement = (ExternalPlace)retICode;
+                //The First thing we need to do is allocate all the code we can for the Paramaters
+                int offset = 4;
+                for(Tuple<String, String> param: procICode.params){
+                    cGen.addVariable(param.dest, VariableLength.WORD, offset);
+                    offset = offset + 4;
+                }
+                int toAllocateToStack = totalReturnStackLengthInBytes + 8;
+                int toPlaceReturnAddressOnStack = toAllocateToStack;
+                int toPlaceReturnValueOnStack = toAllocateToStack - 4;
+                cGen.addInstruction("ADD R13, R13, #" + toAllocateToStack);
+                cGen.addInstruction("STR R14, [R13, -"+toPlaceReturnAddressOnStack+"]");
+                for(int x = 0; x < totalLength; x++){
+                    Tuple<String, String> sourceDest = procICode.params.get(x);
+
+                    String offSetRegister = iGen.genNextRegister();
+                    String offReg = rGen.getTempReg(offSetRegister, procICode);
+                    cGen.addInstruction("LDR " + offReg + ", " + sourceDest.dest);
+
+                    String reg = rGen.getReg(sourceDest.source, procICode); 
+                    cGen.addInstruction("LDR " + reg + ", " + sourceDest.source);
+                    cGen.addInstruction("STR " + reg +  ", [R13,-" + offReg + "]");
+                }
+                cGen.addInstruction("BL " + procICode.pname);
+                cGen.addInstruction("LDR ");
+                cGen.addInstruction("LDR R14, [R13, -"+toPlaceReturnAddressOnStack+"]");
+                cGen.addInstruction("SUB R13, R13, #" + toAllocateToStack);
+                rGen.freeTempRegs();
                 return null;
             }
         });

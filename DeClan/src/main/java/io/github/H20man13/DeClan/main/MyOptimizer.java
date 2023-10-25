@@ -27,7 +27,7 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Label;
-import io.github.H20man13.DeClan.common.icode.Place;
+import io.github.H20man13.DeClan.common.icode.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
@@ -207,8 +207,8 @@ public class MyOptimizer {
                 for(Tuple<String, String> param : ((Proc)icode).params){
                     symbolTable.addEntry(param.source, new LiveInfo(true, i));
                 }
-            } else if(icode instanceof Place){
-                Place place = (Place)icode;
+            } else if(icode instanceof ExternalPlace){
+                ExternalPlace place = (ExternalPlace)icode;
                 symbolTable.addEntry(place.retPlace, new LiveInfo(true, i));
             }
 
@@ -453,8 +453,8 @@ public class MyOptimizer {
                     if(liveVariables.contains(assICode.place)){
                         result.add(assICode);
                     }
-                } else if(icode instanceof Place){
-                    Place assICode = (Place)icode;
+                } else if(icode instanceof ExternalPlace){
+                    ExternalPlace assICode = (ExternalPlace)icode;
                     Set<String> liveVariables = this.liveAnal.getInstructionOutputSet(icode);
                     if(liveVariables.contains(assICode.place)){
                         result.add(assICode);

@@ -30,7 +30,7 @@ public class ParamAssign implements ICode {
     public String toString(){
         StringBuilder resultBuilder = new StringBuilder();
         resultBuilder.append(newPlace);
-        resultBuilder.append(" << ");
+        resultBuilder.append(" <- ");
         resultBuilder.append(paramPlace);
         return resultBuilder.toString();
     }
