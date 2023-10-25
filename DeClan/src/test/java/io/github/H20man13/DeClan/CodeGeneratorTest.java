@@ -67,6 +67,86 @@ public class CodeGeneratorTest {
 
     @Test
     public void testConversions(){
-        testDeclanFile("test_source/Conversions.dcl");
+        testDeclanFile("test_source/conversions.dcl");
+    }
+
+    @Test
+    public void testExpressions(){
+        testDeclanFile("test_source/expressions.dcl");
+    }
+
+    @Test
+    public void testForLoopAdvanced(){
+        testDeclanFile("test_source/ForLoopAdvanced.dcl");
+    }
+
+    @Test
+    public void testForLoopBasic(){
+        testDeclanFile("test_source/ForLoopBasic.dcl");
+    }
+
+    @Test
+    public void testForLoopBasic2(){
+        testDeclanFile("test_source/ForLoopBasic2.dcl");
+    }
+
+    @Test
+    public void testForLoopBasic3(){
+        testDeclanFile("test_source/ForLoopBasic3.dcl");
+    }
+
+    @Test
+    public void testIfStatementAdvanced(){
+        testDeclanFile("test_source/IfStatementAdvanced.dcl");
+    }
+
+    @Test
+    public void testIfStatementBasic(){
+        testDeclanFile("test_source/IfStatementBasic.dcl");
+    }
+
+    @Test
+    public void testLoops(){
+        testDeclanFile("test_source/loops.dcl");
+    }
+
+    @Test
+    public void testRepeatLoopBasic(){
+        testDeclanFile("test_source/RepeatLoopBasic.dcl");
+    }
+
+    @Test
+    public void testSample(){
+        testDeclanFile("test_source/sample.dcl");
+    }
+
+    @Test
+    public void testTest(){
+        testDeclanFile("test_source/test.dcl");
+    }
+
+    @Test
+    public void testTest2(){
+        testDeclanFile("test_source/test2.dcl");
+    }
+
+    @Test
+    public void testTest3(){
+        testDeclanFile("test_source/test3.dcl");
+    }
+
+    @Test
+    public void testTest4(){
+        testDeclanFile("test_source/test4.dcl");
+    }
+
+    @Test
+    public void testWhileLoopAdvanced(){
+        testDeclanFile("test_source/WhileLoopAdvanced.dcl");
+    }
+
+    @Test
+    public void testWhileLoopBasic(){
+        testDeclanFile("test_source/WhileLoopBasic.dcl");
     }
 }
