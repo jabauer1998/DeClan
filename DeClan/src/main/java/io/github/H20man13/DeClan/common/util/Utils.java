@@ -254,6 +254,10 @@ public class Utils {
             case IDIV: return P.IDIV();
             case LAND: return P.BAND();
             case IMOD: return P.IMOD();
+            case RMUL: return P.RMUL();
+            case RDIVIDE: return P.RDIVIDE();
+            case RADD: return P.RADD();
+            case RSUB: return P.RSUB();
             case IAND: return P.IAND();
             case IOR: return P.IOR();
             case IXOR: return P.IXOR();

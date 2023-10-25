@@ -75,6 +75,7 @@ public class MyCodeGenerator {
                     if(codeGenFunctions.containsKey(possibleTwoStagePattern)){
                         Callable<Void> codeGenFunction = codeGenFunctions.get(possibleTwoStagePattern);
                         codeGenFunction.call();
+                        i++;
                     } else if(codeGenFunctions.containsKey(oneStagePattern)) {
                         Callable<Void> codeGenFunction = codeGenFunctions.get(oneStagePattern);
                         codeGenFunction.call();
