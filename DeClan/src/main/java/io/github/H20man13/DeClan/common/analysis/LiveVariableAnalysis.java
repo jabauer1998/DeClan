@@ -12,6 +12,7 @@ import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.InternalPlace;
 import io.github.H20man13.DeClan.common.icode.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.Proc;
@@ -72,6 +73,10 @@ public class LiveVariableAnalysis extends Analysis<String> {
                     }
                 } else if(code instanceof ExternalPlace){
                     ExternalPlace placement = (ExternalPlace)code;
+                    instructionUse.add(placement.retPlace);
+                    instructionDef.add(placement.place);
+                } else if (code instanceof InternalPlace){
+                    InternalPlace placement = (InternalPlace)code;
                     instructionUse.add(placement.retPlace);
                     instructionDef.add(placement.place);
                 } else if(code instanceof ParamAssign){
