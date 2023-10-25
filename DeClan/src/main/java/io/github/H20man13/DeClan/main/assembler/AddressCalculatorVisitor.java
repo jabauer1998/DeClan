@@ -51,6 +51,7 @@ import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.PsrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.PsrfContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.RListContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.RValueContext;
+import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.RealNumberContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.RelationalContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.RsbInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.RscInstrContext;
@@ -453,6 +454,11 @@ public class AddressCalculatorVisitor implements ArmAssemblerVisitor<Integer> {
 
     @Override
     public Integer visitShiftName(ShiftNameContext ctx) {
+        return null;
+    }
+
+    @Override
+    public Integer visitRealNumber(RealNumberContext ctx) {
         return null;
     }
 }

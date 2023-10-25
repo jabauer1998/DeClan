@@ -90,6 +90,8 @@ public interface ArmAssemblerVisitor<T> extends ParseTreeVisitor<T> {
 
 	T visitExpression(ArmAssemblerParser.ExpressionContext ctx);
 
+	T visitRealNumber(ArmAssemblerParser.RealNumberContext ctx);
+
 	T visitAddress(ArmAssemblerParser.AddressContext ctx);
 
 	T visitBlInstr(ArmAssemblerParser.BlInstrContext ctx);

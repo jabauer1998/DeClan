@@ -49,9 +49,7 @@ public class CodeGeneratorTest {
 
             List<ICode> optimizedICode = optimizer.getICode();
 
-            MyCodeGenerator codeGenerator = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), optimizedICode, rGen, errLog);
-
-            
+            MyCodeGenerator codeGenerator = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), optimizedICode, rGen, errLog); 
 
             StringWriter writer = new StringWriter();
             codeGenerator.codeGen(writer);

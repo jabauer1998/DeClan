@@ -101,6 +101,7 @@ term: unary ((TIMES|DIV|MOD|LSHIFT|RSHIFT) term)?;
 unary: (PLUS|MINUS)? single;
 single: number
 	  | identifier
+	  | realNumber
 	  ;
 identifier: IDENT
 		  | BRANCH
@@ -143,6 +144,7 @@ identifier: IDENT
 		  | RPX
 		  ;
 number: NUMBER;
+realNumber: NUMBER PERIOD NUMBER;
 
 /*
  * Below is the code for dealing with addresses
@@ -278,7 +280,7 @@ LAND : '&&';
 LOR : '||';
 HASH : '#';
 COLON: ':';
-PERIOD: [\.];
+PERIOD: [.];
 
 /*
  * The following are used for ldm and store memory instructions 

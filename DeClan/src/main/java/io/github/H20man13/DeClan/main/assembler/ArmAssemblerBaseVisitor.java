@@ -91,6 +91,8 @@ public class ArmAssemblerBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 
 	@Override public T visitExpression(ArmAssemblerParser.ExpressionContext ctx) { return visitChildren(ctx); }
 
+	@Override public T visitRealNumber(ArmAssemblerParser.RealNumberContext ctx) { return visitChildren(ctx); }
+
 	@Override public T visitAddress(ArmAssemblerParser.AddressContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitBlInstr(ArmAssemblerParser.BlInstrContext ctx) { return visitChildren(ctx); }

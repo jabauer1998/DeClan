@@ -51,6 +51,7 @@ import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.PsrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.PsrfContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.RListContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.RValueContext;
+import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.RealNumberContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.RelationalContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.RsbInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.RscInstrContext;
@@ -1967,5 +1968,14 @@ public class AssemblerVisitor implements ArmAssemblerVisitor<Integer> {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public Integer visitRealNumber(RealNumberContext ctx) {
+        String number = ctx.getText();
+        float asFloat = Float.parseFloat(number);
+        long asLong = (long)asFloat;
+        int asInt = (int)asLong;
+        return asInt;
     }
 }

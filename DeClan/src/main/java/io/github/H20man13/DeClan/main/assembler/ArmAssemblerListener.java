@@ -133,6 +133,9 @@ public interface ArmAssemblerListener extends ParseTreeListener {
 	void enterExpression(ArmAssemblerParser.ExpressionContext ctx);
 	void exitExpression(ArmAssemblerParser.ExpressionContext ctx);
 
+	void enterRealNumber(ArmAssemblerParser.RealNumberContext ctx);
+	void exitRealNumber(ArmAssemblerParser.RealNumberContext ctx);
+
 	void enterAddress(ArmAssemblerParser.AddressContext ctx);
 	void exitAddress(ArmAssemblerParser.AddressContext ctx);
 

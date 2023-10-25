@@ -136,6 +136,9 @@ public class ArmAssemblerBaseListener implements ArmAssemblerListener {
 	@Override public void enterExpression(ArmAssemblerParser.ExpressionContext ctx) { }
 	@Override public void exitExpression(ArmAssemblerParser.ExpressionContext ctx) { }
 
+	@Override public void enterRealNumber(ArmAssemblerParser.RealNumberContext ctx) { }
+	@Override public void exitRealNumber(ArmAssemblerParser.RealNumberContext ctx) { }
+
 	@Override public void enterAddress(ArmAssemblerParser.AddressContext ctx) { }
 	@Override public void exitAddress(ArmAssemblerParser.AddressContext ctx) { }
 
