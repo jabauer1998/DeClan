@@ -1922,7 +1922,13 @@ public class AssemblerVisitor implements ArmAssemblerVisitor<Integer> {
     @Override
     public Integer visitWordDirective(WordDirectiveContext ctx) {
         AntlrToken<Integer> number = Factory.decorateToken(ctx.number());
-        return number.accept(this);
+        AntlrToken<Integer> realNumber = Factory.decorateToken(ctx.realNumber());
+
+        if(Matcher.match(number)){
+            return number.accept(this);
+        } else {
+            return realNumber.accept(this);
+        }
     }
 
     @Override

@@ -2140,7 +2140,7 @@ public class MyCodeGenerator {
                 }
                 
                 cGen.addInstruction("ADD R13, R13, #" + toAllocateToStack);
-                cGen.addInstruction("STR R14, [R13, -"+toPlaceReturnAddressOnStack+"]");
+                cGen.addInstruction("STR R14, [R13, #-"+toPlaceReturnAddressOnStack+"]");
                 for(int x = 0; x < totalLength; x++){
                     Tuple<String, String> sourceDest = procICode.params.get(x);
 
@@ -2163,7 +2163,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("STR " + temp + ", " + returnPlacement.place);
 
                 //Now to load the Return address from the Stack back into the Link Register R14
-                cGen.addInstruction("LDR R14, [R13, -"+toPlaceReturnAddressOnStack+"]");
+                cGen.addInstruction("LDR R14, [R13, #-"+toPlaceReturnAddressOnStack+"]");
 
                 cGen.addInstruction("SUB R13, R13, #" + toAllocateToStack);
                 rGen.freeTempRegs();
@@ -4830,8 +4830,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV GE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV LT " + finalPlace + ", #0");
+                cGen.addInstruction("MOVGE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVLT " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
                 return null;
@@ -4861,8 +4861,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV GE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV LT " + finalPlace + ", #0");
+                cGen.addInstruction("MOVGE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVLT " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
                 return null;
@@ -4893,8 +4893,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV GE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV LT " + finalPlace + ", #0");
+                cGen.addInstruction("MOVGE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVLT " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
                 return null;
@@ -4927,8 +4927,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV GE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV LT " + finalPlace + ", #0");
+                cGen.addInstruction("MOVGE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVLT " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
                 return null;
@@ -4966,8 +4966,8 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV GE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV LT " + finalPlace + ", #0");
+                cGen.addInstruction("MOVGE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVLT " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
                 return null;
@@ -5007,8 +5007,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV GE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV LT " + finalPlace + ", #0");
+                cGen.addInstruction("MOVGE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVLT " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
                 return null;
@@ -5057,8 +5057,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV GE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV LT " + finalPlace + ", #0");
+                cGen.addInstruction("MOVGE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVLT " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
                 return null;
@@ -5099,8 +5099,8 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV GE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV LT " + finalPlace + ", #0");
+                cGen.addInstruction("MOVGE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVLT " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
                 return null;
@@ -5142,8 +5142,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV GE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV LT " + finalPlace + ", #0");
+                cGen.addInstruction("MOVGE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVLT " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
                 return null;
@@ -5170,8 +5170,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV GT " + finalPlace + ", #1");
-                cGen.addInstruction("MOV LE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVGT " + finalPlace + ", #1");
+                cGen.addInstruction("MOVLE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -5202,8 +5202,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV GT " + finalPlace + ", #1");
-                cGen.addInstruction("MOV LE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVGT " + finalPlace + ", #1");
+                cGen.addInstruction("MOVLE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -5235,8 +5235,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV GT " + finalPlace + ", #1");
-                cGen.addInstruction("MOV LE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVGT " + finalPlace + ", #1");
+                cGen.addInstruction("MOVLE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -5270,8 +5270,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV GT " + finalPlace + ", #1");
-                cGen.addInstruction("MOV LE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVGT " + finalPlace + ", #1");
+                cGen.addInstruction("MOVLE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
 
                 rGen.freeTempRegs();
@@ -5352,8 +5352,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV GT " + finalPlace + ", #1");
-                cGen.addInstruction("MOV LE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVGT " + finalPlace + ", #1");
+                cGen.addInstruction("MOVLE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -5552,8 +5552,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV LT " + finalPlace + ", #1");
-                cGen.addInstruction("MOV GE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVLT " + finalPlace + ", #1");
+                cGen.addInstruction("MOVGE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -5585,8 +5585,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV LT " + finalPlace + ", #1");
-                cGen.addInstruction("MOV GE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVLT " + finalPlace + ", #1");
+                cGen.addInstruction("MOVGE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -5620,8 +5620,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV LT " + finalPlace + ", #1");
-                cGen.addInstruction("MOV GE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVLT " + finalPlace + ", #1");
+                cGen.addInstruction("MOVGE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
                 return null;
@@ -5659,8 +5659,8 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV LT " + finalPlace + ", #1");
-                cGen.addInstruction("MOV GE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVLT " + finalPlace + ", #1");
+                cGen.addInstruction("MOVGE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -5866,8 +5866,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV LE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV GT " + finalPlace + ", #0");
+                cGen.addInstruction("MOVLE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVGT " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -5898,8 +5898,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV LE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV GT " + finalPlace + ", #0");
+                cGen.addInstruction("MOVLE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVGT " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -5931,8 +5931,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV LE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV GT " + finalPlace + ", #0");
+                cGen.addInstruction("MOVLE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVGT " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -5966,8 +5966,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV LE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV GT " + finalPlace + ", #0");
+                cGen.addInstruction("MOVLE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVGT " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -6006,8 +6006,8 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV LE " + finalPlace + ", #1");
-                cGen.addInstruction("MOV GT " + finalPlace + ", #0");
+                cGen.addInstruction("MOVLE " + finalPlace + ", #1");
+                cGen.addInstruction("MOVGT " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -6216,8 +6216,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
-                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -6248,8 +6248,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
-                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -6281,8 +6281,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
-                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -6467,8 +6467,8 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
-                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -6501,8 +6501,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
 
                 cGen.addInstruction("TST " + leftReg + ", " + rightReg);
-                cGen.addInstruction("MOV EQ " + finalPlace + ", #1");
-                cGen.addInstruction("MOV NE " + finalPlace + ", #0");
+                cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
+                cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
                 rGen.freeTempRegs();
 
@@ -9847,7 +9847,7 @@ public class MyCodeGenerator {
                 }
                 
                 cGen.addInstruction("ADD R13, R13, #" + toAllocateToStack);
-                cGen.addInstruction("STR R14, [R13, -"+toPlaceReturnAddressOnStack+"]");
+                cGen.addInstruction("STR R14, [R13, #-"+toPlaceReturnAddressOnStack+"]");
                 for(int x = 0; x < totalLength; x++){
                     Tuple<String, String> sourceDest = procICode.params.get(x);
 
@@ -9862,7 +9862,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("BL " + procICode.pname);
 
                 //Now to load the Return address from the Stack back into the Link Register R14
-                cGen.addInstruction("LDR R14, [R13, -"+toPlaceReturnAddressOnStack+"]");
+                cGen.addInstruction("LDR R14, [R13, #-"+toPlaceReturnAddressOnStack+"]");
 
                 cGen.addInstruction("SUB R13, R13, #" + toAllocateToStack);
                 rGen.freeTempRegs();

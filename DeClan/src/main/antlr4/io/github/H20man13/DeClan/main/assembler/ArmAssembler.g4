@@ -39,8 +39,8 @@ instruction : bInstr
 			| stopInstr
 			;
 
-wordDirective: DOT_WORD number;
-byteDirective: DOT_BYTE number;
+wordDirective: DOT_WORD (number | realNumber);
+byteDirective: DOT_BYTE (number | realNumber);
 
 bInstr : BRANCH expression;
 blInstr : BRANCH_WITH_LINK expression;
@@ -99,9 +99,9 @@ primary : bitwise ((PLUS|MINUS) primary)?;
 bitwise : term ((BOR|BAND|BXOR) bitwise)?;
 term: unary ((TIMES|DIV|MOD|LSHIFT|RSHIFT) term)?;
 unary: (PLUS|MINUS)? single;
-single: number
+single: realNumber
+	  | number
 	  | identifier
-	  | realNumber
 	  ;
 identifier: IDENT
 		  | BRANCH
@@ -143,8 +143,9 @@ identifier: IDENT
 		  | REG
 		  | RPX
 		  ;
+realNumber: REAL_NUMBER;
 number: NUMBER;
-realNumber: NUMBER PERIOD NUMBER;
+
 
 /*
  * Below is the code for dealing with addresses
@@ -192,9 +193,6 @@ ROR : R O R;
 
 RPX : R P X;
 
-DOT_WORD: PERIOD WORD;
-DOT_BYTE: PERIOD BYTE;
-
 /*
  * Below is code for condition codes
  */
@@ -232,15 +230,15 @@ MOVE: MOV CONDITION_CODE? S?;
 MOVE_NEGATIVE: MVN CONDITION_CODE? S?;
 STOP: STP;
 
-REG : R DIGIT DIGIT?;
+REG: R (([1][0-5]?)|[02-9]);
 LABEL: IDENT WS* COLON;
 IDENT: LETTER LETTER_OR_UNDERSCORE_OR_NUMBER*;
 
+DOT_WORD: '.' WORD;
+DOT_BYTE: '.' BYTE;
 
-/*
- * Below is the code for dealing with REGs
- */
-NUMBER : DIGIT+;
+REAL_NUMBER: [0-9]+ '.' [0-9]+;
+NUMBER: [+-]?(([1-9] [0-9]*)|[0]);
 
 CPSR: C P S R;
 CPSR_ALL: C P S R '_' A L L;
@@ -280,7 +278,6 @@ LAND : '&&';
 LOR : '||';
 HASH : '#';
 COLON: ':';
-PERIOD: [.];
 
 /*
  * The following are used for ldm and store memory instructions 
@@ -387,9 +384,8 @@ fragment GT : G T;
 fragment LE : L E;
 fragment AL : A L;
 
-fragment LETTER_OR_UNDERSCORE_OR_NUMBER: LETTER | '_' | DIGIT;
+fragment LETTER_OR_UNDERSCORE_OR_NUMBER: LETTER | '_' | [0-9];
 fragment LETTER: (A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z);
-fragment DIGIT : [0-9];
 
 fragment A : ('A'|'a');
 fragment B : ('B'|'b');

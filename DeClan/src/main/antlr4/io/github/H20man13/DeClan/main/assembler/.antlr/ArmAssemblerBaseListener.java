@@ -640,6 +640,18 @@ public class ArmAssemblerBaseListener implements ArmAssemblerListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterRealNumber(ArmAssemblerParser.RealNumberContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRealNumber(ArmAssemblerParser.RealNumberContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterNumber(ArmAssemblerParser.NumberContext ctx) { }
 	/**
 	 * {@inheritDoc}

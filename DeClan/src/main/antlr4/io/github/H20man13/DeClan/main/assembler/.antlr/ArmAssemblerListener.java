@@ -527,6 +527,16 @@ public interface ArmAssemblerListener extends ParseTreeListener {
 	 */
 	void exitIdentifier(ArmAssemblerParser.IdentifierContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ArmAssemblerParser#realNumber}.
+	 * @param ctx the parse tree
+	 */
+	void enterRealNumber(ArmAssemblerParser.RealNumberContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ArmAssemblerParser#realNumber}.
+	 * @param ctx the parse tree
+	 */
+	void exitRealNumber(ArmAssemblerParser.RealNumberContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ArmAssemblerParser#number}.
 	 * @param ctx the parse tree
 	 */

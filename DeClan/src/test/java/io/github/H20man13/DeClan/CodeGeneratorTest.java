@@ -3,9 +3,18 @@ package io.github.H20man13.DeClan;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileReader;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Future;
 
+import javax.swing.JDialog;
+
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.misc.TestRig;
+import org.antlr.v4.runtime.tree.gui.TreeViewer;
 import org.junit.Test;
 
 import edu.depauw.declan.common.ErrorLog;
@@ -20,6 +29,8 @@ import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.MyICodeGenerator;
 import io.github.H20man13.DeClan.main.MyOptimizer;
 import io.github.H20man13.DeClan.main.MyStandardLibrary;
+import io.github.H20man13.DeClan.main.assembler.ArmAssemblerLexer;
+import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser;
 
 public class CodeGeneratorTest {
     private void testDeclanFile(String fileName){
@@ -35,6 +46,7 @@ public class CodeGeneratorTest {
 
             IrRegisterGenerator rGen = new IrRegisterGenerator();
             MyICodeGenerator gen = new MyICodeGenerator(errLog, rGen);
+            
 
             stdLib.ioLibrary().accept(gen);
             stdLib.mathLibrary().accept(gen);
@@ -54,9 +66,31 @@ public class CodeGeneratorTest {
             StringWriter writer = new StringWriter();
             codeGenerator.codeGen(writer);
 
+
             for(LogItem item : errLog){
                 assertTrue(item.toString(), false);
             }
+
+            String outputString = writer.toString();
+
+            String[] splitOutput = outputString.split("\r?\n");
+
+            for(int i = 0; i < splitOutput.length; i++){
+                StringBuilder lineBuilder = new StringBuilder();
+                lineBuilder.append(i);
+                lineBuilder.append("~ ");
+                lineBuilder.append(splitOutput[i]);
+                System.err.println(lineBuilder.toString());
+            }
+
+            StringReader outputStringReader = new StringReader(outputString);
+            ANTLRInputStream inputString = new ANTLRInputStream(outputStringReader);
+            ArmAssemblerLexer armLexer = new ArmAssemblerLexer(inputString);
+            CommonTokenStream tokStream = new CommonTokenStream(armLexer);
+            ArmAssemblerParser armParser = new ArmAssemblerParser(tokStream);
+
+            armParser.program();
+   
         } catch(Exception exp){
             assertTrue(exp.toString(), false);
         }
