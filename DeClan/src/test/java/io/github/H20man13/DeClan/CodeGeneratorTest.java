@@ -73,16 +73,6 @@ public class CodeGeneratorTest {
 
             String outputString = writer.toString();
 
-            String[] splitOutput = outputString.split("\r?\n");
-
-            for(int i = 0; i < splitOutput.length; i++){
-                StringBuilder lineBuilder = new StringBuilder();
-                lineBuilder.append(i);
-                lineBuilder.append("~ ");
-                lineBuilder.append(splitOutput[i]);
-                System.err.println(lineBuilder.toString());
-            }
-
             StringReader outputStringReader = new StringReader(outputString);
             ANTLRInputStream inputString = new ANTLRInputStream(outputStringReader);
             ArmAssemblerLexer armLexer = new ArmAssemblerLexer(inputString);
