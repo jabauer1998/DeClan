@@ -480,6 +480,9 @@ public class AssemblerVisitor implements ArmAssemblerVisitor<Integer> {
         //Set Opcode Bits
         result |= (0b1001 << 21);
 
+        //Set Condition Code Bits
+        result |= (0b1 << 20);
+
         //set operand 2
         result |= op2.accept(this);
 
@@ -534,6 +537,9 @@ public class AssemblerVisitor implements ArmAssemblerVisitor<Integer> {
 
         //Set Opcode Bits
         result |= (0b1000 << 21);
+
+        //Set condition code bit to 1 in this instruction
+        result |= (0b1 << 20);
 
         //set operand 2
         result |= op2.accept(this);
@@ -1461,6 +1467,9 @@ public class AssemblerVisitor implements ArmAssemblerVisitor<Integer> {
         //Set Opcode Bits
         result |= (0b1010 << 21);
 
+        //Set Condition Code Bits
+        result |= (0b1 << 20);
+
         //set operand 2
         result |= op2.accept(this);
 
@@ -1846,6 +1855,9 @@ public class AssemblerVisitor implements ArmAssemblerVisitor<Integer> {
 
         //Set Opcode Bits
         result |= (0b1011 << 21);
+
+        //Set Condition Codes
+        result |= (0b1 << 20);
 
         //set operand 2
         result |= op2.accept(this);
