@@ -6215,7 +6215,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
                 cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6247,7 +6247,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
                 cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6280,7 +6280,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
                 cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6315,7 +6315,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
                 cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6353,7 +6353,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
                 cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6390,7 +6390,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
                 cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6433,7 +6433,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
                 cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6466,7 +6466,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
 
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
                 cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6500,7 +6500,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
 
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
                 cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6537,7 +6537,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
 
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
                 cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6581,7 +6581,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR R14, [R13, #-12]");
                 cGen.addInstruction("SUB R13, R13, #12");
                 
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
                 cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6625,7 +6625,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
                 
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
                 cGen.addInstruction("MOVNE " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6654,7 +6654,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6686,7 +6686,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6718,7 +6718,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6751,7 +6751,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6787,7 +6787,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6824,7 +6824,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6867,7 +6867,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6900,7 +6900,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
 
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6932,7 +6932,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -6965,7 +6965,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -7009,7 +7009,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR R14, [R13, #-12]");
                 cGen.addInstruction("SUB R13, R13, #12");
 
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
@@ -7054,7 +7054,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
 
-                cGen.addInstruction("TST " + leftReg + ", " + rightReg);
+                cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
                 cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
