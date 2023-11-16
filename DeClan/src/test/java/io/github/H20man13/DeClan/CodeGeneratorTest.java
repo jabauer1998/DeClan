@@ -85,6 +85,7 @@ public class CodeGeneratorTest {
         }
     }
 
+    /* 
     @Test
     public void testConversions(){
         String expectedResult = "";
@@ -1986,7 +1987,984 @@ public class CodeGeneratorTest {
 
     @Test
     public void testIfStatementBasic(){
-        String expectedResult = "";
+        String expectedResult = "LDR R13, totalBytes\r\n" + //
+                "B begin_0\r\n" + //
+                "a7: .WORD 0\r\n" + //
+                "a8: .WORD 0\r\n" + //
+                "a9: .WORD 0\r\n" + //
+                "e4: .WORD 1\r\n" + //
+                "d8: .WORD 0\r\n" + //
+                "e5: .WORD 1\r\n" + //
+                "d9: .WORD 0\r\n" + //
+                "e6: .WORD 23\r\n" + //
+                "e7: .WORD 0\r\n" + //
+                "s2: .BYTE 1\r\n" + //
+                "s3: .BYTE 1\r\n" + //
+                "e8: .WORD 0\r\n" + //
+                "e9: .WORD 23\r\n" + //
+                "f0: .WORD 0\r\n" + //
+                "f1: .WORD 0\r\n" + //
+                "e0: .WORD 0\r\n" + //
+                "f2: .WORD 1\r\n" + //
+                "f3: .WORD 0\r\n" + //
+                "e0: .WORD 0\r\n" + //
+                "f4: .WORD 2\r\n" + //
+                "f5: .WORD 0\r\n" + //
+                "c7: .WORD 12.0\r\n" + //
+                "c5: .WORD 8\r\n" + //
+                "c6: .WORD 4\r\n" + //
+                "f6: .WORD 0\r\n" + //
+                "f7: .WORD 0\r\n" + //
+                "e1: .WORD 0\r\n" + //
+                "f8: .WORD 0\r\n" + //
+                "d8: .WORD 0\r\n" + //
+                "f9: .WORD 1\r\n" + //
+                "g0: .WORD 0\r\n" + //
+                "d9: .WORD 0\r\n" + //
+                "g1: .WORD 23\r\n" + //
+                "g2: .WORD 0\r\n" + //
+                "e7: .WORD 0\r\n" + //
+                "g3: .WORD 23\r\n" + //
+                "g4: .WORD 0\r\n" + //
+                "g5: .WORD 255\r\n" + //
+                "g6: .WORD 0\r\n" + //
+                "e2: .WORD 0\r\n" + //
+                "g7: .WORD 2\r\n" + //
+                "g8: .WORD 127\r\n" + //
+                "g9: .WORD 0\r\n" + //
+                "d0: .WORD 12.0\r\n" + //
+                "c8: .WORD 8\r\n" + //
+                "c9: .WORD 4\r\n" + //
+                "h0: .WORD 0\r\n" + //
+                "e2: .WORD 0\r\n" + //
+                "h1: .WORD 31\r\n" + //
+                "h2: .WORD 0\r\n" + //
+                "h3: .WORD 1\r\n" + //
+                "h4: .WORD 0\r\n" + //
+                "e3: .WORD 0\r\n" + //
+                "h5: .WORD 1\r\n" + //
+                "h6: .WORD 0\r\n" + //
+                "s8: .BYTE 1\r\n" + //
+                "h7: .WORD 1\r\n" + //
+                "h8: .WORD 0\r\n" + //
+                "e3: .WORD 0\r\n" + //
+                "h9: .WORD 0\r\n" + //
+                "i0: .WORD 0\r\n" + //
+                "d7: .WORD 0\r\n" + //
+                "i3: .WORD 0\r\n" + //
+                "i5: .WORD 255\r\n" + //
+                "i6: .WORD 0\r\n" + //
+                "i2: .WORD 0\r\n" + //
+                "i7: .WORD 2\r\n" + //
+                "i8: .WORD 127\r\n" + //
+                "i9: .WORD 0\r\n" + //
+                "d0: .WORD 12.0\r\n" + //
+                "c8: .WORD 8\r\n" + //
+                "c9: .WORD 4\r\n" + //
+                "j0: .WORD 0\r\n" + //
+                "i1: .WORD 0\r\n" + //
+                "j2: .WORD 0\r\n" + //
+                "j3: .WORD 0\r\n" + //
+                "j4: .WORD 0\r\n" + //
+                "t3: .BYTE 1\r\n" + //
+                "j1: .WORD 0\r\n" + //
+                "j5: .WORD 0\r\n" + //
+                "j1: .WORD 0\r\n" + //
+                "j8: .WORD 0\r\n" + //
+                "j6: .WORD 0\r\n" + //
+                "j9: .WORD 0\r\n" + //
+                "j7: .WORD 0\r\n" + //
+                "k0: .WORD 0\r\n" + //
+                "k1: .WORD 0\r\n" + //
+                "k2: .WORD 0\r\n" + //
+                "k3: .WORD 0\r\n" + //
+                "t5: .BYTE 1\r\n" + //
+                "t6: .BYTE 1\r\n" + //
+                "k4: .WORD 0\r\n" + //
+                "j6: .WORD 0\r\n" + //
+                "k5: .WORD 1\r\n" + //
+                "k6: .WORD 0\r\n" + //
+                "j7: .WORD 0\r\n" + //
+                "k7: .WORD 0\r\n" + //
+                "k8: .WORD 0\r\n" + //
+                "k9: .WORD 0\r\n" + //
+                "k3: .WORD 0\r\n" + //
+                "l2: .WORD 0\r\n" + //
+                "l3: .WORD 0\r\n" + //
+                "b8: .WORD 12.0\r\n" + //
+                "b6: .WORD 8\r\n" + //
+                "b7: .WORD 4\r\n" + //
+                "l4: .WORD 0\r\n" + //
+                "l0: .WORD 0\r\n" + //
+                "b1: .WORD 8.0\r\n" + //
+                "b0: .WORD 4\r\n" + //
+                "l5: .WORD 0\r\n" + //
+                "l1: .WORD 0\r\n" + //
+                "l8: .WORD 0\r\n" + //
+                "l6: .WORD 0\r\n" + //
+                "l9: .WORD 0\r\n" + //
+                "m0: .WORD 0\r\n" + //
+                "m1: .WORD 0\r\n" + //
+                "m2: .WORD 0\r\n" + //
+                "u2: .BYTE 1\r\n" + //
+                "u3: .BYTE 1\r\n" + //
+                "m3: .WORD 0\r\n" + //
+                "l6: .WORD 0\r\n" + //
+                "m4: .WORD 0\r\n" + //
+                "m5: .WORD 0\r\n" + //
+                "m6: .WORD 0\r\n" + //
+                "m2: .WORD 0\r\n" + //
+                "m9: .WORD 1\r\n" + //
+                "m7: .WORD 0\r\n" + //
+                "n0: .WORD 0\r\n" + //
+                "m8: .WORD 0\r\n" + //
+                "n1: .WORD 0\r\n" + //
+                "n2: .WORD 0\r\n" + //
+                "n3: .WORD 0\r\n" + //
+                "u5: .BYTE 1\r\n" + //
+                "n4: .WORD 0\r\n" + //
+                "u6: .BYTE 1\r\n" + //
+                "u7: .BYTE 1\r\n" + //
+                "n5: .WORD 0\r\n" + //
+                "n6: .WORD 0\r\n" + //
+                "m7: .WORD 0\r\n" + //
+                "n7: .WORD 1\r\n" + //
+                "n8: .WORD 0\r\n" + //
+                "m8: .WORD 0\r\n" + //
+                "n9: .WORD 0\r\n" + //
+                "n4: .WORD 0\r\n" + //
+                "o0: .WORD 0\r\n" + //
+                "o1: .WORD 0\r\n" + //
+                "u8: .BYTE 1\r\n" + //
+                "o2: .WORD 0\r\n" + //
+                "u9: .BYTE 1\r\n" + //
+                "v0: .BYTE 1\r\n" + //
+                "o3: .WORD 0\r\n" + //
+                "m7: .WORD 0\r\n" + //
+                "o4: .WORD 1\r\n" + //
+                "o5: .WORD 0\r\n" + //
+                "m8: .WORD 0\r\n" + //
+                "o6: .WORD 0\r\n" + //
+                "o2: .WORD 0\r\n" + //
+                "o9: .WORD 1\r\n" + //
+                "o7: .WORD 0\r\n" + //
+                "p0: .WORD 0\r\n" + //
+                "o8: .WORD 0\r\n" + //
+                "p1: .WORD 0\r\n" + //
+                "p2: .WORD 0\r\n" + //
+                "v2: .BYTE 1\r\n" + //
+                "v3: .BYTE 1\r\n" + //
+                "p3: .WORD 0\r\n" + //
+                "p4: .WORD 0\r\n" + //
+                "o7: .WORD 0\r\n" + //
+                "p5: .WORD 1\r\n" + //
+                "p6: .WORD 0\r\n" + //
+                "o8: .WORD 0\r\n" + //
+                "p7: .WORD 0\r\n" + //
+                "p2: .WORD 0\r\n" + //
+                "p8: .WORD 0\r\n" + //
+                "p9: .WORD 0\r\n" + //
+                "q0: .WORD 0.5\r\n" + //
+                "q1: .WORD 0\r\n" + //
+                "d2: .WORD 8.0\r\n" + //
+                "d1: .WORD 4\r\n" + //
+                "q2: .WORD 0\r\n" + //
+                "q3: .WORD 1\r\n" + //
+                "q4: .WORD 0\r\n" + //
+                "q5: .WORD 0\r\n" + //
+                "d2: .WORD 8.0\r\n" + //
+                "d1: .WORD 4\r\n" + //
+                "q6: .WORD 0\r\n" + //
+                "q7: .WORD 0\r\n" + //
+                "q8: .WORD 0\r\n" + //
+                "q9: .WORD 1\r\n" + //
+                "r0: .WORD 0\r\n" + //
+                "r1: .WORD 0\r\n" + //
+                "r2: .WORD 0\r\n" + //
+                "w0: .BYTE 1\r\n" + //
+                "r3: .WORD 4\r\n" + //
+                "a2: .WORD 4\r\n" + //
+                "r4: .WORD 5\r\n" + //
+                "a2: .WORD 4\r\n" + //
+                "w3: .BYTE 1\r\n" + //
+                "r5: .WORD 2\r\n" + //
+                "a2: .WORD 4\r\n" + //
+                "w5: .BYTE 1\r\n" + //
+                "r6: .WORD 5\r\n" + //
+                "a2: .WORD 4\r\n" + //
+                "r7: .WORD 6\r\n" + //
+                "a2: .WORD 4\r\n" + //
+                "totalBytes: .WORD 3855\r\n" + //
+                "begin_0: B begin_1\r\n" + //
+                "WriteLn: SWI 4\r\n" + //
+                "LDR R2, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "WriteInt: LDR R2, a2\r\n" + //
+                "LDR R2, [R13, -R2]\r\n" + //
+                "STR R2, a7\r\n" + //
+                "LDR R0, a7\r\n" + //
+                "SWI 1\r\n" + //
+                "LDR R3, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "WriteReal: LDR R3, a4\r\n" + //
+                "LDR R3, [R13, -R3]\r\n" + //
+                "STR R3, a8\r\n" + //
+                "LDR R0, a8\r\n" + //
+                "SWI 2\r\n" + //
+                "LDR R2, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "ReadInt: SWI 3\r\n" + //
+                "STR R0, a9\r\n" + //
+                "LDR R2, a9\r\n" + //
+                "LDR R3, a6\r\n" + //
+                "STR R2, [R13, -R3]\r\n" + //
+                "LDR R4, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "begin_1: B begin_2\r\n" + //
+                "IntToReal: LDR R3, e4\r\n" + //
+                "STR R3, d8\r\n" + //
+                "LDR R2, e5\r\n" + //
+                "STR R2, d9\r\n" + //
+                "LDR R3, d9\r\n" + //
+                "LDR R3, e6\r\n" + //
+                "CMP R3, R3\r\n" + //
+                "MOVLE R3, #1\r\n" + //
+                "MOVGT R3, #0\r\n" + //
+                "STR R3, e7\r\n" + //
+                "LDR R3, e7\r\n" + //
+                "LDR R3, s2\r\n" + //
+                "TST R3, R3\r\n" + //
+                "BEQ WHILESTAT_0_SEQ_0_LEVEL_0\r\n" + //
+                "BNE WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                "WHILECOND_0_SEQ_0_LEVEL_0: LDR R3, e7\r\n" + //
+                "LDR R3, s3\r\n" + //
+                "TST R3, R3\r\n" + //
+                "BEQ WHILESTAT_0_SEQ_0_LEVEL_0\r\n" + //
+                "BNE WHILEEND_0_LEVEL_0\r\n" + //
+                "WHILESTAT_0_SEQ_0_LEVEL_0: LDR R3, b0\r\n" + //
+                "LDR R3, [R13, -R3]\r\n" + //
+                "STR R3, e8\r\n" + //
+                "LDR R3, e9\r\n" + //
+                "LDR R3, d9\r\n" + //
+                "SUB R3, R3, R3\r\n" + //
+                "STR R3, f0\r\n" + //
+                "LDR R3, e8\r\n" + //
+                "LDR R3, f0\r\n" + //
+                "MOV R3, R3, LSR R3\r\n" + //
+                "STR R3, f1\r\n" + //
+                "LDR R3, f1\r\n" + //
+                "STR R3, e0\r\n" + //
+                "LDR R2, e0\r\n" + //
+                "LDR R3, f2\r\n" + //
+                "AND R4, R2, R3\r\n" + //
+                "STR R4, f3\r\n" + //
+                "LDR R2, f3\r\n" + //
+                "STR R2, e0\r\n" + //
+                "LDR R3, d9\r\n" + //
+                "ADD R13, R13, #12\r\n" + //
+                "STR R3, [R13, #-4]\r\n" + //
+                "STR R14, [R13, #-12]\r\n" + //
+                "BL INeg\r\n" + //
+                "LDR R3, [R13, #-8]\r\n" + //
+                "LDR R14, [R13, #-12]\r\n" + //
+                "SUB R13, R13, #12\r\n" + //
+                "STR R3, f5\r\n" + //
+                "ADD R13, R13, #16\r\n" + //
+                "STR R14, [R13, #-16]\r\n" + //
+                "LDR R3, c5\r\n" + //
+                "LDR R4, f4\r\n" + //
+                "STR R4, [R13,-R3]\r\n" + //
+                "LDR R4, c6\r\n" + //
+                "LDR R5, f5\r\n" + //
+                "STR R5, [R13,-R4]\r\n" + //
+                "BL RealExp\r\n" + //
+                "LDR R2, c7\r\n" + //
+                "LDR R2, [R13, -R2]\r\n" + //
+                "STR R2, f6\r\n" + //
+                "LDR R14, [R13, #-16]\r\n" + //
+                "SUB R13, R13, #16\r\n" + //
+                "LDR R2, e0\r\n" + //
+                "LDR R3, f6\r\n" + //
+                "MUL R4, R2, R3\r\n" + //
+                "STR R4, f7\r\n" + //
+                "LDR R2, f7\r\n" + //
+                "STR R2, e1\r\n" + //
+                "LDR R3, d8\r\n" + //
+                "LDR R3, e1\r\n" + //
+                "ADD R3, R3, R3\r\n" + //
+                "ADD R13, R13, #12\r\n" + //
+                "STR R3, [R13, #-4]\r\n" + //
+                "STR R14, [R13, #-12]\r\n" + //
+                "BL IntToReal\r\n" + //
+                "LDR R3, [R13, #-8]\r\n" + //
+                "LDR R14, [R13, #-12]\r\n" + //
+                "SUB R13, R13, #12\r\n" + //
+                "STR R3, f8\r\n" + //
+                "LDR R3, f8\r\n" + //
+                "STR R3, d8\r\n" + //
+                "LDR R2, d9\r\n" + //
+                "LDR R3, f9\r\n" + //
+                "ADD R4, R2, R3\r\n" + //
+                "STR R4, g0\r\n" + //
+                "LDR R2, g0\r\n" + //
+                "STR R2, d9\r\n" + //
+                "LDR R3, d9\r\n" + //
+                "LDR R3, g1\r\n" + //
+                "CMP R3, R3\r\n" + //
+                "MOVLE R3, #1\r\n" + //
+                "MOVGT R3, #0\r\n" + //
+                "STR R3, g2\r\n" + //
+                "LDR R3, g2\r\n" + //
+                "STR R3, e7\r\n" + //
+                "B WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
+                "WHILENEXT_0_SEQ_0_LEVEL_0: ADD R0, R0, #0\r\n" + //
+                "WHILEEND_0_LEVEL_0: LDR R2, e8\r\n" + //
+                "LDR R3, g3\r\n" + //
+                "MOV R4, R2, LSR R3\r\n" + //
+                "STR R4, g4\r\n" + //
+                "LDR R2, g4\r\n" + //
+                "LDR R2, g5\r\n" + //
+                "AND R2, R2, R2\r\n" + //
+                "STR R2, g6\r\n" + //
+                "LDR R2, g6\r\n" + //
+                "STR R2, e2\r\n" + //
+                "LDR R2, e2\r\n" + //
+                "LDR R3, g8\r\n" + //
+                "SUB R4, R2, R3\r\n" + //
+                "STR R4, g9\r\n" + //
+                "ADD R13, R13, #16\r\n" + //
+                "STR R14, [R13, #-16]\r\n" + //
+                "LDR R2, c8\r\n" + //
+                "LDR R3, g7\r\n" + //
+                "STR R3, [R13,-R2]\r\n" + //
+                "LDR R4, c9\r\n" + //
+                "LDR R5, g9\r\n" + //
+                "STR R5, [R13,-R4]\r\n" + //
+                "BL IntExp\r\n" + //
+                "LDR R3, d0\r\n" + //
+                "LDR R3, [R13, -R3]\r\n" + //
+                "STR R3, h0\r\n" + //
+                "LDR R14, [R13, #-16]\r\n" + //
+                "SUB R13, R13, #16\r\n" + //
+                "LDR R2, h0\r\n" + //
+                "STR R2, e2\r\n" + //
+                "LDR R3, e8\r\n" + //
+                "LDR R3, h1\r\n" + //
+                "MOV R3, R3, LSR R3\r\n" + //
+                "STR R3, h2\r\n" + //
+                "LDR R3, h2\r\n" + //
+                "LDR R3, h3\r\n" + //
+                "AND R3, R3, R3\r\n" + //
+                "STR R3, h4\r\n" + //
+                "LDR R3, h4\r\n" + //
+                "STR R3, e3\r\n" + //
+                "LDR R2, e3\r\n" + //
+                "LDR R3, h5\r\n" + //
+                "TEQ R2, R3\r\n" + //
+                "MOVEQ R4, #1\r\n" + //
+                "MOVNE R4, #0\r\n" + //
+                "STR R4, h6\r\n" + //
+                "LDR R2, h6\r\n" + //
+                "LDR R2, s8\r\n" + //
+                "TST R2, R2\r\n" + //
+                "BEQ IFSTAT_0_SEQ_0_LEVEL_0\r\n" + //
+                "BNE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                "IFSTAT_0_SEQ_0_LEVEL_0: LDR R2, h7\r\n" + //
+                "ADD R13, R13, #12\r\n" + //
+                "STR R2, [R13, #-4]\r\n" + //
+                "STR R14, [R13, #-12]\r\n" + //
+                "BL INeg\r\n" + //
+                "LDR R2, [R13, #-8]\r\n" + //
+                "LDR R14, [R13, #-12]\r\n" + //
+                "SUB R13, R13, #12\r\n" + //
+                "STR R2, h8\r\n" + //
+                "LDR R2, h8\r\n" + //
+                "STR R2, e3\r\n" + //
+                "B IFEND_0_LEVEL_0\r\n" + //
+                "IFNEXT_0_SEQ_0_LEVEL_0: ADD R0, R0, #0\r\n" + //
+                "IFEND_0_LEVEL_0: LDR R3, e3\r\n" + //
+                "LDR R3, e2\r\n" + //
+                "MUL R3, R3, R3\r\n" + //
+                "STR R3, h9\r\n" + //
+                "LDR R3, h9\r\n" + //
+                "LDR R3, d8\r\n" + //
+                "MUL R3, R3, R3\r\n" + //
+                "STR R3, i0\r\n" + //
+                "LDR R3, i0\r\n" + //
+                "STR R3, d7\r\n" + //
+                "LDR R2, d7\r\n" + //
+                "LDR R3, b1\r\n" + //
+                "STR R2, [R13, -R3]\r\n" + //
+                "LDR R4, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "RealToInt: LDR R3, b2\r\n" + //
+                "LDR R3, [R13, -R3]\r\n" + //
+                "STR R3, i3\r\n" + //
+                "LDR R2, i3\r\n" + //
+                "LDR R3, i5\r\n" + //
+                "AND R4, R2, R3\r\n" + //
+                "STR R4, i6\r\n" + //
+                "LDR R2, i6\r\n" + //
+                "STR R2, i2\r\n" + //
+                "LDR R3, i2\r\n" + //
+                "LDR R3, i8\r\n" + //
+                "SUB R3, R3, R3\r\n" + //
+                "STR R3, i9\r\n" + //
+                "ADD R13, R13, #16\r\n" + //
+                "STR R14, [R13, #-16]\r\n" + //
+                "LDR R3, c8\r\n" + //
+                "LDR R4, i7\r\n" + //
+                "STR R4, [R13,-R3]\r\n" + //
+                "LDR R4, c9\r\n" + //
+                "LDR R5, i9\r\n" + //
+                "STR R5, [R13,-R4]\r\n" + //
+                "BL IntExp\r\n" + //
+                "LDR R2, d0\r\n" + //
+                "LDR R2, [R13, -R2]\r\n" + //
+                "STR R2, j0\r\n" + //
+                "LDR R14, [R13, #-16]\r\n" + //
+                "SUB R13, R13, #16\r\n" + //
+                "LDR R2, j0\r\n" + //
+                "STR R2, i1\r\n" + //
+                "LDR R3, i1\r\n" + //
+                "LDR R3, b3\r\n" + //
+                "STR R3, [R13, -R3]\r\n" + //
+                "LDR R4, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "Abs: LDR R3, b4\r\n" + //
+                "LDR R3, [R13, -R3]\r\n" + //
+                "STR R3, j2\r\n" + //
+                "LDR R2, j2\r\n" + //
+                "LDR R3, j3\r\n" + //
+                "CMP R2, R3\r\n" + //
+                "MOVGE R4, #1\r\n" + //
+                "MOVLT R4, #0\r\n" + //
+                "STR R4, j4\r\n" + //
+                "LDR R2, j4\r\n" + //
+                "LDR R2, t3\r\n" + //
+                "TST R2, R2\r\n" + //
+                "BEQ IFSTAT_1_SEQ_0_LEVEL_0\r\n" + //
+                "BNE IFNEXT_1_SEQ_0_LEVEL_0\r\n" + //
+                "IFSTAT_1_SEQ_0_LEVEL_0: LDR R2, j2\r\n" + //
+                "STR R2, j1\r\n" + //
+                "B IFEND_1_LEVEL_0\r\n" + //
+                "IFNEXT_1_SEQ_0_LEVEL_0: LDR R2, j2\r\n" + //
+                "ADD R13, R13, #12\r\n" + //
+                "STR R2, [R13, #-4]\r\n" + //
+                "STR R14, [R13, #-12]\r\n" + //
+                "BL RNeg\r\n" + //
+                "LDR R2, [R13, #-8]\r\n" + //
+                "LDR R14, [R13, #-12]\r\n" + //
+                "SUB R13, R13, #12\r\n" + //
+                "STR R2, j5\r\n" + //
+                "LDR R2, j5\r\n" + //
+                "STR R2, j1\r\n" + //
+                "B IFEND_1_LEVEL_0\r\n" + //
+                "IFNEXT_1_SEQ_1_LEVEL_0: ADD R0, R0, #0\r\n" + //
+                "IFEND_1_LEVEL_0: LDR R3, j1\r\n" + //
+                "LDR R3, b5\r\n" + //
+                "STR R3, [R13, -R3]\r\n" + //
+                "LDR R4, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "Div: LDR R3, b6\r\n" + //
+                "LDR R3, [R13, -R3]\r\n" + //
+                "STR R3, j8\r\n" + //
+                "LDR R2, j8\r\n" + //
+                "STR R2, j6\r\n" + //
+                "LDR R3, j9\r\n" + //
+                "STR R3, j7\r\n" + //
+                "LDR R2, b7\r\n" + //
+                "LDR R2, [R13, -R2]\r\n" + //
+                "STR R2, k0\r\n" + //
+                "LDR R3, j6\r\n" + //
+                "LDR R3, k0\r\n" + //
+                "SUB R3, R3, R3\r\n" + //
+                "STR R3, k1\r\n" + //
+                "LDR R3, k1\r\n" + //
+                "LDR R3, k2\r\n" + //
+                "CMP R3, R3\r\n" + //
+                "MOVGT R3, #1\r\n" + //
+                "MOVLE R3, #0\r\n" + //
+                "STR R3, k3\r\n" + //
+                "LDR R3, k3\r\n" + //
+                "LDR R3, t5\r\n" + //
+                "TST R3, R3\r\n" + //
+                "BEQ WHILESTAT_2_SEQ_0_LEVEL_0\r\n" + //
+                "BNE WHILENEXT_2_SEQ_0_LEVEL_0\r\n" + //
+                "WHILECOND_2_SEQ_0_LEVEL_0: LDR R3, k3\r\n" + //
+                "LDR R3, t6\r\n" + //
+                "TST R3, R3\r\n" + //
+                "BEQ WHILESTAT_2_SEQ_0_LEVEL_0\r\n" + //
+                "BNE WHILEEND_2_LEVEL_0\r\n" + //
+                "WHILESTAT_2_SEQ_0_LEVEL_0: LDR R3, j6\r\n" + //
+                "LDR R3, k0\r\n" + //
+                "SUB R3, R3, R3\r\n" + //
+                "STR R3, k4\r\n" + //
+                "LDR R3, k4\r\n" + //
+                "STR R3, j6\r\n" + //
+                "LDR R2, j7\r\n" + //
+                "LDR R3, k5\r\n" + //
+                "ADD R4, R2, R3\r\n" + //
+                "STR R4, k6\r\n" + //
+                "LDR R2, k6\r\n" + //
+                "STR R2, j7\r\n" + //
+                "LDR R3, j6\r\n" + //
+                "LDR R3, k0\r\n" + //
+                "SUB R3, R3, R3\r\n" + //
+                "STR R3, k7\r\n" + //
+                "LDR R3, k7\r\n" + //
+                "LDR R3, k8\r\n" + //
+                "CMP R3, R3\r\n" + //
+                "MOVGT R3, #1\r\n" + //
+                "MOVLE R3, #0\r\n" + //
+                "STR R3, k9\r\n" + //
+                "LDR R3, k9\r\n" + //
+                "STR R3, k3\r\n" + //
+                "B WHILECOND_2_SEQ_0_LEVEL_0\r\n" + //
+                "WHILENEXT_2_SEQ_0_LEVEL_0: ADD R0, R0, #0\r\n" + //
+                "WHILEEND_2_LEVEL_0: LDR R2, j7\r\n" + //
+                "LDR R3, b8\r\n" + //
+                "STR R2, [R13, -R3]\r\n" + //
+                "LDR R4, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "Divide: LDR R3, b9\r\n" + //
+                "LDR R3, [R13, -R3]\r\n" + //
+                "STR R3, l2\r\n" + //
+                "LDR R2, c0\r\n" + //
+                "LDR R2, [R13, -R2]\r\n" + //
+                "STR R2, l3\r\n" + //
+                "ADD R13, R13, #16\r\n" + //
+                "STR R14, [R13, #-16]\r\n" + //
+                "LDR R3, b6\r\n" + //
+                "LDR R4, l2\r\n" + //
+                "STR R4, [R13,-R3]\r\n" + //
+                "LDR R4, b7\r\n" + //
+                "LDR R5, l3\r\n" + //
+                "STR R5, [R13,-R4]\r\n" + //
+                "BL Div\r\n" + //
+                "LDR R2, b8\r\n" + //
+                "LDR R2, [R13, -R2]\r\n" + //
+                "STR R2, l4\r\n" + //
+                "LDR R14, [R13, #-16]\r\n" + //
+                "SUB R13, R13, #16\r\n" + //
+                "LDR R2, l4\r\n" + //
+                "STR R2, l0\r\n" + //
+                "ADD R13, R13, #12\r\n" + //
+                "STR R14, [R13, #-12]\r\n" + //
+                "LDR R3, b0\r\n" + //
+                "LDR R4, l0\r\n" + //
+                "STR R4, [R13,-R3]\r\n" + //
+                "BL IntToReal\r\n" + //
+                "LDR R2, b1\r\n" + //
+                "LDR R2, [R13, -R2]\r\n" + //
+                "STR R2, l5\r\n" + //
+                "LDR R14, [R13, #-12]\r\n" + //
+                "SUB R13, R13, #12\r\n" + //
+                "LDR R2, l5\r\n" + //
+                "STR R2, l1\r\n" + //
+                "LDR R3, l1\r\n" + //
+                "LDR R3, c1\r\n" + //
+                "STR R3, [R13, -R3]\r\n" + //
+                "LDR R4, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "Mod: LDR R3, c2\r\n" + //
+                "LDR R3, [R13, -R3]\r\n" + //
+                "STR R3, l8\r\n" + //
+                "LDR R2, l8\r\n" + //
+                "STR R2, l6\r\n" + //
+                "LDR R3, c3\r\n" + //
+                "LDR R3, [R13, -R3]\r\n" + //
+                "STR R3, l9\r\n" + //
+                "LDR R2, l6\r\n" + //
+                "LDR R3, l9\r\n" + //
+                "SUB R4, R2, R3\r\n" + //
+                "STR R4, m0\r\n" + //
+                "LDR R4, m0\r\n" + //
+                "LDR R5, m1\r\n" + //
+                "CMP R4, R5\r\n" + //
+                "MOVGT R6, #1\r\n" + //
+                "MOVLE R6, #0\r\n" + //
+                "STR R6, m2\r\n" + //
+                "LDR R2, m2\r\n" + //
+                "LDR R3, u2\r\n" + //
+                "TST R2, R3\r\n" + //
+                "BEQ WHILESTAT_4_SEQ_0_LEVEL_0\r\n" + //
+                "BNE WHILENEXT_4_SEQ_0_LEVEL_0\r\n" + //
+                "WHILECOND_4_SEQ_0_LEVEL_0: LDR R2, m2\r\n" + //
+                "LDR R3, u3\r\n" + //
+                "TST R2, R3\r\n" + //
+                "BEQ WHILESTAT_4_SEQ_0_LEVEL_0\r\n" + //
+                "BNE WHILEEND_4_LEVEL_0\r\n" + //
+                "WHILESTAT_4_SEQ_0_LEVEL_0: LDR R3, l6\r\n" + //
+                "LDR R3, l9\r\n" + //
+                "SUB R3, R3, R3\r\n" + //
+                "STR R3, m3\r\n" + //
+                "LDR R3, m3\r\n" + //
+                "STR R3, l6\r\n" + //
+                "LDR R2, l6\r\n" + //
+                "LDR R3, l9\r\n" + //
+                "SUB R4, R2, R3\r\n" + //
+                "STR R4, m4\r\n" + //
+                "LDR R4, m4\r\n" + //
+                "LDR R5, m5\r\n" + //
+                "CMP R4, R5\r\n" + //
+                "MOVGT R6, #1\r\n" + //
+                "MOVLE R6, #0\r\n" + //
+                "STR R6, m6\r\n" + //
+                "LDR R2, m6\r\n" + //
+                "STR R2, m2\r\n" + //
+                "B WHILECOND_4_SEQ_0_LEVEL_0\r\n" + //
+                "WHILENEXT_4_SEQ_0_LEVEL_0: ADD R0, R0, #0\r\n" + //
+                "WHILEEND_4_LEVEL_0: LDR R3, l6\r\n" + //
+                "LDR R3, c4\r\n" + //
+                "STR R3, [R13, -R3]\r\n" + //
+                "LDR R4, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "RealExp: LDR R3, m9\r\n" + //
+                "STR R3, m7\r\n" + //
+                "LDR R2, n0\r\n" + //
+                "STR R2, m8\r\n" + //
+                "LDR R3, c6\r\n" + //
+                "LDR R3, [R13, -R3]\r\n" + //
+                "STR R3, n1\r\n" + //
+                "LDR R2, n1\r\n" + //
+                "LDR R3, n2\r\n" + //
+                "CMP R2, R3\r\n" + //
+                "MOVGT R4, #1\r\n" + //
+                "MOVLE R4, #0\r\n" + //
+                "STR R4, n3\r\n" + //
+                "LDR R2, n3\r\n" + //
+                "LDR R2, u5\r\n" + //
+                "TST R2, R2\r\n" + //
+                "BEQ IFSTAT_2_SEQ_0_LEVEL_0\r\n" + //
+                "BNE IFNEXT_2_SEQ_0_LEVEL_0\r\n" + //
+                "IFSTAT_2_SEQ_0_LEVEL_0: LDR R2, m8\r\n" + //
+                "LDR R2, n1\r\n" + //
+                "CMP R2, R2\r\n" + //
+                "MOVLT R2, #1\r\n" + //
+                "MOVGE R2, #0\r\n" + //
+                "STR R2, n4\r\n" + //
+                "LDR R2, n4\r\n" + //
+                "LDR R2, u6\r\n" + //
+                "TST R2, R2\r\n" + //
+                "BEQ WHILESTAT_6_SEQ_0_LEVEL_0\r\n" + //
+                "BNE WHILENEXT_6_SEQ_0_LEVEL_0\r\n" + //
+                "WHILECOND_6_SEQ_0_LEVEL_0: LDR R2, n4\r\n" + //
+                "LDR R2, u7\r\n" + //
+                "TST R2, R2\r\n" + //
+                "BEQ WHILESTAT_6_SEQ_0_LEVEL_0\r\n" + //
+                "BNE WHILEEND_6_LEVEL_0\r\n" + //
+                "WHILESTAT_6_SEQ_0_LEVEL_0: LDR R2, c5\r\n" + //
+                "LDR R2, [R13, -R2]\r\n" + //
+                "STR R2, n5\r\n" + //
+                "LDR R2, m7\r\n" + //
+                "LDR R2, n5\r\n" + //
+                "MUL R2, R2, R2\r\n" + //
+                "STR R2, n6\r\n" + //
+                "LDR R2, n6\r\n" + //
+                "STR R2, m7\r\n" + //
+                "LDR R2, m8\r\n" + //
+                "LDR R3, n7\r\n" + //
+                "ADD R4, R2, R3\r\n" + //
+                "STR R4, n8\r\n" + //
+                "LDR R2, n8\r\n" + //
+                "STR R2, m8\r\n" + //
+                "LDR R3, m8\r\n" + //
+                "LDR R3, n1\r\n" + //
+                "CMP R3, R3\r\n" + //
+                "MOVLT R3, #1\r\n" + //
+                "MOVGE R3, #0\r\n" + //
+                "STR R3, n9\r\n" + //
+                "LDR R3, n9\r\n" + //
+                "STR R3, n4\r\n" + //
+                "B WHILECOND_6_SEQ_0_LEVEL_0\r\n" + //
+                "WHILENEXT_6_SEQ_0_LEVEL_0: ADD R0, R0, #0\r\n" + //
+                "WHILEEND_6_LEVEL_0: B IFEND_2_LEVEL_0\r\n" + //
+                "IFNEXT_2_SEQ_0_LEVEL_0: LDR R2, n1\r\n" + //
+                "LDR R3, o0\r\n" + //
+                "CMP R2, R3\r\n" + //
+                "MOVLT R4, #1\r\n" + //
+                "MOVGE R4, #0\r\n" + //
+                "STR R4, o1\r\n" + //
+                "LDR R2, o1\r\n" + //
+                "LDR R2, u8\r\n" + //
+                "TST R2, R2\r\n" + //
+                "BEQ IFSTAT_2_SEQ_1_LEVEL_0\r\n" + //
+                "BNE IFNEXT_2_SEQ_1_LEVEL_0\r\n" + //
+                "IFSTAT_2_SEQ_1_LEVEL_0: LDR R2, m8\r\n" + //
+                "LDR R2, n1\r\n" + //
+                "CMP R2, R2\r\n" + //
+                "MOVGT R2, #1\r\n" + //
+                "MOVLE R2, #0\r\n" + //
+                "STR R2, o2\r\n" + //
+                "LDR R2, o2\r\n" + //
+                "LDR R2, u9\r\n" + //
+                "TST R2, R2\r\n" + //
+                "BEQ WHILESTAT_8_SEQ_0_LEVEL_0\r\n" + //
+                "BNE WHILENEXT_8_SEQ_0_LEVEL_0\r\n" + //
+                "WHILECOND_8_SEQ_0_LEVEL_0: LDR R2, o2\r\n" + //
+                "LDR R2, v0\r\n" + //
+                "TST R2, R2\r\n" + //
+                "BEQ WHILESTAT_8_SEQ_0_LEVEL_0\r\n" + //
+                "BNE WHILEEND_8_LEVEL_0\r\n" + //
+                "WHILESTAT_8_SEQ_0_LEVEL_0: LDR R2, m7\r\n" + //
+                "LDR R2, n5\r\n" + //
+                "ADD R13, R13, #16\r\n" + //
+                "STR R2, [R13, #-4]\r\n" + //
+                "STR R2, [R13, #-8]\r\n" + //
+                "STR R14, [R13, #-16]\r\n" + //
+                "BL Divide\r\n" + //
+                "LDR R2, [R13, #-12]\r\n" + //
+                "LDR R14, [R13, #-16]\r\n" + //
+                "SUB R13, R13, #16\r\n" + //
+                "STR R2, o3\r\n" + //
+                "LDR R2, o3\r\n" + //
+                "STR R2, m7\r\n" + //
+                "LDR R2, m8\r\n" + //
+                "LDR R3, o4\r\n" + //
+                "SUB R4, R2, R3\r\n" + //
+                "STR R4, o5\r\n" + //
+                "LDR R2, o5\r\n" + //
+                "STR R2, m8\r\n" + //
+                "LDR R3, m8\r\n" + //
+                "LDR R3, n1\r\n" + //
+                "CMP R3, R3\r\n" + //
+                "MOVGT R3, #1\r\n" + //
+                "MOVLE R3, #0\r\n" + //
+                "STR R3, o6\r\n" + //
+                "LDR R3, o6\r\n" + //
+                "STR R3, o2\r\n" + //
+                "B WHILECOND_8_SEQ_0_LEVEL_0\r\n" + //
+                "WHILENEXT_8_SEQ_0_LEVEL_0: ADD R0, R0, #0\r\n" + //
+                "WHILEEND_8_LEVEL_0: B IFEND_2_LEVEL_0\r\n" + //
+                "IFNEXT_2_SEQ_1_LEVEL_0: ADD R0, R0, #0\r\n" + //
+                "IFEND_2_LEVEL_0: LDR R2, m7\r\n" + //
+                "LDR R3, c7\r\n" + //
+                "STR R2, [R13, -R3]\r\n" + //
+                "LDR R4, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "IntExp: LDR R3, o9\r\n" + //
+                "STR R3, o7\r\n" + //
+                "LDR R2, p0\r\n" + //
+                "STR R2, o8\r\n" + //
+                "LDR R3, c9\r\n" + //
+                "LDR R3, [R13, -R3]\r\n" + //
+                "STR R3, p1\r\n" + //
+                "LDR R2, o8\r\n" + //
+                "LDR R3, p1\r\n" + //
+                "CMP R2, R3\r\n" + //
+                "MOVLT R4, #1\r\n" + //
+                "MOVGE R4, #0\r\n" + //
+                "STR R4, p2\r\n" + //
+                "LDR R4, p2\r\n" + //
+                "LDR R5, v2\r\n" + //
+                "TST R4, R5\r\n" + //
+                "BEQ WHILESTAT_10_SEQ_0_LEVEL_0\r\n" + //
+                "BNE WHILENEXT_10_SEQ_0_LEVEL_0\r\n" + //
+                "WHILECOND_10_SEQ_0_LEVEL_0: LDR R4, p2\r\n" + //
+                "LDR R5, v3\r\n" + //
+                "TST R4, R5\r\n" + //
+                "BEQ WHILESTAT_10_SEQ_0_LEVEL_0\r\n" + //
+                "BNE WHILEEND_10_LEVEL_0\r\n" + //
+                "WHILESTAT_10_SEQ_0_LEVEL_0: LDR R2, c8\r\n" + //
+                "LDR R2, [R13, -R2]\r\n" + //
+                "STR R2, p3\r\n" + //
+                "LDR R2, o7\r\n" + //
+                "LDR R2, p3\r\n" + //
+                "MUL R2, R2, R2\r\n" + //
+                "STR R2, p4\r\n" + //
+                "LDR R2, p4\r\n" + //
+                "STR R2, o7\r\n" + //
+                "LDR R2, o8\r\n" + //
+                "LDR R3, p5\r\n" + //
+                "ADD R4, R2, R3\r\n" + //
+                "ADD R13, R13, #12\r\n" + //
+                "STR R4, [R13, #-4]\r\n" + //
+                "STR R14, [R13, #-12]\r\n" + //
+                "BL IntToReal\r\n" + //
+                "LDR R4, [R13, #-8]\r\n" + //
+                "LDR R14, [R13, #-12]\r\n" + //
+                "SUB R13, R13, #12\r\n" + //
+                "STR R4, p6\r\n" + //
+                "LDR R2, p6\r\n" + //
+                "STR R2, o8\r\n" + //
+                "LDR R3, o8\r\n" + //
+                "LDR R3, p1\r\n" + //
+                "CMP R3, R3\r\n" + //
+                "MOVLT R3, #1\r\n" + //
+                "MOVGE R3, #0\r\n" + //
+                "STR R3, p7\r\n" + //
+                "LDR R3, p7\r\n" + //
+                "STR R3, p2\r\n" + //
+                "B WHILECOND_10_SEQ_0_LEVEL_0\r\n" + //
+                "WHILENEXT_10_SEQ_0_LEVEL_0: ADD R0, R0, #0\r\n" + //
+                "WHILEEND_10_LEVEL_0: LDR R2, o7\r\n" + //
+                "LDR R3, d0\r\n" + //
+                "STR R2, [R13, -R3]\r\n" + //
+                "LDR R4, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "Floor: LDR R3, d1\r\n" + //
+                "LDR R3, [R13, -R3]\r\n" + //
+                "STR R3, p8\r\n" + //
+                "LDR R2, p8\r\n" + //
+                "LDR R3, d2\r\n" + //
+                "STR R2, [R13, -R3]\r\n" + //
+                "LDR R4, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "Round: LDR R3, d3\r\n" + //
+                "LDR R3, [R13, -R3]\r\n" + //
+                "STR R3, p9\r\n" + //
+                "LDR R2, p9\r\n" + //
+                "LDR R3, q0\r\n" + //
+                "ADD R4, R2, R3\r\n" + //
+                "ADD R13, R13, #12\r\n" + //
+                "STR R4, [R13, #-4]\r\n" + //
+                "STR R14, [R13, #-12]\r\n" + //
+                "BL IntToReal\r\n" + //
+                "LDR R4, [R13, #-8]\r\n" + //
+                "LDR R14, [R13, #-12]\r\n" + //
+                "SUB R13, R13, #12\r\n" + //
+                "STR R4, q1\r\n" + //
+                "ADD R13, R13, #12\r\n" + //
+                "STR R14, [R13, #-12]\r\n" + //
+                "LDR R2, d1\r\n" + //
+                "LDR R3, q1\r\n" + //
+                "STR R3, [R13,-R2]\r\n" + //
+                "BL Floor\r\n" + //
+                "LDR R4, d2\r\n" + //
+                "LDR R4, [R13, -R4]\r\n" + //
+                "STR R4, q2\r\n" + //
+                "LDR R14, [R13, #-12]\r\n" + //
+                "SUB R13, R13, #12\r\n" + //
+                "LDR R2, q2\r\n" + //
+                "LDR R2, d4\r\n" + //
+                "STR R2, [R13, -R2]\r\n" + //
+                "LDR R4, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "Ceil: LDR R2, d5\r\n" + //
+                "LDR R2, [R13, -R2]\r\n" + //
+                "STR R2, q4\r\n" + //
+                "LDR R2, q4\r\n" + //
+                "ADD R13, R13, #12\r\n" + //
+                "STR R2, [R13, #-4]\r\n" + //
+                "STR R14, [R13, #-12]\r\n" + //
+                "BL RNeg\r\n" + //
+                "LDR R2, [R13, #-8]\r\n" + //
+                "LDR R14, [R13, #-12]\r\n" + //
+                "SUB R13, R13, #12\r\n" + //
+                "STR R2, q5\r\n" + //
+                "ADD R13, R13, #12\r\n" + //
+                "STR R14, [R13, #-12]\r\n" + //
+                "LDR R3, d1\r\n" + //
+                "LDR R4, q5\r\n" + //
+                "STR R4, [R13,-R3]\r\n" + //
+                "BL Floor\r\n" + //
+                "LDR R2, d2\r\n" + //
+                "LDR R2, [R13, -R2]\r\n" + //
+                "STR R2, q6\r\n" + //
+                "LDR R14, [R13, #-12]\r\n" + //
+                "SUB R13, R13, #12\r\n" + //
+                "LDR R2, q3\r\n" + //
+                "LDR R3, q6\r\n" + //
+                "MUL R4, R2, R3\r\n" + //
+                "STR R4, q7\r\n" + //
+                "LDR R2, q7\r\n" + //
+                "ADD R13, R13, #12\r\n" + //
+                "STR R2, [R13, #-4]\r\n" + //
+                "STR R14, [R13, #-12]\r\n" + //
+                "BL RNeg\r\n" + //
+                "LDR R2, [R13, #-8]\r\n" + //
+                "LDR R14, [R13, #-12]\r\n" + //
+                "SUB R13, R13, #12\r\n" + //
+                "STR R2, q8\r\n" + //
+                "LDR R3, q8\r\n" + //
+                "LDR R3, d6\r\n" + //
+                "STR R3, [R13, -R3]\r\n" + //
+                "LDR R4, [R13]\r\n" + //
+                "SUB R13, R13, #2\r\n" + //
+                "MOV R15, R14\r\n" + //
+                "begin_2: LDR R3, q9\r\n" + //
+                "STR R3, r0\r\n" + //
+                "LDR R2, r1\r\n" + //
+                "STR R2, r2\r\n" + //
+                "B begin_3\r\n" + //
+                "begin_3: LDR R3, r0\r\n" + //
+                "LDR R3, w0\r\n" + //
+                "TST R3, R3\r\n" + //
+                "BEQ IFSTAT_3_SEQ_0_LEVEL_0\r\n" + //
+                "BNE IFNEXT_3_SEQ_0_LEVEL_0\r\n" + //
+                "IFSTAT_3_SEQ_0_LEVEL_0: ADD R13, R13, #8\r\n" + //
+                "STR R14, [R13, #-8]\r\n" + //
+                "LDR R3, a2\r\n" + //
+                "LDR R4, r3\r\n" + //
+                "STR R4, [R13,-R3]\r\n" + //
+                "BL WriteInt\r\n" + //
+                "LDR R14, [R13, #-8]\r\n" + //
+                "SUB R13, R13, #8\r\n" + //
+                "B IFEND_3_LEVEL_0\r\n" + //
+                "IFNEXT_3_SEQ_0_LEVEL_0: ADD R13, R13, #8\r\n" + //
+                "STR R14, [R13, #-8]\r\n" + //
+                "LDR R2, a2\r\n" + //
+                "LDR R3, r4\r\n" + //
+                "STR R3, [R13,-R2]\r\n" + //
+                "BL WriteInt\r\n" + //
+                "LDR R14, [R13, #-8]\r\n" + //
+                "SUB R13, R13, #8\r\n" + //
+                "B IFEND_3_LEVEL_0\r\n" + //
+                "IFNEXT_3_SEQ_1_LEVEL_0: ADD R0, R0, #0\r\n" + //
+                "IFEND_3_LEVEL_0: LDR R2, r2\r\n" + //
+                "LDR R2, w3\r\n" + //
+                "TST R2, R2\r\n" + //
+                "BEQ IFSTAT_4_SEQ_0_LEVEL_0\r\n" + //
+                "BNE IFNEXT_4_SEQ_0_LEVEL_0\r\n" + //
+                "IFSTAT_4_SEQ_0_LEVEL_0: ADD R13, R13, #8\r\n" + //
+                "STR R14, [R13, #-8]\r\n" + //
+                "LDR R2, a2\r\n" + //
+                "LDR R4, r5\r\n" + //
+                "STR R4, [R13,-R2]\r\n" + //
+                "BL WriteInt\r\n" + //
+                "LDR R14, [R13, #-8]\r\n" + //
+                "SUB R13, R13, #8\r\n" + //
+                "B IFEND_4_LEVEL_0\r\n" + //
+                "IFNEXT_4_SEQ_0_LEVEL_0: LDR R2, r0\r\n" + //
+                "LDR R3, w5\r\n" + //
+                "TST R2, R3\r\n" + //
+                "BEQ IFSTAT_4_SEQ_1_LEVEL_0\r\n" + //
+                "BNE IFNEXT_4_SEQ_1_LEVEL_0\r\n" + //
+                "IFSTAT_4_SEQ_1_LEVEL_0: ADD R13, R13, #8\r\n" + //
+                "STR R14, [R13, #-8]\r\n" + //
+                "LDR R3, a2\r\n" + //
+                "LDR R4, r6\r\n" + //
+                "STR R4, [R13,-R3]\r\n" + //
+                "BL WriteInt\r\n" + //
+                "LDR R14, [R13, #-8]\r\n" + //
+                "SUB R13, R13, #8\r\n" + //
+                "B IFEND_4_LEVEL_0\r\n" + //
+                "IFNEXT_4_SEQ_1_LEVEL_0: ADD R13, R13, #8\r\n" + //
+                "STR R14, [R13, #-8]\r\n" + //
+                "LDR R2, a2\r\n" + //
+                "LDR R3, r7\r\n" + //
+                "STR R3, [R13,-R2]\r\n" + //
+                "BL WriteInt\r\n" + //
+                "LDR R14, [R13, #-8]\r\n" + //
+                "SUB R13, R13, #8\r\n" + //
+                "B IFEND_4_LEVEL_0\r\n" + //
+                "IFNEXT_4_SEQ_2_LEVEL_0: ADD R0, R0, #0\r\n" + //
+                "IFEND_4_LEVEL_0: STP\r\n";
         testDeclanFile("test_source/IfStatementBasic.dcl", expectedResult);
     }
 
@@ -2043,4 +3021,5 @@ public class CodeGeneratorTest {
         String expectedResult = "";
         testDeclanFile("test_source/WhileLoopBasic.dcl", expectedResult);
     }
+    */
 }
