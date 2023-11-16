@@ -84,14 +84,13 @@ public class ArmCodeGenerator {
             addVariable("totalBytes", VariableLength.WORD, totalBytes+12);
         }
 
-        writer.append("LDR R13, totalBytes\n");
-        writer.append("B begin_0\n");
+        writer.append("LDR R13, totalBytes\r\n");
+        writer.append("B begin_0\r\n");
         for(String dataValue : dataSection){
-            writer.append(dataValue + '\n');
+            writer.append(dataValue + "\r\n");
         }
-
         for(String instruction : instructions){
-            writer.append(instruction + '\n');
+            writer.append(instruction + "\r\n");
         }
     }
 }

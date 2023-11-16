@@ -7667,7 +7667,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLT " + ifStatement.ifTrue);
                 cGen.addInstruction("BGE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -7695,7 +7695,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLT " + ifStatement.ifTrue);
                 cGen.addInstruction("BGE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -7724,7 +7724,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLT " + ifStatement.ifTrue);
                 cGen.addInstruction("BGE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -7755,7 +7755,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLT " + ifStatement.ifTrue);
                 cGen.addInstruction("BGE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -7781,7 +7781,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGT " + ifStatement.ifTrue);
                 cGen.addInstruction("BLE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -7809,7 +7809,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGT " + ifStatement.ifTrue);
                 cGen.addInstruction("BLE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -7838,7 +7838,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGT " + ifStatement.ifTrue);
                 cGen.addInstruction("BLE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -7869,7 +7869,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGT " + ifStatement.ifTrue);
                 cGen.addInstruction("BLE " + ifStatement.ifFalse);
 
@@ -7896,7 +7896,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLE " + ifStatement.ifTrue);
                 cGen.addInstruction("BGT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -7924,7 +7924,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLE " + ifStatement.ifTrue);
                 cGen.addInstruction("BGT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -7953,7 +7953,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLE " + ifStatement.ifTrue);
                 cGen.addInstruction("BGT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -7984,7 +7984,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLE " + ifStatement.ifTrue);
                 cGen.addInstruction("BGT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8010,7 +8010,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGE " + ifStatement.ifTrue);
                 cGen.addInstruction("BLT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8038,7 +8038,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGE " + ifStatement.ifTrue);
                 cGen.addInstruction("BLT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8067,7 +8067,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGE " + ifStatement.ifTrue);
                 cGen.addInstruction("BLT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8098,7 +8098,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGE " + ifStatement.ifTrue);
                 cGen.addInstruction("BLT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8573,7 +8573,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLT " + ifStatement.ifTrue);
                 cGen.addInstruction("BGE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8611,7 +8611,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR R14, [R13, #-12]");
                 cGen.addInstruction("SUB R13, R13, #12");
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLT " + ifStatement.ifTrue);
                 cGen.addInstruction("BGE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8659,7 +8659,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLT " + ifStatement.ifTrue);
                 cGen.addInstruction("BGE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8699,7 +8699,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLT " + ifStatement.ifTrue);
                 cGen.addInstruction("BGE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8740,7 +8740,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLT " + ifStatement.ifTrue);
                 cGen.addInstruction("BGE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8778,7 +8778,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGT " + ifStatement.ifTrue);
                 cGen.addInstruction("BLE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8816,7 +8816,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR R14, [R13, #-12]");
                 cGen.addInstruction("SUB R13, R13, #12");
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGT " + ifStatement.ifTrue);
                 cGen.addInstruction("BLE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8864,7 +8864,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGT " + ifStatement.ifTrue);
                 cGen.addInstruction("BLE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8904,7 +8904,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGT " + ifStatement.ifTrue);
                 cGen.addInstruction("BLE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8945,7 +8945,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGT " + ifStatement.ifTrue);
                 cGen.addInstruction("BLE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -8983,7 +8983,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLE " + ifStatement.ifTrue);
                 cGen.addInstruction("BGT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9021,7 +9021,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR R14, [R13, #-12]");
                 cGen.addInstruction("SUB R13, R13, #12");
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLE " + ifStatement.ifTrue);
                 cGen.addInstruction("BGT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9069,7 +9069,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLE " + ifStatement.ifTrue);
                 cGen.addInstruction("BGT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9109,7 +9109,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLE " + ifStatement.ifTrue);
                 cGen.addInstruction("BGT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9150,7 +9150,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BLE " + ifStatement.ifTrue);
                 cGen.addInstruction("BGT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9188,7 +9188,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGE " + ifStatement.ifTrue);
                 cGen.addInstruction("BLT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9226,7 +9226,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR R14, [R13, #-12]");
                 cGen.addInstruction("SUB R13, R13, #12");
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGE " + ifStatement.ifTrue);
                 cGen.addInstruction("BLT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9274,7 +9274,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGE " + ifStatement.ifTrue);
                 cGen.addInstruction("BLT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9314,7 +9314,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGE " + ifStatement.ifTrue);
                 cGen.addInstruction("BLT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9355,7 +9355,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BGE " + ifStatement.ifTrue);
                 cGen.addInstruction("BLT " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9393,7 +9393,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BEQ " + ifStatement.ifTrue);
                 cGen.addInstruction("BNE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9431,7 +9431,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR R14, [R13, #-12]");
                 cGen.addInstruction("SUB R13, R13, #12");
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BEQ " + ifStatement.ifTrue);
                 cGen.addInstruction("BNE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9479,7 +9479,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BEQ " + ifStatement.ifTrue);
                 cGen.addInstruction("BNE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9519,7 +9519,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BEQ " + ifStatement.ifTrue);
                 cGen.addInstruction("BNE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9560,7 +9560,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BEQ " + ifStatement.ifTrue);
                 cGen.addInstruction("BNE " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9598,7 +9598,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BNE " + ifStatement.ifTrue);
                 cGen.addInstruction("BEQ " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9636,7 +9636,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("LDR R14, [R13, #-12]");
                 cGen.addInstruction("SUB R13, R13, #12");
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BNE " + ifStatement.ifTrue);
                 cGen.addInstruction("BEQ " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9684,7 +9684,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BNE " + ifStatement.ifTrue);
                 cGen.addInstruction("BEQ " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9724,7 +9724,7 @@ public class MyCodeGenerator {
 
                 cGen.addInstruction("LDR " + rightReg + ", " + temp);
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BNE " + ifStatement.ifTrue);
                 cGen.addInstruction("BEQ " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
@@ -9765,7 +9765,7 @@ public class MyCodeGenerator {
                 cGen.addInstruction("SUB R13, R13, #12");
 
 
-                cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
+                cGen.addInstruction("CMP " + rightReg + ", " + leftReg);
                 cGen.addInstruction("BNE " + ifStatement.ifTrue);
                 cGen.addInstruction("BEQ " + ifStatement.ifFalse);
                 rGen.freeTempRegs();
