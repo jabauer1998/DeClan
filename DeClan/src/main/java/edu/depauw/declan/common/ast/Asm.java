@@ -38,5 +38,23 @@ public class Asm extends AbstractASTNode implements Statement {
     public <R> R acceptResult(StatementVisitor<R> visitor) {
         return visitor.visitResult(this);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("asm(");
+        sb.append(inlineAssembly);
+        sb.append(':');
+        int size = paramaters.size();
+        for(int i = 0; i < size; i++){
+            String par = paramaters.get(i);
+            sb.append(par);
+            if(i < size - 1){
+                sb.append(", ");
+            }
+        }
+        sb.append(')');
+        return sb.toString();
+    }
     
 }

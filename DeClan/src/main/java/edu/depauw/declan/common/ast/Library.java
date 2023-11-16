@@ -59,4 +59,39 @@ public class Library extends AbstractASTNode{
     public void accept(ASTVisitor visitor) {
         visitor.visit(this);
     }
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("CONST ");
+        
+        int constSize = constDecls.size();
+        for(int i = 0; i < constSize; i++){
+            Declaration constDecl = constDecls.get(i);
+            sb.append(constDecl.toString());
+            if(i < constSize - 1){
+                sb.append("; ");
+            }
+        }
+        sb.append(";\nVAR ");
+
+        int varSize = varDecls.size();
+        for(int i = 0; i < varSize; i++){
+            Declaration varDecl = varDecls.get(i);
+            sb.append(varDecl.toString());
+            if(i < varSize - 1){
+                sb.append("; ");
+            }
+        }
+        sb.append(";\n");
+
+        int procSize = procDecls.size();
+        for(int i = 0; i < procSize; i++){
+            Declaration procDecl = procDecls.get(i);
+            sb.append(procDecl.toString());
+            sb.append("\n");
+        }
+
+        return sb.toString();
+    }
 }

@@ -18,4 +18,7 @@ public abstract class AbstractASTNode implements ASTNode {
 	public Position getStart() {
 		return start;
 	}
+
+	@Override
+	public abstract String toString();
 }
