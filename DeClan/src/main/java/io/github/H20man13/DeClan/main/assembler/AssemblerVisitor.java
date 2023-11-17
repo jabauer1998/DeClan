@@ -1273,7 +1273,7 @@ public class AssemblerVisitor implements ArmAssemblerVisitor<Integer> {
         boolean contS = containsS(MOVE_NEGATIVE.getText(), 3);
 
         //Set Opcode Bits
-        result |= (0b1101 << 21);
+        result |= (0b1111 << 21);
 
         //set operand 2
         result |= op2.accept(this);
