@@ -9819,8 +9819,6 @@ public class MyCodeGenerator {
                 ICode instruction = intermediateCode.get(i);
                 String register = iGen.genNextRegister();
                 String literalRegister = rGen.getTempReg(register, instruction);
-                cGen.addInstruction("LDR " + literalRegister + ", [R13]");
-                cGen.addInstruction("SUB R13, R13, #2");
                 cGen.addInstruction("MOV R15, R14");
                 rGen.freeTempRegs();
                 return null;
