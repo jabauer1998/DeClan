@@ -247,6 +247,7 @@ public class MyICodeTypeChecker {
             case RNEG: return new TypeCheckerQualities(TypeCheckerQualities.REAL);
             case INEG: return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
             case BNOT: return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+            case INOT: return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
             default:
                 errLog.add("Error unknown Operation type " + expression.op, new Position(instructionNumber, 0));
                 return new TypeCheckerQualities(TypeCheckerQualities.NA);
