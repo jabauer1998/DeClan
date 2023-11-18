@@ -65,27 +65,13 @@ public class ArmRegisterGenerator {
         Set<String> regs = new HashSet<String>();
         Set<Tuple<String, String>> resultSet = new HashSet<Tuple<String, String>>();
         for(Tuple<String, String> sourceDest : variablesToRegister){
-            if(!sourceDest.source.equals(var)){
+            if(sourceDest.source.equals(var)){
                 regs.add(sourceDest.dest);
             } else {
                 resultSet.add(sourceDest);
             }
         }
         this.variablesToRegister = resultSet;
-        return regs;
-    }
-
-    private Set<String> removeTempRegs(String var){
-        Set<String> regs = new HashSet<String>();
-        Set<Tuple<String, String>> resultSet = new HashSet<Tuple<String, String>>();
-        for(Tuple<String, String> sourceDest : variablesToTempRegisters){
-            if(!sourceDest.source.equals(var)){
-                regs.add(sourceDest.dest);
-            } else {
-                resultSet.add(sourceDest);
-            }
-        }
-        this.variablesToTempRegisters = resultSet;
         return regs;
     }
 

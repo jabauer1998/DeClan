@@ -85,8 +85,6 @@ public class CodeGeneratorTest {
         }
     }
 
-    /*
-
     @Test
     public void testConversions(){
         String expectedResult = "";
@@ -2269,35 +2267,27 @@ public class CodeGeneratorTest {
                 "n6: .WORD 0\r\n" + //
                 "n7: .WORD 0\r\n" + //
                 "n2: .WORD 0\r\n" + //
-                "totalBytes: .WORD 3860\r\n" + //
+                "totalBytes: .WORD 3724\r\n" + //
                 "begin_0: B begin_1\r\n" + //
                 "WriteLn: SWI 4\r\n" + //
-                "LDR R2, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "WriteInt: LDR R2, c\r\n" + //
                 "LDR R2, [R13, -R2]\r\n" + //
                 "STR R2, h\r\n" + //
                 "LDR R0, h\r\n" + //
                 "SWI 1\r\n" + //
-                "LDR R3, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "WriteReal: LDR R3, e\r\n" + //
                 "LDR R3, [R13, -R3]\r\n" + //
                 "STR R3, i\r\n" + //
                 "LDR R0, i\r\n" + //
                 "SWI 2\r\n" + //
-                "LDR R2, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "ReadInt: SWI 3\r\n" + //
                 "STR R0, j\r\n" + //
                 "LDR R2, j\r\n" + //
                 "LDR R3, g\r\n" + //
                 "STR R2, [R13, -R3]\r\n" + //
-                "LDR R4, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "begin_1: B begin_2\r\n" + //
                 "IntToReal: LDR R3, W\r\n" + //
@@ -2474,8 +2464,6 @@ public class CodeGeneratorTest {
                 "LDR R2, P\r\n" + //
                 "LDR R3, l\r\n" + //
                 "STR R2, [R13, -R3]\r\n" + //
-                "LDR R4, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "RealToInt: LDR R3, m\r\n" + //
                 "LDR R3, [R13, -R3]\r\n" + //
@@ -2509,8 +2497,6 @@ public class CodeGeneratorTest {
                 "LDR R3, d3\r\n" + //
                 "LDR R3, n\r\n" + //
                 "STR R3, [R13, -R3]\r\n" + //
-                "LDR R4, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "Abs: LDR R3, o\r\n" + //
                 "LDR R3, [R13, -R3]\r\n" + //
@@ -2545,8 +2531,6 @@ public class CodeGeneratorTest {
                 "IFEND_1_LEVEL_0: LDR R3, e3\r\n" + //
                 "LDR R3, p\r\n" + //
                 "STR R3, [R13, -R3]\r\n" + //
-                "LDR R4, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "Div: LDR R3, q\r\n" + //
                 "LDR R3, [R13, -R3]\r\n" + //
@@ -2606,10 +2590,7 @@ public class CodeGeneratorTest {
                 "WHILENEXT_2_SEQ_0_LEVEL_0: ADD R0, R0, #0\r\n" + //
                 "WHILEEND_2_LEVEL_0: LDR R2, e9\r\n" + //
                 "LDR R3, s\r\n" + //
-                "\r\n" + //
                 "STR R2, [R13, -R3]\r\n" + //
-                "LDR R4, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "Divide: LDR R3, t\r\n" + //
                 "LDR R3, [R13, -R3]\r\n" + //
@@ -2624,6 +2605,7 @@ public class CodeGeneratorTest {
                 "STR R4, [R13,-R3]\r\n" + //
                 "LDR R4, r\r\n" + //
                 "LDR R5, g5\r\n" + //
+                "\r\n" + //
                 "STR R5, [R13,-R4]\r\n" + //
                 "BL Div\r\n" + //
                 "LDR R2, s\r\n" + //
@@ -2649,8 +2631,6 @@ public class CodeGeneratorTest {
                 "LDR R3, g3\r\n" + //
                 "LDR R3, v\r\n" + //
                 "STR R3, [R13, -R3]\r\n" + //
-                "LDR R4, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "Mod: LDR R3, w\r\n" + //
                 "LDR R3, [R13, -R3]\r\n" + //
@@ -2703,8 +2683,6 @@ public class CodeGeneratorTest {
                 "WHILEEND_4_LEVEL_0: LDR R3, g8\r\n" + //
                 "LDR R3, y\r\n" + //
                 "STR R3, [R13, -R3]\r\n" + //
-                "LDR R4, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "RealExp: LDR R3, i1\r\n" + //
                 "STR R3, h9\r\n" + //
@@ -2827,8 +2805,6 @@ public class CodeGeneratorTest {
                 "IFEND_2_LEVEL_0: LDR R2, h9\r\n" + //
                 "LDR R3, B\r\n" + //
                 "STR R2, [R13, -R3]\r\n" + //
-                "LDR R4, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "IntExp: LDR R3, k1\r\n" + //
                 "STR R3, j9\r\n" + //
@@ -2888,8 +2864,6 @@ public class CodeGeneratorTest {
                 "WHILEEND_10_LEVEL_0: LDR R2, j9\r\n" + //
                 "LDR R3, E\r\n" + //
                 "STR R2, [R13, -R3]\r\n" + //
-                "LDR R4, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "Floor: LDR R3, F\r\n" + //
                 "LDR R3, [R13, -R3]\r\n" + //
@@ -2897,8 +2871,6 @@ public class CodeGeneratorTest {
                 "LDR R2, l0\r\n" + //
                 "LDR R3, G\r\n" + //
                 "STR R2, [R13, -R3]\r\n" + //
-                "LDR R4, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "Round: LDR R3, H\r\n" + //
                 "LDR R3, [R13, -R3]\r\n" + //
@@ -2928,8 +2900,6 @@ public class CodeGeneratorTest {
                 "LDR R2, l4\r\n" + //
                 "LDR R2, I\r\n" + //
                 "STR R2, [R13, -R2]\r\n" + //
-                "LDR R4, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "Ceil: LDR R2, J\r\n" + //
                 "LDR R2, [R13, -R2]\r\n" + //
@@ -2970,8 +2940,6 @@ public class CodeGeneratorTest {
                 "LDR R3, m0\r\n" + //
                 "LDR R3, K\r\n" + //
                 "STR R3, [R13, -R3]\r\n" + //
-                "LDR R4, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "RNeg: LDR R3, m3\r\n" + //
                 "LDR R3, m4\r\n" + //
@@ -2985,8 +2953,6 @@ public class CodeGeneratorTest {
                 "LDR R2, m2\r\n" + //
                 "LDR R3, M\r\n" + //
                 "STR R2, [R13, -R3]\r\n" + //
-                "LDR R4, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "INeg: LDR R3, N\r\n" + //
                 "LDR R3, [R13, -R3]\r\n" + //
@@ -3003,8 +2969,6 @@ public class CodeGeneratorTest {
                 "LDR R2, m7\r\n" + //
                 "LDR R3, O\r\n" + //
                 "STR R2, [R13, -R3]\r\n" + //
-                "LDR R4, [R13]\r\n" + //
-                "SUB R13, R13, #2\r\n" + //
                 "MOV R15, R14\r\n" + //
                 "begin_2: B begin_3\r\n" + //
                 "begin_3: LDR R3, n3\r\n" + //
@@ -4084,6 +4048,4 @@ public class CodeGeneratorTest {
         String expectedResult = "";
         testDeclanFile("test_source/WhileLoopBasic.dcl", expectedResult);
     }
-
-    */
 }
