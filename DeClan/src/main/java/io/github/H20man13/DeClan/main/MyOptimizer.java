@@ -248,7 +248,11 @@ public class MyOptimizer {
             } else if(i + 1 < intermediateCode.size() && intermediateInstruction.isBranch()){
                 //First instruction following an If/Goto/Proc/Call are leaders
                 firsts.add(i + 1);
-                i++;
+                //To prevent loading a Label as a first twice
+                ICode nextInstruction = intermediateCode.get(i + 1);
+                if(nextInstruction instanceof Label){
+                    i++;
+                }
             }
         }
 
