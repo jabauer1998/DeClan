@@ -6351,7 +6351,7 @@ public class MyCodeGenerator {
                 String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
-                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDRB " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
@@ -6389,7 +6389,7 @@ public class MyCodeGenerator {
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
-                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("LDRB " + rightReg + ", " + temp);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
                 cGen.addInstruction("MOVNE " + finalPlace + ", #0");
@@ -6431,8 +6431,8 @@ public class MyCodeGenerator {
                 String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
-                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
-                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("LDRB " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDRB " + rightReg + ", " + tempRight);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #1");
                 cGen.addInstruction("MOVNE " + finalPlace + ", #0");
@@ -6785,7 +6785,7 @@ public class MyCodeGenerator {
                 String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.BYTE);
 
-                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDRB " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + rightIdent.ident);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
@@ -6823,7 +6823,7 @@ public class MyCodeGenerator {
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
                 cGen.addInstruction("LDR " + leftReg + ", " + leftIdent.ident);
-                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("LDRB " + rightReg + ", " + temp);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
@@ -6865,8 +6865,8 @@ public class MyCodeGenerator {
                 String finalPlace = rGen.getReg(assignICode.place, assignICode);
                 cGen.addVariable(assignICode.place, VariableLength.WORD);
 
-                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
-                cGen.addInstruction("LDR " + rightReg + ", " + tempRight);
+                cGen.addInstruction("LDRB " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDRB " + rightReg + ", " + tempRight);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("MOVNE " + finalPlace + ", #1");
                 cGen.addInstruction("MOVEQ " + finalPlace + ", #0");
@@ -8242,7 +8242,7 @@ public class MyCodeGenerator {
                 }
                 String rightReg = rGen.getReg(right.ident, icode);
 
-                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDRB " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("BEQ " + ifStatement.ifTrue);
@@ -8276,7 +8276,7 @@ public class MyCodeGenerator {
                 }
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
-                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("LDRB " + rightReg + ", " + temp);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("BEQ " + ifStatement.ifTrue);
                 cGen.addInstruction("BNE " + ifStatement.ifFalse);
@@ -8314,8 +8314,8 @@ public class MyCodeGenerator {
                     cGen.addVariable(temp, VariableLength.BYTE, 0);
                 }
 
-                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
-                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("LDRB " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDRB " + rightReg + ", " + temp);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("BEQ " + ifStatement.ifTrue);
                 cGen.addInstruction("BNE " + ifStatement.ifFalse);
@@ -8461,7 +8461,7 @@ public class MyCodeGenerator {
                 }
                 String rightReg = rGen.getReg(right.ident, icode);
 
-                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDRB " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("BNE " + ifStatement.ifTrue);
@@ -8495,7 +8495,7 @@ public class MyCodeGenerator {
                 }
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
-                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("LDRB " + rightReg + ", " + temp);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("BNE " + ifStatement.ifTrue);
                 cGen.addInstruction("BEQ " + ifStatement.ifFalse);
@@ -8533,8 +8533,8 @@ public class MyCodeGenerator {
                     cGen.addVariable(temp, VariableLength.BYTE, 0);
                 }
 
-                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
-                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("LDRB " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDRB " + rightReg + ", " + temp);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("BNE " + ifStatement.ifTrue);
                 cGen.addInstruction("BEQ " + ifStatement.ifFalse);
