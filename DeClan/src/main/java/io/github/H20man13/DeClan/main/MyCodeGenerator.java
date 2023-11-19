@@ -8242,7 +8242,7 @@ public class MyCodeGenerator {
                 }
                 String rightReg = rGen.getReg(right.ident, icode);
 
-                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDRB " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("BEQ " + ifStatement.ifTrue);
@@ -8276,7 +8276,7 @@ public class MyCodeGenerator {
                 }
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
-                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("LDRB " + rightReg + ", " + temp);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("BEQ " + ifStatement.ifTrue);
                 cGen.addInstruction("BNE " + ifStatement.ifFalse);
@@ -8314,8 +8314,8 @@ public class MyCodeGenerator {
                     cGen.addVariable(temp, VariableLength.BYTE, 0);
                 }
 
-                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
-                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("LDRB " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDRB " + rightReg + ", " + temp);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("BEQ " + ifStatement.ifTrue);
                 cGen.addInstruction("BNE " + ifStatement.ifFalse);
@@ -8461,7 +8461,7 @@ public class MyCodeGenerator {
                 }
                 String rightReg = rGen.getReg(right.ident, icode);
 
-                cGen.addInstruction("LDR " + leftReg + ", " + temp);
+                cGen.addInstruction("LDRB " + leftReg + ", " + temp);
                 cGen.addInstruction("LDR " + rightReg + ", " + right.ident);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("BNE " + ifStatement.ifTrue);
@@ -8495,7 +8495,7 @@ public class MyCodeGenerator {
                 }
 
                 cGen.addInstruction("LDR " + leftReg + ", " + left.ident);
-                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("LDRB " + rightReg + ", " + temp);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("BNE " + ifStatement.ifTrue);
                 cGen.addInstruction("BEQ " + ifStatement.ifFalse);
@@ -8533,8 +8533,8 @@ public class MyCodeGenerator {
                     cGen.addVariable(temp, VariableLength.BYTE, 0);
                 }
 
-                cGen.addInstruction("LDR " + leftReg + ", " + tempLeft);
-                cGen.addInstruction("LDR " + rightReg + ", " + temp);
+                cGen.addInstruction("LDRB " + leftReg + ", " + tempLeft);
+                cGen.addInstruction("LDRB " + rightReg + ", " + temp);
                 cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
                 cGen.addInstruction("BNE " + ifStatement.ifTrue);
                 cGen.addInstruction("BEQ " + ifStatement.ifFalse);
