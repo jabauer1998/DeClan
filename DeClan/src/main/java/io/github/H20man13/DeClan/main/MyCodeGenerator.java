@@ -7588,12 +7588,17 @@ public class MyCodeGenerator {
                 Assign assignICode = (Assign)icode;
                 BoolExp assignExp = (BoolExp)assignICode.value;
 
+                String temp = iGen.genNextRegister();
                 if(assignExp.trueFalse){
-                    cGen.addVariable(assignICode.place, VariableLength.BYTE, 1);
+                    cGen.addVariable(temp, VariableLength.BYTE, 1);
                 } else {
-                    cGen.addVariable(assignICode.place, VariableLength.BYTE, 0);
+                    cGen.addVariable(temp, VariableLength.BYTE, 0);
                 }
+                cGen.addVariable(assignICode.place, VariableLength.WORD);
 
+                String reg = rGen.getReg(assignICode.place, assignICode);
+                cGen.addInstruction("LDRB " + reg + ", " + temp);
+                cGen.addInstruction("STR " + reg + ", " + assignICode.place);
                 rGen.freeTempRegs();
                 return null;
             }

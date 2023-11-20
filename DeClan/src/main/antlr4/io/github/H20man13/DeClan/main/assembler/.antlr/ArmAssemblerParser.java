@@ -156,6 +156,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_program; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterProgram(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitProgram(this);
+		}
 	}
 
 	public final ProgramContext program() throws RecognitionException {
@@ -208,6 +216,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_instructionOrDirective; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterInstructionOrDirective(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitInstructionOrDirective(this);
+		}
 	}
 
 	public final InstructionOrDirectiveContext instructionOrDirective() throws RecognitionException {
@@ -400,6 +416,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_instruction; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterInstruction(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitInstruction(this);
+		}
 	}
 
 	public final InstructionContext instruction() throws RecognitionException {
@@ -666,6 +690,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_wordDirective; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterWordDirective(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitWordDirective(this);
+		}
 	}
 
 	public final WordDirectiveContext wordDirective() throws RecognitionException {
@@ -720,6 +752,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_byteDirective; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterByteDirective(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitByteDirective(this);
+		}
 	}
 
 	public final ByteDirectiveContext byteDirective() throws RecognitionException {
@@ -771,6 +811,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_bInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterBInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitBInstr(this);
+		}
 	}
 
 	public final BInstrContext bInstr() throws RecognitionException {
@@ -806,6 +854,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_blInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterBlInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitBlInstr(this);
+		}
 	}
 
 	public final BlInstrContext blInstr() throws RecognitionException {
@@ -839,6 +895,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_bxInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterBxInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitBxInstr(this);
+		}
 	}
 
 	public final BxInstrContext bxInstr() throws RecognitionException {
@@ -878,6 +942,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_ldmInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterLdmInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitLdmInstr(this);
+		}
 	}
 
 	public final LdmInstrContext ldmInstr() throws RecognitionException {
@@ -940,6 +1012,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_ldrSignedInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterLdrSignedInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitLdrSignedInstr(this);
+		}
 	}
 
 	public final LdrSignedInstrContext ldrSignedInstr() throws RecognitionException {
@@ -981,6 +1061,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_ldrDefInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterLdrDefInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitLdrDefInstr(this);
+		}
 	}
 
 	public final LdrDefInstrContext ldrDefInstr() throws RecognitionException {
@@ -1025,6 +1113,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_mlaInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterMlaInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitMlaInstr(this);
+		}
 	}
 
 	public final MlaInstrContext mlaInstr() throws RecognitionException {
@@ -1074,6 +1170,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_mrsInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterMrsInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitMrsInstr(this);
+		}
 	}
 
 	public final MrsInstrContext mrsInstr() throws RecognitionException {
@@ -1115,6 +1219,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_msrDefInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterMsrDefInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitMsrDefInstr(this);
+		}
 	}
 
 	public final MsrDefInstrContext msrDefInstr() throws RecognitionException {
@@ -1159,6 +1271,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_msrPrivInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterMsrPrivInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitMsrPrivInstr(this);
+		}
 	}
 
 	public final MsrPrivInstrContext msrPrivInstr() throws RecognitionException {
@@ -1221,6 +1341,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_mulInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterMulInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitMulInstr(this);
+		}
 	}
 
 	public final MulInstrContext mulInstr() throws RecognitionException {
@@ -1268,6 +1396,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_stmInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterStmInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitStmInstr(this);
+		}
 	}
 
 	public final StmInstrContext stmInstr() throws RecognitionException {
@@ -1330,6 +1466,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_strSignedInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterStrSignedInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitStrSignedInstr(this);
+		}
 	}
 
 	public final StrSignedInstrContext strSignedInstr() throws RecognitionException {
@@ -1371,6 +1515,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_strDefInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterStrDefInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitStrDefInstr(this);
+		}
 	}
 
 	public final StrDefInstrContext strDefInstr() throws RecognitionException {
@@ -1410,6 +1562,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_swiInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterSwiInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitSwiInstr(this);
+		}
 	}
 
 	public final SwiInstrContext swiInstr() throws RecognitionException {
@@ -1452,6 +1612,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_swpInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterSwpInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitSwpInstr(this);
+		}
 	}
 
 	public final SwpInstrContext swpInstr() throws RecognitionException {
@@ -1507,6 +1675,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_addInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterAddInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitAddInstr(this);
+		}
 	}
 
 	public final AddInstrContext addInstr() throws RecognitionException {
@@ -1558,6 +1734,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_andInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterAndInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitAndInstr(this);
+		}
 	}
 
 	public final AndInstrContext andInstr() throws RecognitionException {
@@ -1609,6 +1793,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_eorInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterEorInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitEorInstr(this);
+		}
 	}
 
 	public final EorInstrContext eorInstr() throws RecognitionException {
@@ -1660,6 +1852,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_subInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterSubInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitSubInstr(this);
+		}
 	}
 
 	public final SubInstrContext subInstr() throws RecognitionException {
@@ -1711,6 +1911,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_rsbInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterRsbInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitRsbInstr(this);
+		}
 	}
 
 	public final RsbInstrContext rsbInstr() throws RecognitionException {
@@ -1762,6 +1970,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_adcInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterAdcInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitAdcInstr(this);
+		}
 	}
 
 	public final AdcInstrContext adcInstr() throws RecognitionException {
@@ -1813,6 +2029,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_sbcInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterSbcInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitSbcInstr(this);
+		}
 	}
 
 	public final SbcInstrContext sbcInstr() throws RecognitionException {
@@ -1864,6 +2088,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_rscInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterRscInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitRscInstr(this);
+		}
 	}
 
 	public final RscInstrContext rscInstr() throws RecognitionException {
@@ -1915,6 +2147,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_orrInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterOrrInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitOrrInstr(this);
+		}
 	}
 
 	public final OrrInstrContext orrInstr() throws RecognitionException {
@@ -1966,6 +2206,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_bicInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterBicInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitBicInstr(this);
+		}
 	}
 
 	public final BicInstrContext bicInstr() throws RecognitionException {
@@ -2011,6 +2259,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_tstInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterTstInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitTstInstr(this);
+		}
 	}
 
 	public final TstInstrContext tstInstr() throws RecognitionException {
@@ -2052,6 +2308,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_teqInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterTeqInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitTeqInstr(this);
+		}
 	}
 
 	public final TeqInstrContext teqInstr() throws RecognitionException {
@@ -2093,6 +2357,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_cmpInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterCmpInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitCmpInstr(this);
+		}
 	}
 
 	public final CmpInstrContext cmpInstr() throws RecognitionException {
@@ -2134,6 +2406,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_cmnInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterCmnInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitCmnInstr(this);
+		}
 	}
 
 	public final CmnInstrContext cmnInstr() throws RecognitionException {
@@ -2175,6 +2455,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_movInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterMovInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitMovInstr(this);
+		}
 	}
 
 	public final MovInstrContext movInstr() throws RecognitionException {
@@ -2216,6 +2504,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_mvnInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterMvnInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitMvnInstr(this);
+		}
 	}
 
 	public final MvnInstrContext mvnInstr() throws RecognitionException {
@@ -2252,6 +2548,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_stopInstr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterStopInstr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitStopInstr(this);
+		}
 	}
 
 	public final StopInstrContext stopInstr() throws RecognitionException {
@@ -2289,6 +2593,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_op2; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterOp2(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitOp2(this);
+		}
 	}
 
 	public final Op2Context op2() throws RecognitionException {
@@ -2354,6 +2666,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_shift; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterShift(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitShift(this);
+		}
 	}
 
 	public final ShiftContext shift() throws RecognitionException {
@@ -2419,6 +2739,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_rList; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterRList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitRList(this);
+		}
 	}
 
 	public final RListContext rList() throws RecognitionException {
@@ -2474,6 +2802,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_rValue; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterRValue(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitRValue(this);
+		}
 	}
 
 	public final RValueContext rValue() throws RecognitionException {
@@ -2520,6 +2856,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_poundExpression; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterPoundExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitPoundExpression(this);
+		}
 	}
 
 	public final PoundExpressionContext poundExpression() throws RecognitionException {
@@ -2558,6 +2902,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_expression; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitExpression(this);
+		}
 	}
 
 	public final ExpressionContext expression() throws RecognitionException {
@@ -2607,6 +2959,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_andExpr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterAndExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitAndExpr(this);
+		}
 	}
 
 	public final AndExprContext andExpr() throws RecognitionException {
@@ -2661,6 +3021,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_relational; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterRelational(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitRelational(this);
+		}
 	}
 
 	public final RelationalContext relational() throws RecognitionException {
@@ -2719,6 +3087,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_primary; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterPrimary(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitPrimary(this);
+		}
 	}
 
 	public final PrimaryContext primary() throws RecognitionException {
@@ -2778,6 +3154,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_bitwise; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterBitwise(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitBitwise(this);
+		}
 	}
 
 	public final BitwiseContext bitwise() throws RecognitionException {
@@ -2839,6 +3223,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_term; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterTerm(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitTerm(this);
+		}
 	}
 
 	public final TermContext term() throws RecognitionException {
@@ -2894,6 +3286,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_unary; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterUnary(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitUnary(this);
+		}
 	}
 
 	public final UnaryContext unary() throws RecognitionException {
@@ -2951,6 +3351,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_single; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterSingle(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitSingle(this);
+		}
 	}
 
 	public final SingleContext single() throws RecognitionException {
@@ -3090,6 +3498,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_identifier; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterIdentifier(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitIdentifier(this);
+		}
 	}
 
 	public final IdentifierContext identifier() throws RecognitionException {
@@ -3392,6 +3808,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_realNumber; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterRealNumber(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitRealNumber(this);
+		}
 	}
 
 	public final RealNumberContext realNumber() throws RecognitionException {
@@ -3422,6 +3846,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_number; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterNumber(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitNumber(this);
+		}
 	}
 
 	public final NumberContext number() throws RecognitionException {
@@ -3460,6 +3892,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_address; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterAddress(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitAddress(this);
+		}
 	}
 
 	public final AddressContext address() throws RecognitionException {
@@ -3528,6 +3968,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_preIndexedAddressing; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterPreIndexedAddressing(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitPreIndexedAddressing(this);
+		}
 	}
 
 	public final PreIndexedAddressingContext preIndexedAddressing() throws RecognitionException {
@@ -3666,6 +4114,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_postIndexedAddressing; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterPostIndexedAddressing(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitPostIndexedAddressing(this);
+		}
 	}
 
 	public final PostIndexedAddressingContext postIndexedAddressing() throws RecognitionException {
@@ -3759,6 +4215,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_shiftName; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterShiftName(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitShiftName(this);
+		}
 	}
 
 	public final ShiftNameContext shiftName() throws RecognitionException {
@@ -3801,6 +4265,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_psr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterPsr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitPsr(this);
+		}
 	}
 
 	public final PsrContext psr() throws RecognitionException {
@@ -3841,6 +4313,14 @@ public class ArmAssemblerParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_psrf; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).enterPsrf(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArmAssemblerListener ) ((ArmAssemblerListener)listener).exitPsrf(this);
+		}
 	}
 
 	public final PsrfContext psrf() throws RecognitionException {
