@@ -15,7 +15,7 @@ import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.InternalPlace;
 import io.github.H20man13.DeClan.common.icode.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.Proc;
+import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
@@ -83,8 +83,8 @@ public class LiveVariableAnalysis extends Analysis<String> {
                     ParamAssign assign = (ParamAssign)code;
                     instructionDef.add(assign.newPlace);
                     instructionUse.add(assign.paramPlace);
-                } else if(code instanceof Proc){
-                    Proc placement = (Proc)code;
+                } else if(code instanceof Call){
+                    Call placement = (Call)code;
                     for(Tuple<String, String> arg : placement.params){
                         instructionDef.add(arg.dest);
                         instructionUse.add(arg.source);

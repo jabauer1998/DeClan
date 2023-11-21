@@ -10,10 +10,9 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.Proc;
+import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
@@ -24,6 +23,9 @@ import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp.Operator;
+import io.github.H20man13.DeClan.common.icode.label.Label;
+import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
+import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class MyIrFactory {
@@ -69,8 +71,8 @@ public class MyIrFactory {
         return new Goto(name);
     }
 
-    public Proc produceProcedure(String funcName, List<Tuple<String, String>> argResults){
-        return new Proc(funcName, argResults);
+    public Call produceProcedure(String funcName, List<Tuple<String, String>> argResults){
+        return new Call(funcName, argResults);
     }
 
     public If produceIfStatement(Exp test, String ifTrue, String ifFalse){
@@ -83,8 +85,12 @@ public class MyIrFactory {
         return new If(exp, ifTrue, ifFalse);
     }
 
-    public Label produceLabel(String name){
-        return new Label(name);
+    public StandardLabel produceLabel(String name){
+        return new StandardLabel(name);
+    }
+
+    public ProcLabel produceProcedureLabel(String name){
+        return new ProcLabel(name);
     }
 
     public Assign produceUnaryOperation(String place, UnExp value){

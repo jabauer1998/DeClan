@@ -14,10 +14,12 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.Label;
+import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.ParamAssign;
-import io.github.H20man13.DeClan.common.icode.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.Proc;
+import io.github.H20man13.DeClan.common.icode.ExternalPlace;
+import io.github.H20man13.DeClan.common.icode.Call;
+import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
@@ -27,6 +29,12 @@ import io.github.H20man13.DeClan.common.icode.exp.IntExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.label.Label;
+import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
+import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
+import io.github.H20man13.DeClan.common.icode.section.CodeSec;
+import io.github.H20man13.DeClan.common.icode.section.DataSec;
+import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.token.IrToken;
 import io.github.H20man13.DeClan.common.token.IrTokenType;
 import io.github.H20man13.DeClan.common.util.Utils;
@@ -100,21 +108,78 @@ public class MyIrParser {
         return false;
     }
 
-    public List<ICode> parseProgram(){
-        Position start = currentPosition;
-        List<ICode> parseInstructions = parseInstructions();
+    public Prog parseProgram(){
+        DataSec data = parseDataSection();
+        ProcSec proc = parseProcedureSection();
+        CodeSec code = parseCodeSection();
         match(IrTokenType.END);
-        parseInstructions.add(new End());
+        End end = new End();
         matchEOF();
-        return parseInstructions;
+        return new Prog(data, proc, code, end);
+    }
+
+    public Lib parseLibrary(){
+        DataSec data = parseDataSection();
+        ProcSec proc = parseProcedureSection();
+        match(IrTokenType.END);
+        End end = new End();
+        matchEOF();
+        return new Lib(data, proc, end);
+    }
+
+    public DataSec parseDataSection(){
+        List<ICode> assignments = new LinkedList<ICode>();
+        while(willMatch(IrTokenType.ID)){
+            ICode icode = parseAssignment();
+            assignments.add(icode);
+        }
+        return new DataSec(assignments);
+    }
+
+    public ProcSec parseProcedureSection(){
+        List<Proc> procedures = new LinkedList<Proc>();
+        while(willMatch(IrTokenType.PROC)){
+            Proc procedure = parseProcedure();
+            procedures.add(procedure);
+        }
+        return new ProcSec(procedures);
+    }
+
+    public Proc parseProcedure(){
+        match(IrTokenType.PROC);
+        match(IrTokenType.LABEL);
+        IrToken id = match(IrTokenType.ID);
+        ProcLabel label = new ProcLabel(id.getLexeme());
+        List<ParamAssign> paramAssignments = new LinkedList<ParamAssign>();
+        List<ICode> instructions = new LinkedList<ICode>();
+        InternalPlace place = null;
+        while(!willMatch(IrTokenType.RETURN)){
+            ICode instruction = parseInstruction();
+            if(instruction instanceof ParamAssign){
+                paramAssignments.add((ParamAssign)instruction);
+            } else if(instruction instanceof InternalPlace){
+                place = (InternalPlace)instruction;
+            } else {
+                instructions.add(instruction);
+            }
+        }
+
+        Return ret = parseReturn();
+
+        return new Proc(label, paramAssignments, instructions, place, ret);
+    }
+
+    public CodeSec parseCodeSection(){
+        List<ICode> instructions = parseInstructions();
+        return new CodeSec(instructions);
     }
 
     public List<ICode> parseInstructions(){
         List<ICode> toRet = new LinkedList<ICode>();
         while(willMatch(IrTokenType.LABEL) || willMatch(IrTokenType.IF) 
         || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) 
-        || willMatch(IrTokenType.PROC) || willMatch(IrTokenType.RETURN) 
-        || willMatch(IrTokenType.IASM) || willMatch(IrTokenType.IPARAM)){
+        || willMatch(IrTokenType.RETURN) || willMatch(IrTokenType.IASM) 
+        || willMatch(IrTokenType.IPARAM) || willMatch(IrTokenType.CALL)){
             ICode instr = parseInstruction();
             toRet.add(instr);
         }
@@ -131,10 +196,8 @@ public class MyIrParser {
            return parseLabel();
         } else if(willMatch(IrTokenType.GOTO)){
             return parseGoto();
-        } else if(willMatch(IrTokenType.PROC)){
-            return parseProcedure();
-        } else if (willMatch(IrTokenType.RETURN)){
-            return parseReturn();  
+        } else if(willMatch(IrTokenType.CALL)){
+            return parseProcedureCall();  
         } else {
             return parseAssignment();
         }
@@ -210,7 +273,7 @@ public class MyIrParser {
         return new If(exp, labelOne.getLexeme(), labelTwo.getLexeme());
     }
 
-    private ICode parseReturn(){
+    private Return parseReturn(){
         match(IrTokenType.RETURN);
         return new Return();
     }
@@ -218,7 +281,7 @@ public class MyIrParser {
     private ICode parseLabel(){
         match(IrTokenType.LABEL);
         IrToken id = match(IrTokenType.ID);
-        return new Label(id.getLexeme());
+        return new StandardLabel(id.getLexeme());
     }
 
     private ICode parseGoto(){
@@ -227,8 +290,8 @@ public class MyIrParser {
         return new Goto(id.getLexeme());
     }
 
-    private ICode parseProcedure(){
-        match(IrTokenType.PROC);
+    private ICode parseProcedureCall(){
+        match(IrTokenType.CALL);
         IrToken procName = match(IrTokenType.ID);
         match(IrTokenType.LPAR);
         
@@ -242,7 +305,7 @@ public class MyIrParser {
 
         match(IrTokenType.RPAR);
 
-        return new Proc(procName.getLexeme(), args);
+        return new Call(procName.getLexeme(), args);
     }
 
     private UnExp parseUnaryExpression(){

@@ -11,10 +11,9 @@ import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
-import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.Proc;
+import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -23,6 +22,7 @@ import io.github.H20man13.DeClan.common.icode.exp.IntExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.IntEntry;
@@ -102,7 +102,7 @@ public class MyICodeTypeChecker {
     private boolean typeCheckPossibleAssignmentsAndParamaters(ICode icode){
         if(icode instanceof Assign) return typeCheckPossibleAssignment((Assign)icode);
         else if(icode instanceof ParamAssign) return typeCheckPossibleParamAssign((ParamAssign)icode);
-        else if(icode instanceof Proc) return typeCheckPossibleParamaters((Proc)icode);
+        else if(icode instanceof Call) return typeCheckPossibleParamaters((Call)icode);
         else if(icode instanceof ExternalPlace) return typeCheckPossibleReturn((ExternalPlace)icode);
         return true;
     }
@@ -135,7 +135,7 @@ public class MyICodeTypeChecker {
         return false;
     }
 
-    private boolean typeCheckPossibleParamaters(Proc proc){
+    private boolean typeCheckPossibleParamaters(Call proc){
         boolean allFound = true;
         for(Tuple<String, String> param : proc.params){
             if(variableQualities.entryExists(param.source)){
@@ -160,11 +160,11 @@ public class MyICodeTypeChecker {
 
     private void typeCheckRestOfInstructions(ICode icode){
         if(icode instanceof If) typeCheckIfStatement((If)icode);
-        else if(icode instanceof Proc) typeCheckProcedureLabel((Proc)icode);
+        else if(icode instanceof Call) typeCheckProcedureLabel((Call)icode);
         else if(icode instanceof Goto) typeCheckGotoStatement((Goto)icode);
     }
 
-    private void typeCheckProcedureLabel(Proc icode){
+    private void typeCheckProcedureLabel(Call icode){
         if(!labels.entryExists(icode.pname)){
             errLog.add("Error No label found for procedure entry " + icode.pname, new Position(instructionNumber, 0));
         }

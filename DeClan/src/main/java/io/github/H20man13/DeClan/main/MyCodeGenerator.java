@@ -27,16 +27,16 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.Proc;
+import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.IntExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.label.Label;
 
 public class MyCodeGenerator {
     private List<ICode> intermediateCode;
@@ -2121,7 +2121,7 @@ public class MyCodeGenerator {
             @Override
             public Void call() throws Exception {
                 ICode icode = intermediateCode.get(i);
-                Proc procICode = (Proc)icode;
+                Call procICode = (Call)icode;
                 int totalLength = procICode.params.size();
                 int totalReturnStackLength = totalLength;
                 int totalReturnStackLengthInBytes = totalReturnStackLength * 4;
@@ -9836,7 +9836,7 @@ public class MyCodeGenerator {
             @Override
             public Void call() throws Exception {
                 ICode icode = intermediateCode.get(i);
-                Proc procICode = (Proc)icode;
+                Call procICode = (Call)icode;
                 int totalLength = procICode.params.size();
                 int totalReturnStackLength = totalLength;
                 int totalReturnStackLengthInBytes = totalReturnStackLength * 4;

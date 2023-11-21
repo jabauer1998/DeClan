@@ -1,6 +1,5 @@
 package io.github.H20man13.DeClan.main;
 
-import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Goto;
@@ -8,9 +7,11 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.H20man13.DeClan.common.icode.Proc;
+import io.github.H20man13.DeClan.common.icode.label.Label;
+import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.builder.IrBuilderContext;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.ProcedureEntry;
 import io.github.H20man13.DeClan.common.symboltable.entry.StringEntry;
@@ -73,7 +74,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
   private Environment<String, StringEntry> paramEnvironment;
   private Environment<String, StringEntry> procEnvironment;
   private Environment<String, StringEntryList> procArgs;
-  private MyIrBuilder builder;
+  private IrBuilderContext builder;
   private MyTypeChecker typeChecker;
   private MyInterpreter interpreter;
 
@@ -83,7 +84,7 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
 
   public MyICodeGenerator(ErrorLog errorLog, IrRegisterGenerator Gen) {
     this.errorLog = errorLog;
-    this.builder = new MyIrBuilder(errorLog, Gen);
+    this.builder = new IrBuilderContext(errorLog, Gen);
     this.varEnvironment = new Environment<>();
     this.procEnvironment = new Environment<>();
     this.paramEnvironment = new Environment<>();

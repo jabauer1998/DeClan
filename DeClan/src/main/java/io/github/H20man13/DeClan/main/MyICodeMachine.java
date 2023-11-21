@@ -18,15 +18,15 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.Proc;
+import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.IntEntry;
 import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
@@ -82,7 +82,7 @@ public class MyICodeMachine {
             switch(this.machineState){
                 case INIT:
                     if(instruction instanceof Assign) interpretAssignment((Assign)instruction);
-                    else if(instruction instanceof Proc) interpretProcedureCall((Proc)instruction);
+                    else if(instruction instanceof Call) interpretProcedureCall((Call)instruction);
                     else if(instruction instanceof If) interpretIfStatement((If)instruction);
                     else if(instruction instanceof Goto) interpretGotoStatement((Goto)instruction);
                     else if(instruction instanceof End) interpretEndStatement((End)instruction);
@@ -177,7 +177,7 @@ public class MyICodeMachine {
         }
     }
 
-    private void interpretProcedureCall(Proc procedure){
+    private void interpretProcedureCall(Call procedure){
         if(procedure.pname.equals("WriteInt")){
             Tuple<String, String> arg1 = procedure.params.get(0);
             VariableEntry entry = variableValues.getEntry(arg1.source);

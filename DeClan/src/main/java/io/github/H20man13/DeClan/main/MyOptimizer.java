@@ -27,14 +27,14 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.Label;
 import io.github.H20man13.DeClan.common.icode.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.Proc;
+import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.LiveInfo;
 import io.github.H20man13.DeClan.common.util.Utils;
@@ -135,8 +135,8 @@ public class MyOptimizer {
                         node.addSuccessor(labeledNode);
                         labeledNode.addPredecessor(node);
                     }
-                } else if(lastCode instanceof Proc){
-                    Proc lastProc = (Proc)lastCode;
+                } else if(lastCode instanceof Call){
+                    Call lastProc = (Call)lastCode;
                     BlockNode labeledNode = labeledNodes.get(lastProc.pname);
                     if(labeledNode != null){
                         node.addSuccessor(labeledNode);
@@ -204,8 +204,8 @@ public class MyOptimizer {
                     IdentExp rightIdent = (IdentExp)binExp.right;
                     symbolTable.addEntry(rightIdent.ident, new LiveInfo(true, i));
                 }
-            } else if(icode instanceof Proc){
-                for(Tuple<String, String> param : ((Proc)icode).params){
+            } else if(icode instanceof Call){
+                for(Tuple<String, String> param : ((Call)icode).params){
                     symbolTable.addEntry(param.source, new LiveInfo(true, i));
                 }
             } else if(icode instanceof ExternalPlace){
