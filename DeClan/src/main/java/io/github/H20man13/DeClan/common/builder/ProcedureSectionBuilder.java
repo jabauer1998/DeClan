@@ -5,10 +5,12 @@ import java.util.List;
 
 import edu.depauw.declan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
+import io.github.H20man13.DeClan.common.builder.template.CompletableBuilder;
+import io.github.H20man13.DeClan.common.builder.template.ResetableBuilder;
 import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 
-public class ProcedureSectionBuilder implements IrBuilderTemplate<ProcSec> {
+public class ProcedureSectionBuilder implements CompletableBuilder<ProcSec>, ResetableBuilder{
     private ProcedureBuilder procBuilder;
     private List<Proc> procedures;
 
@@ -35,5 +37,5 @@ public class ProcedureSectionBuilder implements IrBuilderTemplate<ProcSec> {
     @Override
     public void resetBuilder() {
         this.procedures = new LinkedList<Proc>();
-    }   
+    }
 }

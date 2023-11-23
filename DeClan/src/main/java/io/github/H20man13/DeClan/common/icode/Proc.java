@@ -70,18 +70,18 @@ public class Proc implements ICode {
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append(label.toString());
-        sb.append("\r\n");
+        sb.append("\r\n  ");
         for(ParamAssign assign: paramAssign){
             sb.append(assign.toString());
-            sb.append("\r\n");
+            sb.append("\r\n  ");
         }
         for(ICode instruction: instructions){
             sb.append(instruction.toString());
-            sb.append("\r\n");
+            sb.append("\r\n  ");
         }
         if(placement != null){
             sb.append(placement.toString());
-            sb.append("\r\n");
+            sb.append("\r\n  ");
         }
         
         sb.append(returnStatement.toString());

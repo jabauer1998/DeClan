@@ -49,6 +49,9 @@ public enum IrTokenType {
     RETURN,
     IASM,
     IPARAM,
+    SECTION,
+    CODE,
+    DATA,
     
     //Operators
     ASSIGN,
@@ -137,6 +140,9 @@ public enum IrTokenType {
         addKeyword(RETURN);
         addKeyword(IASM);
         addKeyword(IPARAM);
+        addKeyword(SECTION);
+        addKeyword(CODE);
+        addKeyword(DATA);
 
         dualOperators = new HashMap<>();
         addDualOp(":=", ASSIGN);

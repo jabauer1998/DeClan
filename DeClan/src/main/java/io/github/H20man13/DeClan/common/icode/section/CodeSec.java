@@ -35,7 +35,9 @@ public class CodeSec implements ICode {
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
+        sb.append("CODE SECTION\r\n");
         for(ICode icode : intermediateCode){
+            sb.append(' ');
             sb.append(icode.toString());
             sb.append("\r\n");
         }

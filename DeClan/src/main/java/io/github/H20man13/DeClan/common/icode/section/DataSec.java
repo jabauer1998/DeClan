@@ -2,6 +2,7 @@ package io.github.H20man13.DeClan.common.icode.section;
 
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
@@ -14,7 +15,7 @@ public class DataSec implements ICode {
     public boolean isConstant() {
         return false;
     }
-    
+
     @Override
     public boolean isBranch() {
         return false;
@@ -32,7 +33,9 @@ public class DataSec implements ICode {
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
+        sb.append("DATA SECTION\r\n");
         for(ICode icode : intermediateCode){
+            sb.append(' ');
             sb.append(icode.toString());
             sb.append("\r\n");
         }

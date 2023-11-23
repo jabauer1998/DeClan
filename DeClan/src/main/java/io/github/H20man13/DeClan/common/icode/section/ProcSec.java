@@ -37,7 +37,9 @@ public class ProcSec implements ICode {
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
+        sb.append("PROC SECTION\r\n");
         for(Proc procedure: procedures){
+            sb.append(' ');
             sb.append(procedure.toString());
             sb.append("\r\n");
         }

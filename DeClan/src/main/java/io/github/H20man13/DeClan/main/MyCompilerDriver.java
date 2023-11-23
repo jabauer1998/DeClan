@@ -10,8 +10,9 @@ import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.Prog;
 
-public class MyMainCompiler {
+public class MyCompilerDriver {
     
     public static void main(String[] args) throws FileNotFoundException{
         Source source = new ReaderSource(new FileReader(args[0]));
@@ -28,9 +29,8 @@ public class MyMainCompiler {
         IrRegisterGenerator gen = new IrRegisterGenerator();
         if(prog != null){
             MyICodeGenerator codeGen = new MyICodeGenerator(errLog, gen);
-            prog.accept(codeGen);
+            Prog program = codeGen.generateProgramIr(prog);
 
-            List<ICode> generatedICode = codeGen.getICode();
             MyOptimizer optimizer = new MyOptimizer(generatedICode, gen);
             
             optimizer.runDataFlowAnalysis();

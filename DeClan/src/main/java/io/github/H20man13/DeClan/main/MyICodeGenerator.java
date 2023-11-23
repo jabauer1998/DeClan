@@ -2,6 +2,8 @@ package io.github.H20man13.DeClan.main;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Lib;
+import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Return;
@@ -11,7 +13,15 @@ import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.builder.AssignmentBuilder;
+import io.github.H20man13.DeClan.common.builder.CodeSectionBuilder;
+import io.github.H20man13.DeClan.common.builder.DataSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.IrBuilderContext;
+import io.github.H20man13.DeClan.common.builder.LibraryBuilder;
+import io.github.H20man13.DeClan.common.builder.ProcedureBuilder;
+import io.github.H20man13.DeClan.common.builder.ProcedureSectionBuilder;
+import io.github.H20man13.DeClan.common.builder.ProgramBuilder;
+import io.github.H20man13.DeClan.common.builder.StatementBuilder;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.ProcedureEntry;
 import io.github.H20man13.DeClan.common.symboltable.entry.StringEntry;
@@ -27,6 +37,7 @@ import java.io.Writer;
 import java.lang.String;
 
 import java.util.List;
+import java.util.function.Function;
 
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ast.ASTVisitor;
@@ -68,23 +79,21 @@ import java.util.LinkedList;
  *@author Jacob Bauer
  */
 
-public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, DeclarationVisitor<String> {
+public class MyICodeGenerator{
   private ErrorLog errorLog;
   private Environment<String, StringEntry> varEnvironment;
   private Environment<String, StringEntry> paramEnvironment;
   private Environment<String, StringEntry> procEnvironment;
   private Environment<String, StringEntryList> procArgs;
-  private IrBuilderContext builder;
   private MyTypeChecker typeChecker;
   private MyInterpreter interpreter;
-
-  public MyICodeGenerator(ErrorLog errorLog){
-    this(errorLog, new IrRegisterGenerator());
-  }
+  private IrBuilderContext ctx;
+  private IrRegisterGenerator gen;
 
   public MyICodeGenerator(ErrorLog errorLog, IrRegisterGenerator Gen) {
     this.errorLog = errorLog;
-    this.builder = new IrBuilderContext(errorLog, Gen);
+    this.ctx = ctx;
+    this.gen = new IrRegisterGenerator();
     this.varEnvironment = new Environment<>();
     this.procEnvironment = new Environment<>();
     this.paramEnvironment = new Environment<>();
@@ -93,75 +102,92 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     this.interpreter = new MyInterpreter(errorLog, null, null, null);
   }
 
-  public List<ICode> getICode(){
-    return builder.getOutput();
-  }
-
-  @Override
-  public void visit(Library lib){
+  public Lib generateLibraryIr(Library lib){
+    LibraryBuilder libBuilder = new LibraryBuilder(ctx, gen, errorLog);
     procEnvironment.addScope();
     varEnvironment.addScope();
     procArgs.addScope();
     typeChecker.addScope();
 
-    builder.buildBeginLabel();
+    DataSectionBuilder dataSecBuilder = libBuilder.getDataSectionBuilder();
     for(Declaration decl : lib.getConstDecls()){
       decl.accept(typeChecker);
-      decl.accept(this);
+      if(decl instanceof ConstDeclaration){
+        generateConstantIr((ConstDeclaration)decl, dataSecBuilder);
+      }
     }
 
     for(Declaration decl : lib.getVarDecls()){
       decl.accept(typeChecker);
-      decl.accept(this);
+      if(decl instanceof VariableDeclaration){
+        generateVariableIr((VariableDeclaration)decl, dataSecBuilder);
+      }
     }
-
-    builder.buildBeginGoto();
 
     loadFunctions(lib.getProcDecls());
     typeChecker.loadFunctions(lib.getProcDecls());
 
+    ProcedureSectionBuilder secBuilder = libBuilder.getProcedureSectionBuilder();
+    ProcedureBuilder procBuilder = secBuilder.getProcedureBuilder();
     for(Declaration decl : lib.getProcDecls()){
       decl.accept(typeChecker);
-      decl.accept(this);
+      if(decl instanceof ProcedureDeclaration){
+        generateProcedureIr((ProcedureDeclaration)decl, procBuilder);
+      }
       typeChecker.removeVarScope();
+      procBuilder.resetBuilder();
     }
+
+    return libBuilder.completeBuild();
   }
 
-  @Override
-  public void visit(Program program) {
+  public Prog generateProgramIr(Program program) {
+    ProgramBuilder builder = new ProgramBuilder(ctx, gen, errorLog);
     procEnvironment.addScope();
     varEnvironment.addScope();
     procArgs.addScope();
     typeChecker.addScope();
-    builder.buildBeginLabel();
+
+    DataSectionBuilder variableBuilder = builder.getDataSectionBuilder(); 
     for(Declaration decl : program.getConstDecls()){
       decl.accept(typeChecker);
-      decl.accept(this);
-    }
-    for (Declaration decl : program.getVarDecls()) {
-      decl.accept(typeChecker);
-      decl.accept(this);
+      if(decl instanceof ConstDeclaration){
+        generateConstantIr((ConstDeclaration)decl, variableBuilder);
+      }      
     }
 
-    builder.buildBeginGoto();
+    for (Declaration decl : program.getVarDecls()) {
+      decl.accept(typeChecker);
+      if(decl instanceof VariableDeclaration){
+        generateVariableIr((VariableDeclaration)decl, variableBuilder);
+      }
+    }
 
     loadFunctions(program.getProcDecls());
     typeChecker.loadFunctions(program.getProcDecls());
 
+    CodeSectionBuilder codeBuilder = builder.getCodeSectionBuilder();
+    for (Statement statement : program.getStatements()) {
+      generateStatementIr(statement, codeBuilder);
+    }
+
+    ProcedureSectionBuilder procSectionBuilder = builder.getProcedureSectionBuilder();
+    ProcedureBuilder procBuilder = procSectionBuilder.getProcedureBuilder();
     for (Declaration decl : program.getProcDecls()){
       decl.accept(typeChecker);
-      decl.accept(this);
+      if(decl instanceof ProcedureDeclaration){
+        generateProcedureIr((ProcedureDeclaration)decl, procBuilder);
+      }
+      procSectionBuilder.addProcedure(procBuilder.completeBuild());
       typeChecker.removeVarScope();
+      procBuilder.resetBuilder();
     }
-    
-    builder.buildBeginLabel();
-    for (Statement statement : program.getStatements()) {
-      statement.accept(this);
-    }
+
     varEnvironment.removeScope();
     procEnvironment.removeScope();
     procArgs.removeScope();
-    builder.buildEnd();
+
+    return builder.completeBuild();
   }
 
     //this function is needed to change a Hex String from the Declan Format to the expected Java format
@@ -173,18 +199,16 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
       return lexeme; //else return input it is fine
     }
   }
-  
-  @Override
-  public void visit(ConstDeclaration constDecl) {
+
+  public void generateConstantIr(ConstDeclaration constDecl, AssignmentBuilder builder) {
     Identifier id = constDecl.getIdentifier();
     Expression valueExpr = constDecl.getValue();
-    String value = valueExpr.acceptResult(this);
+    String value = generateExpressionIr(valueExpr, builder);
     String place = builder.buildVariableAssignment(value);
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
   }
 
-  @Override
-  public void visit(VariableDeclaration varDecl) {
+  public void generateVariableIr(VariableDeclaration varDecl, AssignmentBuilder builder) {
     Identifier id = varDecl.getIdentifier();
     Identifier type = varDecl.getType();
     String argVal = null;
@@ -211,23 +235,22 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     
     StringEntryList alias = new StringEntryList();
     for(int i = 0; i < args.size(); i++){
-	    String argAlias = builder.buildAlias();
+	    String argAlias = gen.genNextRegister();
       alias.add(argAlias);
     }
 
     procArgs.addEntry(procedureName, alias);
   
-    String returnPlace = builder.buildAlias();
+    String returnPlace = gen.genNextRegister();
     Expression retExp = procDecl.getReturnStatement();
     if(retExp != null){
       procEnvironment.addEntry(procedureName, new StringEntry(returnPlace));
     }
   } 
 
-  @Override
-  public void visit(ProcedureDeclaration procDecl){
+  public void generateProcedureIr(ProcedureDeclaration procDecl, ProcedureBuilder builder){
     String procedureName = procDecl.getProcedureName().getLexeme();
-    builder.buildProcedureDeclaration(procedureName);
+    builder.buildProcedureLabel(procedureName);
     paramEnvironment.addScope();
     varEnvironment.addScope();
 
@@ -241,17 +264,20 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
 
     List <Declaration> localVars = procDecl.getLocalVariables();
     for(int i = 0; i < localVars.size(); i++){
-	    localVars.get(i).accept(this);
+      Declaration localDecl = localVars.get(i);
+      if(localDecl instanceof VariableDeclaration){
+        generateVariableIr((VariableDeclaration)localVars.get(i), builder);
+      }
     }
 
     List <Statement> exec = procDecl.getExecutionStatements();
     for(int i = 0; i < exec.size(); i++){
-	    exec.get(i).accept(this);
+	    generateStatementIr(exec.get(i), builder);
     }
 
     Expression retExp = procDecl.getReturnStatement();
     if(retExp != null){
-      String retPlace = retExp.acceptResult(this);
+      String retPlace = generateExpressionIr(retExp, builder);
       String returnPlace = procEnvironment.getEntry(procedureName).toString();
       builder.buildInternalReturnPlacement(returnPlace, retPlace);
     }
@@ -259,9 +285,18 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     varEnvironment.removeScope();
     paramEnvironment.removeScope();
   }
+
+  public void generateStatementIr(Statement stat, StatementBuilder builder){
+    if(stat instanceof ProcedureCall) generateProcedureCallIr((ProcedureCall)stat, builder);
+    else if(stat instanceof Branch) generateBranchIr((Branch)stat, builder);
+    else if(stat instanceof Assignment) generateAssignmentIr((Assignment)stat, builder);
+    else if(stat instanceof Asm) generateInlineAssemblyIr((Asm)stat, builder);
+    else {
+      errorLog.add("Error generating invalid statment type " + stat.getClass().getSimpleName(), stat.getStart());
+    }
+  }
         
-  @Override
-  public void visit(ProcedureCall procedureCall) {
+  public void generateProcedureCallIr(ProcedureCall procedureCall, StatementBuilder builder) {
     String funcName = procedureCall.getProcedureName().getLexeme();
     List<Expression> valArgs = procedureCall.getArguments();
     List<Tuple<String, String>> valArgResults = new ArrayList<>();
@@ -269,99 +304,104 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     StringEntryList argsToMap = procArgs.getEntry(funcName);
     for(int i = 0; i < valArgs.size(); i++){
       Expression valArg = valArgs.get(i);
-      String result = valArg.acceptResult(this);
+      String result = generateExpressionIr(valArg, builder);
       valArgResults.add(new Tuple<String, String>(result, argsToMap.get(i)));
     }
-    builder.buildProcedure(funcName, valArgResults);
+    builder.buildProcedureCall(funcName, valArgResults);
   }
 
-  @Override
-  public void visit(WhileElifBranch whilebranch){
+  public void generateWhileBranchIr(WhileElifBranch whilebranch, StatementBuilder builder){
     Expression toCheck = whilebranch.getExpression();
     List<Statement> toExec = whilebranch.getExecStatements();
-    String test = toCheck.acceptResult(this);
+    String test = generateExpressionIr(toCheck, builder);
     
     IdentExp ident = new IdentExp(test);
     builder.buildWhileLoopBeginning(ident);
 
     builder.incrimentWhileLoopLevel();
     for(int i = 0; i < toExec.size(); i++){
-      toExec.get(i).accept(this);
+      generateStatementIr(toExec.get(i), builder);
     }
 
-    String test2 = toCheck.acceptResult(this);
+    String test2 = generateExpressionIr(toCheck, builder);
     builder.buildVariableAssignment(test, test2);
 
     builder.deIncrimentWhileLoopLevel();
 
     if(whilebranch.getNextBranch() != null) {
       builder.buildElseWhileLoopBeginning();
-      whilebranch.getNextBranch().accept(this);
+      generateBranchIr(whilebranch, builder);
     } else {
       builder.buildWhileLoopEnd();
     }
   }
     
-  @Override
-  public void visit(IfElifBranch ifbranch){
+  public void generateBranchIr(Branch branch, StatementBuilder builder){
+    if(branch instanceof IfElifBranch) generateIfBranchIr((IfElifBranch)branch, builder);
+    else if(branch instanceof ElseBranch) generateElseBranchIr((ElseBranch)branch, builder);
+    else if(branch instanceof WhileElifBranch) generateWhileBranchIr((WhileElifBranch)branch, builder);
+    else if(branch instanceof RepeatBranch) generateRepeatLoopIr((RepeatBranch)branch, builder);
+    else if(branch instanceof ForBranch) generateForLoopIr((ForBranch)branch, builder);
+    else {
+      errorLog.add("Error unexpected branch type " + branch.getClass().getSimpleName(), branch.getStart());
+    }
+  }
+  public void generateIfBranchIr(IfElifBranch ifbranch, StatementBuilder builder){
     Expression toCheck = ifbranch.getExpression();
-    String test = toCheck.acceptResult(this);
+    String test = generateExpressionIr(toCheck, builder);
     IdentExp ident = new IdentExp(test);
     builder.buildIfStatementBeginning(ident);
 
     builder.incrimentIfStatementLevel();
     List<Statement> toExec = ifbranch.getExecStatements();
     for(int i = 0; i < toExec.size(); i++){
-      toExec.get(i).accept(this);
+      generateStatementIr(toExec.get(i), builder);
     }
     builder.deIncrimentIfStatementLevel();
 
     if(ifbranch.getNextBranch() != null) {
       builder.buildElseIfStatementBeginning();
-      ifbranch.getNextBranch().accept(this);
+      generateBranchIr(ifbranch.getNextBranch(), builder);
     } else {
       builder.buildIfStatementEnd();
     }
   }
 
-  @Override
-  public void visit(ElseBranch elsebranch){
+  public void generateElseBranchIr(ElseBranch elsebranch, StatementBuilder builder){
     List<Statement> toExec = elsebranch.getExecStatements();
     builder.incrimentIfStatementLevel();
     for(int i = 0; i < toExec.size(); i++){
-      toExec.get(i).accept(this);
+      generateStatementIr(toExec.get(i), builder);
     }
     builder.deIncrimentIfStatementLevel();
     builder.buildIfStatementEnd();
   }
 
-  @Override
-  public void visit(RepeatBranch repeatbranch){
+  public void generateRepeatLoopIr(RepeatBranch repeatbranch, StatementBuilder builder){
     Expression toCheck = repeatbranch.getExpression();
     List<Statement> toExec = repeatbranch.getExecStatements();
-    String test = toCheck.acceptResult(this);
+    String test = generateExpressionIr(toCheck, builder);
 
     builder.buildRepeatLoopBeginning(test);
 
     builder.incrimentRepeatLoopLevel();
     for(int i = 0; i < toExec.size(); i++){
-	    toExec.get(i).accept(this);
+	    generateStatementIr(toExec.get(i), builder);
     }
     builder.deIncrimentRepeatLoopLevel();
 
-    String test2 = toCheck.acceptResult(this);
+    String test2 = generateExpressionIr(toCheck, builder);
     builder.buildVariableAssignment(test, test2);
 
     builder.buildRepeatLoopEnd();
   }
 
-  @Override
-  public void visit(ForBranch forbranch){
+  public void generateForLoopIr(ForBranch forbranch, StatementBuilder builder){
     Expression toMod = forbranch.getModifyExpression();
     List<Statement> toExec = forbranch.getExecStatements();
     if(toMod != null){
-        forbranch.getInitAssignment().accept(this);
-        String target = forbranch.getTargetExpression().acceptResult(this);
+        generateAssignmentIr(forbranch.getInitAssignment(), builder);
+        String target = generateExpressionIr(forbranch.getTargetExpression(), builder);
         
         IdentExp targetIdent = new IdentExp(target);
         StringEntry curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
@@ -395,11 +435,11 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
         
         builder.incrimentForLoopLevel();
         for(int i = 0; i < toExec.size(); i++){
-            toExec.get(i).accept(this);
+            generateStatementIr(toExec.get(i), builder);
         }
         builder.deIncrimentForLoopLevel();
 
-        String incriment = toMod.acceptResult(this);
+        String incriment = generateExpressionIr(toMod, builder);
         TypeCheckerQualities qual = toMod.acceptResult(typeChecker);
         if(qual.containsQualities(TypeCheckerQualities.REAL)){
           String result = builder.buildRealAdditionAssignment(new IdentExp(curvalue.toString()), new IdentExp(incriment));
@@ -411,74 +451,69 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
 
         builder.buildForLoopEnd();
     } else {
-      forbranch.getInitAssignment().accept(this);
-      String target = forbranch.getTargetExpression().acceptResult(this);
+      generateAssignmentIr(forbranch.getInitAssignment(), builder);
+      String target = generateExpressionIr(forbranch.getTargetExpression(), builder);
       IdentExp targetIdent = new IdentExp(target);
       StringEntry curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
       IdentExp curvalueIdent = new IdentExp(curvalue.toString());
       builder.buildForLoopBeginning(curvalueIdent, BinExp.Operator.NE, targetIdent);
       builder.incrimentForLoopLevel();
       for(int i = 0; i < toExec.size(); i++){
-          toExec.get(i).accept(this);
+          generateStatementIr(toExec.get(i), builder);
       }
       builder.deIncrimentForLoopLevel();
       builder.buildForLoopEnd();
     }
   }
         
-  @Override
-  public void visit(Assignment assignment) {
+  public void generateAssignmentIr(Assignment assignment, AssignmentBuilder builder) {
     StringEntry place = varEnvironment.getEntry(assignment.getVariableName().getLexeme());
-    String value = assignment.getVariableValue().acceptResult(this);
+    String value = generateExpressionIr(assignment.getVariableValue(), builder);
     builder.buildVariableAssignment(place.toString(), value);
   }
+
+  public void generateInlineAssemblyIr(Asm asm, StatementBuilder builder) {
+     List<String> icodeParams = new LinkedList<String>();
+     for(String param : asm.getParamaters()){
+       if(varEnvironment.inScope(param)){
+          StringEntry icodeParam = varEnvironment.getEntry(param);
+          icodeParams.add(icodeParam.toString());
+       }
+       else if(paramEnvironment.entryExists(param)){
+          StringEntry icodeParam = paramEnvironment.getEntry(param);
+          String result = builder.buildParamaterAssignment(icodeParam.toString());
+          icodeParams.add(result);
+          varEnvironment.addEntry(param, new StringEntry(result));
+       } else {
+         StringEntry icodeParam = varEnvironment.getEntry(param);
+         icodeParams.add(icodeParam.toString());
+       }
+     }
+     builder.buildInlineAssembly(asm.getInlineAssembly(), icodeParams);
+  }
+
   
-  @Override
-  public void visit(EmptyStatement emptyStatement) {
-    // Not used
-  }
-  @Override
-  public void visit(UnaryOperation unaryOperation) {
-    // Not used
-  }
-
-  @Override
-  public void visit(BinaryOperation binaryOperation) {
-    // Not used
-  }
-
-  @Override
-  public void visit(NumValue numValue) {
-    // Not used
-  }
-
-  @Override
-  public void visit(StrValue numValue) {
-    // Not used
-  }
-
-  @Override
-  public void visit(BoolValue boolValue) {
-    // Not used
-  }
-
-  @Override
-  public void visit(Identifier identifier) {
-    // Not used
-  }
-
-  @Override
-  public void visit(FunctionCall funcCall){
-    // Not used
+  public String generateExpressionIr(Expression exp, AssignmentBuilder builder){
+    if(exp instanceof BinaryOperation) return generateBinaryOperationIr((BinaryOperation)exp, builder);
+    else if(exp instanceof FunctionCall) return generateFunctionCallIr((FunctionCall)exp, builder);
+    else if(exp instanceof UnaryOperation) return generateUnaryOperationIr((UnaryOperation)exp, builder);
+    else if(exp instanceof Identifier) return generateIdentifierIr((Identifier)exp, builder);
+    else if(exp instanceof NumValue) return generateNumberIr((NumValue)exp, builder);
+    else if(exp instanceof BoolValue) return generateBooleanIr((BoolValue)exp, builder);
+    else if(exp instanceof StrValue) return generateStringIr((StrValue)exp, builder);
+    else {
+      errorLog.add("Error Invalid Expression Type found when generating Ir", exp.getStart());
+      return "NOTFOUND";
+    }
   }
   
-  @Override
-  public String visitResult(BinaryOperation binaryOperation) {
-      String leftValue = binaryOperation.getLeft().acceptResult(this);
+  
+  public String generateBinaryOperationIr(BinaryOperation binaryOperation, AssignmentBuilder builder) {
+      String leftValue = generateExpressionIr(binaryOperation.getLeft(), builder);
       IdentExp leftIdent = new IdentExp(leftValue);
       TypeCheckerQualities leftType = binaryOperation.getLeft().acceptResult(typeChecker);
       
-      String rightValue = binaryOperation.getRight().acceptResult(this);
+      String rightValue = generateExpressionIr(binaryOperation.getRight(), builder);
       IdentExp rightIdent = new IdentExp(rightValue);
       TypeCheckerQualities rightType = binaryOperation.getRight().acceptResult(typeChecker);
 
@@ -536,25 +571,23 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     }
   }
 
-  @Override
-  public String visitResult(FunctionCall funcCall) {
+  public String generateFunctionCallIr(FunctionCall funcCall, AssignmentBuilder builder) {
     String funcName = funcCall.getFunctionName().getLexeme();
     List<Expression> valArgs = funcCall.getArguments();
     List<Tuple<String, String>> valArgResults = new ArrayList<>();
     StringEntryList argsToMap = procArgs.getEntry(funcName);
     for(int i = 0; i < valArgs.size(); i++){
       Expression valArg = valArgs.get(i);
-	    String result = valArg.acceptResult(this);
+	    String result = generateExpressionIr(valArg, builder);
 	    valArgResults.add(new Tuple<String, String>(result, argsToMap.get(i)));
     }
-    builder.buildProcedure(funcName, valArgResults);
+    builder.buildProcedureCall(funcName, valArgResults);
     StringEntry returnPlace = procEnvironment.getEntry(funcName);
     return builder.buildExternalReturnPlacement(returnPlace.toString());
   }
 
-  @Override
-  public String visitResult(UnaryOperation unaryOperation) {
-    String value = unaryOperation.getExpression().acceptResult(this);
+  public String generateUnaryOperationIr(UnaryOperation unaryOperation, AssignmentBuilder builder) {
+    String value = generateExpressionIr(unaryOperation.getExpression(), builder);
     IdentExp valueIdent = new IdentExp(value);
     TypeCheckerQualities rightType = unaryOperation.getExpression().acceptResult(typeChecker);
 
@@ -573,9 +606,8 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
 	    }
     }
   }
-    
-  @Override
-  public String visitResult(Identifier identifier){
+
+  public String generateIdentifierIr(Identifier identifier, AssignmentBuilder builder){
     if(varEnvironment.inScope(identifier.getLexeme())){
       StringEntry place = varEnvironment.getEntry(identifier.getLexeme());
       if(place != null)
@@ -600,68 +632,25 @@ public class MyICodeGenerator implements ASTVisitor, ExpressionVisitor<String>, 
     }
   }
 
-  @Override
-  public String visitResult(NumValue numValue){
+  public String generateNumberIr(NumValue numValue, AssignmentBuilder builder){
       String rawnum = ifHexToInt(numValue.getLexeme());
       return builder.buildNumAssignment(rawnum);
   }
 
-  @Override
-  public String visitResult(BoolValue boolValue){
+  public String generateBooleanIr(BoolValue boolValue, AssignmentBuilder builder){
       String lexeme = boolValue.getLexeme(); //change to hex if you need to otherwise unchanged
       return builder.buildBoolAssignment(lexeme);
   }
 
-  @Override
-  public String visitResult(StrValue strValue){
+  public String generateStringIr(StrValue strValue, AssignmentBuilder builder){
       return builder.buildStringAssignment(strValue.getLexeme());
   }
 
-  @Override
-  public String visitResult(ConstDeclaration constDeclaration) {
-    return null;
-  }
 
-  @Override
-  public String visitResult(VariableDeclaration varDeclaration) {
-    return null;
-  }
-
-  @Override
-  public String visitResult(ProcedureDeclaration varDeclaration) {
-    return null;
-  }
-
-  @Override
-  public String visitResult(ParamaterDeclaration parDeclaration) {
+  public String generateParamaterDeclarationIr(ParamaterDeclaration parDeclaration, AssignmentBuilder builder) {
     Identifier id = parDeclaration.getIdentifier();
-    String alias = builder.buildAlias();
+    String alias = gen.genNextRegister();
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(alias));
     return alias;
-  }
-
-  @Override
-  public void visit(ParamaterDeclaration declaration) {
-  }
-
-  @Override
-  public void visit(Asm asm) {
-     List<String> icodeParams = new LinkedList<String>();
-     for(String param : asm.getParamaters()){
-       if(varEnvironment.inScope(param)){
-          StringEntry icodeParam = varEnvironment.getEntry(param);
-          icodeParams.add(icodeParam.toString());
-       }
-       else if(paramEnvironment.entryExists(param)){
-          StringEntry icodeParam = paramEnvironment.getEntry(param);
-          String result = builder.buildParamaterAssignment(icodeParam.toString());
-          icodeParams.add(result);
-          varEnvironment.addEntry(param, new StringEntry(result));
-       } else {
-         StringEntry icodeParam = varEnvironment.getEntry(param);
-         icodeParams.add(icodeParam.toString());
-       }
-     }
-     builder.buildInlineAssembly(asm.getInlineAssembly(), icodeParams);
   }
 }

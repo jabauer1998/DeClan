@@ -30,7 +30,7 @@ public class Prog implements ICode {
 
     @Override
     public P asPattern() {
-        return P.PAT(variables.asPattern(), procedures.asPattern(), code.asPattern());
+        return P.PAT(variables.asPattern(), procedures.asPattern(), code.asPattern(), end.asPattern());
     }
 
     @Override

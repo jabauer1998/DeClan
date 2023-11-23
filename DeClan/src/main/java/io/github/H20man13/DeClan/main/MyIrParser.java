@@ -128,6 +128,8 @@ public class MyIrParser {
     }
 
     public DataSec parseDataSection(){
+        match(IrTokenType.DATA);
+        match(IrTokenType.SECTION);
         List<ICode> assignments = new LinkedList<ICode>();
         while(willMatch(IrTokenType.ID)){
             ICode icode = parseAssignment();
@@ -137,6 +139,8 @@ public class MyIrParser {
     }
 
     public ProcSec parseProcedureSection(){
+        match(IrTokenType.PROC);
+        match(IrTokenType.SECTION);
         List<Proc> procedures = new LinkedList<Proc>();
         while(willMatch(IrTokenType.PROC)){
             Proc procedure = parseProcedure();
@@ -170,6 +174,8 @@ public class MyIrParser {
     }
 
     public CodeSec parseCodeSection(){
+        match(IrTokenType.CODE);
+        match(IrTokenType.SECTION);
         List<ICode> instructions = parseInstructions();
         return new CodeSec(instructions);
     }
