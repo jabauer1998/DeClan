@@ -12,14 +12,14 @@ import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
-import io.github.H20man13.DeClan.common.icode.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.procedure.Call;
+import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
+import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
 
 public class LiveVariableAnalysis extends Analysis<String> {
 

@@ -6,11 +6,11 @@ import java.util.List;
 import edu.depauw.declan.common.Position;
 
 public class Library extends AbstractASTNode{
-    private final List<Declaration> constDecls;
-    private final List<Declaration> varDecls;
-    private final List<Declaration> procDecls;
+    private final List<ConstDeclaration> constDecls;
+    private final List<VariableDeclaration> varDecls;
+    private final List<ProcedureDeclaration> procDecls;
 
-    public Library(Position start, List<Declaration> constDecls, List<Declaration> varDecls, List<Declaration> procDecls){
+    public Library(Position start, List<ConstDeclaration> constDecls, List<VariableDeclaration> varDecls, List<ProcedureDeclaration> procDecls){
         super(start);
         this.constDecls = constDecls;
         this.varDecls = varDecls;
@@ -20,30 +20,30 @@ public class Library extends AbstractASTNode{
     public Library(Position start, List<Declaration> declarations){
         super(start);
 
-        this.constDecls = new LinkedList<Declaration>();
-        this.varDecls = new LinkedList<Declaration>();
-        this.procDecls = new LinkedList<Declaration>();
+        this.constDecls = new LinkedList<ConstDeclaration>();
+        this.varDecls = new LinkedList<VariableDeclaration>();
+        this.procDecls = new LinkedList<ProcedureDeclaration>();
 
         for(Declaration decl : declarations){
             if(decl instanceof ConstDeclaration){
-                this.constDecls.add(decl);
+                this.constDecls.add((ConstDeclaration)decl);
             } else if(decl instanceof ProcedureDeclaration){
-                this.procDecls.add(decl);
+                this.procDecls.add((ProcedureDeclaration)decl);
             } else if(decl instanceof VariableDeclaration){
-                this.varDecls.add(decl);
+                this.varDecls.add((VariableDeclaration)decl);
             }
         }
     }
 
-    public List<Declaration> getConstDecls(){
+    public List<ConstDeclaration> getConstDecls(){
         return this.constDecls;
     }
 
-    public List<Declaration> getVarDecls(){
+    public List<VariableDeclaration> getVarDecls(){
         return this.varDecls;
     }
 
-    public List<Declaration> getProcDecls(){
+    public List<ProcedureDeclaration> getProcDecls(){
         return this.procDecls;
     }
 

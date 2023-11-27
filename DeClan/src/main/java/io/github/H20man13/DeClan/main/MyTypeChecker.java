@@ -102,41 +102,39 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 	}
     }
 
-	public void loadFunctions(List<Declaration> functions){
-		for(Declaration decl : functions){
+	public void loadFunctions(List<ProcedureDeclaration> functions){
+		for(ProcedureDeclaration decl : functions){
 			loadFunction(decl);
 		}
 	}
 
-	private void loadFunction(Declaration decl){
-		if(decl instanceof ProcedureDeclaration){
-			ProcedureDeclaration procDecl = (ProcedureDeclaration)decl;
-			if(!procEnvironment.entryExists(procDecl.getProcedureName().getLexeme())){
-	    		varEnvironment.addScope();
-	    		List <ParamaterDeclaration> args = procDecl.getArguments();
-				List <TypeCheckerQualities> argTypes = new LinkedList<TypeCheckerQualities>();
-	    		for(ParamaterDeclaration argDecl : args){
-					argDecl.accept(this);
-					TypeCheckerQualities type = varEnvironment.getEntry(argDecl.getIdentifier().getLexeme());
-					argTypes.add(type);
-	    		}
-	    		List <Declaration> localVars = procDecl.getLocalVariables();
-	    		for(Declaration varDecl : localVars){
-					varDecl.accept(this);
-	    		}
-
-				Expression retExp = procDecl.getReturnStatement();
-	    		String returnType = procDecl.getReturnType().getLexeme();
-				TypeCheckerQualities myType = StringToType(returnType);
-				if(myType.containsQualities(TypeCheckerQualities.NA) && retExp != null){
-					myType = retExp.acceptResult(this);
-				} else if(myType.containsQualities(TypeCheckerQualities.VOID) || retExp == null) {
-					myType = new TypeCheckerQualities(TypeCheckerQualities.VOID);
-				}
-
-				procEnvironment.addEntry(procDecl.getProcedureName().getLexeme(), new ProcedureTypeEntry(myType, argTypes));
-				varEnvironment.removeScope();
+	private void loadFunction(ProcedureDeclaration decl){
+		ProcedureDeclaration procDecl = (ProcedureDeclaration)decl;
+		if(!procEnvironment.entryExists(procDecl.getProcedureName().getLexeme())){
+			varEnvironment.addScope();
+			List <ParamaterDeclaration> args = procDecl.getArguments();
+			List <TypeCheckerQualities> argTypes = new LinkedList<TypeCheckerQualities>();
+			for(ParamaterDeclaration argDecl : args){
+				argDecl.accept(this);
+				TypeCheckerQualities type = varEnvironment.getEntry(argDecl.getIdentifier().getLexeme());
+				argTypes.add(type);
 			}
+			List <Declaration> localVars = procDecl.getLocalVariables();
+			for(Declaration varDecl : localVars){
+				varDecl.accept(this);
+			}
+
+			Expression retExp = procDecl.getReturnStatement();
+			String returnType = procDecl.getReturnType().getLexeme();
+			TypeCheckerQualities myType = StringToType(returnType);
+			if(myType.containsQualities(TypeCheckerQualities.NA) && retExp != null){
+				myType = retExp.acceptResult(this);
+			} else if(myType.containsQualities(TypeCheckerQualities.VOID) || retExp == null) {
+				myType = new TypeCheckerQualities(TypeCheckerQualities.VOID);
+			}
+
+			procEnvironment.addEntry(procDecl.getProcedureName().getLexeme(), new ProcedureTypeEntry(myType, argTypes));
+			varEnvironment.removeScope();
 		}
 	}
     

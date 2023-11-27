@@ -1,8 +1,9 @@
-package io.github.H20man13.DeClan.common.icode;
+package io.github.H20man13.DeClan.common.icode.procedure;
 
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Call implements ICode {

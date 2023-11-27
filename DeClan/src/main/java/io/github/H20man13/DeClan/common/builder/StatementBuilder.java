@@ -6,6 +6,7 @@ import java.util.List;
 import edu.depauw.declan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.builder.section.SymbolSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.template.ResetableBuilder;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -18,8 +19,8 @@ public abstract class StatementBuilder extends AssignmentBuilder implements Rese
     private IrRegisterGenerator gen;
     private MyIrFactory factory;
     
-    protected StatementBuilder(IrBuilderContext ctx, IrRegisterGenerator gen, ErrorLog errLog) {
-        super(ctx, gen, errLog);
+    protected StatementBuilder(SymbolSectionBuilder symbols, IrBuilderContext ctx, IrRegisterGenerator gen, ErrorLog errLog) {
+        super(symbols, ctx, gen, errLog);
         this.ctx = ctx;
         this.gen = gen;
         this.intermediateCode = new LinkedList<ICode>();

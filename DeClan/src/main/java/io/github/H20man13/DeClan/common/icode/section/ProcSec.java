@@ -3,7 +3,7 @@ package io.github.H20man13.DeClan.common.icode.section;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
-import io.github.H20man13.DeClan.common.icode.Proc;
+import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.pat.Pattern;
 

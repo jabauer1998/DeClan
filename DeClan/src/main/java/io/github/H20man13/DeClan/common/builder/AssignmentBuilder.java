@@ -6,6 +6,7 @@ import java.util.List;
 import edu.depauw.declan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.builder.section.SymbolSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.template.ResetableBuilder;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -20,11 +21,17 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
     private IrBuilderContext ctx;
     private IrRegisterGenerator gen;
     private MyIrFactory factory;
+    private SymbolSectionBuilder symbols;
     
-    protected AssignmentBuilder(IrBuilderContext ctx, IrRegisterGenerator gen, ErrorLog errLog){
+    protected AssignmentBuilder(SymbolSectionBuilder symbols, IrBuilderContext ctx, IrRegisterGenerator gen, ErrorLog errLog){
         this.ctx = ctx;
         this.factory = new MyIrFactory(errLog);
+        this.symbols = symbols;
         resetBuilder();
+    }
+
+    public SymbolSectionBuilder getSymbolSectionBuilder(){
+        return symbols;
     }
 
     public String buildStringAssignment(String value){

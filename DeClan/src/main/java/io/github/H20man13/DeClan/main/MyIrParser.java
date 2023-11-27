@@ -13,14 +13,11 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
-import io.github.H20man13.DeClan.common.icode.InternalPlace;
 import io.github.H20man13.DeClan.common.icode.Lib;
-import io.github.H20man13.DeClan.common.icode.ParamAssign;
-import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
+import io.github.H20man13.DeClan.common.icode.SymEntry;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -32,9 +29,15 @@ import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
+import io.github.H20man13.DeClan.common.icode.procedure.Call;
+import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
+import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
+import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
+import io.github.H20man13.DeClan.common.icode.section.SymSec;
+import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.token.IrToken;
 import io.github.H20man13.DeClan.common.token.IrTokenType;
 import io.github.H20man13.DeClan.common.util.Utils;
@@ -109,22 +112,32 @@ public class MyIrParser {
     }
 
     public Prog parseProgram(){
+        SymSec sym = parseSymbolSection();
         DataSec data = parseDataSection();
         ProcSec proc = parseProcedureSection();
         CodeSec code = parseCodeSection();
-        match(IrTokenType.END);
-        End end = new End();
         matchEOF();
-        return new Prog(data, proc, code, end);
+        return new Prog(sym, data, proc, code);
     }
 
     public Lib parseLibrary(){
+        SymSec sym = parseSymbolSection();
         DataSec data = parseDataSection();
         ProcSec proc = parseProcedureSection();
-        match(IrTokenType.END);
-        End end = new End();
         matchEOF();
-        return new Lib(data, proc, end);
+        return new Lib(sym, data, proc);
+    }
+
+    public SymSec parseSymbolSection(){
+        match(IrTokenType.SYMBOL);
+        match(IrTokenType.SECTION);
+
+        List<SymEntry> symEntries = new LinkedList<SymEntry>();
+        while(willMatch(IrTokenType.ID)){
+            SymEntry entry = parseSymbolEntry();
+            symEntries.add(entry);
+        }
+        return new SymSec(symEntries);
     }
 
     public DataSec parseDataSection(){
@@ -147,6 +160,27 @@ public class MyIrParser {
             procedures.add(procedure);
         }
         return new ProcSec(procedures);
+    }
+
+    public SymEntry parseSymbolEntry(){
+        int resultMask = 0;
+        IrToken irPlace = match(IrTokenType.ID);
+        if(willMatch(IrTokenType.CONST)){
+            skip();
+            resultMask |= SymEntry.CONST;
+        }
+
+        if(willMatch(IrTokenType.INTERNAL)){
+            skip();
+            resultMask |= SymEntry.INTERNAL;
+        } else {
+            match(IrTokenType.EXTERNAL);
+            resultMask |= SymEntry.EXTERNAL;
+        }
+
+        IrToken declanIdent = match(IrTokenType.ID);
+
+        return new SymEntry(resultMask, irPlace.toString(), declanIdent.toString());
     }
 
     public Proc parseProcedure(){
@@ -177,6 +211,7 @@ public class MyIrParser {
         match(IrTokenType.CODE);
         match(IrTokenType.SECTION);
         List<ICode> instructions = parseInstructions();
+        match(IrTokenType.END);
         return new CodeSec(instructions);
     }
 

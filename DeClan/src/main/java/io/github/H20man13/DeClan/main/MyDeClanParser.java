@@ -145,17 +145,17 @@ public class MyDeClanParser implements Parser {
   // Library -> DeclDequence
   public Library parseLibrary(){
     Position start = currentPosition;
-    List<Declaration> constDeclarations = new LinkedList<Declaration>();
+    List<ConstDeclaration> constDeclarations = new LinkedList<ConstDeclaration>();
     if(willMatch(TokenType.CONST)){
       skip();
       constDeclarations.addAll(parseConstDeclSequence());
     }
-    List<Declaration> varDeclarations = new LinkedList<Declaration>();
+    List<VariableDeclaration> varDeclarations = new LinkedList<VariableDeclaration>();
     if(willMatch(TokenType.VAR)){
       skip();
       varDeclarations.addAll(parseVariableDeclSequence());
     }
-    List<Declaration> procDeclarations = new LinkedList<Declaration>();
+    List<ProcedureDeclaration> procDeclarations = new LinkedList<ProcedureDeclaration>();
     procDeclarations.addAll(parseProcedureDeclSequence());
 
     return new Library(start, constDeclarations, varDeclarations, procDeclarations);
@@ -165,17 +165,17 @@ public class MyDeClanParser implements Parser {
   @Override
   public Program parseProgram() {
     Position start = currentPosition;
-    List<Declaration> constDeclarations = new LinkedList<Declaration>();
+    List<ConstDeclaration> constDeclarations = new LinkedList<ConstDeclaration>();
     if(willMatch(TokenType.CONST)){
       skip();
       constDeclarations.addAll(parseConstDeclSequence());
     }
-    List<Declaration> varDeclarations = new LinkedList<Declaration>();
+    List<VariableDeclaration> varDeclarations = new LinkedList<VariableDeclaration>();
     if(willMatch(TokenType.VAR)){
       skip();
       varDeclarations.addAll(parseVariableDeclSequence());
     }
-    List<Declaration> procDeclarations = new LinkedList<Declaration>();
+    List<ProcedureDeclaration> procDeclarations = new LinkedList<ProcedureDeclaration>();
     procDeclarations.addAll(parseProcedureDeclSequence());
     match(TokenType.BEGIN);
     List<Statement> statements = parseStatementSequence();

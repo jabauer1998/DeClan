@@ -2,6 +2,7 @@ package io.github.H20man13.DeClan.common.icode.section;
 
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
@@ -25,10 +26,12 @@ public class CodeSec implements ICode {
     @Override
     public P asPattern() {
         int size = intermediateCode.size();
-        P[] patList = new P[size];
-        for(int i = 0; i < size; i++){
+        P[] patList = new P[size + 1];
+        int i;
+        for(i = 0; i < size + 1; i++){
             patList[i] = intermediateCode.get(i).asPattern();
         }
+        patList[i] = P.END();
         return P.PAT(patList);
     }
 
@@ -41,6 +44,7 @@ public class CodeSec implements ICode {
             sb.append(icode.toString());
             sb.append("\r\n");
         }
+        sb.append("End\r\n");
         return sb.toString();
     }
 }

@@ -6,13 +6,11 @@ import java.util.List;
 import edu.depauw.declan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.builder.section.SymbolSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.template.CompletableBuilder;
 import io.github.H20man13.DeClan.common.builder.template.ResetableBuilder;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
-import io.github.H20man13.DeClan.common.icode.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.ParamAssign;
-import io.github.H20man13.DeClan.common.icode.Proc;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -20,6 +18,9 @@ import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
+import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
+import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
+import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.main.MyIrFactory;
 
 public class ProcedureBuilder extends StatementBuilder implements CompletableBuilder<Proc>, ResetableBuilder {
@@ -31,8 +32,8 @@ public class ProcedureBuilder extends StatementBuilder implements CompletableBui
     private InternalPlace returnPlace;
     private Return ret;
 
-    public ProcedureBuilder(IrBuilderContext ctx, IrRegisterGenerator gen, ErrorLog errLog){
-        super(ctx, gen, errLog);
+    public ProcedureBuilder(SymbolSectionBuilder symbols, IrBuilderContext ctx, IrRegisterGenerator gen, ErrorLog errLog){
+        super(symbols, ctx, gen, errLog);
         this.ctx = ctx;
         this.gen = gen;
         this.factory = new MyIrFactory(errLog);

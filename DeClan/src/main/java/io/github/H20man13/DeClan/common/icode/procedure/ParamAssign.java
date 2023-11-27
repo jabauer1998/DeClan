@@ -1,5 +1,6 @@
-package io.github.H20man13.DeClan.common.icode;
+package io.github.H20man13.DeClan.common.icode.procedure;
 
+import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class ParamAssign implements ICode {

@@ -13,7 +13,6 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.Prog;
 
 public class MyCompilerDriver {
-    
     public static void main(String[] args) throws FileNotFoundException{
         Source source = new ReaderSource(new FileReader(args[0]));
         ErrorLog errLog = new ErrorLog();

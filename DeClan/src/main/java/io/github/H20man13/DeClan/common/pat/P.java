@@ -730,6 +730,54 @@ public abstract class P {
         
     }
 
+    public static class PUBLIC extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof PUBLIC){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "PUBLIC";
+        }
+    }
+
+    public static class PRIVATE extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof PRIVATE){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "PRIVATE";
+        }
+    }
+
+    public static class CONST extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof CONST){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "CONST";
+        }
+    }
+
     public static class PAT extends P{
         private P[] pattern;
 
@@ -936,6 +984,15 @@ public abstract class P {
     }
     public static PLACE PLACE(){
         return new PLACE();
+    }
+    public static CONST CONST(){
+        return new CONST();
+    }
+    public static PUBLIC PUBLIC(){
+        return new PUBLIC();
+    }
+    public static PRIVATE PRIVATE(){
+        return new PRIVATE();
     }
 
     @Override

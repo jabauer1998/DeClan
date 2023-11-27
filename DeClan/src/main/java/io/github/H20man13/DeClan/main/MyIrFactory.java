@@ -9,10 +9,7 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
-import io.github.H20man13.DeClan.common.icode.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
@@ -26,6 +23,9 @@ import io.github.H20man13.DeClan.common.icode.exp.BinExp.Operator;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
+import io.github.H20man13.DeClan.common.icode.procedure.Call;
+import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
+import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class MyIrFactory {

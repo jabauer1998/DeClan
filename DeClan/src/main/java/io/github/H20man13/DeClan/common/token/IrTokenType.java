@@ -52,6 +52,10 @@ public enum IrTokenType {
     SECTION,
     CODE,
     DATA,
+    EXTERNAL,
+    SYMBOL,
+    INTERNAL,
+    CONST,
     
     //Operators
     ASSIGN,
@@ -143,6 +147,10 @@ public enum IrTokenType {
         addKeyword(SECTION);
         addKeyword(CODE);
         addKeyword(DATA);
+        addKeyword(EXTERNAL);
+        addKeyword(INTERNAL);
+        addKeyword(SYMBOL);
+        addKeyword(CONST);
 
         dualOperators = new HashMap<>();
         addDualOp(":=", ASSIGN);

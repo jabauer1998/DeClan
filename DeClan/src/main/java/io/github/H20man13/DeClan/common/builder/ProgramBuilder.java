@@ -2,6 +2,10 @@ package io.github.H20man13.DeClan.common.builder;
 
 import edu.depauw.declan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
+import io.github.H20man13.DeClan.common.builder.section.CodeSectionBuilder;
+import io.github.H20man13.DeClan.common.builder.section.DataSectionBuilder;
+import io.github.H20man13.DeClan.common.builder.section.ProcedureSectionBuilder;
+import io.github.H20man13.DeClan.common.builder.section.SymbolSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.template.CompletableBuilder;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Lib;
@@ -12,13 +16,15 @@ public class ProgramBuilder implements CompletableBuilder<Prog> {
     private DataSectionBuilder variables;
     private ProcedureSectionBuilder procedures;
     private CodeSectionBuilder code;
+    private SymbolSectionBuilder symbols;
     private IrRegisterGenerator gen;
 
     public ProgramBuilder(IrBuilderContext ctx, IrRegisterGenerator gen, ErrorLog errLog){
         this.ctx = ctx;
-        this.variables = new DataSectionBuilder(ctx, gen, errLog);
-        this.procedures = new ProcedureSectionBuilder(ctx, gen, errLog);
-        this.code = new CodeSectionBuilder(ctx, gen, errLog);
+        this.symbols = new SymbolSectionBuilder(errLog);
+        this.variables = new DataSectionBuilder(symbols, ctx, gen, errLog);
+        this.procedures = new ProcedureSectionBuilder(symbols, ctx, gen, errLog);
+        this.code = new CodeSectionBuilder(symbols, ctx, gen, errLog);
     }
 
     public ProcedureSectionBuilder getProcedureSectionBuilder(){
@@ -35,6 +41,6 @@ public class ProgramBuilder implements CompletableBuilder<Prog> {
 
     @Override
     public Prog completeBuild() {
-        return new Prog(variables.completeBuild(), procedures.completeBuild(), code.completeBuild(), new End());
+        return new Prog(symbols.completeBuild(), variables.completeBuild(), procedures.completeBuild(), code.completeBuild());
     }
 }
