@@ -9,7 +9,6 @@ import java.util.Set;
 
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.model.SymbolTable;
-import io.github.H20man13.DeClan.common.BasicBlock;
 import io.github.H20man13.DeClan.common.dag.DagGraph;
 import io.github.H20man13.DeClan.common.dag.DagInlineAssemblyNode;
 import io.github.H20man13.DeClan.common.dag.DagNode;
@@ -18,12 +17,12 @@ import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.dag.DagValueNode;
 import io.github.H20man13.DeClan.common.dag.DagVariableNode;
 import io.github.H20man13.DeClan.common.dag.DagVariableNode.VariableType;
+import io.github.H20man13.DeClan.common.flow.block.BasicBlock;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
-import io.github.H20man13.DeClan.common.icode.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -34,6 +33,7 @@ import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
+import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
 import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
@@ -44,296 +44,11 @@ public class BlockNode implements FlowGraphNode {
     protected BasicBlock block;
     protected List<FlowGraphNode> successors;
     protected List<FlowGraphNode> predecessors;
-    protected DagNodeFactory factory;
-    protected DagGraph dag;
 
-    public BlockNode(BasicBlock block, Map<ICode, Environment<String, LiveInfo>> liveInfo){
+    public BlockNode(BasicBlock block){
         this.block = block;
         this.successors = new ArrayList<FlowGraphNode>();
         this.predecessors = new ArrayList<FlowGraphNode>();
-        this.dag = new DagGraph();
-        this.factory = new DagNodeFactory();
-        this.buildDag(liveInfo);
-    }
-
-    private void buildCodeFromDag(Map<ICode, Environment<String, LiveInfo>> liveInfo){
-        List<ICode> result = new LinkedList<ICode>();
-        List<ICode> initialList = this.getICode();
-        int initialListSize = initialList.size();
-
-        if(initialListSize > 0){
-            ICode firstElem = initialList.get(0);
-            if(firstElem instanceof Label){
-                result.add(firstElem);
-            }
-        }
-
-        Environment<String, LiveInfo> liveAtEndOfBlock = liveInfo.get(initialList.get(initialListSize - 1));
-
-        for(DagNode node : this.dag.getDagNodes()){
-
-            List<String> isAlive = new LinkedList<String>();
-            for(String identifier: node.getIdentifiers()){
-                if(liveAtEndOfBlock.entryExists(identifier)){
-                    LiveInfo info = liveAtEndOfBlock.getEntry(identifier);
-                    if(info.isAlive){
-                        isAlive.add(identifier);
-                    }
-                }
-            }
-
-            String identifier = null;
-            if(isAlive.size() > 0){
-                identifier = isAlive.remove(0);
-            } else {
-                identifier = node.getIdentifiers().get(0);
-            }
-
-            if(node instanceof DagOperationNode){
-                DagOperationNode node2 = (DagOperationNode)node;
-
-                if(node2.getChildren().size() == 2){
-                    //Its a Binary Operation
-                    DagOperationNode.Op op = node2.getOperator();
-                    BinExp.Operator op2 = Utils.getBinOp(op);
-
-                    DagNode child1 = node2.getChildren().get(0);
-                    DagNode child2 = node2.getChildren().get(1);
-
-                    String identifier1 = Utils.getIdentifier(child1, liveAtEndOfBlock);
-                    String identifier2 = Utils.getIdentifier(child2, liveAtEndOfBlock);
-
-                    IdentExp exp1 = new IdentExp(identifier1);
-                    IdentExp exp2 = new IdentExp(identifier2);
-
-                    BinExp binExp = new BinExp(exp1, op2, exp2);
-
-                    result.add(new Assign(identifier, binExp));
-                } else if(node2.getChildren().size() == 1) {
-                    //Its a Unary Operation
-                    DagOperationNode.Op op = node2.getOperator();
-                    UnExp.Operator op2 = Utils.getUnOp(op);
-
-                    DagNode child1 = node2.getChildren().get(0);
-
-                    String identifier1 = Utils.getIdentifier(child1, liveAtEndOfBlock);
-
-                    IdentExp exp1 = new IdentExp(identifier1);
-
-                    UnExp unExp = new UnExp(op2, exp1);
-
-                    result.add(new Assign(identifier, unExp));
-                }
-            } else if(node instanceof DagValueNode){
-                DagValueNode valNode = (DagValueNode)node;
-                Object value = valNode.getValue();
-                Exp resultExp = Utils.valueToExp(value);
-                result.add(new Assign(identifier, resultExp));
-            } else if(node instanceof DagVariableNode){
-                DagVariableNode varNode = (DagVariableNode)node;
-                VariableType type = varNode.getType();
-                if(type == VariableType.DEFAULT){
-                    DagNode child = varNode.getChild();
-                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
-                    IdentExp ident1 = new IdentExp(identifier1);
-                    result.add(new Assign(identifier, ident1));
-                } else if(type == VariableType.PARAM){
-                    DagNode child = varNode.getChild();
-                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
-                    result.add(new ParamAssign(identifier, identifier1));
-                } else if(type == VariableType.EXTERNAL_RET){
-                    DagNode child = varNode.getChild();
-                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
-                    result.add(new ExternalPlace(identifier, identifier1));
-                } else if(type == VariableType.INTERNAL_RET){
-                    DagNode child = varNode.getChild();
-                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
-                    result.add(new InternalPlace(identifier, identifier1));
-                }
-            } else if(node instanceof DagInlineAssemblyNode){
-                DagInlineAssemblyNode dagNode = (DagInlineAssemblyNode)node;
-                List<String> children = new LinkedList<String>();
-                for(DagNode child : dagNode.getChildren()){
-                    String ident = Utils.getIdentifier(child, liveAtEndOfBlock);
-                    children.add(ident);
-                }
-                List<String> operationList = dagNode.getIdentifiers();
-                result.add(new Inline(operationList.get(0), children));
-            }
-
-            for(String ident : isAlive){
-                IdentExp ident1 = new IdentExp(identifier);
-                result.add(new Assign(ident, ident1));
-            }
-        }
-
-        if(initialList.size() > 0){
-            int size = initialList.size();
-            ICode lastElem = initialList.get(size - 1);
-            if(lastElem.isBranch()){
-                result.add(lastElem);
-            }
-        }
-        
-        block.setICode(result);
-    }
-
-    private void buildDag(Map<ICode, Environment<String, LiveInfo>> liveInfo){
-        List<ICode> icodes = this.block.getIcode();
-        for(ICode icode : icodes){
-            if(icode instanceof Assign){
-                Assign assignICode = (Assign)icode;
-
-                if(assignICode.value instanceof BinExp){
-                    BinExp exp = (BinExp)assignICode.value;
-                    
-                    DagNode left = this.dag.searchForLatestChild(exp.left.toString());
-                    DagNode right = this.dag.searchForLatestChild(exp.right.toString());
-
-                    if(left == null){
-                        left = factory.createNullNode(exp.left.toString());
-                        this.dag.addDagNode(left);
-                    }
-    
-                    if(right == null){
-                        right = factory.createNullNode(exp.right.toString());
-                        this.dag.addDagNode(right);
-                    }
-
-                    DagNode newNode = Utils.createBinaryNode(exp.op, assignICode.place, left, right);
-
-                    DagNode exists = this.dag.getDagNode(newNode);
-                    if(exists == null){
-                        this.dag.addDagNode(newNode);
-                    } else {
-                        exists.addIdentifier(assignICode.place);
-                    }
-                } else if(assignICode.value instanceof UnExp){
-                    UnExp exp = (UnExp)assignICode.value;
-
-                    DagNode right = this.dag.searchForLatestChild(exp.right.toString());
-
-                    if(right == null){
-                        right = factory.createNullNode(exp.right.toString());
-                        this.dag.addDagNode(right);
-                    }
-
-                    DagNode newNode = Utils.createUnaryNode(exp.op, assignICode.place, right);
-
-                    DagNode exists = this.dag.getDagNode(newNode);
-                    if(exists == null){
-                        this.dag.addDagNode(newNode);
-                    } else {
-                        exists.addIdentifier(assignICode.place);
-                    }
-                } else if(assignICode.value instanceof IdentExp){
-                    IdentExp exp = (IdentExp)assignICode.value;
-
-                    DagNode right = this.dag.searchForLatestChild(exp.ident.toString());
-
-                    if(right == null){
-                        right = factory.createNullNode(exp.ident.toString());
-                        this.dag.addDagNode(right);
-                    }
-
-                    DagNode newNode = factory.createDefaultVariableNode(assignICode.place, right);
-
-                    DagNode exists = this.dag.getDagNode(newNode);
-                    if(exists == null){
-                        this.dag.addDagNode(newNode);
-                    } else {
-                        exists.addIdentifier(assignICode.place);
-                    }
-                } else if(assignICode.value instanceof BoolExp){
-                    BoolExp boolICode = (BoolExp)assignICode.value;
-                    DagNode newNode = factory.createBooleanNode(assignICode.place, boolICode.trueFalse);
-                    this.dag.addDagNode(newNode);
-                } else if(assignICode.value instanceof IntExp){
-                    IntExp intICode = (IntExp)assignICode.value;
-                    DagNode newNode = factory.createIntNode(assignICode.place, intICode.value);
-                    this.dag.addDagNode(newNode);
-                } else if(assignICode.value instanceof RealExp){
-                    RealExp realICode = (RealExp)assignICode.value;
-                    DagNode newNode = factory.createRealNode(assignICode.place, realICode.realValue);
-                    this.dag.addDagNode(newNode);
-                } else if(assignICode.value instanceof StrExp){
-                    StrExp strICode = (StrExp)assignICode.value;
-                    DagNode newNode = factory.createStringNode(assignICode.place, strICode.value);
-                    this.dag.addDagNode(newNode);
-                }
-            } else if(icode instanceof Inline){
-                Inline inline = (Inline)icode;
-                LinkedList<DagNode> children = new LinkedList<DagNode>();
-                for(String param : inline.param){
-                    DagNode child = this.dag.searchForLatestChild(param);
-                    if(child == null){
-                        child = factory.createNullNode(param);
-                        this.dag.addDagNode(child);
-                    }
-
-                    children.add(child);
-                }
-
-                DagNode newNode = new DagInlineAssemblyNode(inline.inlineAssembly, children);
-                
-                DagNode exists = this.dag.getDagNode(newNode);
-                if(exists == null){
-                    this.dag.addDagNode(newNode);
-                }
-            } else if(icode instanceof ExternalPlace){
-                ExternalPlace place = (ExternalPlace)icode;
-                DagNode right = this.dag.searchForLatestChild(place.retPlace);
-
-                if(right == null){
-                    right = factory.createNullNode(place.retPlace);
-                    this.dag.addDagNode(right);
-                }
-
-                DagNode newNode = factory.createExternalReturnVariableNode(place.place, right);
-
-                DagNode exists = this.dag.getDagNode(newNode);
-                if(exists == null){
-                    this.dag.addDagNode(newNode);
-                } else {
-                    exists.addIdentifier(place.place);
-                }
-            } else if(icode instanceof InternalPlace){
-                InternalPlace place = (InternalPlace)icode;
-                DagNode right = this.dag.searchForLatestChild(place.retPlace);
-
-                if(right == null){
-                    right = factory.createNullNode(place.retPlace);
-                    this.dag.addDagNode(right);
-                }
-
-                DagNode newNode = factory.createInternalReturnVariableNode(place.place, right);
-
-                DagNode exists = this.dag.getDagNode(newNode);
-                if(exists == null){
-                    this.dag.addDagNode(newNode);
-                } else {
-                    exists.addIdentifier(place.place);
-                }
-            }else if(icode instanceof ParamAssign){
-                ParamAssign paramAssign = (ParamAssign)icode;
-                DagNode right = this.dag.searchForLatestChild(paramAssign.paramPlace);
-
-                if(right == null){
-                    right = factory.createNullNode(paramAssign.paramPlace);
-                    this.dag.addDagNode(right);
-                }
-
-                DagNode newNode = factory.createParamVariableNode(paramAssign.newPlace, right);
-
-                DagNode exists = this.dag.getDagNode(newNode);
-                if(exists == null){
-                    this.dag.addDagNode(newNode);
-                } else {
-                    exists.addIdentifier(paramAssign.newPlace);
-                }
-            }
-        }
-        buildCodeFromDag(liveInfo);
     }
 
     public BasicBlock getBlock(){

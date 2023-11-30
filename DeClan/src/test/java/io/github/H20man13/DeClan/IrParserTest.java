@@ -12,6 +12,7 @@ import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.ErrorLog.LogItem;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.main.MyIrLexer;
 import io.github.H20man13.DeClan.main.MyIrParser;
 
@@ -41,15 +42,14 @@ public class IrParserTest {
                        + "f := u LE j\n"
                        + "h := y GE o\n"
                        + "j := h NE u\n"
-                       + "y := y EQ u\n"
-                       + "END";
+                       + "y := y EQ u\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        List<ICode> programICode = parser.parseInstructions();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -64,14 +64,13 @@ public class IrParserTest {
         String program = "x := 38393\n"
                        + "y := INEG x\n"
                        + "y := RNEG x\n"
-                       + "z := BNOT y\n"
-                       + "END";
+                       + "z := BNOT y\n";
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        List<ICode> programICode = parser.parseInstructions();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -83,15 +82,14 @@ public class IrParserTest {
     @Test
     public void testBooleanAssignment(){
         String program = "v := FALSE\n"
-                       + "z := TRUE\n"
-                       + "END";
+                       + "z := TRUE\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        List<ICode> programICode = parser.parseInstructions();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -103,15 +101,14 @@ public class IrParserTest {
     @Test
     public void testNumAssignment(){
         String program = "x := 89309\n"
-                       + "z := 438.343\n"
-                       + "END";
+                       + "z := 438.343\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        List<ICode> programICode = parser.parseInstructions();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -122,23 +119,27 @@ public class IrParserTest {
 
     @Test
     public void testProcedureCall(){
-        String program = "t := 899\n"
+        String program = "SYMBOL SECTION\n" 
+                       + "DATA SECTION\n"
+                       + "t := 899\n"
                        + "g := 89\n"
                        + "f := 98\n"
-                       + "LABEL func\n"
+                       + "PROC SECTION\n"
+                       + "PROC LABEL func\n"
                        + "x := 78\n"
                        + "y := 79\n"
                        + "z := 48\n"
                        + "RETURN\n"
-                       + "PROC func (t -> x, g -> y, f -> z)\n"
-                       + "END\n";
+                       + "CODE SECTION\n"
+                       + "CALL func (t -> x, g -> y, f -> z)\n"
+                       + "End\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        Prog programICode = parser.parseProgram();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);

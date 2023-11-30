@@ -155,8 +155,8 @@ public enum IrTokenType {
         dualOperators = new HashMap<>();
         addDualOp(":=", ASSIGN);
         addDualOp("->", MAP);
-        addDualOp("<&", EPLACE);
-        addDualOp("&<", IPLACE);
+        addDualOp("<|", EPLACE);
+        addDualOp("|<", IPLACE);
         addDualOp("<-", PARAM_ASSIGN);
 
         singleOperators = new HashMap<>();

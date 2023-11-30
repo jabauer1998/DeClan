@@ -29,14 +29,6 @@ public class MyCompilerDriver {
         if(prog != null){
             MyICodeGenerator codeGen = new MyICodeGenerator(errLog, gen);
             Prog program = codeGen.generateProgramIr(prog);
-
-            MyOptimizer optimizer = new MyOptimizer(generatedICode, gen);
-            
-            optimizer.runDataFlowAnalysis();
-            optimizer.performDeadCodeElimination();
-            optimizer.performConstantPropogation();
-
-            List<ICode> optimizedICode = optimizer.getICode();
         }
     }
 }

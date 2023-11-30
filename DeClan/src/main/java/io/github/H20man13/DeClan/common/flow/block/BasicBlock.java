@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common;
+package io.github.H20man13.DeClan.common.flow.block;
 
 import java.util.LinkedList;
 import java.util.List;

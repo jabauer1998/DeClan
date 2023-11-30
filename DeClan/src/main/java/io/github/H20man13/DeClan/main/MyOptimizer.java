@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.H20man13.DeClan.common.BasicBlock;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.AnticipatedExpressionsAnalysis;
@@ -16,31 +15,50 @@ import io.github.H20man13.DeClan.common.analysis.ConstantPropogationAnalysis;
 import io.github.H20man13.DeClan.common.analysis.LiveVariableAnalysis;
 import io.github.H20man13.DeClan.common.analysis.PostponableExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.UsedExpressionAnalysis;
+import io.github.H20man13.DeClan.common.dag.DagGraph;
+import io.github.H20man13.DeClan.common.dag.DagInlineAssemblyNode;
+import io.github.H20man13.DeClan.common.dag.DagNode;
+import io.github.H20man13.DeClan.common.dag.DagNodeFactory;
+import io.github.H20man13.DeClan.common.dag.DagOperationNode;
+import io.github.H20man13.DeClan.common.dag.DagValueNode;
+import io.github.H20man13.DeClan.common.dag.DagVariableNode;
+import io.github.H20man13.DeClan.common.dag.DagVariableNode.VariableType;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.EntryNode;
 import io.github.H20man13.DeClan.common.flow.ExitNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
+import io.github.H20man13.DeClan.common.flow.block.BasicBlock;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
-import io.github.H20man13.DeClan.common.icode.ExternalPlace;
+import io.github.H20man13.DeClan.common.icode.Inline;
+import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.IntExp;
+import io.github.H20man13.DeClan.common.icode.exp.RealExp;
+import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
+import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
+import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
+import io.github.H20man13.DeClan.common.icode.procedure.Proc;
+import io.github.H20man13.DeClan.common.icode.section.CodeSec;
+import io.github.H20man13.DeClan.common.icode.section.DataSec;
+import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.LiveInfo;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class MyOptimizer {
-    private List<ICode> intermediateCode;
+    private Prog intermediateCode;
     private FlowGraph globalFlowGraph;
     private AnticipatedExpressionsAnalysis anticipatedAnal;
     private AvailableExpressionsAnalysis availableAnal;
@@ -55,11 +73,11 @@ public class MyOptimizer {
     private Set<Exp> globalFlowSet;
     private IrRegisterGenerator gen;
 
-    public MyOptimizer(List<ICode> intermediateCode){
+    public MyOptimizer(Prog intermediateCode){
         this(intermediateCode, new IrRegisterGenerator());
     }
 
-    public MyOptimizer(List<ICode> intermediateCode, IrRegisterGenerator gen){
+    public MyOptimizer(Prog intermediateCode, IrRegisterGenerator gen){
         this.gen = gen;
         this.intermediateCode = intermediateCode;
         this.latest = new HashMap<FlowGraphNode, Set<Exp>>();
@@ -158,81 +176,412 @@ public class MyOptimizer {
         this.globalFlowGraph = flowGraph;
     }
 
-    private void updateLiveLinessInformation() {
-        Environment<String, LiveInfo> symbolTable = new Environment<String, LiveInfo>();
-        symbolTable.addScope();
-        for(int i = this.intermediateCode.size() - 1; i >= 0; i--){
-            ICode icode = this.intermediateCode.get(i);
-            if(icode instanceof Assign){
-                Assign icodeAssign = (Assign)icode;
-                symbolTable.addEntry(icodeAssign.place, new LiveInfo(false, -1));
-
-                if(icodeAssign.value instanceof IdentExp){
-                    IdentExp identExp = (IdentExp)icodeAssign.value;
-                    symbolTable.addEntry(identExp.ident, new LiveInfo(true, i));
-                } else if(icodeAssign.value instanceof BinExp){
-                    BinExp binExp = (BinExp)icodeAssign.value;
-
-                    if(binExp.right instanceof IdentExp){
-                        IdentExp rightExp = (IdentExp)binExp.right;
-                        symbolTable.addEntry(rightExp.ident, new LiveInfo(true, i));
-                    }
-
-                    if(binExp.left instanceof IdentExp){
-                        IdentExp leftExp = (IdentExp)binExp.left;
-                        symbolTable.addEntry(leftExp.ident, new LiveInfo(true, i));
-                    }
-                } else if(icodeAssign.value instanceof UnExp){
-                    UnExp unExp = (UnExp)icodeAssign.value;
-
-                    if(unExp.right instanceof IdentExp){
-                        IdentExp rightExp = (IdentExp)unExp.right;
-                        symbolTable.addEntry(rightExp.ident, new LiveInfo(true, i));
-                    }
-                }
-            } else if(icode instanceof If){
-                If ifStat = (If)icode;
-
-                BinExp binExp = ifStat.exp;
-
-                if(binExp.left instanceof IdentExp){
-                    IdentExp leftIdent = (IdentExp)binExp.left;
-                    symbolTable.addEntry(leftIdent.ident, new LiveInfo(true, i));
-                }
-
-                if(binExp.right instanceof IdentExp){
-                    IdentExp rightIdent = (IdentExp)binExp.right;
-                    symbolTable.addEntry(rightIdent.ident, new LiveInfo(true, i));
-                }
-            } else if(icode instanceof Call){
-                for(Tuple<String, String> param : ((Call)icode).params){
-                    symbolTable.addEntry(param.source, new LiveInfo(true, i));
-                }
-            } else if(icode instanceof ExternalPlace){
-                ExternalPlace place = (ExternalPlace)icode;
-                symbolTable.addEntry(place.retPlace, new LiveInfo(true, i));
-                symbolTable.addEntry(place.place, new LiveInfo(false, i));
-            } else if(icode instanceof InternalPlace){
-                InternalPlace place = (InternalPlace)icode;
-                symbolTable.addEntry(place.place, new LiveInfo(false, i));
-                symbolTable.addEntry(place.retPlace, new LiveInfo(true, i));
+    private void updateProcedureLivelinessInformation(Environment<String, LiveInfo> symbolTable){
+        ProcSec data = intermediateCode.procedures;
+        List<Proc> procedures = data.procedures;
+        int size = procedures.size();
+        for(int i = size - 1; i >= 0; i--){
+            Proc procedure = procedures.get(i);
+            if(procedure.placement != null){
+                InternalPlace returnPlacement = procedure.placement;
+                symbolTable.addEntry(returnPlacement.place, new LiveInfo(false, i));
+                symbolTable.addEntry(returnPlacement.retPlace, new LiveInfo(true, i));
+                livelinessInformation.put(returnPlacement, symbolTable.copy());
             }
 
-            livelinessInformation.put(icode, symbolTable.copy());
+            List<ICode> procedureCode = procedure.instructions;
+            int internalSize = procedureCode.size();
+            for(int x = internalSize - 1; x >= 0; x--){
+                ICode icode = procedureCode.get(i);
+                updateICodeLivelinessInformation(symbolTable, icode);
+            }
+                
+
+            List<ParamAssign> paramaterAssignmants = procedure.paramAssign;
+            int paramAssignSize = paramaterAssignmants.size();
+            for(int z = paramAssignSize - 1; z >= 0; z--){
+                ParamAssign assign = paramaterAssignmants.get(i);
+                symbolTable.addEntry(assign.newPlace, new LiveInfo(false, z));
+                symbolTable.addEntry(assign.paramPlace, new LiveInfo(true, z));
+                livelinessInformation.put(assign, symbolTable.copy());
+            }
         }
     }
 
-    public List<ICode> getICode(){
-        if(this.globalFlowGraph == null){
-            return this.intermediateCode;
-        } else {
-            List<ICode> result = new LinkedList<ICode>();
-            for(BlockNode block : this.globalFlowGraph.getBlocks()){
-                result.addAll(block.getICode());
+    private void updateICodeLivelinessInformation(Environment<String, LiveInfo> symbolTable, ICode icode){
+        if(icode instanceof Assign){
+            Assign icodeAssign = (Assign)icode;
+            symbolTable.addEntry(icodeAssign.place, new LiveInfo(false, x));
+            if(icodeAssign.value instanceof IdentExp){
+                IdentExp identExp = (IdentExp)icodeAssign.value;
+                symbolTable.addEntry(identExp.ident, new LiveInfo(true, x));
+            } else if(icodeAssign.value instanceof BinExp){
+                BinExp binExp = (BinExp)icodeAssign.value;
+
+                if(binExp.right instanceof IdentExp){
+                    IdentExp rightExp = (IdentExp)binExp.right;
+                    symbolTable.addEntry(rightExp.ident, new LiveInfo(true, x));
+                }
+
+                if(binExp.left instanceof IdentExp){
+                    IdentExp leftExp = (IdentExp)binExp.left;
+                    symbolTable.addEntry(leftExp.ident, new LiveInfo(true, x));
+                }
+            } else if(icodeAssign.value instanceof UnExp){
+                UnExp unExp = (UnExp)icodeAssign.value;
+
+                if(unExp.right instanceof IdentExp){
+                    IdentExp rightExp = (IdentExp)unExp.right;
+                    symbolTable.addEntry(rightExp.ident, new LiveInfo(true, x));
+                }
             }
-            result.add(new End());
-            return result;
+        } else if(icode instanceof If){
+            If ifStat = (If)icode;
+
+            BinExp binExp = ifStat.exp;
+
+            if(binExp.left instanceof IdentExp){
+                IdentExp leftIdent = (IdentExp)binExp.left;
+                symbolTable.addEntry(leftIdent.ident, new LiveInfo(true, x));
+            }
+
+            if(binExp.right instanceof IdentExp){
+                IdentExp rightIdent = (IdentExp)binExp.right;
+                symbolTable.addEntry(rightIdent.ident, new LiveInfo(true, x));
+            }
+        } else if(icode instanceof Call){
+            for(Tuple<String, String> param : ((Call)icode).params){
+                symbolTable.addEntry(param.source, new LiveInfo(true, x));
+            }
+        } else if(icode instanceof ExternalPlace){
+            ExternalPlace place = (ExternalPlace)icode;
+            symbolTable.addEntry(place.retPlace, new LiveInfo(true, x));
+            symbolTable.addEntry(place.place, new LiveInfo(false, x));
         }
+        livelinessInformation.put(icode, symbolTable.copy());
+    }
+
+    private void updateCodeLivelinessInformation(Environment<String, LiveInfo> symbolTable){
+        CodeSec code = intermediateCode.code;
+        List<ICode> icodeList = code.intermediateCode;
+        int size = icodeList.size();
+        for(int i = size - 1; i >= 0; i--){
+            ICode icode = icodeList.get(i);
+            updateICodeLivelinessInformation(symbolTable, icode);
+        }
+    }
+
+    private void updateVariableLivelinessInformation(Environment<String, LiveInfo> symbolTable){
+        DataSec data = intermediateCode.variables;
+        List<ICode> assignmants = data.intermediateCode;
+        int size = assignmants.size();
+        for(int i = size - 1; i >= 0; i--){
+            ICode icode = assignmants.get(i);
+            updateICodeLivelinessInformation(symbolTable, icode);
+        }
+    }
+
+    private void updateLiveLinessInformation() {
+        Environment<String, LiveInfo> symbolTable = new Environment<String, LiveInfo>();
+        updateProcedureLivelinessInformation(symbolTable);
+        updateCodeLivelinessInformation(symbolTable);
+        updateVariableLivelinessInformation(symbolTable);
+    }
+
+    public void eliminateCommonSubExpressions(){
+        if(this.globalFlowGraph != null){
+            for(BlockNode block: globalFlowGraph.getBlocks()){
+                DagGraph dag = buildDagForBlock(block, true);
+                regenerateICodeForBlock(block, dag);
+            }
+        }
+    }
+
+    private void regenerateICodeForBlock(BlockNode block, DagGraph dag){
+        List<ICode> result = new LinkedList<ICode>();
+        List<ICode> initialList = block.getICode();
+        int initialListSize = initialList.size();
+
+        if(initialListSize > 0){
+            ICode firstElem = initialList.get(0);
+            if(firstElem instanceof Label){
+                result.add(firstElem);
+            }
+        }
+
+        Environment<String, LiveInfo> liveAtEndOfBlock = this.livelinessInformation.get(initialList.get(initialListSize - 1));
+
+        for(DagNode node : dag.getDagNodes()){
+
+            List<String> isAlive = new LinkedList<String>();
+            for(String identifier: node.getIdentifiers()){
+                if(liveAtEndOfBlock.entryExists(identifier)){
+                    LiveInfo info = liveAtEndOfBlock.getEntry(identifier);
+                    if(info.isAlive){
+                        isAlive.add(identifier);
+                    }
+                }
+            }
+
+            String identifier = null;
+            if(isAlive.size() > 0){
+                identifier = isAlive.remove(0);
+            } else {
+                identifier = node.getIdentifiers().get(0);
+            }
+
+            if(node instanceof DagOperationNode){
+                DagOperationNode node2 = (DagOperationNode)node;
+
+                if(node2.getChildren().size() == 2){
+                    //Its a Binary Operation
+                    DagOperationNode.Op op = node2.getOperator();
+                    BinExp.Operator op2 = Utils.getBinOp(op);
+
+                    DagNode child1 = node2.getChildren().get(0);
+                    DagNode child2 = node2.getChildren().get(1);
+
+                    String identifier1 = Utils.getIdentifier(child1, liveAtEndOfBlock);
+                    String identifier2 = Utils.getIdentifier(child2, liveAtEndOfBlock);
+
+                    IdentExp exp1 = new IdentExp(identifier1);
+                    IdentExp exp2 = new IdentExp(identifier2);
+
+                    BinExp binExp = new BinExp(exp1, op2, exp2);
+
+                    result.add(new Assign(identifier, binExp));
+                } else if(node2.getChildren().size() == 1) {
+                    //Its a Unary Operation
+                    DagOperationNode.Op op = node2.getOperator();
+                    UnExp.Operator op2 = Utils.getUnOp(op);
+
+                    DagNode child1 = node2.getChildren().get(0);
+
+                    String identifier1 = Utils.getIdentifier(child1, liveAtEndOfBlock);
+
+                    IdentExp exp1 = new IdentExp(identifier1);
+
+                    UnExp unExp = new UnExp(op2, exp1);
+
+                    result.add(new Assign(identifier, unExp));
+                }
+            } else if(node instanceof DagValueNode){
+                DagValueNode valNode = (DagValueNode)node;
+                Object value = valNode.getValue();
+                Exp resultExp = Utils.valueToExp(value);
+                result.add(new Assign(identifier, resultExp));
+            } else if(node instanceof DagVariableNode){
+                DagVariableNode varNode = (DagVariableNode)node;
+                VariableType type = varNode.getType();
+                if(type == VariableType.DEFAULT){
+                    DagNode child = varNode.getChild();
+                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
+                    IdentExp ident1 = new IdentExp(identifier1);
+                    result.add(new Assign(identifier, ident1));
+                } else if(type == VariableType.PARAM){
+                    DagNode child = varNode.getChild();
+                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
+                    result.add(new ParamAssign(identifier, identifier1));
+                } else if(type == VariableType.EXTERNAL_RET){
+                    DagNode child = varNode.getChild();
+                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
+                    result.add(new ExternalPlace(identifier, identifier1));
+                } else if(type == VariableType.INTERNAL_RET){
+                    DagNode child = varNode.getChild();
+                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
+                    result.add(new InternalPlace(identifier, identifier1));
+                }
+            } else if(node instanceof DagInlineAssemblyNode){
+                DagInlineAssemblyNode dagNode = (DagInlineAssemblyNode)node;
+                List<String> children = new LinkedList<String>();
+                for(DagNode child : dagNode.getChildren()){
+                    String ident = Utils.getIdentifier(child, liveAtEndOfBlock);
+                    children.add(ident);
+                }
+                List<String> operationList = dagNode.getIdentifiers();
+                result.add(new Inline(operationList.get(0), children));
+            }
+
+            for(String ident : isAlive){
+                IdentExp ident1 = new IdentExp(identifier);
+                result.add(new Assign(ident, ident1));
+            }
+        }
+
+        if(initialList.size() > 0){
+            int size = initialList.size();
+            ICode lastElem = initialList.get(size - 1);
+            if(lastElem.isBranch()){
+                result.add(lastElem);
+            }
+        }
+        
+        block.getBlock().setICode(result);
+    }
+
+    private static DagGraph buildDagForBlock(BlockNode block, boolean optimized){
+        DagGraph dag = new DagGraph();
+        DagNodeFactory factory = new DagNodeFactory();
+        List<ICode> icodes = block.getICode();
+        for(ICode icode : icodes){
+            if(icode instanceof Assign){
+                Assign assignICode = (Assign)icode;
+
+                if(assignICode.value instanceof BinExp){
+                    BinExp exp = (BinExp)assignICode.value;
+                    
+                    DagNode left = dag.searchForLatestChild(exp.left.toString());
+                    DagNode right = dag.searchForLatestChild(exp.right.toString());
+
+                    if(left == null){
+                        left = factory.createNullNode(exp.left.toString());
+                        dag.addDagNode(left);
+                    }
+    
+                    if(right == null){
+                        right = factory.createNullNode(exp.right.toString());
+                        dag.addDagNode(right);
+                    }
+
+                    DagNode newNode = Utils.createBinaryNode(exp.op, assignICode.place, left, right);
+
+                    DagNode exists = dag.getDagNode(newNode);
+                    if(exists == null || !optimized){
+                        dag.addDagNode(newNode);
+                    } else {
+                        exists.addIdentifier(assignICode.place);
+                    }
+                } else if(assignICode.value instanceof UnExp){
+                    UnExp exp = (UnExp)assignICode.value;
+
+                    DagNode right = dag.searchForLatestChild(exp.right.toString());
+
+                    if(right == null){
+                        right = factory.createNullNode(exp.right.toString());
+                        dag.addDagNode(right);
+                    }
+
+                    DagNode newNode = Utils.createUnaryNode(exp.op, assignICode.place, right);
+
+                    DagNode exists = dag.getDagNode(newNode);
+                    if(exists == null || !optimized){
+                        dag.addDagNode(newNode);
+                    } else {
+                        exists.addIdentifier(assignICode.place);
+                    }
+                } else if(assignICode.value instanceof IdentExp){
+                    IdentExp exp = (IdentExp)assignICode.value;
+
+                    DagNode right = dag.searchForLatestChild(exp.ident.toString());
+
+                    if(right == null){
+                        right = factory.createNullNode(exp.ident.toString());
+                        dag.addDagNode(right);
+                    }
+
+                    DagNode newNode = factory.createDefaultVariableNode(assignICode.place, right);
+
+                    DagNode exists = dag.getDagNode(newNode);
+                    if(exists == null || !optimized){
+                        dag.addDagNode(newNode);
+                    } else {
+                        exists.addIdentifier(assignICode.place);
+                    }
+                } else if(assignICode.value instanceof BoolExp){
+                    BoolExp boolICode = (BoolExp)assignICode.value;
+                    DagNode newNode = factory.createBooleanNode(assignICode.place, boolICode.trueFalse);
+                    dag.addDagNode(newNode);
+                } else if(assignICode.value instanceof IntExp){
+                    IntExp intICode = (IntExp)assignICode.value;
+                    DagNode newNode = factory.createIntNode(assignICode.place, intICode.value);
+                    dag.addDagNode(newNode);
+                } else if(assignICode.value instanceof RealExp){
+                    RealExp realICode = (RealExp)assignICode.value;
+                    DagNode newNode = factory.createRealNode(assignICode.place, realICode.realValue);
+                    dag.addDagNode(newNode);
+                } else if(assignICode.value instanceof StrExp){
+                    StrExp strICode = (StrExp)assignICode.value;
+                    DagNode newNode = factory.createStringNode(assignICode.place, strICode.value);
+                    dag.addDagNode(newNode);
+                }
+            } else if(icode instanceof Inline){
+                Inline inline = (Inline)icode;
+                LinkedList<DagNode> children = new LinkedList<DagNode>();
+                for(String param : inline.param){
+                    DagNode child = dag.searchForLatestChild(param);
+                    if(child == null){
+                        child = factory.createNullNode(param);
+                        dag.addDagNode(child);
+                    }
+
+                    children.add(child);
+                }
+
+                DagNode newNode = new DagInlineAssemblyNode(inline.inlineAssembly, children);
+                
+                DagNode exists = dag.getDagNode(newNode);
+                if(exists == null){
+                    dag.addDagNode(newNode);
+                }
+            } else if(icode instanceof ExternalPlace){
+                ExternalPlace place = (ExternalPlace)icode;
+                DagNode right = dag.searchForLatestChild(place.retPlace);
+
+                if(right == null){
+                    right = factory.createNullNode(place.retPlace);
+                    dag.addDagNode(right);
+                }
+
+                DagNode newNode = factory.createExternalReturnVariableNode(place.place, right);
+
+                DagNode exists = dag.getDagNode(newNode);
+                if(exists == null || !optimized){
+                    dag.addDagNode(newNode);
+                } else {
+                    exists.addIdentifier(place.place);
+                }
+            } else if(icode instanceof InternalPlace){
+                InternalPlace place = (InternalPlace)icode;
+                DagNode right = dag.searchForLatestChild(place.retPlace);
+
+                if(right == null){
+                    right = factory.createNullNode(place.retPlace);
+                    dag.addDagNode(right);
+                }
+
+                DagNode newNode = factory.createInternalReturnVariableNode(place.place, right);
+
+                DagNode exists = dag.getDagNode(newNode);
+                if(exists == null || !optimized){
+                    dag.addDagNode(newNode);
+                } else {
+                    exists.addIdentifier(place.place);
+                }
+            }else if(icode instanceof ParamAssign){
+                ParamAssign paramAssign = (ParamAssign)icode;
+                DagNode right = dag.searchForLatestChild(paramAssign.paramPlace);
+
+                if(right == null){
+                    right = factory.createNullNode(paramAssign.paramPlace);
+                    dag.addDagNode(right);
+                }
+
+                DagNode newNode = factory.createParamVariableNode(paramAssign.newPlace, right);
+
+                DagNode exists = dag.getDagNode(newNode);
+                if(exists == null || !optimized){
+                    dag.addDagNode(newNode);
+                } else {
+                    exists.addIdentifier(paramAssign.newPlace);
+                }
+            }
+        }
+
+        return dag;
+    }
+
+    public Prog getICode(){
+        return this.intermediateCode;
     }
 
     private List<Integer> findFirsts(){

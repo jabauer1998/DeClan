@@ -82,8 +82,4 @@ public class MyIrLinker {
         MyICodeGenerator iGen = new MyICodeGenerator(errLog, gen);
         return iGen.generateLibraryIr(lib);
     }
-
-    public Prog performStaticLink(){
-        
-    }
 }

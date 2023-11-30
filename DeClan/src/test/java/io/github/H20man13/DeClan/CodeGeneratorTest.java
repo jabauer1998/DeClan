@@ -23,6 +23,7 @@ import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.main.MyCodeGenerator;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
@@ -46,17 +47,7 @@ public class CodeGeneratorTest {
 
             IrRegisterGenerator rGen = new IrRegisterGenerator();
             MyICodeGenerator gen = new MyICodeGenerator(errLog, rGen);
-            stdLib.ioLibrary().accept(gen);
-            stdLib.mathLibrary().accept(gen);
-            prog.accept(gen);
-
-            List<ICode> generatedICode = gen.getICode();
-
-            MyOptimizer optimizer = new MyOptimizer(generatedICode, rGen);
-            optimizer.runDataFlowAnalysis();
-            optimizer.performDeadCodeElimination();
-
-            List<ICode> optimizedICode = optimizer.getICode();
+            Prog program = gen.generateProgramIr(prog);
 
             MyCodeGenerator codeGenerator = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), optimizedICode, rGen, errLog); 
 

@@ -7,7 +7,6 @@ import java.util.Set;
 
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.model.SymbolTable;
-import io.github.H20man13.DeClan.common.BasicBlock;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.dag.DagNode;
 import io.github.H20man13.DeClan.common.dag.DagNodeFactory;
@@ -15,6 +14,7 @@ import io.github.H20man13.DeClan.common.dag.DagNullNode;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.dag.DagValueNode;
 import io.github.H20man13.DeClan.common.dag.DagVariableNode;
+import io.github.H20man13.DeClan.common.flow.block.BasicBlock;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;

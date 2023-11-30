@@ -28,7 +28,7 @@ public class IrLexerTest {
     }
 
     public void compareTokensToTypes(List<IrToken> tokens, List<IrTokenType> tokTypes){
-        assertTrue(tokens.size() == tokTypes.size());
+        assertTrue("Error expected " + tokTypes.size() + " tokens but found " + tokens.size() + " tokens", tokens.size() == tokTypes.size());
 
         for(int i = 0; i < tokens.size(); i++){
             IrToken tok = tokens.get(i);
@@ -40,7 +40,7 @@ public class IrLexerTest {
 
     @Test
     public void testKeywords(){
-        String keywords = "LABEL IF TRUE FALSE THEN ELSE GOTO CALL PROC IADD RADD ISUB RSUB BNOT IMUL RMUL IDIV RDIV IMOD LT GT GE LE NE EQ IASM IPARAM";
+        String keywords = "LABEL IF TRUE FALSE THEN ELSE GOTO CALL PROC IADD RADD ISUB RSUB BNOT IMUL RMUL IDIV RDIV IMOD LT GT GE LE NE EQ IASM IPARAM SECTION EXTERNAL INTERNAL CONST CODE DATA";
         Source source = new ReaderSource(new StringReader(keywords));
         ErrorLog errLog = new ErrorLog();
         MyIrLexer lex = new MyIrLexer(source, errLog);
@@ -73,6 +73,12 @@ public class IrLexerTest {
         tokTypes.add(IrTokenType.EQ);
         tokTypes.add(IrTokenType.IASM);
         tokTypes.add(IrTokenType.IPARAM);
+        tokTypes.add(IrTokenType.SECTION);
+        tokTypes.add(IrTokenType.EXTERNAL);
+        tokTypes.add(IrTokenType.INTERNAL);
+        tokTypes.add(IrTokenType.CONST);
+        tokTypes.add(IrTokenType.CODE);
+        tokTypes.add(IrTokenType.DATA);
 
         for(LogItem item : errLog){
             assertTrue(item.toString(), false);
@@ -83,7 +89,7 @@ public class IrLexerTest {
 
     @Test
     public void testSymbols(){
-        String symbols = "( , ) :=";
+        String symbols = "( , ) := -> |< <| <-";
         Source source = new ReaderSource(new StringReader(symbols));
         ErrorLog errLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(source, errLog);
@@ -93,6 +99,10 @@ public class IrLexerTest {
         tokTypes.add(IrTokenType.COMMA);
         tokTypes.add(IrTokenType.RPAR);
         tokTypes.add(IrTokenType.ASSIGN);
+        tokTypes.add(IrTokenType.MAP);
+        tokTypes.add(IrTokenType.IPLACE);
+        tokTypes.add(IrTokenType.EPLACE);
+        tokTypes.add(IrTokenType.PARAM_ASSIGN);
 
         for(LogItem item : errLog){
             assertTrue(item.toString(), false);

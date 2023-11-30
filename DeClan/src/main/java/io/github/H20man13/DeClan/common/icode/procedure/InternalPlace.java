@@ -16,7 +16,7 @@ public class InternalPlace implements ICode {
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append(place);
-        sb.append(" &< ");
+        sb.append(" |< ");
         sb.append(retPlace);
         return sb.toString();
     }

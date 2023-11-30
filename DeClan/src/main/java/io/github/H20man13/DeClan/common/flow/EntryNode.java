@@ -20,6 +20,4 @@ public class EntryNode implements FlowGraphNode {
     public List<ICode> getICode() {
         return new LinkedList<ICode>();
     }
-
-
 }
