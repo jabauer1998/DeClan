@@ -12,8 +12,20 @@ import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.model.SymbolTable;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.ReaderSource;
+import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
+import io.github.H20man13.DeClan.common.icode.SymEntry;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
+import io.github.H20man13.DeClan.common.icode.exp.Exp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.section.CodeSec;
+import io.github.H20man13.DeClan.common.icode.section.DataSec;
+import io.github.H20man13.DeClan.common.icode.section.ProcSec;
+import io.github.H20man13.DeClan.common.icode.section.SymSec;
 
 public class MyIrLinker {
     private Prog program;
@@ -81,5 +93,44 @@ public class MyIrLinker {
         IrRegisterGenerator gen = new IrRegisterGenerator();
         MyICodeGenerator iGen = new MyICodeGenerator(errLog, gen);
         return iGen.generateLibraryIr(lib);
+    }
+
+    private DataSec linkDataSections(SymSec symbolTable){
+        List<ICode> finalAssignments = new LinkedList<ICode>();
+
+        SymSec programSymbolTable = program.symbols;
+        DataSec programDataSec = program.variables;
+        List<ICode> programAssignments = programDataSec.intermediateCode;
+        for(int i = 0; i < programAssignments.size(); i++){
+            ICode icode = programAssignments.get(i);
+            Assign assign = (Assign)icode;
+            Exp assignExp = assign.value;
+            if(assignExp instanceof BinExp){
+                BinExp assignBinExp = (BinExp)assignExp;
+
+            } else if(assignExp instanceof UnExp){
+                UnExp assignUnExp = (UnExp)assignExp;
+
+            } else if(assignExp instanceof IdentExp){
+                IdentExp assignIdentExp = (IdentExp)assignExp;
+                if(symbolTable.containsEntry(assignIdentExp.ident)){
+                    SymEntry entry = symbolTable.getEntry(assignIdentExp.ident, SymEntry.EXTERNAL | SymEntry.CONST);
+                    String identToSearch = entry.declanIdent;
+                    for(int libIndex = 0; libIndex < libraries.size(); libIndex++){
+                        Lib library = libraries.get(libIndex);
+                        SymSec libSymbols = library.symbols;
+                        if(libSymbols)
+                    }
+                }
+            }
+        }
+    }
+
+    public Prog performLinkage(){
+        SymSec symbolTable = new SymSec(new LinkedList<SymEntry>());
+        DataSec finalDataSec = linkDataSections(symbolTable);
+        CodeSec finalCodeSec = linkCodeSections(symbolTable);
+        ProcSec finalProcedureSec = linkProcedureSections(symbolTable);
+        return new Prog(symbolTable, finalDataSec, finalProcedureSec, finalCodeSec);
     }
 }

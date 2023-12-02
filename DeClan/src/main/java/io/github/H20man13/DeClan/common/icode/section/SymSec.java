@@ -24,6 +24,80 @@ public class SymSec implements ICode {
         return false;
     }
 
+    public void addEntry(SymEntry entry){
+        entries.add(entry);
+    }
+
+    public SymEntry getEntryByICodePlace(String place, int mask){
+        for(SymEntry entry : entries){
+            if(entry.icodePlace.equals(place) && entry.containsQualities(mask)){
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    public SymEntry getEntryByIdentifier(String ident, int mask){
+        for(SymEntry entry : entries){
+            if(entry.declanIdent.equals(ident) && entry.containsQualities(mask)){
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    public SymEntry removeEntryWithICodePlace(String place, int mask){
+        int toRemove = -1;
+        for(int i = 0; i < entries.size(); i++){
+            SymEntry entry = entries.get(i);
+            if(entry.icodePlace.equals(place) && entry.containsQualities(mask)){
+                toRemove = i;
+                break;
+            }
+        }
+
+        if(toRemove != -1){
+            return entries.remove(toRemove);
+        } else {
+            return null;
+        }
+    }
+
+    public SymEntry removeEntryWithIdentifier(String ident, int mask){
+        int toRemove = -1;
+        for(int i = 0; i < entries.size(); i++){
+            SymEntry entry = entries.get(i);
+            if(entry.declanIdent.equals(ident) && entry.containsQualities(mask)){
+                toRemove = i;
+                break;
+            }
+        }
+
+        if(toRemove != -1){
+            return entries.remove(toRemove);
+        } else {
+            return null;
+        }
+    }
+
+    public boolean containsEntryWithICodePlace(String place, int mask){
+        for(SymEntry entry : entries){
+            if(entry.icodePlace.equals(place) && entry.containsQualities(mask)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsEntryWithIdentifier(String ident, int mask){
+        for(SymEntry entry : entries){
+            if(entry.declanIdent.equals(ident) && entry.containsQualities(mask)){
+                return true;
+            }
+        } 
+        return false;
+    }
+
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
