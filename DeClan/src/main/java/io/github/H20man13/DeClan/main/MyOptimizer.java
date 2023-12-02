@@ -28,7 +28,11 @@ import io.github.H20man13.DeClan.common.flow.EntryNode;
 import io.github.H20man13.DeClan.common.flow.ExitNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
+import io.github.H20man13.DeClan.common.flow.ProcedureEntryNode;
+import io.github.H20man13.DeClan.common.flow.ProcedureExitNode;
 import io.github.H20man13.DeClan.common.flow.block.BasicBlock;
+import io.github.H20man13.DeClan.common.flow.block.ProcedureBeginningBlock;
+import io.github.H20man13.DeClan.common.flow.block.ProcedureEndingBlock;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
@@ -45,6 +49,7 @@ import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
+import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
 import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
@@ -55,6 +60,7 @@ import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.LiveInfo;
+import io.github.H20man13.DeClan.common.symboltable.entry.ProcedureEntry;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class MyOptimizer {
@@ -93,85 +99,284 @@ public class MyOptimizer {
         return this.liveAnal;
     }
 
-    private void buildFlowGraph() {
-        List<Integer> firsts = findFirsts();
-        List<BasicBlock> basicBlocks = new LinkedList<BasicBlock>();
-        for(int leaderIndex = 0; leaderIndex < firsts.size(); leaderIndex++){
-            int beginIndex = firsts.get(leaderIndex);
-            int endIndex;
-            if(leaderIndex + 1 < firsts.size()){
-                endIndex = firsts.get(leaderIndex + 1) - 1;
-            } else {
-                endIndex = this.intermediateCode.size() - 1;
-            }
+    public BasicBlock buildDataBlock(){
+        DataSec dataSec = intermediateCode.variables;
+        List<Integer> dataFirsts = findFirsts(dataSec.intermediateCode, false);
+        int intermediateCodeSize = dataSec.intermediateCode.size();
 
+        if(dataFirsts.size() > 1){
+            int beginIndex = dataFirsts.get(0);
+            int endIndex = intermediateCodeSize - 1;
+            List<ICode> blockCode = new LinkedList<ICode>();
+            for(int i = beginIndex; i < endIndex; i--){
+                ICode codeAtIndex = dataSec.intermediateCode.get(i);
+                blockCode.add(codeAtIndex);
+            }
+            return new BasicBlock(blockCode);
+        } else {
+            return new BasicBlock(new LinkedList<ICode>());
+        }
+    }
+
+    public List<BasicBlock> buildCodeBlocks(){
+         CodeSec code = intermediateCode.code;
+         List<Integer> codeFirsts = findFirsts(code.intermediateCode, false);
+         List<BasicBlock> codeBlocks = new LinkedList<BasicBlock>();
+
+        for(int leaderIndex = 0; leaderIndex < codeFirsts.size(); leaderIndex++){
+            int beginIndex = codeFirsts.get(leaderIndex);
+            int endIndex;
+            if(leaderIndex + 1 < codeFirsts.size()){
+                endIndex = codeFirsts.get(leaderIndex + 1);
+            } else {
+                endIndex = code.intermediateCode.size() - 1;
+            }
             List<ICode> basicBlockList = new LinkedList<ICode>();
             for(int i = beginIndex; i <= endIndex; i++){
-                basicBlockList.add(intermediateCode.get(i));
+                basicBlockList.add(code.intermediateCode.get(i));
             }
-
-            basicBlocks.add(new BasicBlock(basicBlockList));
+            codeBlocks.add(new BasicBlock(basicBlockList));
         }
 
-        HashMap<String, BlockNode> labeledNodes = new HashMap<String, BlockNode>();
-        List<BlockNode> dagNodes = new LinkedList<BlockNode>();
+        return codeBlocks;
+    }
 
-        for(int i = 0; i < basicBlocks.size(); i++){
-            BasicBlock blockAtIndex = basicBlocks.get(i);
-            BlockNode blockNode = new BlockNode(blockAtIndex, this.livelinessInformation);
+    private List<BasicBlock> buildProcedureBlocks(){
+        ProcSec proc = intermediateCode.procedures;
+        List<BasicBlock> procedureBlocks = new LinkedList<BasicBlock>();
+        for(Proc procedure : proc.procedures){
+            List<Integer> procFirsts = findFirsts(procedure.instructions, true);
+            List<ParamAssign> assignments = procedure.paramAssign;
+            List<ICode> instructionsInBlock = new LinkedList<ICode>();
+            if(procFirsts.size() > 0){
+                Integer firstIndex = procFirsts.get(0);
+                Integer endIndex = firstIndex - 1;
+                List<ICode> codeInBlock = new LinkedList<ICode>();
+                for(int i = 0; i <= endIndex; i++){
+                    instructionsInBlock.add(procedure.instructions.get(i));
+                }
+            }
+
+            procedureBlocks.add(new ProcedureBeginningBlock(procedure.label, assignments, instructionsInBlock));
                 
-            if(Utils.beginningOfBlockIsLabel(blockAtIndex)){
-                Label firstLabel = (Label)blockAtIndex.getIcode().get(0);
-                String labelName = firstLabel.label;
-                labeledNodes.put(labelName, blockNode);
+            for(int leaderIndex = 0; leaderIndex < procFirsts.size() - 1; leaderIndex++){
+                int beginIndex = procFirsts.get(leaderIndex);
+                int endIndex;
+                if(leaderIndex + 1 < procFirsts.size()){
+                    endIndex = procFirsts.get(leaderIndex + 1);
+                } else {
+                    endIndex = procedure.instructions.size() - 1;
+                }
+                
+                List<ICode> basicBlockList = new LinkedList<ICode>();
+                for(int i = beginIndex; i <= endIndex; i++){
+                    basicBlockList.add(procedure.instructions.get(i));
+                }
+
+                procedureBlocks.add(new BasicBlock(basicBlockList));
             }
 
-            dagNodes.add(blockNode);
+            if(procFirsts.size() > 1){
+                int beginIndex = procFirsts.get(procFirsts.size() - 1);
+                int endIndex = procedure.instructions.size() - 1;
+
+                List<ICode> basicBlockList = new LinkedList<ICode>();
+                for(int i = beginIndex; i <= endIndex; i++){
+                    basicBlockList.add(procedure.instructions.get(i));
+                }
+                procedureBlocks.add(new ProcedureEndingBlock(basicBlockList, procedure.returnStatement));
+            } else {
+                procedureBlocks.add(new ProcedureEndingBlock(new LinkedList<ICode>(), procedure.returnStatement));
+            }
         }
 
-        for(int i = 0; i < dagNodes.size(); i++){
-            BlockNode node = dagNodes.get(i);
+        return procedureBlocks;
+    }
+
+    private BlockNode buildDataBlockNode(){
+        BasicBlock block = buildDataBlock();
+        return new BlockNode(block);
+    }
+
+    private List<BlockNode> buildCodeBlockNodes(){
+        List<BasicBlock> blocks = buildCodeBlocks();
+        List<BlockNode> codeNodes = new LinkedList<BlockNode>();
+        for(BasicBlock block: blocks){
+            codeNodes.add(new BlockNode(block));
+        }
+        return codeNodes;
+    }
+
+    private List<BlockNode> buildProcedureBlockNodes(){
+        List<BasicBlock> blocks = buildProcedureBlocks();
+        List<BlockNode> blockNodes = new LinkedList<BlockNode>();
+        for(BasicBlock block : blocks){
+            if(block instanceof ProcedureEndingBlock){
+                ProcedureEndingBlock endBlock = (ProcedureEndingBlock)block;
+                blockNodes.add(new ProcedureExitNode(endBlock));
+            } else if(block instanceof ProcedureBeginningBlock){
+                ProcedureBeginningBlock beginBlock = (ProcedureBeginningBlock)block;
+                blockNodes.add(new ProcedureEntryNode(beginBlock));
+            } else {
+                blockNodes.add(new BlockNode(block));
+            }
+        }
+        return blockNodes;
+    }
+
+    private static Map<String, BlockNode> findProcedureEntryPoints(List<BlockNode> nodes){
+        Map<String, BlockNode> toRet = new HashMap<String, BlockNode>();
+        for(BlockNode node : nodes){
+            if(node instanceof ProcedureEntryNode){
+                ProcedureBeginningBlock entryBlock = (ProcedureBeginningBlock)node.getBlock();
+                ProcLabel label = entryBlock.getLabel();
+                toRet.put(label.label, node);
+            }
+        }
+        return toRet;
+    }
+
+    private static Map<String, BlockNode> findBranchEntryPoints(List<BlockNode> nodes){
+        Map<String, BlockNode> toRet = new HashMap<String, BlockNode>();
+        for(BlockNode node: nodes){
+            BasicBlock block = node.getBlock();
+            if(Utils.beginningOfBlockIsLabel(block)){
+                Label lab = (Label)block.getIcode().get(0);
+                toRet.put(lab.label, node);
+            }
+        }
+        return toRet;
+    }
+
+    private static Map<String, BlockNode> findProcedureExitPoints(List<BlockNode> nodes){
+        Map<String, BlockNode> toRet = new HashMap<String, BlockNode>();
+        for(int i = 0; i < nodes.size(); i++){
+            BlockNode node = nodes.get(i);
+            if(node instanceof ProcedureEntryNode){
+                ProcedureBeginningBlock block = (ProcedureBeginningBlock)node.getBlock();
+                ProcLabel label = block.getLabel();
+                boolean endingNotFound = true;
+                i++;
+                while(endingNotFound){
+                    BlockNode nodeEnd = nodes.get(i);
+                    if(nodeEnd instanceof ProcedureExitNode){
+                        toRet.put(label.label, nodeEnd);
+                        endingNotFound = false;
+                    } else {
+                        i++;
+                    }
+                }
+            }
+        }
+        return toRet;
+    }
+
+    private static void linkUpFunctionCalls(List<BlockNode> nodes, Map<String, BlockNode> functionBlocks){
+        for(BlockNode node : nodes){
             BasicBlock block = node.getBlock();
             if(Utils.endOfBlockIsJump(block)){
                 ICode lastCode = block.getIcode().get(block.getIcode().size() - 1);
-                if(lastCode instanceof If){
-                    If lastIf = (If)lastCode;
-                    BlockNode trueNode = labeledNodes.get(lastIf.ifTrue);
-                    if(trueNode != null){
-                        node.addSuccessor(trueNode);
-                        trueNode.addPredecessor(node);
-                    }
-                    BlockNode falseNode = labeledNodes.get(lastIf.ifFalse);
-                    if(falseNode != null){
-                        node.addSuccessor(falseNode);
-                        falseNode.addPredecessor(node);
-                    }
-                } else if(lastCode instanceof Goto){
-                    Goto lastGoto = (Goto)lastCode;
-                    BlockNode labeledNode = labeledNodes.get(lastGoto.label);
-                    if(labeledNode != null){
-                        node.addSuccessor(labeledNode);
-                        labeledNode.addPredecessor(node);
-                    }
-                } else if(lastCode instanceof Call){
+                if(lastCode instanceof Call){
                     Call lastProc = (Call)lastCode;
-                    BlockNode labeledNode = labeledNodes.get(lastProc.pname);
+                    BlockNode labeledNode = functionBlocks.get(lastProc.pname);
                     if(labeledNode != null){
                         node.addSuccessor(labeledNode);
                         labeledNode.addPredecessor(node);
                     }
                 }
-            } else if(i + 1 < dagNodes.size()){
-                BlockNode nextNode = dagNodes.get(i + 1);
-                node.addSuccessor(nextNode);
-                nextNode.addPredecessor(node);
             }
         }
+    }
 
-        EntryNode entry = new EntryNode(dagNodes.get(0));
-        ExitNode exit = new ExitNode(dagNodes.get(dagNodes.size() - 1));
+    private static void linkUpJumps(List<BlockNode> nodes, Map<String, BlockNode> branchLabels){
+        for(BlockNode node : nodes){
+            BasicBlock block = node.getBlock();
+            if(Utils.endOfBlockIsJump(block)){
+                ICode lastICode = block.getIcode().get(block.getIcode().size() - 1);
+                if(lastICode instanceof If){
+                    If lastIf = (If)lastICode;
+                    BlockNode trueNode = branchLabels.get(lastIf.ifTrue);
+                    if(trueNode != null){
+                        node.addSuccessor(trueNode);
+                        trueNode.addPredecessor(node);
+                    }
+                    BlockNode falseNode = branchLabels.get(lastIf.ifFalse);
+                    if(falseNode != null){
+                        node.addSuccessor(falseNode);
+                        falseNode.addPredecessor(node);
+                    }
+                } else if(lastICode instanceof Goto){
+                    Goto lastGoto = (Goto)lastICode;
+                    BlockNode labeledNode = branchLabels.get(lastGoto.label);
+                    if(labeledNode != null){
+                        node.addSuccessor(labeledNode);
+                        labeledNode.addPredecessor(node);
+                    }
+                }
+            }
+        }
+    }
 
-        FlowGraph flowGraph = new FlowGraph(entry, dagNodes, exit);
+    private static void linkUpReturns(List<BlockNode> nodes, Map<String, BlockNode> procedureEndings){
+        for(int i = 0; i < nodes.size(); i++){
+            BlockNode node = nodes.get(i);
+            BasicBlock block = node.getBlock();
+            if(Utils.endOfBlockIsJump(block)){
+                ICode lastICode = block.getIcode().get(block.getIcode().size() - 1);
+                if(lastICode instanceof Call && i + 1 < nodes.size()){
+                    Call call = (Call)lastICode;
+                    BlockNode nextNode = nodes.get(i + 1);
+                    BlockNode returnNode = procedureEndings.get(call.pname);
+                    if(returnNode != null){
+                        returnNode.addSuccessor(nextNode);
+                        nextNode.addPredecessor(returnNode);
+                    }
+                }
+            }
+        }
+    }
+
+    private void linkUpFollowThrough(BlockNode dataNode, List<BlockNode> codeSectionNodes){
+        if(codeSectionNodes.size() > 0){
+            BlockNode firstNode = codeSectionNodes.get(0);
+            firstNode.addPredecessor(dataNode);
+            dataNode.addSuccessor(firstNode);
+            for(int i = 0; i < codeSectionNodes.size() - 1; i++){
+                BlockNode node = codeSectionNodes.get(i);
+                BasicBlock block = node.getBlock();
+                if(!Utils.endOfBlockIsJump(block)){
+                    BlockNode nextNode = codeSectionNodes.get(i + 1);
+                    nextNode.addPredecessor(node);
+                    node.addSuccessor(nextNode);
+                }
+            }
+        }
+    }
+
+    private void buildFlowGraph() {
+        BlockNode dataBlockNode = buildDataBlockNode();
+        List<BlockNode> codeBlockNodes = buildCodeBlockNodes();
+        List<BlockNode> procedureBlockNodes = buildProcedureBlockNodes();
+        
+        Map<String, BlockNode> procedureEntryNodes = findProcedureEntryPoints(procedureBlockNodes);
+        linkUpFunctionCalls(codeBlockNodes, procedureEntryNodes);
+        linkUpFunctionCalls(procedureBlockNodes, procedureEntryNodes);
+
+        Map<String, BlockNode> codeLabeledNodes = findBranchEntryPoints(codeBlockNodes);
+        linkUpJumps(codeBlockNodes, codeLabeledNodes);
+        linkUpJumps(procedureBlockNodes, codeLabeledNodes);
+
+        Map<String, BlockNode> procedureExitNodes = findProcedureExitPoints(procedureBlockNodes);
+        linkUpReturns(codeBlockNodes, procedureExitNodes);
+        linkUpReturns(procedureBlockNodes, procedureExitNodes);
+
+        linkUpFollowThrough(dataBlockNode, codeBlockNodes);
+        linkUpFollowThrough(codeBlockNodes.get(codeBlockNodes.size() - 1), procedureBlockNodes);
+
+        EntryNode entry = new EntryNode(dataBlockNode);
+        ExitNode exit = new ExitNode(codeBlockNodes.get(codeBlockNodes.size() - 1));
+
+        FlowGraph flowGraph = new FlowGraph(entry, dataBlockNode, codeBlockNodes, procedureBlockNodes, exit);
 
         this.globalFlowGraph = flowGraph;
     }
@@ -193,7 +398,7 @@ public class MyOptimizer {
             int internalSize = procedureCode.size();
             for(int x = internalSize - 1; x >= 0; x--){
                 ICode icode = procedureCode.get(i);
-                updateICodeLivelinessInformation(symbolTable, icode);
+                updateICodeLivelinessInformation(symbolTable, icode, x);
             }
                 
 
@@ -208,7 +413,7 @@ public class MyOptimizer {
         }
     }
 
-    private void updateICodeLivelinessInformation(Environment<String, LiveInfo> symbolTable, ICode icode){
+    private void updateICodeLivelinessInformation(Environment<String, LiveInfo> symbolTable, ICode icode, int x){
         if(icode instanceof Assign){
             Assign icodeAssign = (Assign)icode;
             symbolTable.addEntry(icodeAssign.place, new LiveInfo(false, x));
@@ -267,7 +472,7 @@ public class MyOptimizer {
         int size = icodeList.size();
         for(int i = size - 1; i >= 0; i--){
             ICode icode = icodeList.get(i);
-            updateICodeLivelinessInformation(symbolTable, icode);
+            updateICodeLivelinessInformation(symbolTable, icode, i);
         }
     }
 
@@ -277,7 +482,7 @@ public class MyOptimizer {
         int size = assignmants.size();
         for(int i = size - 1; i >= 0; i--){
             ICode icode = assignmants.get(i);
-            updateICodeLivelinessInformation(symbolTable, icode);
+            updateICodeLivelinessInformation(symbolTable, icode, i);
         }
     }
 
@@ -584,11 +789,11 @@ public class MyOptimizer {
         return this.intermediateCode;
     }
 
-    private List<Integer> findFirsts(){
+    private List<Integer> findFirsts(List<ICode> intermediateCode, boolean procedureFirst){
         List<Integer> firsts = new LinkedList<Integer>();
         for(int i = 0; i < intermediateCode.size(); i++){
             ICode intermediateInstruction = intermediateCode.get(i);
-            if(i == 0){
+            if(i == 0 && !procedureFirst){
                 //First Statement is allways a leader
                 firsts.add(i);
             } else if(intermediateInstruction instanceof Label){

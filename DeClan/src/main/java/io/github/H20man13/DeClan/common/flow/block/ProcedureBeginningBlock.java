@@ -6,11 +6,11 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
 
-public class BasicProcedureBlock extends BasicBlock {
+public class ProcedureBeginningBlock extends BasicBlock {
     private ProcLabel label;
     private List<ParamAssign> paramaterAssignmants;
     
-    public BasicProcedureBlock(ProcLabel label, List<ParamAssign> assignments, List<ICode> initialICode){
+    public ProcedureBeginningBlock(ProcLabel label, List<ParamAssign> assignments, List<ICode> initialICode){
         super(initialICode);
         this.paramaterAssignmants = assignments;
         this.label = label;
