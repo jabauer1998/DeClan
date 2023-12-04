@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.icode.section;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.icode.End;
@@ -11,6 +12,22 @@ public class CodeSec implements ICode {
 
     public CodeSec(List<ICode> code){
         this.intermediateCode = code;    
+    }
+
+    public CodeSec(){
+        this(new LinkedList<ICode>());
+    }
+
+    public void addInstruction(ICode instruction){
+        this.intermediateCode.add(instruction);
+    }
+
+    public int getLength(){
+        return intermediateCode.size();
+    }
+
+    public ICode getInstruction(int index){
+        return intermediateCode.get(index);
     }
 
     @Override

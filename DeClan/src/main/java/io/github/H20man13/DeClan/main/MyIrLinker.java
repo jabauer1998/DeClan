@@ -108,8 +108,7 @@ public class MyIrLinker {
         return iGen.generateLibraryIr(lib);
     }
 
-    private void fetchExternalDependentInstructions(String identName, int mask, SymSec newTable, List<ICode> dataInstructions, Lib... libsToIgnore){
-        List<ICode> toRet = new LinkedList<ICode>();
+    private void fetchExternalDependentInstructions(String identName, int mask, SymSec newTable, DataSec dataInstructions, CodeSec codeSec, ProcSec procSec, Lib... libsToIgnore){
         loop: for(int libIndex = 0; libIndex < libraries.size(); libIndex++){
             Lib library = libraries.get(libIndex);
             if(!Utils.arrayContainsValue(library, libsToIgnore)){
@@ -126,9 +125,9 @@ public class MyIrLinker {
                                 IdentExp identExp = (IdentExp)exp;
                                 if(libSymbols.containsEntryWithICodePlace(identExp.ident, SymEntry.EXTERNAL | mask)){
                                     SymEntry symEntry = libSymbols.getEntryByICodePlace(identExp.ident, SymEntry.EXTERNAL | mask);
-                                    fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, library);
+                                    fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, codeSec, procSec, library);
                                 } else {
-                                    fetchInternalDependentInstructions(library, identExp.ident, mask, newTable, dataInstructions);
+                                    fetchInternalDependentInstructions(library, identExp.ident, mask, newTable, dataInstructions, codeSec, procSec);
                                 }
                             } else if(exp instanceof UnExp){
                                 UnExp unary = (UnExp)exp;
@@ -136,9 +135,9 @@ public class MyIrLinker {
                                     IdentExp identExp = (IdentExp)unary.right;
                                     if(libSymbols.containsEntryWithICodePlace(identExp.ident, SymEntry.EXTERNAL | mask)){
                                         SymEntry symEntry = libSymbols.getEntryByICodePlace(identExp.ident, SymEntry.EXTERNAL | mask);
-                                        fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, library);
+                                        fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, codeSec, procSec, library);
                                     } else {
-                                        fetchInternalDependentInstructions(library, identExp.ident, mask, newTable, dataInstructions);
+                                        fetchInternalDependentInstructions(library, identExp.ident, mask, newTable, dataInstructions, codeSec, procSec);
                                     }
                                 }
                             } else if(exp instanceof BinExp){
@@ -148,9 +147,9 @@ public class MyIrLinker {
                                     IdentExp leftIdent = (IdentExp)binary.left;
                                     if(libSymbols.containsEntryWithICodePlace(leftIdent.ident, SymEntry.EXTERNAL | mask)){
                                         SymEntry symEntry = libSymbols.getEntryByICodePlace(leftIdent.ident, SymEntry.EXTERNAL | mask);
-                                        fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, library);
+                                        fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, codeSec, procSec, library);
                                     } else {
-                                        fetchInternalDependentInstructions(library, leftIdent.ident, mask, newTable, dataInstructions);
+                                        fetchInternalDependentInstructions(library, leftIdent.ident, mask, newTable, dataInstructions, codeSec, procSec);
                                     }
                                 }
 
@@ -158,33 +157,33 @@ public class MyIrLinker {
                                     IdentExp rightIdent = (IdentExp)binary.right;
                                     if(libSymbols.containsEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL | mask)){
                                         SymEntry symEntry = libSymbols.getEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL | mask);
-                                        fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, library);
+                                        fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, codeSec, procSec, library);
                                     } else {
-                                        fetchInternalDependentInstructions(library, rightIdent.ident, mask, newTable,  dataInstructions);
+                                        fetchInternalDependentInstructions(library, rightIdent.ident, mask, newTable, dataInstructions, codeSec, procSec);
                                     }
                                 }
                             }
 
-                            if(placeExistsInNewProgram(assignLib.place, dataInstructions)){
+                            if(placeExistsInNewProgram(assignLib.place, newTable, dataInstructions, codeSec, procSec)){
                                 String place = null;    
                                 do{
                                     place = gen.genNextRegister();
-                                } while(placeExistsInNewProgram(place, dataInstructions));
+                                } while(placeExistsInNewProgram(place, newTable, dataInstructions, codeSec, procSec));
 
                                 replacePlaceInLib(library, assignLib.place, place);
                             }
 
-                            toRet.add(assignLib);
+                            if(!instructionExistsInNewProgram(assignLib, dataInstructions, codeSec))
+                                dataInstructions.addInstruction(assignLib);
                             break loop;
                         }
                     }
                 }
             }
         }
-        dataInstructions.addAll(toRet);
     }
 
-    private void fetchInternalDependentInstructions(Lib currentLib, String labelName, int mask, SymSec newTable, List<ICode> dataInstructions){
+    private void fetchInternalDependentInstructions(Lib currentLib, String labelName, int mask, SymSec newTable, DataSec dataInstructions, CodeSec codeSection, ProcSec procSec){
         DataSec data = currentLib.variables;
         SymSec libSymbols = currentLib.symbols;
         LinkedList<ICode> toRet = new LinkedList<ICode>();
@@ -196,9 +195,9 @@ public class MyIrLinker {
                     IdentExp identExp = (IdentExp)exp;
                     if(libSymbols.containsEntryWithICodePlace(identExp.ident, SymEntry.EXTERNAL | mask)){
                         SymEntry symEntry = libSymbols.getEntryByICodePlace(identExp.ident, SymEntry.EXTERNAL | mask);
-                        fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, currentLib);
+                        fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, codeSection, procSec, currentLib);
                     } else {
-                        fetchInternalDependentInstructions(currentLib, identExp.ident, mask, newTable, dataInstructions);
+                        fetchInternalDependentInstructions(currentLib, identExp.ident, mask, newTable, dataInstructions, codeSection, procSec);
                     }
                 } else if(exp instanceof UnExp){
                     UnExp unary = (UnExp)exp;
@@ -206,9 +205,9 @@ public class MyIrLinker {
                         IdentExp identExp = (IdentExp)unary.right;
                         if(libSymbols.containsEntryWithICodePlace(identExp.ident, SymEntry.EXTERNAL | mask)){
                             SymEntry symEntry = libSymbols.getEntryByICodePlace(identExp.ident, SymEntry.EXTERNAL | mask);
-                            fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, currentLib);
+                            fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, codeSection, procSec, currentLib);
                         } else {
-                            fetchInternalDependentInstructions(currentLib, identExp.ident, mask, newTable, dataInstructions);
+                            fetchInternalDependentInstructions(currentLib, identExp.ident, mask, newTable, dataInstructions, codeSection, procSec);
                         }
                     }
                 } else if(exp instanceof BinExp){
@@ -218,9 +217,9 @@ public class MyIrLinker {
                         IdentExp leftIdent = (IdentExp)binary.left;
                         if(libSymbols.containsEntryWithICodePlace(leftIdent.ident, SymEntry.EXTERNAL | mask)){
                             SymEntry symEntry = libSymbols.getEntryByICodePlace(leftIdent.ident, SymEntry.EXTERNAL | mask);
-                            fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, currentLib);
+                            fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, codeSection, procSec, currentLib);
                         } else {
-                            fetchInternalDependentInstructions(currentLib, leftIdent.ident, mask, newTable, dataInstructions);
+                            fetchInternalDependentInstructions(currentLib, leftIdent.ident, mask, newTable, dataInstructions, codeSection, procSec);
                         }
                     }
 
@@ -228,22 +227,26 @@ public class MyIrLinker {
                         IdentExp rightIdent = (IdentExp)binary.right;
                         if(libSymbols.containsEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL | mask)){
                             SymEntry symEntry = libSymbols.getEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL | mask);
-                            fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, currentLib);
+                            fetchExternalDependentInstructions(symEntry.declanIdent, SymEntry.EXTERNAL | mask, newTable, dataInstructions, codeSection, procSec, currentLib);
                         } else {
-                            fetchInternalDependentInstructions(currentLib, rightIdent.ident, mask, newTable, dataInstructions);
+                            fetchInternalDependentInstructions(currentLib, rightIdent.ident, mask, newTable, dataInstructions, codeSection, procSec);
                         }
                     }
                 }
                 
-                if(placeExistsInNewProgram(assign.place, dataInstructions)){
+                if(placeExistsInNewProgram(assign.place, newTable, dataInstructions, codeSection, procSec)){
                     String place = null;    
                     do{
                         place = gen.genNextRegister();
-                    } while(placeExistsInNewProgram(place, dataInstructions));
+                    } while(placeExistsInNewProgram(place, newTable, dataInstructions, codeSection, procSec));
 
                     replacePlaceInLib(currentLib, assign.place, place);
                 }
-                dataInstructions.add(assign);
+
+                if(!instructionExistsInNewProgram(assign, dataInstructions, codeSection)){
+                    dataInstructions.addInstruction(assign);
+                }
+                
                 break;
             }
         }
@@ -395,97 +398,154 @@ public class MyIrLinker {
         }
     }
 
-    private boolean placeExistsInNewProgram(String place, List<ICode> dataCodes){
-        for(ICode dataCode : dataCodes){
-            if(dataCode instanceof Assign){
-                Assign assign = (Assign)dataCode;
+    private static boolean placeExistsInICode(String place, ICode dataCode){
+        if(dataCode instanceof Assign){
+            Assign assign = (Assign)dataCode;
+            
+            if(assign.place.equals(place))
+                return true;
+
+            Exp value = assign.value;
+            if(value instanceof IdentExp){
+                IdentExp identVal = (IdentExp)value;
+                if(identVal.ident.equals(place))
+                    return true;
+            } else if(value instanceof UnExp){
+                UnExp unaryVal = (UnExp)value;
+                if(unaryVal.right instanceof IdentExp){
+                    IdentExp rightVal = (IdentExp)unaryVal.right;
+                    if(rightVal.ident.equals(place))
+                        return true;
+                }
+            } else if(value instanceof BinExp){
+                BinExp binVal = (BinExp)value;
                 
-                if(assign.place.equals(place))
-                    return true;
-
-                Exp value = assign.value;
-                if(value instanceof IdentExp){
-                    IdentExp identVal = (IdentExp)value;
-                    if(identVal.ident.equals(place))
-                        return true;
-                } else if(value instanceof UnExp){
-                    UnExp unaryVal = (UnExp)value;
-                    if(unaryVal.right instanceof IdentExp){
-                        IdentExp rightVal = (IdentExp)unaryVal.right;
-                        if(rightVal.ident.equals(place))
-                            return true;
-                    }
-                } else if(value instanceof BinExp){
-                    BinExp binVal = (BinExp)value;
-                    
-                    if(binVal.left instanceof IdentExp){
-                        IdentExp leftVal = (IdentExp)binVal.left;
-                        if(leftVal.ident.equals(place))
-                            return true;
-                    }
-
-                    if(binVal.right instanceof IdentExp){
-                        IdentExp rightVal = (IdentExp)binVal.right;
-                        if(rightVal.ident.equals(place))
-                            return true;
-                    }
-                }
-            } else if(dataCode instanceof If){
-                If ifStat = (If)dataCode;
-                BinExp expression = ifStat.exp;
-
-                if(expression.left instanceof IdentExp){
-                    IdentExp leftIdent = (IdentExp)expression.left;
-                    if(leftIdent.ident.equals(place))
+                if(binVal.left instanceof IdentExp){
+                    IdentExp leftVal = (IdentExp)binVal.left;
+                    if(leftVal.ident.equals(place))
                         return true;
                 }
 
-                if(expression.right instanceof IdentExp){
-                    IdentExp rightIdent = (IdentExp)expression.right;
-                    if(rightIdent.ident.equals(place))
-                        return true;
-                }
-            } else if(dataCode instanceof ExternalPlace){
-                ExternalPlace placement = (ExternalPlace)dataCode;
-                if(placement.place.equals(place))
-                    return true;
-
-                if(placement.retPlace.equals(place))
-                    return true;
-            } else if(dataCode instanceof Inline){
-                Inline inlineAssembly = (Inline)dataCode;
-                for(String arg : inlineAssembly.param){
-                    if(arg.equals(place))
-                        return true;
-                }
-            } else if(dataCode instanceof ExternalCall){
-                ExternalCall call = (ExternalCall)dataCode;
-                for(String arg: call.arguments){
-                    if(arg.equals(place))
-                        return true;
-                }
-            } else if(dataCode instanceof Call){
-                Call call = (Call)dataCode;
-                for(Tuple<String, String> arg : call.params){
-                    if(arg.source.equals(place))
-                        return true;
-
-                    if(arg.dest.equals(place))
+                if(binVal.right instanceof IdentExp){
+                    IdentExp rightVal = (IdentExp)binVal.right;
+                    if(rightVal.ident.equals(place))
                         return true;
                 }
             }
+        } else if(dataCode instanceof If){
+            If ifStat = (If)dataCode;
+            BinExp expression = ifStat.exp;
+
+            if(expression.left instanceof IdentExp){
+                IdentExp leftIdent = (IdentExp)expression.left;
+                if(leftIdent.ident.equals(place))
+                    return true;
+            }
+
+            if(expression.right instanceof IdentExp){
+                IdentExp rightIdent = (IdentExp)expression.right;
+                if(rightIdent.ident.equals(place))
+                    return true;
+            }
+        } else if(dataCode instanceof ExternalPlace){
+            ExternalPlace placement = (ExternalPlace)dataCode;
+            if(placement.place.equals(place))
+                return true;
+
+            if(placement.retPlace.equals(place))
+                return true;
+        } else if(dataCode instanceof Inline){
+            Inline inlineAssembly = (Inline)dataCode;
+            for(String arg : inlineAssembly.param){
+                if(arg.equals(place))
+                    return true;
+            }
+        } else if(dataCode instanceof ExternalCall){
+            ExternalCall call = (ExternalCall)dataCode;
+            for(String arg: call.arguments){
+                if(arg.equals(place))
+                    return true;
+            }
+        } else if(dataCode instanceof Call){
+            Call call = (Call)dataCode;
+            for(Tuple<String, String> arg : call.params){
+                if(arg.source.equals(place))
+                    return true;
+
+                if(arg.dest.equals(place))
+                    return true;
+            }
+        } else if(dataCode instanceof ParamAssign){
+            ParamAssign assign = (ParamAssign)dataCode;
+            if(assign.newPlace.equals(place))
+                return true;
+
+            if(assign.paramPlace.equals(place))
+                return true;
+        } else {
+            return false;
         }
         return false;
     }
 
-    private DataSec linkDataSections(SymSec symbolTable){
-        List<ICode> finalAssignments = new LinkedList<ICode>();
+    private boolean placeExistsInNewProgram(String place, SymSec symbols, DataSec dataCodes, CodeSec codeSec, ProcSec procedures){
+        for(int i = 0; i < symbols.getLength(); i++){
+            SymEntry entry = symbols.getEntryByIndex(i);
+            if(entry.icodePlace.equals(place))
+                return true;
+        }
 
+        for(int i = 0; i < dataCodes.getLength(); i++){
+            ICode dataCode = dataCodes.getInstruction(i);
+            if(placeExistsInICode(place, dataCode))
+                return true;
+        }
+
+        for(int i = 0; i < codeSec.getLength(); i++){
+            ICode icode = codeSec.getInstruction(i);
+            if(placeExistsInICode(place, icode))
+                return true;
+        }
+
+        for(int i = 0; i < procedures.getLength(); i++){
+            Proc procedure = procedures.getProcedureByIndex(i);
+            for(ParamAssign assign: procedure.paramAssign){
+                if(placeExistsInICode(place, assign))
+                    return true;
+            }
+
+            for(ICode icode : procedure.instructions){
+                if(placeExistsInICode(place, icode))
+                    return true;
+            }
+
+            if(procedure.placement != null)
+                if(placeExistsInICode(place, procedure.placement))
+                    return true;
+        }
+        return false;
+    }
+
+    private static boolean instructionExistsInNewProgram(ICode codeToSearch, DataSec dataSec, CodeSec codeSec){
+        for(int i = 0; i < dataSec.getLength(); i++){
+            ICode icode = dataSec.getInstruction(i);
+            if(icode.equals(codeToSearch))
+                return true;
+        }
+
+        for(int i = 0; i < codeSec.getLength(); i++){
+            ICode icode = codeSec.getInstruction(i);
+            if(icode.equals(codeToSearch))
+                return true;
+        }
+        return false;
+    }
+
+    private void linkDataSections(SymSec symbolTable, DataSec dataSec, CodeSec codeSec, ProcSec procedures){
         SymSec programSymbolTable = program.symbols;
         DataSec programDataSec = program.variables;
-        List<ICode> programAssignments = programDataSec.intermediateCode;
-        for(int i = 0; i < programAssignments.size(); i++){
-            ICode icode = programAssignments.get(i);
+        for(int i = 0; i < programDataSec.getLength(); i++){
+            ICode icode = programDataSec.getInstruction(i);
             Assign assign = (Assign)icode;
             Exp assignExp = assign.value;
             if(assignExp instanceof BinExp){
@@ -495,7 +555,7 @@ public class MyIrLinker {
                     IdentExp leftIdent = (IdentExp)assignBinExp.left;
                     if(programSymbolTable.containsEntryWithICodePlace(leftIdent.ident, SymEntry.EXTERNAL | SymEntry.CONST)){
                         SymEntry entry = programSymbolTable.getEntryByICodePlace(leftIdent.ident, SymEntry.EXTERNAL | SymEntry.CONST);
-                        fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL | SymEntry.CONST, symbolTable, finalAssignments);
+                        fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL | SymEntry.CONST, symbolTable, dataSec, codeSec, procedures);
                     }
                 }
 
@@ -503,7 +563,7 @@ public class MyIrLinker {
                     IdentExp rightIdent = (IdentExp)assignBinExp.right;
                     if(programSymbolTable.containsEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL | SymEntry.CONST)){
                         SymEntry entry = programSymbolTable.getEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL | SymEntry.CONST);
-                        fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL | SymEntry.CONST, symbolTable, finalAssignments);
+                        fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL | SymEntry.CONST, symbolTable, dataSec, codeSec, procedures);
                     }
                 }
             } else if(assignExp instanceof UnExp){
@@ -512,27 +572,33 @@ public class MyIrLinker {
                     IdentExp rightIdent = (IdentExp)assignUnExp.right;
                     if(programSymbolTable.containsEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL | SymEntry.CONST)){
                         SymEntry entry = symbolTable.getEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL | SymEntry.CONST);
-                        fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL | SymEntry.CONST, symbolTable, finalAssignments);
+                        fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL | SymEntry.CONST, symbolTable, dataSec, codeSec, procedures);
                     }
                 }
             } else if(assignExp instanceof IdentExp){
                 IdentExp assignIdentExp = (IdentExp)assignExp;
                 if(programSymbolTable.containsEntryWithICodePlace(assignIdentExp.ident, SymEntry.EXTERNAL | SymEntry.CONST)){
                     SymEntry entry = symbolTable.getEntryByICodePlace(assignIdentExp.ident, SymEntry.EXTERNAL | SymEntry.CONST);
-                    fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL | SymEntry.CONST, symbolTable, finalAssignments);
+                    fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL | SymEntry.CONST, symbolTable, dataSec, codeSec, procedures);
                 }
             }
-            finalAssignments.add(icode);
+            dataSec.addInstruction(icode);
         }
+    }
 
-        return new DataSec(finalAssignments);
+    private void linkCodeSection(SymSec symbolTable, DataSec dataSection, CodeSec codeSection, ProcSec procedureSec){
+        SymSec programTable = program.symbols;
+        CodeSec codeTable = program.code;
+
     }
 
     public Prog performLinkage(){
-        SymSec symbolTable = new SymSec(new LinkedList<SymEntry>());
-        DataSec finalDataSec = linkDataSections(symbolTable);
-        CodeSec finalCodeSec = linkCodeSection(symbolTable);
-        ProcSec finalProcedureSec = linkProcedureSections(symbolTable);
-        return new Prog(symbolTable, finalDataSec, finalProcedureSec, finalCodeSec);
+        SymSec symbolTable = new SymSec();
+        DataSec dataSec = new DataSec();
+        CodeSec codeSec = new CodeSec();
+        ProcSec procSec = new ProcSec();
+        linkDataSections(symbolTable, dataSec, codeSec, procSec);
+        linkCodeSection(symbolTable, dataSec, codeSec, procSec);
+        return new Prog(symbolTable, dataSec, codeSec, procSec);
     }
 }

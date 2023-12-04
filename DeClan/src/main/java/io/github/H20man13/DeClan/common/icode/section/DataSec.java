@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.icode.section;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.icode.Assign;
@@ -11,6 +12,27 @@ public class DataSec implements ICode {
     public DataSec(List<ICode> icode){
         this.intermediateCode = icode;
     }
+
+    public DataSec(){
+        this(new LinkedList<ICode>());
+    }
+
+    public void addInstruction(ICode icode){
+        this.intermediateCode.add(icode);
+    }
+
+    public void addInstructions(List<ICode> icodes){
+        this.intermediateCode.addAll(icodes);
+    }
+
+    public int getLength(){
+        return intermediateCode.size();
+    }
+
+    public ICode getInstruction(int index){
+        return intermediateCode.get(index);
+    }
+
     @Override
     public boolean isConstant() {
         return false;

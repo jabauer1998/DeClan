@@ -114,10 +114,10 @@ public class MyIrParser {
     public Prog parseProgram(){
         SymSec sym = parseSymbolSection();
         DataSec data = parseDataSection();
-        ProcSec proc = parseProcedureSection();
         CodeSec code = parseCodeSection();
+        ProcSec proc = parseProcedureSection();
         matchEOF();
-        return new Prog(sym, data, proc, code);
+        return new Prog(sym, data, code, proc);
     }
 
     public Lib parseLibrary(){

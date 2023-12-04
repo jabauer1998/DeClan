@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.icode.section;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -12,6 +13,10 @@ public class SymSec implements ICode {
 
     public SymSec(List<SymEntry> entries){
         this.entries = entries;
+    }
+
+    public SymSec(){
+        this(new LinkedList<SymEntry>());
     }
 
     @Override
@@ -35,6 +40,14 @@ public class SymSec implements ICode {
             }
         }
         return null;
+    }
+
+    public SymEntry getEntryByIndex(int index){
+        return entries.get(index);
+    }
+
+    public int getLength(){
+        return entries.size();
     }
 
     public SymEntry getEntryByIdentifier(String ident, int mask){

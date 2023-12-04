@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.icode.section;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -12,6 +13,40 @@ public class ProcSec implements ICode {
 
     public ProcSec(List<Proc> procedures){
         this.procedures = procedures;
+    }
+
+    public ProcSec(){
+        this(new LinkedList<Proc>());
+    }
+
+    public int getLength(){
+        return procedures.size();
+    }
+
+    public boolean containsProcedure(String name){
+        for(Proc procedure : procedures){
+            if(procedure.label.label.equals(name)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Proc getProcedureByName(String name){
+        for(Proc procedure : procedures){
+            if(procedure.label.label.equals(name)){
+                return procedure;
+            }
+        }
+        return null;
+    }
+
+    public Proc getProcedureByIndex(int index){
+        return procedures.get(index);
+    }
+
+    public void addProcedure(Proc procedure){
+        this.procedures.add(procedure);
     }
 
     @Override

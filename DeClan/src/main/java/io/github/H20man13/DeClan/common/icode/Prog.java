@@ -12,7 +12,7 @@ public class Prog implements ICode {
     public ProcSec procedures;
     public CodeSec code;
 
-    public Prog(SymSec symbols, DataSec variables, ProcSec procedures, CodeSec code){
+    public Prog(SymSec symbols, DataSec variables, CodeSec code, ProcSec procedures){
         this.symbols = symbols;
         this.variables = variables;
         this.procedures = procedures;
