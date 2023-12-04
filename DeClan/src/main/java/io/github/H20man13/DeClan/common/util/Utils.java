@@ -335,4 +335,13 @@ public class Utils {
             return null;
         }
     }
+
+    public static <ArrayType> boolean arrayContainsValue(ArrayType toCheck, ArrayType[] array){
+        for(ArrayType arrayVal : array){
+            if(toCheck.equals(arrayVal)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
