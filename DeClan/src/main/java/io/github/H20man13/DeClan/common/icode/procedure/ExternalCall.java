@@ -6,14 +6,18 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class ExternalCall implements ICode {
-    public String paramName;
+    public String procedureName;
     public List<String> arguments;
     public String toRet;
     
-    public ExternalCall(String paramName, List<String> arguments, String toRet){
-        this.paramName = paramName;
+    public ExternalCall(String procedureName, List<String> arguments, String toRet){
+        this.procedureName = procedureName;
         this.arguments = arguments;
         this.toRet = toRet;
+    }
+
+    public ExternalCall(String procedureName, List<String> arguments){
+        this(procedureName, arguments, null);
     }
 
     @Override
@@ -29,5 +33,30 @@ public class ExternalCall implements ICode {
     @Override
     public P asPattern() {
         return P.PAT(P.EXTERNAL(), P.CALL(), P.ID());
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+
+        if(toRet != null){
+            sb.append(toRet);
+            sb.append(" := ");
+        }
+
+        sb.append("External Call ");
+        sb.append(procedureName);
+        sb.append('(');
+
+        for(int i = 0; i < arguments.size(); i++){
+            sb.append(arguments.get(i));
+            if(i < arguments.size() - 1){
+                sb.append(", ");
+            }
+        }
+
+        sb.append(')');
+
+        return sb.toString();
     }
 }

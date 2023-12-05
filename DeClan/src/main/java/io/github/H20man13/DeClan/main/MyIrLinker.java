@@ -42,6 +42,7 @@ public class MyIrLinker {
     private Prog program;
     private List<Lib> libraries;
     private IrRegisterGenerator gen;
+    private ErrorLog errLog;
 
     public MyIrLinker(ErrorLog errLog, String progSrc, String... libSrc) throws Exception{
         this(errLog, parseProgram(errLog, progSrc), parseLibraries(errLog, libSrc));
@@ -52,6 +53,7 @@ public class MyIrLinker {
     }
 
     public MyIrLinker(ErrorLog errLog, Prog program, Lib... libraries){
+        this.errLog = errLog;
         this.program = program;
         this.libraries = new LinkedList<Lib>();
         this.gen = new IrRegisterGenerator();
@@ -590,6 +592,95 @@ public class MyIrLinker {
         SymSec programTable = program.symbols;
         CodeSec codeTable = program.code;
 
+        for(int i = 0; i < codeTable.getLength(); i++){
+            ICode icode = codeTable.getInstruction(i);
+            if(icode instanceof Assign){
+                Assign assignment = (Assign)icode;
+                Exp assignExp = assignment.value;
+
+                if(assignExp instanceof IdentExp){
+                    IdentExp ident = (IdentExp)assignExp;
+                    if(programTable.containsEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
+                        SymEntry entry = programTable.getEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
+                        fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL, symbolTable, dataSection, codeSection, procedureSec);
+                    }
+                } else if(icode instanceof UnExp){
+                    UnExp unExp = (UnExp)icode;
+                    
+                    if(unExp.right instanceof IdentExp){
+                        IdentExp ident = (IdentExp)unExp.right;
+                        if(programTable.containsEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
+                            SymEntry entry = programTable.getEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
+                            fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL, symbolTable, dataSection, codeSection, procedureSec);
+                        }
+                    }
+                } else if(icode instanceof BinExp){
+                    BinExp binExp = (BinExp)icode;
+
+                    if(binExp.left instanceof IdentExp){
+                        IdentExp leftExp = (IdentExp)binExp.left;
+                        if(programTable.containsEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
+                            SymEntry entry = programTable.getEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
+                            fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL, symbolTable, dataSection, codeSection, procedureSec);
+                        }
+                    }
+
+                    if(binExp.right instanceof IdentExp){
+                        IdentExp rightExp = (IdentExp)binExp.right;
+                        if(programTable.containsEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
+                            SymEntry entry = programTable.getEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
+                            fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL, symbolTable, dataSection, codeSection, procedureSec);
+                        }
+                    }
+                }
+            } else if(icode instanceof If){
+                If ifStat = (If)icode;
+
+                BinExp exp = ifStat.exp;
+                if(exp.left instanceof IdentExp){
+                    IdentExp leftExp = (IdentExp)exp.left;
+                    if(programTable.containsEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
+                        SymEntry entry = programTable.getEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
+                        fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL, symbolTable, dataSection, codeSection, procedureSec);
+                    }
+                }
+
+                if(exp.right instanceof IdentExp){
+                    IdentExp rightExp = (IdentExp)exp.right;
+                    if(programTable.containsEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
+                        SymEntry entry = programTable.getEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
+                        fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL, symbolTable, dataSection, codeSection, procedureSec);
+                    }
+                }
+            } else if(icode instanceof ExternalCall){
+                ExternalCall call = (ExternalCall)icode;
+                Proc procedure = null;
+                if(procedureSec.containsProcedure(call.procedureName)){
+                    procedure = procedureSec.getProcedureByName(call.procedureName);
+                } else {
+                    procedure = fetchExternalProcedure(call.procedureName);
+                }
+
+                int numberOfArgsInProc = procedure.paramAssign.size();
+                int numberOfArgsInCall = call.arguments.size();
+
+                if(numberOfArgsInCall != numberOfArgsInProc){
+                    errLog.add("In call " + call.toString() + " expected " + numberOfArgsInCall + " but found procedure with " + numberOfArgsInProc + " arguments", new Position(i, 0));
+                } else if(procedure.placement == null && call.toRet != null){
+                    errLog.add("In call " + call.toString())
+                } else {
+                    List<Tuple<String, String>> newArgs = new LinkedList<Tuple<String, String>>();
+                    for(int argIndex = 0; argIndex < numberOfArgsInCall; argIndex++){
+                        Tuple<String, String> newArg = new Tuple<String,String>("", "");
+                        newArg.source = call.arguments.get(argIndex);
+                        newArg.dest = procedure.paramAssign.get(argIndex).paramPlace;
+                        newArgs.add(newArg);
+                    }
+                    codeSection.addInstruction(new Call(call.procedureName, newArgs));
+                    continue;
+                }
+            }
+        }
     }
 
     public Prog performLinkage(){

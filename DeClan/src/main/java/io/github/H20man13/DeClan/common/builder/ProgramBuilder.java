@@ -41,6 +41,6 @@ public class ProgramBuilder implements CompletableBuilder<Prog> {
 
     @Override
     public Prog completeBuild() {
-        return new Prog(symbols.completeBuild(), variables.completeBuild(), procedures.completeBuild(), code.completeBuild());
+        return new Prog(symbols.completeBuild(), variables.completeBuild(), code.completeBuild(), procedures.completeBuild());
     }
 }

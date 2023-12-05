@@ -29,6 +29,7 @@ import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
+import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
 import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
 import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
@@ -239,9 +240,29 @@ public class MyIrParser {
             return parseGoto();
         } else if(willMatch(IrTokenType.CALL)){
             return parseProcedureCall();  
+        } else if(willMatch(IrTokenType.EXTERNAL)){
+            return parseExternalProcedure();  
         } else {
             return parseAssignment();
         }
+    }
+
+    private ExternalCall parseExternalProcedure(){
+        match(IrTokenType.EXTERNAL);
+        match(IrTokenType.CALL);
+
+        IrToken funcName = match(IrTokenType.ID);
+        match(IrTokenType.LPAR);
+
+        List<String> args = new LinkedList<String>();
+        do{
+            IrToken id = match(IrTokenType.ID);
+            args.add(id.getLexeme());
+        } while(skipIfYummy(IrTokenType.COMMA));
+
+        match(IrTokenType.RPAR);
+
+        return new ExternalCall(funcName.getLexeme(), args);
     }
 
     private Inline parseInlineAssembly(){
@@ -417,8 +438,27 @@ public class MyIrParser {
             return new ParamAssign(id.getLexeme(), id2.getLexeme());
         } else {
             match(IrTokenType.ASSIGN);
-            Exp expression = parseExpression();
-            return new Assign(id.getLexeme(), expression);
+
+            if(willMatch(IrTokenType.EXTERNAL)){
+                skip();
+                match(IrTokenType.CALL);
+
+                IrToken funcName = match(IrTokenType.ID);
+
+                match(IrTokenType.LPAR);
+                List<String> args = new LinkedList<String>();
+                do{
+                    IrToken arg = match(IrTokenType.ID);
+                    args.add(arg.getLexeme());
+                } while(skipIfYummy(IrTokenType.COMMA));
+
+                match(IrTokenType.RPAR);
+
+                return new ExternalCall(funcName.getLexeme(), args, id.getLexeme());
+            } else {
+                Exp expression = parseExpression();
+                return new Assign(id.getLexeme(), expression);
+            }
         }
     }
 }
