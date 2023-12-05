@@ -33,6 +33,21 @@ public class Lib implements ICode {
     }
 
     @Override
+    public boolean equals(Object obj){
+        if(obj instanceof Lib){
+            Lib lib = (Lib)obj;
+            
+            boolean symbolsEquals = lib.symbols.equals(symbols);
+            boolean dataEquals = lib.variables.equals(variables);
+            boolean procEquals = lib.procedures.equals(procedures);
+            
+            return symbolsEquals && dataEquals && procEquals;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append(symbols.toString());

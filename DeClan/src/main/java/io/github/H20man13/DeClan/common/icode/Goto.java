@@ -15,6 +15,17 @@ public class Goto implements ICode {
 	}
 
 	@Override
+	public boolean equals(Object obj){
+		if(obj instanceof Goto){
+			Goto objGoto = (Goto)obj;
+
+			return objGoto.label.equals(label);
+		} else {
+			return false;
+		}
+	}
+
+	@Override
 	public boolean isConstant() {
 		return false;
 	}

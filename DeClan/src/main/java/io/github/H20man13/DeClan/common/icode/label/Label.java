@@ -19,4 +19,7 @@ public abstract class Label implements ICode {
 	public boolean isBranch() {
 		return false;
 	}
+
+	@Override
+	public abstract boolean equals(Object obj);
 }

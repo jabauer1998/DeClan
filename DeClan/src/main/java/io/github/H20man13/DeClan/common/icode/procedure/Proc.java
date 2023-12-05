@@ -69,6 +69,48 @@ public class Proc implements ICode {
     }
 
     @Override
+    public boolean equals(Object obj){
+        if(obj instanceof Proc){
+            Proc objProc = (Proc)obj;
+
+            if(!objProc.label.equals(label))
+                return false;
+
+            if(objProc.paramAssign.size() != paramAssign.size())
+                return false;
+
+            for(int i = 0; i < paramAssign.size(); i++){
+                ParamAssign assign1 = paramAssign.get(i);
+                ParamAssign assign2 = objProc.paramAssign.get(i);
+
+                if(!assign1.equals(assign2))
+                    return false;
+            }
+
+            if(objProc.instructions.size() != instructions.size())
+                return false;
+
+            for(int i = 0; i < instructions.size(); i++){
+                ICode instr1 = instructions.get(i);
+                ICode instr2 = objProc.instructions.get(i);
+
+                if(!instr1.equals(instr2))
+                    return false;
+            }
+
+            if(!objProc.placement.equals(placement))
+                return false;
+
+            if(!objProc.returnStatement.equals(returnStatement))
+                return false;
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append(label.toString());

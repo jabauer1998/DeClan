@@ -64,4 +64,27 @@ public class CodeSec implements ICode {
         sb.append("End\r\n");
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof CodeSec){
+            CodeSec objSec = (CodeSec)obj;
+            
+            if(objSec.intermediateCode.size() != intermediateCode.size())
+                return false;
+
+            int size = objSec.getLength();
+
+            for(int i = 0; i < size; i++){
+                ICode objICode = objSec.getInstruction(i);
+                ICode icode = getInstruction(i);
+                if(!objICode.equals(icode))
+                    return false;
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

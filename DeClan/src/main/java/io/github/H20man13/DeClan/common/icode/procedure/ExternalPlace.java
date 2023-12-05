@@ -36,5 +36,18 @@ public class ExternalPlace implements ICode {
     public P asPattern() {
         return P.PAT(P.ID(), P.EXTERNAL(), P.PLACE(), P.ID());
     }
-    
+
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof ExternalPlace){
+            ExternalPlace ePlace = (ExternalPlace)obj;
+
+            boolean placeEquals = ePlace.place.equals(place);
+            boolean returnPlaceEquals = ePlace.retPlace.equals(retPlace);
+
+            return placeEquals && returnPlaceEquals;
+        } else {
+            return false;
+        }
+    }
 }

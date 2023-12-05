@@ -19,4 +19,15 @@ public class ProcLabel extends Label {
         sb.append(label);
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof ProcLabel){
+            ProcLabel label = (ProcLabel)obj;
+
+            return label.label.equals(this.label);
+        } else {
+            return false;
+        }
+    }
 }

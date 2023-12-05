@@ -21,4 +21,14 @@ public class StandardLabel extends Label {
         sb.append(label);
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof StandardLabel){
+            StandardLabel label = (StandardLabel)obj;
+            return label.label.equals(this.label);
+        } else {
+            return false;
+        }
+    }
 }

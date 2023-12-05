@@ -133,4 +133,22 @@ public class SymSec implements ICode {
         return P.PAT(patterns);
     }
 
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof SymSec){
+            SymSec symbols = (SymSec)obj;
+
+            if(getLength() != symbols.getLength())
+                return false;
+
+            for(int i = 0; i < getLength(); i++){
+                if(symbols.getEntryByIndex(i).equals(getEntryByIndex(i)))
+                    return false;
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

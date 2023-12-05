@@ -29,6 +29,29 @@ public class Inline implements ICode{
     }
 
     @Override
+    public boolean equals(Object obj){
+        if(obj instanceof Inline){
+            Inline inLine = (Inline)obj;
+
+            if(!inLine.inlineAssembly.equals(inlineAssembly))
+                return false;
+
+            if(inLine.param.size() != param.size())
+                return false;
+
+            int size = param.size();
+            for(int i = 0; i < size; i++){
+                if(!param.get(i).equals(inLine.param.get(i)))
+                    return false;
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public String toString(){
         StringBuilder inlineAssemblyBuilder = new StringBuilder();
         for(String str : param){

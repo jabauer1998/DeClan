@@ -35,4 +35,18 @@ public class InternalPlace implements ICode {
     public P asPattern() {
         return P.PAT(P.ID(), P.INTERNAL(), P.PLACE(), P.ID());
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof InternalPlace){
+            InternalPlace iPlace = (InternalPlace)obj;
+             
+            boolean placeEquals = iPlace.place.equals(place);
+            boolean returnEquals = iPlace.retPlace.equals(retPlace);
+
+            return placeEquals && returnEquals;
+        } else {
+            return false;
+        }
+    }
 }

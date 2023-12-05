@@ -24,6 +24,20 @@ public class If implements ICode {
 	}
 
 	@Override
+	public boolean equals(Object obj){
+		if(obj instanceof If){
+			If objIf = (If)obj;
+
+			boolean falseEqual = objIf.ifFalse.equals(ifFalse);
+			boolean trueEqual = objIf.ifTrue.equals(ifTrue);
+			boolean expEqual = objIf.exp.equals(exp);
+			return falseEqual && trueEqual && expEqual;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
 	public boolean isBranch() {
 		return true;
 	}

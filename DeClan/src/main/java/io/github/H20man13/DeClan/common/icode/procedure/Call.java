@@ -48,4 +48,29 @@ public class Call implements ICode {
 	public P asPattern() {
 		return P.PAT(P.PROC(), P.ID());
 	}
+
+	@Override
+	public boolean equals(Object obj){
+		if(obj instanceof Call){
+			Call objCall = (Call)obj;
+
+			if(!pname.equals(objCall.pname))
+				return false;
+
+			if(objCall.params.size() != params.size())
+				return false;
+
+			for(int i = 0; i < params.size(); i++){
+				Tuple<String, String> arg1 = objCall.params.get(i);
+				Tuple<String, String> arg2 = params.get(i);
+
+				if(!arg1.equals(arg2))
+					return false;
+			}
+
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

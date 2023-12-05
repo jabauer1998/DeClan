@@ -35,6 +35,22 @@ public class Prog implements ICode {
     }
 
     @Override
+    public boolean equals(Object obj){
+        if(obj instanceof Prog){
+            Prog program = (Prog)obj;
+
+            boolean symEquals = program.symbols.equals(symbols);
+            boolean dataEquals = program.variables.equals(variables);
+            boolean codeEquals = program.code.equals(code);
+            boolean procEquals = program.procedures.equals(procedures);
+
+            return symEquals && dataEquals && codeEquals && procEquals;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append(variables.toString());

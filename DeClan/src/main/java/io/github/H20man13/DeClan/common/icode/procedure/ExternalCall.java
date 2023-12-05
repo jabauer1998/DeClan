@@ -36,6 +36,37 @@ public class ExternalCall implements ICode {
     }
 
     @Override
+    public boolean equals(Object obj){
+        if(obj instanceof ExternalCall){
+            ExternalCall call = (ExternalCall)obj;
+
+            if(!call.procedureName.equals(procedureName))
+                return false;
+
+            if(call.toRet == null && toRet != null || call.toRet != null && toRet == null)
+                return false;
+
+            if(!call.toRet.equals(toRet))
+                return false;
+
+            if(call.arguments.size() != arguments.size())
+                return false;
+
+            for(int i = 0; i < arguments.size(); i++){
+                String arg1 = call.arguments.get(i);
+                String arg2 = arguments.get(i);
+
+                if(!arg1.equals(arg2))
+                    return false;
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
 

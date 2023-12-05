@@ -47,6 +47,21 @@ public class SymEntry implements ICode {
     }
 
     @Override
+    public boolean equals(Object obj){
+        if(obj instanceof SymEntry){
+            SymEntry entry = (SymEntry)obj;
+            
+            boolean identEquals = entry.declanIdent.equals(declanIdent);
+            boolean maskEquals = entry.symType == symType;
+            boolean placeEquals = entry.icodePlace.equals(icodePlace);
+
+            return identEquals && maskEquals && placeEquals;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append(icodePlace);

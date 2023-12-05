@@ -7,4 +7,5 @@ public interface ICode {
     public boolean isConstant();
     public boolean isBranch();
     public P asPattern();
+    public boolean equals(Object object);
 }

@@ -34,6 +34,29 @@ public class DataSec implements ICode {
     }
 
     @Override
+    public boolean equals(Object obj){
+        if(obj instanceof DataSec){
+            DataSec dataSec = (DataSec)obj;
+            
+            if(dataSec.intermediateCode.size() != intermediateCode.size())
+                return false;
+
+            int size = dataSec.getLength();
+
+            for(int i = 0; i < size; i++){
+                ICode objICode = dataSec.getInstruction(i);
+                ICode icode = getInstruction(i);
+                if(!objICode.equals(icode))
+                    return false;
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public boolean isConstant() {
         return false;
     }

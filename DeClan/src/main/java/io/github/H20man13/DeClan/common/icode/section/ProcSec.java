@@ -60,6 +60,28 @@ public class ProcSec implements ICode {
     }
 
     @Override
+    public boolean equals(Object obj){
+        if(obj instanceof ProcSec){
+            ProcSec procSec = (ProcSec)obj;
+
+            if(procSec.getLength() != getLength())
+                return false;
+
+            for(int i = 0; i < getLength(); i++){
+                Proc objProc = procSec.getProcedureByIndex(i);
+                Proc proc = getProcedureByIndex(i);
+
+                if(!objProc.equals(proc))
+                    return false;
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public P asPattern() {
         int size = procedures.size();
         P[] patList = new P[size];

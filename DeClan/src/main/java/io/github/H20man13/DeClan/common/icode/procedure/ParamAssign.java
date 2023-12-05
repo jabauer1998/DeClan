@@ -35,4 +35,18 @@ public class ParamAssign implements ICode {
         resultBuilder.append(paramPlace);
         return resultBuilder.toString();
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof ParamAssign){
+            ParamAssign assign = (ParamAssign)obj;
+
+            boolean paramEquals = assign.paramPlace.equals(paramPlace);
+            boolean newEquals = assign.newPlace.equals(newPlace);
+
+            return paramEquals && newEquals;
+        } else {
+            return false;
+        }
+    }
 }

@@ -19,6 +19,14 @@ public class End implements ICode {
 	}
 
 	@Override
+	public boolean equals(Object obj){
+		if(obj instanceof End) 
+			return true;
+
+		return false;
+	}
+
+	@Override
 	public P asPattern() {
 		return P.END();
 	}

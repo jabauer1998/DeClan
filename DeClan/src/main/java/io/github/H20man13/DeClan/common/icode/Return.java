@@ -19,6 +19,14 @@ public class Return implements ICode {
 	}
 
 	@Override
+	public boolean equals(Object obj){
+		if(obj instanceof Return)
+			return true;
+		else
+			return false;
+	}
+
+	@Override
 	public P asPattern() {
 		// TODO Auto-generated method stub
 		return P.RETURN();
