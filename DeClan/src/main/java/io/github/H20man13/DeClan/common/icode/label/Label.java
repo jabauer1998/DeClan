@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.icode.label;
 
+import java.util.List;
+
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
@@ -22,4 +24,7 @@ public abstract class Label implements ICode {
 
 	@Override
 	public abstract boolean equals(Object obj);
+
+	@Override
+	public abstract List<ICode> genFlatCode();
 }

@@ -102,4 +102,13 @@ public class ProcSec implements ICode {
         }
         return sb.toString();
     }
+
+    @Override
+    public List<ICode> genFlatCode() {
+        LinkedList<ICode> resultList = new LinkedList<ICode>();
+        for(Proc procedure: procedures){
+            resultList.addAll(procedure.genFlatCode());
+        }
+        return resultList;
+    }
 }

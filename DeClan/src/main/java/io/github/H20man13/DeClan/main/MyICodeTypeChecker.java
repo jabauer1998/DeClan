@@ -11,6 +11,7 @@ import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -45,6 +46,10 @@ public class MyICodeTypeChecker {
         this.labels = new Environment<String, IntEntry>();
         this.variableQualities.addScope();
         this.labels.addScope();
+    }
+
+    public MyICodeTypeChecker(Prog program, ErrorLog errorLog){
+        this(program.genFlatCode(), errorLog);
     }
 
     public void runTypeChecker(){

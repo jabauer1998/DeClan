@@ -1,5 +1,9 @@
 package io.github.H20man13.DeClan.common.icode.label;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class ProcLabel extends Label {
@@ -29,5 +33,12 @@ public class ProcLabel extends Label {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public List<ICode> genFlatCode() {
+        LinkedList<ICode> resultList = new LinkedList<ICode>();
+        resultList.add(this);
+        return resultList;
     }
 }

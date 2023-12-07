@@ -1,5 +1,8 @@
 package io.github.H20man13.DeClan.common.icode.procedure;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.pat.P.PLACE;
@@ -49,5 +52,12 @@ public class ExternalPlace implements ICode {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public List<ICode> genFlatCode() {
+        List<ICode> resultList = new LinkedList<ICode>();
+        resultList.add(this);
+        return resultList;
     }
 }

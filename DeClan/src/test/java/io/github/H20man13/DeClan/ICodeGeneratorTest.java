@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.StringReader;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
@@ -32,9 +33,10 @@ import io.github.H20man13.DeClan.main.MyStandardLibrary;
 
 public class ICodeGeneratorTest {
     
-    public void testReaderSource(List<ICode> iCodes, String programInput){
+    public static void testReaderSource(Prog program, String programInput){
         StringBuilder sb = new StringBuilder();
-        
+        List<ICode> iCodes = program.genFlatCode();
+
         for(ICode iCode : iCodes){
             sb.append(iCode.toString());
             sb.append("\n");
@@ -57,9 +59,7 @@ public class ICodeGeneratorTest {
             
             Prog program = igen.generateProgramIr(prog);
 
-            List<ICode> programICode = Utils.genFlatCode(program);
-
-            testReaderSource(programICode, expectedOutput);
+            testReaderSource(program, expectedOutput);
         } catch(FileNotFoundException exp) {
             assertTrue("Error File not found...", false);
         }
@@ -98,11 +98,10 @@ public class ICodeGeneratorTest {
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
         Prog prog = parser.parseProgram();
-        List<ICode> progICode = Utils.genFlatCode(prog);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(progICode, program);
+        testReaderSource(prog, program);
     }
 
 
@@ -118,11 +117,10 @@ public class ICodeGeneratorTest {
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
         Prog prog = parser.parseProgram();
-        List<ICode> progICode = Utils.genFlatCode(prog);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(progICode, program);
+        testReaderSource(prog, program);
     }
 
     @Test
@@ -137,11 +135,10 @@ public class ICodeGeneratorTest {
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
         Prog prog = parser.parseProgram();
-        List<ICode> progICode = Utils.genFlatCode(prog);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(progICode, program);
+        testReaderSource(prog, program);
     }
 
     @Test
@@ -156,11 +153,10 @@ public class ICodeGeneratorTest {
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
         Prog prog = parser.parseProgram();
-        List<ICode> progICode = Utils.genFlatCode(prog);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(progICode, program);
+        testReaderSource(prog, program);
     }
 
     @Test
@@ -183,11 +179,10 @@ public class ICodeGeneratorTest {
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
         Prog programICode = parser.parseProgram();
-        List<ICode> progICode = Utils.genFlatCode(programICode);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(progICode, program);
+        testReaderSource(programICode, program);
     }
 
     @Test
@@ -201,11 +196,10 @@ public class ICodeGeneratorTest {
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
         Prog programICode = parser.parseProgram();
-        List<ICode> progICode = Utils.genFlatCode(programICode);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(progICode, program);
+        testReaderSource(programICode, program);
     }
 
     @Test
@@ -221,11 +215,10 @@ public class ICodeGeneratorTest {
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
         Prog programICode = parser.parseProgram();
-        List<ICode> progICode = Utils.genFlatCode(programICode);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(progICode, program);
+        testReaderSource(programICode, program);
     }
 
     @Test
@@ -242,11 +235,10 @@ public class ICodeGeneratorTest {
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
         Prog programICode = parser.parseProgram();
-        List<ICode> progICode = Utils.genFlatCode(programICode);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(progICode, program);
+        testReaderSource(programICode, program);
     }
 
     

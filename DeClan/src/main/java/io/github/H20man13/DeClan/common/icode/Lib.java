@@ -1,5 +1,8 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.icode.section.SymSec;
@@ -55,5 +58,13 @@ public class Lib implements ICode {
         sb.append(procedures.toString());
         sb.append("\r\n");
         return sb.toString();
+    }
+
+    @Override
+    public List<ICode> genFlatCode() {
+        LinkedList<ICode> resultList = new LinkedList<ICode>();
+        resultList.addAll(variables.genFlatCode());
+        resultList.addAll(procedures.genFlatCode());
+        return resultList;
     }
 }

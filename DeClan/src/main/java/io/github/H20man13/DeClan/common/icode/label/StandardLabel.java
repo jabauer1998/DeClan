@@ -1,5 +1,10 @@
 package io.github.H20man13.DeClan.common.icode.label;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.LinkedTransferQueue;
+
+import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.pat.P.LABEL;
 
@@ -30,5 +35,12 @@ public class StandardLabel extends Label {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public List<ICode> genFlatCode() {
+        LinkedList<ICode> resultList = new LinkedList<ICode>();
+        resultList.add(this);
+        return resultList;
     }
 }

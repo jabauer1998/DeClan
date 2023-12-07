@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.icode.procedure;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.Tuple;
@@ -72,5 +73,12 @@ public class Call implements ICode {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public List<ICode> genFlatCode() {
+		LinkedList<ICode> resultList = new LinkedList<ICode>();
+		resultList.add(this);
+		return resultList;
 	}
 }

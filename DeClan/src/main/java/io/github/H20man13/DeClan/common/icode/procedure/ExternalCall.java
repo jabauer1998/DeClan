@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.icode.procedure;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -89,5 +90,12 @@ public class ExternalCall implements ICode {
         sb.append(')');
 
         return sb.toString();
+    }
+
+    @Override
+    public List<ICode> genFlatCode() {
+        LinkedList<ICode> resultList = new LinkedList<ICode>();
+        resultList.add(this);
+        return resultList;
     }
 }

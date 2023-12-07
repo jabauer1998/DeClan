@@ -1,5 +1,8 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Return implements ICode {
@@ -30,5 +33,12 @@ public class Return implements ICode {
 	public P asPattern() {
 		// TODO Auto-generated method stub
 		return P.RETURN();
+	}
+
+	@Override
+	public List<ICode> genFlatCode() {
+		LinkedList<ICode> list = new LinkedList<ICode>();
+		list.add(this);
+		return list;
 	}
 }

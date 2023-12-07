@@ -87,4 +87,13 @@ public class CodeSec implements ICode {
             return false;
         }
     }
+
+    @Override
+    public List<ICode> genFlatCode() {
+        LinkedList<ICode> resultList = new LinkedList<ICode>();
+        for(ICode icode : intermediateCode){
+            resultList.addAll(icode.genFlatCode());
+        }
+        return resultList;
+    }
 }

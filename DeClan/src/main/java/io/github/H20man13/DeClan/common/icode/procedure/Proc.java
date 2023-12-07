@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.icode.procedure;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -132,5 +133,27 @@ public class Proc implements ICode {
         sb.append("\r\n");
 
         return sb.toString();
+    }
+
+    @Override
+    public List<ICode> genFlatCode() {
+        LinkedList<ICode> toRet = new LinkedList<ICode>();
+
+        toRet.addAll(label.genFlatCode());
+
+        for(ParamAssign assign : paramAssign){
+            toRet.addAll(assign.genFlatCode());
+        }
+
+        for(ICode icode: instructions){
+            toRet.addAll(icode.genFlatCode());
+        }
+
+        if(placement != null)
+            toRet.addAll(placement.genFlatCode());
+
+        toRet.addAll(returnStatement.genFlatCode());
+
+        return toRet;
     }
 }

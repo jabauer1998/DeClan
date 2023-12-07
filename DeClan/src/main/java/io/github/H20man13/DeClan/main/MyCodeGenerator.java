@@ -57,7 +57,7 @@ public class MyCodeGenerator {
     private int i;
 
     public MyCodeGenerator(LiveVariableAnalysis analysis, Prog program, IrRegisterGenerator iGen, ErrorLog errorLog){
-        this.intermediateCode = Utils.genFlatCode(program);
+        this.intermediateCode = program.genFlatCode();
         this.cGen = new ArmCodeGenerator();
         this.rGen = new ArmRegisterGenerator(cGen, analysis);
         this.iGen = iGen;

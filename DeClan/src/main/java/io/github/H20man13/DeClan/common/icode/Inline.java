@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.pat.P;
@@ -64,5 +65,12 @@ public class Inline implements ICode{
         inlineAssemblyBuilder.append('\"');
 
         return inlineAssemblyBuilder.toString();
+    }
+
+    @Override
+    public List<ICode> genFlatCode() {
+        LinkedList<ICode> list = new LinkedList<ICode>();
+        list.add(this);
+        return list;
     }
 }

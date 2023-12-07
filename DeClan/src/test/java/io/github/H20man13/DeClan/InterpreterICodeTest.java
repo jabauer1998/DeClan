@@ -18,11 +18,13 @@ import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.MyICodeGenerator;
 import io.github.H20man13.DeClan.main.MyICodeMachine;
 import io.github.H20man13.DeClan.main.MyInterpreter;
+import io.github.H20man13.DeClan.main.MyIrLinker;
 import io.github.H20man13.DeClan.main.MyStandardLibrary;
 
 public class InterpreterICodeTest {
@@ -52,17 +54,12 @@ public class InterpreterICodeTest {
             }
 
             IrRegisterGenerator gen = new IrRegisterGenerator();
-            MyICodeGenerator iGen = new MyICodeGenerator(errLog, gen);
-        
+            MyIrLinker linker = new MyIrLinker(errLog, prog, lib.ioLibrary(), lib.mathLibrary());
 
-            for(LogItem errItem : errLog){
-                assertTrue(errItem.toString(), false);
-            }
-
-            List<ICode> generatedICode = iGen.getICode();
+            Prog program = linker.performLinkage();
 
             MyICodeMachine vm = new MyICodeMachine(errLog, icodeOut, errOut, standardInICode);
-            vm.interpretICode(generatedICode);
+            vm.interpretICode(program);
 
             for(LogItem errItem : errLog){
                 assertTrue(errItem.toString(), false);

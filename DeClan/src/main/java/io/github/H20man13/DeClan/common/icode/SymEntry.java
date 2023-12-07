@@ -1,5 +1,8 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class SymEntry implements ICode {
@@ -75,5 +78,12 @@ public class SymEntry implements ICode {
         sb.append(' ');
         sb.append(declanIdent);
         return sb.toString();
+    }
+
+    @Override
+    public List<ICode> genFlatCode() {
+        LinkedList<ICode> list = new LinkedList<ICode>();
+        list.add(this);
+        return list;
     }
 }

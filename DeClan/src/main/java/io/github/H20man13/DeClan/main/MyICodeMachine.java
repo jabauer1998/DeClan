@@ -17,6 +17,7 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -63,6 +64,11 @@ public class MyICodeMachine {
     private enum State{
         RETURN,
         INIT,
+    }
+
+    public void interpretICode(Prog program){
+        List<ICode> icode = program.genFlatCode();
+        interpretICode(icode);
     }
 
     public void interpretICode(List<ICode> instructions){

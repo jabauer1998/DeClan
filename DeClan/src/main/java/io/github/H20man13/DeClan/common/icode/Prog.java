@@ -1,5 +1,9 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
@@ -48,6 +52,14 @@ public class Prog implements ICode {
         } else {
             return false;
         }
+    }
+
+    public List<ICode> genFlatCode(){
+        LinkedList<ICode> resultList = new LinkedList<ICode>();
+        resultList.addAll(variables.genFlatCode());
+        resultList.addAll(code.genFlatCode());
+        resultList.addAll(procedures.genFlatCode());
+        return resultList;
     }
 
     @Override

@@ -151,4 +151,11 @@ public class SymSec implements ICode {
             return false;
         }
     }
+
+    @Override
+    public List<ICode> genFlatCode() {
+        LinkedList<ICode> resultList = new LinkedList<ICode>();
+        resultList.add(this);
+        return resultList;
+    }
 }

@@ -10,15 +10,18 @@ import org.junit.Test;
 import edu.depauw.declan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.main.MyIrLexer;
 import io.github.H20man13.DeClan.main.MyIrParser;
 import io.github.H20man13.DeClan.main.MyOptimizer;
 
 public class MyOptimizerTest {
-    private void comparePrograms(List<ICode> prog1, String prog){
+    private void comparePrograms(Prog prog1, String prog){
         StringBuilder sb = new StringBuilder();
 
-        for(ICode progCode : prog1){
+        List<ICode> progICode = prog1.genFlatCode();
+
+        for(ICode progCode : progICode){
             sb.append(progCode.toString());
             sb.append('\n');
         }
@@ -44,11 +47,11 @@ public class MyOptimizerTest {
         ReaderSource source = new ReaderSource(new StringReader(inputSource));
         MyIrLexer lexer = new MyIrLexer(source, errLog);
         MyIrParser parser = new MyIrParser(lexer, errLog);
-        List<ICode> prog = parser.parseProgram();
+        Prog prog = parser.parseProgram();
         MyOptimizer optimizer = new MyOptimizer(prog);
         //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
         //It is called within the Optimizers constructor
-        List<ICode> optimizedProg = optimizer.getICode();
+        Prog optimizedProg = optimizer.getICode();
 
         comparePrograms(optimizedProg, targetSource);
     }
@@ -79,11 +82,11 @@ public class MyOptimizerTest {
         ReaderSource source = new ReaderSource(new StringReader(inputSource));
         MyIrLexer lexer = new MyIrLexer(source, errLog);
         MyIrParser parser = new MyIrParser(lexer, errLog);
-        List<ICode> prog = parser.parseProgram();
+        Prog prog = parser.parseProgram();
         MyOptimizer optimizer = new MyOptimizer(prog);
         //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
         //It is called within the Optimizers constructor
-        List<ICode> optimizedProg = optimizer.getICode();
+        Prog optimizedProg = optimizer.getICode();
 
         comparePrograms(optimizedProg, targetSource);
     }
@@ -113,13 +116,13 @@ public class MyOptimizerTest {
         ReaderSource source = new ReaderSource(new StringReader(inputSource));
         MyIrLexer lexer = new MyIrLexer(source, errLog);
         MyIrParser parser = new MyIrParser(lexer, errLog);
-        List<ICode> prog = parser.parseProgram();
+        Prog prog = parser.parseProgram();
         MyOptimizer optimizer = new MyOptimizer(prog);
         optimizer.runDataFlowAnalysis();
         optimizer.performDeadCodeElimination();
         //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
         //It is called within the Optimizers constructor
-        List<ICode> optimizedProg = optimizer.getICode();
+        Prog optimizedProg = optimizer.getICode();
 
         comparePrograms(optimizedProg, targetSource);
     }
