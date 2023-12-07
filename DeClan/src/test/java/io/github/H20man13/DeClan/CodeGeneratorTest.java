@@ -49,11 +49,15 @@ public class CodeGeneratorTest {
             MyICodeGenerator gen = new MyICodeGenerator(errLog, rGen);
             Prog program = gen.generateProgramIr(prog);
 
-            MyCodeGenerator codeGenerator = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), optimizedICode, rGen, errLog); 
+            MyOptimizer optimizer = new MyOptimizer(program);
+            optimizer.eliminateCommonSubExpressions();
+            optimizer.runDataFlowAnalysis();
+            optimizer.performDeadCodeElimination();
 
+            MyCodeGenerator codeGenerator = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), program, rGen, errLog); 
+            
             StringWriter writer = new StringWriter();
             codeGenerator.codeGen(writer);
-
 
             for(LogItem item : errLog){
                 assertTrue(item.toString(), false);

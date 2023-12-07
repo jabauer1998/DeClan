@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -22,10 +23,12 @@ import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 import io.github.H20man13.DeClan.common.arm.ArmRegisterGenerator;
 import io.github.H20man13.DeClan.common.arm.ArmCodeGenerator.VariableLength;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
+import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
@@ -37,6 +40,10 @@ import io.github.H20man13.DeClan.common.icode.procedure.Call;
 import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
 import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
+import io.github.H20man13.DeClan.common.icode.procedure.Proc;
+import io.github.H20man13.DeClan.common.icode.section.CodeSec;
+import io.github.H20man13.DeClan.common.icode.section.DataSec;
+import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 
 public class MyCodeGenerator {
     private List<ICode> intermediateCode;
@@ -48,8 +55,8 @@ public class MyCodeGenerator {
 
     private int i;
 
-    public MyCodeGenerator(LiveVariableAnalysis analysis, List<ICode> intermediateCode, IrRegisterGenerator iGen, ErrorLog errorLog){
-        this.intermediateCode = intermediateCode;
+    public MyCodeGenerator(LiveVariableAnalysis analysis, Prog program, IrRegisterGenerator iGen, ErrorLog errorLog){
+        this.intermediateCode = genFlatCode(program);
         this.cGen = new ArmCodeGenerator();
         this.rGen = new ArmRegisterGenerator(cGen, analysis);
         this.iGen = iGen;
@@ -59,38 +66,91 @@ public class MyCodeGenerator {
         initCodeGenFunctions();
     }
 
+    private List<ICode> genFlatCode(Prog program){
+        LinkedList<ICode> resultList = new LinkedList<ICode>();
+        DataSec dataSec = program.variables;
+        for(i = 0; i < dataSec.getLength(); i++){
+            ICode icode = dataSec.getInstruction(i);
+            resultList.add(icode);
+        }
+
+        CodeSec codeSec = program.code;
+        for(i = 0; i < codeSec.getLength(); i++){
+            ICode icode = codeSec.getInstruction(i);
+            resultList.add(icode);
+        }
+        resultList.add(new End());
+
+        ProcSec procSec = program.procedures;
+        for(i = 0; i < procSec.getLength(); i++){
+            Proc procedure = procSec.getProcedureByIndex(i);
+            List<ICode> icodes = genFlatProcedure(procedure);
+            resultList.addAll(icodes);
+        }
+
+        return resultList;
+    }
+
+    private List<ICode> genFlatProcedure(Proc procedure){
+        LinkedList<ICode> toRet = new LinkedList<ICode>();
+
+        toRet.add(procedure.label);
+
+        for(ParamAssign assign : procedure.paramAssign){
+            toRet.add(assign);
+        }
+
+        for(ICode icode: procedure.instructions){
+            toRet.add(icode);
+        }
+
+        if(procedure.placement != null)
+            toRet.add(procedure.placement);
+
+        toRet.add(procedure.returnStatement);
+
+        return toRet;
+    }
+
+    private boolean genICode(ICode icode1, ICode icode2) throws Exception{
+        P possibleTwoStagePattern = P.PAT(icode1.asPattern(), icode2.asPattern());
+        if(codeGenFunctions.containsKey(possibleTwoStagePattern)){
+            Callable<Void> codeGenFunction = codeGenFunctions.get(possibleTwoStagePattern);
+            codeGenFunction.call();
+            i++;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean genICode(ICode icode) throws Exception{
+        P oneStagePattern = icode.asPattern();
+
+        if(codeGenFunctions.containsKey(oneStagePattern)){
+            codeGenFunctions.get(oneStagePattern).call();
+            return true;
+        } else {
+            errorLog.add("Pattern \n\n" + oneStagePattern.toString() + "\n\n" + "not found", new Position(i, 0));
+            return false;
+        }
+    }
+
     public void codeGen(Writer writer){
         try{
-            for(i = 0; i < intermediateCode.size(); i++){
-                P possibleTwoStagePattern = null;
-                if(i + 1 < intermediateCode.size()){
-                    possibleTwoStagePattern = P.PAT(intermediateCode.get(i).asPattern(), intermediateCode.get(i + 1).asPattern());
-                }
+            int size = intermediateCode.size();
 
-                P oneStagePattern = intermediateCode.get(i).asPattern();
-
-
-                if(possibleTwoStagePattern != null){
-                    if(codeGenFunctions.containsKey(possibleTwoStagePattern)){
-                        Callable<Void> codeGenFunction = codeGenFunctions.get(possibleTwoStagePattern);
-                        codeGenFunction.call();
-                        i++;
-                    } else if(codeGenFunctions.containsKey(oneStagePattern)) {
-                        Callable<Void> codeGenFunction = codeGenFunctions.get(oneStagePattern);
-                        codeGenFunction.call();
-                    } else {
-                        errorLog.add("Pattern \n\n" + oneStagePattern.toString() + "\n\n" + "not found", new Position(i, 0));
-                        break;
+            for(i = 0; i < size; i++){
+                ICode icode1 = intermediateCode.get(i);
+                if(i + 1 < size){
+                    ICode icode2 = intermediateCode.get(i + 1);
+                    if(!genICode(icode1, icode2) && !genICode(icode1)){
+                        errorLog.add("Error cannot generate icode " + icode1, new Position(i, 0));
                     }
-                } else {
-                    if(codeGenFunctions.containsKey(oneStagePattern)){
-                        codeGenFunctions.get(oneStagePattern).call();
-                    } else {
-                        errorLog.add("Pattern \n\n" + oneStagePattern.toString() + "\n\n" + "not found", new Position(i, 0));
-                        break;
-                    }
+                } else if(!genICode(icode1)){
+                    errorLog.add("Error cannot generate icode " + icode1, new Position(i, 0));
                 }
             }
+
             cGen.writeToStream(writer);
         } catch(Exception exp) {
             errorLog.add(exp.toString(), new Position(i, 0));
