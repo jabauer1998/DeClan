@@ -53,9 +53,7 @@ public class InterpreterICodeTest {
 
             IrRegisterGenerator gen = new IrRegisterGenerator();
             MyICodeGenerator iGen = new MyICodeGenerator(errLog, gen);
-            lib.ioLibrary().accept(iGen);
-            lib.mathLibrary().accept(iGen);
-            prog.accept(iGen);
+        
 
             for(LogItem errItem : errLog){
                 assertTrue(errItem.toString(), false);

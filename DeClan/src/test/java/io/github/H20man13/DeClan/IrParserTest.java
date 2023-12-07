@@ -158,7 +158,7 @@ public class IrParserTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        Prog programICode = parser.parseProgram();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -179,7 +179,7 @@ public class IrParserTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        Prog programICode = parser.parseProgram();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -200,7 +200,7 @@ public class IrParserTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        Prog programICode = parser.parseProgram();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);

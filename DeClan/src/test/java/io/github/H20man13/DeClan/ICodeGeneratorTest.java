@@ -15,12 +15,14 @@ import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.pat.P.ELSE;
 import io.github.H20man13.DeClan.common.pat.P.GOTO;
 import io.github.H20man13.DeClan.common.pat.P.IF;
 import io.github.H20man13.DeClan.common.pat.P.INEG;
 import io.github.H20man13.DeClan.common.pat.P.LABEL;
 import io.github.H20man13.DeClan.common.pat.P.THEN;
+import io.github.H20man13.DeClan.common.util.Utils;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.MyICodeGenerator;
@@ -52,13 +54,12 @@ public class ICodeGeneratorTest {
             
             IrRegisterGenerator gen = new IrRegisterGenerator();
             MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
-            stdLib.ioLibrary().accept(igen);
-            stdLib.mathLibrary().accept(igen);
-            prog.accept(igen);
             
-            List<ICode> icode = igen.getICode();
+            Prog program = igen.generateProgramIr(prog);
 
-            testReaderSource(icode, expectedOutput);
+            List<ICode> programICode = Utils.genFlatCode(program);
+
+            testReaderSource(programICode, expectedOutput);
         } catch(FileNotFoundException exp) {
             assertTrue("Error File not found...", false);
         }
@@ -96,11 +97,12 @@ public class ICodeGeneratorTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        Prog prog = parser.parseProgram();
+        List<ICode> progICode = Utils.genFlatCode(prog);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(programICode, program);
+        testReaderSource(progICode, program);
     }
 
 
@@ -115,11 +117,12 @@ public class ICodeGeneratorTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        Prog prog = parser.parseProgram();
+        List<ICode> progICode = Utils.genFlatCode(prog);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(programICode, program);
+        testReaderSource(progICode, program);
     }
 
     @Test
@@ -133,11 +136,12 @@ public class ICodeGeneratorTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        Prog prog = parser.parseProgram();
+        List<ICode> progICode = Utils.genFlatCode(prog);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(programICode, program);
+        testReaderSource(progICode, program);
     }
 
     @Test
@@ -151,11 +155,12 @@ public class ICodeGeneratorTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        Prog prog = parser.parseProgram();
+        List<ICode> progICode = Utils.genFlatCode(prog);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(programICode, program);
+        testReaderSource(progICode, program);
     }
 
     @Test
@@ -177,11 +182,12 @@ public class ICodeGeneratorTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        Prog programICode = parser.parseProgram();
+        List<ICode> progICode = Utils.genFlatCode(programICode);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(programICode, program);
+        testReaderSource(progICode, program);
     }
 
     @Test
@@ -194,11 +200,12 @@ public class ICodeGeneratorTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        Prog programICode = parser.parseProgram();
+        List<ICode> progICode = Utils.genFlatCode(programICode);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(programICode, program);
+        testReaderSource(progICode, program);
     }
 
     @Test
@@ -213,11 +220,12 @@ public class ICodeGeneratorTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        Prog programICode = parser.parseProgram();
+        List<ICode> progICode = Utils.genFlatCode(programICode);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(programICode, program);
+        testReaderSource(progICode, program);
     }
 
     @Test
@@ -233,19 +241,19 @@ public class ICodeGeneratorTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseProgram();
+        Prog programICode = parser.parseProgram();
+        List<ICode> progICode = Utils.genFlatCode(programICode);
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(programICode, program);
+        testReaderSource(progICode, program);
     }
 
-    /* 
+    
     @Test
     public void testDeclanConversions(){
         String programName = "test_source/conversions.dcl";
-        
-        /*        
+               
         String expectedICode = "LABEL begin_0\n"+
                                "GOTO begin_1\n"+
                                "LABEL WriteLn\n"+
@@ -750,6 +758,4 @@ public class ICodeGeneratorTest {
                                 "END\r\n";
         testDeclanFileOnICode(programName, expectedICode);
     }
-
-    */
 }

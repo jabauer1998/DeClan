@@ -16,9 +16,11 @@ import io.github.H20man13.DeClan.common.dag.DagValueNode;
 import io.github.H20man13.DeClan.common.dag.DagVariableNode;
 import io.github.H20man13.DeClan.common.flow.block.BasicBlock;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -29,6 +31,11 @@ import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
 import io.github.H20man13.DeClan.common.icode.label.Label;
+import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
+import io.github.H20man13.DeClan.common.icode.procedure.Proc;
+import io.github.H20man13.DeClan.common.icode.section.CodeSec;
+import io.github.H20man13.DeClan.common.icode.section.DataSec;
+import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.LiveInfo;
@@ -343,5 +350,51 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    public static List<ICode> genFlatCode(Prog program){
+        LinkedList<ICode> resultList = new LinkedList<ICode>();
+        DataSec dataSec = program.variables;
+        for(int i = 0; i < dataSec.getLength(); i++){
+            ICode icode = dataSec.getInstruction(i);
+            resultList.add(icode);
+        }
+
+        CodeSec codeSec = program.code;
+        for(int i = 0; i < codeSec.getLength(); i++){
+            ICode icode = codeSec.getInstruction(i);
+            resultList.add(icode);
+        }
+        resultList.add(new End());
+
+        ProcSec procSec = program.procedures;
+        for(int i = 0; i < procSec.getLength(); i++){
+            Proc procedure = procSec.getProcedureByIndex(i);
+            List<ICode> icodes = genFlatProcedure(procedure);
+            resultList.addAll(icodes);
+        }
+
+        return resultList;
+    }
+
+    private static List<ICode> genFlatProcedure(Proc procedure){
+        LinkedList<ICode> toRet = new LinkedList<ICode>();
+
+        toRet.add(procedure.label);
+
+        for(ParamAssign assign : procedure.paramAssign){
+            toRet.add(assign);
+        }
+
+        for(ICode icode: procedure.instructions){
+            toRet.add(icode);
+        }
+
+        if(procedure.placement != null)
+            toRet.add(procedure.placement);
+
+        toRet.add(procedure.returnStatement);
+
+        return toRet;
     }
 }

@@ -20,6 +20,7 @@ import io.github.H20man13.DeClan.common.arm.ArmCodeGenerator;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.pat.Pattern;
 import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
+import io.github.H20man13.DeClan.common.util.Utils;
 import io.github.H20man13.DeClan.common.arm.ArmRegisterGenerator;
 import io.github.H20man13.DeClan.common.arm.ArmCodeGenerator.VariableLength;
 import io.github.H20man13.DeClan.common.icode.Assign;
@@ -56,7 +57,7 @@ public class MyCodeGenerator {
     private int i;
 
     public MyCodeGenerator(LiveVariableAnalysis analysis, Prog program, IrRegisterGenerator iGen, ErrorLog errorLog){
-        this.intermediateCode = genFlatCode(program);
+        this.intermediateCode = Utils.genFlatCode(program);
         this.cGen = new ArmCodeGenerator();
         this.rGen = new ArmRegisterGenerator(cGen, analysis);
         this.iGen = iGen;
@@ -66,51 +67,6 @@ public class MyCodeGenerator {
         initCodeGenFunctions();
     }
 
-    private List<ICode> genFlatCode(Prog program){
-        LinkedList<ICode> resultList = new LinkedList<ICode>();
-        DataSec dataSec = program.variables;
-        for(i = 0; i < dataSec.getLength(); i++){
-            ICode icode = dataSec.getInstruction(i);
-            resultList.add(icode);
-        }
-
-        CodeSec codeSec = program.code;
-        for(i = 0; i < codeSec.getLength(); i++){
-            ICode icode = codeSec.getInstruction(i);
-            resultList.add(icode);
-        }
-        resultList.add(new End());
-
-        ProcSec procSec = program.procedures;
-        for(i = 0; i < procSec.getLength(); i++){
-            Proc procedure = procSec.getProcedureByIndex(i);
-            List<ICode> icodes = genFlatProcedure(procedure);
-            resultList.addAll(icodes);
-        }
-
-        return resultList;
-    }
-
-    private List<ICode> genFlatProcedure(Proc procedure){
-        LinkedList<ICode> toRet = new LinkedList<ICode>();
-
-        toRet.add(procedure.label);
-
-        for(ParamAssign assign : procedure.paramAssign){
-            toRet.add(assign);
-        }
-
-        for(ICode icode: procedure.instructions){
-            toRet.add(icode);
-        }
-
-        if(procedure.placement != null)
-            toRet.add(procedure.placement);
-
-        toRet.add(procedure.returnStatement);
-
-        return toRet;
-    }
 
     private boolean genICode(ICode icode1, ICode icode2) throws Exception{
         P possibleTwoStagePattern = P.PAT(icode1.asPattern(), icode2.asPattern());
