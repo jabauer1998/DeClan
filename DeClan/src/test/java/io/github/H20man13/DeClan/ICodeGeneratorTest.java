@@ -33,11 +33,10 @@ import io.github.H20man13.DeClan.main.MyStandardLibrary;
 
 public class ICodeGeneratorTest {
     
-    public static void testReaderSource(Prog program, String programInput){
+    public static void testReaderSource(List<ICode> program, String programInput){
         StringBuilder sb = new StringBuilder();
-        List<ICode> iCodes = program.genFlatCode();
 
-        for(ICode iCode : iCodes){
+        for(ICode iCode : program){
             sb.append(iCode.toString());
             sb.append("\n");
         }
@@ -59,7 +58,9 @@ public class ICodeGeneratorTest {
             
             Prog program = igen.generateProgramIr(prog);
 
-            testReaderSource(program, expectedOutput);
+            List<ICode> flatCode = program.genFlatCode();
+
+            testReaderSource(flatCode, expectedOutput);
         } catch(FileNotFoundException exp) {
             assertTrue("Error File not found...", false);
         }
@@ -89,15 +90,14 @@ public class ICodeGeneratorTest {
                        + "f := u LE j\n"
                        + "h := y GE o\n"
                        + "j := h NE u\n"
-                       + "y := y EQ u\n"
-                       + "END\n";
+                       + "y := y EQ u\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        Prog prog = parser.parseProgram();
+        List<ICode> prog = parser.parseInstructions();
 
         assertTrue(!parser.containsErrors());
 
@@ -109,14 +109,14 @@ public class ICodeGeneratorTest {
     public void testUnaryOp(){
         String program = "x := 38393\n"
                        + "y := INEG x\n"
-                       + "z := BNOT y\n"
-                       + "END\n";
+                       + "z := BNOT y\n";
+
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        Prog prog = parser.parseProgram();
+        List<ICode> prog = parser.parseInstructions();
 
         assertTrue(!parser.containsErrors());
 
@@ -126,15 +126,14 @@ public class ICodeGeneratorTest {
     @Test
     public void testBooleanAssignment(){
         String program = "v := FALSE\n"
-                       + "z := TRUE\n"
-                       + "END\n";
+                       + "z := TRUE\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        Prog prog = parser.parseProgram();
+        List<ICode> prog = parser.parseInstructions();
 
         assertTrue(!parser.containsErrors());
 
@@ -144,15 +143,14 @@ public class ICodeGeneratorTest {
     @Test
     public void testNumAssignment(){
         String program = "x := 89309\n"
-                       + "z := 438.343\n"
-                       + "END\n";
+                       + "z := 438.343\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        Prog prog = parser.parseProgram();
+        List<ICode> prog = parser.parseInstructions();
 
         assertTrue(!parser.containsErrors());
 
@@ -161,17 +159,34 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testProcedureCall(){
-        String program = "t := 899\n"
+        String program = "SYMBOL SECTION\n"
+                       + "DATA SECTION\n"
+                       + "CODE SECTION\n"
+                       + "t := 899\n"
                        + "g := 89\n"
                        + "f := 98\n"
-                       + "LABEL func\n"
+                       + "CALL func ( t -> x , g -> y , f -> z )\n"
+                       + "x <- z\n"
+                       + "END\n"
+                       + "PROC SECTION\n"
+                       + "PROC LABEL func\n"
                        + "x := 78\n"
                        + "y := 79\n"
                        + "z := 48\n"
-                       + "RETURN\n"
-                       + "PROC func ( t -> x , g -> y , f -> z )\n"
-                       + "x <- z\n"
-                       + "END\n";
+                       + "RETURN\n";
+
+        String flatProgram = "t := 899\n"
+                           + "g := 89\n"
+                           + "f := 98\n"
+                           + "CALL func ( t -> x , g -> y , f -> z )\n"
+                           + "x <- z\n"
+                           + "END\n"
+                           + "PROC LABEL func\n"
+                           + "x := 78\n"
+                           + "y := 79\n"
+                           + "z := 48\n"
+                           + "RETURN\n";
+
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -179,23 +194,23 @@ public class ICodeGeneratorTest {
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
         Prog programICode = parser.parseProgram();
+        List<ICode> flatProg = programICode.genFlatCode();
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(programICode, program);
+        testReaderSource(flatProg, flatProgram);
     }
 
     @Test
     public void testStringDecl(){
-        String program = "t := \"Text Here\"\n"
-                       + "END\n";
+        String program = "t := \"Text Here\"\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        Prog programICode = parser.parseProgram();
+        List<ICode> programICode = parser.parseInstructions();
 
         assertTrue(!parser.containsErrors());
 
@@ -206,15 +221,14 @@ public class ICodeGeneratorTest {
     public void testIfStatement(){
         String program = "LABEL y\n"
                        + "IF x EQ TRUE THEN z ELSE y\n"
-                       + "LABEL z\n"
-                       + "END\n";
+                       + "LABEL z\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        Prog programICode = parser.parseProgram();
+        List<ICode> programICode = parser.parseInstructions();
 
         assertTrue(!parser.containsErrors());
 
@@ -226,15 +240,14 @@ public class ICodeGeneratorTest {
         String program = "LABEL x\n"
                        + "v <- y\n"
                        + "z <- t\n"
-                       + "g := z IADD v\n"
-                       + "END\n";
+                       + "g := z IADD v\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        Prog programICode = parser.parseProgram();
+        List<ICode> programICode = parser.parseInstructions();
 
         assertTrue(!parser.containsErrors());
 

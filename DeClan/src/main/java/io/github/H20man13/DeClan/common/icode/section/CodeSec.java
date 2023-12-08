@@ -61,7 +61,7 @@ public class CodeSec implements ICode {
             sb.append(icode.toString());
             sb.append("\r\n");
         }
-        sb.append("End\r\n");
+        sb.append("END\r\n");
         return sb.toString();
     }
 
@@ -94,6 +94,7 @@ public class CodeSec implements ICode {
         for(ICode icode : intermediateCode){
             resultList.addAll(icode.genFlatCode());
         }
+        resultList.add(new End());
         return resultList;
     }
 }
