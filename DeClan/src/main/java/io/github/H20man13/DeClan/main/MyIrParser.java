@@ -79,7 +79,7 @@ public class MyIrParser {
             errorLog.add("Expected " + type + ", found EOF", current.getPosition());
             errorCount++;
         } else {
-            errorLog.add("Expected " + type + ", found" + current.getType(), currentPosition);
+            errorLog.add("Expected " + type + ", found " + current.getType(), currentPosition);
             errorCount++;
         }
         throw new ParseException("Parsing aborted");

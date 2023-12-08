@@ -126,7 +126,7 @@ public class IrParserTest {
                        + "f := 98\n"
                        + "CODE SECTION\n"
                        + "CALL func (t -> x, g -> y, f -> z)\n"
-                       + "End\n"
+                       + "END\n"
                        + "PROC SECTION\n"
                        + "PROC LABEL func\n"
                        + "x := 78\n"
@@ -150,8 +150,13 @@ public class IrParserTest {
 
     @Test
     public void testStringDecl(){
-        String program = "t := \"Text Here\"\n"
-                       + "END\n";
+        String program = "SYMBOL SECTION\n"
+                       + "DATA SECTION\n"
+                       + "t := \"Text Here\"\n"
+                       + "CODE SECTION\n"
+                       + "t := \"Text Here Too\"\n"
+                       + "END\n"
+                       + "PROC SECTION\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -169,10 +174,14 @@ public class IrParserTest {
 
     @Test
     public void testIfStatement(){
-        String program = "LABEL y\n"
+        String program = "SYMBOL SECTION\n"
+                       + "DATA SECTION\n"
+                       + "CODE SECTION\n"
+                       + "LABEL y\n"
                        + "IF x EQ TRUE THEN z ELSE y\n"
                        + "LABEL z\n"
-                       + "END\n";
+                       + "END\n"
+                       + "PROC SECTION\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -190,10 +199,14 @@ public class IrParserTest {
 
     @Test
     public void testInlineAssembly(){
-        String program = "IPARAM x\n"
+        String program = "SYMBOL SECTION\n"
+                       + "DATA SECTION\n"
+                       + "CODE SECTION\n"
+                       + "IPARAM x\n"
                        + "IPARAM z\n"
                        + "IASM \"LDR %r, %a\"\n"
-                       + "END\n";
+                       + "END\n"
+                       + "PROC SECTION\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
