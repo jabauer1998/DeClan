@@ -127,8 +127,6 @@ public class MyOptimizerTest {
         comparePrograms(optimizedProg, targetSource);
     }
     
-
-    /*
     @Test
     public void testConstantPropogation(){
         String inputSource = "a := 1\n"
@@ -149,18 +147,17 @@ public class MyOptimizerTest {
         ReaderSource source = new ReaderSource(new StringReader(inputSource));
         MyIrLexer lexer = new MyIrLexer(source, errLog);
         MyIrParser parser = new MyIrParser(lexer, errLog);
-        List<ICode> prog = parser.parseProgram();
+        Prog prog = parser.parseProgram();
         
         MyOptimizer optimizer = new MyOptimizer(prog);
         optimizer.runDataFlowAnalysis();
         optimizer.performConstantPropogation();
         //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
         //It is called within the Optimizers constructor
-        List<ICode> optimizedProg = optimizer.getICode();
+        Prog optimizedProg = optimizer.getICode();
 
         comparePrograms(optimizedProg, targetSource);
     }
-    */
 
     /*
     This one is not working yet so I just decided to cut it out

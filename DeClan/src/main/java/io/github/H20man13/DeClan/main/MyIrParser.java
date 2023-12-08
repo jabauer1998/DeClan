@@ -144,9 +144,9 @@ public class MyIrParser {
     public DataSec parseDataSection(){
         match(IrTokenType.DATA);
         match(IrTokenType.SECTION);
-        List<ICode> assignments = new LinkedList<ICode>();
+        List<Assign> assignments = new LinkedList<Assign>();
         while(willMatch(IrTokenType.ID)){
-            ICode icode = parseAssignment();
+            Assign icode = parseDataAssignment();
             assignments.add(icode);
         }
         return new DataSec(assignments);
@@ -419,6 +419,13 @@ public class MyIrParser {
                 return exp1;
             }
         }
+    }
+
+    private Assign parseDataAssignment(){
+        IrToken id = match(IrTokenType.ID);
+        match(IrTokenType.ASSIGN);
+        Exp expression = parseExpression();
+        return new Assign(id.getLexeme(), expression);
     }
 
     private ICode parseAssignment(){

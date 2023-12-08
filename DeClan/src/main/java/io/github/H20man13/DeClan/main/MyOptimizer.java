@@ -101,21 +101,14 @@ public class MyOptimizer {
 
     public BasicBlock buildDataBlock(){
         DataSec dataSec = intermediateCode.variables;
-        List<Integer> dataFirsts = findFirsts(dataSec.intermediateCode, false);
-        int intermediateCodeSize = dataSec.intermediateCode.size();
+        int intermediateCodeSize = dataSec.getLength();
 
-        if(dataFirsts.size() > 1){
-            int beginIndex = dataFirsts.get(0);
-            int endIndex = intermediateCodeSize - 1;
-            List<ICode> blockCode = new LinkedList<ICode>();
-            for(int i = beginIndex; i < endIndex; i--){
-                ICode codeAtIndex = dataSec.intermediateCode.get(i);
-                blockCode.add(codeAtIndex);
-            }
-            return new BasicBlock(blockCode);
-        } else {
-            return new BasicBlock(new LinkedList<ICode>());
+        LinkedList<ICode> blockCode = new LinkedList<ICode>();
+        for(int i = 0; i < intermediateCodeSize; i++){
+            Assign assign = dataSec.getInstruction(i);
+            blockCode.add(assign);
         }
+        return new BasicBlock(blockCode);
     }
 
     public List<BasicBlock> buildCodeBlocks(){
@@ -478,10 +471,10 @@ public class MyOptimizer {
 
     private void updateVariableLivelinessInformation(Environment<String, LiveInfo> symbolTable){
         DataSec data = intermediateCode.variables;
-        List<ICode> assignmants = data.intermediateCode;
+        List<Assign> assignmants = data.intermediateCode;
         int size = assignmants.size();
         for(int i = size - 1; i >= 0; i--){
-            ICode icode = assignmants.get(i);
+            Assign icode = assignmants.get(i);
             updateICodeLivelinessInformation(symbolTable, icode, i);
         }
     }

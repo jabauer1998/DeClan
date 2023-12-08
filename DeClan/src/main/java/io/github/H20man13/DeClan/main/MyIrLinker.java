@@ -118,9 +118,9 @@ public class MyIrLinker {
                 if(libSymbols.containsEntryWithIdentifier(identName, SymEntry.INTERNAL | mask)){
                     SymEntry libEntry = libSymbols.getEntryByIdentifier(identName, SymEntry.INTERNAL | mask);
                     DataSec libData = library.variables;
-                    List<ICode> libICode = libData.intermediateCode;
+                    List<Assign> libICode = libData.intermediateCode;
                     for(int z = 0; z <= libICode.size(); z++){
-                        Assign assignLib = (Assign)libICode.get(z);
+                        Assign assignLib = libICode.get(z);
                         if(assignLib.place.equals(libEntry.icodePlace)){
                             Exp exp = assignLib.value;
                             if(exp instanceof IdentExp){
@@ -746,8 +746,7 @@ public class MyIrLinker {
         SymSec programSymbolTable = program.symbols;
         DataSec programDataSec = program.variables;
         for(int i = 0; i < programDataSec.getLength(); i++){
-            ICode icode = programDataSec.getInstruction(i);
-            Assign assign = (Assign)icode;
+            Assign assign = programDataSec.getInstruction(i);
             Exp assignExp = assign.value;
             if(assignExp instanceof BinExp){
                 BinExp assignBinExp = (BinExp)assignExp;
@@ -783,7 +782,7 @@ public class MyIrLinker {
                     fetchExternalDependentInstructions(entry.declanIdent, SymEntry.EXTERNAL | SymEntry.CONST, symbolTable, dataSec, codeSec, procedures);
                 }
             }
-            dataSec.addInstruction(icode);
+            dataSec.addInstruction(assign);
         }
     }
 

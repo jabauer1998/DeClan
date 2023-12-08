@@ -29,7 +29,11 @@ public class DataSectionBuilder extends AssignmentBuilder implements Completable
 
     @Override
     public DataSec completeBuild() {
-        return new DataSec(intermediateCode);
+        List<Assign> assignments = new LinkedList<Assign>();
+        for(ICode icode : intermediateCode){
+            assignments.add((Assign)icode);
+        }
+        return new DataSec(assignments);
     }
 
     @Override

@@ -124,15 +124,15 @@ public class IrParserTest {
                        + "t := 899\n"
                        + "g := 89\n"
                        + "f := 98\n"
+                       + "CODE SECTION\n"
+                       + "CALL func (t -> x, g -> y, f -> z)\n"
+                       + "End\n"
                        + "PROC SECTION\n"
                        + "PROC LABEL func\n"
                        + "x := 78\n"
                        + "y := 79\n"
                        + "z := 48\n"
-                       + "RETURN\n"
-                       + "CODE SECTION\n"
-                       + "CALL func (t -> x, g -> y, f -> z)\n"
-                       + "End\n";
+                       + "RETURN\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
