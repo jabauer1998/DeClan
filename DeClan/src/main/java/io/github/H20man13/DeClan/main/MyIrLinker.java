@@ -803,8 +803,8 @@ public class MyIrLinker {
                         SymEntry entry = programTable.getEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                         fetchExternalDependentInstructions(entry.declanIdent, symbolTable, dataSection, codeSection, procedureSec);
                     }
-                } else if(icode instanceof UnExp){
-                    UnExp unExp = (UnExp)icode;
+                } else if(assignExp instanceof UnExp){
+                    UnExp unExp = (UnExp)assignExp;
                     
                     if(unExp.right instanceof IdentExp){
                         IdentExp ident = (IdentExp)unExp.right;
@@ -813,8 +813,8 @@ public class MyIrLinker {
                             fetchExternalDependentInstructions(entry.declanIdent, symbolTable, dataSection, codeSection, procedureSec);
                         }
                     }
-                } else if(icode instanceof BinExp){
-                    BinExp binExp = (BinExp)icode;
+                } else if(assignExp instanceof BinExp){
+                    BinExp binExp = (BinExp)assignExp;
 
                     if(binExp.left instanceof IdentExp){
                         IdentExp leftExp = (IdentExp)binExp.left;
