@@ -258,7 +258,6 @@ public class ICodeGeneratorTest {
     @Test
     public void testDeclanConversions(){
         String programName = "test_source/conversions.dcl";
-               
         String expectedICode = "LABEL begin_0\n"+
                                "GOTO begin_1\n"+
                                "LABEL WriteLn\n"+

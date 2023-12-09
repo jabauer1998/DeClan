@@ -65,9 +65,10 @@ public class Prog implements ICode {
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
+        sb.append(symbols.toString());
         sb.append(variables.toString());
-        sb.append(procedures.toString());
         sb.append(code.toString());
+        sb.append(procedures.toString());
         return sb.toString();
     }
 }

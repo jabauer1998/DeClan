@@ -24,6 +24,7 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
     private SymbolSectionBuilder symbols;
     
     protected AssignmentBuilder(SymbolSectionBuilder symbols, IrBuilderContext ctx, IrRegisterGenerator gen, ErrorLog errLog){
+        this.gen = gen;
         this.ctx = ctx;
         this.factory = new MyIrFactory(errLog);
         this.symbols = symbols;
@@ -258,6 +259,16 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
 
     public void buildProcedureCall(String name, List<Tuple<String, String>> args){
         intermediateCode.add(factory.produceProcedure(name, args));
+    }
+
+    public void buildExternalProcedureCall(String funcName, List<String> args){
+        intermediateCode.add(factory.produceExternalProcedure(funcName, args));
+    }
+
+    public String buildExternalFunctionCall(String funcName, List<String> args){
+        String place = gen.genNextRegister();
+        intermediateCode.add(factory.produceExternalProcedure(place, funcName, args));
+        return place;
     }
 
     public String buildExternalReturnPlacement(String dest){

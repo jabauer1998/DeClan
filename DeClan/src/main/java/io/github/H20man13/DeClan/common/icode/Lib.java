@@ -56,7 +56,6 @@ public class Lib implements ICode {
         sb.append(symbols.toString());
         sb.append(variables.toString());
         sb.append(procedures.toString());
-        sb.append("\r\n");
         return sb.toString();
     }
 

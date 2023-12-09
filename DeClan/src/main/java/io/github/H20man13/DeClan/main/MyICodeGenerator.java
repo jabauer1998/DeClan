@@ -301,15 +301,26 @@ public class MyICodeGenerator{
   public void generateProcedureCallIr(ProcedureCall procedureCall, StatementBuilder builder) {
     String funcName = procedureCall.getProcedureName().getLexeme();
     List<Expression> valArgs = procedureCall.getArguments();
-    List<Tuple<String, String>> valArgResults = new ArrayList<>();
 
-    StringEntryList argsToMap = procArgs.getEntry(funcName);
-    for(int i = 0; i < valArgs.size(); i++){
-      Expression valArg = valArgs.get(i);
-      String result = generateExpressionIr(valArg, builder);
-      valArgResults.add(new Tuple<String, String>(result, argsToMap.get(i)));
+    if(procArgs.entryExists(funcName)){
+      //Generate a standard Procedure Call
+      StringEntryList argsToMap = procArgs.getEntry(funcName);
+      List<Tuple<String, String>> valArgResults = new ArrayList<Tuple<String, String>>();
+      for(int i = 0; i < valArgs.size(); i++){
+        Expression valArg = valArgs.get(i);
+        String result = generateExpressionIr(valArg, builder);
+        valArgResults.add(new Tuple<String, String>(result, argsToMap.get(i)));
+      }
+      builder.buildProcedureCall(funcName, valArgResults);
+    } else {
+      //Generate an External Procedure Call
+      LinkedList<String> args = new LinkedList<String>();
+      for(Expression valArg : valArgs){
+         String place = generateExpressionIr(valArg, builder);
+         args.add(place);
+      }
+      builder.buildExternalProcedureCall(funcName, args);
     }
-    builder.buildProcedureCall(funcName, valArgResults);
   }
 
   public void generateWhileBranchIr(WhileElifBranch whilebranch, StatementBuilder builder){
@@ -576,16 +587,30 @@ public class MyICodeGenerator{
   public String generateFunctionCallIr(FunctionCall funcCall, AssignmentBuilder builder) {
     String funcName = funcCall.getFunctionName().getLexeme();
     List<Expression> valArgs = funcCall.getArguments();
-    List<Tuple<String, String>> valArgResults = new ArrayList<>();
-    StringEntryList argsToMap = procArgs.getEntry(funcName);
-    for(int i = 0; i < valArgs.size(); i++){
-      Expression valArg = valArgs.get(i);
-	    String result = generateExpressionIr(valArg, builder);
-	    valArgResults.add(new Tuple<String, String>(result, argsToMap.get(i)));
+    if(procArgs.entryExists(funcName)){
+      //Build Internal Function Call Sequence
+      StringEntryList argsToMap = procArgs.getEntry(funcName);
+      List<Tuple<String, String>> valArgResults = new ArrayList<>();
+
+      for(int i = 0; i < valArgs.size(); i++){
+        Expression valArg = valArgs.get(i);
+	      String result = generateExpressionIr(valArg, builder);
+	      valArgResults.add(new Tuple<String, String>(result, argsToMap.get(i)));
+      }
+      builder.buildProcedureCall(funcName, valArgResults);
+      StringEntry returnPlace = procEnvironment.getEntry(funcName);
+      return builder.buildExternalReturnPlacement(returnPlace.toString());
+    } else {
+      //Build external function call
+      LinkedList<String> procedureArgs = new LinkedList<String>();
+      for(Expression arg : valArgs){
+        String place = generateExpressionIr(arg, builder);
+        procedureArgs.add(place);
+      }
+
+      String retPlace = builder.buildExternalFunctionCall(funcName, procedureArgs);
+      return retPlace;
     }
-    builder.buildProcedureCall(funcName, valArgResults);
-    StringEntry returnPlace = procEnvironment.getEntry(funcName);
-    return builder.buildExternalReturnPlacement(returnPlace.toString());
   }
 
   public String generateUnaryOperationIr(UnaryOperation unaryOperation, AssignmentBuilder builder) {

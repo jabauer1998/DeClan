@@ -23,6 +23,7 @@ import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
+import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
 import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
 import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
@@ -73,6 +74,14 @@ public class MyIrFactory {
 
     public Call produceProcedure(String funcName, List<Tuple<String, String>> argResults){
         return new Call(funcName, argResults);
+    }
+
+    public ExternalCall produceExternalProcedure(String funcName, List<String> args){
+        return new ExternalCall(funcName, args);
+    }
+
+    public ExternalCall produceExternalProcedure(String toRet, String funcName, List<String> args){
+        return new ExternalCall(funcName, args, toRet);
     }
 
     public If produceIfStatement(Exp test, String ifTrue, String ifFalse){
