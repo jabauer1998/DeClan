@@ -181,7 +181,7 @@ public class MyIrParser {
 
         IrToken declanIdent = match(IrTokenType.ID);
 
-        return new SymEntry(resultMask, irPlace.toString(), declanIdent.toString());
+        return new SymEntry(resultMask, irPlace.getLexeme(), declanIdent.getLexeme());
     }
 
     public Proc parseProcedure(){
