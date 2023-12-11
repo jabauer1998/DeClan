@@ -738,6 +738,16 @@ public class MyIrLinker {
         }
     }
 
+    private static void replacePlaceInProgram(Prog program, String oldPlace, String newPlace){
+        replacePlaceInLib(program, oldPlace, newPlace);
+
+        CodeSec cSec = program.code;
+        for(int i = 0; i < cSec.getLength(); i++){
+            ICode instruction = cSec.getInstruction(i);
+            replacePlaceInICode(instruction, oldPlace, newPlace);
+        }
+    }
+
     private static boolean placeExistsInICode(String place, ICode dataCode){
         if(dataCode instanceof Assign){
             Assign assign = (Assign)dataCode;
@@ -792,6 +802,13 @@ public class MyIrLinker {
             if(placement.place.equals(place))
                 return true;
 
+            if(placement.retPlace.equals(place))
+                return true;
+        } else if(dataCode instanceof InternalPlace){
+            InternalPlace placement = (InternalPlace)dataCode;
+            if(placement.place.equals(place))
+                return true;
+            
             if(placement.retPlace.equals(place))
                 return true;
         } else if(dataCode instanceof Inline){
@@ -922,19 +939,6 @@ public class MyIrLinker {
     private static boolean instructionExistsInNewProgram(ICode codeToSearch, DataSec dataSec){
         for(int i = 0; i < dataSec.getLength(); i++){
             ICode icode = dataSec.getInstruction(i);
-            if(icode.equals(codeToSearch))
-                return true;
-        }
-
-        return false;
-    }
-
-    private static boolean instructionExistsInNewProgram(ICode codeToSearch, DataSec dataSec, CodeSec codeSec){
-        if(instructionExistsInNewProgram(codeToSearch, dataSec))
-            return true;
-
-        for(int i = 0; i < codeSec.getLength(); i++){
-            ICode icode = codeSec.getInstruction(i);
             if(icode.equals(codeToSearch))
                 return true;
         }
@@ -1097,6 +1101,17 @@ public class MyIrLinker {
                 }
             } else if(icode instanceof ExternalCall){
                 ExternalCall call = (ExternalCall)icode;
+
+                if(call.toRet != null){
+                    if(placeExistsAcrossMultiplePrograms(call.toRet, program, libraries)){
+                        String place = null;
+                        do{
+                            place = gen.genNextRegister();
+                        } while(placeExistsAcrossMultiplePrograms(place, program, libraries));
+
+                        replacePlaceInProgram(program, call.toRet, place);
+                    }
+                }
                 
                 if(!procedureSec.containsProcedure(call.procedureName))
                     fetchExternalProcedure(call.procedureName, program, libraries, symbolTable, dataSection, codeSection, procedureSec);
