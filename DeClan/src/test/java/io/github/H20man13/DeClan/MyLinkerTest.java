@@ -185,7 +185,7 @@ public class MyLinkerTest {
                      + " a := 20\n"
                      + " b := 500\n"
                      + "CODE SECTION\n"
-                     + " d := EXTERNAL CALL func ( a )\n"
+                     + " d := EXTERNAL CALL func ( )\n"
                      + " g := d IADD v\n"
                      + "END\n"
                      + "PROC SECTION\n";

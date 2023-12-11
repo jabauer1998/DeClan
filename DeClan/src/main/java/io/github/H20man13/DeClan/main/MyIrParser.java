@@ -454,10 +454,13 @@ public class MyIrParser {
 
                 match(IrTokenType.LPAR);
                 List<String> args = new LinkedList<String>();
-                do{
-                    IrToken arg = match(IrTokenType.ID);
-                    args.add(arg.getLexeme());
-                } while(skipIfYummy(IrTokenType.COMMA));
+
+                if(willMatch(IrTokenType.ID)){
+                    do{
+                        IrToken arg = match(IrTokenType.ID);
+                        args.add(arg.getLexeme());
+                    } while(skipIfYummy(IrTokenType.COMMA));
+                }
 
                 match(IrTokenType.RPAR);
 
