@@ -175,8 +175,10 @@ public class MyIrLinker {
                                 replacePlaceInLib(library, assignLib.place, place);
                             }
 
-                            if(!instructionExistsInNewProgram(assignLib, dataInstructions, codeSec))
+                            if(!instructionExistsInNewProgram(assignLib, dataInstructions, codeSec)){
                                 dataInstructions.addInstruction(assignLib);
+                                newTable.addEntry(libEntry);
+                            }
                             break loop;
                         }
                     }
@@ -188,7 +190,6 @@ public class MyIrLinker {
     private void fetchInternalDependentInstructions(Lib currentLib, String labelName, SymSec newTable, DataSec dataInstructions, CodeSec codeSection, ProcSec procSec){
         DataSec data = currentLib.variables;
         SymSec libSymbols = currentLib.symbols;
-        LinkedList<ICode> toRet = new LinkedList<ICode>();
         for(int i = 0; i < data.intermediateCode.size(); i++){
             Assign assign = (Assign)data.intermediateCode.get(i);
             if(assign.place.equals(labelName)){

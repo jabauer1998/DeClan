@@ -122,7 +122,99 @@ public class MyLinkerTest {
                     + "b |< a\n"
                     + "RETURN\n";
 
-        String exp = "";
+        String exp = "SYMBOL SECTION\r\n" + //
+                     " a INTERNAL lib1VariableName\r\n" + //
+                     "DATA SECTION\r\n" + //
+                     " v := 30\r\n" + //
+                     " a := 3\r\n" + //
+                    "CODE SECTION\r\n" + //
+                    " d := a IADD v\r\n" + //
+                    "END\r\n" + //
+                    "PROC SECTION\r\n";
+
+        linkProgramStrings(exp, prog1, lib1, lib2);
+    }
+
+    @Test
+    public void checkVariableRename(){
+        String prog1 = "SYMBOL SECTION\n"
+                     + "b EXTERNAL lib1VariableName\n"
+                     + "DATA SECTION\n"
+                     + " v := 30\n"
+                     + " a := 20\n"
+                     + "CODE SECTION\n"
+                     + " d := b IADD v\n"
+                     + " g := d IADD a\n"
+                     + "END\n"
+                     + "PROC SECTION\n";
+
+        String lib1 = "SYMBOL SECTION\n"
+                    + "a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
+                    + "DATA SECTION\n"
+                    + "a := 3\n"
+                    + "PROC SECTION\n";
+
+        String lib2 = "SYMBOL SECTION\n"
+                    + "DATA SECTION\n"
+                    + "PROC SECTION\n"
+                    + "PROC LABEL func\n"
+                    + "a := 3\n"
+                    + "b |< a\n"
+                    + "RETURN\n";
+
+        String exp = "SYMBOL SECTION\r\n" + //
+                     " b INTERNAL lib1VariableName\r\n" + //
+                     "DATA SECTION\r\n" + //
+                     " v := 30\r\n" + //
+                     " a := 20\r\n" + //
+                     " b := 3\r\n" + // But when it is inserted here on the left it will be changed into a b because a is already taken
+                    "CODE SECTION\r\n" + //
+                    " d := b IADD v\r\n" + //
+                    " g := d IADD a\r\n" + //
+                    "END\r\n" + //
+                    "PROC SECTION\r\n";//
+
+        linkProgramStrings(exp, prog1, lib1, lib2);
+    }
+
+    @Test
+    public void linkExternalCall(){
+        String prog1 = "SYMBOL SECTION\n"
+                     + "v EXTERNAL lib1VariableName\n"
+                     + "DATA SECTION\n"
+                     + " a := 20\n"
+                     + " b := 500\n"
+                     + "CODE SECTION\n"
+                     + " d := EXTERNAL CALL func ( a )\n"
+                     + " g := d IADD v\n"
+                     + "END\n"
+                     + "PROC SECTION\n";
+
+        String lib1 = "SYMBOL SECTION\n"
+                    + "a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
+                    + "DATA SECTION\n"
+                    + "a := 3\n"
+                    + "PROC SECTION\n";
+
+        String lib2 = "SYMBOL SECTION\n"
+                    + "DATA SECTION\n"
+                    + "PROC SECTION\n"
+                    + "PROC LABEL func\n"
+                    + "a := 3\n"
+                    + "b |< a\n"
+                    + "RETURN\n";
+
+        String exp = "SYMBOL SECTION\r\n" + //
+                     " b INTERNAL lib1VariableName\r\n" + //
+                     "DATA SECTION\r\n" + //
+                     " v := 30\r\n" + //
+                     " a := 20\r\n" + //
+                     " b := 3\r\n" + // But when it is inserted here on the left it will be changed into a b because a is already taken
+                    "CODE SECTION\r\n" + //
+                    " d := b IADD v\r\n" + //
+                    " g := d IADD a\r\n" + //
+                    "END\r\n" + //
+                    "PROC SECTION\r\n";//
 
         linkProgramStrings(exp, prog1, lib1, lib2);
     }
