@@ -54,9 +54,9 @@ public class MyICodeTypeCheckerTest {
         parser.close();
 
         MyStandardLibrary lib = new MyStandardLibrary(errLog);
-        MyIrLinker linker = new MyIrLinker(errLog, prog, lib.ioLibrary(), lib.mathLibrary());
+        MyIrLinker linker = new MyIrLinker(errLog);
 
-        Prog icodeProg = linker.performLinkage();
+        Prog icodeProg = linker.performLinkage(prog, lib.ioLibrary(), lib.mathLibrary());
 
         MyICodeTypeChecker typeChecker = new MyICodeTypeChecker(icodeProg, errLog);
         typeChecker.runTypeChecker();

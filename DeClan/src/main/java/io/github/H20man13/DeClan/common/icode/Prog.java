@@ -10,16 +10,11 @@ import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.icode.section.SymSec;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class Prog implements ICode {
-    public SymSec symbols;
-    public DataSec variables;
-    public ProcSec procedures;
+public class Prog extends Lib implements ICode {
     public CodeSec code;
 
     public Prog(SymSec symbols, DataSec variables, CodeSec code, ProcSec procedures){
-        this.symbols = symbols;
-        this.variables = variables;
-        this.procedures = procedures;
+        super(symbols, variables, procedures);
         this.code = code;
     }
 

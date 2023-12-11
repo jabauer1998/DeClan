@@ -18,6 +18,7 @@ import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
@@ -54,9 +55,9 @@ public class InterpreterICodeTest {
             }
 
             IrRegisterGenerator gen = new IrRegisterGenerator();
-            MyIrLinker linker = new MyIrLinker(errLog, prog, lib.ioLibrary(), lib.mathLibrary());
+            MyIrLinker linker = new MyIrLinker(errLog);
 
-            Prog program = linker.performLinkage();
+            Prog program = linker.performLinkage(prog, lib.ioLibrary(), lib.mathLibrary());
 
             MyICodeMachine vm = new MyICodeMachine(errLog, icodeOut, errOut, standardInICode);
             vm.interpretICode(program);

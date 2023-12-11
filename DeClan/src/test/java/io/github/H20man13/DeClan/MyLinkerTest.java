@@ -56,8 +56,8 @@ public class MyLinkerTest {
     }
 
     private static void linkPrograms(ErrorLog errLog, String expectedString, Prog prog, Lib... libs){
-        MyIrLinker linker = new MyIrLinker(errLog, prog, libs);
-        Prog program = linker.performLinkage();
+        MyIrLinker linker = new MyIrLinker(errLog);
+        Prog program = linker.performLinkage(prog, libs);
         regenerateProgram(program, expectedString);
     }
 
