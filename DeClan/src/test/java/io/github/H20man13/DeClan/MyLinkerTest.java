@@ -205,16 +205,21 @@ public class MyLinkerTest {
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
-                     " b INTERNAL lib1VariableName\r\n" + //
+                     " e INTERNAL lib1VariableName\r\n" + //
                      "DATA SECTION\r\n" + //
-                     " v := 30\r\n" + //
                      " a := 20\r\n" + //
-                     " b := 3\r\n" + // But when it is inserted here on the left it will be changed into a b because a is already taken
-                    "CODE SECTION\r\n" + //
-                    " d := b IADD v\r\n" + //
-                    " g := d IADD a\r\n" + //
-                    "END\r\n" + //
-                    "PROC SECTION\r\n";//
+                     " b := 500\r\n" + //
+                     " e := 3\r\n" + //
+                     "CODE SECTION\r\n" + //
+                     " CALL func (  )\r\n" + //
+                     " d <| b\r\n" + //
+                     " g := d IADD v\r\n" + //
+                     "END\r\n" + //
+                     "PROC SECTION\r\n" + //
+                     " PROC LABEL func\r\n" + //
+                     "  a := 3\r\n" + //
+                     "  b |< a\r\n" + //
+                     "  RETURN\r\n";
 
         linkProgramStrings(exp, prog1, lib1, lib2);
     }

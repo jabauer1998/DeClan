@@ -299,8 +299,9 @@ public class MyIrLinker {
                                 do{
                                     newPlace = gen.genNextRegister();
                                 } while(placeExistsInNewProgram(newPlace, symbolTable, dataSection, codeSection, procedureSec));
-                                replacePlaceInLib(library, newPlace, assignment.place);
+                                replacePlaceInLib(library, assignment.place, newPlace);
                             }
+
                             Exp assignExp = assignment.value;
                             if(assignExp instanceof IdentExp){
                                 IdentExp ident = (IdentExp)assignExp;
@@ -310,8 +311,8 @@ public class MyIrLinker {
                                 } else {
                                     fetchInternalDependentInstructions(library, ident.ident, symbolTable, dataSection, codeSection, procedureSec);
                                 }
-                            } else if(icode instanceof UnExp){
-                                UnExp unExp = (UnExp)icode;
+                            } else if(assignExp instanceof UnExp){
+                                UnExp unExp = (UnExp)assignExp;
                                 
                                 if(unExp.right instanceof IdentExp){
                                     IdentExp ident = (IdentExp)unExp.right;
@@ -322,8 +323,8 @@ public class MyIrLinker {
                                         fetchInternalDependentInstructions(library, ident.ident, symbolTable, dataSection, codeSection, procedureSec);
                                     }
                                 }
-                            } else if(icode instanceof BinExp){
-                                BinExp binExp = (BinExp)icode;
+                            } else if(assignExp instanceof BinExp){
+                                BinExp binExp = (BinExp)assignExp;
 
                                 if(binExp.left instanceof IdentExp){
                                     IdentExp leftExp = (IdentExp)binExp.left;
