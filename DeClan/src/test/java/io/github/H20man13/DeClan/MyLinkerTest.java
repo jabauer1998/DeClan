@@ -212,13 +212,13 @@ public class MyLinkerTest {
                      " e := 3\r\n" + //
                      "CODE SECTION\r\n" + //
                      " CALL func (  )\r\n" + //
-                     " d <| b\r\n" + //
+                     " d <| d\r\n" + //
                      " g := d IADD v\r\n" + //
                      "END\r\n" + //
                      "PROC SECTION\r\n" + //
                      " PROC LABEL func\r\n" + //
-                     "  a := 3\r\n" + //
-                     "  b |< a\r\n" + //
+                     "  c := 3\r\n" + //
+                     "  d |< c\r\n" + //
                      "  RETURN\r\n";
 
         linkProgramStrings(exp, prog1, lib1, lib2);
