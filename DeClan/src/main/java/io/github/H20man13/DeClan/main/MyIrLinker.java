@@ -502,6 +502,7 @@ public class MyIrLinker {
                                     newArg.dest = fetchedProcedure.paramAssign.get(argIndex).paramPlace;
                                     newArgs.add(newArg);
                                 }
+                                
                                 codeSection.addInstruction(new Call(call.procedureName, newArgs));
 
                                 if(call.toRet != null){
@@ -692,6 +693,11 @@ public class MyIrLinker {
                     newArgs.add(newPlace);
                 else
                     newArgs.add(arg);
+            }
+
+            if(call.toRet != null){
+                if(call.toRet.equals(oldPlace))
+                    call.toRet = newPlace;
             }
 
             call.arguments = newArgs;
@@ -903,16 +909,11 @@ public class MyIrLinker {
     }
 
     private static boolean placeExistsAcrossMultiplePrograms(String place, Prog program, Lib[] libraries){
-        int count = 0;
-
         if(placeExistsInProgram(place, program))
-            count++;
+            return true;
 
         for(Lib library : libraries){
             if(placeExistsInLibrary(place, library))
-                count++;
-
-            if(count >= 2)
                 return true;
         }
 
@@ -920,16 +921,12 @@ public class MyIrLinker {
     }
 
     private static boolean placeExistsAcrossMultipleLibraries(String place, Lib library, Lib[] libraries){
-        int count = 0;
 
         if(placeExistsInLibrary(place, library))
-            count++;
+            return true;
 
         for(Lib lib : libraries){
             if(placeExistsInLibrary(place, lib))
-                count++;
-
-            if(count >= 2)
                 return true;
         }
 
