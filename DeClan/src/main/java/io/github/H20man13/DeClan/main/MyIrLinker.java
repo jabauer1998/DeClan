@@ -77,9 +77,8 @@ public class MyIrLinker {
                 if(libSymbols.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
                     SymEntry libEntry = libSymbols.getEntryByIdentifier(identName, SymEntry.INTERNAL);
                     DataSec libData = library.variables;
-                    List<Assign> libICode = libData.intermediateCode;
-                    for(int z = 0; z <= libICode.size(); z++){
-                        Assign assignLib = libICode.get(z);
+                    for(int z = 0; z <= libData.getLength(); z++){
+                        Assign assignLib = libData.getInstruction(z);
                         if(assignLib.place.equals(libEntry.icodePlace)){
                             Exp exp = assignLib.value;
                             if(exp instanceof IdentExp){
