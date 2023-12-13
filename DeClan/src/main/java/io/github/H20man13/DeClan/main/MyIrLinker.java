@@ -27,6 +27,7 @@ import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
 import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
 import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
@@ -439,6 +440,8 @@ public class MyIrLinker {
     }
 
     private void fetchExternalProcedure(String procName, Prog prog, Lib[] libraries, SymSec symbolTable, DataSec dataSection, CodeSec codeSection, ProcSec procedureSec, Lib... libsToIgnore){
+        ProcLabel newProcLabel = new ProcLabel(procName);
+        Proc newProcedure = new Proc(newProcLabel);
         loop: for(int i = 0; i < libraries.length; i++){
             Lib library = libraries[i];
             if(!Utils.arrayContainsValue(library, libsToIgnore)){
@@ -467,6 +470,8 @@ public class MyIrLinker {
 
                             replacePlaceInLib(library, assign.newPlace, place);
                         }
+
+                        newProcedure.addParamater(assign);
                     }
 
                     for(int instructionIndex = 0; instructionIndex < procedure.instructions.size(); instructionIndex++){
@@ -617,12 +622,12 @@ public class MyIrLinker {
                                     newArgs.add(newArg);
                                 }
                                 
-                                codeSection.addInstruction(new Call(call.procedureName, newArgs));
+                                newProcedure.addInstruction(new Call(call.procedureName, newArgs));
 
                                 if(call.toRet != null){
                                     String toRetFrom = fetchedProcedure.placement.place;
                                     String toRetTo = call.toRet;
-                                    codeSection.addInstruction(new ExternalPlace(toRetTo, toRetFrom));
+                                    newProcedure.addInstruction(new ExternalPlace(toRetTo, toRetFrom));
                                 }
 
                                 continue;
@@ -682,6 +687,7 @@ public class MyIrLinker {
                                 fetchInternalDependentInstructions(library, prog, libraries, placement.retPlace, symbolTable, dataSection, codeSection, procedureSec);
                             }
                         }
+                        newProcedure.addInstruction(icode);
                     }
 
                     if(procedure.placement != null){
@@ -713,9 +719,11 @@ public class MyIrLinker {
                                     replacePlaceInLib(library, entry.icodePlace, newEntry.icodePlace);
                             }
                         }
+
+                        newProcedure.placement = placement;
                     }
 
-                    procedureSec.addProcedure(procedure);
+                    procedureSec.addProcedure(newProcedure);
                     break loop;
                 }
             }

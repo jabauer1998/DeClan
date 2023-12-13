@@ -19,7 +19,9 @@ import io.github.H20man13.DeClan.main.MyStandardLibrary;
 
 public class MyLinkerTest {
     private static void compareProgramStrings(String resultProgram, String expectedProgram){
-        //assertTrue("Error expected -\n\n" + expectedProgram + "\n\n but found -\n\n" + resultProgram, resultProgram.equals(expectedProgram));
+        
+        assertTrue("Error expected -\n\n" + expectedProgram + "\n\n but found -\n\n" + resultProgram, resultProgram.equals(expectedProgram));
+        /* 
         int line = 0;
         int position = 0;
 
@@ -39,6 +41,7 @@ public class MyLinkerTest {
         assertTrue("Result program length is equal to " + resultProgram.length() + "and expected program length is " + expectedProgram.length(), resultProgram.length() == expectedProgram.length());
 
         assertTrue("Result program --\n\n" + resultProgram + "\n\n is not equal to expected program \n\n" + expectedProgram, resultProgram.equals(expectedProgram));
+        */
     }
 
     private static void regenerateProgram(Prog  prog, String expected){
@@ -142,14 +145,14 @@ public class MyLinkerTest {
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
-                     " a INTERNAL lib1VariableName\r\n" + //
+                     " c INTERNAL lib1VariableName\r\n" + //
                      "DATA SECTION\r\n" + //
                      " v := 30\r\n" + //
-                     " a := 3\r\n" + //
-                    "CODE SECTION\r\n" + //
-                    " d := a IADD v\r\n" + //
-                    "END\r\n" + //
-                    "PROC SECTION\r\n";
+                     " c := 3\r\n" + //
+                     "CODE SECTION\r\n" + //
+                     " d := c IADD v\r\n" + //
+                     "END\r\n" + //
+                     "PROC SECTION\r\n";
 
         linkProgramStrings(exp, prog1, lib1, lib2);
     }
@@ -182,13 +185,13 @@ public class MyLinkerTest {
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
-                     " b INTERNAL lib1VariableName\r\n" + //
+                     " c INTERNAL lib1VariableName\r\n" + //
                      "DATA SECTION\r\n" + //
                      " v := 30\r\n" + //
                      " a := 20\r\n" + //
-                     " b := 3\r\n" + // But when it is inserted here on the left it will be changed into a b because a is already taken
+                     " c := 3\r\n" + //
                     "CODE SECTION\r\n" + //
-                    " d := b IADD v\r\n" + //
+                    " d := c IADD v\r\n" + //
                     " g := d IADD a\r\n" + //
                     "END\r\n" + //
                     "PROC SECTION\r\n";//
@@ -239,6 +242,64 @@ public class MyLinkerTest {
                      "  e := 3\r\n" + //
                      "  f |< e\r\n" + //
                      "  RETURN\r\n";
+
+        linkProgramStrings(exp, prog1, lib1, lib2);
+    }
+
+    @Test
+    public void linkExternalCall2(){
+        String prog1 = "SYMBOL SECTION\n"
+                     + "v EXTERNAL lib1VariableName\n"
+                     + "DATA SECTION\n"
+                     + " a := 20\n"
+                     + " b := 500\n"
+                     + "CODE SECTION\n"
+                     + " d := EXTERNAL CALL func2 ( )\n"
+                     + " g := d IADD v\n"
+                     + "END\n"
+                     + "PROC SECTION\n";
+
+        String lib1 = "SYMBOL SECTION\n"
+                    + "a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
+                    + "DATA SECTION\n"
+                    + "a := 3\n"
+                    + "PROC SECTION\n"
+                    + " PROC LABEL func2\n"
+                    + "  b := EXTERNAL CALL func1 ( )\n"
+                    + "  c := b ISUB a\n"
+                    + "  d |< c\n"
+                    + " RETURN\n";
+
+        String lib2 = "SYMBOL SECTION\n"
+                    + "DATA SECTION\n"
+                    + "PROC SECTION\n"
+                    + "PROC LABEL func1\n"
+                    + "a := 3\n"
+                    + "b |< a\n"
+                    + "RETURN\n";
+
+        String exp = "SYMBOL SECTION\r\n" + //
+                     "DATA SECTION\r\n" + //
+                     " a := 20\r\n" + //
+                     " b := 500\r\n" + //
+                     " m := 3\r\n" + //
+                     "CODE SECTION\r\n" + //
+                     " CALL func1 (  )\r\n" + //
+                     " b <| h\r\n" + //
+                     " CALL func2 (  )\r\n" + //
+                     " e <| l\r\n" + //
+                     " g := e IADD v\r\n" + //
+                     "END\r\n" + //
+                     "PROC SECTION\r\n" + //
+                     " PROC LABEL func1\r\n" + //
+                     "  f := 3\r\n" + //
+                     "  h |< f\r\n" + //
+                     " RETURN\r\n" + //
+                     " PROC LABEL func2\r\n" + //
+                     "  b := EXTERNAL CALL func1()\r\n" + //
+                     "  k := b ISUB m\r\n" + //
+                     "  l |< k\r\n" + //
+                     " RETURN\r\n";
 
         linkProgramStrings(exp, prog1, lib1, lib2);
     }

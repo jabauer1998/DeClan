@@ -76,7 +76,7 @@ public class ExternalCall implements ICode {
             sb.append(" := ");
         }
 
-        sb.append("External Call ");
+        sb.append("EXTERNAL CALL ");
         sb.append(procedureName);
         sb.append('(');
 

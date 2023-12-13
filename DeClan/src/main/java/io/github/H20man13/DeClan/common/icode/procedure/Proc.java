@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.icode.procedure;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,6 +22,38 @@ public class Proc implements ICode {
         this.instructions = instructions;
         this.placement = place;
         this.returnStatement = returnStatement;
+    }
+
+    public Proc(ProcLabel label){
+        this.label = label;
+        this.paramAssign = new LinkedList<ParamAssign>();
+        this.instructions = new LinkedList<ICode>();
+        this.placement = null;
+        this.returnStatement = new Return();
+    }
+
+    public ICode getInstruction(int index){
+        return this.instructions.get(index);
+    }
+
+    public ParamAssign getParamater(int index){
+        return this.paramAssign.get(index);
+    }
+
+    public int getParamLength(){
+        return this.paramAssign.size();
+    }
+
+    public int getInstructionLength(){
+        return this.instructions.size();
+    }
+
+    public void addParamater(ParamAssign assign){
+        this.paramAssign.add(assign);
+    }
+
+    public void addInstruction(ICode instruction){
+        this.instructions.add(instruction);
     }
 
     @Override
@@ -115,20 +148,24 @@ public class Proc implements ICode {
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append(label.toString());
-        sb.append("\r\n  ");
+        sb.append("\r\n");
         for(ParamAssign assign: paramAssign){
+            sb.append("  ");
             sb.append(assign.toString());
-            sb.append("\r\n  ");
+            sb.append("\r\n");
         }
         for(ICode instruction: instructions){
+            sb.append("  ");
             sb.append(instruction.toString());
-            sb.append("\r\n  ");
+            sb.append("\r\n");
         }
+
         if(placement != null){
+            sb.append("  ");
             sb.append(placement.toString());
-            sb.append("\r\n  ");
+            sb.append("\r\n");
         }
-        
+        sb.append(" ");
         sb.append(returnStatement.toString());
 
         return sb.toString();
