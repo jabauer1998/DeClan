@@ -19,7 +19,26 @@ import io.github.H20man13.DeClan.main.MyStandardLibrary;
 
 public class MyLinkerTest {
     private static void compareProgramStrings(String resultProgram, String expectedProgram){
-        assertTrue("Error expected -\n\n" + expectedProgram + "\n\n but found -\n\n" + resultProgram, resultProgram.equals(expectedProgram));
+        //assertTrue("Error expected -\n\n" + expectedProgram + "\n\n but found -\n\n" + resultProgram, resultProgram.equals(expectedProgram));
+        int line = 0;
+        int position = 0;
+
+        int shorterLength = (resultProgram.length() < expectedProgram.length()) ? resultProgram.length() : expectedProgram.length();
+        for(int i = 0; i < shorterLength; i++){
+            char resultChar = resultProgram.charAt(i);
+            char expectedChar = expectedProgram.charAt(i);
+            assertTrue("Error got " + resultChar + " but expected " + expectedChar + " at line " + line + " and position " + position, resultChar == expectedChar);
+            if(resultChar == '\r'){
+                line++;
+                position = 0;
+            } else {
+                position++;
+            }
+        }
+
+        assertTrue("Result program length is equal to " + resultProgram.length() + "and expected program length is " + expectedProgram.length(), resultProgram.length() == expectedProgram.length());
+
+        assertTrue("Result program --\n\n" + resultProgram + "\n\n is not equal to expected program \n\n" + expectedProgram, resultProgram.equals(expectedProgram));
     }
 
     private static void regenerateProgram(Prog  prog, String expected){
@@ -178,7 +197,7 @@ public class MyLinkerTest {
     }
 
     @Test
-    public void linkExternalCall(){
+    public void linkExternalCall1(){
         String prog1 = "SYMBOL SECTION\n"
                      + "v EXTERNAL lib1VariableName\n"
                      + "DATA SECTION\n"

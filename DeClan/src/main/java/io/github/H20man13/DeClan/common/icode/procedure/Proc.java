@@ -130,7 +130,6 @@ public class Proc implements ICode {
         }
         
         sb.append(returnStatement.toString());
-        sb.append("\r\n");
 
         return sb.toString();
     }

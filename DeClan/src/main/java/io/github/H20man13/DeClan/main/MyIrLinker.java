@@ -144,11 +144,11 @@ public class MyIrLinker {
                                 }
                             }
 
-                            if(placeExistsAcrossMultiplePrograms(assignLib.place, program, libraries)){
+                            if(!placeIsUniqueToProgramOrLibrary(assignLib.place, program, libraries, library)){
                                 String place = null;    
                                 do{
                                     place = gen.genNextRegister();
-                                } while(placeExistsAcrossMultiplePrograms(place, program, libraries));
+                                } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
 
                                 replacePlaceInLib(library, assignLib.place, place);
                             }
@@ -241,11 +241,11 @@ public class MyIrLinker {
                                 }
                             }
 
-                            if(placeExistsAcrossMultipleLibraries(assignLib.place, single, libraries)){
+                            if(!placeIsUniqueToLibrary(assignLib.place, single, libraries, library)){
                                 String place = null;    
                                 do{
                                     place = gen.genNextRegister();
-                                } while(placeExistsAcrossMultipleLibraries(place, single, libraries));
+                                } while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                                 replacePlaceInLib(library, assignLib.place, place);
                             }
@@ -332,11 +332,11 @@ public class MyIrLinker {
                     }
                 }
                 
-                if(placeExistsAcrossMultipleLibraries(assign.place, single, libraries)){
+                if(!placeIsUniqueToLibrary(assign.place, single, libraries, currentLib)){
                     String place = null;    
                     do{
                         place = gen.genNextRegister();
-                    } while(placeExistsAcrossMultipleLibraries(place, single, libraries));
+                    } while(!placeIsUniqueToLibrary(place, single, libraries, currentLib));
 
                     replacePlaceInLib(currentLib, assign.place, place);
                 }
@@ -420,11 +420,11 @@ public class MyIrLinker {
                     }
                 }
                 
-                if(placeExistsAcrossMultiplePrograms(assign.place, program, libraries)){
+                if(!placeIsUniqueToProgramOrLibrary(assign.place, program, libraries, currentLib)){
                     String place = null;    
                     do{
                         place = gen.genNextRegister();
-                    } while(placeExistsAcrossMultiplePrograms(place, program, libraries));
+                    } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, currentLib));
 
                     replacePlaceInLib(currentLib, assign.place, place);
                 }
@@ -450,20 +450,20 @@ public class MyIrLinker {
                     for(int assignIndex = 0; assignIndex < procedure.paramAssign.size(); assignIndex++){
                         ParamAssign assign = procedure.paramAssign.get(assignIndex);
 
-                        if(placeExistsAcrossMultiplePrograms(assign.paramPlace, prog, libraries)){
+                        if(!placeIsUniqueToProgramOrLibrary(assign.paramPlace, prog, libraries, library)){
                             String place = null;
                             do{
                                 place = gen.genNextRegister();
-                            }while(placeExistsAcrossMultiplePrograms(place, prog, libraries));
+                            }while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                             replacePlaceInLib(library, assign.paramPlace, place);
                         }
 
-                        if(placeExistsAcrossMultiplePrograms(assign.newPlace, prog, libraries)){
+                        if(!placeIsUniqueToProgramOrLibrary(assign.newPlace, prog, libraries, library)){
                             String place = null;
                             do{
                                 place = gen.genNextRegister();
-                            } while(placeExistsAcrossMultiplePrograms(place, prog, libraries));
+                            } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                             replacePlaceInLib(library, assign.newPlace, place);
                         }
@@ -475,11 +475,11 @@ public class MyIrLinker {
                         if(icode instanceof Assign){
                             Assign assignment = (Assign)icode;
                             
-                            if(placeExistsAcrossMultiplePrograms(assignment.place, prog, libraries)){
+                            if(!placeIsUniqueToProgramOrLibrary(assignment.place, prog, libraries, library)){
                                 String newPlace = null;
                                 do{
                                     newPlace = gen.genNextRegister();
-                                } while(placeExistsAcrossMultiplePrograms(newPlace, prog, libraries));
+                                } while(!placeIsUniqueToProgramOrLibrary(newPlace, prog, libraries, library));
                                 replacePlaceInLib(library, assignment.place, newPlace);
                             }
 
@@ -652,20 +652,20 @@ public class MyIrLinker {
                         } else if(icode instanceof ExternalPlace){
                             ExternalPlace placement = (ExternalPlace)icode;
 
-                            if(placeExistsAcrossMultiplePrograms(placement.place, prog, libraries)){
+                            if(!placeIsUniqueToProgramOrLibrary(placement.place, prog, libraries, library)){
                                 String place = null;
                                 do{
                                     place = gen.genNextRegister();
-                                }while(placeExistsAcrossMultiplePrograms(place, prog, libraries));
+                                }while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
                                 
                                 replacePlaceInLib(library, placement.place, place);
                             }
 
-                            if(placeExistsAcrossMultiplePrograms(placement.retPlace, prog, libraries)){
+                            if(placeIsUniqueToProgramOrLibrary(placement.retPlace, prog, libraries, library)){
                                 String place = null;
                                 do{
                                     place = gen.genNextRegister();
-                                } while(placeExistsAcrossMultiplePrograms(place, prog, libraries));
+                                } while(placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                                 replacePlaceInLib(library, placement.retPlace, place);
                             }
@@ -686,20 +686,20 @@ public class MyIrLinker {
 
                     if(procedure.placement != null){
                         InternalPlace placement = procedure.placement;
-                        if(placeExistsAcrossMultiplePrograms(placement.retPlace, prog, libraries)){
+                        if(!placeIsUniqueToProgramOrLibrary(placement.retPlace, prog, libraries, library)){
                             String place = null;
                             do{
                                 place = gen.genNextRegister();
-                            } while(placeExistsAcrossMultiplePrograms(place, prog, libraries));
+                            } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                             replacePlaceInLib(library, placement.retPlace, place);
                         }
 
-                        if(placeExistsAcrossMultiplePrograms(placement.place, prog, libraries)){
+                        if(!placeIsUniqueToProgramOrLibrary(placement.place, prog, libraries, library)){
                             String place = null;
                             do{
                                 place = gen.genNextRegister();
-                            } while(placeExistsAcrossMultiplePrograms(place, prog, libraries));
+                            } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                             replacePlaceInLib(library, placement.place, place);
                         }
@@ -1037,29 +1037,40 @@ public class MyIrLinker {
         return false;
     }
 
-    private static boolean placeExistsAcrossMultiplePrograms(String place, Prog program, Lib[] libraries){
+    private static boolean placeIsUniqueToProgramOrLibrary(String place, Prog program, Lib[] libraries, Lib libraryToIgnore){
         if(placeExistsInProgram(place, program))
-            return true;
+            return false;
 
         for(Lib library : libraries){
-            if(placeExistsInLibrary(place, library))
-                return true;
+            if(!library.equals(libraryToIgnore))
+                if(placeExistsInLibrary(place, library))
+                    return false;
         }
 
-        return false;
+        return true;
     }
 
-    private static boolean placeExistsAcrossMultipleLibraries(String place, Lib library, Lib[] libraries){
-
-        if(placeExistsInLibrary(place, library))
-            return true;
-
-        for(Lib lib : libraries){
-            if(placeExistsInLibrary(place, lib))
-                return true;
+    private static boolean placeIsUniqueToProgramOrLibrary(String place, Lib[] libraries){
+        for(Lib library : libraries){
+            if(placeExistsInLibrary(place, library))
+                return false;
         }
 
-        return false;
+        return true;
+    }
+
+    private static boolean placeIsUniqueToLibrary(String place, Lib library, Lib[] libraries, Lib libToIgnore){
+        if(!library.equals(libToIgnore))
+            if(placeExistsInLibrary(place, library))
+                return false;
+
+        for(Lib lib : libraries){
+            if(!lib.equals(libToIgnore))
+                if(placeExistsInLibrary(place, lib))
+                    return false;
+        }
+
+        return true;
     }
 
     private static boolean instructionExistsInNewProgram(ICode codeToSearch, DataSec dataSec){
@@ -1299,11 +1310,11 @@ public class MyIrLinker {
                 ExternalCall call = (ExternalCall)icode;
 
                 if(call.toRet != null){
-                    if(placeExistsAcrossMultiplePrograms(call.toRet, program, libraries)){
+                    if(!placeIsUniqueToProgramOrLibrary(call.toRet, program, libraries, program)){
                         String place = null;
                         do{
                             place = gen.genNextRegister();
-                        } while(placeExistsAcrossMultiplePrograms(place, program, libraries));
+                        } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, program));
 
                         replacePlaceInProgram(program, call.toRet, place);
                     }
