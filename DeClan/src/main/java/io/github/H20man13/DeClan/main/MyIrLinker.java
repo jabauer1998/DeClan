@@ -344,6 +344,10 @@ public class MyIrLinker {
 
                 if(!instructionExistsInNewProgram(assign, dataInstructions)){
                     dataInstructions.addInstruction(assign);
+                    if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
+                        SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
+                        newTable.addEntry(entry);
+                    }
                 }
                 
                 break;
@@ -432,6 +436,10 @@ public class MyIrLinker {
 
                 if(!instructionExistsInNewProgram(assign, dataInstructions)){
                     dataInstructions.addInstruction(assign);
+                    if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
+                        SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
+                        newTable.addEntry(entry);
+                    }
                 }
                 
                 break;

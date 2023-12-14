@@ -227,21 +227,21 @@ public class MyLinkerTest {
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
-                     " h INTERNAL lib1VariableName\r\n" + //
+                     " f INTERNAL lib1VariableName\r\n" + //
                      "DATA SECTION\r\n" + //
                      " a := 20\r\n" + //
                      " b := 500\r\n" + //
-                     " h := 3\r\n" + //
+                     " f := 3\r\n" + //
                      "CODE SECTION\r\n" + //
                      " CALL func (  )\r\n" + //
-                     " c <| f\r\n" + //
-                     " g := c IADD h\r\n" + //
+                     " c <| e\r\n" + //
+                     " g := c IADD f\r\n" + //
                      "END\r\n" + //
                      "PROC SECTION\r\n" + //
                      " PROC LABEL func\r\n" + //
-                     "  e := 3\r\n" + //
-                     "  f |< e\r\n" + //
-                     "  RETURN\r\n";
+                     "  d := 3\r\n" + //
+                     "  e |< d\r\n" + //
+                     " RETURN\r\n";
 
         linkProgramStrings(exp, prog1, lib1, lib2);
     }
@@ -279,16 +279,15 @@ public class MyLinkerTest {
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
+                     " m INTERNAL lib1VariableName\r\n" + //
                      "DATA SECTION\r\n" + //
                      " a := 20\r\n" + //
                      " b := 500\r\n" + //
                      " m := 3\r\n" + //
                      "CODE SECTION\r\n" + //
-                     " CALL func1 (  )\r\n" + //
-                     " b <| h\r\n" + //
                      " CALL func2 (  )\r\n" + //
                      " e <| l\r\n" + //
-                     " g := e IADD v\r\n" + //
+                     " g := e IADD m\r\n" + //
                      "END\r\n" + //
                      "PROC SECTION\r\n" + //
                      " PROC LABEL func1\r\n" + //
@@ -296,7 +295,8 @@ public class MyLinkerTest {
                      "  h |< f\r\n" + //
                      " RETURN\r\n" + //
                      " PROC LABEL func2\r\n" + //
-                     "  b := EXTERNAL CALL func1()\r\n" + //
+                     "  CALL func1 (  )\r\n" + //
+                     "  b <| h\r\n" + //
                      "  k := b ISUB m\r\n" + //
                      "  l |< k\r\n" + //
                      " RETURN\r\n";
