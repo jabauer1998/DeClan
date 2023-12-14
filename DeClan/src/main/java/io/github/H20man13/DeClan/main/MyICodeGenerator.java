@@ -171,13 +171,9 @@ public class MyICodeGenerator{
 
     ProcedureSectionBuilder procSectionBuilder = builder.getProcedureSectionBuilder();
     ProcedureBuilder procBuilder = procSectionBuilder.getProcedureBuilder();
-    for (Declaration decl : program.getProcDecls()){
-      decl.accept(typeChecker);
-      if(decl instanceof ProcedureDeclaration){
-        generateProcedureIr((ProcedureDeclaration)decl, procBuilder);
-      }
+    for (ProcedureDeclaration decl : program.getProcDecls()){
+      generateProcedureIr(decl, procBuilder);
       procSectionBuilder.addProcedure(procBuilder.completeBuild());
-      typeChecker.removeVarScope();
       procBuilder.resetBuilder();
     }
 
