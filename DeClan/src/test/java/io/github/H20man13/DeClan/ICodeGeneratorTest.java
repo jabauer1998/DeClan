@@ -311,69 +311,36 @@ public class ICodeGeneratorTest {
     @Test
     public void testIfStatementAdvanced(){
         String programName = "test_source/IfStatementAdvanced.dcl";
-        String expectedICodee = "LABEL begin_0\r\n" + //
-                                "GOTO begin_1\r\n" + //
-                                "LABEL WriteLn\r\n" + //
-                                "RETURN\r\n" + //
-                                "LABEL WriteInt\r\n" + //
-                                "RETURN\r\n" + //
-                                "LABEL WriteReal\r\n" + //
-                                "RETURN\r\n" + //
-                                "LABEL ReadInt\r\n" + //
-                                "g := 1\r\n" + //
-                                "h := INEG g\r\n" + //
-                                "f := h\r\n" + //
-                                "RETURN\r\n" + //
-                                "LABEL begin_1\r\n" + //
-                                "GOTO begin_2\r\n" + //
-                                "LABEL Round\r\n" + //
-                                "o := 1\r\n" + //
-                                "p := INEG o\r\n" + //
-                                "j := p\r\n" + //
-                                "RETURN\r\n" + //
-                                "LABEL Floor\r\n" + //
-                                "q := 1\r\n" + //
-                                "r := INEG q\r\n" + //
-                                "l := r\r\n" + //
-                                "RETURN\r\n" + //
-                                "LABEL Ceil\r\n" + //
-                                "s := 1\r\n" + //
-                                "t := INEG s\r\n" + //
-                                "n := t\r\n" + //
-                                "RETURN\r\n" + //
-                                "LABEL begin_2\r\n" + //
-                                "u := TRUE\r\n" + //
-                                "v := u\r\n" + //
-                                "w := FALSE\r\n" + //
-                                "x := w\r\n" + //
-                                "GOTO begin_3\r\n" + //
-                                "LABEL begin_3\r\n" + //
-                                "IF v EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
+        String expectedICodee = "a := TRUE\r\n" + //
+                                "b := a\r\n" + //
+                                "c := FALSE\r\n" + //
+                                "d := c\r\n" + //
+                                "IF b EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
                                 "LABEL IFSTAT_0_SEQ_0_LEVEL_0\r\n" + //
-                                "IF x EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_1 ELSE IFNEXT_0_SEQ_0_LEVEL_1\r\n" + //
-                                "LABEL IFSTAT_0_SEQ_0_LEVEL_1\r\n" + //
-                                "y := 5\r\n" + //
-                                "PROC WriteInt ( y -> b )\r\n" + //
-                                "GOTO IFEND_0_LEVEL_1\r\n" + //
-                                "LABEL IFNEXT_0_SEQ_0_LEVEL_1\r\n" + //
-                                "z := 6\r\n" + //
-                                "PROC WriteInt ( z -> b )\r\n" + //
-                                "GOTO IFEND_0_LEVEL_1\r\n" + //
-                                "LABEL IFNEXT_0_SEQ_1_LEVEL_1\r\n" + //
-                                "LABEL IFEND_0_LEVEL_1\r\n" + //
+                                "IF d EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_1 ELSE IFNEXT_1_SEQ_0_LEVEL_1\r\n" + //
+                                "LABEL IFSTAT_1_SEQ_0_LEVEL_1\r\n" + //
+                                "e := 5\r\n" + //
+                                "EXTERNAL CALL WriteInt(e)\r\n" + //
+                                "GOTO IFEND_1_LEVEL_1\r\n" + //
+                                "LABEL IFNEXT_1_SEQ_0_LEVEL_1\r\n" + //
+                                "f := 6\r\n" + //
+                                "EXTERNAL CALL WriteInt(f)\r\n" + //
+                                "GOTO IFEND_1_LEVEL_1\r\n" + //
+                                "LABEL IFNEXT_1_SEQ_1_LEVEL_1\r\n" + //
+                                "LABEL IFEND_1_LEVEL_1\r\n" + //
                                 "GOTO IFEND_0_LEVEL_0\r\n" + //
                                 "LABEL IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
-                                "IF x EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_1 ELSE IFNEXT_0_SEQ_0_LEVEL_1\r\n" + //
-                                "LABEL IFSTAT_0_SEQ_0_LEVEL_1\r\n" + //
-                                "A := 7\r\n" + //
-                                "PROC WriteInt ( A -> b )\r\n" + //
-                                "GOTO IFEND_0_LEVEL_1\r\n" + //
-                                "LABEL IFNEXT_0_SEQ_0_LEVEL_1\r\n" + //
-                                "B := 8\r\n" + //
-                                "PROC WriteInt ( B -> b )\r\n" + //
-                                "GOTO IFEND_0_LEVEL_1\r\n" + //
-                                "LABEL IFNEXT_0_SEQ_1_LEVEL_1\r\n" + //
-                                "LABEL IFEND_0_LEVEL_1\r\n" + //
+                                "IF d EQ TRUE THEN IFSTAT_3_SEQ_0_LEVEL_1 ELSE IFNEXT_3_SEQ_0_LEVEL_1\r\n" + //
+                                "LABEL IFSTAT_3_SEQ_0_LEVEL_1\r\n" + //
+                                "g := 7\r\n" + //
+                                "EXTERNAL CALL WriteInt(g)\r\n" + //
+                                "GOTO IFEND_3_LEVEL_1\r\n" + //
+                                "LABEL IFNEXT_3_SEQ_0_LEVEL_1\r\n" + //
+                                "h := 8\r\n" + //
+                                "EXTERNAL CALL WriteInt(h)\r\n" + //
+                                "GOTO IFEND_3_LEVEL_1\r\n" + //
+                                "LABEL IFNEXT_3_SEQ_1_LEVEL_1\r\n" + //
+                                "LABEL IFEND_3_LEVEL_1\r\n" + //
                                 "GOTO IFEND_0_LEVEL_0\r\n" + //
                                 "LABEL IFNEXT_0_SEQ_1_LEVEL_0\r\n" + //
                                 "LABEL IFEND_0_LEVEL_0\r\n" + //

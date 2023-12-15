@@ -65,17 +65,19 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
         return place;
     }
 
-    public String buildRealNegationAssignment(Exp value){
+    public String buildRealNegationAssignment(String arg){
         String place = gen.genNextRegister();
-        UnExp unaryExp = new UnExp(UnExp.Operator.RNEG, value);
-        intermediateCode.add(factory.produceUnaryOperation(place, unaryExp));
+        List<String> args = new LinkedList<String>();
+        args.add(arg);
+        intermediateCode.add(factory.produceExternalProcedure(place, "RNeg", args));
         return place;
     }
 
-    public String buildIntegerNegationAssignment(Exp value){
+    public String buildIntegerNegationAssignment(String arg){
         String place = gen.genNextRegister();
-        UnExp unaryExp = new UnExp(UnExp.Operator.INEG, value);
-        intermediateCode.add(factory.produceUnaryOperation(place, unaryExp));
+        List<String> args = new LinkedList<String>();
+        args.add(arg);
+        intermediateCode.add(factory.produceExternalProcedure(place, "INeg", args));
         return place;
     }
 
@@ -135,24 +137,30 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
         return place;
     }
 
-    public String buildIntegerDivAssignment(Exp left, Exp right){
+    public String buildIntegerDivAssignment(String left, String right){
         String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.IDIV, right);
-        intermediateCode.add(factory.produceBinaryOperation(place, binExp));
+        List<String> args = new LinkedList<String>();
+        args.add(left);
+        args.add(right);
+        intermediateCode.add(factory.produceExternalProcedure(place, "Div", args));
         return place;
     }
 
-    public String buildRealDivisionAssignment(Exp left, Exp right){
+    public String buildRealDivisionAssignment(String left, String right){
         String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.RDIVIDE, right);
-        intermediateCode.add(factory.produceBinaryOperation(place, binExp));
+        List<String> args = new LinkedList<String>();
+        args.add(left);
+        args.add(right);
+        intermediateCode.add(factory.produceExternalProcedure(place, "Divide", args));
         return place;
     }
 
-    public String buildIntegerModuloAssignment(Exp left, Exp right){
+    public String buildIntegerModuloAssignment(String left, String right){
         String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.IMOD, right);
-        intermediateCode.add(factory.produceBinaryOperation(place, binExp));
+        List<String> args = new LinkedList<String>();
+        args.add(left);
+        args.add(right);
+        intermediateCode.add(factory.produceExternalProcedure(place, "Mod", args));
         return place;
     }
 

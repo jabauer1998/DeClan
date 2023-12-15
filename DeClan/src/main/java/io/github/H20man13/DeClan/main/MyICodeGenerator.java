@@ -541,9 +541,9 @@ public class MyICodeGenerator{
           case PLUS: return builder.buildRealAdditionAssignment(leftIdent, rightIdent);
           case MINUS: return builder.buildRealSubtractionAssignment(leftIdent, rightIdent);
           case TIMES: return builder.buildRealMultiplicationAssignment(leftIdent, rightIdent);
-          case DIVIDE: return builder.buildRealDivisionAssignment(leftIdent, rightIdent);
-          case DIV: return builder.buildIntegerDivAssignment(leftIdent, rightIdent);
-          case MOD: return builder.buildIntegerModuloAssignment(leftIdent, rightIdent);
+          case DIVIDE: return builder.buildRealDivisionAssignment(leftValue, rightValue);
+          case DIV: return builder.buildIntegerDivAssignment(leftValue, rightValue);
+          case MOD: return builder.buildIntegerModuloAssignment(leftValue, rightValue);
           case LE: return builder.buildLessThanOrEqualAssignment(leftIdent, rightIdent);
           case LT: return builder.buildLessThanAssignment(leftIdent, rightIdent);
           case GE: return builder.buildGreaterThanOrEqualToAssignment(leftIdent, rightIdent);
@@ -559,9 +559,9 @@ public class MyICodeGenerator{
         case PLUS: return builder.buildIntegerAdditionAssignment(leftIdent, rightIdent);
         case MINUS: return builder.buildIntegerSubtractionAssignment(leftIdent, rightIdent);
         case TIMES: return builder.buildIntegerMultiplicationAssignment(leftIdent, rightIdent);
-        case DIV: return builder.buildIntegerDivAssignment(leftIdent, rightIdent);
-        case DIVIDE: return builder.buildRealDivisionAssignment(leftIdent, rightIdent);
-        case MOD: return builder.buildIntegerModuloAssignment(leftIdent, rightIdent);
+        case DIV: return builder.buildIntegerDivAssignment(leftValue, rightValue);
+        case DIVIDE: return builder.buildRealDivisionAssignment(leftValue, rightValue);
+        case MOD: return builder.buildIntegerModuloAssignment(leftValue, rightValue);
         case LE: return builder.buildLessThanOrEqualAssignment(leftIdent, rightIdent);
         case LT: return builder.buildLessThanAssignment(leftIdent, rightIdent);
         case GE: return builder.buildGreaterThanOrEqualToAssignment(leftIdent, rightIdent);
@@ -616,13 +616,13 @@ public class MyICodeGenerator{
 
     if(rightType.containsQualities(TypeCheckerQualities.REAL)){
       switch(unaryOperation.getOperator()){
-        case MINUS: return builder.buildRealNegationAssignment(valueIdent);
+        case MINUS: return builder.buildRealNegationAssignment(value);
         case NOT: return builder.buildNotAssignment(valueIdent);
         default: return value;
 	    }
     } else {
       switch(unaryOperation.getOperator()){
-        case MINUS: return builder.buildIntegerNegationAssignment(valueIdent);
+        case MINUS: return builder.buildIntegerNegationAssignment(value);
         case NOT: return builder.buildNotAssignment(valueIdent);
         case BNOT: return builder.buildIntegerNotAssignment(valueIdent);
         default: return value;
