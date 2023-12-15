@@ -78,7 +78,7 @@ public abstract class StatementBuilder extends AssignmentBuilder implements Rese
     }
 
     public void incrimentIfStatementLevel(){
-        ctx.deIncrimentIfStatementLevel();
+        ctx.incrimentIfStatementLevel();
     }
 
     public void deIncrimentIfStatementLevel(){

@@ -38,7 +38,7 @@ public class ICodeGeneratorTest {
 
         for(ICode iCode : program){
             sb.append(iCode.toString());
-            sb.append("\n");
+            sb.append("\r\n");
         }
 
         assertTrue("Expected \n...\n\n" + programInput + "\n\n but found \n\n" + sb.toString(), programInput.equals(sb.toString()));
@@ -68,29 +68,29 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testBinaryOp(){
-        String program = "x := 456\n"
-                       + "z := 48393\n"
-                       + "v := x IADD z\n"
-                       + "y := v ISUB v\n"
-                       + "g := v IMOD y\n"
-                       + "e := y IMUL g\n"
-                       + "v := x RADD z\n"
-                       + "y := v RSUB v\n"
-                       + "e := y RMUL g\n"
-                       + "y := z LOR x\n"
-                       + "Z := b IOR x\n"
-                       + "z := v IDIV y\n"
-                       + "z := v RDIVIDE y\n"
-                       + "g := v LAND z\n"
-                       + "d := v IAND z\n"
-                       + "e := v ILSHIFT x\n"
-                       + "d := b IRSHIFT f\n"
-                       + "e := v LT x\n"
-                       + "e := i GT g\n"
-                       + "f := u LE j\n"
-                       + "h := y GE o\n"
-                       + "j := h NE u\n"
-                       + "y := y EQ u\n";
+        String program = "x := 456\r\n"
+                       + "z := 48393\r\n"
+                       + "v := x IADD z\r\n"
+                       + "y := v ISUB v\r\n"
+                       + "g := v IMOD y\r\n"
+                       + "e := y IMUL g\r\n"
+                       + "v := x RADD z\r\n"
+                       + "y := v RSUB v\r\n"
+                       + "e := y RMUL g\r\n"
+                       + "y := z LOR x\r\n"
+                       + "Z := b IOR x\r\n"
+                       + "z := v IDIV y\r\n"
+                       + "z := v RDIVIDE y\r\n"
+                       + "g := v LAND z\r\n"
+                       + "d := v IAND z\r\n"
+                       + "e := v ILSHIFT x\r\n"
+                       + "d := b IRSHIFT f\r\n"
+                       + "e := v LT x\r\n"
+                       + "e := i GT g\r\n"
+                       + "f := u LE j\r\n"
+                       + "h := y GE o\r\n"
+                       + "j := h NE u\r\n"
+                       + "y := y EQ u\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -107,9 +107,9 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testUnaryOp(){
-        String program = "x := 38393\n"
-                       + "y := INEG x\n"
-                       + "z := BNOT y\n";
+        String program = "x := 38393\r\n"
+                       + "y := INEG x\r\n"
+                       + "z := BNOT y\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -125,8 +125,8 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testBooleanAssignment(){
-        String program = "v := FALSE\n"
-                       + "z := TRUE\n";
+        String program = "v := FALSE\r\n"
+                       + "z := TRUE\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -142,8 +142,8 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testNumAssignment(){
-        String program = "x := 89309\n"
-                       + "z := 438.343\n";
+        String program = "x := 89309\r\n"
+                       + "z := 438.343\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -159,33 +159,33 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testProcedureCall(){
-        String program = "SYMBOL SECTION\n"
-                       + "DATA SECTION\n"
-                       + "CODE SECTION\n"
-                       + "t := 899\n"
-                       + "g := 89\n"
-                       + "f := 98\n"
-                       + "CALL func ( t -> x , g -> y , f -> z )\n"
-                       + "x <- z\n"
-                       + "END\n"
-                       + "PROC SECTION\n"
-                       + "PROC LABEL func\n"
-                       + "x := 78\n"
-                       + "y := 79\n"
-                       + "z := 48\n"
-                       + "RETURN\n";
+        String program = "SYMBOL SECTION\r\n"
+                       + "DATA SECTION\r\n"
+                       + "CODE SECTION\r\n"
+                       + "t := 899\r\n"
+                       + "g := 89\r\n"
+                       + "f := 98\r\n"
+                       + "CALL func ( t -> x , g -> y , f -> z )\r\n"
+                       + "x <- z\r\n"
+                       + "END\r\n"
+                       + "PROC SECTION\r\n"
+                       + "PROC LABEL func\r\n"
+                       + "x := 78\r\n"
+                       + "y := 79\r\n"
+                       + "z := 48\r\n"
+                       + "RETURN\r\n";
 
-        String flatProgram = "t := 899\n"
-                           + "g := 89\n"
-                           + "f := 98\n"
-                           + "CALL func ( t -> x , g -> y , f -> z )\n"
-                           + "x <- z\n"
-                           + "END\n"
-                           + "PROC LABEL func\n"
-                           + "x := 78\n"
-                           + "y := 79\n"
-                           + "z := 48\n"
-                           + "RETURN\n";
+        String flatProgram = "t := 899\r\n"
+                           + "g := 89\r\n"
+                           + "f := 98\r\n"
+                           + "CALL func ( t -> x , g -> y , f -> z )\r\n"
+                           + "x <- z\r\n"
+                           + "END\r\n"
+                           + "PROC LABEL func\r\n"
+                           + "x := 78\r\n"
+                           + "y := 79\r\n"
+                           + "z := 48\r\n"
+                           + "RETURN\r\n";
 
 
         Source mySource = new ReaderSource(new StringReader(program));
@@ -203,7 +203,7 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testStringDecl(){
-        String program = "t := \"Text Here\"\n";
+        String program = "t := \"Text Here\"\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -219,9 +219,9 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testIfStatement(){
-        String program = "LABEL y\n"
-                       + "IF x EQ TRUE THEN z ELSE y\n"
-                       + "LABEL z\n";
+        String program = "LABEL y\r\n"
+                       + "IF x EQ TRUE THEN z ELSE y\r\n"
+                       + "LABEL z\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -237,10 +237,10 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testParamaterPlacement(){
-        String program = "LABEL x\n"
-                       + "v <- y\n"
-                       + "z <- t\n"
-                       + "g := z IADD v\n";
+        String program = "LABEL x\r\n"
+                       + "v <- y\r\n"
+                       + "z <- t\r\n"
+                       + "g := z IADD v\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -258,70 +258,53 @@ public class ICodeGeneratorTest {
     @Test
     public void testDeclanConversions(){
         String programName = "test_source/conversions.dcl";
-        String expectedICode = "LABEL begin_0\n"+
-                               "GOTO begin_1\n"+
-                               "LABEL WriteLn\n"+
-                               "RETURN\n"+
-                               "LABEL WriteInt\n"+
-                               "RETURN\n"+
-                               "LABEL WriteReal\n"+
-                               "RETURN\n"+
-                               "LABEL begin_1\n"+
-                               "GOTO begin_2\n"+
-                               "LABEL Round\n"+
-                               "d := 1\n"+
-                               "e := INEG d\n"+
-                               "RETURN\n"+
-                               "LABEL Floor\n"+
-                               "g := 1\n"+
-                               "h := INEG g\n"+
-                               "RETURN\n"+
-                               "LABEL Ceil\n"+
-                               "j := 1\n"+
-                               "k := INEG j\n"+
-                               "RETURN\n"+
-                               "LABEL begin_2\n"+
-                               "l := 0.0\n"+
-                               "m := 0\n"+
-                               "GOTO begin_3\n"+
-                               "LABEL p\n"+
-                               "p := 0\n" +
-                               "q := n RADD o\n"+
-                               "PROC Round ( q -> c )\n"+
-                               "r <- e\n"+
-                               "p := r\n"+
-                               "RETURN\n"+
-                               "LABEL begin_3\n"+
-                               "s := 1\n"+
-                               "m := s\n"+
-                               "t := 2\n"+
-                               "l := t\n"+
-                               "PROC WriteInt ( m -> a )\n"+
-                               "PROC WriteReal ( m -> b )\n"+
-                               "PROC WriteReal ( l -> b )\n"+
-                               "PROC WriteLn (  )\n"+
-                               "u := m RDIVIDE l\n"+
-                               "PROC WriteReal ( u -> b )\n"+
-                               "v := 5\n"+
-                               "w := m IADD v\n"+
-                               "x := 6\n"+
-                               "y := m IADD x\n"+
-                               "z := w IMUL y\n"+
-                               "PROC WriteInt ( z -> a )\n"+
-                               "A := 4\n"+
-                               "B := l RADD A\n"+
-                               "C := 5.0\n"+
-                               "D := l RADD C\n"+
-                               "E := B RMUL D\n"+
-                               "PROC WriteReal ( E -> b )\n"+
-                               "PROC WriteLn (  )\n"+
-                               "F := 3.1415\n"+
-                               "PROC p ( m -> n , F -> o )\n"+
-                               "G <- p\n"+
-                               "l := G\n"+
-                               "PROC WriteReal ( l -> b )\n"+
-                               "PROC WriteLn (  )\n"+
-                               "END\n";
+        String expectedICode = "a := 0\r\n" + //
+                               "b := 0\r\n" + //
+                               "c := 0.0\r\n" + //
+                               "d := 0.0\r\n" + //
+                               "h := 1\r\n" + //
+                               "b := h\r\n" + //
+                               "i := 1.0\r\n" + //
+                               "c := i\r\n" + //
+                               "j := 2\r\n" + //
+                               "a := j\r\n" + //
+                               "k := 2.0\r\n" + //
+                               "d := k\r\n" + //
+                               "EXTERNAL CALL WriteInt(b)\r\n" + //
+                               "EXTERNAL CALL WriteReal(c)\r\n" + //
+                               "EXTERNAL CALL WriteReal(d)\r\n" + //
+                               "EXTERNAL CALL WriteLn()\r\n" + //
+                               "l := b RDIVIDE a\r\n" + //
+                               "EXTERNAL CALL WriteReal(l)\r\n" + //
+                               "m := 5\r\n" + //
+                               "n := b IADD m\r\n" + //
+                               "o := 6\r\n" + //
+                               "p := b IADD o\r\n" + //
+                               "q := n IMUL p\r\n" + //
+                               "EXTERNAL CALL WriteInt(q)\r\n" + //
+                               "r := 4\r\n" + //
+                               "s := a IADD r\r\n" + //
+                               "t := 5.0\r\n" + //
+                               "u := a RADD t\r\n" + //
+                               "v := s RMUL u\r\n" + //
+                               "EXTERNAL CALL WriteReal(v)\r\n" + //
+                               "EXTERNAL CALL WriteLn()\r\n" + //
+                               "w := 3.1415\r\n" + //
+                               "CALL p ( b -> e , w -> f )\r\n" + //
+                               "x <| g\r\n" + //
+                               "a := x\r\n" + //
+                               "EXTERNAL CALL WriteReal(d)\r\n" + //
+                               "EXTERNAL CALL WriteLn()\r\n" + //
+                               "END\r\n" + //
+                               "PROC LABEL p\r\n" + //
+                               "z <- f\r\n" + //
+                               "A <- e\r\n" + //
+                               "y := 0\r\n" + //
+                               "B := z IADD A\r\n" + //
+                               "C := EXTERNAL CALL Round(B)\r\n" + //
+                               "y := C\r\n" + //
+                               "g |< y\r\n" + //
+                               "RETURN\r\n";
         testDeclanFileOnICode(programName, expectedICode);
     }
 

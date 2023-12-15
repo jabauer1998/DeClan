@@ -94,7 +94,7 @@ public class MyICodeGenerator{
 
   public MyICodeGenerator(ErrorLog errorLog, IrRegisterGenerator Gen) {
     this.errorLog = errorLog;
-    this.ctx = ctx;
+    this.ctx = new IrBuilderContext();
     this.gen = new IrRegisterGenerator();
     this.varEnvironment = new Environment<>();
     this.procEnvironment = new Environment<>();
