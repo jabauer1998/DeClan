@@ -637,7 +637,7 @@ public class MyICodeGenerator{
       if(place != null)
         return place.toString();
       else{
-        errorLog.add("WHen generating ICode could not find place associated with local identifier " + identifier.getLexeme(), identifier.getStart());
+        errorLog.add("When generating ICode could not find place associated with local identifier " + identifier.getLexeme(), identifier.getStart());
         return "";
       }
     } else if(paramEnvironment.entryExists(identifier.getLexeme())){
