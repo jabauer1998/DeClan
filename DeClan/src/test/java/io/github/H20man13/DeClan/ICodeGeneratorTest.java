@@ -72,15 +72,12 @@ public class ICodeGeneratorTest {
                        + "z := 48393\r\n"
                        + "v := x IADD z\r\n"
                        + "y := v ISUB v\r\n"
-                       + "g := v IMOD y\r\n"
                        + "e := y IMUL g\r\n"
                        + "v := x RADD z\r\n"
                        + "y := v RSUB v\r\n"
                        + "e := y RMUL g\r\n"
                        + "y := z LOR x\r\n"
                        + "Z := b IOR x\r\n"
-                       + "z := v IDIV y\r\n"
-                       + "z := v RDIVIDE y\r\n"
                        + "g := v LAND z\r\n"
                        + "d := v IAND z\r\n"
                        + "e := v ILSHIFT x\r\n"
@@ -108,7 +105,6 @@ public class ICodeGeneratorTest {
     @Test
     public void testUnaryOp(){
         String program = "x := 38393\r\n"
-                       + "y := INEG x\r\n"
                        + "z := BNOT y\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
@@ -274,7 +270,7 @@ public class ICodeGeneratorTest {
                                "EXTERNAL CALL WriteReal(c)\r\n" + //
                                "EXTERNAL CALL WriteReal(d)\r\n" + //
                                "EXTERNAL CALL WriteLn()\r\n" + //
-                               "l := b RDIVIDE a\r\n" + //
+                               "l := EXTERNAL CALL Divide(b, a)\r\n" + //
                                "EXTERNAL CALL WriteReal(l)\r\n" + //
                                "m := 5\r\n" + //
                                "n := b IADD m\r\n" + //
@@ -353,57 +349,26 @@ public class ICodeGeneratorTest {
     @Test
     public void testWhileLoopBasic(){
         String programName = "test_source/WhileLoopBasic.dcl";
-        String expectedICode = "LABEL begin_0\r\n" + //
-                                "GOTO begin_1\r\n" + //
-                                "LABEL WriteLn\r\n" + //
-                                "RETURN\r\n" + //
-                                "LABEL WriteInt\r\n" + //
-                                "RETURN\r\n" + //
-                                "LABEL WriteReal\r\n" + //
-                                "RETURN\r\n" + //
-                                "LABEL ReadInt\r\n" + //
-                                "g := 1\r\n" + //
-                                "h := INEG g\r\n" + //
-                                "f := h\r\n" + //
-                                "RETURN\r\n" + //
-                                "LABEL begin_1\r\n" + //
-                                "GOTO begin_2\r\n" + //
-                                "LABEL Round\r\n" + //
-                                "o := 1\r\n" + //
-                                "p := INEG o\r\n" + //
-                                "j := p\r\n" + //
-                                "RETURN\r\n" + //
-                                "LABEL Floor\r\n" + //
-                                "q := 1\r\n" + //
-                                "r := INEG q\r\n" + //
-                                "l := r\r\n" + //
-                                "RETURN\r\n" + //
-                                "LABEL Ceil\r\n" + //
-                                "s := 1\r\n" + //
-                                "t := INEG s\r\n" + //
-                                "n := t\r\n" + //
-                                "RETURN\r\n" + //
-                                "LABEL begin_2\r\n" + //
-                                "u := 10\r\n" + //
-                                "v := u\r\n" + //
-                                "w := 0\r\n" + //
-                                "GOTO begin_3\r\n" + //
-                                "LABEL begin_3\r\n" + //
-                                "x := 0\r\n" + //
-                                "w := x\r\n" + //
-                                "y := w LT v\r\n" + //
-                                "IF y EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
-                                "LABEL WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
-                                "IF y EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0\r\n" + //
-                                "LABEL WHILESTAT_0_SEQ_0_LEVEL_0\r\n" + //
-                                "PROC WriteInt ( w -> b )\r\n" + //
-                                "z := 1\r\n" + //
-                                "A := w IADD z\r\n" + //
-                                "w := A\r\n" + //
-                                "GOTO WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
-                                "LABEL WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
-                                "LABEL WHILEEND_0_LEVEL_0\r\n" + //
-                                "END\r\n";
+        String expectedICode = "a := 10\r\n" + //
+                               "b := a\r\n" + //
+                               "c := 0\r\n" + //
+                               "d := 0\r\n" + //
+                               "c := d\r\n" + //
+                               "e := c LT b\r\n" + //
+                               "IF e EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                               "LABEL WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
+                               "IF e EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0\r\n" + //
+                               "LABEL WHILESTAT_0_SEQ_0_LEVEL_0\r\n" + //
+                               "EXTERNAL CALL WriteInt(c)\r\n" + //
+                               "f := 1\r\n" + //
+                               "g := c IADD f\r\n" + //
+                               "c := g\r\n" + //
+                               "h := c LT b\r\n" + //
+                               "e := h\r\n" + //
+                               "GOTO WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
+                               "LABEL WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                               "LABEL WHILEEND_0_LEVEL_0\r\n" + //
+                               "END\r\n";
 
         testDeclanFileOnICode(programName, expectedICode);
     }

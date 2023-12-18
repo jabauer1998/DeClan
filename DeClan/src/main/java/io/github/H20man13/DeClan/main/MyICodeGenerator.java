@@ -337,9 +337,10 @@ public class MyICodeGenerator{
 
     builder.deIncrimentWhileLoopLevel();
 
-    if(whilebranch.getNextBranch() != null) {
+    Branch nextBranch = whilebranch.getNextBranch();
+    if(nextBranch != null) {
       builder.buildElseWhileLoopBeginning();
-      generateBranchIr(whilebranch, builder);
+      generateBranchIr(nextBranch, builder);
     } else {
       builder.buildWhileLoopEnd();
     }
