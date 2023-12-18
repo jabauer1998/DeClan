@@ -8,20 +8,20 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class DataSec implements ICode {
-    public List<Assign> intermediateCode;
-    public DataSec(List<Assign> icode){
+    public List<ICode> intermediateCode;
+    public DataSec(List<ICode> icode){
         this.intermediateCode = icode;
     }
 
     public DataSec(){
-        this(new LinkedList<Assign>());
+        this(new LinkedList<ICode>());
     }
 
-    public void addInstruction(Assign icode){
+    public void addInstruction(ICode icode){
         this.intermediateCode.add(icode);
     }
 
-    public void addInstructions(List<Assign> icodes){
+    public void addInstructions(List<ICode> icodes){
         this.intermediateCode.addAll(icodes);
     }
 
@@ -29,7 +29,7 @@ public class DataSec implements ICode {
         return intermediateCode.size();
     }
 
-    public Assign getInstruction(int index){
+    public ICode getInstruction(int index){
         return intermediateCode.get(index);
     }
 

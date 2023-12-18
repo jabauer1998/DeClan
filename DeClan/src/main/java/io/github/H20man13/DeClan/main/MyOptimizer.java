@@ -99,16 +99,26 @@ public class MyOptimizer {
         return this.liveAnal;
     }
 
-    public BasicBlock buildDataBlock(){
+    public List<BasicBlock> buildDataBlocks(){
         DataSec dataSec = intermediateCode.variables;
-        int intermediateCodeSize = dataSec.getLength();
+        List<Integer> codeFirsts = findFirsts(dataSec.intermediateCode, false);
+        List<BasicBlock> dataBlocks = new LinkedList<BasicBlock>();
 
-        LinkedList<ICode> blockCode = new LinkedList<ICode>();
-        for(int i = 0; i < intermediateCodeSize; i++){
-            Assign assign = dataSec.getInstruction(i);
-            blockCode.add(assign);
+        for(int leaderIndex = 0; leaderIndex < codeFirsts.size(); leaderIndex++){
+            int beginIndex = codeFirsts.get(leaderIndex);
+            int endIndex;
+            if(leaderIndex + 1 < codeFirsts.size()){
+                endIndex = codeFirsts.get(leaderIndex + 1);
+            } else {
+                endIndex = dataSec.intermediateCode.size() - 1;
+            }
+            List<ICode> basicBlockList = new LinkedList<ICode>();
+            for(int i = beginIndex; i <= endIndex; i++){
+                basicBlockList.add(dataSec.intermediateCode.get(i));
+            }
+            dataBlocks.add(new BasicBlock(basicBlockList));
         }
-        return new BasicBlock(blockCode);
+        return dataBlocks;
     }
 
     public List<BasicBlock> buildCodeBlocks(){
@@ -186,9 +196,13 @@ public class MyOptimizer {
         return procedureBlocks;
     }
 
-    private BlockNode buildDataBlockNode(){
-        BasicBlock block = buildDataBlock();
-        return new BlockNode(block);
+    private List<BlockNode> buildDataBlockNodes(){
+        List<BasicBlock> blocks = buildDataBlocks();
+        List<BlockNode> dataNodes = new LinkedList<BlockNode>();
+        for(BasicBlock block: blocks){
+            dataNodes.add(new BlockNode(block));
+        }
+        return dataNodes;
     }
 
     private List<BlockNode> buildCodeBlockNodes(){
@@ -329,15 +343,36 @@ public class MyOptimizer {
         }
     }
 
-    private void linkUpFollowThrough(BlockNode dataNode, List<BlockNode> codeSectionNodes){
-        if(codeSectionNodes.size() > 0){
-            BlockNode firstNode = codeSectionNodes.get(0);
-            firstNode.addPredecessor(dataNode);
-            dataNode.addSuccessor(firstNode);
-            for(int i = 0; i < codeSectionNodes.size() - 1; i++){
-                BlockNode node = codeSectionNodes.get(i);
-                BasicBlock block = node.getBlock();
-                if(!Utils.endOfBlockIsJump(block)){
+    private void linkUpFollowThrough(List<BlockNode> dataBlockNodes, List<BlockNode> codeSectionNodes){
+        for(int i = 0; i < dataBlockNodes.size(); i++){
+            BlockNode node = dataBlockNodes.get(i);
+            BasicBlock block = node.getBlock();
+            if(!Utils.endOfBlockIsJump(block)){
+                if(i + 1 < dataBlockNodes.size()){
+                    BlockNode nextNode = dataBlockNodes.get(i + 1);
+                    nextNode.addPredecessor(node);
+                    node.addSuccessor(nextNode);
+                }
+            }
+        }
+
+        if(dataBlockNodes.size() > 0){
+            BlockNode lastDataNode = dataBlockNodes.get(dataBlockNodes.size() - 1);
+            BasicBlock lastDataNodeBlock = lastDataNode.getBlock();
+            if(!Utils.endOfBlockIsJump(lastDataNodeBlock)){
+                if(codeSectionNodes.size() > 0){
+                    BlockNode firstCodeNode = codeSectionNodes.get(0);
+                    lastDataNode.addSuccessor(firstCodeNode);
+                    firstCodeNode.addPredecessor(lastDataNode);
+                }
+            }
+        }
+
+        for(int i = 0; i < codeSectionNodes.size() - 1; i++){
+            BlockNode node = codeSectionNodes.get(i);
+            BasicBlock block = node.getBlock();
+            if(!Utils.endOfBlockIsJump(block)){
+                if(i + 1 < codeSectionNodes.size()){
                     BlockNode nextNode = codeSectionNodes.get(i + 1);
                     nextNode.addPredecessor(node);
                     node.addSuccessor(nextNode);
@@ -347,11 +382,12 @@ public class MyOptimizer {
     }
 
     private void buildFlowGraph() {
-        BlockNode dataBlockNode = buildDataBlockNode();
+        List<BlockNode> dataBlockNodes = buildDataBlockNodes();
         List<BlockNode> codeBlockNodes = buildCodeBlockNodes();
         List<BlockNode> procedureBlockNodes = buildProcedureBlockNodes();
         
         Map<String, BlockNode> procedureEntryNodes = findProcedureEntryPoints(procedureBlockNodes);
+        linkUpFunctionCalls(dataBlockNodes, procedureEntryNodes);
         linkUpFunctionCalls(codeBlockNodes, procedureEntryNodes);
         linkUpFunctionCalls(procedureBlockNodes, procedureEntryNodes);
 
@@ -360,16 +396,14 @@ public class MyOptimizer {
         linkUpJumps(procedureBlockNodes, codeLabeledNodes);
 
         Map<String, BlockNode> procedureExitNodes = findProcedureExitPoints(procedureBlockNodes);
-        linkUpReturns(codeBlockNodes, procedureExitNodes);
         linkUpReturns(procedureBlockNodes, procedureExitNodes);
 
-        linkUpFollowThrough(dataBlockNode, codeBlockNodes);
-        linkUpFollowThrough(codeBlockNodes.get(codeBlockNodes.size() - 1), procedureBlockNodes);
+        linkUpFollowThrough(dataBlockNodes, codeBlockNodes);
 
-        EntryNode entry = new EntryNode(dataBlockNode);
+        EntryNode entry = new EntryNode(dataBlockNodes.get(0));
         ExitNode exit = new ExitNode(codeBlockNodes.get(codeBlockNodes.size() - 1));
 
-        FlowGraph flowGraph = new FlowGraph(entry, dataBlockNode, codeBlockNodes, procedureBlockNodes, exit);
+        FlowGraph flowGraph = new FlowGraph(entry, dataBlockNodes, codeBlockNodes, procedureBlockNodes, exit);
 
         this.globalFlowGraph = flowGraph;
     }
@@ -471,10 +505,10 @@ public class MyOptimizer {
 
     private void updateVariableLivelinessInformation(Environment<String, LiveInfo> symbolTable){
         DataSec data = intermediateCode.variables;
-        List<Assign> assignmants = data.intermediateCode;
+        List<ICode> assignmants = data.intermediateCode;
         int size = assignmants.size();
         for(int i = size - 1; i >= 0; i--){
-            Assign icode = assignmants.get(i);
+            ICode icode = assignmants.get(i);
             updateICodeLivelinessInformation(symbolTable, icode, i);
         }
     }

@@ -305,6 +305,13 @@ public class ICodeGeneratorTest {
     }
 
     @Test
+    public void testExpressions(){
+        String programName = "test_source/expressions.dcl";
+        String expectedICode = "";
+        testDeclanFileOnICode(programName, expectedICode);
+    }
+
+    @Test
     public void testIfStatementAdvanced(){
         String programName = "test_source/IfStatementAdvanced.dcl";
         String expectedICodee = "a := TRUE\r\n" + //

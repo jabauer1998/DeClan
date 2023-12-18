@@ -9,14 +9,14 @@ import java.util.Set;
 public class FlowGraph {
     private EntryNode entryNode;
     private ExitNode exitNode;
-    private BlockNode dataBlock;
+    private List<BlockNode> dataBlocks;
     private List<BlockNode> procedureBlocks;
     private List<BlockNode> codeBlocks;
 
-    public FlowGraph(EntryNode entry, BlockNode dataBlock, List<BlockNode> codeBlocks, List<BlockNode> procedureBlocks, ExitNode exit){
+    public FlowGraph(EntryNode entry, List<BlockNode> dataBlocks, List<BlockNode> codeBlocks, List<BlockNode> procedureBlocks, ExitNode exit){
         this.entryNode = entry;
         this.exitNode = exit;
-        this.dataBlock = dataBlock;
+        this.dataBlocks = dataBlocks;
         this.codeBlocks = codeBlocks;
         this.procedureBlocks = procedureBlocks;
     }
@@ -31,7 +31,7 @@ public class FlowGraph {
 
     public List<BlockNode> getBlocks(){
         LinkedList<BlockNode> toRet = new LinkedList<BlockNode>();
-        toRet.add(dataBlock);
+        toRet.addAll(dataBlocks);
         toRet.addAll(codeBlocks);
         toRet.addAll(procedureBlocks);
         return toRet;

@@ -144,7 +144,7 @@ public class MyIrParser {
     public DataSec parseDataSection(){
         match(IrTokenType.DATA);
         match(IrTokenType.SECTION);
-        List<Assign> assignments = new LinkedList<Assign>();
+        List<ICode> assignments = new LinkedList<ICode>();
         while(willMatch(IrTokenType.ID)){
             Assign icode = parseDataAssignment();
             assignments.add(icode);
