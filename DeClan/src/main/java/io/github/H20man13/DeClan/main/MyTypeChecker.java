@@ -350,7 +350,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 			TypeCheckerQualities entry = varEnvironment.getEntry(name);
 			TypeCheckerQualities expression = assignment.getVariableValue().acceptResult(this);
 			
-			if(expression.containsQualities(TypeCheckerQualities.VOID) || expression.containsQualities(TypeCheckerQualities.NA)
+			if(expression.containsQualities(TypeCheckerQualities.VOID) || expression.containsQualities(TypeCheckerQualities.NA) || expression.containsQualities(TypeCheckerQualities.NULL)
 			|| (expression.containsQualities(TypeCheckerQualities.STRING) && entry.missingQualities(TypeCheckerQualities.STRING))
 			|| (entry.containsQualities(TypeCheckerQualities.STRING) && expression.missingQualities(TypeCheckerQualities.STRING))
 			|| (entry.containsQualities(TypeCheckerQualities.BOOLEAN) && expression.missingQualities(TypeCheckerQualities.BOOLEAN))
@@ -405,26 +405,27 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
     public TypeCheckerQualities visitResult(BinaryOperation binaryOperation) {
 		TypeCheckerQualities leftValue = binaryOperation.getLeft().acceptResult(this);
 		TypeCheckerQualities rightValue = binaryOperation.getRight().acceptResult(this);
+
 		BinaryOperation.OpType op = binaryOperation.getOperator();
 		switch(op){
 		case MOD:
 			if(leftValue.missingQualities(TypeCheckerQualities.INTEGER) || rightValue.missingQualities(TypeCheckerQualities.INTEGER)){
 				errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
-				return null;
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
 			} else {
 				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
 			}
 		case AND:
 			if(leftValue.missingQualities(TypeCheckerQualities.BOOLEAN) || rightValue.missingQualities(TypeCheckerQualities.BOOLEAN)){
 				errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
-				return null;
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 			} else {
 				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 			}
 		case OR:
 			if(leftValue.missingQualities(TypeCheckerQualities.BOOLEAN) || rightValue.missingQualities(TypeCheckerQualities.BOOLEAN)){
 				errorLog.add("Type mismatch in binary opperation: " + leftValue + " " + op + " " + rightValue,  binaryOperation.getStart());
-				return null;
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 			} else {
 				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 			}
@@ -474,7 +475,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 	    return retValue;
 	} else {
 	    errorLog.add("Couldnt find entry for " + funcName, funcCall.getStart());
-	    return null;
+	    return new TypeCheckerQualities(TypeCheckerQualities.NULL);
 	}
     }
 
@@ -485,7 +486,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 			return value;
 		} else {
 			errorLog.add("Invalid Type for Unary Operation " + value , unaryOperation.getStart());
-			return null;
+			return new TypeCheckerQualities(TypeCheckerQualities.NULL);
 		}
     }
     
@@ -493,6 +494,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
     public TypeCheckerQualities visitResult(Identifier ident){
 		if(!varEnvironment.entryExists(ident.getLexeme())){
 			errorLog.add("Couldnt find entry for " + ident.getLexeme(), ident.getStart());
+			return new TypeCheckerQualities(TypeCheckerQualities.NULL);
 		}
 		return varEnvironment.getEntry(ident.getLexeme());
     }

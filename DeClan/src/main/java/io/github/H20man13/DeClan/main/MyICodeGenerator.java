@@ -131,11 +131,9 @@ public class MyICodeGenerator{
 
     ProcedureSectionBuilder secBuilder = libBuilder.getProcedureSectionBuilder();
     ProcedureBuilder procBuilder = secBuilder.getProcedureBuilder();
-    for(Declaration decl : lib.getProcDecls()){
+    for(ProcedureDeclaration decl : lib.getProcDecls()){
       decl.accept(typeChecker);
-      if(decl instanceof ProcedureDeclaration){
-        generateProcedureIr((ProcedureDeclaration)decl, procBuilder);
-      }
+      generateProcedureIr(decl, procBuilder);
       typeChecker.removeVarScope();
       procBuilder.resetBuilder();
     }
@@ -172,8 +170,10 @@ public class MyICodeGenerator{
     ProcedureSectionBuilder procSectionBuilder = builder.getProcedureSectionBuilder();
     ProcedureBuilder procBuilder = procSectionBuilder.getProcedureBuilder();
     for (ProcedureDeclaration decl : program.getProcDecls()){
+      decl.accept(typeChecker);
       generateProcedureIr(decl, procBuilder);
       procSectionBuilder.addProcedure(procBuilder.completeBuild());
+      typeChecker.removeVarScope();
       procBuilder.resetBuilder();
     }
 
@@ -207,15 +207,16 @@ public class MyICodeGenerator{
   public void generateVariableIr(VariableDeclaration varDecl, AssignmentBuilder builder) {
     Identifier id = varDecl.getIdentifier();
     Identifier type = varDecl.getType();
-    String argVal = null;
-    if(type.getLexeme().equals("INTEGER")){
-      argVal = "0";
-    } else if(type.getLexeme().equals("STRING")){
-      argVal = "\0";
+    String place = null;
+    if(type.getLexeme().equals("STRING")){
+      place = builder.buildStringAssignment("\0");
+    } else if(type.getLexeme().equals("REAL")) {
+      place = builder.buildNumAssignment("0.0");
+    } else if(type.getLexeme().equals("BOOLEAN")){
+      place = builder.buildBoolAssignment("FALSE");
     } else {
-      argVal = "0.0";
+      place = builder.buildNumAssignment("0");
     }
-    String place = builder.buildNumAssignment(argVal);
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
     SymbolSectionBuilder symBuilder = builder.getSymbolSectionBuilder();
     symBuilder.addSymEntry(SymEntry.INTERNAL, place, id.getLexeme());
@@ -526,16 +527,6 @@ public class MyICodeGenerator{
       String rightValue = generateExpressionIr(binaryOperation.getRight(), builder);
       IdentExp rightIdent = new IdentExp(rightValue);
       TypeCheckerQualities rightType = binaryOperation.getRight().acceptResult(typeChecker);
-
-      if(leftType == null){
-        errorLog.add("Error: rightHand side of expression equals null value " + binaryOperation.getLeft(), binaryOperation.getLeft().getStart());
-        return "";
-      }
-
-      if(rightType == null){
-        errorLog.add("Error: leftHand side of expression equals null value " + binaryOperation.getRight(), binaryOperation.getRight().getStart());
-        return "";
-      }
 
       if(leftType.containsQualities(TypeCheckerQualities.REAL) || rightType.containsQualities(TypeCheckerQualities.REAL)){
         switch (binaryOperation.getOperator()){
