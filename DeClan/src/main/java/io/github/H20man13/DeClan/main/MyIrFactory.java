@@ -80,8 +80,8 @@ public class MyIrFactory {
         return new ExternalCall(funcName, args);
     }
 
-    public ExternalCall produceExternalProcedure(String toRet, String funcName, List<String> args){
-        return new ExternalCall(funcName, args, toRet);
+    public Assign produceExternalProcedureAssignment(String place, String funcName, List<String> args){
+        return new Assign(place, new ExternalCall(funcName, args));
     }
 
     public If produceIfStatement(Exp test, String ifTrue, String ifFalse){

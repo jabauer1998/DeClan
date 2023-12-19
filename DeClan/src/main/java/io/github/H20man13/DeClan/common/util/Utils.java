@@ -31,6 +31,8 @@ import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
 import io.github.H20man13.DeClan.common.icode.label.Label;
+import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
+import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
 import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
@@ -230,6 +232,8 @@ public class Utils {
             ICode firstICode = codeInBlock.get(0);
             if(firstICode instanceof Label){
                 return true;
+            } else if(firstICode instanceof ProcLabel){
+                return true;
             } else {
                 return false;
             }
@@ -246,6 +250,14 @@ public class Utils {
                 return true;
             } else if(lastICode instanceof Goto){
                 return true;
+            } else if(lastICode instanceof Assign){
+                Assign assignment = (Assign)lastICode;
+                if(assignment.value instanceof ExternalCall)
+                    return true;
+                else
+                    return false;  
+            } else if(lastICode instanceof ExternalCall){
+                return true;  
             } else {
                 return false;
             }

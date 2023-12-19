@@ -14,6 +14,7 @@ import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
+import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
 import io.github.H20man13.DeClan.main.MyIrFactory;
 
 public abstract class AssignmentBuilder implements ResetableBuilder{
@@ -69,7 +70,7 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
         String place = gen.genNextRegister();
         List<String> args = new LinkedList<String>();
         args.add(arg);
-        intermediateCode.add(factory.produceExternalProcedure(place, "RNeg", args));
+        intermediateCode.add(factory.produceExternalProcedureAssignment(place, "RNeg", args));
         return place;
     }
 
@@ -77,7 +78,7 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
         String place = gen.genNextRegister();
         List<String> args = new LinkedList<String>();
         args.add(arg);
-        intermediateCode.add(factory.produceExternalProcedure(place, "INeg", args));
+        intermediateCode.add(factory.produceExternalProcedureAssignment(place, "INeg", args));
         return place;
     }
 
@@ -142,7 +143,7 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
         List<String> args = new LinkedList<String>();
         args.add(left);
         args.add(right);
-        intermediateCode.add(factory.produceExternalProcedure(place, "Div", args));
+        intermediateCode.add(factory.produceExternalProcedureAssignment(place, "Div", args));
         return place;
     }
 
@@ -151,7 +152,7 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
         List<String> args = new LinkedList<String>();
         args.add(left);
         args.add(right);
-        intermediateCode.add(factory.produceExternalProcedure(place, "Divide", args));
+        intermediateCode.add(factory.produceExternalProcedureAssignment(place, "Divide", args));
         return place;
     }
 
@@ -160,7 +161,7 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
         List<String> args = new LinkedList<String>();
         args.add(left);
         args.add(right);
-        intermediateCode.add(factory.produceExternalProcedure(place, "Mod", args));
+        intermediateCode.add(factory.produceExternalProcedureAssignment(place, "Mod", args));
         return place;
     }
 
@@ -275,7 +276,7 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
 
     public String buildExternalFunctionCall(String funcName, List<String> args){
         String place = gen.genNextRegister();
-        intermediateCode.add(factory.produceExternalProcedure(place, funcName, args));
+        intermediateCode.add(factory.produceExternalProcedureAssignment(place, funcName, args));
         return place;
     }
 

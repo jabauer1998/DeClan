@@ -4,21 +4,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class ExternalCall implements ICode {
+public class ExternalCall implements ICode, Exp {
     public String procedureName;
     public List<String> arguments;
-    public String toRet;
     
-    public ExternalCall(String procedureName, List<String> arguments, String toRet){
+    public ExternalCall(String procedureName, List<String> arguments){
         this.procedureName = procedureName;
         this.arguments = arguments;
-        this.toRet = toRet;
-    }
-
-    public ExternalCall(String procedureName, List<String> arguments){
-        this(procedureName, arguments, null);
     }
 
     @Override
@@ -44,12 +39,6 @@ public class ExternalCall implements ICode {
             if(!call.procedureName.equals(procedureName))
                 return false;
 
-            if(call.toRet == null && toRet != null || call.toRet != null && toRet == null)
-                return false;
-
-            if(!call.toRet.equals(toRet))
-                return false;
-
             if(call.arguments.size() != arguments.size())
                 return false;
 
@@ -70,11 +59,6 @@ public class ExternalCall implements ICode {
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
-
-        if(toRet != null){
-            sb.append(toRet);
-            sb.append(" := ");
-        }
 
         sb.append("EXTERNAL CALL ");
         sb.append(procedureName);
@@ -97,5 +81,10 @@ public class ExternalCall implements ICode {
         LinkedList<ICode> resultList = new LinkedList<ICode>();
         resultList.add(this);
         return resultList;
+    }
+
+    @Override
+    public P asPattern(boolean hasContainer) {
+        return asPattern();
     }
 }

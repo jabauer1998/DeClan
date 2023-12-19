@@ -781,25 +781,100 @@ public class ICodeGeneratorTest {
                                 "PROC LABEL gcd\r\n" + //
                                 "n <- f\r\n" + //
                                 "o <- g\r\n" + //
-                                "IF  EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "p := n NE o\r\n" + //
+                                "IF p EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
                                 "LABEL WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
-                                "IF  EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0\r\n" + //
+                                "IF p EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0\r\n" + //
                                 "LABEL WHILESTAT_0_SEQ_0_LEVEL_0\r\n" + //
-                                "IF  EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "q := n GT o\r\n" + //
+                                "IF q EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
                                 "LABEL IFSTAT_0_SEQ_0_LEVEL_0\r\n" + //
-                                "n := \r\n" + //
+                                "r := n ISUB o\r\n" + //
+                                "n := r\r\n" + //
                                 "GOTO IFEND_0_LEVEL_0\r\n" + //
                                 "LABEL IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
-                                "o := \r\n" + //
+                                "s := o ISUB n\r\n" + //
+                                "o := s\r\n" + //
                                 "GOTO IFEND_0_LEVEL_0\r\n" + //
                                 "LABEL IFNEXT_0_SEQ_1_LEVEL_0\r\n" + //
                                 "LABEL IFEND_0_LEVEL_0\r\n" + //
-                                " := \r\n" + //
+                                "t := n NE o\r\n" + //
+                                "p := t\r\n" + //
                                 "GOTO WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
                                 "LABEL WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
                                 "LABEL WHILEEND_0_LEVEL_0\r\n" + //
                                 "h |< n\r\n" + //
                                 "RETURN\r\n";
+        testDeclanFileOnICode(programName, expectedICode);
+    }
+
+    @Test
+    public void testTest(){
+        String programName = "test_source/test.dcl";
+        String expectedICode = "a := 42\r\n" + //
+                               "b := EXTERNAL CALL INeg(a)\r\n" + //
+                               "c := b\r\n" + //
+                "d := 0\r\n" + //
+                "d := c\r\n" + //
+                "g := 0\r\n" + //
+                "h := d LT g\r\n" + //
+                "IF h EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                "LABEL IFSTAT_0_SEQ_0_LEVEL_0\r\n" + //
+                "i := EXTERNAL CALL INeg(d)\r\n" + //
+                "d := i\r\n" + //
+                "GOTO IFEND_0_LEVEL_0\r\n" + //
+                "LABEL IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                "j := 0\r\n" + //
+                "k := d GT j\r\n" + //
+                "IF k EQ TRUE THEN IFSTAT_0_SEQ_1_LEVEL_0 ELSE IFNEXT_0_SEQ_1_LEVEL_0\r\n" + //
+                "LABEL IFSTAT_0_SEQ_1_LEVEL_0\r\n" + //
+                "CALL Display ( d -] e )\r\n" + //
+                "GOTO IFEND_0_LEVEL_0\r\n" + //
+                "LABEL IFNEXT_0_SEQ_1_LEVEL_0\r\n" + //
+                "LABEL IFEND_0_LEVEL_0\r\n" + //
+                "END\r\n" + //
+                "PROC LABEL Display\r\n" + //
+                "m [- e\r\n" + //
+                "l := FALSE\r\n" + //
+                "n := 2\r\n" + //
+                "o := EXTERNAL CALL Mod(m, n)\r\n" + //
+                "p := 0\r\n" + //
+                "q := o NE p\r\n" + //
+                "l := q\r\n" + //
+                "IF l EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0\r\n" + //
+                "LABEL IFSTAT_1_SEQ_0_LEVEL_0\r\n" + //
+                "r := 1\r\n" + //
+                "EXTERNAL CALL WriteInt(r)\r\n" + //
+                "s := 1\r\n" + //
+                "t := m ISUB s\r\n" + //
+                "u := 2\r\n" + //
+                "v := EXTERNAL CALL Div(t, u)\r\n" + //
+                "m := v\r\n" + //
+                "GOTO IFEND_1_LEVEL_0\r\n" + //
+                "LABEL IFNEXT_1_SEQ_0_LEVEL_0\r\n" + //
+                "w := 0\r\n" + //
+                "x := m EQ w\r\n" + //
+                "IF x EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
+                "LABEL IFSTAT_1_SEQ_1_LEVEL_0\r\n" + //
+                "y := 1\r\n" + //
+                "z := EXTERNAL CALL INeg(y)\r\n" + //
+                "EXTERNAL CALL WriteInt(z)\r\n" + //
+                "GOTO IFEND_1_LEVEL_0\r\n" + //
+                "LABEL IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
+                "A := 0\r\n" + //
+                "EXTERNAL CALL WriteInt(A)\r\n" + //
+                "B := 2\r\n" + //
+                "C := EXTERNAL CALL Div(m, B)\r\n" + //
+                "m := C\r\n" + //
+                "GOTO IFEND_1_LEVEL_0\r\n" + //
+                "LABEL IFNEXT_1_SEQ_2_LEVEL_0\r\n" + //
+                "LABEL IFEND_1_LEVEL_0\r\n" + //
+                "RETURN\r\n" + //
+                "\r\n" + //
+                " at io.github.H20man13.DeClan.ICodeGeneratorTest.testReaderSource(ICodeGeneratorTest.java:44)\r\n" + //
+                " at io.github.H20man13.DeClan.ICodeGeneratorTest.testDeclanFileOnICode(ICodeGeneratorTest.java:63)\r\n" + //
+                " at io.github.H20man13.DeClan.ICodeGeneratorTest.testTest(ICodeGeneratorTest.java:815)\r\n" + //
+                "";
         testDeclanFileOnICode(programName, expectedICode);
     }
 

@@ -101,7 +101,7 @@ public class MyOptimizer {
 
     public List<BasicBlock> buildDataBlocks(){
         DataSec dataSec = intermediateCode.variables;
-        List<Integer> codeFirsts = findFirsts(dataSec.intermediateCode, false);
+        List<Integer> codeFirsts = findFirstsInICode(dataSec.intermediateCode, false);
         List<BasicBlock> dataBlocks = new LinkedList<BasicBlock>();
 
         for(int leaderIndex = 0; leaderIndex < codeFirsts.size(); leaderIndex++){
@@ -123,7 +123,7 @@ public class MyOptimizer {
 
     public List<BasicBlock> buildCodeBlocks(){
          CodeSec code = intermediateCode.code;
-         List<Integer> codeFirsts = findFirsts(code.intermediateCode, false);
+         List<Integer> codeFirsts = findFirstsInICode(code.intermediateCode, false);
          List<BasicBlock> codeBlocks = new LinkedList<BasicBlock>();
 
         for(int leaderIndex = 0; leaderIndex < codeFirsts.size(); leaderIndex++){
@@ -148,7 +148,7 @@ public class MyOptimizer {
         ProcSec proc = intermediateCode.procedures;
         List<BasicBlock> procedureBlocks = new LinkedList<BasicBlock>();
         for(Proc procedure : proc.procedures){
-            List<Integer> procFirsts = findFirsts(procedure.instructions, true);
+            List<Integer> procFirsts = findFirstsInICode(procedure.instructions, true);
             List<ParamAssign> assignments = procedure.paramAssign;
             List<ICode> instructionsInBlock = new LinkedList<ICode>();
             if(procFirsts.size() > 0){
@@ -816,14 +816,14 @@ public class MyOptimizer {
         return this.intermediateCode;
     }
 
-    private List<Integer> findFirsts(List<ICode> intermediateCode, boolean procedureFirst){
+    private List<Integer> findFirstsInICode(List<ICode> intermediateCode, boolean procedureFirst){
         List<Integer> firsts = new LinkedList<Integer>();
         for(int i = 0; i < intermediateCode.size(); i++){
             ICode intermediateInstruction = intermediateCode.get(i);
             if(i == 0 && !procedureFirst){
                 //First Statement is allways a leader
                 firsts.add(i);
-            } else if(intermediateInstruction instanceof Label){
+            } else if(intermediateInstruction instanceof Label || intermediateInstruction instanceof ProcLabel){
                 //Target of Jumps are allways leaders
                 firsts.add(i);
             } else if(i + 1 < intermediateCode.size() && intermediateInstruction.isBranch()){
@@ -831,7 +831,7 @@ public class MyOptimizer {
                 firsts.add(i + 1);
                 //To prevent loading a Label as a first twice
                 ICode nextInstruction = intermediateCode.get(i + 1);
-                if(nextInstruction instanceof Label){
+                if(nextInstruction instanceof Label || nextInstruction instanceof ProcLabel){
                     i++;
                 }
             }

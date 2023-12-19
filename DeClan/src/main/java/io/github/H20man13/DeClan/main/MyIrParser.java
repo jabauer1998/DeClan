@@ -146,7 +146,7 @@ public class MyIrParser {
         match(IrTokenType.SECTION);
         List<ICode> assignments = new LinkedList<ICode>();
         while(willMatch(IrTokenType.ID)){
-            Assign icode = parseDataAssignment();
+            ICode icode = parseDataAssignment();
             assignments.add(icode);
         }
         return new DataSec(assignments);
@@ -241,28 +241,10 @@ public class MyIrParser {
         } else if(willMatch(IrTokenType.CALL)){
             return parseProcedureCall();  
         } else if(willMatch(IrTokenType.EXTERNAL)){
-            return parseExternalProcedure();  
+            return parseExternalCall();  
         } else {
             return parseAssignment();
         }
-    }
-
-    private ExternalCall parseExternalProcedure(){
-        match(IrTokenType.EXTERNAL);
-        match(IrTokenType.CALL);
-
-        IrToken funcName = match(IrTokenType.ID);
-        match(IrTokenType.LPAR);
-
-        List<String> args = new LinkedList<String>();
-        do{
-            IrToken id = match(IrTokenType.ID);
-            args.add(id.getLexeme());
-        } while(skipIfYummy(IrTokenType.COMMA));
-
-        match(IrTokenType.RPAR);
-
-        return new ExternalCall(funcName.getLexeme(), args);
     }
 
     private Inline parseInlineAssembly(){
@@ -395,6 +377,8 @@ public class MyIrParser {
     private Exp parseExpression(){
         if(willMatch(IrTokenType.INEG) || willMatch(IrTokenType.RNEG) || willMatch(IrTokenType.BNOT)) {
             return parseUnaryExpression();
+        } else if(willMatch(IrTokenType.EXTERNAL)){
+            return parseExternalCall();  
         } else {
             Exp exp1 = parsePrimaryExpression();
 
@@ -421,6 +405,23 @@ public class MyIrParser {
         }
     }
 
+    private ExternalCall parseExternalCall(){
+        match(IrTokenType.EXTERNAL);
+        match(IrTokenType.CALL);
+        IrToken funcName = match(IrTokenType.ID);
+        LinkedList<String> args = new LinkedList<String>();
+        match(IrTokenType.LPAR);
+        if(willMatch(IrTokenType.ID)){
+            do{
+                IrToken arg = match(IrTokenType.ID);
+                args.add(arg.getLexeme());
+            } while(skipIfYummy(IrTokenType.COMMA));
+        }
+        match(IrTokenType.RPAR);
+
+        return new ExternalCall(funcName.getLexeme(), args);
+    }
+
     private Assign parseDataAssignment(){
         IrToken id = match(IrTokenType.ID);
         match(IrTokenType.ASSIGN);
@@ -445,30 +446,8 @@ public class MyIrParser {
             return new ParamAssign(id.getLexeme(), id2.getLexeme());
         } else {
             match(IrTokenType.ASSIGN);
-
-            if(willMatch(IrTokenType.EXTERNAL)){
-                skip();
-                match(IrTokenType.CALL);
-
-                IrToken funcName = match(IrTokenType.ID);
-
-                match(IrTokenType.LPAR);
-                List<String> args = new LinkedList<String>();
-
-                if(willMatch(IrTokenType.ID)){
-                    do{
-                        IrToken arg = match(IrTokenType.ID);
-                        args.add(arg.getLexeme());
-                    } while(skipIfYummy(IrTokenType.COMMA));
-                }
-
-                match(IrTokenType.RPAR);
-
-                return new ExternalCall(funcName.getLexeme(), args, id.getLexeme());
-            } else {
-                Exp expression = parseExpression();
-                return new Assign(id.getLexeme(), expression);
-            }
+            Exp expression = parseExpression();
+            return new Assign(id.getLexeme(), expression);
         }
     }
 }
