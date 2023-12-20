@@ -737,23 +737,10 @@ public class MyIrLinker {
                                         newArgs.add(newArg);
                                     }
 
-                                    if(!placeIsUniqueToProgramOrLibrary(assignment.place, prog, libraries, library)){
-                                        String place = null;    
-                                        do{
-                                            place = gen.genNextRegister();
-                                        } while(!placeIsUniqueToProgramOrLibrary(assignment.place, prog, libraries, library));
-                                        replacePlaceInLib(library, assignment.place, place);
-                                    }
-
-                                    if(procedure.placement != null){
-                                        InternalPlace intPlace = procedure.placement;
-                                        Call newCall = new Call(call.procedureName, newArgs);
-                                        newProcedure.addInstruction(newCall);
-                                        ExternalPlace newPlace = new ExternalPlace(assignment.place, intPlace.place);
-                                        newProcedure.addInstruction(newPlace);
-                                    } else {
-                                        newProcedure.addInstruction(assignment);
-                                    }
+                                    Call newCall = new Call(call.procedureName, newArgs);
+                                    newProcedure.addInstruction(newCall);
+                                    ExternalPlace newPlace = new ExternalPlace(assignment.place, procedure.placement.place);
+                                    newProcedure.addInstruction(newPlace);
 
                                     continue;
                                 }
@@ -1584,15 +1571,6 @@ public class MyIrLinker {
             if(!library.equals(libraryToIgnore))
                 if(placeExistsInLibrary(place, library))
                     return false;
-        }
-
-        return true;
-    }
-
-    private static boolean placeIsUniqueToProgramOrLibrary(String place, Lib[] libraries){
-        for(Lib library : libraries){
-            if(placeExistsInLibrary(place, library))
-                return false;
         }
 
         return true;
