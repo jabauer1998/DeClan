@@ -99,6 +99,15 @@ public class MyIrLinker {
                                         fetchInternalDependentInstructions(library, program, libraries, identExp.ident, newTable, dataInstructions, procSec);
                                     }
 
+                                    if(!placeIsUniqueToProgramOrLibrary(assignLib.place, program, libraries, library)){
+                                        String place = null;    
+                                        do{
+                                            place = gen.genNextRegister();
+                                        } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
+
+                                        replacePlaceInLib(library, assignLib.place, place);
+                                    }
+
                                     if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
                                         dataInstructions.addInstruction(assignLib);
                                         newTable.addEntry(libEntry);
@@ -118,6 +127,15 @@ public class MyIrLinker {
                                         } else {
                                             fetchInternalDependentInstructions(library, program, libraries, identExp.ident, newTable, dataInstructions, procSec);
                                         }
+                                    }
+
+                                    if(!placeIsUniqueToProgramOrLibrary(assignLib.place, program, libraries, library)){
+                                        String place = null;    
+                                        do{
+                                            place = gen.genNextRegister();
+                                        } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
+
+                                        replacePlaceInLib(library, assignLib.place, place);
                                     }
 
                                     if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
@@ -155,6 +173,15 @@ public class MyIrLinker {
                                         } else {
                                             fetchInternalDependentInstructions(library, program, libraries, rightIdent.ident, newTable, dataInstructions, procSec);
                                         }
+                                    }
+
+                                    if(!placeIsUniqueToProgramOrLibrary(assignLib.place, program, libraries, library)){
+                                        String place = null;    
+                                        do{
+                                            place = gen.genNextRegister();
+                                        } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
+
+                                        replacePlaceInLib(library, assignLib.place, place);
                                     }
 
                                     if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
@@ -195,6 +222,15 @@ public class MyIrLinker {
                                             newArgs.add(newArg);
                                         }
 
+                                        if(!placeIsUniqueToProgramOrLibrary(assignLib.place, program, libraries, library)){
+                                            String place = null;    
+                                            do{
+                                                place = gen.genNextRegister();
+                                            } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
+
+                                            replacePlaceInLib(library, assignLib.place, place);
+                                        }
+
                                         Call newCall = new Call(call.procedureName, newArgs);
                                         if(!instructionExistsInNewProgram(newCall, dataInstructions)){
                                             dataInstructions.addInstruction(newCall);
@@ -209,19 +245,19 @@ public class MyIrLinker {
                                         }
                                     }
                                 } else {
+                                    if(!placeIsUniqueToProgramOrLibrary(assignLib.place, program, libraries, library)){
+                                        String place = null;    
+                                        do{
+                                            place = gen.genNextRegister();
+                                        } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
+
+                                        replacePlaceInLib(library, assignLib.place, place);
+                                    }
+
                                     if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
                                         dataInstructions.addInstruction(assignLib);
                                         newTable.addEntry(libEntry);
                                     }
-                                }
-
-                                if(!placeIsUniqueToProgramOrLibrary(assignLib.place, program, libraries, library)){
-                                    String place = null;    
-                                    do{
-                                        place = gen.genNextRegister();
-                                    } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
-
-                                    replacePlaceInLib(library, assignLib.place, place);
                                 }
 
                                 break loop;
@@ -263,12 +299,12 @@ public class MyIrLinker {
                                     }
 
                                     if(!placeIsUniqueToLibrary(assignLib.place, single, libraries, library)){
-                                            String place = null;    
-                                            do{
-                                                place = gen.genNextRegister();
-                                            } while(!placeIsUniqueToLibrary(place, single, libraries, library));
-                                            replacePlaceInLib(library, assignLib.place, place);
-                                        }
+                                        String place = null;    
+                                        do{
+                                            place = gen.genNextRegister();
+                                        } while(!placeIsUniqueToLibrary(place, single, libraries, library));
+                                        replacePlaceInLib(library, assignLib.place, place);
+                                    }
 
                                     if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
                                         dataInstructions.addInstruction(assignLib);
@@ -292,12 +328,12 @@ public class MyIrLinker {
                                     }
 
                                     if(!placeIsUniqueToLibrary(assignLib.place, single, libraries, library)){
-                                            String place = null;    
-                                            do{
-                                                place = gen.genNextRegister();
-                                            } while(!placeIsUniqueToLibrary(place, single, libraries, library));
-                                            replacePlaceInLib(library, assignLib.place, place);
-                                        }
+                                        String place = null;    
+                                        do{
+                                            place = gen.genNextRegister();
+                                        } while(!placeIsUniqueToLibrary(place, single, libraries, library));
+                                        replacePlaceInLib(library, assignLib.place, place);
+                                    }
 
                                     if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
                                         dataInstructions.addInstruction(assignLib);
@@ -337,12 +373,12 @@ public class MyIrLinker {
                                     }
 
                                     if(!placeIsUniqueToLibrary(assignLib.place, single, libraries, library)){
-                                            String place = null;    
-                                            do{
-                                                place = gen.genNextRegister();
-                                            } while(!placeIsUniqueToLibrary(place, single, libraries, library));
-                                            replacePlaceInLib(library, assignLib.place, place);
-                                        }
+                                        String place = null;    
+                                        do{
+                                            place = gen.genNextRegister();
+                                        } while(!placeIsUniqueToLibrary(place, single, libraries, library));
+                                        replacePlaceInLib(library, assignLib.place, place);
+                                    }
 
                                     if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
                                         dataInstructions.addInstruction(assignLib);
@@ -400,7 +436,21 @@ public class MyIrLinker {
                                         ExternalPlace newPlace = new ExternalPlace(toRetTo, toRetFrom);
                                         if(!instructionExistsInNewProgram(newPlace, dataInstructions)){
                                             dataInstructions.addInstruction(newPlace);
+                                            newTable.addEntry(libEntry);
                                         }
+                                    }
+                                } else {
+                                    if(!placeIsUniqueToLibrary(assignLib.place, single, libraries, library)){
+                                        String place = null;    
+                                        do{
+                                            place = gen.genNextRegister();
+                                        } while(!placeIsUniqueToLibrary(place, single, libraries, library));
+                                        replacePlaceInLib(library, assignLib.place, place);
+                                    }
+
+                                    if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
+                                        dataInstructions.addInstruction(assignLib);
+                                        newTable.addEntry(libEntry);
                                     }
                                 }
                                 break loop;
