@@ -24,6 +24,7 @@ import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
+import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
 import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
@@ -35,6 +36,7 @@ import io.github.H20man13.DeClan.common.util.OpUtil;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class MyICodeMachine {
+    private Environment<String, IntEntry> procLabelAddresses;
     private Environment<String, IntEntry> labelAddresses;
     private Environment<String, VariableEntry> variableValues;
     private Stack<Integer> returnStack;
@@ -48,6 +50,7 @@ public class MyICodeMachine {
 
     public MyICodeMachine(ErrorLog errLog, Writer standardOutput, Writer standardError, Reader standardIn){
         this.labelAddresses = new Environment<String, IntEntry>();
+        this.procLabelAddresses = new Environment<String, IntEntry>();
         this.returnStack = new Stack<Integer>();
         this.variableValues = new Environment<String, VariableEntry>();
         this.programCounter = 0;
@@ -73,12 +76,16 @@ public class MyICodeMachine {
 
     public void interpretICode(List<ICode> instructions){
         this.labelAddresses.addScope();
+        this.procLabelAddresses.addScope();
         this.variableValues.addScope();
         for(int i = 0; i < instructions.size(); i++){
             ICode instruction = instructions.get(i);
             if(instruction instanceof Label){
                 Label label = (Label)instruction;
                 labelAddresses.addEntry(label.label, new IntEntry(i));
+            } else if(instruction instanceof ProcLabel){
+                ProcLabel label = (ProcLabel)instruction;
+                procLabelAddresses.addEntry(label.label, new IntEntry(i));
             }
         }
         this.machineState = State.INIT;

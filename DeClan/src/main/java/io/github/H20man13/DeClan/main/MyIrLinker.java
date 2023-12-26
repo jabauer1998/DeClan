@@ -205,7 +205,13 @@ public class MyIrLinker {
                                         ExternalPlace newPlace = new ExternalPlace(toRetTo, toRetFrom);
                                         if(!instructionExistsInNewProgram(newPlace, dataInstructions)){
                                             dataInstructions.addInstruction(newPlace);
+                                            newTable.addEntry(libEntry);
                                         }
+                                    }
+                                } else {
+                                    if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
+                                        dataInstructions.addInstruction(assignLib);
+                                        newTable.addEntry(libEntry);
                                     }
                                 }
 
