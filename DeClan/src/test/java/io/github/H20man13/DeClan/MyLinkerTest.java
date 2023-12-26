@@ -279,26 +279,26 @@ public class MyLinkerTest {
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
-                     " m INTERNAL lib1VariableName\r\n" + //
+                     " n INTERNAL lib1VariableName\r\n" + //
                      "DATA SECTION\r\n" + //
                      " a := 20\r\n" + //
                      " b := 500\r\n" + //
-                     " m := 3\r\n" + //
+                     " n := 3\r\n" + //
                      "CODE SECTION\r\n" + //
                      " CALL func2 (  )\r\n" + //
-                     " e <| l\r\n" + //
-                     " g := e IADD m\r\n" + //
+                     " e <| m\r\n" + //
+                     " g := e IADD n\r\n" + //
                      "END\r\n" + //
                      "PROC SECTION\r\n" + //
                      " PROC LABEL func1\r\n" + //
-                     "  f := 3\r\n" + //
-                     "  h |< f\r\n" + //
+                     "  h := 3\r\n" + //
+                     "  i |< h\r\n" + //
                      " RETURN\r\n" + //
                      " PROC LABEL func2\r\n" + //
                      "  CALL func1 (  )\r\n" + //
-                     "  b <| h\r\n" + //
-                     "  k := b ISUB m\r\n" + //
-                     "  l |< k\r\n" + //
+                     "  f <| d\r\n" + //
+                     "  l := f ISUB n\r\n" + //
+                     "  m |< l\r\n" + //
                      " RETURN\r\n";
 
         linkProgramStrings(exp, prog1, lib1, lib2);

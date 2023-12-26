@@ -759,7 +759,7 @@ public class MyIrLinker {
                                     }
                                 }
                             } else if(assignExp instanceof ExternalCall){
-                                ExternalCall call = (ExternalCall)icode;
+                                ExternalCall call = (ExternalCall)assignExp;
                             
                                 if(!procedureSec.containsProcedure(call.procedureName))
                                     fetchExternalProcedure(call.procedureName, prog, libraries, symbolTable, dataSection, codeSection, procedureSec, library);
@@ -2052,7 +2052,7 @@ public class MyIrLinker {
                         }
                     }
                 } else if(assignExp instanceof ExternalCall){
-                    ExternalCall call = (ExternalCall)icode;
+                    ExternalCall call = (ExternalCall)assignExp;
 
                     if(!placeIsUniqueToProgramOrLibrary(assignment.place, program, libraries, program)){
                         String place = null;
