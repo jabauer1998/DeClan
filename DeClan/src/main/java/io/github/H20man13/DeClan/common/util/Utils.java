@@ -341,6 +341,24 @@ public class Utils {
         }
     }
 
+    public static Integer toRawInt(Object input){
+        if(input instanceof Integer){
+            return (Integer)input;
+        } else if(input instanceof Double){
+            double dV = (double)input;
+            float fV = (float)dV;
+            long lV = (long)fV;
+            int iV = (int)lV;
+            return iV;
+        } else if(input instanceof Boolean){
+            Boolean bi = (Boolean)input;
+            if(bi) return 1;
+            else return 0;
+        } else {
+            return null;
+        }
+    }
+
     public static Boolean toBool(Object input){
         if(input instanceof Integer){
             Integer inti = (Integer)input;

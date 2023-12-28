@@ -22,7 +22,7 @@ public class OpUtil {
     }
 
     public static Object bitwiseNot(Object val1){
-        return ~Utils.toInt(val1);
+        return ~Utils.toRawInt(val1);
     }
 
     public static Object notEqual(Object val1, Object val2){
@@ -170,33 +170,33 @@ public class OpUtil {
     }
 
     public static Object bitwiseAnd(Object val1, Object val2){
-        Integer int1 = Utils.toInt(val1);
-        Integer int2 = Utils.toInt(val2);
+        Integer int1 = Utils.toRawInt(val1);
+        Integer int2 = Utils.toRawInt(val2);
 
         return int1 & int2;
     }
 
     public static Object bitwiseOr(Object val1, Object val2){
-        Integer int1 = Utils.toInt(val1);
-        Integer int2 = Utils.toInt(val2);
+        Integer int1 = Utils.toRawInt(val1);
+        Integer int2 = Utils.toRawInt(val2);
         return int1 | int2;
     }
 
     public static Object bitwiseXor(Object val1, Object val2){
-        Integer int1 = Utils.toInt(val1);
-        Integer int2 = Utils.toInt(val2);
+        Integer int1 = Utils.toRawInt(val1);
+        Integer int2 = Utils.toRawInt(val2);
         return int1 ^ int2;
     }
 
     public static Object leftShift(Object val1, Object val2){
-        Integer int1 = Utils.toInt(val1);
-        Integer int2 = Utils.toInt(val2);
+        Integer int1 = Utils.toRawInt(val1);
+        Integer int2 = Utils.toRawInt(val2);
         return int1 << int2;
     }
 
     public static Object rightShift(Object val1, Object val2){
-        Integer int1 = Utils.toInt(val1);
-        Integer int2 = Utils.toInt(val2);
+        Integer int1 = Utils.toRawInt(val1);
+        Integer int2 = Utils.toRawInt(val2);
         return int1 >> int2;
     }
 
