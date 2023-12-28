@@ -112,18 +112,14 @@ public class MyICodeGenerator{
     typeChecker.addScope();
 
     DataSectionBuilder dataSecBuilder = libBuilder.getDataSectionBuilder();
-    for(Declaration decl : lib.getConstDecls()){
+    for(ConstDeclaration decl : lib.getConstDecls()){
       decl.accept(typeChecker);
-      if(decl instanceof ConstDeclaration){
-        generateConstantIr((ConstDeclaration)decl, dataSecBuilder);
-      }
+      generateConstantIr(decl, dataSecBuilder);
     }
 
-    for(Declaration decl : lib.getVarDecls()){
+    for(VariableDeclaration decl : lib.getVarDecls()){
       decl.accept(typeChecker);
-      if(decl instanceof VariableDeclaration){
-        generateVariableIr((VariableDeclaration)decl, dataSecBuilder);
-      }
+      generateVariableIr(decl, dataSecBuilder);
     }
 
     loadFunctions(lib.getProcDecls());
@@ -134,6 +130,7 @@ public class MyICodeGenerator{
     for(ProcedureDeclaration decl : lib.getProcDecls()){
       decl.accept(typeChecker);
       generateProcedureIr(decl, procBuilder);
+      secBuilder.addProcedure(procBuilder.completeBuild());
       typeChecker.removeVarScope();
       procBuilder.resetBuilder();
     }
@@ -533,8 +530,56 @@ public class MyICodeGenerator{
           case PLUS: return builder.buildRealAdditionAssignment(leftIdent, rightIdent);
           case MINUS: return builder.buildRealSubtractionAssignment(leftIdent, rightIdent);
           case TIMES: return builder.buildRealMultiplicationAssignment(leftIdent, rightIdent);
-          case DIVIDE: return builder.buildRealDivisionAssignment(leftValue, rightValue);
-          case DIV: return builder.buildIntegerDivAssignment(leftValue, rightValue);
+          case DIVIDE:
+            if(procArgs.entryExists("Divide") && procEnvironment.entryExists("Divide")){
+              StringEntryList params = procArgs.getEntry("Divide");
+              if(params.size() >= 2){
+                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
+                args.add(new Tuple<String,String>(leftValue, params.get(0)));
+                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+
+                builder.buildProcedureCall("Divide", args);
+
+                StringEntry returnPlace = procEnvironment.getEntry("Divide");
+                return builder.buildExternalReturnPlacement(returnPlace.toString());
+              } else {
+                 errorLog.add("Cant find the function Divide that contains two arguments", binaryOperation.getStart());
+                 LinkedList<String> args = new LinkedList<String>();
+                 args.add(leftValue);
+                 args.add(rightValue);
+                 return builder.buildExternalFunctionCall("Divide", args);
+              }
+            } else {
+               LinkedList<String> args = new LinkedList<String>();
+               args.add(leftValue);
+               args.add(rightValue);
+               return builder.buildExternalFunctionCall("Divide", args);
+            }
+          case DIV:
+            if(procArgs.entryExists("Div") && procEnvironment.entryExists("Div")){
+              StringEntryList params = procArgs.getEntry("Div");
+              if(params.size() >= 2){
+                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
+                args.add(new Tuple<String,String>(leftValue, params.get(0)));
+                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+
+                builder.buildProcedureCall("Div", args);
+
+                StringEntry returnPlace = procEnvironment.getEntry("Div");
+                return builder.buildExternalReturnPlacement(returnPlace.toString());
+              } else {
+                 errorLog.add("Cant find the function Div that contains two arguments", binaryOperation.getStart());
+                 LinkedList<String> args = new LinkedList<String>();
+                 args.add(leftValue);
+                 args.add(rightValue);
+                 return builder.buildExternalFunctionCall("Div", args);
+              }
+            } else {
+               LinkedList<String> args = new LinkedList<String>();
+               args.add(leftValue);
+               args.add(rightValue);
+               return builder.buildExternalFunctionCall("Div", args);
+            }
           case MOD: return builder.buildIntegerModuloAssignment(leftValue, rightValue);
           case LE: return builder.buildLessThanOrEqualAssignment(leftIdent, rightIdent);
           case LT: return builder.buildLessThanAssignment(leftIdent, rightIdent);
@@ -551,8 +596,56 @@ public class MyICodeGenerator{
         case PLUS: return builder.buildIntegerAdditionAssignment(leftIdent, rightIdent);
         case MINUS: return builder.buildIntegerSubtractionAssignment(leftIdent, rightIdent);
         case TIMES: return builder.buildIntegerMultiplicationAssignment(leftIdent, rightIdent);
-        case DIV: return builder.buildIntegerDivAssignment(leftValue, rightValue);
-        case DIVIDE: return builder.buildRealDivisionAssignment(leftValue, rightValue);
+        case DIV: 
+          if(procArgs.entryExists("Div") && procEnvironment.entryExists("Div")){
+              StringEntryList params = procArgs.getEntry("Div");
+              if(params.size() >= 2){
+                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
+                args.add(new Tuple<String,String>(leftValue, params.get(0)));
+                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+
+                builder.buildProcedureCall("Div", args);
+
+                StringEntry returnPlace = procEnvironment.getEntry("Div");
+                return builder.buildExternalReturnPlacement(returnPlace.toString());
+              } else {
+                 errorLog.add("Cant find the function Div that contains two arguments", binaryOperation.getStart());
+                 LinkedList<String> args = new LinkedList<String>();
+                 args.add(leftValue);
+                 args.add(rightValue);
+                 return builder.buildExternalFunctionCall("Div", args);
+              }
+            } else {
+               LinkedList<String> args = new LinkedList<String>();
+               args.add(leftValue);
+               args.add(rightValue);
+               return builder.buildExternalFunctionCall("Div", args);
+            }
+        case DIVIDE: 
+            if(procArgs.entryExists("Divide") && procEnvironment.entryExists("Divide")){
+              StringEntryList params = procArgs.getEntry("Divide");
+              if(params.size() >= 2){
+                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
+                args.add(new Tuple<String,String>(leftValue, params.get(0)));
+                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+
+                builder.buildProcedureCall("Divide", args);
+
+                StringEntry returnPlace = procEnvironment.getEntry("Divide");
+                return builder.buildExternalReturnPlacement(returnPlace.toString());
+              } else {
+                 errorLog.add("Cant find the function Divide that contains two arguments", binaryOperation.getStart());
+                 LinkedList<String> args = new LinkedList<String>();
+                 args.add(leftValue);
+                 args.add(rightValue);
+                 return builder.buildExternalFunctionCall("Divide", args);
+              }
+            } else {
+               LinkedList<String> args = new LinkedList<String>();
+               args.add(leftValue);
+               args.add(rightValue);
+               return builder.buildExternalFunctionCall("Divide", args);
+            }
         case MOD: return builder.buildIntegerModuloAssignment(leftValue, rightValue);
         case LE: return builder.buildLessThanOrEqualAssignment(leftIdent, rightIdent);
         case LT: return builder.buildLessThanAssignment(leftIdent, rightIdent);
@@ -608,13 +701,53 @@ public class MyICodeGenerator{
 
     if(rightType.containsQualities(TypeCheckerQualities.REAL)){
       switch(unaryOperation.getOperator()){
-        case MINUS: return builder.buildRealNegationAssignment(value);
+        case MINUS: 
+          if(procArgs.entryExists("RNeg") && procEnvironment.entryExists("RNeg")){
+              StringEntryList params = procArgs.getEntry("RNeg");
+              if(params.size() >= 1){
+                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
+                args.add(new Tuple<String,String>(value, params.get(0)));
+                builder.buildProcedureCall("RNeg", args);
+
+                StringEntry returnPlace = procEnvironment.getEntry("RNeg");
+                return builder.buildExternalReturnPlacement(returnPlace.toString());
+              } else {
+                 errorLog.add("Cant find the function RNeg that contains one argument", unaryOperation.getStart());
+                 LinkedList<String> args = new LinkedList<String>();
+                 args.add(value);
+                 return builder.buildExternalFunctionCall("RNeg", args);
+              }
+            } else {
+               LinkedList<String> args = new LinkedList<String>();
+               args.add(value);
+               return builder.buildExternalFunctionCall("RNeg", args);
+            }
         case NOT: return builder.buildNotAssignment(valueIdent);
         default: return value;
 	    }
     } else {
       switch(unaryOperation.getOperator()){
-        case MINUS: return builder.buildIntegerNegationAssignment(value);
+        case MINUS:
+          if(procArgs.entryExists("INeg") && procEnvironment.entryExists("INeg")){
+              StringEntryList params = procArgs.getEntry("INeg");
+              if(params.size() >= 1){
+                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
+                args.add(new Tuple<String,String>(value, params.get(0)));
+                builder.buildProcedureCall("INeg", args);
+
+                StringEntry returnPlace = procEnvironment.getEntry("INeg");
+                return builder.buildExternalReturnPlacement(returnPlace.toString());
+              } else {
+                 errorLog.add("Cant find the function INeg that contains one argument", unaryOperation.getStart());
+                 LinkedList<String> args = new LinkedList<String>();
+                 args.add(value);
+                 return builder.buildExternalFunctionCall("INeg", args);
+              }
+            } else {
+               LinkedList<String> args = new LinkedList<String>();
+               args.add(value);
+               return builder.buildExternalFunctionCall("INeg", args);
+            }
         case NOT: return builder.buildNotAssignment(valueIdent);
         case BNOT: return builder.buildIntegerNotAssignment(valueIdent);
         default: return value;

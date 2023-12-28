@@ -132,7 +132,12 @@ public class Proc implements ICode {
                     return false;
             }
 
-            if(!objProc.placement.equals(placement))
+            if(objProc.placement == null && placement != null 
+            || objProc.placement != null && placement == null)
+                return false;
+
+            if(objProc.placement != null && placement != null)
+                if(!objProc.placement.equals(placement))
                 return false;
 
             if(!objProc.returnStatement.equals(returnStatement))

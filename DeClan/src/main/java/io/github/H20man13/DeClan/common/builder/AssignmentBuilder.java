@@ -66,22 +66,6 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
         return place;
     }
 
-    public String buildRealNegationAssignment(String arg){
-        String place = gen.genNextRegister();
-        List<String> args = new LinkedList<String>();
-        args.add(arg);
-        intermediateCode.add(factory.produceExternalProcedureAssignment(place, "RNeg", args));
-        return place;
-    }
-
-    public String buildIntegerNegationAssignment(String arg){
-        String place = gen.genNextRegister();
-        List<String> args = new LinkedList<String>();
-        args.add(arg);
-        intermediateCode.add(factory.produceExternalProcedureAssignment(place, "INeg", args));
-        return place;
-    }
-
     public String buildIntegerNotAssignment(Exp value){
         String place = gen.genNextRegister();
         UnExp unExp = new UnExp(Operator.INOT, value);
@@ -135,24 +119,6 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
         String place = gen.genNextRegister();
         BinExp binExp = new BinExp(left, BinExp.Operator.RMUL, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
-        return place;
-    }
-
-    public String buildIntegerDivAssignment(String left, String right){
-        String place = gen.genNextRegister();
-        List<String> args = new LinkedList<String>();
-        args.add(left);
-        args.add(right);
-        intermediateCode.add(factory.produceExternalProcedureAssignment(place, "Div", args));
-        return place;
-    }
-
-    public String buildRealDivisionAssignment(String left, String right){
-        String place = gen.genNextRegister();
-        List<String> args = new LinkedList<String>();
-        args.add(left);
-        args.add(right);
-        intermediateCode.add(factory.produceExternalProcedureAssignment(place, "Divide", args));
         return place;
     }
 
