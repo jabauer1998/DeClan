@@ -320,6 +320,11 @@ public class MyICodeMachine {
             case RSUB: return OpUtil.rSub(left, right);
             case IMUL: return OpUtil.iMul(left, right);
             case RMUL: return OpUtil.rMul(left, right);
+            case IAND: return OpUtil.bitwiseAnd(left, right);
+            case IOR: return OpUtil.bitwiseOr(left, right);
+            case IXOR: return OpUtil.bitwiseXor(left, right);
+            case ILSHIFT: return OpUtil.leftShift(left, right);
+            case IRSHIFT: return OpUtil.rightShift(left, right);
             case IDIV: return OpUtil.iDiv(left, right);
             case RDIVIDE: return OpUtil.rDivide(left, right);
             case IMOD: return OpUtil.iMod(left, right);
