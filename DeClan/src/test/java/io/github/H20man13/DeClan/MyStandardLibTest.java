@@ -31,4 +31,37 @@ public class MyStandardLibTest {
             assertTrue(err.toString(), false);
         }
     }
+
+    @Test
+    public void parseRealLibrary(){
+        ErrorLog errLog = new ErrorLog();
+        MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
+        Library lib = stdLib.realLibrary();
+
+        for(LogItem err: errLog){
+            assertTrue(err.toString(), false);
+        }
+    }
+
+    @Test
+    public void parseIntegerLibrary(){
+        ErrorLog errLog = new ErrorLog();
+        MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
+        Library lib = stdLib.intLibrary();
+
+        for(LogItem err: errLog){
+            assertTrue(err.toString(), false);
+        }
+    }
+
+    @Test
+    public void parseConversionsLibrary(){
+        ErrorLog errLog = new ErrorLog();
+        MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
+        Library lib = stdLib.conversionsLibrary();
+
+        for(LogItem err: errLog){
+            assertTrue(err.toString(), false);
+        }
+    }
 }
