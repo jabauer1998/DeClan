@@ -87,13 +87,6 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
         return place;
     }
 
-    public String buildRealAdditionAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.RADD ,right);
-        intermediateCode.add(factory.produceBinaryOperation(place, binExp));
-        return place;
-    }
-
     public String buildIntegerSubtractionAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
         BinExp binExp = new BinExp(left, BinExp.Operator.ISUB, right);
@@ -101,23 +94,9 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
         return place;
     }
 
-    public String buildRealSubtractionAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.RSUB, right);
-        intermediateCode.add(factory.produceBinaryOperation(place, binExp));
-        return place;
-    }
-
     public String buildIntegerMultiplicationAssignment(Exp left, Exp right){
         String place = gen.genNextRegister();
         BinExp binExp = new BinExp(left, BinExp.Operator.IMUL, right);
-        intermediateCode.add(factory.produceBinaryOperation(place, binExp));
-        return place;
-    }
-
-    public String buildRealMultiplicationAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
-        BinExp binExp = new BinExp(left, BinExp.Operator.RMUL, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }

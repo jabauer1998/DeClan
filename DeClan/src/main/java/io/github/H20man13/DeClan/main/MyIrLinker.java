@@ -78,6 +78,7 @@ public class MyIrLinker {
                 if(libSymbols.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
                     SymEntry libEntry = libSymbols.getEntryByIdentifier(identName, SymEntry.INTERNAL);
                     DataSec libData = library.variables;
+                    ProcSec libProc = library.procedures;
                     for(int z = 0; z <= libData.getLength(); z++){
                         ICode icodeLib = libData.getInstruction(z);
                         if(icodeLib instanceof Assign){
@@ -261,6 +262,52 @@ public class MyIrLinker {
                                 }
 
                                 break loop;
+                            }
+                        } else if (icodeLib instanceof ExternalPlace){
+                            ExternalPlace place = (ExternalPlace)icodeLib;
+                            if(place.place.equals(libEntry.icodePlace)){
+                                ICode funcCallICode = libData.getInstruction(z - 1);
+                                if(funcCallICode instanceof Call){
+                                    Call funcCall = (Call)funcCallICode;
+
+                                    int numArgs = funcCall.params.size();
+                                    for(int argIndex = 0; argIndex < numArgs; argIndex++){
+                                        Tuple<String, String> arg = funcCall.params.get(argIndex);
+                                        if(libSymbols.containsEntryWithICodePlace(arg.source, SymEntry.EXTERNAL)){
+                                            SymEntry entry = libSymbols.getEntryByICodePlace(arg.source, SymEntry.EXTERNAL);
+                                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newTable, dataInstructions, codeSec, procSec, library);
+                                            if(newTable.containsEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL)){
+                                                SymEntry newEntry = newTable.getEntryByIdentifier(entry.declanIdent, SymEntry.INTERNAL);
+                                                if(!entry.icodePlace.equals(newEntry.icodePlace))
+                                                    replacePlaceInLib(library, entry.icodePlace, newEntry.icodePlace);
+                                            }
+                                        } else {
+                                            fetchInternalDependentInstructions(library, program, libraries, arg.source, newTable, dataInstructions, codeSec, procSec);
+                                        }
+                                    }
+
+                                    if(!procSec.containsProcedure(funcCall.pname)){
+                                        Proc procedureEntry = libProc.getProcedureByName(funcCall.pname);
+                                        procSec.addProcedure(procedureEntry);
+                                    }
+
+                                    if(!placeIsUniqueToProgramOrLibrary(place.place, program, libraries, library)){
+                                        String newPlace = null;    
+                                        do{
+                                            newPlace = gen.genNextRegister();
+                                        } while(!placeIsUniqueToProgramOrLibrary(newPlace, program, libraries, library));
+
+                                        replacePlaceInLib(library, place.place, newPlace);
+                                    }
+
+                                    if(!instructionExistsInNewProgram(funcCall, dataInstructions)){
+                                        dataInstructions.addInstruction(funcCall);
+                                    }
+
+                                    if(!instructionExistsInNewProgram(place, dataInstructions)){
+                                        dataInstructions.addInstruction(place);
+                                    }
+                                }
                             }
                         }
                     }

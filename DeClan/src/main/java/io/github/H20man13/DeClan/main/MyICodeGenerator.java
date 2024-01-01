@@ -450,8 +450,32 @@ public class MyICodeGenerator{
         String incriment = generateExpressionIr(toMod, builder);
         TypeCheckerQualities qual = toMod.acceptResult(typeChecker);
         if(qual.containsQualities(TypeCheckerQualities.REAL)){
-          String result = builder.buildRealAdditionAssignment(new IdentExp(curvalue.toString()), new IdentExp(incriment));
-          builder.buildVariableAssignment(curvalue.toString(), result);
+          String result = null;
+          if(procArgs.entryExists("RAdd") && procEnvironment.entryExists("RAdd")){
+              StringEntryList params = procArgs.getEntry("RAdd");
+              if(params.size() >= 2){
+                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
+                args.add(new Tuple<String,String>(curvalue.toString(), params.get(0)));
+                args.add(new Tuple<String,String>(incriment, params.get(1)));
+
+                builder.buildProcedureCall("RAdd", args);
+
+                StringEntry returnPlace = procEnvironment.getEntry("RAdd");
+                result = builder.buildExternalReturnPlacement(returnPlace.toString());
+              } else {
+                 errorLog.add("Cant find the function RAdd that contains two arguments", forbranch.getStart());
+                 LinkedList<String> args = new LinkedList<String>();
+                 args.add(curvalue.toString());
+                 args.add(incriment);
+                 result = builder.buildExternalFunctionCall("RAdd", args);
+              }
+            } else {
+               LinkedList<String> args = new LinkedList<String>();
+               args.add(curvalue.toString());
+               args.add(incriment);
+               result = builder.buildExternalFunctionCall("RAdd", args);
+            }
+            builder.buildVariableAssignment(curvalue.toString(), result);
         } else {
           String result = builder.buildIntegerAdditionAssignment(new IdentExp(curvalue.toString()), new IdentExp(incriment));
           builder.buildVariableAssignment(curvalue.toString(), result);
@@ -526,44 +550,157 @@ public class MyICodeGenerator{
       TypeCheckerQualities rightType = binaryOperation.getRight().acceptResult(typeChecker);
 
       if(leftType.containsQualities(TypeCheckerQualities.REAL) || rightType.containsQualities(TypeCheckerQualities.REAL)){
+        if(leftType.containsQualities(TypeCheckerQualities.INTEGER)){
+           if(procArgs.entryExists("IntToReal") && procEnvironment.entryExists("IntToReal")){
+             StringEntryList params = procArgs.getEntry("IntToReal");
+             if(params.size() >= 1){
+               LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
+               args.add(new Tuple<String,String>(leftValue, params.get(0)));
+               builder.buildProcedureCall("IntToReal", args);
+               StringEntry entry = procEnvironment.getEntry("IntToReal");
+               leftValue = builder.buildExternalReturnPlacement(entry.toString());
+             } else {
+              LinkedList<String> args = new LinkedList<String>();
+              args.add(leftValue);
+              leftValue = builder.buildExternalFunctionCall("IntToReal", args);
+             }
+           } else {
+             LinkedList<String> args = new LinkedList<String>();
+             args.add(leftValue);
+             leftValue = builder.buildExternalFunctionCall("IntToReal", args);
+           }
+        }
+
+        if(rightType.containsQualities(TypeCheckerQualities.INTEGER)){
+          if(procArgs.entryExists("IntToReal") && procEnvironment.entryExists("IntToReal")){
+             StringEntryList params = procArgs.getEntry("IntToReal");
+             if(params.size() >= 1){
+               LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
+               args.add(new Tuple<String,String>(rightValue, params.get(0)));
+               builder.buildProcedureCall("IntToReal", args);
+               StringEntry entry = procEnvironment.getEntry("IntToReal");
+               leftValue = builder.buildExternalReturnPlacement(entry.toString());
+             } else {
+              LinkedList<String> args = new LinkedList<String>();
+              args.add(rightValue);
+              leftValue = builder.buildExternalFunctionCall("IntToReal", args);
+             }
+           } else {
+             LinkedList<String> args = new LinkedList<String>();
+             args.add(rightValue);
+             leftValue = builder.buildExternalFunctionCall("IntToReal", args);
+           }
+        }
         switch (binaryOperation.getOperator()){
-          case PLUS: return builder.buildRealAdditionAssignment(leftIdent, rightIdent);
-          case MINUS: return builder.buildRealSubtractionAssignment(leftIdent, rightIdent);
-          case TIMES: return builder.buildRealMultiplicationAssignment(leftIdent, rightIdent);
-          case DIVIDE:
-            if(procArgs.entryExists("Divide") && procEnvironment.entryExists("Divide")){
-              StringEntryList params = procArgs.getEntry("Divide");
+          case PLUS:
+            if(procArgs.entryExists("RAdd") && procEnvironment.entryExists("RAdd")){
+              StringEntryList params = procArgs.getEntry("RAdd");
               if(params.size() >= 2){
                 LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
                 args.add(new Tuple<String,String>(leftValue, params.get(0)));
                 args.add(new Tuple<String,String>(rightValue, params.get(1)));
 
-                builder.buildProcedureCall("Divide", args);
+                builder.buildProcedureCall("RAdd", args);
 
-                StringEntry returnPlace = procEnvironment.getEntry("Divide");
+                StringEntry returnPlace = procEnvironment.getEntry("RAdd");
+                return builder.buildExternalReturnPlacement(returnPlace.toString());
+              } else {
+                 errorLog.add("Cant find the function RAdd that contains two arguments", binaryOperation.getStart());
+                 LinkedList<String> args = new LinkedList<String>();
+                 args.add(leftValue);
+                 args.add(rightValue);
+                 return builder.buildExternalFunctionCall("RAdd", args);
+              }
+            } else {
+               LinkedList<String> args = new LinkedList<String>();
+               args.add(leftValue);
+               args.add(rightValue);
+               return builder.buildExternalFunctionCall("RAdd", args);
+            }
+          case MINUS: 
+            if(procArgs.entryExists("RSub") && procEnvironment.entryExists("RSub")){
+              StringEntryList params = procArgs.getEntry("RSub");
+              if(params.size() >= 2){
+                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
+                args.add(new Tuple<String,String>(leftValue, params.get(0)));
+                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+
+                builder.buildProcedureCall("RSub", args);
+
+                StringEntry returnPlace = procEnvironment.getEntry("RDivide");
+                return builder.buildExternalReturnPlacement(returnPlace.toString());
+              } else {
+                 errorLog.add("Cant find the function Subtract that contains two arguments", binaryOperation.getStart());
+                 LinkedList<String> args = new LinkedList<String>();
+                 args.add(leftValue);
+                 args.add(rightValue);
+                 return builder.buildExternalFunctionCall("RSub", args);
+              }
+            } else {
+               LinkedList<String> args = new LinkedList<String>();
+               args.add(leftValue);
+               args.add(rightValue);
+               return builder.buildExternalFunctionCall("RSub", args);
+            }
+          case TIMES: 
+            if(procArgs.entryExists("RMul") && procEnvironment.entryExists("RMul")){
+              StringEntryList params = procArgs.getEntry("RMul");
+              if(params.size() >= 2){
+                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
+                args.add(new Tuple<String,String>(leftValue, params.get(0)));
+                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+
+                builder.buildProcedureCall("RDivide", args);
+
+                StringEntry returnPlace = procEnvironment.getEntry("RMul");
                 return builder.buildExternalReturnPlacement(returnPlace.toString());
               } else {
                  errorLog.add("Cant find the function Divide that contains two arguments", binaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("Divide", args);
+                 return builder.buildExternalFunctionCall("RMul", args);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("Divide", args);
+               return builder.buildExternalFunctionCall("RMul", args);
+            }
+          case DIVIDE:
+            if(procArgs.entryExists("RDivide") && procEnvironment.entryExists("RDivide")){
+              StringEntryList params = procArgs.getEntry("RDivide");
+              if(params.size() >= 2){
+                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
+                args.add(new Tuple<String,String>(leftValue, params.get(0)));
+                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+
+                builder.buildProcedureCall("RDivide", args);
+
+                StringEntry returnPlace = procEnvironment.getEntry("RDivide");
+                return builder.buildExternalReturnPlacement(returnPlace.toString());
+              } else {
+                 errorLog.add("Cant find the function Divide that contains two arguments", binaryOperation.getStart());
+                 LinkedList<String> args = new LinkedList<String>();
+                 args.add(leftValue);
+                 args.add(rightValue);
+                 return builder.buildExternalFunctionCall("RDivide", args);
+              }
+            } else {
+               LinkedList<String> args = new LinkedList<String>();
+               args.add(leftValue);
+               args.add(rightValue);
+               return builder.buildExternalFunctionCall("RDivide", args);
             }
           case DIV:
-            if(procArgs.entryExists("Div") && procEnvironment.entryExists("Div")){
+            if(procArgs.entryExists("RDiv") && procEnvironment.entryExists("RDiv")){
               StringEntryList params = procArgs.getEntry("Div");
               if(params.size() >= 2){
                 LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
                 args.add(new Tuple<String,String>(leftValue, params.get(0)));
                 args.add(new Tuple<String,String>(rightValue, params.get(1)));
 
-                builder.buildProcedureCall("Div", args);
+                builder.buildProcedureCall("RDiv", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("Div");
                 return builder.buildExternalReturnPlacement(returnPlace.toString());
@@ -572,15 +709,14 @@ public class MyICodeGenerator{
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("Div", args);
+                 return builder.buildExternalFunctionCall("RDiv", args);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("Div", args);
+               return builder.buildExternalFunctionCall("RDiv", args);
             }
-          case MOD: return builder.buildIntegerModuloAssignment(leftValue, rightValue);
           case LE: return builder.buildLessThanOrEqualAssignment(leftIdent, rightIdent);
           case LT: return builder.buildLessThanAssignment(leftIdent, rightIdent);
           case GE: return builder.buildGreaterThanOrEqualToAssignment(leftIdent, rightIdent);
