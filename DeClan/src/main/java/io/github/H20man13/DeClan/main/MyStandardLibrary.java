@@ -83,6 +83,16 @@ public class MyStandardLibrary {
         }
     }
 
+    public Library utilsLibrary(){
+        if(libDirFound){
+            String libSource = libDir + "/Utils.declib";
+            return parseLibrarySource(libSource);
+        } else {
+            String libSource = "Utils.declib";
+            return parseLibrarySource(libSource);
+        }
+    }
+
     private Library parseLibrarySource(String sourceName){
         try{
             File file = new File(sourceName);

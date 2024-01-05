@@ -64,4 +64,15 @@ public class MyStandardLibTest {
             assertTrue(err.toString(), false);
         }
     }
+
+    @Test
+    public void parseUtilsLibrary(){
+        ErrorLog errLog = new ErrorLog();
+        MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
+        Library lib = stdLib.utilsLibrary();
+
+        for(LogItem err: errLog){
+            assertTrue(err.toString(), false);
+        }
+    }
 }

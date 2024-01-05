@@ -258,49 +258,49 @@ public class ICodeGeneratorTest {
                                "b := 0\r\n" + //
                                "c := 0.0\r\n" + //
                                "d := 0.0\r\n" + //
-                                "h := 1\r\n" + //
-                                "b := h\r\n" + //
-                                "i := 1.0\r\n" + //
-                                "c := i\r\n" + //
-                                "j := 2\r\n" + //
-                                "a := j\r\n" + //
-                                "k := 2.0\r\n" + //
-                                "d := k\r\n" + //
-                                "EXTERNAL CALL WriteInt(b)\r\n" + //
-                                "EXTERNAL CALL WriteReal(c)\r\n" + //
-                                "EXTERNAL CALL WriteReal(d)\r\n" + //
-                                "EXTERNAL CALL WriteLn()\r\n" + //
-                                "l := EXTERNAL CALL Divide(b, a)\r\n" + //
-                                "EXTERNAL CALL WriteReal(l)\r\n" + //
-                                "m := 5\r\n" + //
-                                "n := b IADD m\r\n" + //
-                                "o := 6\r\n" + //
-                                "p := b IADD o\r\n" + //
-                                "q := n IMUL p\r\n" + //
-                                "EXTERNAL CALL WriteInt(q)\r\n" + //
-                                "r := 4\r\n" + //
-                                "s := a IADD r\r\n" + //
-                                "t := 5.0\r\n" + //
-                                "u := a RADD t\r\n" + //
-                                "v := s RMUL u\r\n" + //
-                                "EXTERNAL CALL WriteReal(v)\r\n" + //
-                                "EXTERNAL CALL WriteLn()\r\n" + //
-                                "w := 3.1415\r\n" + //
-                                "CALL p ( b -> e , w -> f )\r\n" + //
-                                "x <| g\r\n" + //
-                                "a := x\r\n" + //
-                                "EXTERNAL CALL WriteReal(d)\r\n" + //
-                                "EXTERNAL CALL WriteLn()\r\n" + //
-                                "END\r\n" + //
-                                "PROC LABEL p\r\n" + //
-                                "z <- f\r\n" + //
-                                "A <- e\r\n" + //
-                                "y := 0\r\n" + //
-                                "B := z RADD A\r\n" + //
-                                "C := EXTERNAL CALL Round(B)\r\n" + //
-                                "y := C\r\n" + //
-                                "g |< y\r\n" + //
-                                "RETURN\r\n";
+                               "h := 1\r\n" + //
+                               "b := h\r\n" + //
+                               "i := 1.0\r\n" + //
+                               "c := i\r\n" + //
+                               "j := 2\r\n" + //
+                               "a := j\r\n" + //
+                               "k := 2.0\r\n" + //
+                               "d := k\r\n" + //
+                               "EXTERNAL CALL WriteInt(b)\r\n" + //
+                            "EXTERNAL CALL WriteReal(c)\r\n" + //
+                            "EXTERNAL CALL WriteReal(d)\r\n" + //
+                            "EXTERNAL CALL WriteLn()\r\n" + //
+                            "l := EXTERNAL CALL Divide(b, a)\r\n" + //
+                            "EXTERNAL CALL WriteReal(l)\r\n" + //
+                            "m := 5\r\n" + //
+                            "n := b IADD m\r\n" + //
+                            "o := 6\r\n" + //
+                            "p := b IADD o\r\n" + //
+                            "q := n IMUL p\r\n" + //
+                            "EXTERNAL CALL WriteInt(q)\r\n" + //
+                            "r := 4\r\n" + //
+                            "s := a IADD r\r\n" + //
+                            "t := 5.0\r\n" + //
+                            "u := a RADD t\r\n" + //
+                            "v := s RMUL u\r\n" + //
+                            "EXTERNAL CALL WriteReal(v)\r\n" + //
+                            "EXTERNAL CALL WriteLn()\r\n" + //
+                            "w := 3.1415\r\n" + //
+                            "CALL p ( b -> e , w -> f )\r\n" + //
+                            "x <| g\r\n" + //
+                            "a := x\r\n" + //
+                            "EXTERNAL CALL WriteReal(d)\r\n" + //
+                            "EXTERNAL CALL WriteLn()\r\n" + //
+                            "END\r\n" + //
+                            "PROC LABEL p\r\n" + //
+                            "z <- f\r\n" + //
+                            "A <- e\r\n" + //
+                            "y := 0\r\n" + //
+                            "B := z RADD A\r\n" + //
+                            "C := EXTERNAL CALL Round(B)\r\n" + //
+                            "y := C\r\n" + //
+                            "g |< y\r\n" + //
+                            "RETURN\r\n";
         testDeclanFileOnICode(programName, expectedICode);
     }
 
