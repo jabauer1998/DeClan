@@ -318,7 +318,7 @@ public class MyLinkerTest {
             Program prog = parser.parseProgram();
             MyStandardLibrary lib = new MyStandardLibrary(log);
             MyIrLinker linker = new MyIrLinker(log);
-            Prog irCode = linker.performLinkage(prog, lib.ioLibrary(), lib.mathLibrary(), lib.conversionsLibrary(), lib.intLibrary(), lib.realLibrary());
+            Prog irCode = linker.performLinkage(prog, lib.ioLibrary(), lib.mathLibrary(), lib.conversionsLibrary(), lib.intLibrary(), lib.realLibrary(), lib.utilsLibrary());
             assertTrue("Expected -\n\n" + expectedResult + "\n\n but found \n\n" + irCode.toString(), irCode.toString().equals(expectedResult));
         } catch(Exception exp){
             assertTrue(exp.toString(), false);
