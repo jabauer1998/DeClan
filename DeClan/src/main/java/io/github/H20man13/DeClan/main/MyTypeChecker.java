@@ -945,7 +945,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 				errorLog.add("Error expected 2 arguments into the RNotEqualTo method but found " + valArgs.size(), funcCall.getStart());
 				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 			}
-		} else if(funcName.equals("RealIsZero"))){
+		} else if(funcName.equals("RealIsZero")){
 			if(valArgs.size() == 1){
 				Expression expArg = valArgs.get(0);
 				TypeCheckerQualities qual = expArg.acceptResult(this);
