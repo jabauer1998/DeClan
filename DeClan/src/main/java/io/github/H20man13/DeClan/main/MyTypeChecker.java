@@ -215,50 +215,46 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
         
     @Override
     public void visit(ProcedureCall procedureCall) {
-	if (procedureCall.getProcedureName().getLexeme().equals("PrintInt")) {
-	    TypeCheckerQualities partype = procedureCall.getArguments().get(0).acceptResult(this);
-	    if(!partype.containsQualities(TypeCheckerQualities.INTEGER)){
-			errorLog.add("Procedure Call PrintInt Exprected an Integer Argument", procedureCall.getStart());
-	    }
-	} else if (procedureCall.getProcedureName().getLexeme().equals("PrintDouble")) {
-	    TypeCheckerQualities partype = procedureCall.getArguments().get(0).acceptResult(this);
-	    if(!partype.containsQualities(TypeCheckerQualities.REAL)){
-			errorLog.add("Procedure Call PrintDouble Exprected an Real Argument", procedureCall.getStart());
-	    }
-	} else if(procedureCall.getProcedureName().getLexeme().equals("PrintString")) {
-	    TypeCheckerQualities partype = procedureCall.getArguments().get(0).acceptResult(this);
-	    if(partype.containsQualities(TypeCheckerQualities.STRING)){
-		errorLog.add("Procedure Call PrintDouble Exprected an String Argument", procedureCall.getStart());
-	    }
-	} else if(procedureCall.getProcedureName().getLexeme().equals("PrintLn")){
-	    //do nothing
-	} else {
-	    String funcName = procedureCall.getProcedureName().getLexeme();
-	    if(procEnvironment.entryExists(funcName)){
-		ProcedureTypeEntry pentry = procEnvironment.getEntry(funcName);
-		List<TypeCheckerQualities> args = pentry.getArgumentTypes();
-		List<Expression> valArgs = procedureCall.getArguments();
-		List<TypeCheckerQualities> exprValues = new ArrayList<TypeCheckerQualities>();
-		for(Expression expr : valArgs){
-		    exprValues.add(expr.acceptResult(this));
-		}
-		if(args.size() == valArgs.size()){
-		    for(int i = 0; i < args.size(); i++){
-				TypeCheckerQualities toChangeType = args.get(i);
-				TypeCheckerQualities argumentType = exprValues.get(i);
-				if(argumentType.containsQualities(TypeCheckerQualities.VOID) || argumentType.containsQualities(TypeCheckerQualities.NA)
-				||(argumentType.containsQualities(TypeCheckerQualities.STRING) && toChangeType.missingQualities(TypeCheckerQualities.STRING))
-				||(toChangeType.containsQualities(TypeCheckerQualities.STRING) && argumentType.missingQualities(TypeCheckerQualities.STRING))
-				||(toChangeType.containsQualities(TypeCheckerQualities.BOOLEAN) && argumentType.missingQualities(TypeCheckerQualities.BOOLEAN))
-				||(argumentType.containsQualities(TypeCheckerQualities.BOOLEAN)&& toChangeType.missingQualities(TypeCheckerQualities.BOOLEAN))){
-					errorLog.add("In function " + funcName + " type mismatch at parameter " + (i + 1), procedureCall.getStart());
+		String procName = procedureCall.getProcedureName().getLexeme();
+		if(procEnvironment.entryExists(procName)){
+			ProcedureTypeEntry pentry = procEnvironment.getEntry(procName);
+			List<TypeCheckerQualities> args = pentry.getArgumentTypes();
+			List<Expression> valArgs = procedureCall.getArguments();
+			List<TypeCheckerQualities> exprValues = new ArrayList<TypeCheckerQualities>();
+			for(Expression expr : valArgs){
+		    	exprValues.add(expr.acceptResult(this));
+			}
+			if(args.size() == valArgs.size()){
+				for(int i = 0; i < args.size(); i++){
+					TypeCheckerQualities toChangeType = args.get(i);
+					TypeCheckerQualities argumentType = exprValues.get(i);
+					if(argumentType.containsQualities(TypeCheckerQualities.VOID) || argumentType.containsQualities(TypeCheckerQualities.NA)
+					||(argumentType.containsQualities(TypeCheckerQualities.STRING) && toChangeType.missingQualities(TypeCheckerQualities.STRING))
+					||(toChangeType.containsQualities(TypeCheckerQualities.STRING) && argumentType.missingQualities(TypeCheckerQualities.STRING))
+					||(toChangeType.containsQualities(TypeCheckerQualities.BOOLEAN) && argumentType.missingQualities(TypeCheckerQualities.BOOLEAN))
+					||(argumentType.containsQualities(TypeCheckerQualities.BOOLEAN)&& toChangeType.missingQualities(TypeCheckerQualities.BOOLEAN))){
+						errorLog.add("In function " + procName + " type mismatch at parameter " + (i + 1), procedureCall.getStart());
+					}
 				}
 			}
-		} else {
-		    errorLog.add("Unexpected amount of arguments provided from Caller to Callie in Function " + procedureCall.getProcedureName().getLexeme(), procedureCall.getStart());
+		} else if (procName.equals("PrintInt")) {
+			TypeCheckerQualities partype = procedureCall.getArguments().get(0).acceptResult(this);
+			if(!partype.containsQualities(TypeCheckerQualities.INTEGER)){
+				errorLog.add("Procedure Call PrintInt Exprected an Integer Argument", procedureCall.getStart());
+			}
+		} else if (procName.equals("PrintDouble")) {
+			TypeCheckerQualities partype = procedureCall.getArguments().get(0).acceptResult(this);
+			if(!partype.containsQualities(TypeCheckerQualities.REAL)){
+				errorLog.add("Procedure Call PrintDouble Exprected an Real Argument", procedureCall.getStart());
+			}
+		} else if(procName.equals("PrintString")) {
+			TypeCheckerQualities partype = procedureCall.getArguments().get(0).acceptResult(this);
+			if(partype.missingQualities(TypeCheckerQualities.STRING)){
+				errorLog.add("Procedure Call PrintDouble Exprected an String Argument", procedureCall.getStart());
+			}
+		} else if(procName.equals("PrintLn")){
+			//do nothing
 		}
-	    }
-	}
     }	
 
 
@@ -431,15 +427,48 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 			}
 		default:
 			if(op == BinaryOperation.OpType.EQ || op == BinaryOperation.OpType.NE || op == BinaryOperation.OpType.LT || op == BinaryOperation.OpType.LE || op == BinaryOperation.OpType.GT || op == BinaryOperation.OpType.GE){
+				if(leftValue.missingQualities(TypeCheckerQualities.REAL) && leftValue.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error expected left side of the Relation Operation to be of type REAL or of type INTEGER", binaryOperation.getLeft().getStart());
+				}
+
+				if(rightValue.missingQualities(TypeCheckerQualities.REAL) && rightValue.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error expected left side of the Relation Operation to be of type REAL or of type INTEGER", binaryOperation.getRight().getStart());
+				}
+
 				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
-			} else if(op == BinaryOperation.OpType.DIV || op == BinaryOperation.OpType.BAND || op == BinaryOperation.OpType.BXOR
+			} else if(op == BinaryOperation.OpType.BAND || op == BinaryOperation.OpType.BXOR
 			|| op == BinaryOperation.OpType.BOR || op == BinaryOperation.OpType.LSHIFT || op == BinaryOperation.OpType.RSHIFT){
+				if(leftValue.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error expected left side argument of Bitwise Operation to be of type INTEGER", binaryOperation.getLeft().getStart());
+				}
+
+				if(rightValue.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error expected right hand side argument of Bitwise Operation to be of type INTEGER", binaryOperation.getRight().getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);	
+			} else if(op == BinaryOperation.OpType.DIV){
+				if(leftValue.missingQualities(TypeCheckerQualities.INTEGER) && leftValue.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected left hand side of DIV operation to be of type REAL or INTEGER", binaryOperation.getLeft().getStart());
+				}
+
+				if(rightValue.missingQualities(TypeCheckerQualities.REAL) && rightValue.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error expected right hand side of the DIV operation to he of type REAL or INTEGER", binaryOperation.getRight().getStart());
+				}
 				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);	
 			} else if(op == BinaryOperation.OpType.DIVIDE){
+				if(leftValue.missingQualities(TypeCheckerQualities.INTEGER) && leftValue.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected left hand side of DIVIDE operation to be of type REAL or INTEGER", binaryOperation.getLeft().getStart());
+				}
+
+				if(rightValue.missingQualities(TypeCheckerQualities.REAL) && rightValue.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error expected right hand side of the DIVIDE operation to he of type REAL or INTEGER", binaryOperation.getRight().getStart());
+				}
+
 				return new TypeCheckerQualities(TypeCheckerQualities.REAL);	
 			} else if(leftValue.containsQualities(TypeCheckerQualities.REAL) || rightValue.containsQualities(TypeCheckerQualities.REAL)){
 				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
 			} else {
+				errorLog.add("Error unsupported Operation " + op, binaryOperation.getStart());
 				return leftValue;
 			}
 		}
@@ -447,36 +476,599 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 
     @Override
     public TypeCheckerQualities visitResult(FunctionCall funcCall) {
-	String funcName = funcCall.getFunctionName().getLexeme();
-	if(procEnvironment.entryExists(funcName)){
-	    ProcedureTypeEntry pentry = procEnvironment.getEntry(funcName);
-	    List<TypeCheckerQualities> args = pentry.getArgumentTypes();
-	    List<Expression> valArgs = funcCall.getArguments();
-	    List<TypeCheckerQualities> exprValues = new ArrayList<>();
-	    for(Expression expr : valArgs){
-			exprValues.add(expr.acceptResult(this));
-	    }
-	    if(args.size() == valArgs.size()){
-		for(int i = 0; i < args.size(); i++){
-		    TypeCheckerQualities toChangeType = args.get(i);
-		    TypeCheckerQualities argumentType = exprValues.get(i);
-			if(argumentType.containsQualities(TypeCheckerQualities.VOID) ||argumentType.containsQualities(TypeCheckerQualities.NA)
-			||(argumentType.containsQualities(TypeCheckerQualities.STRING) && toChangeType.missingQualities(TypeCheckerQualities.STRING))
-			||(toChangeType.containsQualities(TypeCheckerQualities.STRING) && argumentType.missingQualities(TypeCheckerQualities.STRING))
-			||(toChangeType.containsQualities(TypeCheckerQualities.BOOLEAN) && argumentType.missingQualities(TypeCheckerQualities.BOOLEAN))
-			||(argumentType.containsQualities(TypeCheckerQualities.BOOLEAN)&& toChangeType.missingQualities(TypeCheckerQualities.BOOLEAN))){
-				errorLog.add("In function " + funcName + " type mismatch at parameter " + (i + 1), funcCall.getStart());
-		    }
+		String funcName = funcCall.getFunctionName().getLexeme();
+		List<Expression> valArgs = funcCall.getArguments();
+		if(procEnvironment.entryExists(funcName)){
+			ProcedureTypeEntry pentry = procEnvironment.getEntry(funcName);
+			List<TypeCheckerQualities> args = pentry.getArgumentTypes();
+			List<TypeCheckerQualities> exprValues = new ArrayList<>();
+			for(Expression expr : valArgs){
+				exprValues.add(expr.acceptResult(this));
+			}
+			if(args.size() == valArgs.size()){
+				for(int i = 0; i < args.size(); i++){
+					TypeCheckerQualities toChangeType = args.get(i);
+					TypeCheckerQualities argumentType = exprValues.get(i);
+					if(argumentType.containsQualities(TypeCheckerQualities.VOID) ||argumentType.containsQualities(TypeCheckerQualities.NA)
+					||(argumentType.containsQualities(TypeCheckerQualities.STRING) && toChangeType.missingQualities(TypeCheckerQualities.STRING))
+					||(toChangeType.containsQualities(TypeCheckerQualities.STRING) && argumentType.missingQualities(TypeCheckerQualities.STRING))
+					||(toChangeType.containsQualities(TypeCheckerQualities.BOOLEAN) && argumentType.missingQualities(TypeCheckerQualities.BOOLEAN))
+					||(argumentType.containsQualities(TypeCheckerQualities.BOOLEAN)&& toChangeType.missingQualities(TypeCheckerQualities.BOOLEAN))){
+						errorLog.add("In function " + funcName + " type mismatch at parameter " + (i + 1), funcCall.getStart());
+					}
+				}
+			} else {
+				errorLog.add("Unexpected amount of arguments provided from Caller to Callie in Function " + funcName, funcCall.getStart());
+			}
+			TypeCheckerQualities retValue = pentry.getReturnType();
+			return retValue;
+		} else if(funcName.equals("ReadInt")){
+			if(valArgs.size() != 0){
+				errorLog.add("Error expected noo arguments into function ReadInt but found " + valArgs.size(), funcCall.getStart());
+			}
+			return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+		} else if(funcName.equals("IntToReal")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error in function IntToReal expected argument of type INTEGER", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			} else {
+				errorLog.add("Error expected 1 argument into the IntToReal method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			}
+		} else if(funcName.equals("RealToInt")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function RealToInt expected argument of type Real", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealToInt method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("RealBinaryAsInt")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function RealBinaryAsInt expected argument of type Real", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealBinaryAsInt method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("IntBinaryAsReal")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error in function IntBinaryAsReal expected argument of type INTEGER", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			} else {
+				errorLog.add("Error expected 1 argument into the IntBinaryAsReal method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			}
+		} else if(funcName.equals("INeg")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error in function INeg expected argument of type INTEGER", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the INeg method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("Div")){
+			if(valArgs.size() == 2){
+				Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error expected 1st paramater in procedure Div to be of type INTEGER", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error expected 2nd paramater in procedure Div to be of type INTEGER", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 2 arguments into the Div method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("Divide")){
+			if(valArgs.size() == 2){
+				Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error expected 1st paramater in procedure Divide to be of type INTEGER", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error expected 2nd paramater in procedure Divide to be of type INTEGER", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			} else {
+				errorLog.add("Error expected 2 arguments into the Divide method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			}
+		} else if(funcName.equals("Mod")){
+			if(valArgs.size() == 2){
+				Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error expected 1st paramater in procedure Mod to be of type INTEGER", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error expected 2nd paramater in procedure Mod to be of type INTEGER", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 2 arguments into the Mod method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("Abs")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error in function Abs expected argument of type INTEGER", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the Abs method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("FAbs")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function FAbs expected argument of type REAL", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			} else {
+				errorLog.add("Error expected 1 argument into the FAbs method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			}
+		} else if(funcName.equals("RealExp")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function RealExp expected argument of type REAL", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealExp method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			}
+		} else if(funcName.equals("IntExp")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error in function IntExp expected argument of type INTEGER", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the IntExp method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("Floor")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function Floor expected argument of type Real", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the Floor method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("Round")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function Round expected argument of type Real", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the Round method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("Ceil")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function Ceil expected argument of type Real", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the Ceil method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("RAdd")){
+			if(valArgs.size() == 2){
+				Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 1st paramater in procedure RAdd to be of type REAL", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 2nd paramater in procedure RAdd to be of type REAL", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			} else {
+				errorLog.add("Error expected 2 arguments into the  RAdd method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			}
+		} else if(funcName.equals("RSub")){
+			if(valArgs.size() == 2){
+				Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 1st paramater in procedure RSub to be of type REAL", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 2nd paramater in procedure RSub to be of type REAL", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			} else {
+				errorLog.add("Error expected 2 arguments into the RSub method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			}
+		} else if(funcName.equals("RMul")){
+			if(valArgs.size() == 2){
+				Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 1st paramater in procedure RMul to be of type REAL", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 2nd paramater in procedure RMul to be of type REAL", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			} else {
+				errorLog.add("Error expected 2 arguments into the RMul method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			}
+		} else if(funcName.equals("RDivide")){
+			if(valArgs.size() == 2){
+				Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 1st paramater in procedure RDivide to be of type REAL", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 2nd paramater in procedure RDivide to be of type REAL", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			} else {
+				errorLog.add("Error expected 2 arguments into the RMul method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			}
+		} else if(funcName.equals("RDiv")){
+			if(valArgs.size() == 2){
+				Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 1st paramater in procedure RDiv to be of type REAL", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 2nd paramater in procedure RDiv to be of type REAL", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 2 arguments into the RMul method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			}
+		} else if(funcName.equals("RLessThan")){
+			if(valArgs.size() == 2){
+				Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 1st paramater in procedure RLessThan to be of type REAL", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 2nd paramater in procedure RLessThan to be of type REAL", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 2 arguments into the RLessThan method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			}
+		} else if(funcName.equals("RLessThanOrEqualTo")){
+			if(valArgs.size() == 2){
+				Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 1st paramater in procedure RLessThanOrEqualTo to be of type REAL", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 2nd paramater in procedure RLessThanOrEqualTo to be of type REAL", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 2 arguments into the RLessThanOrEqualTo method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			}
+		} else if(funcName.equals("RGreaterThan")){
+			if(valArgs.size() == 2){
+				Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 1st paramater in procedure RGreaterThan to be of type REAL", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 2nd paramater in procedure RGreaterThan to be of type REAL", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 2 arguments into the RGreaterThan method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			}
+		} else if(funcName.equals("RGreaterThanOrEqualTo")){
+			if(valArgs.size() == 2){
+				Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 1st paramater in procedure RGreaterThanOrEqualTo to be of type REAL", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 2nd paramater in procedure RGreaterThanOrEqualTo to be of type REAL", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 2 arguments into the RGreaterThanOrEqualTo method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			}
+		} else if(funcName.equals("REqualTo")){
+			if(valArgs.size() == 2){
+				Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 1st paramater in procedure REqualTo to be of type REAL", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 2nd paramater in procedure REqualTo to be of type REAL", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 2 arguments into the REqualTo method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			}
+		} else if(funcName.equals("RNotEqualTo")){
+			if(valArgs.size() == 2){
+				Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 1st paramater in procedure RNotEqualTo to be of type REAL", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected 2nd paramater in procedure RNotEqualTo to be of type REAL", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 2 arguments into the RNotEqualTo method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			}
+		} else if(funcName.equals("RealIsZero"))){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function RealIsZero expected argument of type REAL", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealIsZero method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			}
+		} else if(funcName.equals("IntIsZero")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error in function IntIsZero expected argument of type INTEGER", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 1 argument into the IntIsZero method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			}
+		} else if(funcName.equals("IntIsNegative")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error in function IntIsNegative expected argument of type INTEGER", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 1 argument into the IntIsNegative method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			}
+		} else if(funcName.equals("IntIsPositive")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error in function IntIsPositive expected argument of type INTEGER", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 1 argument into the IntIsPositive method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			}
+		} else if(funcName.equals("RealIsNegative")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function RealIsNegative expected argument of type REAL", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealIsNegative method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			}
+		} else if(funcName.equals("RealIsPositive")) {
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function RealIsPositive expected argument of type REAL", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealIsPositive method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			}
+		} else if(funcName.equals("RealScore")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function RealScore expected argument of type REAL", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealScore method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("RealMantissa")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function RealMantissa expected argument of type REAL", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealMantissa method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("RealSign")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function RealSign expected argument of type REAL", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealSign method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("RealExponent")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function RealExponent expected argument of type REAL", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealExponent method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else {
+			errorLog.add("Noo known function defined in the local Program or in the Standard Library with the name of " + funcName, funcCall.getStart());
+			return new TypeCheckerQualities(TypeCheckerQualities.NULL);
 		}
-	    } else {
-			errorLog.add("Unexpected amount of arguments provided from Caller to Callie in Function " + funcName, funcCall.getStart());
-	    }
-	    TypeCheckerQualities retValue = pentry.getReturnType();
-	    return retValue;
-	} else {
-	    errorLog.add("Couldnt find entry for " + funcName, funcCall.getStart());
-	    return new TypeCheckerQualities(TypeCheckerQualities.NULL);
-	}
     }
 
     @Override
