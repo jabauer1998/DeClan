@@ -1,0 +1,429 @@
+PROCEDURE RAdd(n1: REAL; n2: REAL);
+    VAR result: REAL; intResult: INTEGER; n1Sign: INTEGER; n2Sign: INTEGER; baseDif:INTEGER; n1Exp: INTEGER; n2Exp: INTEGER; n1Base: INTEGER; n2Base: INTEGER; resultExp: INTEGER; resultCarry: INTEGER; resultBase: INTEGER; resultSign: INTEGER;
+    BEGIN
+	n1Sign := RealSign(n1);
+	n2Sign := RealSign(n2);
+	n1Exp := RealExponent(n1);
+	n2Exp := RealExponent(n2);
+	n1Base := RealMantissa(n1);
+	n2Base := RealMantissa(n2);
+	IF (n1Sign = n2Sign) THEN
+	  resultSign := n1Sign;
+	  IF (n1Exp = n2Exp) THEN
+	    resultBase := n1Base + n2Base;
+	    resultCarry := (resultBase >> 25) BAND 1;
+	    resultExp := n1Exp;
+ 	    IF (resultCarry = 1) THEN
+	      resultExp := resultExp + 1;
+	      resultBase := resultBase >> 1;
+	    END;
+	    intResult := resultExp << 23;
+	    intResult := intResult BOR resultBase;
+	    intResult := intResult BOR (resultSign << 31);
+	  ELSIF (n1Exp > n2Exp) THEN
+	    baseDif := n1Exp - n2Exp;
+	    n2Exp := n1Exp;
+	    resultExp := n1Exp;
+	    n2Base := n2Base >> baseDif;
+	    resultBase := n1Base + n2Base;
+	    resultCarry := (resultBase >> 25) BAND 1;
+	    IF (resultCarry = 1) THEN
+	     resultExp := resultExp + 1;
+	     resultBase := resultBase >> 1;
+	    END;
+	    intResult := resultExp << 23;
+	    intResult := intResult BOR (resultSign << 31);
+	    intResult := intResult BOR resultBase;
+	  ELSE
+	    baseDif := n2Exp - n1Exp;
+	    n1Exp := n2Exp;
+	    resultExp := n2Exp;
+	    n1Base := n1Base >> baseDif;
+	    resultBase := n1Base + n2Base;
+	    resultCarry := (resultBase >> 25) BAND 1;
+	    IF (resultCarry = 1) THEN
+	     resultExp := resultExp + 1;
+	     resultBase := resultBase >> 1;
+	    END;
+	    intResult := resultExp << 23;
+ 	    intResult := intResult BOR (resultSign << 31);
+	    intResult := intResult BOR resultBase;
+	  END
+	ELSE
+	  IF ((n1Sign = 0) & (n2Sign = 1)) THEN
+	    IF (n2Base > n1Base) THEN
+	      resultSign := 1;
+	    ELSE
+	      resultSign := 0;
+	    END
+	  ELSE
+	   IF ((n1Sign = 1) & (n2Sign = 0)) THEN
+	     IF (n2Base >= n1Base) THEN
+	       resultSign := 0;
+	     ELSE
+	       resultSign := 1;
+	     END
+	   END;
+	   IF (n1Exp = n2Exp) THEN
+	    resultBase := 0;
+	    resultCarry := (resultBase >> 25) BAND 1;
+	    resultExp := n1Exp;
+ 	    IF (resultCarry = 1) THEN
+	      resultExp := resultExp + 1;
+	      resultBase := resultBase >> 1;
+	    END;
+	    intResult := resultExp << 23;
+	    intResult := intResult BOR resultBase;
+	    intResult := intResult BOR (resultSign << 31);
+	   ELSIF (n1Exp > n2Exp) THEN
+	    baseDif := n1Exp - n2Exp;
+	    n2Exp := n1Exp;
+	    resultExp := n1Exp;
+	    n2Base := n2Base >> baseDif;
+	    IF ((n1Sign = 1) & (n2Sign = 0)) THEN
+	      resultBase := n2Base - n1Base;
+	    ELSE
+	      resultBase := n1Base - n2Base;
+	    END;
+	    resultCarry := (resultBase >> 25) BAND 1;
+	    IF (resultCarry = 1) THEN
+	     resultExp := resultExp + 1;
+	     resultBase := resultBase >> 1;
+	    END;
+	    intResult := resultExp << 23;
+	    intResult := intResult BOR (resultSign << 31);
+	    intResult := intResult BOR resultBase;
+	   ELSE
+	    baseDif := n2Exp - n1Exp;
+	    n1Exp := n2Exp;
+	    resultExp := n2Exp;
+	    n1Base := n1Base >> baseDif;
+	    IF ((n1Sign = 1) & (n2Sign = 0)) THEN
+	      resultBase := n2Base - n1Base;
+	    ELSE
+	      resultBase := n1Base - n2Base;
+	    END;
+	    resultCarry := (resultBase >> 25) BAND 1;
+	    IF (resultCarry = 1) THEN
+	     resultExp := resultExp + 1;
+	     resultBase := resultBase >> 1;
+	    END;
+	    intResult := resultExp << 23;
+ 	    intResult := intResult BOR (resultSign << 31);
+	    intResult := intResult BOR resultBase;
+	   END
+	  END
+	END;
+	result := IntBinaryAsReal(intResult)
+	RETURN result
+    END RAdd;
+PROCEDURE RSub(n1: REAL; n2: REAL);
+    VAR result: REAL;
+    BEGIN
+	result := n1 + (-n2);
+	RETURN result
+    END RSub;
+PROCEDURE RMul(n1: REAL; n2: REAL);
+    VAR result: REAL; intResult: INTEGER; n1Sign: INTEGER; n2Sign: INTEGER; n1Exp: INTEGER; n2Exp: INTEGER; n1Base: INTEGER; n2Base: INTEGER; resultSign: INTEGER; resultBase: INTEGER; resultExp: INTEGER;
+    BEGIN
+	n1Sign := RealSign(n1);
+	n2Sign := RealSign(n2);
+	n1Exp := RealExponent(n1);
+	n2Exp := RealExponent(n2);
+	n1Base := RealMantissa(n1);
+	n2Base := RealMantissa(n2);
+	IF (n1Sign # n2Sign) THEN
+	     resultSign := 1
+	ELSE
+	     resultSign := 0
+	END;
+	resultBase := n1Base * n2Base;
+	resultExp := n1Exp + n2Exp;
+	intResult := resultExp << 23;
+ 	intResult := intResult BOR (resultSign << 31);
+	intResult := intResult BOR resultBase;
+	result := IntBinaryAsReal(intResult)
+	RETURN result
+    END RMul;
+PROCEDURE RDivide(n1: REAL; n2: REAL);
+    VAR result: REAL; intResult: INTEGER; n1Sign: INTEGER; n2Sign: INTEGER; n1Exp: INTEGER; n2Exp: INTEGER; n1Base: INTEGER; n2Base: INTEGER; resultSign: INTEGER; resultBase: INTEGER; resultExp: INTEGER;
+    BEGIN
+	n1Sign := RealSign(n1);
+	n2Sign := RealSign(n2);
+	n1Exp := RealExponent(n1);
+	n2Exp := RealExponent(n2);
+	n1Base := RealMantissa(n1);
+	n2Base := RealMantissa(n2);
+	IF (n1Sign # n2Sign) THEN
+	     resultSign := 1
+	ELSE
+	     resultSign := 0
+	END;
+	resultBase := n1Base DIV n2Base;
+	resultExp := n1Exp - n2Exp;
+	intResult := resultExp << 23;
+ 	intResult := intResult BOR (resultSign << 31);
+	intResult := intResult BOR resultBase;
+	result := IntBinaryAsReal(intResult)
+	RETURN result
+    END RDivide;
+PROCEDURE RDiv(n1: REAL; n2: REAL);
+    VAR result: INTEGER; n1Sign: INTEGER; n2Sign: INTEGER; n1Exp: INTEGER; n2Exp: INTEGER; n1Base: INTEGER; n2Base: INTEGER; resultSign: INTEGER; resultBase: INTEGER; resultExp: INTEGER;
+    BEGIN
+	result := RealToInt(n1 / n2);
+	RETURN result
+    END RDiv;
+PROCEDURE RNeg(n: REAL);
+    VAR lastBit: INTEGER; intN: INTEGER; result: INTEGER;
+    BEGIN
+        lastBit := 1 << 31;
+        intN := RealBinaryAsInt(n);
+	result := intN BXOR lastBit;
+	RETURN result
+    END RNeg;
+PROCEDURE RLessThan(n1: REAL; n2: REAL);
+    VAR result: BOOLEAN; n1IsZero: BOOLEAN; n2IsZero: BOOLEAN; n1IsNegative: BOOLEAN; n2IsNegative: BOOLEAN; n1IsPositive: BOOLEAN; n2IsPositive: BOOLEAN; n1Score: INTEGER; n2Score: INTEGER; n1Value: INTEGER; n2Value: INTEGER;
+    BEGIN
+	n1IsZero := RealIsZero(n1);
+	n2IsZero := RealIsZero(n2);
+	n1IsNegative := RealIsNegative(n1);
+	n2IsNegative := RealIsNegative(n2);
+	n1IsPositive := RealIsPositive(n1);
+	n2IsPositive := RealIsPositive(n2);
+	IF n1IsZero & n2IsZero THEN
+	    result := FALSE
+	ELSIF n1IsNegative & n2IsZero THEN
+	    result := TRUE
+	ELSIF n1IsNegative & n2IsPositive THEN
+	    result := TRUE
+	ELSIF n1IsZero & n2IsPositive THEN
+	    result := TRUE
+	ELSIF n1IsNegative & n2IsNegative THEN
+	    n1Score := RealScore(n1);
+	    n2Score := RealScore(n2);
+	    IF n1Score > n2Score THEN
+	        result := TRUE;
+	    ELSIF n1Score = n2Score THEN 
+		n1Value := RealMantissa(n1);
+	        n2Value := RealMantissa(n2);
+	        IF n1Value > n2Value THEN
+		    result := TRUE
+		ELSE
+		    result := FALSE
+		END
+	    ELSE
+		result := FALSE; 
+	    END
+	ELSIF n1IsPositive & n2IsPositive THEN
+	    n1Score := RealScore(n1);
+	    n1Score := RealScore(n2);
+	    IF n1Score < n2Score THEN
+	        result := TRUE;
+	    ELSIF n1Score = n2Score THEN
+		n1Value := RealMantissa(n1);
+		n2Value := RealMantissa(n2);
+		IF n1Value < n2Value THEN
+		    result := TRUE
+		ELSE
+		    result := FALSE
+		END
+	    ELSE
+	        result := FALSE
+	    END
+	END
+        RETURN result
+    END RLessThan;
+PROCEDURE RLessThanOrEqualTo(n1: REAL; n2: REAL);
+    VAR result: BOOLEAN; n1IsZero: BOOLEAN; n2IsZero: BOOLEAN; n1IsNegative: BOOLEAN; n2IsNegative: BOOLEAN; n1IsPositive: BOOLEAN; n2IsPositive: BOOLEAN; n1Score: INTEGER; n2Score: INTEGER; n1Value: INTEGER; n2Value: INTEGER;
+    BEGIN
+	n1IsZero := RealIsZero(n1);
+	n2IsZero := RealIsZero(n2);
+	n1IsNegative := RealIsNegative(n1);
+	n2IsNegative := RealIsNegative(n2);
+	n1IsPositive := RealIsPositive(n1);
+	n2IsPositive := RealIsPositive(n2);
+	IF n1IsZero & n2IsZero THEN
+	    result := FALSE
+	ELSIF n1IsNegative & n2IsZero THEN
+	    result := TRUE
+	ELSIF n1IsNegative & n2IsPositive THEN
+	    result := TRUE
+	ELSIF n1IsZero & n2IsPositive THEN
+	    result := TRUE
+	ELSIF n1IsNegative & n2IsNegative THEN
+	    n1Score := RealScore(n1);
+	    n2Score := RealScore(n2);
+	    IF n1Score > n2Score THEN
+	        result := TRUE;
+	    ELSIF n1Score = n2Score THEN 
+		n1Value := RealMantissa(n1);
+	        n2Value := RealMantissa(n2);
+	        IF n1Value >= n2Value THEN
+		    result := TRUE
+		ELSE
+		    result := FALSE
+		END
+	    ELSE
+		result := FALSE; 
+	    END
+	ELSIF n1IsPositive & n2IsPositive THEN
+	    n1Score := RealScore(n1);
+	    n1Score := RealScore(n2);
+	    IF n1Score < n2Score THEN
+	        result := TRUE;
+	    ELSIF n1Score = n2Score THEN
+		n1Value := RealMantissa(n1);
+		n2Value := RealMantissa(n2);
+		IF n1Value <= n2Value THEN
+		    result := TRUE
+		ELSE
+		    result := FALSE
+		END
+	    ELSE
+	        result := FALSE
+	    END
+	END
+        RETURN result
+    END RLessThanOrEqualTo;
+PROCEDURE RGreaterThan(n1: REAL; n2: REAL);
+    VAR result: BOOLEAN; n1IsZero: BOOLEAN; n2IsZero: BOOLEAN; n1IsNegative: BOOLEAN; n2IsNegative: BOOLEAN; n1IsPositive: BOOLEAN; n2IsPositive: BOOLEAN; n1Score: INTEGER; n2Score: INTEGER; n1Value: INTEGER; n2Value: INTEGER;
+    BEGIN
+	n1IsZero := RealIsZero(n1);
+	n2IsZero := RealIsZero(n2);
+	n1IsNegative := RealIsNegative(n1);
+	n2IsNegative := RealIsNegative(n2);
+	n1IsPositive := RealIsPositive(n1);
+	n2IsPositive := RealIsPositive(n2);
+	IF n1IsZero & n2IsZero THEN
+	    result := FALSE
+	ELSIF n1IsNegative & n2IsZero THEN
+	    result := TRUE
+	ELSIF n1IsNegative & n2IsPositive THEN
+	    result := TRUE
+	ELSIF n1IsZero & n2IsPositive THEN
+	    result := TRUE
+	ELSIF n1IsNegative & n2IsNegative THEN
+	    n1Score := RealScore(n1);
+	    n2Score := RealScore(n2);
+	    IF n1Score < n2Score THEN
+	        result := TRUE;
+	    ELSIF n1Score = n2Score THEN 
+		n1Value := RealMantissa(n1);
+	        n2Value := RealMantissa(n2);
+	        IF n1Value < n2Value THEN
+		    result := TRUE
+		ELSE
+		    result := FALSE
+		END
+	    ELSE
+		result := FALSE; 
+	    END
+	ELSIF n1IsPositive & n2IsPositive THEN
+	    n1Score := RealScore(n1);
+	    n1Score := RealScore(n2);
+	    IF n1Score > n2Score THEN
+	        result := TRUE;
+	    ELSIF n1Score = n2Score THEN
+		n1Value := RealMantissa(n1);
+		n2Value := RealMantissa(n2);
+		IF n1Value > n2Value THEN
+		    result := TRUE
+		ELSE
+		    result := FALSE
+		END
+	    ELSE
+	        result := FALSE
+	    END
+	END
+        RETURN result
+    END RGreaterThan;
+PROCEDURE RGreaterThanOrEqualTo(n1: REAL; n2: REAL);
+    VAR result: BOOLEAN; n1IsZero: BOOLEAN; n2IsZero: BOOLEAN; n1IsNegative: BOOLEAN; n2IsNegative: BOOLEAN; n1IsPositive: BOOLEAN; n2IsPositive: BOOLEAN; n1Score: INTEGER; n2Score: INTEGER; n1Value: INTEGER; n2Value: INTEGER;
+    BEGIN
+	n1IsZero := RealIsZero(n1);
+	n2IsZero := RealIsZero(n2);
+	n1IsNegative := RealIsNegative(n1);
+	n2IsNegative := RealIsNegative(n2);
+	n1IsPositive := RealIsPositive(n1);
+	n2IsPositive := RealIsPositive(n2);
+	IF n1IsZero & n2IsZero THEN
+	    result := FALSE
+	ELSIF n1IsNegative & n2IsZero THEN
+	    result := TRUE
+	ELSIF n1IsNegative & n2IsPositive THEN
+	    result := TRUE
+	ELSIF n1IsZero & n2IsPositive THEN
+	    result := TRUE
+	ELSIF n1IsNegative & n2IsNegative THEN
+	    n1Score := RealScore(n1);
+	    n2Score := RealScore(n2);
+	    IF n1Score < n2Score THEN
+	        result := TRUE;
+	    ELSIF n1Score = n2Score THEN 
+		n1Value := RealMantissa(n1);
+	        n2Value := RealMantissa(n2);
+	        IF n1Value <= n2Value THEN
+		    result := TRUE
+		ELSE
+		    result := FALSE
+		END
+	    ELSE
+		result := FALSE; 
+	    END
+	ELSIF n1IsPositive & n2IsPositive THEN
+	    n1Score := RealScore(n1);
+	    n1Score := RealScore(n2);
+	    IF n1Score > n2Score THEN
+	        result := TRUE
+	    ELSIF n1Score = n2Score THEN
+		n1Value := RealMantissa(n1);
+		n2Value := RealMantissa(n2);
+		IF n1Value >= n2Value THEN
+		    result := TRUE
+		ELSE
+		    result := FALSE
+		END
+	    ELSE
+	        result := FALSE
+	    END
+	END
+        RETURN result
+    END RGreaterThanOrEqualTo;
+PROCEDURE REqualTo(n1: REAL; n2: REAL);
+    VAR result: BOOLEAN; n1IsZero: BOOLEAN; n2IsZero: BOOLEAN; xorResult: INTEGER; n1AsInt: INTEGER; n2AsInt: INTEGER;
+    BEGIN
+        n1IsZero := RealIsZero(n1);
+	n2IsZero := RealIsZero(n2);
+	IF n1IsZero & n2IsZero THEN
+            result := TRUE
+        ELSE
+	    n1AsInt := RealBinaryAsInt(n1);
+	    n2AsInt := RealBinaryAsInt(n2);
+	    xorResult := n1AsInt BXOR n2AsInt;
+	    IF xorResult = 0 THEN
+	        result := TRUE
+	    ELSE
+		result := FALSE
+	    END
+	END
+	RETURN result
+    END REqualTo;
+PROCEDURE RNotEqualTo(n1: REAL; n2: REAL);
+    VAR result: BOOLEAN; n1IsZero: BOOLEAN; n2IsZero: BOOLEAN; xorResult: INTEGER; n1AsInt: INTEGER; n2AsInt: INTEGER;
+    BEGIN
+        n1IsZero := RealIsZero(n1);
+	n2IsZero := RealIsZero(n2);
+	IF n1IsZero & n2IsZero THEN
+            result := FALSE
+        ELSE
+            n1AsInt := RealBinaryAsInt(n1);
+	    n2AsInt := RealBinaryAsInt(n2);
+	    xorResult := n1AsInt BXOR n2AsInt;
+	    IF xorResult = 0 THEN
+	        result := FALSE
+	    ELSE
+		result := TRUE
+	    END
+	END
+	RETURN result
+    END RNotEqualTo;

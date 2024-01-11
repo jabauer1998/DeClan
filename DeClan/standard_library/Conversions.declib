@@ -1,0 +1,137 @@
+PROCEDURE IntToReal(n: INTEGER);
+    VAR result: REAL; isNeg: BOOLEAN; intResult: INTEGER; furthestOne: INTEGER; count: INTEGER; tempN: INTEGER; lastBit: INTEGER; fullExponent: INTEGER; exponent: INTEGER; mantissa: INTEGER; mantissaMask: INTEGER; toShiftOver: INTEGER;
+    BEGIN
+       tempN := n;
+       count := 0;
+       isNeg := IntIsNegative(n);
+       WHILE ~IntIsZero(tempN) DO
+          lastBit := tempN BAND 1;
+          IF lastBit = 1 THEN
+              furthestOne := count
+          END;
+          count := count + 1;
+          tempN := tempN >> 1;
+       END;
+       IF furthestOne < 23 THEN
+           fullExponent := 23 - furthestOne;
+           exponent := (BNOT fullExponent) + 1;
+           exponent := exponent BAND (BNOT 080000000H);
+           exponent := exponent BOR 040H;
+           mantissaMask := (1 << furthestOne) - 1;
+           mantissa := n BAND mantissaMask;
+           mantissa := mantissa << fullExponent
+       ELSIF furthestOne > 23 THEN
+          fullExponent := furthestOne - 23;
+          exponent := fullExponent;
+          mantissaMask := (1 << furthestOne) - 1;
+          mantissa := n BAND mantissaMask;
+          mantissa := mantissa >> fullExponent
+       ELSE
+          exponent := furthestOne;
+          mantissaMask := (1 << furthestOne) - 1;
+          mantissa := n BAND mantissaMask;
+       END;
+       intResult := mantissa;
+       intResult := intResult BOR (exponent << 23);
+       IF isNeg THEN
+           intResult := intResult BOR (1 << 31);
+       END;
+       result := IntBinaryAsReal(intResult)
+       RETURN result
+    END IntToReal;
+PROCEDURE RealToInt(n: REAL);
+    VAR result: INTEGER; exp: INTEGER; mantissa: INTEGER; sign: INTEGER; fullMantissa: INTEGER; 
+    BEGIN
+	exp := RealExponent(n);
+	mantissa := RealMantissa(n);
+	sign := RealSign(n);
+	fullMantissa := (1 << 23) BOR mantissa;
+	result := fullMantissa << exp;
+	IF sign = 1 THEN
+	    result := ~result;
+	    result := result + 1;
+	END
+	RETURN result
+    END RealToInt;
+PROCEDURE BoolToInt(b: BOOLEAN);
+    VAR result: INTEGER;
+    BEGIN
+        IF b THEN
+            result := 1
+        ELSE
+            result := 0
+        END
+        RETURN result
+    END BoolToInt;
+PROCEDURE BoolToReal(b: BOOLEAN);
+    VAR result: REAL;
+    BEGIN
+        IF b THEN
+            result := 1.0
+        ELSE
+            result := 2.0
+        END
+        RETURN result
+    END BoolToReal;
+PROCEDURE IntToBool(n: INTEGER);
+    VAR result: BOOLEAN;
+    BEGIN
+        IF IntIsZero(n) THEN
+            result := FALSE
+        ELSE
+            result := TRUE
+        END
+        RETURN result
+    END IntToBool;
+PROCEDURE RealToBool(r: REAL);
+    VAR result: BOOLEAN;
+    BEGIN
+        IF RealIsZero(r) THEN
+            result := FALSE
+        ELSE
+            result := TRUE
+        END
+        RETURN result
+    END RealToBool;
+PROCEDURE RealBinaryAsInt(r: REAL);
+    VAR result: INTEGER; temp: REAL;
+    BEGIN
+        asm("LDR %r, %a": temp, r);
+	    asm("STR %r, %a": temp, result)
+	RETURN result
+    END RealBinaryAsInt;
+PROCEDURE IntBinaryAsReal(n: INTEGER);
+    VAR result: REAL; temp: INTEGER;
+    BEGIN
+	    asm("LDR %r, %a": temp, n);
+	    asm("STR %r, %a": temp, result)
+        RETURN result
+    END IntBinaryAsReal;
+PROCEDURE BoolBinaryAsReal(b: BOOLEAN);
+    VAR result: REAL; temp: INTEGER;
+    BEGIN
+        asm("LDRB %r, %a": temp, b);
+        asm("STR %r, %a": temp, result)
+        RETURN result
+    END BoolBinaryAsReal;
+PROCEDURE RealBinaryAsBool(r: REAL);
+    VAR result: BOOLEAN; temp: INTEGER;
+    BEGIN
+        asm("LDR %r, %a": temp, r);
+        asm("STRB %r, %a": temp, result)
+        RETURN result
+    END RealBinaryAsBool;
+PROCEDURE BoolBinaryAsInt(b: BOOLEAN);
+    VAR result: INTEGER; temp: INTEGER;
+    BEGIN
+        asm("LDRB %r, %a": temp, b);
+        asm("STR %r, %a": temp, result)
+        RETURN result
+    END BoolBinaryAsInt;
+PROCEDURE IntBinaryAsBool(n: INTEGER);
+    VAR result: BOOLEAN; temp: INTEGER;
+    BEGIN
+        asm("LDR %r, %a": temp, n);
+        asm("STRB %r, %a": temp, result)
+        RETURN result
+    END IntBinaryAsBool;

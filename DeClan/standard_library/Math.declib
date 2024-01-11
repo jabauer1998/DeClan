@@ -1,0 +1,65 @@
+PROCEDURE Abs(n: INTEGER);
+    VAR result: INTEGER;
+    BEGIN
+        IF n >= 0 THEN 
+            result := n
+        ELSE 
+            result := -n
+        END
+        RETURN result
+    END Abs;
+PROCEDURE RAbs(n: REAL);
+    VAR result: REAL; intResult: INTEGER; signBit: BOOLEAN;
+    BEGIN
+	signBit := RealIsNegative(n);
+	IF signBit THEN
+	    result := RNeg(n)
+	END
+	RETURN result
+    END RAbs;
+PROCEDURE RealExp(n: REAL; exp: INTEGER);
+    VAR result: REAL; count: INTEGER;
+    BEGIN
+	result := 1;
+	count := 0;
+	IF exp > 0 THEN
+	   WHILE(count < exp) DO
+	      result := result * n;
+	      count := count + 1
+	   END
+        ELSIF exp < 0 THEN
+	   WHILE(count > exp) DO
+	      result := result / n;
+	      count := count - 1
+	   END
+	END;
+	RETURN result
+    END RealExp;
+PROCEDURE IntExp(n: INTEGER; exp: INTEGER);
+    VAR result :INTEGER; count :REAL;
+    BEGIN
+        result := 1;
+	count := 0;
+        WHILE(count < exp) DO
+	    result := result * n;
+	    count := count + 1
+	END
+	RETURN result
+    END IntExp;
+PROCEDURE Floor(n: REAL);
+    BEGIN
+	RETURN n
+    END Floor;
+PROCEDURE Round(n: REAL);
+    BEGIN
+    	RETURN Floor(n + 0.5)
+    END Round;
+PROCEDURE Ceil(n: REAL);
+    BEGIN
+        RETURN -1 * Floor(-n)
+    END Ceil;
+
+
+
+    
+

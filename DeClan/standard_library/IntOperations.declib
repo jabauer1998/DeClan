@@ -1,0 +1,33 @@
+PROCEDURE INeg(n: INTEGER);
+    VAR result: INTEGER;
+    BEGIN
+	result := (BNOT n) + 1;
+	RETURN result
+    END INeg;
+PROCEDURE Div (dividend: INTEGER; divisor: INTEGER);
+    VAR total: INTEGER; result: INTEGER;
+    BEGIN
+	total := dividend;
+	result := 0;
+	WHILE ((total - divisor) > 0) DO
+	    total := total - divisor;
+	    result := result + 1
+	END;
+	RETURN result
+    END Div;
+PROCEDURE Divide (dividend: INTEGER; divisor: INTEGER);
+    VAR divResult: INTEGER; realResult: INTEGER;
+    BEGIN
+	divResult := Div(dividend, divisor);
+	realResult := IntToReal(divResult);
+	RETURN realResult
+    END Divide;
+PROCEDURE Mod (dividend: INTEGER; divisor: INTEGER);
+    VAR total: INTEGER; result: INTEGER;
+    BEGIN
+	total := dividend;
+	WHILE((total - divisor) > 0) DO
+             total := total - divisor
+	END
+	RETURN total
+    END Mod;

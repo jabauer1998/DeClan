@@ -1,0 +1,25 @@
+VAR ReadIntTempVar: INTEGER;
+PROCEDURE WriteLn();
+    BEGIN
+	asm("SWI 4");
+    END WriteLn;
+
+PROCEDURE WriteInt(i: INTEGER);
+    BEGIN
+	asm("LDR R0, %a": i);
+	asm("SWI 1");
+    END WriteInt;
+
+PROCEDURE WriteReal(r: REAL);
+    BEGIN
+	asm("LDR R0, %a": r);
+	asm("SWI 2");
+    END WriteReal;
+
+PROCEDURE ReadInt();
+    VAR result: INTEGER;
+    BEGIN
+	asm("SWI 3");
+	asm("STR R0, %a": result);
+	RETURN result
+    END ReadInt;

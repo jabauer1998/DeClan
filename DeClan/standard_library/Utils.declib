@@ -1,0 +1,107 @@
+PROCEDURE RealIsZero(r: REAL);
+    VAR result: BOOLEAN; val: INTEGER;
+    BEGIN
+        val := RealMantissa(r);
+	IF val = 0 THEN
+	   result := TRUE
+	ELSE
+	   result := FALSE
+	END
+	RETURN result
+    END RealIsZero;
+PROCEDURE IntIsZero(n: INTEGER);
+    VAR result: BOOLEAN;
+    BEGIN
+        IF n = 0 THEN
+	    result := TRUE
+	ELSE
+	    result := FALSE
+	END
+	RETURN result
+    END IntIsZero;
+PROCEDURE IntIsNegative(n: INTEGER);
+    VAR result: BOOLEAN; thirtyFirstBit: INTEGER;
+    BEGIN
+	thirtyFirstBit := (n >> 31) BAND 1;
+	IF thirtyFirstBit = 0 THEN
+	    result := FALSE
+	ELSE
+	    result := TRUE
+	END
+	RETURN result
+    END IntIsNegative;
+PROCEDURE RealIsNegative(r: REAL);
+    VAR result: BOOLEAN; thirtyFirstBit: INTEGER;
+    BEGIN
+        thirtyFirstBit := RealSign(r);
+	IF thirtyFirstBit = 0 THEN
+	    result := FALSE
+	ELSE
+	    result := TRUE
+	END
+	RETURN result
+    END RealIsNegative;
+PROCEDURE IntIsPositive(n: INTEGER);
+    VAR result: BOOLEAN; thirtyFirstBit: INTEGER;
+    BEGIN
+	thirtyFirstBit := (n >> 31) BAND 1;
+	IF thirtyFirstBit = 0 THEN
+	    result := TRUE
+	ELSE
+	    result := FALSE
+	END
+	RETURN result
+    END IntIsPositive;
+PROCEDURE RealIsPositive(r: REAL);
+    VAR result: BOOLEAN; realAsInteger: INTEGER; thirtyFirstBit: INTEGER;
+    BEGIN
+        thirtyFirstBit := RealSign(r);
+	IF thirtyFirstBit = 0 THEN
+	    result := TRUE
+	ELSE
+	    result := FALSE
+	END
+	RETURN result
+    END RealIsPositive;
+PROCEDURE RealScore(r: REAL);
+    VAR result: INTEGER; exponent: INTEGER; value: INTEGER; firstOne: INTEGER; temp: INTEGER; count: INTEGER; firstBit: INTEGER;
+    BEGIN
+	exponent := RealExponent(r); 
+	value := RealMantissa(r);
+	IF value = 0 THEN
+	    result := value;
+	ELSE
+	    count := 0;
+	    WHILE value # 0 DO
+		firstBit := value BAND 1;
+		IF firstBit = 1 THEN
+		    firstOne := count;
+		END;
+		value := value >> 1;
+		count := count + 1
+	    END;
+	    result := (23 - firstOne) + exponent;
+	END
+	RETURN result
+    END RealScore;
+PROCEDURE RealMantissa(r: REAL);
+    VAR result: INTEGER; realAsInt: INTEGER;
+    BEGIN
+	realAsInt := RealBinaryAsInt(r);
+        result := realAsInt BAND 07FFFFFH
+	RETURN result
+    END RealMantissa;
+PROCEDURE RealSign(r: REAL);
+    VAR result: INTEGER; realAsInteger: INTEGER;
+    BEGIN
+	realAsInteger := RealBinaryAsInt(r);
+        result := (realAsInteger >> 31) BAND 1
+	RETURN result
+    END RealSign;
+PROCEDURE RealExponent(r: REAL);
+    VAR result: INTEGER; realAsInteger: INTEGER;
+    BEGIN
+	realAsInteger := RealBinaryAsInt(r);
+        result := (realAsInteger >> 23) BAND 0ffH
+	RETURN result
+    END RealExponent;
