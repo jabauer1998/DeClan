@@ -276,16 +276,16 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
     @Override
     public void visit(IfElifBranch ifbranch){
 	Expression toCheck = ifbranch.getExpression();
-	if(toCheck.acceptResult(this).missingQualities(TypeCheckerQualities.BOOLEAN)){
-	    errorLog.add("Invalid Boolean Expression in While Loop", ifbranch.getStart());
-	}
-	List<Statement> toExec = ifbranch.getExecStatements();
-	for(int i = 0; i < toExec.size(); i++){
-	    toExec.get(i).accept(this);
-	}
-	if(ifbranch.getNextBranch() != null) {
-	    ifbranch.getNextBranch().accept(this);
-	}
+		if(toCheck.acceptResult(this).missingQualities(TypeCheckerQualities.BOOLEAN)){
+			errorLog.add("Invalid Boolean Expression in If Statement", ifbranch.getStart());
+		}
+		List<Statement> toExec = ifbranch.getExecStatements();
+		for(int i = 0; i < toExec.size(); i++){
+			toExec.get(i).accept(this);
+		}
+		if(ifbranch.getNextBranch() != null) {
+			ifbranch.getNextBranch().accept(this);
+		}
     }
 
     @Override
@@ -310,33 +310,39 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 
     @Override
     public void visit(ForBranch forbranch){
-	Expression toMod = forbranch.getModifyExpression();
-	List<Statement> toExec = forbranch.getExecStatements();
-	if(toMod != null){
-	    forbranch.getInitAssignment().accept(this);
-	    TypeCheckerQualities incriment = toMod.acceptResult(this);
-	    TypeCheckerQualities target = forbranch.getTargetExpression().acceptResult(this);
-	    TypeCheckerQualities curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-	    if((incriment.containsQualities(TypeCheckerQualities.INTEGER) && incriment.missingQualities(TypeCheckerQualities.INTEGER)) 
-		|| (incriment.containsQualities(TypeCheckerQualities.REAL) && incriment.missingQualities(TypeCheckerQualities.REAL))
-		|| (incriment.containsQualities(TypeCheckerQualities.INTEGER) && curvalue.missingQualities(TypeCheckerQualities.INTEGER))
-		|| (incriment.containsQualities(TypeCheckerQualities.REAL) && curvalue.missingQualities(TypeCheckerQualities.REAL))){
-			errorLog.add("Type Mismatch in head of For Loop", forbranch.getStart());
-	    }
-	    for(int i = 0; i < toExec.size(); i++){
-	       toExec.get(i).accept(this);
-	    }
-	} else {
-	    forbranch.getInitAssignment().accept(this);
-	    TypeCheckerQualities target = forbranch.getTargetExpression().acceptResult(this);
-	    TypeCheckerQualities curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
-	    if(curvalue != target){
-	        errorLog.add("Type Mismatch in head of For Loop", forbranch.getStart());
-	    }
-	    for(int i = 0; i < toExec.size(); i++){
-		toExec.get(i).accept(this);
-	    }
-	}
+		Expression toMod = forbranch.getModifyExpression();
+		List<Statement> toExec = forbranch.getExecStatements();
+		if(toMod != null){
+			forbranch.getInitAssignment().accept(this);
+			TypeCheckerQualities incriment = toMod.acceptResult(this);
+			TypeCheckerQualities target = forbranch.getTargetExpression().acceptResult(this);
+			TypeCheckerQualities curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+
+			if((curvalue.containsQualities(TypeCheckerQualities.INTEGER) && target.missingQualities(TypeCheckerQualities.INTEGER))
+			|| (curvalue.containsQualities(TypeCheckerQualities.REAL) && target.missingQualities(TypeCheckerQualities.REAL))){
+				errorLog.add("Variable in for loop is of type " + curvalue + " but target expression is of type " + target, forbranch.getStart());
+			}
+
+			if((curvalue.containsQualities(TypeCheckerQualities.INTEGER) && incriment.missingQualities(TypeCheckerQualities.INTEGER))
+			|| (curvalue.containsQualities(TypeCheckerQualities.REAL) && incriment.missingQualities(TypeCheckerQualities.REAL))){
+				errorLog.add("Variable in for Loop is of type " + curvalue + " but incriment is of type" + incriment, forbranch.getStart());
+			}
+
+			for(int i = 0; i < toExec.size(); i++){
+			toExec.get(i).accept(this);
+			}
+		} else {
+			forbranch.getInitAssignment().accept(this);
+			TypeCheckerQualities target = forbranch.getTargetExpression().acceptResult(this);
+			TypeCheckerQualities curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+			if((curvalue.containsQualities(TypeCheckerQualities.INTEGER) && target.missingQualities(TypeCheckerQualities.INTEGER))
+			|| (curvalue.containsQualities(TypeCheckerQualities.REAL) && target.missingQualities(TypeCheckerQualities.REAL))){
+				errorLog.add("Variable in for loop is of type " + curvalue + " but target expression is of type " + target, forbranch.getStart());
+			}
+			for(int i = 0; i < toExec.size(); i++){
+				toExec.get(i).accept(this);
+			}
+		}
     }
         
     @Override
@@ -426,7 +432,17 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 			}
 		default:
-			if(op == BinaryOperation.OpType.EQ || op == BinaryOperation.OpType.NE || op == BinaryOperation.OpType.LT || op == BinaryOperation.OpType.LE || op == BinaryOperation.OpType.GT || op == BinaryOperation.OpType.GE){
+		    if(op == BinaryOperation.OpType.EQ || op == BinaryOperation.OpType.NE){
+				if(leftValue.missingQualities(TypeCheckerQualities.REAL) && leftValue.missingQualities(TypeCheckerQualities.INTEGER) && leftValue.missingQualities(TypeCheckerQualities.BOOLEAN)){
+					errorLog.add("Error expected left side of the Relation Operation "+ op + " to be of type REAL, INTEGER, or BOOLEAN", binaryOperation.getLeft().getStart());
+				}
+
+				if(rightValue.missingQualities(TypeCheckerQualities.REAL) && rightValue.missingQualities(TypeCheckerQualities.INTEGER) && rightValue.missingQualities(TypeCheckerQualities.BOOLEAN)){
+					errorLog.add("Error expected left side of the Relation Operation " + op + " to be of type REAL, INTEGER, or BOOLEAN", binaryOperation.getRight().getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else if(op == BinaryOperation.OpType.LT || op == BinaryOperation.OpType.LE || op == BinaryOperation.OpType.GT || op == BinaryOperation.OpType.GE){
 				if(leftValue.missingQualities(TypeCheckerQualities.REAL) && leftValue.missingQualities(TypeCheckerQualities.INTEGER)){
 					errorLog.add("Error expected left side of the Relation Operation "+ op + " to be of type REAL or of type INTEGER", binaryOperation.getLeft().getStart());
 				}

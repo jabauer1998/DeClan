@@ -1,4 +1,4 @@
-CONST ifTrue = 1; ifFalse = 0;
+CONST ifTrue = TRUE; ifFalse = FALSE;
 BEGIN
     IF ifTrue THEN WriteInt(4) 
     ELSE WriteInt(5)
