@@ -24,6 +24,11 @@ public class Position implements Comparable<Position>, Copyable<Position> {
 		this.column = column;
 	}
 
+	public Position(Position pos){
+		this.line = pos.line;
+		this.column = pos.column;
+	}
+
 	public int getLine() {
 		return line;
 	}

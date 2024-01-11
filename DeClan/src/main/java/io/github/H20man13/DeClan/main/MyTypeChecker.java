@@ -428,22 +428,22 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 		default:
 			if(op == BinaryOperation.OpType.EQ || op == BinaryOperation.OpType.NE || op == BinaryOperation.OpType.LT || op == BinaryOperation.OpType.LE || op == BinaryOperation.OpType.GT || op == BinaryOperation.OpType.GE){
 				if(leftValue.missingQualities(TypeCheckerQualities.REAL) && leftValue.missingQualities(TypeCheckerQualities.INTEGER)){
-					errorLog.add("Error expected left side of the Relation Operation to be of type REAL or of type INTEGER", binaryOperation.getLeft().getStart());
+					errorLog.add("Error expected left side of the Relation Operation "+ op + " to be of type REAL or of type INTEGER", binaryOperation.getLeft().getStart());
 				}
 
 				if(rightValue.missingQualities(TypeCheckerQualities.REAL) && rightValue.missingQualities(TypeCheckerQualities.INTEGER)){
-					errorLog.add("Error expected left side of the Relation Operation to be of type REAL or of type INTEGER", binaryOperation.getRight().getStart());
+					errorLog.add("Error expected left side of the Relation Operation " + op + " to be of type REAL or of type INTEGER", binaryOperation.getRight().getStart());
 				}
 
 				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 			} else if(op == BinaryOperation.OpType.BAND || op == BinaryOperation.OpType.BXOR
 			|| op == BinaryOperation.OpType.BOR || op == BinaryOperation.OpType.LSHIFT || op == BinaryOperation.OpType.RSHIFT){
 				if(leftValue.missingQualities(TypeCheckerQualities.INTEGER)){
-					errorLog.add("Error expected left side argument of Bitwise Operation to be of type INTEGER", binaryOperation.getLeft().getStart());
+					errorLog.add("Error expected left side argument of Bitwise Operation " + op + " to be of type INTEGER", binaryOperation.getLeft().getStart());
 				}
 
 				if(rightValue.missingQualities(TypeCheckerQualities.INTEGER)){
-					errorLog.add("Error expected right hand side argument of Bitwise Operation to be of type INTEGER", binaryOperation.getRight().getStart());
+					errorLog.add("Error expected right hand side argument of Bitwise Operation " + op + " to be of type INTEGER", binaryOperation.getRight().getStart());
 				}
 				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);	
 			} else if(op == BinaryOperation.OpType.DIV){
@@ -465,6 +465,20 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 				}
 
 				return new TypeCheckerQualities(TypeCheckerQualities.REAL);	
+			} else if(op == BinaryOperation.OpType.PLUS || op == BinaryOperation.OpType.MINUS || op == BinaryOperation.OpType.TIMES){
+			    if(leftValue.missingQualities(TypeCheckerQualities.INTEGER) && leftValue.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected left hand side of the " + op + " operation to be of type INTEGER or type REAL but found type" + leftValue, binaryOperation.getLeft().getStart());
+				}
+
+				if(rightValue.missingQualities(TypeCheckerQualities.INTEGER) && rightValue.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected right hand side of the " + op + " operation to be of type INTEGER or type REAL but found type" + rightValue, binaryOperation.getRight().getStart());
+				}
+
+				if(leftValue.containsQualities(TypeCheckerQualities.REAL) || rightValue.containsQualities(TypeCheckerQualities.REAL)){
+					return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+				} else {
+					return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+				}
 			} else if(leftValue.containsQualities(TypeCheckerQualities.REAL) || rightValue.containsQualities(TypeCheckerQualities.REAL)){
 				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
 			} else {
@@ -817,6 +831,21 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
 			} else {
 				errorLog.add("Error expected 2 arguments into the RMul method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			}
+		} else if(funcName.equals("RNeg")){
+			if(valArgs.size() == 1){
+				Expression arg1 = valArgs.get(0);
+
+				TypeCheckerQualities qual = arg1.acceptResult(this);
+
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error expected REAL argument into the RNeg method but found " + qual, arg1.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			} else {
+				errorLog.add("Error expected 1 argument into the RNeg method but found " + valArgs.size(), funcCall.getStart());
 				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
 			}
 		} else if(funcName.equals("RLessThan")){

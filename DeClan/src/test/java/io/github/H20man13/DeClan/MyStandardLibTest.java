@@ -8,6 +8,7 @@ import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ErrorLog.LogItem;
 import edu.depauw.declan.common.ast.Library;
 import io.github.H20man13.DeClan.main.MyStandardLibrary;
+import io.github.H20man13.DeClan.main.MyTypeChecker;
 
 public class MyStandardLibTest {
     @Test
@@ -15,6 +16,13 @@ public class MyStandardLibTest {
         ErrorLog errLog = new ErrorLog();
         MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
         Library lib = stdLib.mathLibrary();
+
+        for(LogItem err : errLog){
+            assertTrue(err.toString(), false);
+        }
+
+        MyTypeChecker typeChecker = new MyTypeChecker(errLog);
+        lib.accept(typeChecker);
 
         for(LogItem err : errLog){
             assertTrue(err.toString(), false);
@@ -30,6 +38,13 @@ public class MyStandardLibTest {
         for(LogItem err : errLog){
             assertTrue(err.toString(), false);
         }
+
+        MyTypeChecker typeChecker = new MyTypeChecker(errLog);
+        lib.accept(typeChecker);
+
+        for(LogItem err : errLog){
+            assertTrue(err.toString(), false);
+        }
     }
 
     @Test
@@ -39,6 +54,13 @@ public class MyStandardLibTest {
         Library lib = stdLib.realLibrary();
 
         for(LogItem err: errLog){
+            assertTrue(err.toString(), false);
+        }
+
+        MyTypeChecker typeChecker = new MyTypeChecker(errLog);
+        lib.accept(typeChecker);
+
+        for(LogItem err : errLog){
             assertTrue(err.toString(), false);
         }
     }
@@ -52,6 +74,13 @@ public class MyStandardLibTest {
         for(LogItem err: errLog){
             assertTrue(err.toString(), false);
         }
+
+        MyTypeChecker typeChecker = new MyTypeChecker(errLog);
+        lib.accept(typeChecker);
+
+        for(LogItem err : errLog){
+            assertTrue(err.toString(), false);
+        }
     }
 
     @Test
@@ -63,6 +92,13 @@ public class MyStandardLibTest {
         for(LogItem err: errLog){
             assertTrue(err.toString(), false);
         }
+
+        MyTypeChecker typeChecker = new MyTypeChecker(errLog);
+        lib.accept(typeChecker);
+
+        for(LogItem err : errLog){
+            assertTrue(err.toString(), false);
+        }
     }
 
     @Test
@@ -72,6 +108,13 @@ public class MyStandardLibTest {
         Library lib = stdLib.utilsLibrary();
 
         for(LogItem err: errLog){
+            assertTrue(err.toString(), false);
+        }
+
+        MyTypeChecker typeChecker = new MyTypeChecker(errLog);
+        lib.accept(typeChecker);
+
+        for(LogItem err : errLog){
             assertTrue(err.toString(), false);
         }
     }
