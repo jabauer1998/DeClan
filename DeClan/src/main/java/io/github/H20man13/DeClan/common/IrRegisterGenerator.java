@@ -1,14 +1,23 @@
 package io.github.H20man13.DeClan.common;
 
 public class IrRegisterGenerator {
-    private char startLetter = 'a';
-    private char endLetter = 'z';
-    private char currentLetter = 'a';
-    private int startNumber = 0;
-    private int endNumber = 9;
-    private int currentNumber = 0;
+    private char startLetter;
+    private char endLetter;
+    private char currentLetter;
+    private int startNumber;
+    private int endNumber;
+    private int currentNumber;
+    private boolean firstRound;
 
-    private static boolean firstRound = true;
+	public IrRegisterGenerator(){
+		firstRound = true;
+		startLetter = 'a';
+		endLetter = 'z';
+		currentLetter = 'a';
+		startNumber = 0;
+		endNumber = 9;
+		currentNumber = 0;
+	}
     
     public String genNextRegister(){
 		if(firstRound){

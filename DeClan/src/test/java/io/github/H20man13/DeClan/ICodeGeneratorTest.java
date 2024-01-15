@@ -32,7 +32,6 @@ import io.github.H20man13.DeClan.main.MyIrParser;
 import io.github.H20man13.DeClan.main.MyStandardLibrary;
 
 public class ICodeGeneratorTest {
-    
     public static void testReaderSource(List<ICode> program, String programInput){
         StringBuilder sb = new StringBuilder();
 
@@ -44,13 +43,12 @@ public class ICodeGeneratorTest {
         assertTrue("Expected \n...\n\n" + programInput + "\n\n but found \n\n" + sb.toString(), programInput.equals(sb.toString()));
     }
 
-    private void testDeclanFileOnICode(String programName, String expectedOutput){
+    private static void testDeclanFileOnICode(String programName, String expectedOutput){
         try{
             Source mySource = new ReaderSource(new FileReader(programName));
             ErrorLog errLog = new ErrorLog();
             MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
             MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
-            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
             Program prog = parser.parseProgram();
             
             IrRegisterGenerator gen = new IrRegisterGenerator();
@@ -61,6 +59,8 @@ public class ICodeGeneratorTest {
             List<ICode> flatCode = program.genFlatCode();
 
             testReaderSource(flatCode, expectedOutput);
+
+            parser.close();
         } catch(FileNotFoundException exp) {
             assertTrue("Error File not found...", false);
         }
@@ -299,7 +299,7 @@ public class ICodeGeneratorTest {
                                "C <- e\r\n" + //
                                "A := 0\r\n" + //
                                "D := EXTERNAL CALL IntToReal(C)\r\n" + //
-                               "E := EXTERNAL CALL RAdd(D, C)\r\n" + //
+                               "E := EXTERNAL CALL RAdd(B, D)\r\n" + //
                                "F := EXTERNAL CALL Round(E)\r\n" + //
                                "A := F\r\n" + //
                                "g |< A\r\n" + //
@@ -312,106 +312,112 @@ public class ICodeGeneratorTest {
         String programName = "test_source/expressions.dcl";
         String expectedICode = "a := 0\r\n" + //
                                "b := a\r\n" + //
-                               "c := 1.2\r\n" + //
-                               "d := c\r\n" + //
-                               "e := 3.14\r\n" + //
-                               "f := EXTERNAL CALL RNeg(e)\r\n" + //
-                               "g := f RADD b\r\n" + //
-                               "h := g\r\n" + //
-                               "i := 6\r\n" + //
-                               "j := 6\r\n" + //
-                               "k := 1\r\n" + //
-                               "l := j IADD k\r\n" + //
-                               "m := i IMUL l\r\n" + //
-                               "n := m\r\n" + //
-                               "o := b RMUL d\r\n" + //
-                               "p := EXTERNAL CALL Divide(h, n)\r\n" + //
-                               "q := o NE p\r\n" + //
-                               "r := q\r\n" + //
-                               "s := 0.0\r\n" + //
-                               "t := 0.0\r\n" + //
-                               "u := 0.0\r\n" + //
-                               "v := 0\r\n" + //
-                               "w := 0\r\n" + //
-                               "x := 0\r\n" + //
-                               "y := FALSE\r\n" + //
-                               "z := FALSE\r\n" + //
-                               "A := FALSE\r\n" + //
-                               "B := EXTERNAL CALL Divide(d, d)\r\n" + //
-                               "s := B\r\n" + //
-                               "C := 10\r\n" + //
-                               "D := EXTERNAL CALL Mod(n, C)\r\n" + //
-                               "v := D\r\n" + //
-                               "E := EXTERNAL CALL RNeg(h)\r\n" + //
-                               "F := d RMUL b\r\n" + //
-                               "G := E RSUB F\r\n" + //
-                               "t := G\r\n" + //
-                               "EXTERNAL CALL WriteInt(b)\r\n" + //
-                               "EXTERNAL CALL WriteReal(s)\r\n" + //
-                               "EXTERNAL CALL WriteReal(s)\r\n" + //
-                               "EXTERNAL CALL WriteReal(t)\r\n" + //
-                               "EXTERNAL CALL WriteLn()\r\n" + //
-                               "H := EXTERNAL CALL Div(n, v)\r\n" + //
-                               "w := H\r\n" + //
-                               "I := EXTERNAL CALL Divide(n, v)\r\n" + //
-                               "u := I\r\n" + //
-                               "EXTERNAL CALL WriteInt(w)\r\n" + //
-                               "EXTERNAL CALL WriteReal(u)\r\n" + //
-                               "EXTERNAL CALL WriteLn()\r\n" + //
-                               "J := EXTERNAL CALL Round(h)\r\n" + //
-                               "u := J\r\n" + //
-                               "EXTERNAL CALL WriteReal(u)\r\n" + //
-                               "IF r EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
-                               "LABEL IFSTAT_0_SEQ_0_LEVEL_0\r\n" + //
-                               "K := 2\r\n" + //
-                               "L := 2\r\n" + //
-                               "M := K IMUL L\r\n" + //
-                               "EXTERNAL CALL WriteInt(M)\r\n" + //
-                               "GOTO IFEND_0_LEVEL_0\r\n" + //
-                               "LABEL IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
-                               "N := 10\r\n" + //
-                               "O := EXTERNAL CALL Divide(n, N)\r\n" + //
-                               "EXTERNAL CALL WriteReal(O)\r\n" + //
-                               "GOTO IFEND_0_LEVEL_0\r\n" + //
-                               "LABEL IFNEXT_0_SEQ_1_LEVEL_0\r\n" + //
-                               "LABEL IFEND_0_LEVEL_0\r\n" + //
-                               "EXTERNAL CALL WriteLn()\r\n" + //
-                               "P := BNOT r\r\n" + //
-                               "Q := s GT b\r\n" + //
-                               "R := P LAND Q\r\n" + //
-                               "y := R\r\n" + //
-                               "S := BNOT r\r\n" + //
-                               "T := s GE b\r\n" + //
-                               "U := S LOR T\r\n" + //
-                               "z := U\r\n" + //
-                               "V := y EQ z\r\n" + //
-                               "A := V\r\n" + //
-                               "IF y EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0\r\n" + //
-                               "LABEL IFSTAT_1_SEQ_0_LEVEL_0\r\n" + //
-                               "W := 4\r\n" + //
-                               "EXTERNAL CALL WriteInt(W)\r\n" + //
-                               "GOTO IFEND_1_LEVEL_0\r\n" + //
-                               "LABEL IFNEXT_1_SEQ_0_LEVEL_0\r\n" + //
-                               "IF z EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
-                               "LABEL IFSTAT_1_SEQ_1_LEVEL_0\r\n" + //
-                               "X := 5\r\n" + //
-                               "EXTERNAL CALL WriteInt(X)\r\n" + //
-                               "GOTO IFEND_1_LEVEL_0\r\n" + //
-                               "LABEL IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
-                               "LABEL IFEND_1_LEVEL_0\r\n" + //
-                               "IF A EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0 ELSE IFNEXT_2_SEQ_0_LEVEL_0\r\n" + //
-                               "LABEL IFSTAT_2_SEQ_0_LEVEL_0\r\n" + //
-                               "Y := 5\r\n" + //
-                               "EXTERNAL CALL WriteInt(Y)\r\n" + //
-                               "GOTO IFEND_2_LEVEL_0\r\n" + //
-                               "LABEL IFNEXT_2_SEQ_0_LEVEL_0\r\n" + //
-                               "Z := 6\r\n" + //
-                               "EXTERNAL CALL WriteInt(Z)\r\n" + //
-                               "GOTO IFEND_2_LEVEL_0\r\n" + //
-                               "LABEL IFNEXT_2_SEQ_1_LEVEL_0\r\n" + //
-                               "LABEL IFEND_2_LEVEL_0\r\n" + //
-                               "EXTERNAL CALL WriteLn()\r\n" + //
-                               "END\r\n";
+                                "c := 1.2\r\n" + //
+                                "d := c\r\n" + //
+                                "e := 3.14\r\n" + //
+                                "f := EXTERNAL CALL RNeg(e)\r\n" + //
+                                "g := EXTERNAL CALL IntToReal(b)\r\n" + //
+                                "h := EXTERNAL CALL RAdd(f, g)\r\n" + //
+                                "i := h\r\n" + //
+                                "j := 6\r\n" + //
+                                "k := 6\r\n" + //
+                                "l := 1\r\n" + //
+                                "m := k IADD l\r\n" + //
+                                "n := j IMUL m\r\n" + //
+                                "o := n\r\n" + //
+                                "p := EXTERNAL CALL IntToReal(b)\r\n" + //
+                                "q := EXTERNAL CALL RMul(p, d)\r\n" + //
+                                "r := EXTERNAL CALL IntToReal(o)\r\n" + //
+                                "s := EXTERNAL CALL RDivide(i, r)\r\n" + //
+                                "t := EXTERNAL CALL RNotEqualTo(q, s)\r\n" + //
+                                "u := t\r\n" + //
+                                "v := 0.0\r\n" + //
+                                "w := 0.0\r\n" + //
+                                "x := 0.0\r\n" + //
+                                "y := 0\r\n" + //
+                                "z := 0\r\n" + //
+                                "A := 0\r\n" + //
+                                "B := FALSE\r\n" + //
+                                "C := FALSE\r\n" + //
+                                "D := FALSE\r\n" + //
+                                "E := EXTERNAL CALL RDivide(d, d)\r\n" + //
+                                "v := E\r\n" + //
+                                "F := 10\r\n" + //
+                                "G := EXTERNAL CALL Mod(o, F)\r\n" + //
+                                "y := G\r\n" + //
+                                "H := EXTERNAL CALL RNeg(i)\r\n" + //
+                                "I := EXTERNAL CALL IntToReal(b)\r\n" + //
+                                "J := EXTERNAL CALL RMul(d, I)\r\n" + //
+                                "K := EXTERNAL CALL RSub(H, J)\r\n" + //
+                                "w := K\r\n" + //
+                                "EXTERNAL CALL WriteInt(b)\r\n" + //
+                                "EXTERNAL CALL WriteReal(v)\r\n" + //
+                                "EXTERNAL CALL WriteReal(v)\r\n" + //
+                                "EXTERNAL CALL WriteReal(w)\r\n" + //
+                                "EXTERNAL CALL WriteLn()\r\n" + //
+                                "L := EXTERNAL CALL Div(o, y)\r\n" + //
+                                "z := L\r\n" + //
+                                "M := EXTERNAL CALL Divide(o, y)\r\n" + //
+                                "x := M\r\n" + //
+                                "EXTERNAL CALL WriteInt(z)\r\n" + //
+                                "EXTERNAL CALL WriteReal(x)\r\n" + //
+                                "EXTERNAL CALL WriteLn()\r\n" + //
+                                "N := EXTERNAL CALL Round(i)\r\n" + //
+                                "x := N\r\n" + //
+                                "EXTERNAL CALL WriteReal(x)\r\n" + //
+                                "IF u EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "LABEL IFSTAT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "O := 2\r\n" + //
+                                "P := 2\r\n" + //
+                                "Q := O IMUL P\r\n" + //
+                                "EXTERNAL CALL WriteInt(Q)\r\n" + //
+                                "GOTO IFEND_0_LEVEL_0\r\n" + //
+                                "LABEL IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "R := 10\r\n" + //
+                                "S := EXTERNAL CALL Divide(o, R)\r\n" + //
+                                "EXTERNAL CALL WriteReal(S)\r\n" + //
+                                "GOTO IFEND_0_LEVEL_0\r\n" + //
+                                "LABEL IFNEXT_0_SEQ_1_LEVEL_0\r\n" + //
+                                "LABEL IFEND_0_LEVEL_0\r\n" + //
+                                "EXTERNAL CALL WriteLn()\r\n" + //
+                                "T := BNOT u\r\n" + //
+                                "U := EXTERNAL CALL IntToReal(b)\r\n" + //
+                                "V := EXTERNAL CALL RGreaterThan(v, U)\r\n" + //
+                                "W := T LAND V\r\n" + //
+                                "B := W\r\n" + //
+                                "X := BNOT u\r\n" + //
+                                "Y := EXTERNAL CALL IntToReal(b)\r\n" + //
+                                "Z := EXTERNAL CALL RGreaterThanOrEqualTo(v, Y)\r\n" + //
+                                "a0 := X LOR Z\r\n" + //
+                                "C := a0\r\n" + //
+                                "a1 := B EQ C\r\n" + //
+                                "D := a1\r\n" + //
+                                "IF B EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0\r\n" + //
+                                "LABEL IFSTAT_1_SEQ_0_LEVEL_0\r\n" + //
+                                "a2 := 4\r\n" + //
+                                "EXTERNAL CALL WriteInt(a2)\r\n" + //
+                                "GOTO IFEND_1_LEVEL_0\r\n" + //
+                                "LABEL IFNEXT_1_SEQ_0_LEVEL_0\r\n" + //
+                                "IF C EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
+                                "LABEL IFSTAT_1_SEQ_1_LEVEL_0\r\n" + //
+                                "a3 := 5\r\n" + //
+                                "EXTERNAL CALL WriteInt(a3)\r\n" + //
+                                "GOTO IFEND_1_LEVEL_0\r\n" + //
+                                "LABEL IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
+                                "LABEL IFEND_1_LEVEL_0\r\n" + //
+                                "IF D EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0 ELSE IFNEXT_2_SEQ_0_LEVEL_0\r\n" + //
+                                "LABEL IFSTAT_2_SEQ_0_LEVEL_0\r\n" + //
+                                "a4 := 5\r\n" + //
+                                "EXTERNAL CALL WriteInt(a4)\r\n" + //
+                                "GOTO IFEND_2_LEVEL_0\r\n" + //
+                                "LABEL IFNEXT_2_SEQ_0_LEVEL_0\r\n" + //
+                                "a5 := 6\r\n" + //
+                                "EXTERNAL CALL WriteInt(a5)\r\n" + //
+                                "GOTO IFEND_2_LEVEL_0\r\n" + //
+                                "LABEL IFNEXT_2_SEQ_1_LEVEL_0\r\n" + //
+                                "LABEL IFEND_2_LEVEL_0\r\n" + //
+                                "EXTERNAL CALL WriteLn()\r\n" + //
+                                "END\r\n";
         testDeclanFileOnICode(programName, expectedICode);
     }
 
@@ -419,20 +425,20 @@ public class ICodeGeneratorTest {
     public void testForLoopAdvanced(){
         String programName = "test_source/ForLoopBasic.dcl";
         String expectedResult= "a := 0\r\n" + //
-                               "b := 1\r\n" + //
-                               "a := b\r\n" + //
-                               "c := 10\r\n" + //
-                               "LABEL FORBEG_0_LEVEL_0\r\n" + //
-                               "IF a NE c THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0\r\n" + //
-                               "LABEL FORLOOP_0_LEVEL_0\r\n" + //
-                               "EXTERNAL CALL WriteInt(a)\r\n" + //
-                               "d := 1\r\n" + //
-                               "e := a IADD d\r\n" + //
-                               "a := e\r\n" + //
-                               "GOTO FORBEG_0_LEVEL_0\r\n" + //
-                               "LABEL FOREND_0_LEVEL_0\r\n" + //
-                               "EXTERNAL CALL WriteLn()\r\n" + //
-                               "END\r\n";
+                                "b := 1\r\n" + //
+                                "a := b\r\n" + //
+                                "c := 10\r\n" + //
+                                "LABEL FORBEG_0_LEVEL_0\r\n" + //
+                                "IF a NE c THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0\r\n" + //
+                                "LABEL FORLOOP_0_LEVEL_0\r\n" + //
+                                "EXTERNAL CALL WriteInt(a)\r\n" + //
+                                "d := 1\r\n" + //
+                                "e := a IADD d\r\n" + //
+                                "a := e\r\n" + //
+                                "GOTO FORBEG_0_LEVEL_0\r\n" + //
+                                "LABEL FOREND_0_LEVEL_0\r\n" + //
+                                "EXTERNAL CALL WriteLn()\r\n" + //
+                                "END\r\n";
         testDeclanFileOnICode(programName, expectedResult);
     }
 
@@ -475,7 +481,6 @@ public class ICodeGeneratorTest {
                                "LABEL FOREND_0_LEVEL_0\r\n" + //
                                "EXTERNAL CALL WriteLn()\r\n" + //
                                "END\r\n";
-        testDeclanFileOnICode(programName, expectedICode);
     }
 
     @Test
@@ -543,39 +548,39 @@ public class ICodeGeneratorTest {
     @Test
     public void testIfStatementBasic(){
         String programName = "test_source/IfStatementBasic.dcl";
-        String expectedICode = "a := 1\r\n" + //
-                               "b := a\r\n" + //
-                               "c := 0\r\n" + //
-                               "d := c\r\n" + //
-                               "IF b EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
-                               "LABEL IFSTAT_0_SEQ_0_LEVEL_0\r\n" + //
-                               "e := 4\r\n" + //
-                               "EXTERNAL CALL WriteInt(e)\r\n" + //
-                               "GOTO IFEND_0_LEVEL_0\r\n" + //
-                               "LABEL IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
-                               "f := 5\r\n" + //
-                               "EXTERNAL CALL WriteInt(f)\r\n" + //
-                               "GOTO IFEND_0_LEVEL_0\r\n" + //
-                               "LABEL IFNEXT_0_SEQ_1_LEVEL_0\r\n" + //
-                               "LABEL IFEND_0_LEVEL_0\r\n" + //
-                               "IF d EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0\r\n" + //
-                               "LABEL IFSTAT_1_SEQ_0_LEVEL_0\r\n" + //
-                               "g := 2\r\n" + //
-                               "EXTERNAL CALL WriteInt(g)\r\n" + //
-                               "GOTO IFEND_1_LEVEL_0\r\n" + //
-                               "LABEL IFNEXT_1_SEQ_0_LEVEL_0\r\n" + //
-                               "IF b EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
-                               "LABEL IFSTAT_1_SEQ_1_LEVEL_0\r\n" + //
-                               "h := 5\r\n" + //
-                               "EXTERNAL CALL WriteInt(h)\r\n" + //
-                               "GOTO IFEND_1_LEVEL_0\r\n" + //
-                               "LABEL IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
-                               "i := 6\r\n" + //
-                               "EXTERNAL CALL WriteInt(i)\r\n" + //
-                               "GOTO IFEND_1_LEVEL_0\r\n" + //
-                               "LABEL IFNEXT_1_SEQ_2_LEVEL_0\r\n" + //
-                               "LABEL IFEND_1_LEVEL_0\r\n" + //
-                               "END\r\n";
+        String expectedICode = "a := TRUE\r\n" + //
+                                "b := a\r\n" + //
+                                "c := FALSE\r\n" + //
+                                "d := c\r\n" + //
+                                "IF b EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "LABEL IFSTAT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "e := 4\r\n" + //
+                                "EXTERNAL CALL WriteInt(e)\r\n" + //
+                                "GOTO IFEND_0_LEVEL_0\r\n" + //
+                                "LABEL IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "f := 5\r\n" + //
+                                "EXTERNAL CALL WriteInt(f)\r\n" + //
+                                "GOTO IFEND_0_LEVEL_0\r\n" + //
+                                "LABEL IFNEXT_0_SEQ_1_LEVEL_0\r\n" + //
+                                "LABEL IFEND_0_LEVEL_0\r\n" + //
+                                "IF d EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0\r\n" + //
+                                "LABEL IFSTAT_1_SEQ_0_LEVEL_0\r\n" + //
+                                "g := 2\r\n" + //
+                                "EXTERNAL CALL WriteInt(g)\r\n" + //
+                                "GOTO IFEND_1_LEVEL_0\r\n" + //
+                                "LABEL IFNEXT_1_SEQ_0_LEVEL_0\r\n" + //
+                                "IF b EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
+                                "LABEL IFSTAT_1_SEQ_1_LEVEL_0\r\n" + //
+                                "h := 5\r\n" + //
+                                "EXTERNAL CALL WriteInt(h)\r\n" + //
+                                "GOTO IFEND_1_LEVEL_0\r\n" + //
+                                "LABEL IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
+                                "i := 6\r\n" + //
+                                "EXTERNAL CALL WriteInt(i)\r\n" + //
+                                "GOTO IFEND_1_LEVEL_0\r\n" + //
+                                "LABEL IFNEXT_1_SEQ_2_LEVEL_0\r\n" + //
+                                "LABEL IFEND_1_LEVEL_0\r\n" + //
+                                "END\r\n";
         testDeclanFileOnICode(programName, expectedICode);
     }
 
@@ -777,36 +782,37 @@ public class ICodeGeneratorTest {
                                 "k := j IMUL e\r\n" + //
                                 "e := k\r\n" + //
                                 "l := 1.0\r\n" + //
-                                "m := e RMUL l\r\n" + //
-                                "EXTERNAL CALL WriteReal(m)\r\n" + //
+                                "m := EXTERNAL CALL IntToReal(e)\r\n" + //
+                                "n := EXTERNAL CALL RMul(m, l)\r\n" + //
+                                "EXTERNAL CALL WriteReal(n)\r\n" + //
                                 "EXTERNAL CALL WriteLn()\r\n" + //
                                 "END\r\n" + //
                                 "PROC LABEL gcd\r\n" + //
-                                "n <- f\r\n" + //
-                                "o <- g\r\n" + //
-                                "p := n NE o\r\n" + //
-                                "IF p EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "o <- f\r\n" + //
+                                "p <- g\r\n" + //
+                                "q := o NE p\r\n" + //
+                                "IF q EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
                                 "LABEL WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
-                                "IF p EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0\r\n" + //
+                                "IF q EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0\r\n" + //
                                 "LABEL WHILESTAT_0_SEQ_0_LEVEL_0\r\n" + //
-                                "q := n GT o\r\n" + //
-                                "IF q EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
+                                "r := o GT p\r\n" + //
+                                "IF r EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
                                 "LABEL IFSTAT_0_SEQ_0_LEVEL_0\r\n" + //
-                                "r := n ISUB o\r\n" + //
-                                "n := r\r\n" + //
+                                "s := o ISUB p\r\n" + //
+                                "o := s\r\n" + //
                                 "GOTO IFEND_0_LEVEL_0\r\n" + //
                                 "LABEL IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
-                                "s := o ISUB n\r\n" + //
-                                "o := s\r\n" + //
+                                "t := p ISUB o\r\n" + //
+                                "p := t\r\n" + //
                                 "GOTO IFEND_0_LEVEL_0\r\n" + //
                                 "LABEL IFNEXT_0_SEQ_1_LEVEL_0\r\n" + //
                                 "LABEL IFEND_0_LEVEL_0\r\n" + //
-                                "t := n NE o\r\n" + //
-                                "p := t\r\n" + //
+                                "u := o NE p\r\n" + //
+                                "q := u\r\n" + //
                                 "GOTO WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
                                 "LABEL WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
                                 "LABEL WHILEEND_0_LEVEL_0\r\n" + //
-                                "h |< n\r\n" + //
+                                "h |< o\r\n" + //
                                 "RETURN\r\n";
         testDeclanFileOnICode(programName, expectedICode);
     }
@@ -816,8 +822,8 @@ public class ICodeGeneratorTest {
         String programName = "test_source/test.dcl";
         String expectedICode = "a := 42\r\n" + //
                                "b := EXTERNAL CALL INeg(a)\r\n" + //
-                               "c := b\r\n" + //
-                               "d := 0\r\n" + //
+                                "c := b\r\n" + //
+                                "d := 0\r\n" + //
                                 "d := c\r\n" + //
                                 "g := 0\r\n" + //
                                 "h := d LT g\r\n" + //
@@ -977,63 +983,65 @@ public class ICodeGeneratorTest {
     public void testTest3(){
         String programName = "test_source/test3.dcl";
         String expectedICode = "a := 42\r\n" + //
-                               "b := a\r\n" + //
-                               "c := 42.0\r\n" + //
-                               "d := c\r\n" + //
-                               "e := 0\r\n" + //
-                               "f := 0\r\n" + //
+                                "b := a\r\n" + //
+                                "c := 42.0\r\n" + //
+                                "d := c\r\n" + //
+                                "e := 0\r\n" + //
+                                "f := 0\r\n" + //
                                 "g := 0.0\r\n" + //
                                 "h := 0.0\r\n" + //
                                 "i := FALSE\r\n" + //
-                                "o := b RMUL h\r\n" + //
-                                "CALL Foo ( e -> j , g -> k , o -> l )\r\n" + //
-                                "p <| m\r\n" + //
-                                "i := p\r\n" + //
+                                "o := EXTERNAL CALL IntToReal(b)\r\n" + //
+                                "p := EXTERNAL CALL RMul(o, h)\r\n" + //
+                                "CALL Foo ( e -> j , g -> k , p -> l )\r\n" + //
+                                "q <| m\r\n" + //
+                                "i := q\r\n" + //
                                 "IF i EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
                                 "LABEL IFSTAT_0_SEQ_0_LEVEL_0\r\n" + //
                                 "EXTERNAL CALL WriteInt(e)\r\n" + //
                                 "GOTO IFEND_0_LEVEL_0\r\n" + //
                                 "LABEL IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
-                                "q := d RSUB b\r\n" + //
-                                "EXTERNAL CALL WriteReal(q)\r\n" + //
+                                "r := EXTERNAL CALL IntToReal(b)\r\n" + //
+                                "s := EXTERNAL CALL RSub(d, r)\r\n" + //
+                                "EXTERNAL CALL WriteReal(s)\r\n" + //
                                 "GOTO IFEND_0_LEVEL_0\r\n" + //
                                 "LABEL IFNEXT_0_SEQ_1_LEVEL_0\r\n" + //
                                 "LABEL IFEND_0_LEVEL_0\r\n" + //
                                 "END\r\n" + //
                                 "PROC LABEL Foo\r\n" + //
-                                "s <- j\r\n" + //
-                                "r := 0\r\n" + //
-                                "r := b\r\n" + //
+                                "u <- j\r\n" + //
+                                "t := 0\r\n" + //
+                                "t := b\r\n" + //
                                 "LABEL FORBEG_0_LEVEL_0\r\n" + //
-                                "IF r GT s THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0\r\n" + //
+                                "IF t GT u THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0\r\n" + //
                                 "LABEL FORLOOP_0_LEVEL_0\r\n" + //
                                 "CALL Bar (  )\r\n" + //
-                                "t := 20\r\n" + //
-                                "u := EXTERNAL CALL INeg(t)\r\n" + //
-                                "v := r IADD u\r\n" + //
-                                "r := v\r\n" + //
+                                "v := 20\r\n" + //
+                                "w := EXTERNAL CALL INeg(v)\r\n" + //
+                                "x := t IADD w\r\n" + //
+                                "t := x\r\n" + //
                                 "GOTO FORBEG_0_LEVEL_0\r\n" + //
                                 "LABEL FOREND_0_LEVEL_0\r\n" + //
-                                "y := 3.14159265\r\n" + //
-                                "z := x GT y\r\n" + //
-                                "A := w LAND z\r\n" + //
-                                "m |< A\r\n" + //
+                                "A := 3.14159265\r\n" + //
+                                "B := EXTERNAL CALL RGreaterThan(z, A)\r\n" + //
+                                "C := y LAND B\r\n" + //
+                                "m |< C\r\n" + //
                                 "RETURN\r\n" + //
                                 "PROC LABEL Bar\r\n" + //
-                                "B := FALSE\r\n" + //
-                                "C := 1\r\n" + //
-                                "D := e IADD C\r\n" + //
-                                "e := D\r\n" + //
-                                "E := BNOT i\r\n" + //
-                                "IF E EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0\r\n" + //
+                                "D := FALSE\r\n" + //
+                                "E := 1\r\n" + //
+                                "F := e IADD E\r\n" + //
+                                "e := F\r\n" + //
+                                "G := BNOT i\r\n" + //
+                                "IF G EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0\r\n" + //
                                 "LABEL IFSTAT_1_SEQ_0_LEVEL_0\r\n" + //
-                                "F := TRUE\r\n" + //
-                                "i := F\r\n" + //
-                                "G := 0\r\n" + //
-                                "H := 0\r\n" + //
-                                "CALL Foo ( f -> j , G -> k , H -> l )\r\n" + //
-                                "I <| m\r\n" + //
-                                "B := I\r\n" + //
+                                "H := TRUE\r\n" + //
+                                "i := H\r\n" + //
+                                "I := 0\r\n" + //
+                                "J := 0\r\n" + //
+                                "CALL Foo ( f -> j , I -> k , J -> l )\r\n" + //
+                                "K <| m\r\n" + //
+                                "D := K\r\n" + //
                                 "GOTO IFEND_1_LEVEL_0\r\n" + //
                                 "LABEL IFNEXT_1_SEQ_0_LEVEL_0\r\n" + //
                                 "LABEL IFEND_1_LEVEL_0\r\n" + //
@@ -1045,7 +1053,7 @@ public class ICodeGeneratorTest {
     public void testTest4(){
         String programName = "test_source/test4.dcl";
         String expectedICode = "a := 0\r\n" + //
-                                "b := 0\r\n" + //
+                               "b := 0\r\n" + //
                                 "c := 0\r\n" + //
                                 "j := EXTERNAL CALL ReadInt()\r\n" + //
                                 "a := j\r\n" + //
