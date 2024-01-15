@@ -52,7 +52,7 @@ public class MyIrFactory {
         return new Assign(place, new BoolExp(trueOrFalse));
     }
 
-    public Assign produceRealAssignment(String place, double value){
+    public Assign produceRealAssignment(String place, float value){
         return new Assign(place, new RealExp(value));
     }
 

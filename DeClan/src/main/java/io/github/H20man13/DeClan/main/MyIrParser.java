@@ -270,7 +270,7 @@ public class MyIrParser {
         } else if(willMatch(IrTokenType.NUMBER)){
             IrToken tok = skip();
             if(tok.getLexeme().contains(".")){
-                return new RealExp(Double.parseDouble(tok.getLexeme()));
+                return new RealExp(Float.parseFloat(tok.getLexeme()));
             } else {
                 return new IntExp(Integer.parseInt(tok.getLexeme()));
             }

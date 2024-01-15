@@ -3,12 +3,12 @@ package io.github.H20man13.DeClan.common.util;
 public class OpUtil {
     public static Object negate(Object val){
         if(val instanceof Integer) return -(Integer)val;
-        else if(val instanceof Double) return -(Double)val;
+        else if(val instanceof Float) return -(Float)val;
         else return null;
     }
 
     public static Object rNegate(Object val){
-        Double dVal = Utils.toDouble(val);
+        Float dVal = Utils.toReal(val);
         return -dVal;
     }
 
@@ -26,30 +26,30 @@ public class OpUtil {
     }
 
     public static Object notEqual(Object val1, Object val2){
-        if(val1 instanceof Double || val2 instanceof Double) return Utils.toDouble(val1) != Utils.toDouble(val2);
+        if(val1 instanceof Float || val2 instanceof Float) return Utils.toReal(val1) != Utils.toReal(val2);
         else if(val1 instanceof Integer || val2 instanceof Integer) return Utils.toInt(val1) != Utils.toInt(val2);
         else if(val1 instanceof Boolean || val2 instanceof Boolean) return Utils.toBool(val1) != Utils.toBool(val2);
         else return null;
     }
 
     public static Object equal(Object val1, Object val2){
-        if(val1 instanceof Double || val2 instanceof Double) return Utils.toDouble(val1) == Utils.toDouble(val2);
+        if(val1 instanceof Float || val2 instanceof Float) return Utils.toReal(val1) == Utils.toReal(val2);
         else if(val1 instanceof Integer || val2 instanceof Integer) return Utils.toInt(val1) == Utils.toInt(val2);
         else if(val1 instanceof Boolean || val2 instanceof Boolean) return Utils.toBool(val1) == Utils.toBool(val2);
         else return null;
     }
 
     public static Object plus(Object val1, Object val2){
-        if(val1 instanceof Double && val2 instanceof Double) return (Double)val1 + (Double)val2;
-        else if(val1 instanceof Integer && val2 instanceof Double) return (Integer)val1 + (Double)val2;
-        else if(val1 instanceof Double && val2 instanceof Integer) return (Double)val1 + (Integer)val2;
+        if(val1 instanceof Float && val2 instanceof Float) return (Float)val1 + (Float)val2;
+        else if(val1 instanceof Integer && val2 instanceof Float) return (Integer)val1 + (Float)val2;
+        else if(val1 instanceof Float && val2 instanceof Integer) return (Float)val1 + (Integer)val2;
         else if(val1 instanceof Integer && val2 instanceof Integer) return (Integer)val1 + (Integer)val2;
         else return null;
     }
 
     public static Object rAdd(Object val1, Object val2){
-        Double rval1 = Utils.toDouble(val1);
-        Double rval2 = Utils.toDouble(val2);
+        Float rval1 = Utils.toReal(val1);
+        Float rval2 = Utils.toReal(val2);
         return rval1 + rval2;
     }
 
@@ -60,16 +60,16 @@ public class OpUtil {
     }
 
     public static Object minus(Object val1, Object val2){
-        if(val1 instanceof Double && val2 instanceof Double) return (Double)val1 - (Double)val2;
-        else if(val1 instanceof Integer && val2 instanceof Double) return (Integer)val1 - (Double)val2;
-        else if(val1 instanceof Double && val2 instanceof Integer) return (Double)val1 - (Integer)val2;
+        if(val1 instanceof Float && val2 instanceof Float) return (Float)val1 - (Float)val2;
+        else if(val1 instanceof Integer && val2 instanceof Float) return (Integer)val1 - (Float)val2;
+        else if(val1 instanceof Float && val2 instanceof Integer) return (Float)val1 - (Integer)val2;
         else if(val1 instanceof Integer && val2 instanceof Integer) return (Integer)val1 - (Integer)val2;
         else return null;
     }
 
     public static Object rSub(Object val1, Object val2){
-        Double rval1 = Utils.toDouble(val1);
-        Double rval2 = Utils.toDouble(val2);
+        Float rval1 = Utils.toReal(val1);
+        Float rval2 = Utils.toReal(val2);
         return rval1 - rval2;
     }
 
@@ -80,16 +80,16 @@ public class OpUtil {
     }
 
     public static Object times(Object val1, Object val2){
-        if(val1 instanceof Double && val2 instanceof Double) return (Double)val1 * (Double)val2;
-        else if(val1 instanceof Integer && val2 instanceof Double) return (Integer)val1 * (Double)val2;
-        else if(val1 instanceof Double && val2 instanceof Integer) return (Double)val1 * (Integer)val2;
+        if(val1 instanceof Float && val2 instanceof Float) return (Float)val1 * (Float)val2;
+        else if(val1 instanceof Integer && val2 instanceof Float) return (Integer)val1 * (Float)val2;
+        else if(val1 instanceof Float && val2 instanceof Integer) return (Float)val1 * (Integer)val2;
         else if(val1 instanceof Integer && val2 instanceof Integer) return (Integer)val1 * (Integer)val2;
         else return null;
     }
 
     public static Object rMul(Object val1, Object val2){
-        Double rVal1 = Utils.toDouble(val1);
-        Double rVal2 = Utils.toDouble(val2);
+        Float rVal1 = Utils.toReal(val1);
+        Float rVal2 = Utils.toReal(val2);
         return rVal1 * rVal2;
     }
 
@@ -100,17 +100,17 @@ public class OpUtil {
     }
 
     public static Object divide(Object val1, Object val2){
-        if(val1 instanceof Double && val2 instanceof Double) return (Double)val1 / (Double)val2;
-        else if(val1 instanceof Integer && val2 instanceof Double) return (Integer)val1 / (Double)val2;
-        else if(val1 instanceof Double && val2 instanceof Integer) return (Double)val1 / (Integer)val2;
-        else if(val1 instanceof Integer && val2 instanceof Integer) return ((Integer)val1).doubleValue() / ((Integer)val2).doubleValue();
+        if(val1 instanceof Float && val2 instanceof Float) return (Float)val1 / (Float)val2;
+        else if(val1 instanceof Integer && val2 instanceof Float) return (Integer)val1 / (Float)val2;
+        else if(val1 instanceof Float && val2 instanceof Integer) return (Float)val1 / (Integer)val2;
+        else if(val1 instanceof Integer && val2 instanceof Integer) return ((Integer)val1).floatValue() / ((Integer)val2).floatValue();
         else return null;
     }
 
     public static Object div(Object val1, Object val2){
-        if(val1 instanceof Double && val2 instanceof Double) return Utils.toInt((Double)val1 / (Double)val2);
-        else if(val1 instanceof Integer && val2 instanceof Double) return Utils.toInt((Integer)val1 / (Double)val2);
-        else if(val1 instanceof Double && val2 instanceof Integer) return Utils.toInt((Double)val1 / (Integer)val2);
+        if(val1 instanceof Float && val2 instanceof Float) return Utils.toInt((Float)val1 / (Float)val2);
+        else if(val1 instanceof Integer && val2 instanceof Float) return Utils.toInt((Integer)val1 / (Float)val2);
+        else if(val1 instanceof Float && val2 instanceof Integer) return Utils.toInt((Float)val1 / (Integer)val2);
         else if(val1 instanceof Integer && val2 instanceof Integer) return Utils.toInt((Integer)val1 / (Integer)val2);
         else return null;
     }
@@ -122,15 +122,15 @@ public class OpUtil {
     }
 
     public static Object rDivide(Object val1, Object val2){
-        Double rVal1 = Utils.toDouble(val1);
-        Double rVal2 = Utils.toDouble(val2);
+        Float rVal1 = Utils.toReal(val1);
+        Float rVal2 = Utils.toReal(val2);
         return rVal1 / rVal2;
     }
 
     public static Object mod(Object val1, Object val2){
-        if(val1 instanceof Double && val2 instanceof Double) return (Double)val1 % (Double)val2;
-        else if(val1 instanceof Integer && val2 instanceof Double) return (Integer)val1 % (Double)val2;
-        else if(val1 instanceof Double && val2 instanceof Integer) return (Double)val1 % (Integer)val2;
+        if(val1 instanceof Float && val2 instanceof Float) return (Float)val1 % (Float)val2;
+        else if(val1 instanceof Integer && val2 instanceof Float) return (Integer)val1 % (Float)val2;
+        else if(val1 instanceof Float && val2 instanceof Integer) return (Float)val1 % (Integer)val2;
         else if(val1 instanceof Integer && val2 instanceof Integer) return (Integer)val1 % (Integer)val2;
         else return null;
     }
@@ -142,25 +142,25 @@ public class OpUtil {
     }
 
     public static Object lessThan(Object val1, Object val2){
-        if(val1 instanceof Double || val2 instanceof Double) return Utils.toDouble(val1) < Utils.toDouble(val2);
+        if(val1 instanceof Float || val2 instanceof Float) return Utils.toReal(val1) < Utils.toReal(val2);
         else if(val1 instanceof Integer || val2 instanceof Integer) return Utils.toInt(val1) < Utils.toInt(val2);
         else return null;
     }
 
     public static Object greaterThan(Object val1, Object val2){
-        if(val1 instanceof Double || val2 instanceof Double) return Utils.toDouble(val1) > Utils.toDouble(val2);
+        if(val1 instanceof Float || val2 instanceof Float) return Utils.toReal(val1) > Utils.toReal(val2);
         else if(val1 instanceof Integer || val2 instanceof Integer) return Utils.toInt(val1) > Utils.toInt(val2);
         else return null;
     }
 
     public static Object greaterThanOrEqualTo(Object val1, Object val2){
-        if(val1 instanceof Double || val2 instanceof Double) return Utils.toDouble(val1) >= Utils.toDouble(val2);
+        if(val1 instanceof Float || val2 instanceof Float) return Utils.toReal(val1) >= Utils.toReal(val2);
         else if(val1 instanceof Integer || val2 instanceof Integer) return Utils.toInt(val1) >= Utils.toInt(val2);
         else return null;
     }
 
     public static Object lessThanOrEqualTo(Object val1, Object val2){
-        if(val1 instanceof Double || val2 instanceof Double) return Utils.toDouble(val1) <= Utils.toDouble(val2);
+        if(val1 instanceof Float || val2 instanceof Float) return Utils.toReal(val1) <= Utils.toReal(val2);
         else if(val1 instanceof Integer || val2 instanceof Integer) return Utils.toInt(val1) > Utils.toInt(val2);
         else return null;
     }

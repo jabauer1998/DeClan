@@ -167,8 +167,8 @@ public class Utils {
             return new IntExp((int)result);
         } else if(result instanceof String){
             return new StrExp((String)result);
-        } else if(result instanceof Double){
-            return new RealExp((double)result);
+        } else if(result instanceof Float){
+            return new RealExp((float)result);
         } else {
             return null;
         }
@@ -304,19 +304,19 @@ public class Utils {
         }
     }
 
-    public static Double toDouble(Object input){
+    public static Float toReal(Object input){
         if(input instanceof Integer){
             Integer inti = (Integer)input;
-            return inti.doubleValue();
-        } else if(input instanceof Double){
-            Double doubi = (Double)input;
-            return doubi.doubleValue();
+            return inti.floatValue();
+        } else if(input instanceof Float){
+            Float fValue = (Float)input;
+            return fValue.floatValue();
         } else if(input instanceof Boolean){
             Boolean bi = (Boolean)input;
             if(bi){
-                return 1.0;
+                return 1.0f;
             } else {
-                return 0.0;
+                return 0.0f;
             }
         } else {
             return null;
@@ -326,8 +326,8 @@ public class Utils {
     public static Integer toInt(Object input){
         if(input instanceof Integer){
             return (Integer)input;
-        } else if(input instanceof Double){
-            Double di = (Double)input;
+        } else if(input instanceof Float){
+            Float di = (Float)input;
             return di.intValue();
         } else if(input instanceof Boolean){
             Boolean bi = (Boolean)input;
@@ -344,12 +344,10 @@ public class Utils {
     public static Integer toRawInt(Object input){
         if(input instanceof Integer){
             return (Integer)input;
-        } else if(input instanceof Double){
-            double dV = (double)input;
-            float fV = (float)dV;
-            long lV = (long)fV;
-            int iV = (int)lV;
-            return iV;
+        } else if(input instanceof Float){
+            Float dV = (Float)input;
+            Integer result = Float.floatToIntBits(dV);
+            return result;
         } else if(input instanceof Boolean){
             Boolean bi = (Boolean)input;
             if(bi) return 1;
@@ -365,8 +363,8 @@ public class Utils {
             return inti != 0;
         } else if(input instanceof Boolean){
             return (Boolean)input;
-        } else if(input instanceof Double){
-            Double di = (Double)input;
+        } else if(input instanceof Float){
+            Float di = (Float)input;
             return di != 0;
         } else {
             return null;

@@ -58,7 +58,7 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
         Assign result = null;
         String place = gen.genNextRegister();
         if(value.contains(".")){
-            result = factory.produceRealAssignment(place, Double.parseDouble(value));
+            result = factory.produceRealAssignment(place, Float.parseFloat(value));
         } else {
             result = factory.produceIntAssignment(place, Integer.parseInt(value));
         }

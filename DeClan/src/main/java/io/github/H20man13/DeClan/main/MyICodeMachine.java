@@ -215,7 +215,7 @@ public class MyICodeMachine {
 
             try{
                 Object val = entry.getValue();
-                Double dVal = Utils.toDouble(val);
+                Float dVal = Utils.toReal(val);
                 standardOutput.append("" + dVal);
             } catch(IOException exp){
                 errorAndExit(exp.toString(), programCounter, 999);
@@ -224,19 +224,19 @@ public class MyICodeMachine {
             Tuple<String, String> arg1 = procedure.params.get(0);
             VariableEntry entry = variableValues.getEntry(arg1.source);
 
-            this.tempReturnValue = (int)Math.round(Utils.toDouble(entry.getValue()));
+            this.tempReturnValue = Math.round(Utils.toReal(entry.getValue()));
             this.machineState = State.RETURN;
         } else if(procedure.pname.equals("floor") || procedure.pname.equals("Floor")){
             Tuple<String, String> arg1 = procedure.params.get(0);
             VariableEntry entry = variableValues.getEntry(arg1.source);
 
-            this.tempReturnValue = (int)Math.floor(Utils.toDouble(entry.getValue()));
+            this.tempReturnValue = (int)Math.floor(Utils.toReal(entry.getValue()));
             this.machineState = State.RETURN;
         } else if(procedure.pname.equals("ceil") || procedure.pname.equals("Ceil")){
             Tuple<String, String> arg1 = procedure.params.get(0);
             VariableEntry entry = variableValues.getEntry(arg1.source);
 
-            this.tempReturnValue = (int)Math.ceil(Utils.toDouble(entry.getValue()));
+            this.tempReturnValue = (int)Math.ceil(Utils.toReal(entry.getValue()));
             this.machineState = State.RETURN;
         } else if(procedure.pname.equals("readInt") || procedure.pname.equals("ReadInt")){
             Scanner scanner = new Scanner(standardIn);

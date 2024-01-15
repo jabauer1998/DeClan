@@ -3,9 +3,9 @@ package io.github.H20man13.DeClan.common.icode.exp;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class RealExp implements Exp {
-    public double realValue;
+    public float realValue;
 
-    public RealExp(double realValue){
+    public RealExp(float realValue){
         this.realValue = realValue;
     }
 

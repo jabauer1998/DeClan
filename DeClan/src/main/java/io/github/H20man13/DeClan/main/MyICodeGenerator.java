@@ -427,11 +427,11 @@ public class MyICodeGenerator{
           } else {
             builder.buildForLoopBeginning(curValueIdent, BinExp.Operator.NE, targetIdent);
           }
-        } else if(actualIncriment instanceof Double){
-          Double doubleActualIncriment = Utils.toDouble(actualIncriment);
-          if(doubleActualIncriment < 0){
+        } else if(actualIncriment instanceof Float){
+          Float floatActualIncriment = Utils.toReal(actualIncriment);
+          if(floatActualIncriment < 0){
             builder.buildForLoopBeginning(curValueIdent, BinExp.Operator.GT, targetIdent);
-          } else if(doubleActualIncriment > 0){
+          } else if(floatActualIncriment > 0){
             builder.buildForLoopBeginning(curValueIdent, BinExp.Operator.LT, targetIdent);
           } else {
             builder.buildForLoopBeginning(curValueIdent, BinExp.Operator.NE, targetIdent);
