@@ -9,6 +9,7 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.SymEntry;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
@@ -1062,7 +1063,49 @@ public class MyICodeGenerator{
     IdentExp valueIdent = new IdentExp(value);
     TypeCheckerQualities rightType = unaryOperation.getExpression().acceptResult(typeChecker);
 
-    if(rightType.containsQualities(TypeCheckerQualities.REAL)){
+    if(unaryOperation.getOperator() == UnaryOperation.OpType.NOT){
+      if(rightType.containsQualities(TypeCheckerQualities.REAL)){
+          if(procArgs.entryExists("RealToBool") && procEnvironment.entryExists("RealToBool")){
+             StringEntryList params = procArgs.getEntry("RealToBool");
+             if(params.size() >= 1){
+               LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
+               args.add(new Tuple<String,String>(value, params.get(0)));
+               builder.buildProcedureCall("RealToBool", args);
+               StringEntry entry = procEnvironment.getEntry("RealToBool");
+               value = builder.buildExternalReturnPlacement(entry.toString());
+             } else {
+              LinkedList<String> args = new LinkedList<String>();
+              args.add(value);
+              value = builder.buildExternalFunctionCall("RealToBool", args);
+             }
+           } else {
+             LinkedList<String> args = new LinkedList<String>();
+             args.add(value);
+             value = builder.buildExternalFunctionCall("RealToBool", args);
+           }
+        } else if(rightType.containsQualities(TypeCheckerQualities.INTEGER)){
+          if(procArgs.entryExists("IntToBool") && procEnvironment.entryExists("IntToBool")){
+            StringEntryList params = procArgs.getEntry("IntToBool");
+            if(params.size() >= 1){
+                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
+                args.add(new Tuple<String,String>(value, params.get(0)));
+                builder.buildProcedureCall("IntToBool", args);
+                StringEntry entry = procEnvironment.getEntry("IntToBool");
+                value = builder.buildExternalReturnPlacement(entry.toString());
+            } else {
+              LinkedList<String> args = new LinkedList<String>();
+              args.add(value);
+              value = builder.buildExternalFunctionCall("IntToBool", args);
+            }
+          } else {
+            LinkedList<String> args = new LinkedList<String>();
+            args.add(value);
+            value = builder.buildExternalFunctionCall("IntToBool", args);
+          }
+        }
+        Exp expVal = new IdentExp(value);
+        return builder.buildNotAssignment(expVal);
+    } else if(rightType.containsQualities(TypeCheckerQualities.REAL)){
       switch(unaryOperation.getOperator()){
         case MINUS: 
           if(procArgs.entryExists("RNeg") && procEnvironment.entryExists("RNeg")){
@@ -1085,8 +1128,9 @@ public class MyICodeGenerator{
                args.add(value);
                return builder.buildExternalFunctionCall("RNeg", args);
             }
-        case NOT: return builder.buildNotAssignment(valueIdent);
-        default: return value;
+        default:
+          errorLog.add("Error unexpected Operation for Real Value " + unaryOperation.getOperator(), unaryOperation.getStart());
+          return value;
 	    }
     } else {
       switch(unaryOperation.getOperator()){
@@ -1111,7 +1155,6 @@ public class MyICodeGenerator{
                args.add(value);
                return builder.buildExternalFunctionCall("INeg", args);
             }
-        case NOT: return builder.buildNotAssignment(valueIdent);
         case BNOT: return builder.buildIntegerNotAssignment(valueIdent);
         default: return value;
 	    }
