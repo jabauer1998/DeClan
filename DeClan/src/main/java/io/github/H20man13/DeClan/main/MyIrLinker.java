@@ -3162,6 +3162,9 @@ public class MyIrLinker {
                 }
             } else if(icode instanceof Call){
                 Call call = (Call)icode;
+                if(!procedureSec.containsProcedure(call.pname))
+                    fetchInternalProcedure(program, call.pname, program, libraries, symbolTable, dataSection, codeSection, procedureSec);
+
                 for(Tuple<String, String> arg : call.params){
                     String place = arg.source;
 
@@ -3174,11 +3177,6 @@ public class MyIrLinker {
                                 replacePlaceInProgram(program, entry.icodePlace, newEntry.icodePlace);
                         }
                     }
-                }
-
-                if(!procedureSec.containsProcedure(call.pname)){
-                    Proc procedure = programProcSec.getProcedureByName(call.pname);
-                    procedureSec.addProcedure(procedure);
                 }
             } else if(icode instanceof ExternalPlace){
                 ExternalPlace placement = (ExternalPlace)icode;

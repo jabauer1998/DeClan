@@ -372,18 +372,18 @@ public class MyLinkerTest {
                                 " CALL p ( b -> e , y -> f )\r\n" + //
                                 " z <| g\r\n" + //
                                 " a := z\r\n" + //
-                                " CALL WriteReal ( d -] W2 )\r\n" + //
+                                " CALL WriteReal ( d -> W2 )\r\n" + //
                                 " CALL WriteLn (  )\r\n" + //
                                 "END\r\n" + //
                                 "PROC SECTION\r\n" + //
                                 " PROC LABEL WriteInt\r\n" + //
-                                "  W1 [- W0\r\n" + //
+                                "  W1 <- W0\r\n" + //
                                 "  IPARAM W1\r\n" + //
                                 "IASM \"LDR R0, %a\"\r\n" + //
                                 "  IASM \"SWI 1\"\r\n" + //
                                 " RETURN\r\n" + //
                                 " PROC LABEL WriteReal\r\n" + //
-                                "  W3 [- W2\r\n" + //
+                                "  W3 <- W2\r\n" + //
                                 "  IPARAM W3\r\n" + //
                                 "IASM \"LDR R0, %a\"\r\n" + //
                                 "  IASM \"SWI 2\"\r\n" + //
@@ -392,20 +392,20 @@ public class MyLinkerTest {
                                 "  IASM \"SWI 4\"\r\n" + //
                                 " RETURN\r\n" + //
                                 " PROC LABEL Divide\r\n" + //
-                                "  W6 [- W5\r\n" + //
-                                "  W8 [- W7\r\n" + //
+                                "  W6 <- W5\r\n" + //
+                                "  W8 <- W7\r\n" + //
                                 "  X4 := 0\r\n" + //
                                 "  b22 := 0\r\n" + //
-                                "  CALL Div ( W6 -] c , W8 -] d )\r\n" + //
-                                "  X3 [| e\r\n" + //
+                                "  CALL Div ( W6 -> c , W8 -> d )\r\n" + //
+                                "  X3 <| e\r\n" + //
                                 "  X4 := X3\r\n" + //
-                                "  CALL IntToReal ( X4 -] X6 )\r\n" + //
-                                "  X5 [| X0\r\n" + //
+                                "  CALL IntToReal ( X4 -> X6 )\r\n" + //
+                                "  X5 <| X0\r\n" + //
                                 "  b22 := X5\r\n" + //
-                                "  X0 |[ b22\r\n" + //
+                                "  X0 |< b22\r\n" + //
                                 " RETURN\r\n" + //
                                 " PROC LABEL IntToReal\r\n" + //
-                                "  X7 [- X6\r\n" + //
+                                "  X7 <- X6\r\n" + //
                                 "  b21 := 0.0\r\n" + //
                                 "  a23 := FALSE\r\n" + //
                                 "  b19 := 0\r\n" + //
@@ -421,11 +421,11 @@ public class MyLinkerTest {
                                 "  a48 := X7\r\n" + //
                                 "  Z3 := 0\r\n" + //
                                 "  a45 := Z3\r\n" + //
-                                "  CALL IntIsNegative ( X7 -] Z6 )\r\n" + //
-                                "  Z5 [| X9\r\n" + //
+                                "  CALL IntIsNegative ( X7 -> Z6 )\r\n" + //
+                                "  Z5 <| X9\r\n" + //
                                 "  a23 := Z5\r\n" + //
-                                "  CALL IntIsZero ( Z2 -] a25 )\r\n" + //
-                                "  a24 [| X9\r\n" + //
+                                "  CALL IntIsZero ( Z2 -> a25 )\r\n" + //
+                                "  a24 <| X9\r\n" + //
                                 "  a51 := BNOT a24\r\n" + //
                                 "  IF a51 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0\r\n" + //
                                 "  LABEL WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
@@ -448,8 +448,8 @@ public class MyLinkerTest {
                                 "  a46 := 1\r\n" + //
                                 "  a47 := a48 IRSHIFT a46\r\n" + //
                                 "  a48 := a47\r\n" + //
-                                "  CALL IntIsZero ( a48 -] a25 )\r\n" + //
-                                "  a49 [| X9\r\n" + //
+                                "  CALL IntIsZero ( a48 -> a25 )\r\n" + //
+                                "  a49 <| X9\r\n" + //
                                 "  a50 := BNOT a49\r\n" + //
                                 "  a51 := a50\r\n" + //
                                 "  GOTO WHILECOND_0_SEQ_0_LEVEL_0\r\n" + //
@@ -529,13 +529,13 @@ public class MyLinkerTest {
                                 "  GOTO IFEND_2_LEVEL_0\r\n" + //
                                 "  LABEL IFNEXT_2_SEQ_0_LEVEL_0\r\n" + //
                                 "  LABEL IFEND_2_LEVEL_0\r\n" + //
-                                "  CALL IntBinaryAsReal ( b19 -] e40 )\r\n" + //
-                                "  b20 [| e43\r\n" + //
+                                "  CALL IntBinaryAsReal ( b19 -> e40 )\r\n" + //
+                                "  b20 <| e43\r\n" + //
                                 "  b21 := b20\r\n" + //
-                                "  X9 |[ b21\r\n" + //
+                                "  X9 |< b21\r\n" + //
                                 " RETURN\r\n" + //
                                 " PROC LABEL IntIsNegative\r\n" + //
-                                "  Z7 [- Z6\r\n" + //
+                                "  Z7 <- Z6\r\n" + //
                                 "  a22 := FALSE\r\n" + //
                                 "  a16 := 0\r\n" + //
                                 "  a12 := 31\r\n" + //
@@ -556,10 +556,10 @@ public class MyLinkerTest {
                                 "  GOTO IFEND_2_LEVEL_0\r\n" + //
                                 "  LABEL IFNEXT_2_SEQ_1_LEVEL_0\r\n" + //
                                 "  LABEL IFEND_2_LEVEL_0\r\n" + //
-                                "  Z9 |[ a22\r\n" + //
+                                "  Z9 |< a22\r\n" + //
                                 " RETURN\r\n" + //
                                 " PROC LABEL IntIsZero\r\n" + //
-                                "  a26 [- a25\r\n" + //
+                                "  a26 <- a25\r\n" + //
                                 "  a35 := FALSE\r\n" + //
                                 "  a30 := 0\r\n" + //
                                 "  a31 := a26 EQ a30\r\n" + //
@@ -574,11 +574,11 @@ public class MyLinkerTest {
                                 "  GOTO IFEND_1_LEVEL_0\r\n" + //
                                 "  LABEL IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
                                 "  LABEL IFEND_1_LEVEL_0\r\n" + //
-                                "  a28 |[ a35\r\n" + //
+                                "  a28 |< a35\r\n" + //
                                 " RETURN\r\n" + //
                                 " PROC LABEL RAdd\r\n" + //
-                                "  b26 [- b25\r\n" + //
-                                "  b28 [- b27\r\n" + //
+                                "  b26 <- b25\r\n" + //
+                                "  b28 <- b27\r\n" + //
                                 "  e46 := 0.0\r\n" + //
                                 "  e38 := 0\r\n" + //
                                 "  b64 := 0\r\n" + //
@@ -592,23 +592,23 @@ public class MyLinkerTest {
                                 "  e21 := 0\r\n" + //
                                 "  e29 := 0\r\n" + //
                                 "  d27 := 0\r\n" + //
-                                "  CALL RealSign ( b26 -] b45 )\r\n" + //
-                                "  b44 [| b30\r\n" + //
+                                "  CALL RealSign ( b26 -> b45 )\r\n" + //
+                                "  b44 <| b30\r\n" + //
                                 "  b64 := b44\r\n" + //
-                                "  CALL RealSign ( b28 -] b45 )\r\n" + //
-                                "  b65 [| b30\r\n" + //
+                                "  CALL RealSign ( b28 -> b45 )\r\n" + //
+                                "  b65 <| b30\r\n" + //
                                 "  b66 := b65\r\n" + //
-                                "  CALL RealExponent ( b26 -] b68 )\r\n" + //
-                                "  b67 [| b30\r\n" + //
+                                "  CALL RealExponent ( b26 -> b68 )\r\n" + //
+                                "  b67 <| b30\r\n" + //
                                 "  d94 := b67\r\n" + //
-                                "  CALL RealExponent ( b28 -] b68 )\r\n" + //
-                                "  b82 [| b30\r\n" + //
+                                "  CALL RealExponent ( b28 -> b68 )\r\n" + //
+                                "  b82 <| b30\r\n" + //
                                 "  d57 := b82\r\n" + //
-                                "  CALL RealMantissa ( b26 -] b85 )\r\n" + //
-                                "  b84 [| b30\r\n" + //
+                                "  CALL RealMantissa ( b26 -> b85 )\r\n" + //
+                                "  b84 <| b30\r\n" + //
                                 "  d97 := b84\r\n" + //
-                                "  CALL RealMantissa ( b28 -] b85 )\r\n" + //
-                                "  b97 [| b30\r\n" + //
+                                "  CALL RealMantissa ( b28 -> b85 )\r\n" + //
+                                "  b97 <| b30\r\n" + //
                                 "  d60 := b97\r\n" + //
                                 "  b99 := b64 EQ b66\r\n" + //
                                 "  IF b99 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0\r\n" + //
@@ -920,27 +920,27 @@ public class MyLinkerTest {
                                 "  GOTO IFEND_0_LEVEL_0\r\n" + //
                                 "  LABEL IFNEXT_0_SEQ_1_LEVEL_0\r\n" + //
                                 "  LABEL IFEND_0_LEVEL_0\r\n" + //
-                                "  CALL IntBinaryAsReal ( e38 -] e40 )\r\n" + //
-                                "  e39 [| b30\r\n" + //
+                                "  CALL IntBinaryAsReal ( e38 -> e40 )\r\n" + //
+                                "  e39 <| b30\r\n" + //
                                 "  e46 := e39\r\n" + //
-                                "  b30 |[ e46\r\n" + //
+                                "  b30 |< e46\r\n" + //
                                 " RETURN\r\n" + //
                                 " PROC LABEL RealSign\r\n" + //
-                                "  b46 [- b45\r\n" + //
+                                "  b46 <- b45\r\n" + //
                                 "  b63 := 0\r\n" + //
                                 "  b58 := 0\r\n" + //
-                                "  CALL RealBinaryAsInt ( b46 -] b52 )\r\n" + //
-                                "  b51 [| b48\r\n" + //
+                                "  CALL RealBinaryAsInt ( b46 -> b52 )\r\n" + //
+                                "  b51 <| b48\r\n" + //
                                 "  b58 := b51\r\n" + //
                                 "  b59 := 31\r\n" + //
                                 "  b60 := b58 IRSHIFT b59\r\n" + //
                                 "  b61 := 1\r\n" + //
                                 "  b62 := b60 IAND b61\r\n" + //
                                 "  b63 := b62\r\n" + //
-                                "  b48 |[ b63\r\n" + //
+                                "  b48 |< b63\r\n" + //
                                 " RETURN\r\n" + //
                                 " PROC LABEL RealBinaryAsInt\r\n" + //
-                                "  b53 [- b52\r\n" + //
+                                "  b53 <- b52\r\n" + //
                                 "  b56 := 0\r\n" + //
                                 "  b57 := 0.0\r\n" + //
                                 "  IPARAM b57\r\n" + //
@@ -949,36 +949,36 @@ public class MyLinkerTest {
                                 "  IPARAM b57\r\n" + //
                                 "IPARAM b56\r\n" + //
                                 "IASM \"STR %r, %a\"\r\n" + //
-                                "  b55 |[ b56\r\n" + //
+                                "  b55 |< b56\r\n" + //
                                 " RETURN\r\n" + //
                                 " PROC LABEL RealExponent\r\n" + //
-                                "  b69 [- b68\r\n" + //
+                                "  b69 <- b68\r\n" + //
                                 "  b80 := 0\r\n" + //
                                 "  b75 := 0\r\n" + //
-                                "  CALL RealBinaryAsInt ( b69 -] b52 )\r\n" + //
-                                "  b74 [| b71\r\n" + //
+                                "  CALL RealBinaryAsInt ( b69 -> b52 )\r\n" + //
+                                "  b74 <| b71\r\n" + //
                                 "  b75 := b74\r\n" + //
                                 "  b76 := 23\r\n" + //
                                 "  b77 := b75 IRSHIFT b76\r\n" + //
                                 "  b78 := 255\r\n" + //
                                 "  b79 := b77 IAND b78\r\n" + //
                                 "  b80 := b79\r\n" + //
-                                "  b71 |[ b80\r\n" + //
+                                "  b71 |< b80\r\n" + //
                                 " RETURN\r\n" + //
                                 " PROC LABEL RealMantissa\r\n" + //
-                                "  b86 [- b85\r\n" + //
+                                "  b86 <- b85\r\n" + //
                                 "  b95 := 0\r\n" + //
                                 "  b92 := 0\r\n" + //
-                                "  CALL RealBinaryAsInt ( b86 -] b52 )\r\n" + //
-                                "  b91 [| b88\r\n" + //
+                                "  CALL RealBinaryAsInt ( b86 -> b52 )\r\n" + //
+                                "  b91 <| b88\r\n" + //
                                 "  b92 := b91\r\n" + //
                                 "  b93 := 8388607\r\n" + //
                                 "  b94 := b92 IAND b93\r\n" + //
                                 "  b95 := b94\r\n" + //
-                                "  b88 |[ b95\r\n" + //
+                                "  b88 |< b95\r\n" + //
                                 " RETURN\r\n" + //
                                 " PROC LABEL IntBinaryAsReal\r\n" + //
-                                "  e41 [- e40\r\n" + //
+                                "  e41 <- e40\r\n" + //
                                 "  e44 := 0.0\r\n" + //
                                 "  e45 := 0\r\n" + //
                                 "  IPARAM e45\r\n" + //
@@ -987,11 +987,11 @@ public class MyLinkerTest {
                                 "  IPARAM e45\r\n" + //
                                 "IPARAM e44\r\n" + //
                                 "IASM \"STR %r, %a\"\r\n" + //
-                                "  e43 |[ e44\r\n" + //
+                                "  e43 |< e44\r\n" + //
                                 " RETURN\r\n" + //
                                 " PROC LABEL RMul\r\n" + //
-                                "  e50 [- e49\r\n" + //
-                                "  e52 [- e51\r\n" + //
+                                "  e50 <- e49\r\n" + //
+                                "  e52 <- e51\r\n" + //
                                 "  e97 := 0.0\r\n" + //
                                 "  e95 := 0\r\n" + //
                                 "  e67 := 0\r\n" + //
@@ -1003,23 +1003,23 @@ public class MyLinkerTest {
                                 "  e82 := 0\r\n" + //
                                 "  e84 := 0\r\n" + //
                                 "  e86 := 0\r\n" + //
-                                "  CALL RealSign ( e50 -] b45 )\r\n" + //
-                                "  e66 [| e54\r\n" + //
+                                "  CALL RealSign ( e50 -> b45 )\r\n" + //
+                                "  e66 <| e54\r\n" + //
                                 "  e67 := e66\r\n" + //
-                                "  CALL RealSign ( e52 -] b45 )\r\n" + //
-                                "  e68 [| e54\r\n" + //
+                                "  CALL RealSign ( e52 -> b45 )\r\n" + //
+                                "  e68 <| e54\r\n" + //
                                 "  e69 := e68\r\n" + //
-                                "  CALL RealExponent ( e50 -] b68 )\r\n" + //
-                                "  e70 [| e54\r\n" + //
+                                "  CALL RealExponent ( e50 -> b68 )\r\n" + //
+                                "  e70 <| e54\r\n" + //
                                 "  e71 := e70\r\n" + //
-                                "  CALL RealExponent ( e52 -] b68 )\r\n" + //
-                                "  e72 [| e54\r\n" + //
+                                "  CALL RealExponent ( e52 -> b68 )\r\n" + //
+                                "  e72 <| e54\r\n" + //
                                 "  e73 := e72\r\n" + //
-                                "  CALL RealMantissa ( e50 -] b85 )\r\n" + //
-                                "  e74 [| e54\r\n" + //
+                                "  CALL RealMantissa ( e50 -> b85 )\r\n" + //
+                                "  e74 <| e54\r\n" + //
                                 "  e75 := e74\r\n" + //
-                                "  CALL RealMantissa ( e52 -] b85 )\r\n" + //
-                                "  e76 [| e54\r\n" + //
+                                "  CALL RealMantissa ( e52 -> b85 )\r\n" + //
+                                "  e76 <| e54\r\n" + //
                                 "  e77 := e76\r\n" + //
                                 "  e78 := e67 NE e69\r\n" + //
                                 "  IF e78 EQ TRUE THEN IFSTAT_26_SEQ_0_LEVEL_0 ELSE IFNEXT_26_SEQ_0_LEVEL_0\r\n" + //
@@ -1046,25 +1046,21 @@ public class MyLinkerTest {
                                 "  e95 := e92\r\n" + //
                                 "  e94 := e95 IOR e84\r\n" + //
                                 "  e95 := e94\r\n" + //
-                                "  CALL IntBinaryAsReal ( e95 -] e40 )\r\n" + //
-                                "  e96 [| e54\r\n" + //
+                                "  CALL IntBinaryAsReal ( e95 -> e40 )\r\n" + //
+                                "  e96 <| e54\r\n" + //
                                 "  e97 := e96\r\n" + //
-                                "  e54 |[ e97\r\n" + //
+                                "  e54 |< e97\r\n" + //
                                 " RETURN\r\n" + //
                                 " PROC LABEL p\r\n" + //
-                                "  B [- f\r\n" + //
-                                "  C [- e\r\n" + //
+                                "  B <- f\r\n" + //
+                                "  C <- e\r\n" + //
                                 "  A := 0\r\n" + //
                                 "  D := EXTERNAL CALL IntToReal(C)\r\n" + //
                                 "  E := EXTERNAL CALL RAdd(B, D)\r\n" + //
                                 "  F := EXTERNAL CALL Round(E)\r\n" + //
                                 "  A := F\r\n" + //
-                                "  g |[ A\r\n" + //
-                                " RETURN\r\n" + //
-                                "\r\n" + //
-                                " at io.github.H20man13.DeClan.MyLinkerTest.linkTestProgram(MyLinkerTest.java:321)\r\n" + //
-                                " at io.github.H20man13.DeClan.MyLinkerTest.testConversions(MyLinkerTest.java:331)\r\n" + //
-                                "";
+                                "  g |< A\r\n" + //
+                                " RETURN\r\n";
         linkTestProgram(expectedResult, progSrc);
     }
 }
