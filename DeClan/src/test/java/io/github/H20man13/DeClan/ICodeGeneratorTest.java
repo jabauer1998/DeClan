@@ -983,10 +983,10 @@ public class ICodeGeneratorTest {
     public void testTest3(){
         String programName = "test_source/test3.dcl";
         String expectedICode = "a := 42\r\n" + //
-                                "b := a\r\n" + //
-                                "c := 42.0\r\n" + //
-                                "d := c\r\n" + //
-                                "e := 0\r\n" + //
+                               "b := a\r\n" + //
+                               "c := 42.0\r\n" + //
+                               "d := c\r\n" + //
+                               "e := 0\r\n" + //
                                 "f := 0\r\n" + //
                                 "g := 0.0\r\n" + //
                                 "h := 0.0\r\n" + //
@@ -1022,7 +1022,7 @@ public class ICodeGeneratorTest {
                                 "t := x\r\n" + //
                                 "GOTO FORBEG_0_LEVEL_0\r\n" + //
                                 "LABEL FOREND_0_LEVEL_0\r\n" + //
-                                "A := 3.14159265\r\n" + //
+                                "A := 3.1415927\r\n" + //
                                 "B := EXTERNAL CALL RGreaterThan(z, A)\r\n" + //
                                 "C := y LAND B\r\n" + //
                                 "m |< C\r\n" + //

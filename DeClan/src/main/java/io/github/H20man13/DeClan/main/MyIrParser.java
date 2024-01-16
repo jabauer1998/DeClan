@@ -272,7 +272,11 @@ public class MyIrParser {
             if(tok.getLexeme().contains(".")){
                 return new RealExp(Float.parseFloat(tok.getLexeme()));
             } else {
-                return new IntExp(Integer.parseInt(tok.getLexeme()));
+                try{
+                    return new IntExp(Integer.parseInt(tok.getLexeme()));
+                } catch(NumberFormatException exp){
+                    return new IntExp(Integer.parseUnsignedInt(tok.getLexeme()));
+                }
             }
         } else if(willMatch(IrTokenType.STRING)){
             IrToken tok = skip();

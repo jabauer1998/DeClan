@@ -379,4 +379,18 @@ public class Utils {
         }
         return false;
     }
+
+  //this function is needed to change a Hex String from the Declan Format to the expected Java format
+  public static String ifHexToInt(String lexeme){
+    int length = lexeme.length();
+    if(lexeme.charAt(0) == '0' && lexeme.length() > 1  
+    && (lexeme.charAt(length - 1) == 'H' || lexeme.charAt(length - 1) == 'h')
+    && !lexeme.contains(".")){
+      String subStr = lexeme.substring(1, length - 1);
+      Integer value = Integer.parseUnsignedInt(subStr, 16);
+      return Integer.toUnsignedString(value);
+    } else {
+      return lexeme; //else return input it is fine
+    }
+  }
 }

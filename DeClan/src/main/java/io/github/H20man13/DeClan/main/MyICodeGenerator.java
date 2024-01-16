@@ -182,16 +182,6 @@ public class MyICodeGenerator{
     return builder.completeBuild();
   }
 
-    //this function is needed to change a Hex String from the Declan Format to the expected Java format
-  private static String ifHexToInt(String lexeme){
-    if(lexeme.charAt(0) == '0' && lexeme.length() > 1 && !lexeme.contains(".")){ //is it a hex number
-      Long value = Long.parseLong(lexeme.substring(1, lexeme.length() - 1), 16);  
-      return ("" + value);
-    } else {
-      return lexeme; //else return input it is fine
-    }
-  }
-
   public void generateConstantIr(ConstDeclaration constDecl, AssignmentBuilder builder) {
     Identifier id = constDecl.getIdentifier();
     Expression valueExpr = constDecl.getValue();
@@ -1195,7 +1185,7 @@ public class MyICodeGenerator{
   }
 
   public String generateNumberIr(NumValue numValue, AssignmentBuilder builder){
-      String rawnum = ifHexToInt(numValue.getLexeme());
+      String rawnum = Utils.ifHexToInt(numValue.getLexeme());
       return builder.buildNumAssignment(rawnum);
   }
 

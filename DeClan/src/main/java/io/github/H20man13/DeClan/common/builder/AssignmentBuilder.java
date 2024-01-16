@@ -60,7 +60,7 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
         if(value.contains(".")){
             result = factory.produceRealAssignment(place, Float.parseFloat(value));
         } else {
-            result = factory.produceIntAssignment(place, Integer.parseInt(value));
+            result = factory.produceIntAssignment(place, Integer.parseUnsignedInt(value));
         }
         intermediateCode.add(result);
         return place;
