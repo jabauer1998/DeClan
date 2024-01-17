@@ -1052,14 +1052,26 @@ public class MyLinkerTest {
                                 "  e54 |< e97\r\n" + //
                                 " RETURN\r\n" + //
                                 " PROC LABEL p\r\n" + //
-                                "  B <- f\r\n" + //
-                                "  C <- e\r\n" + //
-                                "  A := 0\r\n" + //
-                                "  D := EXTERNAL CALL IntToReal(C)\r\n" + //
-                                "  E := EXTERNAL CALL RAdd(B, D)\r\n" + //
-                                "  F := EXTERNAL CALL Round(E)\r\n" + //
-                                "  A := F\r\n" + //
-                                "  g |< A\r\n" + //
+                                "  e99 <- e98\r\n" + //
+                                "  f11 <- f10\r\n" + //
+                                "  f25 := 0\r\n" + //
+                                "  CALL IntToReal ( f11 -> X6 )\r\n" + //
+                                "  f15 <| f13\r\n" + //
+                                "  CALL RAdd ( e99 -> b25 , f15 -> b27 )\r\n" + //
+                                "  f16 <| f13\r\n" + //
+                                "  CALL Round ( f16 -> f18 )\r\n" + //
+                                "  f17 <| f13\r\n" + //
+                                "  f25 := f17\r\n" + //
+                                "  f13 |< f25\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL Round\r\n" + //
+                                "  f19 <- f18\r\n" + //
+                                "  f22 := 0.5\r\n" + //
+                                "  CALL RAdd ( f19 -> b25 , f22 -> b27 )\r\n" + //
+                                "  f23 <| f21\r\n" + //
+                                "  CALL Floor ( f23 -> k )\r\n" + //
+                                "  f24 <| l\r\n" + //
+                                "  f21 |< f24\r\n" + //
                                 " RETURN\r\n";
         linkTestProgram(expectedResult, progSrc);
     }

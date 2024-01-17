@@ -16,6 +16,7 @@ import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
@@ -27,6 +28,7 @@ import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
 import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
@@ -2292,6 +2294,25 @@ public class MyIrLinker {
         }
     }
 
+    private static void replaceLabelInICode(ICode icode, String oldLabel, String newLabel){
+        if(icode instanceof Label){
+            Label label = (Label)icode;
+            if(label.label.equals(oldLabel))
+                label.label = newLabel;
+        } else if(icode instanceof Goto){
+            Goto gotoLabel = (Goto)icode;
+            if(gotoLabel.label.equals(oldLabel))
+                gotoLabel.label = newLabel;
+        } else if(icode instanceof If){
+            If ifLabel = (If)icode;
+            if(ifLabel.ifTrue.equals(oldLabel))
+                ifLabel.ifTrue = newLabel;
+
+            if(ifLabel.ifFalse.equals(oldLabel))
+                ifLabel.ifFalse = newLabel;
+        }
+    }
+
     private static void replacePlaceInICode(ICode icode, String oldPlace, String newPlace){
         if(icode instanceof Assign){
             Assign icodeAssign = (Assign)icode;
@@ -2429,6 +2450,27 @@ public class MyIrLinker {
         }
     }
 
+    private static void replaceLabelInLib(Lib library, String oldPlace, String newPlace){
+        ProcSec procSection = library.procedures;
+        for(Proc procedure : procSection.procedures){
+            replaceLabelInProcedure(procedure, oldPlace, newPlace);
+        }
+    }
+
+    private static void replaceLabelInProcedure(Proc proc, String oldLabel, String newLabel){
+        for(ICode icode : proc.instructions)
+            replaceLabelInICode(icode, oldLabel, newLabel);
+    }
+
+    private static void replacePlaceInProcedure(Proc proc, String oldPlace, String newPlace){
+        for(ParamAssign assign : proc.paramAssign)
+            replacePlaceInICode(assign, oldPlace, newPlace);
+        for(ICode icode : proc.instructions)
+            replacePlaceInICode(icode, oldPlace, newPlace);
+        if(proc.placement != null)
+            replacePlaceInICode(proc.placement, oldPlace, newPlace);
+    }
+
     private static void replacePlaceInLib(Lib library, String oldPlace, String newPlace){
         SymSec symbols = library.symbols;
         for(SymEntry entry : symbols.entries)
@@ -2441,12 +2483,17 @@ public class MyIrLinker {
 
         ProcSec procSection = library.procedures;
         for(Proc proc : procSection.procedures){
-            for(ParamAssign assign : proc.paramAssign)
-                replacePlaceInICode(assign, oldPlace, newPlace);
-            for(ICode icode : proc.instructions)
-                replacePlaceInICode(icode, oldPlace, newPlace);
-            if(proc.placement != null)
-                replacePlaceInICode(proc.placement, oldPlace, newPlace);
+            replacePlaceInProcedure(proc, oldPlace, newPlace);
+        }
+    }
+
+    private static void replaceLabelInProgram(Prog program, String oldLabel, String newLabel){
+        replaceLabelInLib(program, oldLabel, newLabel);
+
+        CodeSec cSec = program.code;
+        for(int i = 0; i < cSec.getLength(); i++){
+            ICode instruction = cSec.getInstruction(i);
+            replaceLabelInICode(instruction, oldLabel, newLabel);
         }
     }
 
@@ -2458,6 +2505,27 @@ public class MyIrLinker {
             ICode instruction = cSec.getInstruction(i);
             replacePlaceInICode(instruction, oldPlace, newPlace);
         }
+    }
+
+    private static boolean labelExistsInICode(String label, ICode instr){
+        if(instr instanceof Label){
+            Label instrLabel = (Label)instr;
+            if(instrLabel.label.equals(label))
+                return true;
+        } else if(instr instanceof Goto){
+            Goto instrGoto = (Goto)instr;
+            if(instrGoto.label.equals(label))
+                return true;
+        } else if(instr instanceof If){
+            If instrIf = (If)instr;
+            if(instrIf.ifTrue.equals(label))
+                return true;
+
+            if(instrIf.ifFalse.equals(label))
+                return true;
+        }
+
+        return false;
     }
 
     private static boolean placeExistsInICode(String place, ICode dataCode){
@@ -2557,6 +2625,20 @@ public class MyIrLinker {
         return false;
     }
 
+    private static boolean labelExistsInProgram(String label, Prog program){
+        if(labelExistsInLibrary(label, program))
+            return true;
+
+        CodeSec codeSec = program.code;
+        for(int i = 0; i < codeSec.getLength(); i++){
+            ICode instr = codeSec.getInstruction(i);
+            if(labelExistsInICode(label, instr))
+                return true;
+        }
+
+        return false;
+    }
+
     private static boolean placeExistsInProgram(String place, Prog program){
         if(placeExistsInLibrary(place, program))
             return true;
@@ -2565,6 +2647,17 @@ public class MyIrLinker {
         for(int i = 0; i < codeSec.getLength(); i++){
             ICode instr = codeSec.getInstruction(i);
             if(placeExistsInICode(place, instr))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static boolean labelExistsInLibrary(String label, Lib lib){
+        ProcSec procedures = lib.procedures;
+        for(int i = 0; i < procedures.getLength(); i++){
+            Proc procedure = procedures.getProcedureByIndex(i);
+            if(labelExistsInProcedure(label, procedure))
                 return true;
         }
 
@@ -2614,6 +2707,15 @@ public class MyIrLinker {
         return false;
     }
 
+    private static boolean labelExistsInProcedure(String label, Proc procedure){
+        for(ICode icode : procedure.instructions){
+            if(labelExistsInICode(label, icode))
+                return true;
+        }
+
+        return false;
+    }
+
     private static boolean placeIsUniqueToProgramOrLibrary(String place, Prog program, Lib[] libraries, Lib libraryToIgnore){
         if(placeExistsInProgram(place, program))
             return false;
@@ -2627,6 +2729,20 @@ public class MyIrLinker {
         return true;
     }
 
+    private static boolean labelIsUniqueToProgramOrLibrary(String label, Prog program, Lib[] libraries, Lib libraryToIgnore){
+        if(labelExistsInProgram(label, program))
+            return false;
+
+        for(Lib library : libraries){
+            if(!library.equals(libraryToIgnore)){
+                if(labelExistsInLibrary(label, library))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
     private static boolean placeIsUniqueToLibrary(String place, Lib library, Lib[] libraries, Lib libToIgnore){
         if(!library.equals(libToIgnore))
             if(placeExistsInLibrary(place, library))
@@ -2635,6 +2751,20 @@ public class MyIrLinker {
         for(Lib lib : libraries){
             if(!lib.equals(libToIgnore))
                 if(placeExistsInLibrary(place, lib))
+                    return false;
+        }
+
+        return true;
+    }
+
+    private static boolean labelIsUniqueToLibrary(String label, Lib library, Lib[] libraries, Lib libToIgnore){
+        if(!library.equals(libToIgnore))
+            if(labelExistsInLibrary(label, library))
+                return false;
+
+        for(Lib lib : libraries){
+            if(!lib.equals(libToIgnore))
+                if(labelExistsInLibrary(label, lib))
                     return false;
         }
 
