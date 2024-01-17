@@ -3327,8 +3327,21 @@ public class MyIrLinker {
     }
 
     private void linkProcedureSections(Lib library, Lib[] libraries, SymSec symbolTable, DataSec variables, ProcSec procedures){
-        ProcSec libProcSec = library.procedures;
-        // Finish tthis another day   
+        ProcSec libraryProcSec = library.procedures;
+        for(int i = 0; i < libraryProcSec.getLength(); i++){
+            Proc procedure = libraryProcSec.getProcedureByIndex(i);
+            if(!procedures.containsProcedure(procedure.label.label))
+                fetchInternalProcedure(library, procedure.label.label, library, libraries, symbolTable, variables, procedures);
+        }
+
+        for(Lib lib : libraries){
+            ProcSec libProcSec = lib.procedures;
+            for(int i = 0; i < libProcSec.getLength(); i++){
+                Proc procedure = libProcSec.getProcedureByIndex(i);
+                if(!procedures.containsProcedure(procedure.label.label))
+                    fetchInternalProcedure(lib, procedure.label.label, library, libraries, symbolTable, variables, procedures);
+            }
+        }
     }
 
     public Prog performLinkage(Prog program, Lib... libraries){
