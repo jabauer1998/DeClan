@@ -4,11 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.depauw.declan.common.ErrorLog;
-import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.builder.section.SymbolSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.template.CompletableBuilder;
 import io.github.H20man13.DeClan.common.builder.template.ResetableBuilder;
+import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.Return;
@@ -55,7 +55,7 @@ public class ProcedureBuilder extends StatementBuilder implements CompletableBui
     }
 
     public String buildParamaterAssignment(String value){
-        String newPlace = gen.genNextRegister();
+        String newPlace = gen.genNext();
         paramaters.add(factory.produceParamAssignment(newPlace, value));
         return newPlace;
     }

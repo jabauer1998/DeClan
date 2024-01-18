@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.AnticipatedExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.AvailableExpressionsAnalysis;
@@ -33,6 +32,7 @@ import io.github.H20man13.DeClan.common.flow.ProcedureExitNode;
 import io.github.H20man13.DeClan.common.flow.block.BasicBlock;
 import io.github.H20man13.DeClan.common.flow.block.ProcedureBeginningBlock;
 import io.github.H20man13.DeClan.common.flow.block.ProcedureEndingBlock;
+import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
@@ -984,7 +984,7 @@ public class MyOptimizer {
             Map<Exp, String> identifierMap = new HashMap<Exp, String>();
             List<ICode> toPreAppendToBeginning = new LinkedList<ICode>();
             for(Exp latestInstructionOutput : latestInstructionUsedOutput){
-                String register = gen.genNextRegister();
+                String register = gen.genNext();
                 toPreAppendToBeginning.add(new Assign(register, latestInstructionOutput));
                 identifierMap.put(latestInstructionOutput, register);
             }

@@ -4,11 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.depauw.declan.common.ErrorLog;
-import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.builder.IrBuilderContext;
 import io.github.H20man13.DeClan.common.builder.ProcedureBuilder;
 import io.github.H20man13.DeClan.common.builder.template.CompletableBuilder;
 import io.github.H20man13.DeClan.common.builder.template.ResetableBuilder;
+import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 

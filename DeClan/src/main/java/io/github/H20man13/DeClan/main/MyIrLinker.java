@@ -12,9 +12,10 @@ import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.ast.Library;
 import edu.depauw.declan.common.ast.Program;
 import edu.depauw.declan.model.SymbolTable;
-import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
+import io.github.H20man13.DeClan.common.gen.LabelGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -105,7 +106,7 @@ public class MyIrLinker {
                                     if(!placeIsUniqueToProgramOrLibrary(assignLib.place, program, libraries, library)){
                                         String place = null;    
                                         do{
-                                            place = gen.genNextRegister();
+                                            place = gen.genNext();
                                         } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
 
                                         replacePlaceInLib(library, assignLib.place, place);
@@ -135,7 +136,7 @@ public class MyIrLinker {
                                     if(!placeIsUniqueToProgramOrLibrary(assignLib.place, program, libraries, library)){
                                         String place = null;    
                                         do{
-                                            place = gen.genNextRegister();
+                                            place = gen.genNext();
                                         } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
 
                                         replacePlaceInLib(library, assignLib.place, place);
@@ -181,7 +182,7 @@ public class MyIrLinker {
                                     if(!placeIsUniqueToProgramOrLibrary(assignLib.place, program, libraries, library)){
                                         String place = null;    
                                         do{
-                                            place = gen.genNextRegister();
+                                            place = gen.genNext();
                                         } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
 
                                         replacePlaceInLib(library, assignLib.place, place);
@@ -228,7 +229,7 @@ public class MyIrLinker {
                                         if(!placeIsUniqueToProgramOrLibrary(assignLib.place, program, libraries, library)){
                                             String place = null;    
                                             do{
-                                                place = gen.genNextRegister();
+                                                place = gen.genNext();
                                             } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
 
                                             replacePlaceInLib(library, assignLib.place, place);
@@ -251,7 +252,7 @@ public class MyIrLinker {
                                     if(!placeIsUniqueToProgramOrLibrary(assignLib.place, program, libraries, library)){
                                         String place = null;    
                                         do{
-                                            place = gen.genNextRegister();
+                                            place = gen.genNext();
                                         } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
 
                                         replacePlaceInLib(library, assignLib.place, place);
@@ -294,7 +295,7 @@ public class MyIrLinker {
                                     if(!placeIsUniqueToProgramOrLibrary(place.place, program, libraries, library)){
                                         String newPlace = null;    
                                         do{
-                                            newPlace = gen.genNextRegister();
+                                            newPlace = gen.genNext();
                                         } while(!placeIsUniqueToProgramOrLibrary(newPlace, program, libraries, library));
 
                                         replacePlaceInLib(library, place.place, newPlace);
@@ -348,7 +349,7 @@ public class MyIrLinker {
                                     if(!placeIsUniqueToLibrary(assignLib.place, single, libraries, library)){
                                         String place = null;    
                                         do{
-                                            place = gen.genNextRegister();
+                                            place = gen.genNext();
                                         } while(!placeIsUniqueToLibrary(place, single, libraries, library));
                                         replacePlaceInLib(library, assignLib.place, place);
                                     }
@@ -377,7 +378,7 @@ public class MyIrLinker {
                                     if(!placeIsUniqueToLibrary(assignLib.place, single, libraries, library)){
                                         String place = null;    
                                         do{
-                                            place = gen.genNextRegister();
+                                            place = gen.genNext();
                                         } while(!placeIsUniqueToLibrary(place, single, libraries, library));
                                         replacePlaceInLib(library, assignLib.place, place);
                                     }
@@ -422,7 +423,7 @@ public class MyIrLinker {
                                     if(!placeIsUniqueToLibrary(assignLib.place, single, libraries, library)){
                                         String place = null;    
                                         do{
-                                            place = gen.genNextRegister();
+                                            place = gen.genNext();
                                         } while(!placeIsUniqueToLibrary(place, single, libraries, library));
                                         replacePlaceInLib(library, assignLib.place, place);
                                     }
@@ -468,7 +469,7 @@ public class MyIrLinker {
                                         if(!placeIsUniqueToLibrary(assignLib.place, single, libraries, library)){
                                             String place = null;    
                                             do{
-                                                place = gen.genNextRegister();
+                                                place = gen.genNext();
                                             } while(!placeIsUniqueToLibrary(place, single, libraries, library));
                                             replacePlaceInLib(library, assignLib.place, place);
                                         }
@@ -490,7 +491,7 @@ public class MyIrLinker {
                                     if(!placeIsUniqueToLibrary(assignLib.place, single, libraries, library)){
                                         String place = null;    
                                         do{
-                                            place = gen.genNextRegister();
+                                            place = gen.genNext();
                                         } while(!placeIsUniqueToLibrary(place, single, libraries, library));
                                         replacePlaceInLib(library, assignLib.place, place);
                                     }
@@ -535,7 +536,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToLibrary(assign.place, single, libraries, currentLib)){
                             String place = null;    
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             } while(!placeIsUniqueToLibrary(place, single, libraries, currentLib));
                             replacePlaceInLib(currentLib, assign.place, place);
                         }
@@ -567,7 +568,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToLibrary(assign.place, single, libraries, currentLib)){
                             String place = null;    
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             } while(!placeIsUniqueToLibrary(place, single, libraries, currentLib));
                             replacePlaceInLib(currentLib, assign.place, place);
                         }
@@ -615,7 +616,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToLibrary(assign.place, single, libraries, currentLib)){
                             String place = null;    
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             } while(!placeIsUniqueToLibrary(place, single, libraries, currentLib));
                             replacePlaceInLib(currentLib, assign.place, place);
                         }
@@ -665,7 +666,7 @@ public class MyIrLinker {
                             if(!placeIsUniqueToLibrary(assign.place, single, libraries, currentLib)){
                                 String place = null;    
                                 do{
-                                    place = gen.genNextRegister();
+                                    place = gen.genNext();
                                 } while(!placeIsUniqueToLibrary(place, single, libraries, currentLib));
                                 replacePlaceInLib(currentLib, assign.place, place);
                             }
@@ -690,7 +691,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToLibrary(assign.place, single, libraries, currentLib)){
                             String place = null;    
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             } while(!placeIsUniqueToLibrary(place, single, libraries, currentLib));
                             replacePlaceInLib(currentLib, assign.place, place);
                         }
@@ -735,7 +736,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToLibrary(place.place, single, libraries, currentLib)){
                             String newPlace = null;    
                             do{
-                                newPlace = gen.genNextRegister();
+                                newPlace = gen.genNext();
                             } while(!placeIsUniqueToLibrary(newPlace, single, libraries, currentLib));
 
                             replacePlaceInLib(currentLib, place.place, newPlace);
@@ -782,7 +783,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToProgramOrLibrary(assign.place, program, libraries, currentLib)){
                             String place = null;    
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, currentLib));
 
                             replacePlaceInLib(currentLib, assign.place, place);
@@ -815,7 +816,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToProgramOrLibrary(assign.place, program, libraries, currentLib)){
                             String place = null;    
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, currentLib));
 
                             replacePlaceInLib(currentLib, assign.place, place);
@@ -864,7 +865,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToProgramOrLibrary(assign.place, program, libraries, currentLib)){
                             String place = null;    
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, currentLib));
 
                             replacePlaceInLib(currentLib, assign.place, place);
@@ -914,7 +915,7 @@ public class MyIrLinker {
                             if(!placeIsUniqueToProgramOrLibrary(assign.place, program, libraries, currentLib)){
                                 String place = null;    
                                 do{
-                                    place = gen.genNextRegister();
+                                    place = gen.genNext();
                                 } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, currentLib));
 
                                 replacePlaceInLib(currentLib, assign.place, place);
@@ -940,7 +941,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToProgramOrLibrary(assign.place, program, libraries, currentLib)){
                             String place = null;    
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, currentLib));
 
                             replacePlaceInLib(currentLib, assign.place, place);
@@ -986,7 +987,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToProgramOrLibrary(place.place, program, libraries, currentLib)){
                             String newPlace = null;    
                             do{
-                                newPlace = gen.genNextRegister();
+                                newPlace = gen.genNext();
                             } while(!placeIsUniqueToProgramOrLibrary(newPlace, program, libraries, currentLib));
 
                             replacePlaceInLib(currentLib, place.place, newPlace);
@@ -1021,7 +1022,7 @@ public class MyIrLinker {
                 if(!placeIsUniqueToProgramOrLibrary(assign.paramPlace, prog, libraries, library)){
                     String place = null;
                     do{
-                        place = gen.genNextRegister();
+                        place = gen.genNext();
                     }while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                     replacePlaceInLib(library, assign.paramPlace, place);
@@ -1030,7 +1031,7 @@ public class MyIrLinker {
                 if(!placeIsUniqueToProgramOrLibrary(assign.newPlace, prog, libraries, library)){
                     String place = null;
                     do{
-                        place = gen.genNextRegister();
+                        place = gen.genNext();
                     } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                     replacePlaceInLib(library, assign.newPlace, place);
@@ -1044,7 +1045,7 @@ public class MyIrLinker {
                 if(!placeIsUniqueToProgramOrLibrary(placement.retPlace, prog, libraries, library)){
                     String place = null;
                     do{
-                        place = gen.genNextRegister();
+                        place = gen.genNext();
                     } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                     replacePlaceInLib(library, placement.retPlace, place);
@@ -1053,7 +1054,7 @@ public class MyIrLinker {
                 if(!placeIsUniqueToProgramOrLibrary(placement.place, prog, libraries, library)){
                     String place = null;
                     do{
-                        place = gen.genNextRegister();
+                        place = gen.genNext();
                     } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                     replacePlaceInLib(library, placement.place, place);
@@ -1083,7 +1084,7 @@ public class MyIrLinker {
                     if(!placeIsUniqueToProgramOrLibrary(assignment.place, prog, libraries, library)){
                         String newPlace = null;
                         do{
-                            newPlace = gen.genNextRegister();
+                            newPlace = gen.genNext();
                         } while(!placeIsUniqueToProgramOrLibrary(newPlace, prog, libraries, library));
                         replacePlaceInLib(library, assignment.place, newPlace);
                     }
@@ -1227,6 +1228,24 @@ public class MyIrLinker {
                             fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, symbolTable, dataSection, codeSection, procedureSec);
                         }
                     }
+
+                    if(!labelIsUniqueToProgramOrLibrary(ifStat.ifTrue, prog, libraries, library)){
+                        String newLabel;
+                        LabelGenerator lGen = new LabelGenerator(ifStat.ifTrue);
+                        do{
+                            newLabel = lGen.genNext();
+                        } while(!labelIsUniqueToProgramOrLibrary(newLabel, prog, libraries, library));
+                        replaceLabelInLib(library, ifStat.ifTrue, newLabel);
+                    }
+
+                    if(!labelIsUniqueToProgramOrLibrary(ifStat.ifFalse, prog, libraries, library)){
+                        String newLabel;
+                        LabelGenerator lGen = new LabelGenerator(ifStat.ifFalse);
+                        do{
+                            newLabel = lGen.genNext();
+                        } while(!labelIsUniqueToProgramOrLibrary(newLabel, prog, libraries, library));
+                        replaceLabelInLib(library, ifStat.ifFalse, newLabel);
+                    }
                 } else if(icode instanceof ExternalCall){
                     ExternalCall call = (ExternalCall)icode;
                     
@@ -1293,7 +1312,7 @@ public class MyIrLinker {
                     if(!placeIsUniqueToProgramOrLibrary(placement.place, prog, libraries, library)){
                         String place = null;
                         do{
-                            place = gen.genNextRegister();
+                            place = gen.genNext();
                         }while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
                         
                         replacePlaceInLib(library, placement.place, place);
@@ -1302,7 +1321,7 @@ public class MyIrLinker {
                     if(placeIsUniqueToProgramOrLibrary(placement.retPlace, prog, libraries, library)){
                         String place = null;
                         do{
-                            place = gen.genNextRegister();
+                            place = gen.genNext();
                         } while(placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                         replacePlaceInLib(library, placement.retPlace, place);
@@ -1319,7 +1338,30 @@ public class MyIrLinker {
                     } else {
                         fetchInternalDependentInstructions(library, prog, libraries, placement.retPlace, symbolTable, dataSection, codeSection, procedureSec);
                     }
+                } else if(icode instanceof Goto){
+                    Goto gotoICode = (Goto)icode;
+
+                    if(!labelIsUniqueToProgramOrLibrary(gotoICode.label, prog, libraries, library)){
+                        String newLabel;
+                        LabelGenerator lGen = new LabelGenerator(gotoICode.label);
+                        do{
+                            newLabel = lGen.genNext();
+                        } while(!labelIsUniqueToProgramOrLibrary(newLabel, prog, libraries, library));
+                        replaceLabelInLib(library, gotoICode.label, newLabel);
+                    }
+                } else if(icode instanceof Label){
+                    Label labelICode = (Label)icode;
+
+                    if(!labelIsUniqueToProgramOrLibrary(labelICode.label, prog, libraries, library)){
+                        String newLabel;
+                        LabelGenerator lGen = new LabelGenerator(labelICode.label);
+                        do{
+                            newLabel = lGen.genNext();
+                        } while(!labelIsUniqueToProgramOrLibrary(newLabel, prog, libraries, library));
+                        replaceLabelInLib(library, labelICode.label, newLabel);
+                    }
                 }
+                
                 newProcedure.addInstruction(icode);
             }
         }
@@ -1339,7 +1381,7 @@ public class MyIrLinker {
                 if(!placeIsUniqueToLibrary(assign.paramPlace, single, libraries, library)){
                     String place = null;
                     do{
-                        place = gen.genNextRegister();
+                        place = gen.genNext();
                     }while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                     replacePlaceInLib(library, assign.paramPlace, place);
@@ -1348,7 +1390,7 @@ public class MyIrLinker {
                 if(!placeIsUniqueToLibrary(assign.newPlace, single, libraries, library)){
                     String place = null;
                     do{
-                        place = gen.genNextRegister();
+                        place = gen.genNext();
                     } while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                     replacePlaceInLib(library, assign.newPlace, place);
@@ -1362,7 +1404,7 @@ public class MyIrLinker {
                 if(!placeIsUniqueToLibrary(placement.retPlace, single, libraries, library)){
                     String place = null;
                     do{
-                        place = gen.genNextRegister();
+                        place = gen.genNext();
                     } while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                     replacePlaceInLib(library, placement.retPlace, place);
@@ -1371,7 +1413,7 @@ public class MyIrLinker {
                 if(!placeIsUniqueToLibrary(placement.place, single, libraries, library)){
                     String place = null;
                     do{
-                        place = gen.genNextRegister();
+                        place = gen.genNext();
                     } while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                     replacePlaceInLib(library, placement.place, place);
@@ -1401,7 +1443,7 @@ public class MyIrLinker {
                     if(!placeIsUniqueToLibrary(assignment.place, single, libraries, library)){
                         String newPlace = null;
                         do{
-                            newPlace = gen.genNextRegister();
+                            newPlace = gen.genNext();
                         } while(!placeIsUniqueToLibrary(newPlace, single, libraries, library));
                         replacePlaceInLib(library, assignment.place, newPlace);
                     }
@@ -1546,6 +1588,24 @@ public class MyIrLinker {
                             fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, symbolTable, dataSection, procedureSec);
                         }
                     }
+
+                    if(!labelIsUniqueToLibrary(ifStat.ifTrue, single, libraries, library)){
+                        String newLabel;
+                        LabelGenerator lGen = new LabelGenerator(ifStat.ifTrue);
+                        do{
+                            newLabel = lGen.genNext();
+                        } while(!labelIsUniqueToLibrary(newLabel, single, libraries, library));
+                        replaceLabelInLib(library, ifStat.ifTrue, newLabel);
+                    }
+
+                    if(!labelIsUniqueToLibrary(ifStat.ifFalse, single, libraries, library)){
+                        String newLabel;
+                        LabelGenerator lGen = new LabelGenerator(ifStat.ifFalse);
+                        do{
+                            newLabel = lGen.genNext();
+                        } while(!labelIsUniqueToLibrary(newLabel, single, libraries, library));
+                        replaceLabelInLib(library, ifStat.ifFalse, newLabel);
+                    }
                 } else if(icode instanceof ExternalCall){
                     ExternalCall call = (ExternalCall)icode;
                     
@@ -1579,7 +1639,7 @@ public class MyIrLinker {
                             newArg.source = place;
                             newArg.dest = fetchedProcedure.paramAssign.get(argIndex).paramPlace;
                             newArgs.add(newArg);
-                        }
+                        } 
                         
                         newProcedure.addInstruction(new Call(call.procedureName, newArgs));
 
@@ -1612,7 +1672,7 @@ public class MyIrLinker {
                     if(!placeIsUniqueToLibrary(placement.place, single, libraries, library)){
                         String place = null;
                         do{
-                            place = gen.genNextRegister();
+                            place = gen.genNext();
                         }while(!placeIsUniqueToLibrary(place, single, libraries, library));
                         
                         replacePlaceInLib(library, placement.place, place);
@@ -1621,7 +1681,7 @@ public class MyIrLinker {
                     if(placeIsUniqueToLibrary(placement.retPlace, single, libraries, library)){
                         String place = null;
                         do{
-                            place = gen.genNextRegister();
+                            place = gen.genNext();
                         } while(placeIsUniqueToLibrary(place, single, libraries, library));
 
                         replacePlaceInLib(library, placement.retPlace, place);
@@ -1638,7 +1698,30 @@ public class MyIrLinker {
                     } else {
                         fetchInternalDependentInstructions(library, single, libraries, placement.retPlace, symbolTable, dataSection, procedureSec);
                     }
+                } else if(icode instanceof Goto){
+                    Goto gotoICode = (Goto)icode;
+
+                    if(!labelIsUniqueToLibrary(gotoICode.label, single, libraries, library)){
+                        String newLabel;
+                        LabelGenerator lGen = new LabelGenerator(gotoICode.label);
+                        do{
+                            newLabel = lGen.genNext();
+                        } while(!labelIsUniqueToLibrary(newLabel, single, libraries, library));
+                        replaceLabelInLib(library, gotoICode.label, newLabel);
+                    }
+                } else if(icode instanceof Label){
+                    Label labelICode = (Label)icode;
+
+                    if(!labelIsUniqueToLibrary(labelICode.label, single, libraries, library)){
+                        String newLabel;
+                        LabelGenerator lGen = new LabelGenerator(labelICode.label);
+                        do{
+                            newLabel = lGen.genNext();
+                        } while(!labelIsUniqueToLibrary(newLabel, single, libraries, library));
+                        replaceLabelInLib(library, labelICode.label, newLabel);
+                    }
                 }
+
                 newProcedure.addInstruction(icode);
             }
         }
@@ -1661,7 +1744,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToProgramOrLibrary(assign.paramPlace, prog, libraries, library)){
                             String place = null;
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             }while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                             replacePlaceInLib(library, assign.paramPlace, place);
@@ -1670,7 +1753,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToProgramOrLibrary(assign.newPlace, prog, libraries, library)){
                             String place = null;
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                             replacePlaceInLib(library, assign.newPlace, place);
@@ -1684,7 +1767,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToProgramOrLibrary(placement.retPlace, prog, libraries, library)){
                             String place = null;
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                             replacePlaceInLib(library, placement.retPlace, place);
@@ -1693,7 +1776,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToProgramOrLibrary(placement.place, prog, libraries, library)){
                             String place = null;
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                             replacePlaceInLib(library, placement.place, place);
@@ -1724,7 +1807,7 @@ public class MyIrLinker {
                             if(!placeIsUniqueToProgramOrLibrary(assignment.place, prog, libraries, library)){
                                 String newPlace = null;
                                 do{
-                                    newPlace = gen.genNextRegister();
+                                    newPlace = gen.genNext();
                                 } while(!placeIsUniqueToProgramOrLibrary(newPlace, prog, libraries, library));
                                 replacePlaceInLib(library, assignment.place, newPlace);
                             }
@@ -1868,6 +1951,24 @@ public class MyIrLinker {
                                     fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, symbolTable, dataSection, codeSection, procedureSec);
                                 }
                             }
+
+                            if(!labelIsUniqueToProgramOrLibrary(ifStat.ifTrue, prog, libraries, library)){
+                                String newLabel;
+                                LabelGenerator lGen = new LabelGenerator(ifStat.ifTrue);
+                                do{
+                                    newLabel = lGen.genNext();
+                                } while(!labelIsUniqueToProgramOrLibrary(newLabel, prog, libraries, library));
+                                replaceLabelInLib(library, ifStat.ifTrue, newLabel);
+                            }
+
+                            if(!labelIsUniqueToProgramOrLibrary(ifStat.ifFalse, prog, libraries, library)){
+                                String newLabel;
+                                LabelGenerator lGen = new LabelGenerator(ifStat.ifFalse);
+                                do{
+                                    newLabel = lGen.genNext();
+                                } while(!labelIsUniqueToProgramOrLibrary(newLabel, prog, libraries, library));
+                                replaceLabelInLib(library, ifStat.ifFalse, newLabel);
+                            }
                         } else if(icode instanceof ExternalCall){
                             ExternalCall call = (ExternalCall)icode;
                             
@@ -1934,7 +2035,7 @@ public class MyIrLinker {
                             if(!placeIsUniqueToProgramOrLibrary(placement.place, prog, libraries, library)){
                                 String place = null;
                                 do{
-                                    place = gen.genNextRegister();
+                                    place = gen.genNext();
                                 }while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
                                 
                                 replacePlaceInLib(library, placement.place, place);
@@ -1943,7 +2044,7 @@ public class MyIrLinker {
                             if(placeIsUniqueToProgramOrLibrary(placement.retPlace, prog, libraries, library)){
                                 String place = null;
                                 do{
-                                    place = gen.genNextRegister();
+                                    place = gen.genNext();
                                 } while(placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                                 replacePlaceInLib(library, placement.retPlace, place);
@@ -1959,6 +2060,28 @@ public class MyIrLinker {
                                 }
                             } else {
                                 fetchInternalDependentInstructions(library, prog, libraries, placement.retPlace, symbolTable, dataSection, codeSection, procedureSec);
+                            }
+                        } else if(icode instanceof Goto){
+                            Goto gotoICode = (Goto)icode;
+
+                            if(!labelIsUniqueToProgramOrLibrary(gotoICode.label, prog, libraries, library)){
+                                String newLabel;
+                                LabelGenerator lGen = new LabelGenerator(gotoICode.label);
+                                do{
+                                    newLabel = lGen.genNext();
+                                } while(!labelIsUniqueToProgramOrLibrary(newLabel, prog, libraries, library));
+                                replaceLabelInLib(library, gotoICode.label, newLabel);
+                            }
+                        } else if(icode instanceof Label){
+                            Label labelICode = (Label)icode;
+
+                            if(!labelIsUniqueToProgramOrLibrary(labelICode.label, prog, libraries, library)){
+                                String newLabel;
+                                LabelGenerator lGen = new LabelGenerator(labelICode.label);
+                                do{
+                                    newLabel = lGen.genNext();
+                                } while(!labelIsUniqueToProgramOrLibrary(newLabel, prog, libraries, library));
+                                replaceLabelInLib(library, labelICode.label, newLabel);
                             }
                         }
                         newProcedure.addInstruction(icode);
@@ -1986,7 +2109,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToLibrary(assign.paramPlace, single, libraries, library)){
                             String place = null;
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             }while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                             replacePlaceInLib(library, assign.paramPlace, place);
@@ -1995,7 +2118,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToLibrary(assign.newPlace, single, libraries, library)){
                             String place = null;
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             } while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                             replacePlaceInLib(library, assign.newPlace, place);
@@ -2009,7 +2132,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToLibrary(placement.retPlace, single, libraries, library)){
                             String place = null;
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             } while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                             replacePlaceInLib(library, placement.retPlace, place);
@@ -2018,7 +2141,7 @@ public class MyIrLinker {
                         if(!placeIsUniqueToLibrary(placement.place, single, libraries, library)){
                             String place = null;
                             do{
-                                place = gen.genNextRegister();
+                                place = gen.genNext();
                             } while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                             replacePlaceInLib(library, placement.place, place);
@@ -2048,7 +2171,7 @@ public class MyIrLinker {
                             if(!placeIsUniqueToLibrary(assignment.place, single, libraries, library)){
                                 String newPlace = null;
                                 do{
-                                    newPlace = gen.genNextRegister();
+                                    newPlace = gen.genNext();
                                 } while(!placeIsUniqueToLibrary(newPlace, single, libraries, library));
                                 replacePlaceInLib(library, assignment.place, newPlace);
                             }
@@ -2193,6 +2316,24 @@ public class MyIrLinker {
                                     fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, symbolTable, dataSection, procedureSec);
                                 }
                             }
+
+                            if(!labelIsUniqueToLibrary(ifStat.ifTrue, single, libraries, library)){
+                                String newLabel;
+                                LabelGenerator lGen = new LabelGenerator(ifStat.ifTrue);
+                                do{
+                                    newLabel = lGen.genNext();
+                                } while(!labelIsUniqueToLibrary(newLabel, single, libraries, library));
+                                replaceLabelInLib(library, ifStat.ifTrue, newLabel);
+                            }
+
+                            if(!labelIsUniqueToLibrary(ifStat.ifFalse, single, libraries, library)){
+                                String newLabel;
+                                LabelGenerator lGen = new LabelGenerator(ifStat.ifFalse);
+                                do{
+                                    newLabel = lGen.genNext();
+                                } while(!labelIsUniqueToLibrary(newLabel, single, libraries, library));
+                                replaceLabelInLib(library, ifStat.ifFalse, newLabel);
+                            }
                         } else if(icode instanceof ExternalCall){
                             ExternalCall call = (ExternalCall)icode;
                             
@@ -2259,7 +2400,7 @@ public class MyIrLinker {
                             if(!placeIsUniqueToLibrary(placement.place, single, libraries, library)){
                                 String place = null;
                                 do{
-                                    place = gen.genNextRegister();
+                                    place = gen.genNext();
                                 }while(!placeIsUniqueToLibrary(place, single, libraries, library));
                                 
                                 replacePlaceInLib(library, placement.place, place);
@@ -2268,7 +2409,7 @@ public class MyIrLinker {
                             if(placeIsUniqueToLibrary(placement.retPlace, single, libraries, library)){
                                 String place = null;
                                 do{
-                                    place = gen.genNextRegister();
+                                    place = gen.genNext();
                                 } while(placeIsUniqueToLibrary(place, single, libraries, library));
 
                                 replacePlaceInLib(library, placement.retPlace, place);
@@ -2285,7 +2426,30 @@ public class MyIrLinker {
                             } else {
                                 fetchInternalDependentInstructions(library, single, libraries, placement.retPlace, symbolTable, dataSection, procedureSec);
                             }
+                        } else if(icode instanceof Goto){
+                            Goto gotoICode = (Goto)icode;
+
+                            if(!labelIsUniqueToLibrary(gotoICode.label, single, libraries, library)){
+                                String newLabel;
+                                LabelGenerator lGen = new LabelGenerator(gotoICode.label);
+                                do{
+                                    newLabel = lGen.genNext();
+                                } while(!labelIsUniqueToLibrary(newLabel, single, libraries, library));
+                                replaceLabelInLib(library, gotoICode.label, newLabel);
+                            }
+                        } else if(icode instanceof Label){
+                            Label labelICode = (Label)icode;
+
+                            if(!labelIsUniqueToLibrary(labelICode.label, single, libraries, library)){
+                                String newLabel;
+                                LabelGenerator lGen = new LabelGenerator(labelICode.label);
+                                do{
+                                    newLabel = lGen.genNext();
+                                } while(!labelIsUniqueToLibrary(newLabel, single, libraries, library));
+                                replaceLabelInLib(library, labelICode.label, newLabel);
+                            }
                         }
+
                         newProcedure.addInstruction(icode);
                     }
                     break loop;
@@ -2848,7 +3012,7 @@ public class MyIrLinker {
                     if(!placeIsUniqueToProgramOrLibrary(assign.place, startingProgram, libraries, startingProgram)){
                         String place = null;
                         do{
-                            place = gen.genNextRegister();
+                            place = gen.genNext();
                         } while(!placeIsUniqueToProgramOrLibrary(place, startingProgram, libraries, startingProgram));
 
                         replacePlaceInProgram(startingProgram, assign.place, place);
@@ -3013,7 +3177,7 @@ public class MyIrLinker {
                     if(!placeIsUniqueToLibrary(assign.place, startingLibrary, libraries, startingLibrary)){
                         String place = null;
                         do{
-                            place = gen.genNextRegister();
+                            place = gen.genNext();
                         } while(!placeIsUniqueToLibrary(place, startingLibrary, libraries, startingLibrary));
 
                         replacePlaceInLib(startingLibrary, assign.place, place);
@@ -3114,7 +3278,6 @@ public class MyIrLinker {
     private void linkCodeSection(Prog program, Lib[] libraries, SymSec symbolTable, DataSec dataSection, CodeSec codeSection, ProcSec procedureSec){
         SymSec programTable = program.symbols;
         CodeSec codeSec = program.code;
-        ProcSec programProcSec = program.procedures;
 
         for(int i = 0; i < codeSec.getLength(); i++){
             ICode icode = codeSec.getInstruction(i);
@@ -3182,7 +3345,7 @@ public class MyIrLinker {
                     if(!placeIsUniqueToProgramOrLibrary(assignment.place, program, libraries, program)){
                         String place = null;
                         do{
-                            place = gen.genNextRegister();
+                            place = gen.genNext();
                         } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, program));
 
                         replacePlaceInProgram(program, assignment.place, place);
@@ -3255,6 +3418,24 @@ public class MyIrLinker {
                         }
                     }
                 }
+
+                if(!labelIsUniqueToProgramOrLibrary(ifStat.ifTrue, program, libraries, program)){
+                    String newLabel;
+                    LabelGenerator lGen = new LabelGenerator(ifStat.ifTrue);
+                    do{
+                        newLabel = lGen.genNext();
+                    } while(!labelIsUniqueToProgramOrLibrary(newLabel, program, libraries, program));
+                    replaceLabelInProgram(program, ifStat.ifTrue, newLabel);
+                }
+
+                if(!labelIsUniqueToProgramOrLibrary(ifStat.ifFalse, program, libraries, program)){
+                    String newLabel;
+                    LabelGenerator lGen = new LabelGenerator(ifStat.ifFalse);
+                    do{
+                        newLabel = lGen.genNext();
+                    } while(!labelIsUniqueToProgramOrLibrary(newLabel, program, libraries, program));
+                    replaceLabelInProgram(program, ifStat.ifFalse, newLabel);
+                }
             } else if(icode instanceof ExternalCall){
                 ExternalCall call = (ExternalCall)icode;
                 
@@ -3319,6 +3500,26 @@ public class MyIrLinker {
                         if(!entry.icodePlace.equals(newEntry.icodePlace))
                             replacePlaceInProgram(program, entry.icodePlace, newEntry.icodePlace);
                     }
+                }
+            } else if(icode instanceof Goto){
+                Goto gotoICode = (Goto)icode;
+                if(!labelIsUniqueToProgramOrLibrary(gotoICode.label, program, libraries, program)){
+                    String newLabel;
+                    LabelGenerator lGen = new LabelGenerator(gotoICode.label);
+                    do{
+                        newLabel = lGen.genNext();
+                    } while(!labelIsUniqueToProgramOrLibrary(newLabel, program, libraries, program));
+                    replaceLabelInProgram(program, gotoICode.label, newLabel);
+                }
+            } else if(icode instanceof Label){
+                Label labelICode = (Label)icode;
+                if(!labelIsUniqueToProgramOrLibrary(labelICode.label, program, libraries, program)){
+                    String newLabel;
+                    LabelGenerator lGen = new LabelGenerator(labelICode.label);
+                    do{
+                        newLabel = lGen.genNext();
+                    } while(!labelIsUniqueToProgramOrLibrary(newLabel, program, libraries, program));
+                    replaceLabelInProgram(program, labelICode.label, newLabel);
                 }
             }
 

@@ -1,12 +1,12 @@
 package io.github.H20man13.DeClan.common.builder;
 
 import edu.depauw.declan.common.ErrorLog;
-import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.builder.section.CodeSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.section.DataSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.section.ProcedureSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.section.SymbolSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.template.CompletableBuilder;
+import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;

@@ -13,7 +13,6 @@ import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
-import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.builder.AssignmentBuilder;
 import io.github.H20man13.DeClan.common.builder.IrBuilderContext;
@@ -25,6 +24,7 @@ import io.github.H20man13.DeClan.common.builder.section.CodeSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.section.DataSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.section.ProcedureSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.section.SymbolSectionBuilder;
+import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.ProcedureEntry;
 import io.github.H20man13.DeClan.common.symboltable.entry.StringEntry;
@@ -33,7 +33,7 @@ import io.github.H20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
 import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 import io.github.H20man13.DeClan.common.util.Utils;
 
-import static io.github.H20man13.DeClan.common.IrRegisterGenerator.*;
+import static io.github.H20man13.DeClan.common.gen.IrRegisterGenerator.*;
 import static io.github.H20man13.DeClan.main.MyIO.*;
 
 import java.io.Writer;
@@ -222,13 +222,13 @@ public class MyICodeGenerator{
     
     StringEntryList alias = new StringEntryList();
     for(int i = 0; i < args.size(); i++){
-	    String argAlias = gen.genNextRegister();
+	    String argAlias = gen.genNext();
       alias.add(argAlias);
     }
 
     procArgs.addEntry(procedureName, alias);
   
-    String returnPlace = gen.genNextRegister();
+    String returnPlace = gen.genNext();
     Expression retExp = procDecl.getReturnStatement();
     if(retExp != null){
       procEnvironment.addEntry(procedureName, new StringEntry(returnPlace));
@@ -1176,7 +1176,7 @@ public class MyICodeGenerator{
           return "";
         }
       } else {
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         symBuilder.addSymEntry(SymEntry.EXTERNAL, place, identifier.getLexeme());
         varEnvironment.addEntry(identifier.getLexeme(), new StringEntry(place));
         return place;
@@ -1201,7 +1201,7 @@ public class MyICodeGenerator{
 
   public String generateParamaterDeclarationIr(ParamaterDeclaration parDeclaration, AssignmentBuilder builder) {
     Identifier id = parDeclaration.getIdentifier();
-    String alias = gen.genNextRegister();
+    String alias = gen.genNext();
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(alias));
     return alias;
   }

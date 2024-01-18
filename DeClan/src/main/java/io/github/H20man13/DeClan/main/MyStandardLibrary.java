@@ -13,8 +13,8 @@ import edu.depauw.declan.common.Position;
 import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.ast.Library;
 import io.github.H20man13.DeClan.common.ElaborateReaderSource;
-import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.ReaderSource;
+import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.ICode;
 
 public class MyStandardLibrary {

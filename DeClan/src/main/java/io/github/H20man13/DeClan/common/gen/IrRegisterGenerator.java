@@ -1,6 +1,6 @@
-package io.github.H20man13.DeClan.common;
+package io.github.H20man13.DeClan.common.gen;
 
-public class IrRegisterGenerator {
+public class IrRegisterGenerator implements Generator {
     private char startLetter;
     private char endLetter;
     private char currentLetter;
@@ -19,7 +19,7 @@ public class IrRegisterGenerator {
 		currentNumber = 0;
 	}
     
-    public String genNextRegister(){
+    public String genNext(){
 		if(firstRound){
 			String awnser = "" + currentLetter;
 			if(currentLetter != endLetter){

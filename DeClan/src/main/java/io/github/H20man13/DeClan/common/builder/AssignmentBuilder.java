@@ -4,10 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.depauw.declan.common.ErrorLog;
-import io.github.H20man13.DeClan.common.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.builder.section.SymbolSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.template.ResetableBuilder;
+import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -37,13 +37,13 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
     }
 
     public String buildStringAssignment(String value){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         intermediateCode.add(factory.produceStringAssignment(place, value));
         return place;
     }
 
     public String buildBoolAssignment(String value){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         Assign result = null;
         if(value.equals("TRUE")){
             result = factory.produceBooleanAssignment(place, true);
@@ -56,7 +56,7 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
 
     public String buildNumAssignment(String value){
         Assign result = null;
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         if(value.contains(".")){
             result = factory.produceRealAssignment(place, Float.parseFloat(value));
         } else {
@@ -67,42 +67,42 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
     }
 
     public String buildIntegerNotAssignment(Exp value){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         UnExp unExp = new UnExp(Operator.INOT, value);
         intermediateCode.add(factory.produceUnaryOperation(place, unExp));
         return place;
     }
 
     public String buildNotAssignment(Exp value){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         UnExp unExp = new UnExp(UnExp.Operator.BNOT, value);
         intermediateCode.add(factory.produceUnaryOperation(place, unExp));
         return place;
     }
 
     public String buildIntegerAdditionAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.IADD ,right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildIntegerSubtractionAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.ISUB, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildIntegerMultiplicationAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.IMUL, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildIntegerModuloAssignment(String left, String right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         List<String> args = new LinkedList<String>();
         args.add(left);
         args.add(right);
@@ -111,91 +111,91 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
     }
 
     public String buildLessThanOrEqualAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.LE, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildLessThanAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.LT, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildGreaterThanOrEqualToAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.GE, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildGreaterThanAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.GT, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildLogicalAndAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.LAND, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildIntegerOrAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.IOR, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildIntegerAndAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.IAND, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildIntegerExclusiveOrAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.IXOR, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildLogicalOrAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.LOR, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildLeftShiftAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.ILSHIFT, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildRightShiftAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.IRSHIFT, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildEqualityAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.EQ, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
     }
 
     public String buildInequalityAssignment(Exp left, Exp right){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         BinExp binExp = new BinExp(left, BinExp.Operator.NE, right);
         intermediateCode.add(factory.produceBinaryOperation(place, binExp));
         return place;
@@ -206,7 +206,7 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
     }
 
     public String buildVariableAssignment(String value){ 
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         intermediateCode.add(factory.produceVariableAssignment(place, value));
         return place;
     }
@@ -220,13 +220,13 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
     }
 
     public String buildExternalFunctionCall(String funcName, List<String> args){
-        String place = gen.genNextRegister();
+        String place = gen.genNext();
         intermediateCode.add(factory.produceExternalProcedureAssignment(place, funcName, args));
         return place;
     }
 
     public String buildExternalReturnPlacement(String dest){
-        String reg = gen.genNextRegister();
+        String reg = gen.genNext();
         intermediateCode.add(factory.procuceExternalReturnPlacement(reg, dest));
         return reg;
     }
