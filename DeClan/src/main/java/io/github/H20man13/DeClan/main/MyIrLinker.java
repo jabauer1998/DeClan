@@ -2881,8 +2881,9 @@ public class MyIrLinker {
     }
 
     private static boolean placeIsUniqueToProgramOrLibrary(String place, Prog program, Lib[] libraries, Lib libraryToIgnore){
-        if(placeExistsInProgram(place, program))
-            return false;
+        if(!program.equals(libraryToIgnore))
+            if(placeExistsInProgram(place, program))
+                return false;
 
         for(Lib library : libraries){
             if(!library.equals(libraryToIgnore))
