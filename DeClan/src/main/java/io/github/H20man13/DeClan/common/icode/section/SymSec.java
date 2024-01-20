@@ -142,7 +142,9 @@ public class SymSec implements ICode {
                 return false;
 
             for(int i = 0; i < getLength(); i++){
-                if(symbols.getEntryByIndex(i).equals(getEntryByIndex(i)))
+                SymEntry expected = symbols.getEntryByIndex(i);
+                SymEntry actual = getEntryByIndex(i);
+                if(!expected.equals(actual))
                     return false;
             }
 

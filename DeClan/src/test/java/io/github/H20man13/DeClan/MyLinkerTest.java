@@ -305,6 +305,101 @@ public class MyLinkerTest {
                      "  k |< j\r\n" + //
                      " RETURN\r\n";
 
+         linkProgramStrings(exp, prog1, lib1, lib2);
+    }
+
+    @Test
+    public void linkDuplicateLabels(){
+        String prog1 = "SYMBOL SECTION\n"
+                      + "v EXTERNAL lib1VariableName\n"
+                      + "DATA SECTION\n"
+                      + " a := 20\n"
+                      + " b := 500\n"
+                      + "CODE SECTION\n"
+                      + " d := EXTERNAL CALL func2 ( )\n"
+                      + " g := d IADD v\n"
+                      + "LABEL begin2\n"
+                      + "IF g EQ v THEN begin ELSE end\n"
+                      + "LABEL begin\n"
+                      + " g := d IADD v\n"
+                      + "GOTO begin2\n"
+                      + "LABEL end\n"
+                      + "END\n"
+                      + "PROC SECTION\n";
+
+        String lib1 = "SYMBOL SECTION\n"
+                      + "a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
+                      + "DATA SECTION\n"
+                      + "a := 3\n"
+                      + "PROC SECTION\n"
+                      + " PROC LABEL func2\n"
+                      + "  b := EXTERNAL CALL func1 ( )\n"
+                      + "  c := b ISUB a\n"
+                      + "  LABEL begin2\n"
+                      + "  IF c EQ b THEN begin ELSE end\n"
+                      + "  LABEL begin\n"
+                      + "  e := c IADD b\n"
+                      + "  GOTO begin2\n"
+                      + "  LABEL end\n"
+                      + "  d |< e\n"
+                      + " RETURN\n";
+
+        String lib2 = "SYMBOL SECTION\n"
+                      + "DATA SECTION\n"
+                      + "PROC SECTION\n"
+                      + "PROC LABEL func1\n"
+                      + "  a := 3\n"
+                      + "  LABEL begin2\n"
+                      + "  IF a EQ a THEN begin ELSE end\n"
+                      + "  LABEL begin\n"
+                      + "  e := a IADD a\n"
+                      + "  GOTO begin2\n"
+                      + "  LABEL end\n"
+                      + "  b |< e\n"
+                      + "RETURN\n";
+
+        String exp = "SYMBOL SECTION\r\n" + //
+                     " r INTERNAL lib1VariableName\r\n" + //
+                     "DATA SECTION\r\n" + //
+                     " a := 20\r\n" + //
+                     " b := 500\r\n" + //
+                     " r := 3\r\n" + //
+                    "CODE SECTION\r\n" + //
+                    " CALL func2 (  )\r\n" + //
+                    " f [| i\r\n" + //
+                    " g := f IADD r\r\n" + //
+                    " LABEL begin2_1_1\r\n" + //
+                    " IF g EQ r THEN begin_1_1 ELSE end_1_1\r\n" + //
+                    " LABEL begin_1_1\r\n" + //
+                    " g := f IADD r\r\n" + //
+                    " GOTO begin2_1_1\r\n" + //
+                    " LABEL end_1_1\r\n" + //
+                    "END\r\n" + //
+                    "PROC SECTION\r\n" + //
+                    " PROC LABEL func2\r\n" + //
+                    "  CALL func1 (  )\r\n" + //
+                    "  j [| i\r\n" + //
+                    "  m := j ISUB r\r\n" + //
+                    "  LABEL begin2_1_0\r\n" + //
+                    "  IF m EQ j THEN begin_1_0 ELSE end_1_0\r\n" + //
+                    "  LABEL begin_1_0\r\n" + //
+                    "  o := m IADD j\r\n" + //
+                    "  GOTO begin2_1_0\r\n" + //
+                    "  LABEL end_1_0\r\n" + //
+                    "  i |[ o\r\n" + //
+                    " RETURN\r\n" + //
+                    " PROC LABEL func1\r\n" + //
+                    "  l := 3\r\n" + //
+                    "  LABEL begin2_0\r\n" + //
+                    "  IF l EQ l THEN begin_0 ELSE end_0\r\n" + //
+                    "  LABEL begin_0\r\n" + //
+                    "  e := l IADD l\r\n" + //
+                    "  GOTO begin2_0\r\n" + //
+                    "  LABEL end_0\r\n" + //
+                    "  k |[ e\r\n" + //
+                    " RETURN\r\n";
+
+        linkProgramStrings(exp, prog1, lib1, lib2);
     }
 
     private static void linkTestProgram(String expectedResult, String prgSrc){
