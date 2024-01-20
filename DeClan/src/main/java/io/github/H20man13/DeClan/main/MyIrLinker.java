@@ -2894,8 +2894,9 @@ public class MyIrLinker {
     }
 
     private static boolean labelIsUniqueToProgramOrLibrary(String label, Prog program, Lib[] libraries, Lib libraryToIgnore){
-        if(labelExistsInProgram(label, program))
-            return false;
+        if(!program.equals(libraryToIgnore))
+            if(labelExistsInProgram(label, program))
+                return false;
 
         for(Lib library : libraries){
             if(!library.equals(libraryToIgnore)){
