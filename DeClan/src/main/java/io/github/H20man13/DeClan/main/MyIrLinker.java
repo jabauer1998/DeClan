@@ -2041,11 +2041,11 @@ public class MyIrLinker {
                                 replacePlaceInLib(library, placement.place, place);
                             }
 
-                            if(placeIsUniqueToProgramOrLibrary(placement.retPlace, prog, libraries, library)){
+                            if(!placeIsUniqueToProgramOrLibrary(placement.retPlace, prog, libraries, library)){
                                 String place = null;
                                 do{
                                     place = gen.genNext();
-                                } while(placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
+                                } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                                 replacePlaceInLib(library, placement.retPlace, place);
                             }
