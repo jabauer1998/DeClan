@@ -1678,11 +1678,11 @@ public class MyIrLinker {
                         replacePlaceInLib(library, placement.place, place);
                     }
 
-                    if(placeIsUniqueToLibrary(placement.retPlace, single, libraries, library)){
+                    if(!placeIsUniqueToLibrary(placement.retPlace, single, libraries, library)){
                         String place = null;
                         do{
                             place = gen.genNext();
-                        } while(placeIsUniqueToLibrary(place, single, libraries, library));
+                        } while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                         replacePlaceInLib(library, placement.retPlace, place);
                     }
