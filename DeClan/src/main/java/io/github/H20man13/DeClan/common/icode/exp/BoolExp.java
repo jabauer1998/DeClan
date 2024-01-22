@@ -13,7 +13,7 @@ public class BoolExp implements Exp {
     public boolean equals(Object exp) {
         if(exp instanceof BoolExp){
             BoolExp boolExp = (BoolExp)exp;
-            return this.trueFalse = boolExp.trueFalse;
+            return this.trueFalse == boolExp.trueFalse;
         } else {
             return false;
         }
