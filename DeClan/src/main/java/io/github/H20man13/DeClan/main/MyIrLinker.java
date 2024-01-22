@@ -1011,7 +1011,7 @@ public class MyIrLinker {
     private void fetchInternalProcedure(Lib library, String procName, Prog prog, Lib[] libraries, SymSec symbolTable, DataSec dataSection, CodeSec codeSection, ProcSec procedureSec){
         ProcLabel newProcLabel = new ProcLabel(procName);
         Proc newProcedure = new Proc(newProcLabel);
-        ProcSec libProcSec = prog.procedures;
+        ProcSec libProcSec = library.procedures;
         SymSec libSymbols = library.symbols;
         if(libProcSec.containsProcedure(procName) && !procedureSec.containsProcedure(procName)){
             Proc procedure = libProcSec.getProcedureByName(procName);
@@ -2895,9 +2895,10 @@ public class MyIrLinker {
     }
 
     private static boolean labelIsUniqueToProgramOrLibrary(String label, Prog program, Lib[] libraries, Lib libraryToIgnore){
-        if(!program.equals(libraryToIgnore))
+        if(!program.equals(libraryToIgnore)){
             if(labelExistsInProgram(label, program))
                 return false;
+        }
 
         for(Lib library : libraries){
             if(!library.equals(libraryToIgnore)){
@@ -2924,14 +2925,16 @@ public class MyIrLinker {
     }
 
     private static boolean labelIsUniqueToLibrary(String label, Lib library, Lib[] libraries, Lib libToIgnore){
-        if(!library.equals(libToIgnore))
+        if(!library.equals(libToIgnore)){
             if(labelExistsInLibrary(label, library))
                 return false;
+        }
 
         for(Lib lib : libraries){
-            if(!lib.equals(libToIgnore))
+            if(!lib.equals(libToIgnore)){
                 if(labelExistsInLibrary(label, lib))
                     return false;
+            }
         }
 
         return true;
