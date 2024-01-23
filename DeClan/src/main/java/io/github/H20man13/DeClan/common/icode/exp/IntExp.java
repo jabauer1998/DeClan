@@ -21,7 +21,7 @@ public class IntExp implements Exp {
 
     @Override
     public String toString(){
-        return "" + value;
+        return Integer.toUnsignedString(value);
     }
 
     @Override
