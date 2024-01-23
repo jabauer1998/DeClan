@@ -2840,4 +2840,717 @@ public class MyLinkerTest {
                                 " RETURN\r\n";
         linkTestProgram(expectedResult, progSrc);
     }
+
+    @Test
+    public void testIfStatementAdvanced(){
+        String progSrc = "test_source/IfStatementAdvanced.dcl";
+        String expectedResult = "SYMBOL SECTION\r\n" + //
+                                "DATA SECTION\r\n" + //
+                                " a := TRUE\r\n" + //
+                                " b := a\r\n" + //
+                                " c := FALSE\r\n" + //
+                                " d := c\r\n" + //
+                                "CODE SECTION\r\n" + //
+                                " IF b EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                " LABEL IFSTAT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                " IF d EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_1_0 ELSE IFNEXT_1_SEQ_0_LEVEL_1_0\r\n" + //
+                                " LABEL IFSTAT_1_SEQ_0_LEVEL_1_0\r\n" + //
+                                " e := 5\r\n" + //
+                                " CALL WriteInt ( e -> W0 )\r\n" + //
+                                " GOTO IFEND_1_LEVEL_1_0\r\n" + //
+                                " LABEL IFNEXT_1_SEQ_0_LEVEL_1_0\r\n" + //
+                                " f := 6\r\n" + //
+                                " CALL WriteInt ( f -> W0 )\r\n" + //
+                                " GOTO IFEND_1_LEVEL_1_0\r\n" + //
+                                " LABEL IFNEXT_1_SEQ_1_LEVEL_1_0\r\n" + //
+                                " LABEL IFEND_1_LEVEL_1_0\r\n" + //
+                                " GOTO IFEND_0_LEVEL_0_0\r\n" + //
+                                " LABEL IFNEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                " IF d EQ TRUE THEN IFSTAT_3_SEQ_0_LEVEL_1 ELSE IFNEXT_3_SEQ_0_LEVEL_1\r\n" + //
+                                " LABEL IFSTAT_3_SEQ_0_LEVEL_1\r\n" + //
+                                " g := 7\r\n" + //
+                                " CALL WriteInt ( g -> W0 )\r\n" + //
+                                " GOTO IFEND_3_LEVEL_1\r\n" + //
+                                " LABEL IFNEXT_3_SEQ_0_LEVEL_1\r\n" + //
+                                " h := 8\r\n" + //
+                                " CALL WriteInt ( h -> W0 )\r\n" + //
+                                " GOTO IFEND_3_LEVEL_1\r\n" + //
+                                " LABEL IFNEXT_3_SEQ_1_LEVEL_1\r\n" + //
+                                " LABEL IFEND_3_LEVEL_1\r\n" + //
+                                " GOTO IFEND_0_LEVEL_0_0\r\n" + //
+                                " LABEL IFNEXT_0_SEQ_1_LEVEL_0_0\r\n" + //
+                                " LABEL IFEND_0_LEVEL_0_0\r\n" + //
+                                "END\r\n" + //
+                                "PROC SECTION\r\n" + //
+                                " PROC LABEL WriteInt\r\n" + //
+                                "  W1 <- W0\r\n" + //
+                                "  IPARAM W1\r\n" + //
+                                "  IASM \"LDR R0, %a\"\r\n" + //
+                                "  IASM \"SWI 1\"\r\n" + //
+                                " RETURN\r\n";
+
+        linkTestProgram(expectedResult, progSrc);
+    }
+
+    @Test
+    public void testIfStatementBasic(){
+        String progSrc = "test_source/IfStatementBasic.dcl";
+        String expectedResult = "SYMBOL SECTION\r\n" + //
+                                "DATA SECTION\r\n" + //
+                                " a := TRUE\r\n" + //
+                                " b := a\r\n" + //
+                                " c := FALSE\r\n" + //
+                                " d := c\r\n" + //
+                                "CODE SECTION\r\n" + //
+                                " IF b EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                " LABEL IFSTAT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                " e := 4\r\n" + //
+                                " CALL WriteInt ( e -> W0 )\r\n" + //
+                                " GOTO IFEND_0_LEVEL_0_0\r\n" + //
+                                " LABEL IFNEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                " f := 5\r\n" + //
+                                " CALL WriteInt ( f -> W0 )\r\n" + //
+                                " GOTO IFEND_0_LEVEL_0_0\r\n" + //
+                                " LABEL IFNEXT_0_SEQ_1_LEVEL_0_0\r\n" + //
+                                " LABEL IFEND_0_LEVEL_0_0\r\n" + //
+                                " IF d EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0_0\r\n" + //
+                                " LABEL IFSTAT_1_SEQ_0_LEVEL_0_0\r\n" + //
+                                " g := 2\r\n" + //
+                                " CALL WriteInt ( g -> W0 )\r\n" + //
+                                " GOTO IFEND_1_LEVEL_0_0\r\n" + //
+                                " LABEL IFNEXT_1_SEQ_0_LEVEL_0_0\r\n" + //
+                                " IF b EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0_0\r\n" + //
+                                " LABEL IFSTAT_1_SEQ_1_LEVEL_0_0\r\n" + //
+                                " h := 5\r\n" + //
+                                " CALL WriteInt ( h -> W0 )\r\n" + //
+                                " GOTO IFEND_1_LEVEL_0_0\r\n" + //
+                                " LABEL IFNEXT_1_SEQ_1_LEVEL_0_0\r\n" + //
+                                " i := 6\r\n" + //
+                                " CALL WriteInt ( i -> W0 )\r\n" + //
+                                " GOTO IFEND_1_LEVEL_0_0\r\n" + //
+                                " LABEL IFNEXT_1_SEQ_2_LEVEL_0_0\r\n" + //
+                                " LABEL IFEND_1_LEVEL_0_0\r\n" + //
+                                "END\r\n" + //
+                                "PROC SECTION\r\n" + //
+                                " PROC LABEL WriteInt\r\n" + //
+                                "  W1 <- W0\r\n" + //
+                                "  IPARAM W1\r\n" + //
+                                "  IASM \"LDR R0, %a\"\r\n" + //
+                                "  IASM \"SWI 1\"\r\n" + //
+                                " RETURN\r\n";
+
+        linkTestProgram(expectedResult, progSrc);
+    }
+
+    @Test
+    public void testLoops(){
+        String progSrc = "test_source/loops.dcl";
+        String expectedResult = "SYMBOL SECTION\r\n" + //
+                                "DATA SECTION\r\n" + //
+                                " a := 0\r\n" + //
+                                "CODE SECTION\r\n" + //
+                                " b := 1\r\n" + //
+                                " a := b\r\n" + //
+                                " c := 10\r\n" + //
+                                " LABEL FORBEG_0_LEVEL_0\r\n" + //
+                                " IF a LT c THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0\r\n" + //
+                                " LABEL FORLOOP_0_LEVEL_0\r\n" + //
+                                " CALL WriteInt ( a -> W0 )\r\n" + //
+                                " d := 1\r\n" + //
+                                " e := a IADD d\r\n" + //
+                                " a := e\r\n" + //
+                                " GOTO FORBEG_0_LEVEL_0\r\n" + //
+                                " LABEL FOREND_0_LEVEL_0\r\n" + //
+                                " CALL WriteLn (  )\r\n" + //
+                                " f := 1\r\n" + //
+                                " a := f\r\n" + //
+                                " g := 10\r\n" + //
+                                " LABEL FORBEG_1_LEVEL_0\r\n" + //
+                                " IF a LT g THEN FORLOOP_1_LEVEL_0 ELSE FOREND_1_LEVEL_0\r\n" + //
+                                " LABEL FORLOOP_1_LEVEL_0\r\n" + //
+                                " CALL WriteInt ( a -> W0 )\r\n" + //
+                                " h := 2\r\n" + //
+                                " i := a IADD h\r\n" + //
+                                " a := i\r\n" + //
+                                " GOTO FORBEG_1_LEVEL_0\r\n" + //
+                                " LABEL FOREND_1_LEVEL_0\r\n" + //
+                                " CALL WriteLn (  )\r\n" + //
+                                " j := 10\r\n" + //
+                                " a := j\r\n" + //
+                                " k := 1\r\n" + //
+                                " LABEL FORBEG_2_LEVEL_0\r\n" + //
+                                " IF a GT k THEN FORLOOP_2_LEVEL_0 ELSE FOREND_2_LEVEL_0\r\n" + //
+                                " LABEL FORLOOP_2_LEVEL_0\r\n" + //
+                                " CALL WriteInt ( a -> W0 )\r\n" + //
+                                " l := 2\r\n" + //
+                                " CALL INeg ( l -> W3 )\r\n" + //
+                                " W2 <| W6\r\n" + //
+                                " n := a IADD W2\r\n" + //
+                                " a := n\r\n" + //
+                                " GOTO FORBEG_2_LEVEL_0\r\n" + //
+                                " LABEL FOREND_2_LEVEL_0\r\n" + //
+                                " CALL WriteLn (  )\r\n" + //
+                                " o := 10\r\n" + //
+                                " a := o\r\n" + //
+                                " p := 1\r\n" + //
+                                " LABEL FORBEG_3_LEVEL_0\r\n" + //
+                                " IF a GT p THEN FORLOOP_3_LEVEL_0 ELSE FOREND_3_LEVEL_0\r\n" + //
+                                " LABEL FORLOOP_3_LEVEL_0\r\n" + //
+                                " CALL WriteInt ( a -> W0 )\r\n" + //
+                                " q := 1\r\n" + //
+                                " CALL INeg ( q -> W3 )\r\n" + //
+                                " X0 <| W6\r\n" + //
+                                " s := a IADD X0\r\n" + //
+                                " a := s\r\n" + //
+                                " GOTO FORBEG_3_LEVEL_0\r\n" + //
+                                " LABEL FOREND_3_LEVEL_0\r\n" + //
+                                " CALL WriteLn (  )\r\n" + //
+                                " t := 1\r\n" + //
+                                " a := t\r\n" + //
+                                " u := 10\r\n" + //
+                                " v := a LE u\r\n" + //
+                                " IF v EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                " LABEL WHILECOND_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                " IF v EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILEEND_0_LEVEL_0_0\r\n" + //
+                                " LABEL WHILESTAT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                " CALL WriteInt ( a -> W0 )\r\n" + //
+                                " w := 1\r\n" + //
+                                " x := a IADD w\r\n" + //
+                                " a := x\r\n" + //
+                                " y := 10\r\n" + //
+                                " z := a LE y\r\n" + //
+                                " v := z\r\n" + //
+                                " GOTO WHILECOND_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                " LABEL WHILENEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                " LABEL WHILEEND_0_LEVEL_0_0\r\n" + //
+                                " CALL WriteLn (  )\r\n" + //
+                                " A := 1\r\n" + //
+                                " a := A\r\n" + //
+                                " B := 10\r\n" + //
+                                " C := a LE B\r\n" + //
+                                " D := 2\r\n" + //
+                                " CALL Mod ( a -> X2 , D -> X4 )\r\n" + //
+                                " X1 <| X7\r\n" + //
+                                " F := 1\r\n" + //
+                                " G := X1 EQ F\r\n" + //
+                                " H := C LAND G\r\n" + //
+                                " IF H EQ TRUE THEN WHILESTAT_2_SEQ_0_LEVEL_0_1 ELSE WHILENEXT_2_SEQ_0_LEVEL_0_1\r\n" + //
+                                " LABEL WHILECOND_2_SEQ_0_LEVEL_0_1\r\n" + //
+                                " IF H EQ TRUE THEN WHILESTAT_2_SEQ_0_LEVEL_0_1 ELSE WHILEEND_2_LEVEL_0_1\r\n" + //
+                                " LABEL WHILESTAT_2_SEQ_0_LEVEL_0_1\r\n" + //
+                                " CALL WriteInt ( a -> W0 )\r\n" + //
+                                " I := 1\r\n" + //
+                                " J := a IADD I\r\n" + //
+                                " a := J\r\n" + //
+                                " K := 10\r\n" + //
+                                " L := a LE K\r\n" + //
+                                " M := 2\r\n" + //
+                                " CALL Mod ( a -> X2 , M -> X4 )\r\n" + //
+                                " Y6 <| X7\r\n" + //
+                                " O := 1\r\n" + //
+                                " P := Y6 EQ O\r\n" + //
+                                " Q := L LAND P\r\n" + //
+                                " H := Q\r\n" + //
+                                " GOTO WHILECOND_2_SEQ_0_LEVEL_0_1\r\n" + //
+                                " LABEL WHILENEXT_2_SEQ_0_LEVEL_0_1\r\n" + //
+                                " R := 10\r\n" + //
+                                " S := a LE R\r\n" + //
+                                " IF S EQ TRUE THEN WHILESTAT_2_SEQ_1_LEVEL_0 ELSE WHILENEXT_2_SEQ_1_LEVEL_0\r\n" + //
+                                " LABEL WHILECOND_2_SEQ_1_LEVEL_0\r\n" + //
+                                " IF S EQ TRUE THEN WHILESTAT_2_SEQ_1_LEVEL_0 ELSE WHILEEND_2_LEVEL_0_1\r\n" + //
+                                " LABEL WHILESTAT_2_SEQ_1_LEVEL_0\r\n" + //
+                                " T := 1\r\n" + //
+                                " U := a IADD T\r\n" + //
+                                " a := U\r\n" + //
+                                " V := 10\r\n" + //
+                                " W := a LE V\r\n" + //
+                                " S := W\r\n" + //
+                                " GOTO WHILECOND_2_SEQ_1_LEVEL_0\r\n" + //
+                                " LABEL WHILENEXT_2_SEQ_1_LEVEL_0\r\n" + //
+                                " LABEL WHILEEND_2_LEVEL_0_1\r\n" + //
+                                " CALL WriteLn (  )\r\n" + //
+                                " X := 10\r\n" + //
+                                " a := X\r\n" + //
+                                " Y := 1\r\n" + //
+                                " Z := a LT Y\r\n" + //
+                                " LABEL REPEATBEG_0_LEVEL_0\r\n" + //
+                                " IF Z EQ TRUE THEN REPEATEND_0_LEVEL_0 ELSE REPEATLOOP_0_LEVEL_0\r\n" + //
+                                " LABEL REPEATLOOP_0_LEVEL_0\r\n" + //
+                                " CALL WriteInt ( a -> W0 )\r\n" + //
+                                " a0 := 2\r\n" + //
+                                " a1 := a ISUB a0\r\n" + //
+                                " a := a1\r\n" + //
+                                " a2 := 1\r\n" + //
+                                " a3 := a LT a2\r\n" + //
+                                " Z := a3\r\n" + //
+                                " GOTO REPEATBEG_0_LEVEL_0\r\n" + //
+                                " LABEL REPEATEND_0_LEVEL_0\r\n" + //
+                                " CALL WriteLn (  )\r\n" + //
+                                " a4 := 10\r\n" + //
+                                " a := a4\r\n" + //
+                                " a5 := 1\r\n" + //
+                                " a6 := a GE a5\r\n" + //
+                                " LABEL REPEATBEG_1_LEVEL_0\r\n" + //
+                                " IF a6 EQ TRUE THEN REPEATEND_1_LEVEL_0 ELSE REPEATLOOP_1_LEVEL_0\r\n" + //
+                                " LABEL REPEATLOOP_1_LEVEL_0\r\n" + //
+                                " CALL WriteInt ( a -> W0 )\r\n" + //
+                                " a7 := 1\r\n" + //
+                                " a8 := a IADD a7\r\n" + //
+                                " a := a8\r\n" + //
+                                " a9 := 1\r\n" + //
+                                " b0 := a GE a9\r\n" + //
+                                " a6 := b0\r\n" + //
+                                " GOTO REPEATBEG_1_LEVEL_0\r\n" + //
+                                " LABEL REPEATEND_1_LEVEL_0\r\n" + //
+                                " CALL WriteLn (  )\r\n" + //
+                                "END\r\n" + //
+                                "PROC SECTION\r\n" + //
+                                " PROC LABEL WriteInt\r\n" + //
+                                "  W1 <- W0\r\n" + //
+                                "  IPARAM W1\r\n" + //
+                                "  IASM \"LDR R0, %a\"\r\n" + //
+                                "  IASM \"SWI 1\"\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL WriteLn\r\n" + //
+                                "  IASM \"SWI 4\"\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL INeg\r\n" + //
+                                "  W4 <- W3\r\n" + //
+                                "  W5 := 0\r\n" + //
+                                "  W7 := INOT W4\r\n" + //
+                                "  W8 := 1\r\n" + //
+                                "  W9 := W7 IADD W8\r\n" + //
+                                "  W5 := W9\r\n" + //
+                                "  W6 |< W5\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL Mod\r\n" + //
+                                "  X3 <- X2\r\n" + //
+                                "  X5 <- X4\r\n" + //
+                                "  X6 := 0\r\n" + //
+                                "  X8 := 0\r\n" + //
+                                "  X6 := X3\r\n" + //
+                                "  X9 := X6 ISUB X5\r\n" + //
+                                "  Y0 := 0\r\n" + //
+                                "  Y1 := X9 GT Y0\r\n" + //
+                                "  IF Y1 EQ TRUE THEN WHILESTAT_2_SEQ_0_LEVEL_0_0 ELSE WHILENEXT_2_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  LABEL WHILECOND_2_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  IF Y1 EQ TRUE THEN WHILESTAT_2_SEQ_0_LEVEL_0_0 ELSE WHILEEND_2_LEVEL_0_0\r\n" + //
+                                "  LABEL WHILESTAT_2_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  Y2 := X6 ISUB X5\r\n" + //
+                                "  X6 := Y2\r\n" + //
+                                "  Y3 := X6 ISUB X5\r\n" + //
+                                "  Y4 := 0\r\n" + //
+                                "  Y5 := Y3 GT Y4\r\n" + //
+                                "  Y1 := Y5\r\n" + //
+                                "  GOTO WHILECOND_2_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  LABEL WHILENEXT_2_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  LABEL WHILEEND_2_LEVEL_0_0\r\n" + //
+                                "  X7 |< X6\r\n" + //
+                                " RETURN\r\n";
+
+        linkTestProgram(expectedResult, progSrc);
+    }
+
+    @Test
+    public void testRepeatLoop(){
+        String progSrc = "test_source/RepeatLoopBasic.dcl";
+        String expectedResult = "SYMBOL SECTION\r\n" + //
+                                "DATA SECTION\r\n" + //
+                                " a := 0\r\n" + //
+                                "CODE SECTION\r\n" + //
+                                " b := 1\r\n" + //
+                                " a := b\r\n" + //
+                                " c := 10\r\n" + //
+                                " d := a GE c\r\n" + //
+                                " LABEL REPEATBEG_0_LEVEL_0\r\n" + //
+                                " IF d EQ TRUE THEN REPEATEND_0_LEVEL_0 ELSE REPEATLOOP_0_LEVEL_0\r\n" + //
+                                " LABEL REPEATLOOP_0_LEVEL_0\r\n" + //
+                                " CALL WriteInt ( a -> W0 )\r\n" + //
+                                " e := 1\r\n" + //
+                                " f := a IADD e\r\n" + //
+                                " a := f\r\n" + //
+                                " g := 10\r\n" + //
+                                " h := a GE g\r\n" + //
+                                " d := h\r\n" + //
+                                " GOTO REPEATBEG_0_LEVEL_0\r\n" + //
+                                " LABEL REPEATEND_0_LEVEL_0\r\n" + //
+                                " CALL WriteLn (  )\r\n" + //
+                                "END\r\n" + //
+                                "PROC SECTION\r\n" + //
+                                " PROC LABEL WriteInt\r\n" + //
+                                "  W1 <- W0\r\n" + //
+                                "  IPARAM W1\r\n" + //
+                                "  IASM \"LDR R0, %a\"\r\n" + //
+                                "  IASM \"SWI 1\"\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL WriteLn\r\n" + //
+                                "  IASM \"SWI 4\"\r\n" + //
+                                " RETURN\r\n";
+
+        linkTestProgram(expectedResult, progSrc);
+    }
+
+    @Test
+    public void testSample(){
+        String progSrc = "test_source/Sample.dcl";
+        String expectedResult = "SYMBOL SECTION\r\n" + //
+                                "DATA SECTION\r\n" + //
+                                " a := 6\r\n" + //
+                                " b := a\r\n" + //
+                                " c := 7\r\n" + //
+                                " d := c\r\n" + //
+                                " e := 0\r\n" + //
+                                "CODE SECTION\r\n" + //
+                                " CALL gcd ( b -> f , d -> g )\r\n" + //
+                                " i <| h\r\n" + //
+                                " e := i\r\n" + //
+                                " j := b IMUL d\r\n" + //
+                                " k := j IMUL e\r\n" + //
+                                " e := k\r\n" + //
+                                " l := 1.0\r\n" + //
+                                " CALL IntToReal ( e -> X1 )\r\n" + //
+                                " X0 <| X4\r\n" + //
+                                " CALL RMul ( X0 -> a78 , l -> a79 )\r\n" + //
+                                " a77 <| a80\r\n" + //
+                                " CALL WriteReal ( a77 -> b24 )\r\n" + //
+                                " CALL WriteLn (  )\r\n" + //
+                                "END\r\n" + //
+                                "PROC SECTION\r\n" + //
+                                " PROC LABEL gcd\r\n" + //
+                                "  W1 <- W0\r\n" + //
+                                "  W3 <- W2\r\n" + //
+                                "  W5 := W1 NE W3\r\n" + //
+                                "  IF W5 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  LABEL WHILECOND_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  IF W5 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILEEND_0_LEVEL_0_0\r\n" + //
+                                "  LABEL WHILESTAT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  W6 := W1 GT W3\r\n" + //
+                                "  IF W6 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  LABEL IFSTAT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  W7 := W1 ISUB W3\r\n" + //
+                                "  W1 := W7\r\n" + //
+                                "  GOTO IFEND_0_LEVEL_0_0\r\n" + //
+                                "  LABEL IFNEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  W8 := W3 ISUB W1\r\n" + //
+                                "  W3 := W8\r\n" + //
+                                "  GOTO IFEND_0_LEVEL_0_0\r\n" + //
+                                "  LABEL IFNEXT_0_SEQ_1_LEVEL_0_0\r\n" + //
+                                "  LABEL IFEND_0_LEVEL_0_0\r\n" + //
+                                "  W9 := W1 NE W3\r\n" + //
+                                "  W5 := W9\r\n" + //
+                                "  GOTO WHILECOND_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  LABEL WHILENEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  LABEL WHILEEND_0_LEVEL_0_0\r\n" + //
+                                "  W4 |< W1\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL IntToReal\r\n" + //
+                                "  X2 <- X1\r\n" + //
+                                "  X3 := 0.0\r\n" + //
+                                "  X5 := FALSE\r\n" + //
+                                "  X6 := 0\r\n" + //
+                                "  X7 := 0\r\n" + //
+                                "  X8 := 0\r\n" + //
+                                "  X9 := 0\r\n" + //
+                                "  Y0 := 0\r\n" + //
+                                "  Y1 := 0\r\n" + //
+                                "  Y2 := 0\r\n" + //
+                                "  Y3 := 0\r\n" + //
+                                "  Y4 := 0\r\n" + //
+                                "  Y5 := 0\r\n" + //
+                                "  X9 := X2\r\n" + //
+                                "  Y6 := 0\r\n" + //
+                                "  X8 := Y6\r\n" + //
+                                "  CALL IntIsNegative ( X2 -> Y8 )\r\n" + //
+                                "  Y7 <| X4\r\n" + //
+                                "  X5 := Y7\r\n" + //
+                                "  CALL IntIsZero ( X9 -> a12 )\r\n" + //
+                                "  a11 <| X4\r\n" + //
+                                "  a20 := BNOT a11\r\n" + //
+                                "  IF a20 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_1 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_1\r\n" + //
+                                "  LABEL WHILECOND_0_SEQ_0_LEVEL_0_1\r\n" + //
+                                "  IF a20 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_1 ELSE WHILEEND_0_LEVEL_0_1\r\n" + //
+                                "  LABEL WHILESTAT_0_SEQ_0_LEVEL_0_1\r\n" + //
+                                "  a21 := 1\r\n" + //
+                                "  a22 := X9 IAND a21\r\n" + //
+                                "  Y0 := a22\r\n" + //
+                                "  a23 := 1\r\n" + //
+                                "  a24 := Y0 EQ a23\r\n" + //
+                                "  IF a24 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_1 ELSE IFNEXT_0_SEQ_0_LEVEL_0_1\r\n" + //
+                                "  LABEL IFSTAT_0_SEQ_0_LEVEL_0_1\r\n" + //
+                                "  X7 := X8\r\n" + //
+                                "  GOTO IFEND_0_LEVEL_0_1\r\n" + //
+                                "  LABEL IFNEXT_0_SEQ_0_LEVEL_0_1\r\n" + //
+                                "  LABEL IFEND_0_LEVEL_0_1\r\n" + //
+                                "  a25 := 1\r\n" + //
+                                "  a26 := X8 IADD a25\r\n" + //
+                                "  X8 := a26\r\n" + //
+                                "  a27 := 1\r\n" + //
+                                "  a28 := X9 IRSHIFT a27\r\n" + //
+                                "  X9 := a28\r\n" + //
+                                "  CALL IntIsZero ( X9 -> a12 )\r\n" + //
+                                "  a29 <| X4\r\n" + //
+                                "  a30 := BNOT a29\r\n" + //
+                                "  a20 := a30\r\n" + //
+                                "  GOTO WHILECOND_0_SEQ_0_LEVEL_0_1\r\n" + //
+                                "  LABEL WHILENEXT_0_SEQ_0_LEVEL_0_1\r\n" + //
+                                "  LABEL WHILEEND_0_LEVEL_0_1\r\n" + //
+                                "  a31 := 23\r\n" + //
+                                "  a32 := X7 LT a31\r\n" + //
+                                "  IF a32 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_1 ELSE IFNEXT_1_SEQ_0_LEVEL_0_1\r\n" + //
+                                "  LABEL IFSTAT_1_SEQ_0_LEVEL_0_1\r\n" + //
+                                "  a33 := 23\r\n" + //
+                                "  a34 := a33 ISUB X7\r\n" + //
+                                "  Y1 := a34\r\n" + //
+                                "  a35 := INOT Y1\r\n" + //
+                                "  a36 := 1\r\n" + //
+                                "  a37 := a35 IADD a36\r\n" + //
+                                "  Y2 := a37\r\n" + //
+                                "  a38 := 2147483648\r\n" + //
+                                "  a39 := INOT a38\r\n" + //
+                                "  a40 := Y2 IAND a39\r\n" + //
+                                "  Y2 := a40\r\n" + //
+                                "  a41 := 64\r\n" + //
+                                "  a42 := Y2 IOR a41\r\n" + //
+                                "  Y2 := a42\r\n" + //
+                                "  a43 := 1\r\n" + //
+                                "  a44 := a43 ILSHIFT X7\r\n" + //
+                                "  a45 := 1\r\n" + //
+                                "  a46 := a44 ISUB a45\r\n" + //
+                                "  Y4 := a46\r\n" + //
+                                "  a47 := X2 IAND Y4\r\n" + //
+                                "  Y3 := a47\r\n" + //
+                                "  a48 := Y3 ILSHIFT Y1\r\n" + //
+                                "  Y3 := a48\r\n" + //
+                                "  GOTO IFEND_1_LEVEL_0_1\r\n" + //
+                                "  LABEL IFNEXT_1_SEQ_0_LEVEL_0_1\r\n" + //
+                                "  a49 := 23\r\n" + //
+                                "  a50 := X7 GT a49\r\n" + //
+                                "  IF a50 EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
+                                "  LABEL IFSTAT_1_SEQ_1_LEVEL_0\r\n" + //
+                                "  a51 := 23\r\n" + //
+                                "  a52 := X7 ISUB a51\r\n" + //
+                                "  Y1 := a52\r\n" + //
+                                "  Y2 := Y1\r\n" + //
+                                "  a53 := 1\r\n" + //
+                                "  a54 := a53 ILSHIFT X7\r\n" + //
+                                "  a55 := 1\r\n" + //
+                                "  a56 := a54 ISUB a55\r\n" + //
+                                "  Y4 := a56\r\n" + //
+                                "  a57 := X2 IAND Y4\r\n" + //
+                                "  Y3 := a57\r\n" + //
+                                "  a58 := Y3 IRSHIFT Y1\r\n" + //
+                                "  Y3 := a58\r\n" + //
+                                "  GOTO IFEND_1_LEVEL_0_1\r\n" + //
+                                "  LABEL IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
+                                "  Y2 := X7\r\n" + //
+                                "  a59 := 1\r\n" + //
+                                "  a60 := a59 ILSHIFT X7\r\n" + //
+                                "  a61 := 1\r\n" + //
+                                "  a62 := a60 ISUB a61\r\n" + //
+                                "  Y4 := a62\r\n" + //
+                                "  a63 := X2 IAND Y4\r\n" + //
+                                "  Y3 := a63\r\n" + //
+                                "  GOTO IFEND_1_LEVEL_0_1\r\n" + //
+                                "  LABEL IFNEXT_1_SEQ_2_LEVEL_0\r\n" + //
+                                "  LABEL IFEND_1_LEVEL_0_1\r\n" + //
+                                "  X6 := Y3\r\n" + //
+                                "  a64 := 23\r\n" + //
+                                "  a65 := Y2 ILSHIFT a64\r\n" + //
+                                "  a66 := X6 IOR a65\r\n" + //
+                                "  X6 := a66\r\n" + //
+                                "  IF X5 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0_1 ELSE IFNEXT_2_SEQ_0_LEVEL_0_1\r\n" + //
+                                "  LABEL IFSTAT_2_SEQ_0_LEVEL_0_1\r\n" + //
+                                "  a67 := 1\r\n" + //
+                                "  a68 := 31\r\n" + //
+                                "  a69 := a67 ILSHIFT a68\r\n" + //
+                                "  a70 := X6 IOR a69\r\n" + //
+                                "  X6 := a70\r\n" + //
+                                "  GOTO IFEND_2_LEVEL_0_1\r\n" + //
+                                "  LABEL IFNEXT_2_SEQ_0_LEVEL_0_1\r\n" + //
+                                "  LABEL IFEND_2_LEVEL_0_1\r\n" + //
+                                "  CALL IntBinaryAsReal ( X6 -> a71 )\r\n" + //
+                                "  a76 <| a74\r\n" + //
+                                "  X3 := a76\r\n" + //
+                                "  X4 |< X3\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL IntIsNegative\r\n" + //
+                                "  Y9 <- Y8\r\n" + //
+                                "  Z0 := FALSE\r\n" + //
+                                "  Z2 := 0\r\n" + //
+                                "  Z3 := 31\r\n" + //
+                                "  Z4 := Y9 IRSHIFT Z3\r\n" + //
+                                "  Z5 := 1\r\n" + //
+                                "  Z6 := Z4 IAND Z5\r\n" + //
+                                "  Z2 := Z6\r\n" + //
+                                "  Z7 := 0\r\n" + //
+                                "  Z8 := Z2 EQ Z7\r\n" + //
+                                "  IF Z8 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0_0 ELSE IFNEXT_2_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  LABEL IFSTAT_2_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  Z9 := FALSE\r\n" + //
+                                "  Z0 := Z9\r\n" + //
+                                "  GOTO IFEND_2_LEVEL_0_0\r\n" + //
+                                "  LABEL IFNEXT_2_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  a10 := TRUE\r\n" + //
+                                "  Z0 := a10\r\n" + //
+                                "  GOTO IFEND_2_LEVEL_0_0\r\n" + //
+                                "  LABEL IFNEXT_2_SEQ_1_LEVEL_0_0\r\n" + //
+                                "  LABEL IFEND_2_LEVEL_0_0\r\n" + //
+                                "  Z1 |< Z0\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL IntIsZero\r\n" + //
+                                "  a13 <- a12\r\n" + //
+                                "  a14 := FALSE\r\n" + //
+                                "  a16 := 0\r\n" + //
+                                "  a17 := a13 EQ a16\r\n" + //
+                                "  IF a17 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  LABEL IFSTAT_1_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  a18 := TRUE\r\n" + //
+                                "  a14 := a18\r\n" + //
+                                "  GOTO IFEND_1_LEVEL_0_0\r\n" + //
+                                "  LABEL IFNEXT_1_SEQ_0_LEVEL_0_0\r\n" + //
+                                "  a19 := FALSE\r\n" + //
+                                "  a14 := a19\r\n" + //
+                                "  GOTO IFEND_1_LEVEL_0_0\r\n" + //
+                                "  LABEL IFNEXT_1_SEQ_1_LEVEL_0_0\r\n" + //
+                                "  LABEL IFEND_1_LEVEL_0_0\r\n" + //
+                                "  a15 |< a14\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL IntBinaryAsReal\r\n" + //
+                                "  a72 <- a71\r\n" + //
+                                "  a73 := 0.0\r\n" + //
+                                "  a75 := 0\r\n" + //
+                                "  IPARAM a75\r\n" + //
+                                "  IPARAM a72\r\n" + //
+                                "  IASM \"LDR %r, %a\"\r\n" + //
+                                "  IPARAM a75\r\n" + //
+                                "  IPARAM a73\r\n" + //
+                                "  IASM \"STR %r, %a\"\r\n" + //
+                                "  a74 |< a73\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL RMul\r\n" + //
+                                "  q4 <- a78\r\n" + //
+                                "  q6 <- a79\r\n" + //
+                                "  p3 := 0.0\r\n" + //
+                                "  p4 := 0\r\n" + //
+                                "  p5 := 0\r\n" + //
+                                "  p6 := 0\r\n" + //
+                                "  p7 := 0\r\n" + //
+                                "  p8 := 0\r\n" + //
+                                "  p9 := 0\r\n" + //
+                                "  q0 := 0\r\n" + //
+                                "  q1 := 0\r\n" + //
+                                "  q2 := 0\r\n" + //
+                                "  q3 := 0\r\n" + //
+                                "  CALL RealSign ( q4 -> a81 )\r\n" + //
+                                "  q5 <| a80\r\n" + //
+                                "  p5 := q5\r\n" + //
+                                "  CALL RealSign ( q6 -> a81 )\r\n" + //
+                                "  q7 <| a80\r\n" + //
+                                "  p6 := q7\r\n" + //
+                                "  CALL RealExponent ( q4 -> a96 )\r\n" + //
+                                "  q8 <| a80\r\n" + //
+                                "  p7 := q8\r\n" + //
+                                "  CALL RealExponent ( q6 -> a96 )\r\n" + //
+                                "  q9 <| a80\r\n" + //
+                                "  p8 := q9\r\n" + //
+                                "  CALL RealMantissa ( q4 -> b16 )\r\n" + //
+                                "  r0 <| a80\r\n" + //
+                                "  p9 := r0\r\n" + //
+                                "  CALL RealMantissa ( q6 -> b16 )\r\n" + //
+                                "  r1 <| a80\r\n" + //
+                                "  q0 := r1\r\n" + //
+                                "  r2 := p5 NE p6\r\n" + //
+                                "  IF r2 EQ TRUE THEN IFSTAT_26_SEQ_0_LEVEL_0 ELSE IFNEXT_26_SEQ_0_LEVEL_0\r\n" + //
+                                "  LABEL IFSTAT_26_SEQ_0_LEVEL_0\r\n" + //
+                                "  r3 := 1\r\n" + //
+                                "  q1 := r3\r\n" + //
+                                "  GOTO IFEND_26_LEVEL_0\r\n" + //
+                                "  LABEL IFNEXT_26_SEQ_0_LEVEL_0\r\n" + //
+                                "  r4 := 0\r\n" + //
+                                "  q1 := r4\r\n" + //
+                                "  GOTO IFEND_26_LEVEL_0\r\n" + //
+                                "  LABEL IFNEXT_26_SEQ_1_LEVEL_0\r\n" + //
+                                "  LABEL IFEND_26_LEVEL_0\r\n" + //
+                                "  r5 := p9 IMUL q0\r\n" + //
+                                "  q2 := r5\r\n" + //
+                                "  r6 := p7 IADD p8\r\n" + //
+                                "  q3 := r6\r\n" + //
+                                "  r7 := 23\r\n" + //
+                                "  r8 := q3 ILSHIFT r7\r\n" + //
+                                "  p4 := r8\r\n" + //
+                                "  r9 := 31\r\n" + //
+                                "  s0 := q1 ILSHIFT r9\r\n" + //
+                                "  s1 := p4 IOR s0\r\n" + //
+                                "  p4 := s1\r\n" + //
+                                "  s2 := p4 IOR q2\r\n" + //
+                                "  p4 := s2\r\n" + //
+                                "  CALL IntBinaryAsReal ( p4 -> a71 )\r\n" + //
+                                "  s3 <| a80\r\n" + //
+                                "  p3 := s3\r\n" + //
+                                "  a80 |< p3\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL RealSign\r\n" + //
+                                "  a82 <- a81\r\n" + //
+                                "  a83 := 0\r\n" + //
+                                "  a85 := 0\r\n" + //
+                                "  CALL RealBinaryAsInt ( a82 -> a87 )\r\n" + //
+                                "  a86 <| a84\r\n" + //
+                                "  a85 := a86\r\n" + //
+                                "  a92 := 31\r\n" + //
+                                "  a93 := a85 IRSHIFT a92\r\n" + //
+                                "  a94 := 1\r\n" + //
+                                "  a95 := a93 IAND a94\r\n" + //
+                                "  a83 := a95\r\n" + //
+                                "  a84 |< a83\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL RealBinaryAsInt\r\n" + //
+                                "  a88 <- a87\r\n" + //
+                                "  a89 := 0\r\n" + //
+                                "  a91 := 0.0\r\n" + //
+                                "  IPARAM a91\r\n" + //
+                                "  IPARAM a88\r\n" + //
+                                "  IASM \"LDR %r, %a\"\r\n" + //
+                                "  IPARAM a91\r\n" + //
+                                "  IPARAM a89\r\n" + //
+                                "  IASM \"STR %r, %a\"\r\n" + //
+                                "  a90 |< a89\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL RealExponent\r\n" + //
+                                "  a97 <- a96\r\n" + //
+                                "  a98 := 0\r\n" + //
+                                "  b10 := 0\r\n" + //
+                                "  CALL RealBinaryAsInt ( a97 -> a87 )\r\n" + //
+                                "  b11 <| a99\r\n" + //
+                                "  b10 := b11\r\n" + //
+                                "  b12 := 23\r\n" + //
+                                "  b13 := b10 IRSHIFT b12\r\n" + //
+                                "  b14 := 255\r\n" + //
+                                "  b15 := b13 IAND b14\r\n" + //
+                                "  a98 := b15\r\n" + //
+                                "  a99 |< a98\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL RealMantissa\r\n" + //
+                                "  b17 <- b16\r\n" + //
+                                "  b18 := 0\r\n" + //
+                                "  b20 := 0\r\n" + //
+                                "  CALL RealBinaryAsInt ( b17 -> a87 )\r\n" + //
+                                "  b21 <| b19\r\n" + //
+                                "  b20 := b21\r\n" + //
+                                "  b22 := 8388607\r\n" + //
+                                "  b23 := b20 IAND b22\r\n" + //
+                                "  b18 := b23\r\n" + //
+                                "  b19 |< b18\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL WriteReal\r\n" + //
+                                "  b25 <- b24\r\n" + //
+                                "  IPARAM b25\r\n" + //
+                                "  IASM \"LDR R0, %a\"\r\n" + //
+                                "  IASM \"SWI 2\"\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL WriteLn\r\n" + //
+                                "  IASM \"SWI 4\"\r\n" + //
+                                " RETURN\r\n";
+
+        linkTestProgram(expectedResult, progSrc);
+    }
 }
