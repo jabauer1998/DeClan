@@ -1204,4 +1204,11 @@ public class MyLinkerTest {
                                 " RETURN\r\n";
         linkTestProgram(expectedResult, progSrc);
     }
+
+    @Test
+    public void testExpressions(){
+        String progSrc = "test_source/expressions.dcl";
+        String expectedResult = "";
+        linkTestProgram(expectedResult, progSrc);
+    }
 }

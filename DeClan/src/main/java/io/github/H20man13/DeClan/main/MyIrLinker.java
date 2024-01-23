@@ -3012,7 +3012,7 @@ public class MyIrLinker {
                         }
                     }
                 } else if(assignExp instanceof ExternalCall){
-                    ExternalCall call = (ExternalCall)instruction;
+                    ExternalCall call = (ExternalCall)assignExp;
                 
                     if(!placeIsUniqueToProgramOrLibrary(assign.place, startingProgram, libraries, startingProgram)){
                         String place = null;
