@@ -592,7 +592,7 @@ public class MyLinkerTest {
                                 "  a56 := 1\r\n" + //
                                 "  a57 := a55 IADD a56\r\n" + //
                                 "  a12 := a57\r\n" + //
-                                "  a58 := -2147483648\r\n" + //
+                                "  a58 := 2147483648\r\n" + //
                                 "  a59 := INOT a58\r\n" + //
                                 "  a60 := a12 IAND a59\r\n" + //
                                 "  a12 := a60\r\n" + //
@@ -1431,7 +1431,7 @@ public class MyLinkerTest {
                                 "  a34 := 1\r\n" + //
                                 "  a35 := a33 IADD a34\r\n" + //
                                 "  Y0 := a35\r\n" + //
-                                "  a36 := -2147483648\r\n" + //
+                                "  a36 := 2147483648\r\n" + //
                                 "  a37 := INOT a36\r\n" + //
                                 "  a38 := Y0 IAND a37\r\n" + //
                                 "  Y0 := a38\r\n" + //
