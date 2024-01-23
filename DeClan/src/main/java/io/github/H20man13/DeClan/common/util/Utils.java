@@ -400,7 +400,7 @@ public class Utils {
       for(int i = 0; i < input.length(); i++){
         char characterAtI = input.charAt(i);
         if(characterAtI == '\t' || characterAtI == ' '){
-            result.append(i);
+            result.append(characterAtI);
         } else {
             break;
         }
@@ -412,6 +412,7 @@ public class Utils {
      StringBuilder result = new StringBuilder();
      int state = 0;
      String leadingWhiteSpace = getLeadingWhiteSpace(input);
+     result.append(leadingWhiteSpace);
      int letterAt = leadingWhiteSpace.length();
      while(letterAt < input.length()){
         char letter = input.charAt(letterAt);
@@ -432,6 +433,8 @@ public class Utils {
             }
         }
      }
+
+     result.append("\r\n");
 
      return result.toString();
   }
