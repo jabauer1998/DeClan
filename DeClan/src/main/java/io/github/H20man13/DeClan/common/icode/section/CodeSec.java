@@ -6,6 +6,7 @@ import java.util.List;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
+import io.github.H20man13.DeClan.common.util.Utils;
 
 public class CodeSec implements ICode {
     public List<ICode> intermediateCode;
@@ -57,9 +58,11 @@ public class CodeSec implements ICode {
         StringBuilder sb = new StringBuilder();
         sb.append("CODE SECTION\r\n");
         for(ICode icode : intermediateCode){
-            sb.append(' ');
-            sb.append(icode.toString());
-            sb.append("\r\n");
+            StringBuilder innerSb = new StringBuilder();
+            innerSb.append(' ');
+            innerSb.append(icode.toString());
+            innerSb.append("\r\n");
+            sb.append(Utils.formatStringToLeadingWhiteSpace(innerSb.toString()));
         }
         sb.append("END\r\n");
         return sb.toString();

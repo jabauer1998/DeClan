@@ -96,9 +96,11 @@ public class ProcSec implements ICode {
         StringBuilder sb = new StringBuilder();
         sb.append("PROC SECTION\r\n");
         for(Proc procedure: procedures){
-            sb.append(' ');
-            sb.append(procedure.toString());
-            sb.append("\r\n");
+            StringBuilder innerSb = new StringBuilder();
+            innerSb.append(' ');
+            innerSb.append(procedure.toString());
+            innerSb.append("\r\n");
+            sb.append(innerSb);
         }
         return sb.toString();
     }

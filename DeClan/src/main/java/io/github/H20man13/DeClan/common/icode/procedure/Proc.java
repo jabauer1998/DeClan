@@ -8,6 +8,7 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.pat.P;
+import io.github.H20man13.DeClan.common.util.Utils;
 
 public class Proc implements ICode {
     public ProcLabel label;
@@ -155,21 +156,29 @@ public class Proc implements ICode {
         sb.append(label.toString());
         sb.append("\r\n");
         for(ParamAssign assign: paramAssign){
-            sb.append("  ");
-            sb.append(assign.toString());
-            sb.append("\r\n");
+            StringBuilder innerSb = new StringBuilder();
+            innerSb.append("  ");
+            innerSb.append(assign.toString());
+            innerSb.append("\r\n");
+            sb.append(Utils.formatStringToLeadingWhiteSpace(innerSb.toString()));
         }
+
         for(ICode instruction: instructions){
-            sb.append("  ");
-            sb.append(instruction.toString());
-            sb.append("\r\n");
+            StringBuilder innerSb = new StringBuilder();
+            innerSb.append("  ");
+            innerSb.append(instruction.toString());
+            innerSb.append("\r\n");
+            sb.append(Utils.formatStringToLeadingWhiteSpace(innerSb.toString()));
         }
 
         if(placement != null){
-            sb.append("  ");
-            sb.append(placement.toString());
-            sb.append("\r\n");
+            StringBuilder innerSb = new StringBuilder();
+            innerSb.append("  ");
+            innerSb.append(placement.toString());
+            innerSb.append("\r\n");
+            sb.append(Utils.formatStringToLeadingWhiteSpace(innerSb.toString()));
         }
+        
         sb.append(" ");
         sb.append(returnStatement.toString());
 

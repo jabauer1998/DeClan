@@ -393,4 +393,46 @@ public class Utils {
       return lexeme; //else return input it is fine
     }
   }
+
+  //This function will be used to replace whatever the Leading whitespace of a String is into the other whitespace of the String
+  public static String getLeadingWhiteSpace(String input){
+      StringBuilder result = new StringBuilder();
+      for(int i = 0; i < input.length(); i++){
+        char characterAtI = input.charAt(i);
+        if(characterAtI == '\t' || characterAtI == ' '){
+            result.append(i);
+        } else {
+            break;
+        }
+     }
+     return result.toString();
+  }
+
+  public static String formatStringToLeadingWhiteSpace(String input){
+     StringBuilder result = new StringBuilder();
+     int state = 0;
+     String leadingWhiteSpace = getLeadingWhiteSpace(input);
+     int letterAt = leadingWhiteSpace.length();
+     while(letterAt < input.length()){
+        char letter = input.charAt(letterAt);
+        if(state == 0){
+            if(letter == '\n' || letter == '\r'){
+                state = 1;
+            } else {
+                result.append(letter);
+                letterAt++;
+            }
+        } else if(state == 1){
+            if(letter == '\n' || letter == '\r' || letter == '\t' || letter == ' '){
+                letterAt++;
+            } else {
+                result.append("\r\n");
+                result.append(leadingWhiteSpace);
+                state = 0;
+            }
+        }
+     }
+
+     return result.toString();
+  }
 }
