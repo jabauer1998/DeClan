@@ -2730,4 +2730,114 @@ public class MyLinkerTest {
                                 " RETURN\r\n";
         linkTestProgram(expectedResult, progSrc);
     }
+
+    @Test
+    public void testForLoopBasic(){
+        String progSrc = "test_source/ForLoopBasic.dcl";
+        String expectedResult = "SYMBOL SECTION\r\n" + //
+                                "DATA SECTION\r\n" + //
+                                " a := 0\r\n" + //
+                                "CODE SECTION\r\n" + //
+                                " b := 1\r\n" + //
+                                " a := b\r\n" + //
+                                " c := 10\r\n" + //
+                                " LABEL FORBEG_0_LEVEL_0\r\n" + //
+                                " IF a NE c THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0\r\n" + //
+                                " LABEL FORLOOP_0_LEVEL_0\r\n" + //
+                                " CALL WriteInt ( a -> W0 )\r\n" + //
+                                " d := 1\r\n" + //
+                                " e := a IADD d\r\n" + //
+                                " a := e\r\n" + //
+                                " GOTO FORBEG_0_LEVEL_0\r\n" + //
+                                " LABEL FOREND_0_LEVEL_0\r\n" + //
+                                " CALL WriteLn (  )\r\n" + //
+                                "END\r\n" + //
+                                "PROC SECTION\r\n" + //
+                                " PROC LABEL WriteInt\r\n" + //
+                                "  W1 <- W0\r\n" + //
+                                "  IPARAM W1\r\n" + //
+                                "  IASM \"LDR R0, %a\"\r\n" + //
+                                "  IASM \"SWI 1\"\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL WriteLn\r\n" + //
+                                "  IASM \"SWI 4\"\r\n" + //
+                                " RETURN\r\n";
+        linkTestProgram(expectedResult, progSrc);
+    }
+
+    @Test
+    public void testFoorLoopBasic2(){
+        String progSrc = "test_source/ForLoopBasic2.dcl";
+        String expectedResult = "SYMBOL SECTION\r\n" + //
+                                "DATA SECTION\r\n" + //
+                                " a := 0\r\n" + //
+                                "CODE SECTION\r\n" + //
+                                " b := 1\r\n" + //
+                                " a := b\r\n" + //
+                                " c := 10\r\n" + //
+                                " LABEL FORBEG_0_LEVEL_0\r\n" + //
+                                " IF a LT c THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0\r\n" + //
+                                " LABEL FORLOOP_0_LEVEL_0\r\n" + //
+                                " CALL WriteInt ( a -> W0 )\r\n" + //
+                                " d := 1\r\n" + //
+                                " e := a IADD d\r\n" + //
+                                " a := e\r\n" + //
+                                " GOTO FORBEG_0_LEVEL_0\r\n" + //
+                                " LABEL FOREND_0_LEVEL_0\r\n" + //
+                                " CALL WriteLn (  )\r\n" + //
+                                "END\r\n" + //
+                                "PROC SECTION\r\n" + //
+                                " PROC LABEL WriteInt\r\n" + //
+                                "  W1 <- W0\r\n" + //
+                                "  IPARAM W1\r\n" + //
+                                "  IASM \"LDR R0, %a\"\r\n" + //
+                                "  IASM \"SWI 1\"\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL WriteLn\r\n" + //
+                                "  IASM \"SWI 4\"\r\n" + //
+                                " RETURN\r\n";
+
+        linkTestProgram(expectedResult, progSrc);
+    }
+
+    @Test
+    public void testForLoopBasic3(){
+        String progSrc = "test_source/ForLoopBasic3.dcl";
+        String expectedResult = "SYMBOL SECTION\r\n" + //
+                                "DATA SECTION\r\n" + //
+                                " a := 0\r\n" + //
+                                "CODE SECTION\r\n" + //
+                                " b := 10\r\n" + //
+                                " a := b\r\n" + //
+                                " c := 1\r\n" + //
+                                " LABEL FORBEG_0_LEVEL_0\r\n" + //
+                                " IF a GT c THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0\r\n" + //
+                                " LABEL FORLOOP_0_LEVEL_0\r\n" + //
+                                " CALL WriteInt ( a -> W0 )\r\n" + //
+                                " d := 1\r\n" + //
+                                " CALL INeg ( d -> W3 )\r\n" + //
+                                " W2 <| W6\r\n" + //
+                                " f := a IADD W2\r\n" + //
+                                " a := f\r\n" + //
+                                " GOTO FORBEG_0_LEVEL_0\r\n" + //
+                                " LABEL FOREND_0_LEVEL_0\r\n" + //
+                                "END\r\n" + //
+                                "PROC SECTION\r\n" + //
+                                " PROC LABEL WriteInt\r\n" + //
+                                "  W1 <- W0\r\n" + //
+                                "  IPARAM W1\r\n" + //
+                                "  IASM \"LDR R0, %a\"\r\n" + //
+                                "  IASM \"SWI 1\"\r\n" + //
+                                " RETURN\r\n" + //
+                                " PROC LABEL INeg\r\n" + //
+                                "  W4 <- W3\r\n" + //
+                                "  W5 := 0\r\n" + //
+                                "  W7 := INOT W4\r\n" + //
+                                "  W8 := 1\r\n" + //
+                                "  W9 := W7 IADD W8\r\n" + //
+                                "  W5 := W9\r\n" + //
+                                "  W6 |< W5\r\n" + //
+                                " RETURN\r\n";
+        linkTestProgram(expectedResult, progSrc);
+    }
 }
