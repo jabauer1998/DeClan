@@ -3553,4 +3553,12 @@ public class MyLinkerTest {
 
         linkTestProgram(expectedResult, progSrc);
     }
+
+    @Test
+    public void testTest(){
+        String progSrc = "test_source/test.dcl";
+        String expectedResult = "";
+
+        linkTestProgram(expectedResult, progSrc);
+    }
 }

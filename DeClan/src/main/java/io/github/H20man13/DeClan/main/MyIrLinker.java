@@ -1189,7 +1189,7 @@ public class MyIrLinker {
 
                             Call newCall = new Call(call.procedureName, newArgs);
                             newProcedure.addInstruction(newCall);
-                            ExternalPlace newPlace = new ExternalPlace(assignment.place, procedure.placement.place);
+                            ExternalPlace newPlace = new ExternalPlace(assignment.place, fetchedProcedure.placement.place);
                             newProcedure.addInstruction(newPlace);
 
                             continue;
