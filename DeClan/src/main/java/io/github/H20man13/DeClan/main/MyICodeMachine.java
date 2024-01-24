@@ -106,7 +106,7 @@ public class MyICodeMachine {
                     else if(instruction instanceof ParamAssign) interpretParamAssignment((ParamAssign)instruction, programLength);
                     else if(instruction instanceof InternalPlace) interpretInternalPlacement((InternalPlace)instruction, programLength);
                     else {
-                        errorAndExit("Unexpected icode instruction found" + instruction.getClass(), this.programCounter, programLength);
+                        errorAndExit("Unexpected icode instruction found " + instruction.getClass(), this.programCounter, programLength);
                     }
                     continue;
                 case RETURN:
@@ -142,18 +142,30 @@ public class MyICodeMachine {
     private void interpretAssignment(Assign assign, int programLength){
         String place = assign.place;
         Object result = interpretExpression(assign.value, programLength);
-        this.variableValues.addEntry(place, new VariableEntry(false, result));
+        if(result != null){
+            this.variableValues.addEntry(place, new VariableEntry(false, result));
+        } else {
+            errorAndExit("Error expression in assignment evaluated to null", programCounter, programLength);
+        }
     }
 
     private void interpretParamAssignment(ParamAssign assign, int programLength){
         String place = assign.newPlace;
-        VariableEntry result = this.variableValues.getEntry(assign.paramPlace);
-        this.variableValues.addEntry(place, result);
+        if(variableValues.entryExists(assign.paramPlace)){
+            VariableEntry result = this.variableValues.getEntry(assign.paramPlace);
+            this.variableValues.addEntry(place, result);
+        } else {
+            errorAndExit("Error in " + assign + " cant find param " + assign.paramPlace, programCounter, programLength);
+        }
     }
 
     private void interpretInternalPlacement(InternalPlace placement, int programLength){
-        VariableEntry entry = variableValues.getEntry(placement.retPlace);
-        variableValues.addEntry(placement.place, entry);
+        if(variableValues.entryExists(placement.retPlace)){
+            VariableEntry entry = variableValues.getEntry(placement.retPlace);
+            variableValues.addEntry(placement.place, entry);
+        } else {
+            errorAndExit("Error in " + placement + " cant find " + placement.retPlace, programCounter, programLength);
+        }
     }
 
     private void interpretEndStatement(End end, int programLength){
@@ -250,9 +262,14 @@ public class MyICodeMachine {
                 if(variableValues.entryExists(arg1.source)){
                     VariableEntry entry = variableValues.getEntry(arg1.source);
                     Object val = entry.getValue();
-                    Float valFloat = (Float)val;
-                    Integer toRet = Float.floatToRawIntBits(valFloat);
-                    tempReturnValue = toRet;
+                    if(val != null){
+                        Float valFloat = (Float)val;
+                        Integer toRet = Float.floatToRawIntBits(valFloat);
+                        tempReturnValue = toRet;
+                        machineState = State.RETURN;
+                    } else {
+                        errorAndExit("In procedure " + procedure + " paramater " + arg1.source + " has a null value", programCounter, programLength);
+                    }
                 } else {
                     errorAndExit("Error paramater " + arg1.source + " does not exist in function " + procedure, programCounter, programLength);
                 }
@@ -265,9 +282,14 @@ public class MyICodeMachine {
                 if(variableValues.entryExists(arg1.source)){
                     VariableEntry entry = variableValues.getEntry(arg1.source);
                     Object val = entry.getValue();
-                    Integer valInt = (Integer)val;
-                    Float toRet = Float.intBitsToFloat(valInt);
-                    tempReturnValue = toRet;
+                    if(val != null){
+                        Integer valInt = (Integer)val;
+                        Float toRet = Float.intBitsToFloat(valInt);
+                        tempReturnValue = toRet;
+                        machineState = State.RETURN;
+                    } else {
+                        errorAndExit("In function " + procedure + " value of argument " + arg1.source + " is null", programCounter, programLength);
+                    }
                 } else {
                     errorAndExit("Error paramater " + arg1.source + " does not exist in function " + procedure, programCounter, programLength);
                 }
@@ -314,7 +336,12 @@ public class MyICodeMachine {
     private Object interpretIdentExp(IdentExp exp, int programLength){
         if(variableValues.entryExists(exp.ident)){
             VariableEntry entry = variableValues.getEntry(exp.ident);
-            return entry.getValue();
+            if(entry != null){
+                return entry.getValue();
+            } else {
+                errorAndExit("Error entry for " + exp + " is null ", programCounter, programLength);
+                return null;
+            }
         } else {
             errorAndExit("Error cant find value for variable " + exp.ident, this.programCounter, programLength);
             return null;
@@ -337,8 +364,11 @@ public class MyICodeMachine {
             switch(expression.op){
                 case BNOT: return OpUtil.not(right);
                 case INEG: return OpUtil.iNegate(right);
+                case INOT: return OpUtil.bitwiseNot(right);
                 case RNEG: return OpUtil.rNegate(right);
-                default: return null;
+                default: 
+                    errorAndExit("Unknown unary operation " + expression, programCounter, programLength);
+                    return null;
             }
         } else {
             return null;
@@ -390,7 +420,9 @@ public class MyICodeMachine {
                 case LT: return OpUtil.lessThan(left, right);
                 case LAND: return OpUtil.and(left, right);
                 case LOR: return OpUtil.or(left, right);
-                default: return null;
+                default:
+                    errorAndExit("Unknown Binary operation " + expression, programCounter, programLength); 
+                    return null;
             }
         } else {
             return null;
