@@ -278,6 +278,9 @@ public class MyICodeGenerator{
     else if(stat instanceof Branch) generateBranchIr((Branch)stat, builder);
     else if(stat instanceof Assignment) generateAssignmentIr((Assignment)stat, builder);
     else if(stat instanceof Asm) generateInlineAssemblyIr((Asm)stat, builder);
+    else if(stat instanceof EmptyStatement){
+         //Do nothing
+    }
     else {
       errorLog.add("Error generating invalid statment type " + stat.getClass().getSimpleName(), stat.getStart());
     }

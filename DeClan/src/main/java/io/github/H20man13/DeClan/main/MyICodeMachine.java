@@ -220,29 +220,25 @@ public class MyICodeMachine {
             } catch(IOException exp){
                 errorAndExit(exp.toString(), programCounter, 999);
             }
-        } else if(procedure.pname.equals("round") || procedure.pname.equals("Round")){
-            Tuple<String, String> arg1 = procedure.params.get(0);
-            VariableEntry entry = variableValues.getEntry(arg1.source);
-
-            this.tempReturnValue = Math.round(Utils.toReal(entry.getValue()));
-            this.machineState = State.RETURN;
-        } else if(procedure.pname.equals("floor") || procedure.pname.equals("Floor")){
-            Tuple<String, String> arg1 = procedure.params.get(0);
-            VariableEntry entry = variableValues.getEntry(arg1.source);
-
-            this.tempReturnValue = (int)Math.floor(Utils.toReal(entry.getValue()));
-            this.machineState = State.RETURN;
-        } else if(procedure.pname.equals("ceil") || procedure.pname.equals("Ceil")){
-            Tuple<String, String> arg1 = procedure.params.get(0);
-            VariableEntry entry = variableValues.getEntry(arg1.source);
-
-            this.tempReturnValue = (int)Math.ceil(Utils.toReal(entry.getValue()));
-            this.machineState = State.RETURN;
         } else if(procedure.pname.equals("readInt") || procedure.pname.equals("ReadInt")){
             Scanner scanner = new Scanner(standardIn);
             this.tempReturnValue = Integer.parseInt(scanner.nextLine());
             scanner.close();
             this.machineState = State.RETURN;  
+        } else if(procedure.pname.equals("RealBinaryAsInt") || procedure.pname.equals("realBinaryAsInt")){
+            Tuple<String, String> arg1 = procedure.params.get(0);
+            VariableEntry entry = variableValues.getEntry(arg1.source);
+            Object val = entry.getValue();
+            Float valFloat = (Float)val;
+            Integer toRet = Float.floatToRawIntBits(valFloat);
+            tempReturnValue = toRet;
+        } else if(procedure.pname.equals("IntBinaryAsReal") || procedure.pname.equals("intBinaryAsReal")){
+            Tuple<String, String> arg1 = procedure.params.get(0);
+            VariableEntry entry = variableValues.getEntry(arg1.source);
+            Object val = entry.getValue();
+            Integer valInt = (Integer)val;
+            Float toRet = Float.intBitsToFloat(valInt);
+            tempReturnValue = toRet;            
         } else {
             this.returnStack.push(this.programCounter);
         
