@@ -425,783 +425,807 @@ public class MyLinkerTest {
     public void testConversions(){
         String progSrc = "test_source/conversions.dcl";
         String expectedResult = "SYMBOL SECTION\r\n" + //
-                                "DATA SECTION\r\n" + //
-                                " a := 0\r\n" + //
-                                " b := 0\r\n" + //
-                                " c := 0.0\r\n" + //
-                                " d := 0.0\r\n" + //
-                                "CODE SECTION\r\n" + //
-                                " h := 1\r\n" + //
-                                " b := h\r\n" + //
-                                " i := 1.0\r\n" + //
-                                " c := i\r\n" + //
-                                " j := 2\r\n" + //
-                                " a := j\r\n" + //
-                                " k := 2.0\r\n" + //
-                                " d := k\r\n" + //
-                                " CALL WriteInt ( b -> W0 )\r\n" + //
-                                " CALL WriteReal ( c -> W2 )\r\n" + //
-                                " CALL WriteReal ( d -> W2 )\r\n" + //
-                                " CALL WriteLn (  )\r\n" + //
-                                " CALL Divide ( b -> W5 , a -> W7 )\r\n" + //
-                                " W4 <| X0\r\n" + //
-                                " CALL WriteReal ( W4 -> W2 )\r\n" + //
-                                " m := 5\r\n" + //
-                                " n := b IADD m\r\n" + //
-                                " o := 6\r\n" + //
-                                " p := b IADD o\r\n" + //
-                                " q := n IMUL p\r\n" + //
-                                " CALL WriteInt ( q -> W0 )\r\n" + //
-                                " r := 4\r\n" + //
-                                " s := a IADD r\r\n" + //
-                                " t := 5.0\r\n" + //
-                                " CALL IntToReal ( a -> Z1 )\r\n" + //
-                                " a97 <| Z4\r\n" + //
-                                " CALL RAdd ( a97 -> a99 , t -> b11 )\r\n" + //
-                                " a98 <| b14\r\n" + //
-                                " CALL IntToReal ( s -> Z1 )\r\n" + //
-                                " c62 <| Z4\r\n" + //
-                                " CALL RMul ( c62 -> c64 , a98 -> c65 )\r\n" + //
-                                " c63 <| c66\r\n" + //
-                                " CALL WriteReal ( c63 -> W2 )\r\n" + //
-                                " CALL WriteLn (  )\r\n" + //
-                                " y := 3.1415\r\n" + //
-                                " CALL p ( b -> c69 , y -> c67 )\r\n" + //
-                                " z <| c72\r\n" + //
-                                " a := z\r\n" + //
-                                " CALL WriteReal ( d -> W2 )\r\n" + //
-                                " CALL WriteLn (  )\r\n" + //
-                                "END\r\n" + //
-                                "PROC SECTION\r\n" + //
-                                " PROC LABEL WriteInt\r\n" + //
-                                "  W1 <- W0\r\n" + //
-                                "  IPARAM W1\r\n" + //
-                                "  IASM \"LDR R0, %a\"\r\n" + //
-                                "  IASM \"SWI 1\"\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL WriteReal\r\n" + //
-                                "  W3 <- W2\r\n" + //
-                                "  IPARAM W3\r\n" + //
-                                "  IASM \"LDR R0, %a\"\r\n" + //
-                                "  IASM \"SWI 2\"\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL WriteLn\r\n" + //
-                                "  IASM \"SWI 4\"\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL Divide\r\n" + //
-                                "  W6 <- W5\r\n" + //
-                                "  W8 <- W7\r\n" + //
-                                "  X1 := 0\r\n" + //
-                                "  W9 := 0\r\n" + //
-                                "  CALL Div ( W6 -> X2 , W8 -> X4 )\r\n" + //
-                                "  Y9 <| X7\r\n" + //
-                                "  X1 := Y9\r\n" + //
-                                "  CALL IntToReal ( X1 -> Z1 )\r\n" + //
-                                "  Z0 <| Z4\r\n" + //
-                                "  W9 := Z0\r\n" + //
-                                "  X0 |< W9\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL Div\r\n" + //
-                                "  X3 <- X2\r\n" + //
-                                "  X5 <- X4\r\n" + //
-                                "  X8 := 0\r\n" + //
-                                "  X6 := 0\r\n" + //
-                                "  X8 := X3\r\n" + //
-                                "  X9 := 0\r\n" + //
-                                "  X6 := X9\r\n" + //
-                                "  Y0 := X8 ISUB X5\r\n" + //
-                                "  Y1 := 0\r\n" + //
-                                "  Y2 := Y0 GT Y1\r\n" + //
-                                "  IF Y2 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
-                                "  LABEL WHILECOND_0_SEQ_0_LEVEL_0_0\r\n" + //
-                                "  IF Y2 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILEEND_0_LEVEL_0_0\r\n" + //
-                                "  LABEL WHILESTAT_0_SEQ_0_LEVEL_0_0\r\n" + //
-                                "  Y3 := X8 ISUB X5\r\n" + //
-                                "  X8 := Y3\r\n" + //
-                                "  Y4 := 1\r\n" + //
-                                "  Y5 := X6 IADD Y4\r\n" + //
-                                "  X6 := Y5\r\n" + //
-                                "  Y6 := X8 ISUB X5\r\n" + //
-                                "  Y7 := 0\r\n" + //
-                                "  Y8 := Y6 GT Y7\r\n" + //
-                                "  Y2 := Y8\r\n" + //
-                                "  GOTO WHILECOND_0_SEQ_0_LEVEL_0_0\r\n" + //
-                                "  LABEL WHILENEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
-                                "  LABEL WHILEEND_0_LEVEL_0_0\r\n" + //
-                                "  X7 |< X6\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL IntToReal\r\n" + //
-                                "  Z2 <- Z1\r\n" + //
-                                "  Z3 := 0.0\r\n" + //
-                                "  Z5 := FALSE\r\n" + //
-                                "  Z6 := 0\r\n" + //
-                                "  Z7 := 0\r\n" + //
-                                "  Z8 := 0\r\n" + //
-                                "  Z9 := 0\r\n" + //
-                                "  a10 := 0\r\n" + //
-                                "  a11 := 0\r\n" + //
-                                "  a12 := 0\r\n" + //
-                                "  a13 := 0\r\n" + //
-                                "  a14 := 0\r\n" + //
-                                "  a15 := 0\r\n" + //
-                                "  Z9 := Z2\r\n" + //
-                                "  a16 := 0\r\n" + //
-                                "  Z8 := a16\r\n" + //
-                                "  CALL IntIsNegative ( Z2 -> a18 )\r\n" + //
-                                "  a17 <| a21\r\n" + //
-                                "  Z5 := a17\r\n" + //
-                                "  CALL IntIsZero ( Z9 -> a32 )\r\n" + //
-                                "  a31 <| a35\r\n" + //
-                                "  a40 := BNOT a31\r\n" + //
-                                "  IF a40 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_1 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_1\r\n" + //
-                                "  LABEL WHILECOND_0_SEQ_0_LEVEL_0_1\r\n" + //
-                                "  IF a40 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_1 ELSE WHILEEND_0_LEVEL_0_1\r\n" + //
-                                "  LABEL WHILESTAT_0_SEQ_0_LEVEL_0_1\r\n" + //
-                                "  a41 := 1\r\n" + //
-                                "  a42 := Z9 IAND a41\r\n" + //
-                                "  a10 := a42\r\n" + //
-                                "  a43 := 1\r\n" + //
-                                "  a44 := a10 EQ a43\r\n" + //
-                                "  IF a44 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
-                                "  LABEL IFSTAT_0_SEQ_0_LEVEL_0_0\r\n" + //
-                                "  Z7 := Z8\r\n" + //
-                                "  GOTO IFEND_0_LEVEL_0_0\r\n" + //
-                                "  LABEL IFNEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
-                                "  LABEL IFEND_0_LEVEL_0_0\r\n" + //
-                                "  a45 := 1\r\n" + //
-                                "  a46 := Z8 IADD a45\r\n" + //
-                                "  Z8 := a46\r\n" + //
-                                "  a47 := 1\r\n" + //
-                                "  a48 := Z9 IRSHIFT a47\r\n" + //
-                                "  Z9 := a48\r\n" + //
-                                "  CALL IntIsZero ( Z9 -> a32 )\r\n" + //
-                                "  a49 <| a35\r\n" + //
-                                "  a50 := BNOT a49\r\n" + //
-                                "  a40 := a50\r\n" + //
-                                "  GOTO WHILECOND_0_SEQ_0_LEVEL_0_1\r\n" + //
-                                "  LABEL WHILENEXT_0_SEQ_0_LEVEL_0_1\r\n" + //
-                                "  LABEL WHILEEND_0_LEVEL_0_1\r\n" + //
-                                "  a51 := 23\r\n" + //
-                                "  a52 := Z7 LT a51\r\n" + //
-                                "  IF a52 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_1 ELSE IFNEXT_1_SEQ_0_LEVEL_0_1\r\n" + //
-                                "  LABEL IFSTAT_1_SEQ_0_LEVEL_0_1\r\n" + //
-                                "  a53 := 23\r\n" + //
-                                "  a54 := a53 ISUB Z7\r\n" + //
-                                "  a11 := a54\r\n" + //
-                                "  a55 := INOT a11\r\n" + //
-                                "  a56 := 1\r\n" + //
-                                "  a57 := a55 IADD a56\r\n" + //
-                                "  a12 := a57\r\n" + //
-                                "  a58 := 2147483648\r\n" + //
-                                "  a59 := INOT a58\r\n" + //
-                                "  a60 := a12 IAND a59\r\n" + //
-                                "  a12 := a60\r\n" + //
-                                "  a61 := 64\r\n" + //
-                                "  a62 := a12 IOR a61\r\n" + //
-                                "  a12 := a62\r\n" + //
-                                "  a63 := 1\r\n" + //
-                                "  a64 := a63 ILSHIFT Z7\r\n" + //
-                                "  a65 := 1\r\n" + //
-                                "  a66 := a64 ISUB a65\r\n" + //
-                                "  a14 := a66\r\n" + //
-                                "  a67 := Z2 IAND a14\r\n" + //
-                                "  a13 := a67\r\n" + //
-                                "  a68 := a13 ILSHIFT a11\r\n" + //
-                                "  a13 := a68\r\n" + //
-                                "  GOTO IFEND_1_LEVEL_0_1\r\n" + //
-                                "  LABEL IFNEXT_1_SEQ_0_LEVEL_0_1\r\n" + //
-                                "  a69 := 23\r\n" + //
-                                "  a70 := Z7 GT a69\r\n" + //
-                                "  IF a70 EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
-                                "  LABEL IFSTAT_1_SEQ_1_LEVEL_0\r\n" + //
-                                "  a71 := 23\r\n" + //
-                                "  a72 := Z7 ISUB a71\r\n" + //
-                                "  a11 := a72\r\n" + //
-                                "  a12 := a11\r\n" + //
-                                "  a73 := 1\r\n" + //
-                                "  a74 := a73 ILSHIFT Z7\r\n" + //
-                                "  a75 := 1\r\n" + //
-                                "  a76 := a74 ISUB a75\r\n" + //
-                                "  a14 := a76\r\n" + //
-                                "  a77 := Z2 IAND a14\r\n" + //
-                                "  a13 := a77\r\n" + //
-                                "  a78 := a13 IRSHIFT a11\r\n" + //
-                                "  a13 := a78\r\n" + //
-                                "  GOTO IFEND_1_LEVEL_0_1\r\n" + //
-                                "  LABEL IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
-                                "  a12 := Z7\r\n" + //
-                                "  a79 := 1\r\n" + //
-                                "  a80 := a79 ILSHIFT Z7\r\n" + //
-                                "  a81 := 1\r\n" + //
-                                "  a82 := a80 ISUB a81\r\n" + //
-                                "  a14 := a82\r\n" + //
-                                "  a83 := Z2 IAND a14\r\n" + //
-                                "  a13 := a83\r\n" + //
-                                "  GOTO IFEND_1_LEVEL_0_1\r\n" + //
-                                "  LABEL IFNEXT_1_SEQ_2_LEVEL_0\r\n" + //
-                                "  LABEL IFEND_1_LEVEL_0_1\r\n" + //
-                                "  Z6 := a13\r\n" + //
-                                "  a84 := 23\r\n" + //
-                                "  a85 := a12 ILSHIFT a84\r\n" + //
-                                "  a86 := Z6 IOR a85\r\n" + //
-                                "  Z6 := a86\r\n" + //
-                                "  IF Z5 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0_1 ELSE IFNEXT_2_SEQ_0_LEVEL_0_1\r\n" + //
-                                "  LABEL IFSTAT_2_SEQ_0_LEVEL_0_1\r\n" + //
-                                "  a87 := 1\r\n" + //
-                                "  a88 := 31\r\n" + //
-                                "  a89 := a87 ILSHIFT a88\r\n" + //
-                                "  a90 := Z6 IOR a89\r\n" + //
-                                "  Z6 := a90\r\n" + //
-                                "  GOTO IFEND_2_LEVEL_0_1\r\n" + //
-                                "  LABEL IFNEXT_2_SEQ_0_LEVEL_0_1\r\n" + //
-                                "  LABEL IFEND_2_LEVEL_0_1\r\n" + //
-                                "  CALL IntBinaryAsReal ( Z6 -> a91 )\r\n" + //
-                                "  a96 <| a94\r\n" + //
-                                "  Z3 := a96\r\n" + //
-                                "  Z4 |< Z3\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL IntIsNegative\r\n" + //
-                                "  a19 <- a18\r\n" + //
-                                "  a20 := FALSE\r\n" + //
-                                "  a22 := 0\r\n" + //
-                                "  a23 := 31\r\n" + //
-                                "  a24 := a19 IRSHIFT a23\r\n" + //
-                                "  a25 := 1\r\n" + //
-                                "  a26 := a24 IAND a25\r\n" + //
-                                "  a22 := a26\r\n" + //
-                                "  a27 := 0\r\n" + //
-                                "  a28 := a22 EQ a27\r\n" + //
-                                "  IF a28 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0_0 ELSE IFNEXT_2_SEQ_0_LEVEL_0_0\r\n" + //
-                                "  LABEL IFSTAT_2_SEQ_0_LEVEL_0_0\r\n" + //
-                                "  a29 := FALSE\r\n" + //
-                                "  a20 := a29\r\n" + //
-                                "  GOTO IFEND_2_LEVEL_0_0\r\n" + //
-                                "  LABEL IFNEXT_2_SEQ_0_LEVEL_0_0\r\n" + //
-                                "  a30 := TRUE\r\n" + //
-                                "  a20 := a30\r\n" + //
-                                "  GOTO IFEND_2_LEVEL_0_0\r\n" + //
-                                "  LABEL IFNEXT_2_SEQ_1_LEVEL_0_0\r\n" + //
-                                "  LABEL IFEND_2_LEVEL_0_0\r\n" + //
-                                "  a21 |< a20\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL IntIsZero\r\n" + //
-                                "  a33 <- a32\r\n" + //
-                                "  a34 := FALSE\r\n" + //
-                                "  a36 := 0\r\n" + //
-                                "  a37 := a33 EQ a36\r\n" + //
-                                "  IF a37 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0_0\r\n" + //
-                                "  LABEL IFSTAT_1_SEQ_0_LEVEL_0_0\r\n" + //
-                                "  a38 := TRUE\r\n" + //
-                                "  a34 := a38\r\n" + //
-                                "  GOTO IFEND_1_LEVEL_0_0\r\n" + //
-                                "  LABEL IFNEXT_1_SEQ_0_LEVEL_0_0\r\n" + //
-                                "  a39 := FALSE\r\n" + //
-                                "  a34 := a39\r\n" + //
-                                "  GOTO IFEND_1_LEVEL_0_0\r\n" + //
-                                "  LABEL IFNEXT_1_SEQ_1_LEVEL_0_0\r\n" + //
-                                "  LABEL IFEND_1_LEVEL_0_0\r\n" + //
-                                "  a35 |< a34\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL IntBinaryAsReal\r\n" + //
-                                "  a92 <- a91\r\n" + //
-                                "  a93 := 0.0\r\n" + //
-                                "  a95 := 0\r\n" + //
-                                "  IPARAM a95\r\n" + //
-                                "  IPARAM a92\r\n" + //
-                                "  IASM \"LDR %r, %a\"\r\n" + //
-                                "  IPARAM a95\r\n" + //
-                                "  IPARAM a93\r\n" + //
-                                "  IASM \"STR %r, %a\"\r\n" + //
-                                "  a94 |< a93\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL RAdd\r\n" + //
-                                "  b10 <- a99\r\n" + //
-                                "  b12 <- b11\r\n" + //
-                                "  b13 := 0.0\r\n" + //
-                                "  b15 := 0\r\n" + //
-                                "  b16 := 0\r\n" + //
-                                "  b17 := 0\r\n" + //
-                                "  b18 := 0\r\n" + //
-                                "  b19 := 0\r\n" + //
-                                "  b20 := 0\r\n" + //
-                                "  b21 := 0\r\n" + //
-                                "  b22 := 0\r\n" + //
-                                "  b23 := 0\r\n" + //
-                                "  b24 := 0\r\n" + //
-                                "  b25 := 0\r\n" + //
-                                "  b26 := 0\r\n" + //
-                                "  CALL RealSign ( b10 -> b28 )\r\n" + //
-                                "  b27 <| b31\r\n" + //
-                                "  b16 := b27\r\n" + //
-                                "  CALL RealSign ( b12 -> b28 )\r\n" + //
-                                "  b43 <| b31\r\n" + //
-                                "  b17 := b43\r\n" + //
-                                "  CALL RealExponent ( b10 -> b45 )\r\n" + //
-                                "  b44 <| b48\r\n" + //
-                                "  b19 := b44\r\n" + //
-                                "  CALL RealExponent ( b12 -> b45 )\r\n" + //
-                                "  b55 <| b48\r\n" + //
-                                "  b20 := b55\r\n" + //
-                                "  CALL RealMantissa ( b10 -> b57 )\r\n" + //
-                                "  b56 <| b60\r\n" + //
-                                "  b21 := b56\r\n" + //
-                                "  CALL RealMantissa ( b12 -> b57 )\r\n" + //
-                                "  b65 <| b60\r\n" + //
-                                "  b22 := b65\r\n" + //
-                                "  b66 := b16 EQ b17\r\n" + //
-                                "  IF b66 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_1 ELSE IFNEXT_0_SEQ_0_LEVEL_0_1\r\n" + //
-                                "  LABEL IFSTAT_0_SEQ_0_LEVEL_0_1\r\n" + //
-                                "  b26 := b16\r\n" + //
-                                "  b67 := b19 EQ b20\r\n" + //
-                                "  IF b67 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_1 ELSE IFNEXT_1_SEQ_0_LEVEL_1\r\n" + //
-                                "  LABEL IFSTAT_1_SEQ_0_LEVEL_1\r\n" + //
-                                "  b68 := b21 IADD b22\r\n" + //
-                                "  b25 := b68\r\n" + //
-                                "  b69 := 25\r\n" + //
-                                "  b70 := b25 IRSHIFT b69\r\n" + //
-                                "  b71 := 1\r\n" + //
-                                "  b72 := b70 IAND b71\r\n" + //
-                                "  b24 := b72\r\n" + //
-                                "  b23 := b19\r\n" + //
-                                "  b73 := 1\r\n" + //
-                                "  b74 := b24 EQ b73\r\n" + //
-                                "  IF b74 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_2 ELSE IFNEXT_2_SEQ_0_LEVEL_2\r\n" + //
-                                "  LABEL IFSTAT_2_SEQ_0_LEVEL_2\r\n" + //
-                                "  b75 := 1\r\n" + //
-                                "  b76 := b23 IADD b75\r\n" + //
-                                "  b23 := b76\r\n" + //
-                                "  b77 := 1\r\n" + //
-                                "  b78 := b25 IRSHIFT b77\r\n" + //
-                                "  b25 := b78\r\n" + //
-                                "  GOTO IFEND_2_LEVEL_2\r\n" + //
-                                "  LABEL IFNEXT_2_SEQ_0_LEVEL_2\r\n" + //
-                                "  LABEL IFEND_2_LEVEL_2\r\n" + //
-                                "  b79 := 23\r\n" + //
-                                "  b80 := b23 ILSHIFT b79\r\n" + //
-                                "  b15 := b80\r\n" + //
-                                "  b81 := b15 IOR b25\r\n" + //
-                                "  b15 := b81\r\n" + //
-                                "  b82 := 31\r\n" + //
-                                "  b83 := b26 ILSHIFT b82\r\n" + //
-                                "  b84 := b15 IOR b83\r\n" + //
-                                "  b15 := b84\r\n" + //
-                                "  GOTO IFEND_1_LEVEL_1\r\n" + //
-                                "  LABEL IFNEXT_1_SEQ_0_LEVEL_1\r\n" + //
-                                "  b85 := b19 GT b20\r\n" + //
-                                "  IF b85 EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_1 ELSE IFNEXT_1_SEQ_1_LEVEL_1\r\n" + //
-                                "  LABEL IFSTAT_1_SEQ_1_LEVEL_1\r\n" + //
-                                "  b86 := b19 ISUB b20\r\n" + //
-                                "  b18 := b86\r\n" + //
-                                "  b20 := b19\r\n" + //
-                                "  b23 := b19\r\n" + //
-                                "  b87 := b22 IRSHIFT b18\r\n" + //
-                                "  b22 := b87\r\n" + //
-                                "  b88 := b21 IADD b22\r\n" + //
-                                "  b25 := b88\r\n" + //
-                                "  b89 := 25\r\n" + //
-                                "  b90 := b25 IRSHIFT b89\r\n" + //
-                                "  b91 := 1\r\n" + //
-                                "  b92 := b90 IAND b91\r\n" + //
-                                "  b24 := b92\r\n" + //
-                                "  b93 := 1\r\n" + //
-                                "  b94 := b24 EQ b93\r\n" + //
-                                "  IF b94 EQ TRUE THEN IFSTAT_4_SEQ_0_LEVEL_2 ELSE IFNEXT_4_SEQ_0_LEVEL_2\r\n" + //
-                                "  LABEL IFSTAT_4_SEQ_0_LEVEL_2\r\n" + //
-                                "  b95 := 1\r\n" + //
-                                "  b96 := b23 IADD b95\r\n" + //
-                                "  b23 := b96\r\n" + //
-                                "  b97 := 1\r\n" + //
-                                "  b98 := b25 IRSHIFT b97\r\n" + //
-                                "  b25 := b98\r\n" + //
-                                "  GOTO IFEND_4_LEVEL_2\r\n" + //
-                                "  LABEL IFNEXT_4_SEQ_0_LEVEL_2\r\n" + //
-                                "  LABEL IFEND_4_LEVEL_2\r\n" + //
-                                "  b99 := 23\r\n" + //
-                                "  c10 := b23 ILSHIFT b99\r\n" + //
-                                "  b15 := c10\r\n" + //
-                                "  c11 := 31\r\n" + //
-                                "  c12 := b26 ILSHIFT c11\r\n" + //
-                                "  c13 := b15 IOR c12\r\n" + //
-                                "  b15 := c13\r\n" + //
-                                "  c14 := b15 IOR b25\r\n" + //
-                                "  b15 := c14\r\n" + //
-                                "  GOTO IFEND_1_LEVEL_1\r\n" + //
-                                "  LABEL IFNEXT_1_SEQ_1_LEVEL_1\r\n" + //
-                                "  c15 := b20 ISUB b19\r\n" + //
-                                "  b18 := c15\r\n" + //
-                                "  b19 := b20\r\n" + //
-                                "  b23 := b20\r\n" + //
-                                "  c16 := b21 IRSHIFT b18\r\n" + //
-                                "  b21 := c16\r\n" + //
-                                "  c17 := b21 IADD b22\r\n" + //
-                                "  b25 := c17\r\n" + //
-                                "  c18 := 25\r\n" + //
-                                "  c19 := b25 IRSHIFT c18\r\n" + //
-                                "  c20 := 1\r\n" + //
-                                "  c21 := c19 IAND c20\r\n" + //
-                                "  b24 := c21\r\n" + //
-                                "  c22 := 1\r\n" + //
-                                "  c23 := b24 EQ c22\r\n" + //
-                                "  IF c23 EQ TRUE THEN IFSTAT_6_SEQ_0_LEVEL_2 ELSE IFNEXT_6_SEQ_0_LEVEL_2\r\n" + //
-                                "  LABEL IFSTAT_6_SEQ_0_LEVEL_2\r\n" + //
-                                "  c24 := 1\r\n" + //
-                                "  c25 := b23 IADD c24\r\n" + //
-                                "  b23 := c25\r\n" + //
-                                "  c26 := 1\r\n" + //
-                                "  c27 := b25 IRSHIFT c26\r\n" + //
-                                "  b25 := c27\r\n" + //
-                                "  GOTO IFEND_6_LEVEL_2\r\n" + //
-                                "  LABEL IFNEXT_6_SEQ_0_LEVEL_2\r\n" + //
-                                "  LABEL IFEND_6_LEVEL_2\r\n" + //
-                                "  c28 := 23\r\n" + //
-                                "  c29 := b23 ILSHIFT c28\r\n" + //
-                                "  b15 := c29\r\n" + //
-                                "  c30 := 31\r\n" + //
-                                "  c31 := b26 ILSHIFT c30\r\n" + //
-                                "  c32 := b15 IOR c31\r\n" + //
-                                "  b15 := c32\r\n" + //
-                                "  c33 := b15 IOR b25\r\n" + //
-                                "  b15 := c33\r\n" + //
-                                "  GOTO IFEND_1_LEVEL_1\r\n" + //
-                                "  LABEL IFNEXT_1_SEQ_2_LEVEL_1\r\n" + //
-                                "  LABEL IFEND_1_LEVEL_1\r\n" + //
-                                "  GOTO IFEND_0_LEVEL_0_1\r\n" + //
-                                "  LABEL IFNEXT_0_SEQ_0_LEVEL_0_1\r\n" + //
-                                "  c34 := 0\r\n" + //
-                                "  c35 := b16 EQ c34\r\n" + //
-                                "  c36 := 1\r\n" + //
-                                "  c37 := b17 EQ c36\r\n" + //
-                                "  c38 := c35 LAND c37\r\n" + //
-                                "  IF c38 EQ TRUE THEN IFSTAT_9_SEQ_0_LEVEL_1 ELSE IFNEXT_9_SEQ_0_LEVEL_1\r\n" + //
-                                "  LABEL IFSTAT_9_SEQ_0_LEVEL_1\r\n" + //
-                                "  c39 := b22 GT b21\r\n" + //
-                                "  IF c39 EQ TRUE THEN IFSTAT_10_SEQ_0_LEVEL_2 ELSE IFNEXT_10_SEQ_0_LEVEL_2\r\n" + //
-                                "  LABEL IFSTAT_10_SEQ_0_LEVEL_2\r\n" + //
-                                "  c40 := 1\r\n" + //
-                                "  b26 := c40\r\n" + //
-                                "  GOTO IFEND_10_LEVEL_2\r\n" + //
-                                "  LABEL IFNEXT_10_SEQ_0_LEVEL_2\r\n" + //
-                                "  c41 := 0\r\n" + //
-                                "  b26 := c41\r\n" + //
-                                "  GOTO IFEND_10_LEVEL_2\r\n" + //
-                                "  LABEL IFNEXT_10_SEQ_1_LEVEL_2\r\n" + //
-                                "  LABEL IFEND_10_LEVEL_2\r\n" + //
-                                "  GOTO IFEND_9_LEVEL_1\r\n" + //
-                                "  LABEL IFNEXT_9_SEQ_0_LEVEL_1\r\n" + //
-                                "  c42 := 1\r\n" + //
-                                "  c43 := b16 EQ c42\r\n" + //
-                                "  c44 := 0\r\n" + //
-                                "  c45 := b17 EQ c44\r\n" + //
-                                "  c46 := c43 LAND c45\r\n" + //
-                                "  IF c46 EQ TRUE THEN IFSTAT_12_SEQ_0_LEVEL_2 ELSE IFNEXT_12_SEQ_0_LEVEL_2\r\n" + //
-                                "  LABEL IFSTAT_12_SEQ_0_LEVEL_2\r\n" + //
-                                "  c47 := b22 GE b21\r\n" + //
-                                "  IF c47 EQ TRUE THEN IFSTAT_13_SEQ_0_LEVEL_3 ELSE IFNEXT_13_SEQ_0_LEVEL_3\r\n" + //
-                                "  LABEL IFSTAT_13_SEQ_0_LEVEL_3\r\n" + //
-                                "  c48 := 0\r\n" + //
-                                "  b26 := c48\r\n" + //
-                                "  GOTO IFEND_13_LEVEL_3\r\n" + //
-                                "  LABEL IFNEXT_13_SEQ_0_LEVEL_3\r\n" + //
-                                "  c49 := 1\r\n" + //
-                                "  b26 := c49\r\n" + //
-                                "  GOTO IFEND_13_LEVEL_3\r\n" + //
-                                "  LABEL IFNEXT_13_SEQ_1_LEVEL_3\r\n" + //
-                                "  LABEL IFEND_13_LEVEL_3\r\n" + //
-                                "  GOTO IFEND_12_LEVEL_2\r\n" + //
-                                "  LABEL IFNEXT_12_SEQ_0_LEVEL_2\r\n" + //
-                                "  LABEL IFEND_12_LEVEL_2\r\n" + //
-                                "  h8 := b19 EQ b20\r\n" + //
-                                "  IF h8 EQ TRUE THEN IFSTAT_15_SEQ_0_LEVEL_2 ELSE IFNEXT_15_SEQ_0_LEVEL_2\r\n" + //
-                                "  LABEL IFSTAT_15_SEQ_0_LEVEL_2\r\n" + //
-                                "  h9 := 0\r\n" + //
-                                "  b25 := h9\r\n" + //
-                                "  i0 := 25\r\n" + //
-                                "  i1 := b25 IRSHIFT i0\r\n" + //
-                                "  i2 := 1\r\n" + //
-                                "  i3 := i1 IAND i2\r\n" + //
-                                "  b24 := i3\r\n" + //
-                                "  b23 := b19\r\n" + //
-                                "  c50 := 1\r\n" + //
-                                "  c51 := b24 EQ c50\r\n" + //
-                                "  IF c51 EQ TRUE THEN IFSTAT_16_SEQ_0_LEVEL_3 ELSE IFNEXT_16_SEQ_0_LEVEL_3\r\n" + //
-                                "  LABEL IFSTAT_16_SEQ_0_LEVEL_3\r\n" + //
-                                "  c52 := 1\r\n" + //
-                                "  c53 := b23 IADD c52\r\n" + //
-                                "  b23 := c53\r\n" + //
-                                "  c54 := 1\r\n" + //
-                                "  c55 := b25 IRSHIFT c54\r\n" + //
-                                "  b25 := c55\r\n" + //
-                                "  GOTO IFEND_16_LEVEL_3\r\n" + //
-                                "  LABEL IFNEXT_16_SEQ_0_LEVEL_3\r\n" + //
-                                "  LABEL IFEND_16_LEVEL_3\r\n" + //
-                                "  c56 := 23\r\n" + //
-                                "  c57 := b23 ILSHIFT c56\r\n" + //
-                                "  b15 := c57\r\n" + //
-                                "  c58 := b15 IOR b25\r\n" + //
-                                "  b15 := c58\r\n" + //
-                                "  c59 := 31\r\n" + //
-                                "  c60 := b26 ILSHIFT c59\r\n" + //
-                                "  c61 := b15 IOR c60\r\n" + //
-                                "  b15 := c61\r\n" + //
-                                "  GOTO IFEND_15_LEVEL_2\r\n" + //
-                                "  LABEL IFNEXT_15_SEQ_0_LEVEL_2\r\n" + //
-                                "  j6 := b19 GT b20\r\n" + //
-                                "  IF j6 EQ TRUE THEN IFSTAT_15_SEQ_1_LEVEL_2 ELSE IFNEXT_15_SEQ_1_LEVEL_2\r\n" + //
-                                "  LABEL IFSTAT_15_SEQ_1_LEVEL_2\r\n" + //
-                                "  j7 := b19 ISUB b20\r\n" + //
-                                "  b18 := j7\r\n" + //
-                                "  b20 := b19\r\n" + //
-                                "  b23 := b19\r\n" + //
-                                "  j8 := b22 IRSHIFT b18\r\n" + //
-                                "  b22 := j8\r\n" + //
-                                "  j9 := 1\r\n" + //
-                                "  k0 := b16 EQ j9\r\n" + //
-                                "  k1 := 0\r\n" + //
-                                "  k2 := b17 EQ k1\r\n" + //
-                                "  k3 := k0 LAND k2\r\n" + //
-                                "  IF k3 EQ TRUE THEN IFSTAT_18_SEQ_0_LEVEL_3 ELSE IFNEXT_18_SEQ_0_LEVEL_3\r\n" + //
-                                "  LABEL IFSTAT_18_SEQ_0_LEVEL_3\r\n" + //
-                                "  k4 := b22 ISUB b21\r\n" + //
-                                "  b25 := k4\r\n" + //
-                                "  GOTO IFEND_18_LEVEL_3\r\n" + //
-                                "  LABEL IFNEXT_18_SEQ_0_LEVEL_3\r\n" + //
-                                "  k5 := b21 ISUB b22\r\n" + //
-                                "  b25 := k5\r\n" + //
-                                "  GOTO IFEND_18_LEVEL_3\r\n" + //
-                                "  LABEL IFNEXT_18_SEQ_1_LEVEL_3\r\n" + //
-                                "  LABEL IFEND_18_LEVEL_3\r\n" + //
-                                "  k6 := 25\r\n" + //
-                                "  k7 := b25 IRSHIFT k6\r\n" + //
-                                "  k8 := 1\r\n" + //
-                                "  k9 := k7 IAND k8\r\n" + //
-                                "  b24 := k9\r\n" + //
-                                "  l0 := 1\r\n" + //
-                                "  l1 := b24 EQ l0\r\n" + //
-                                "  IF l1 EQ TRUE THEN IFSTAT_19_SEQ_0_LEVEL_3 ELSE IFNEXT_19_SEQ_0_LEVEL_3\r\n" + //
-                                "  LABEL IFSTAT_19_SEQ_0_LEVEL_3\r\n" + //
-                                "  l2 := 1\r\n" + //
-                                "  l3 := b23 IADD l2\r\n" + //
-                                "  b23 := l3\r\n" + //
-                                "  l4 := 1\r\n" + //
-                                "  l5 := b25 IRSHIFT l4\r\n" + //
-                                "  b25 := l5\r\n" + //
-                                "  GOTO IFEND_19_LEVEL_3\r\n" + //
-                                "  LABEL IFNEXT_19_SEQ_0_LEVEL_3\r\n" + //
-                                "  LABEL IFEND_19_LEVEL_3\r\n" + //
-                                "  l6 := 23\r\n" + //
-                                "  l7 := b23 ILSHIFT l6\r\n" + //
-                                "  b15 := l7\r\n" + //
-                                "  l8 := 31\r\n" + //
-                                "  l9 := b26 ILSHIFT l8\r\n" + //
-                                "  m0 := b15 IOR l9\r\n" + //
-                                "  b15 := m0\r\n" + //
-                                "  m1 := b15 IOR b25\r\n" + //
-                                "  b15 := m1\r\n" + //
-                                "  GOTO IFEND_15_LEVEL_2\r\n" + //
-                                "  LABEL IFNEXT_15_SEQ_1_LEVEL_2\r\n" + //
-                                "  m2 := b20 ISUB b19\r\n" + //
-                                "  b18 := m2\r\n" + //
-                                "  b19 := b20\r\n" + //
-                                "  b23 := b20\r\n" + //
-                                "  m3 := b21 IRSHIFT b18\r\n" + //
-                                "  b21 := m3\r\n" + //
-                                "  m4 := 1\r\n" + //
-                                "  m5 := b16 EQ m4\r\n" + //
-                                "  m6 := 0\r\n" + //
-                                "  m7 := b17 EQ m6\r\n" + //
-                                "  m8 := m5 LAND m7\r\n" + //
-                                "  IF m8 EQ TRUE THEN IFSTAT_21_SEQ_0_LEVEL_3 ELSE IFNEXT_21_SEQ_0_LEVEL_3\r\n" + //
-                                "  LABEL IFSTAT_21_SEQ_0_LEVEL_3\r\n" + //
-                                "  m9 := b22 ISUB b21\r\n" + //
-                                "  b25 := m9\r\n" + //
-                                "  GOTO IFEND_21_LEVEL_3\r\n" + //
-                                "  LABEL IFNEXT_21_SEQ_0_LEVEL_3\r\n" + //
-                                "  n0 := b21 ISUB b22\r\n" + //
-                                "  b25 := n0\r\n" + //
-                                "  GOTO IFEND_21_LEVEL_3\r\n" + //
-                                "  LABEL IFNEXT_21_SEQ_1_LEVEL_3\r\n" + //
-                                "  LABEL IFEND_21_LEVEL_3\r\n" + //
-                                "  n1 := 25\r\n" + //
-                                "  n2 := b25 IRSHIFT n1\r\n" + //
-                                "  n3 := 1\r\n" + //
-                                "  n4 := n2 IAND n3\r\n" + //
-                                "  b24 := n4\r\n" + //
-                                "  n5 := 1\r\n" + //
-                                "  n6 := b24 EQ n5\r\n" + //
-                                "  IF n6 EQ TRUE THEN IFSTAT_22_SEQ_0_LEVEL_3 ELSE IFNEXT_22_SEQ_0_LEVEL_3\r\n" + //
-                                "  LABEL IFSTAT_22_SEQ_0_LEVEL_3\r\n" + //
-                                "  n7 := 1\r\n" + //
-                                "  n8 := b23 IADD n7\r\n" + //
-                                "  b23 := n8\r\n" + //
-                                "  n9 := 1\r\n" + //
-                                "  o0 := b25 IRSHIFT n9\r\n" + //
-                                "  b25 := o0\r\n" + //
-                                "  GOTO IFEND_22_LEVEL_3\r\n" + //
-                                "  LABEL IFNEXT_22_SEQ_0_LEVEL_3\r\n" + //
-                                "  LABEL IFEND_22_LEVEL_3\r\n" + //
-                                "  o1 := 23\r\n" + //
-                                "  o2 := b23 ILSHIFT o1\r\n" + //
-                                "  b15 := o2\r\n" + //
-                                "  o3 := 31\r\n" + //
-                                "  o4 := b26 ILSHIFT o3\r\n" + //
-                                "  o5 := b15 IOR o4\r\n" + //
-                                "  b15 := o5\r\n" + //
-                                "  o6 := b15 IOR b25\r\n" + //
-                                "  b15 := o6\r\n" + //
-                                "  GOTO IFEND_15_LEVEL_2\r\n" + //
-                                "  LABEL IFNEXT_15_SEQ_2_LEVEL_2\r\n" + //
-                                "  LABEL IFEND_15_LEVEL_2\r\n" + //
-                                "  GOTO IFEND_9_LEVEL_1\r\n" + //
-                                "  LABEL IFNEXT_9_SEQ_1_LEVEL_1\r\n" + //
-                                "  LABEL IFEND_9_LEVEL_1\r\n" + //
-                                "  GOTO IFEND_0_LEVEL_0_1\r\n" + //
-                                "  LABEL IFNEXT_0_SEQ_1_LEVEL_0_0\r\n" + //
-                                "  LABEL IFEND_0_LEVEL_0_1\r\n" + //
-                                "  CALL IntBinaryAsReal ( b15 -> a91 )\r\n" + //
-                                "  o7 <| a94\r\n" + //
-                                "  b13 := o7\r\n" + //
-                                "  b14 |< b13\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL RealSign\r\n" + //
-                                "  b29 <- b28\r\n" + //
-                                "  b30 := 0\r\n" + //
-                                "  b32 := 0\r\n" + //
-                                "  CALL RealBinaryAsInt ( b29 -> b34 )\r\n" + //
-                                "  b33 <| b37\r\n" + //
-                                "  b32 := b33\r\n" + //
-                                "  b39 := 31\r\n" + //
-                                "  b40 := b32 IRSHIFT b39\r\n" + //
-                                "  b41 := 1\r\n" + //
-                                "  b42 := b40 IAND b41\r\n" + //
-                                "  b30 := b42\r\n" + //
-                                "  b31 |< b30\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL RealBinaryAsInt\r\n" + //
-                                "  b35 <- b34\r\n" + //
-                                "  b36 := 0\r\n" + //
-                                "  b38 := 0.0\r\n" + //
-                                "  IPARAM b38\r\n" + //
-                                "  IPARAM b35\r\n" + //
-                                "  IASM \"LDR %r, %a\"\r\n" + //
-                                "  IPARAM b38\r\n" + //
-                                "  IPARAM b36\r\n" + //
-                                "  IASM \"STR %r, %a\"\r\n" + //
-                                "  b37 |< b36\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL RealExponent\r\n" + //
-                                "  b46 <- b45\r\n" + //
-                                "  b47 := 0\r\n" + //
-                                "  b49 := 0\r\n" + //
-                                "  CALL RealBinaryAsInt ( b46 -> b34 )\r\n" + //
-                                "  b50 <| b37\r\n" + //
-                                "  b49 := b50\r\n" + //
-                                "  b51 := 23\r\n" + //
-                                "  b52 := b49 IRSHIFT b51\r\n" + //
-                                "  b53 := 255\r\n" + //
-                                "  b54 := b52 IAND b53\r\n" + //
-                                "  b47 := b54\r\n" + //
-                                "  b48 |< b47\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL RealMantissa\r\n" + //
-                                "  b58 <- b57\r\n" + //
-                                "  b59 := 0\r\n" + //
-                                "  b61 := 0\r\n" + //
-                                "  CALL RealBinaryAsInt ( b58 -> b34 )\r\n" + //
-                                "  b62 <| b37\r\n" + //
-                                "  b61 := b62\r\n" + //
-                                "  b63 := 8388607\r\n" + //
-                                "  b64 := b61 IAND b63\r\n" + //
-                                "  b59 := b64\r\n" + //
-                                "  b60 |< b59\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL RMul\r\n" + //
-                                "  q4 <- c64\r\n" + //
-                                "  q6 <- c65\r\n" + //
-                                "  p3 := 0.0\r\n" + //
-                                "  p4 := 0\r\n" + //
-                                "  p5 := 0\r\n" + //
-                                "  p6 := 0\r\n" + //
-                                "  p7 := 0\r\n" + //
-                                "  p8 := 0\r\n" + //
-                                "  p9 := 0\r\n" + //
-                                "  q0 := 0\r\n" + //
-                                "  q1 := 0\r\n" + //
-                                "  q2 := 0\r\n" + //
-                                "  q3 := 0\r\n" + //
-                                "  CALL RealSign ( q4 -> b28 )\r\n" + //
-                                "  q5 <| b31\r\n" + //
-                                "  p5 := q5\r\n" + //
-                                "  CALL RealSign ( q6 -> b28 )\r\n" + //
-                                "  q7 <| b31\r\n" + //
-                                "  p6 := q7\r\n" + //
-                                "  CALL RealExponent ( q4 -> b45 )\r\n" + //
-                                "  q8 <| b48\r\n" + //
-                                "  p7 := q8\r\n" + //
-                                "  CALL RealExponent ( q6 -> b45 )\r\n" + //
-                                "  q9 <| b48\r\n" + //
-                                "  p8 := q9\r\n" + //
-                                "  CALL RealMantissa ( q4 -> b57 )\r\n" + //
-                                "  r0 <| b60\r\n" + //
-                                "  p9 := r0\r\n" + //
-                                "  CALL RealMantissa ( q6 -> b57 )\r\n" + //
-                                "  r1 <| b60\r\n" + //
-                                "  q0 := r1\r\n" + //
-                                "  r2 := p5 NE p6\r\n" + //
-                                "  IF r2 EQ TRUE THEN IFSTAT_26_SEQ_0_LEVEL_0 ELSE IFNEXT_26_SEQ_0_LEVEL_0\r\n" + //
-                                "  LABEL IFSTAT_26_SEQ_0_LEVEL_0\r\n" + //
-                                "  r3 := 1\r\n" + //
-                                "  q1 := r3\r\n" + //
-                                "  GOTO IFEND_26_LEVEL_0\r\n" + //
-                                "  LABEL IFNEXT_26_SEQ_0_LEVEL_0\r\n" + //
-                                "  r4 := 0\r\n" + //
-                                "  q1 := r4\r\n" + //
-                                "  GOTO IFEND_26_LEVEL_0\r\n" + //
-                                "  LABEL IFNEXT_26_SEQ_1_LEVEL_0\r\n" + //
-                                "  LABEL IFEND_26_LEVEL_0\r\n" + //
-                                "  r5 := p9 IMUL q0\r\n" + //
-                                "  q2 := r5\r\n" + //
-                                "  r6 := p7 IADD p8\r\n" + //
-                                "  q3 := r6\r\n" + //
-                                "  r7 := 23\r\n" + //
-                                "  r8 := q3 ILSHIFT r7\r\n" + //
-                                "  p4 := r8\r\n" + //
-                                "  r9 := 31\r\n" + //
-                                "  s0 := q1 ILSHIFT r9\r\n" + //
-                                "  s1 := p4 IOR s0\r\n" + //
-                                "  p4 := s1\r\n" + //
-                                "  s2 := p4 IOR q2\r\n" + //
-                                "  p4 := s2\r\n" + //
-                                "  CALL IntBinaryAsReal ( p4 -> a91 )\r\n" + //
-                                "  s3 <| a94\r\n" + //
-                                "  p3 := s3\r\n" + //
-                                "  c66 |< p3\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL p\r\n" + //
-                                "  c68 <- c67\r\n" + //
-                                "  c70 <- c69\r\n" + //
-                                "  c71 := 0\r\n" + //
-                                "  CALL IntToReal ( c70 -> Z1 )\r\n" + //
-                                "  c73 <| Z4\r\n" + //
-                                "  CALL RAdd ( c68 -> a99 , c73 -> b11 )\r\n" + //
-                                "  c74 <| b14\r\n" + //
-                                "  CALL Round ( c74 -> c76 )\r\n" + //
-                                "  c75 <| c79\r\n" + //
-                                "  c71 := c75\r\n" + //
-                                "  c72 |< c71\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL Round\r\n" + //
-                                "  c77 <- c76\r\n" + //
-                                "  c80 := 0.5\r\n" + //
-                                "  CALL RAdd ( c77 -> a99 , c80 -> b11 )\r\n" + //
-                                "  c81 <| b14\r\n" + //
-                                "  CALL Floor ( c81 -> c82 )\r\n" + //
-                                "  c78 <| c84\r\n" + //
-                                "  c79 |< c78\r\n" + //
-                                " RETURN\r\n" + //
-                                " PROC LABEL Floor\r\n" + //
-                                "  c83 <- c82\r\n" + //
-                                "  c84 |< c83\r\n" + //
-                                " RETURN\r\n";
+                " b83 CONST INTERNAL realBias\r\n" + //
+                "DATA SECTION\r\n" + //
+                " a := 0\r\n" + //
+                " b := 0\r\n" + //
+                " c := 0.0\r\n" + //
+                " d := 0.0\r\n" + //
+                " b82 := 127\r\n" + //
+                " b83 := b82\r\n" + //
+                "CODE SECTION\r\n" + //
+                " h := 1\r\n" + //
+                " b := h\r\n" + //
+                " i := 1.0\r\n" + //
+                " c := i\r\n" + //
+                " j := 2\r\n" + //
+                " a := j\r\n" + //
+                " k := 2.0\r\n" + //
+                " d := k\r\n" + //
+                " CALL WriteInt ( b -] Y5 )\r\n" + //
+                " CALL WriteReal ( c -] Y7 )\r\n" + //
+                " CALL WriteReal ( d -] Y7 )\r\n" + //
+                " CALL WriteLn (  )\r\n" + //
+                " CALL Divide ( b -] Z0 , a -] Z2 )\r\n" + //
+                " Y9 [| Z5\r\n" + //
+                " CALL WriteReal ( Y9 -] Y7 )\r\n" + //
+                " m := 5\r\n" + //
+                " n := b IADD m\r\n" + //
+                " o := 6\r\n" + //
+                " p := b IADD o\r\n" + //
+                " q := n IMUL p\r\n" + //
+                " CALL WriteInt ( q -] Y5 )\r\n" + //
+                " r := 4\r\n" + //
+                " s := a IADD r\r\n" + //
+                " t := 5.0\r\n" + //
+                " CALL IntToReal ( a -] a26 )\r\n" + //
+                " b32 [| a29\r\n" + //
+                " CALL RAdd ( b32 -] b34 , t -] b36 )\r\n" + //
+                " b33 [| b39\r\n" + //
+                " CALL IntToReal ( s -] a26 )\r\n" + //
+                " c90 [| a29\r\n" + //
+                " CALL RMul ( c90 -] c92 , b33 -] c93 )\r\n" + //
+                " c91 [| c94\r\n" + //
+                " CALL WriteReal ( c91 -] Y7 )\r\n" + //
+                " CALL WriteLn (  )\r\n" + //
+                " y := 3.1415\r\n" + //
+                " CALL p ( b -] c97 , y -] c95 )\r\n" + //
+                " z [| d10\r\n" + //
+                " a := z\r\n" + //
+                " CALL WriteReal ( d -] Y7 )\r\n" + //
+                " CALL WriteLn (  )\r\n" + //
+                "END\r\n" + //
+                "PROC SECTION\r\n" + //
+                " PROC LABEL WriteInt\r\n" + //
+                "  Y6 [- Y5\r\n" + //
+                "  IPARAM Y6\r\n" + //
+                "  IASM \"LDR R0, %a\"\r\n" + //
+                "  IASM \"SWI 1\"\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL WriteReal\r\n" + //
+                "  Y8 [- Y7\r\n" + //
+                "  IPARAM Y8\r\n" + //
+                "  IASM \"LDR R0, %a\"\r\n" + //
+                "  IASM \"SWI 2\"\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL WriteLn\r\n" + //
+                "  IASM \"SWI 4\"\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL Divide\r\n" + //
+                "  Z1 [- Z0\r\n" + //
+                "  Z3 [- Z2\r\n" + //
+                "  Z6 := 0\r\n" + //
+                "  Z4 := 0\r\n" + //
+                "  CALL Div ( Z1 -] Z7 , Z3 -] Z9 )\r\n" + //
+                "  a24 [| a12\r\n" + //
+                "  Z6 := a24\r\n" + //
+                "  CALL IntToReal ( Z6 -] a26 )\r\n" + //
+                "  a25 [| a29\r\n" + //
+                "  Z4 := a25\r\n" + //
+                "  Z5 |[ Z4\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL Div\r\n" + //
+                "  Z8 [- Z7\r\n" + //
+                "  a10 [- Z9\r\n" + //
+                "  a13 := 0\r\n" + //
+                "  a11 := 0\r\n" + //
+                "  a13 := Z8\r\n" + //
+                "  a14 := 0\r\n" + //
+                "  a11 := a14\r\n" + //
+                "  a15 := a13 ISUB a10\r\n" + //
+                "  a16 := 0\r\n" + //
+                "  a17 := a15 GT a16\r\n" + //
+                "  IF a17 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                "  LABEL WHILECOND_0_SEQ_0_LEVEL_0_0\r\n" + //
+                "  IF a17 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILEEND_0_LEVEL_0_0\r\n" + //
+                "  LABEL WHILESTAT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                "  a18 := a13 ISUB a10\r\n" + //
+                "  a13 := a18\r\n" + //
+                "  a19 := 1\r\n" + //
+                "  a20 := a11 IADD a19\r\n" + //
+                "  a11 := a20\r\n" + //
+                "  a21 := a13 ISUB a10\r\n" + //
+                "  a22 := 0\r\n" + //
+                "  a23 := a21 GT a22\r\n" + //
+                "  a17 := a23\r\n" + //
+                "  GOTO WHILECOND_0_SEQ_0_LEVEL_0_0\r\n" + //
+                "  LABEL WHILENEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                "  LABEL WHILEEND_0_LEVEL_0_0\r\n" + //
+                "  a12 |[ a11\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL IntToReal\r\n" + //
+                "  a27 [- a26\r\n" + //
+                "  a28 := 0.0\r\n" + //
+                "  a30 := FALSE\r\n" + //
+                "  a31 := 0\r\n" + //
+                "  a32 := 0\r\n" + //
+                "  a33 := 0\r\n" + //
+                "  a34 := 0\r\n" + //
+                "  a35 := 0\r\n" + //
+                "  a36 := 0\r\n" + //
+                "  a37 := 0\r\n" + //
+                "  a38 := 0\r\n" + //
+                "  a39 := 0\r\n" + //
+                "  a40 := 0\r\n" + //
+                "  a34 := a27\r\n" + //
+                "  a41 := 0\r\n" + //
+                "  a33 := a41\r\n" + //
+                "  CALL IntIsNegative ( a27 -] a43 )\r\n" + //
+                "  a42 [| a46\r\n" + //
+                "  a30 := a42\r\n" + //
+                "  CALL IntIsZero ( a34 -] a57 )\r\n" + //
+                "  a56 [| a60\r\n" + //
+                "  a65 := BNOT a56\r\n" + //
+                "  IF a65 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_1 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_1\r\n" + //
+                "  LABEL WHILECOND_0_SEQ_0_LEVEL_0_1\r\n" + //
+                "  IF a65 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_1 ELSE WHILEEND_0_LEVEL_0_1\r\n" + //
+                "  LABEL WHILESTAT_0_SEQ_0_LEVEL_0_1\r\n" + //
+                "  a66 := 1\r\n" + //
+                "  a67 := a34 IAND a66\r\n" + //
+                "  a35 := a67\r\n" + //
+                "  a68 := 1\r\n" + //
+                "  a69 := a35 EQ a68\r\n" + //
+                "  IF a69 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                "  LABEL IFSTAT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                "  a32 := a33\r\n" + //
+                "  GOTO IFEND_0_LEVEL_0_0\r\n" + //
+                "  LABEL IFNEXT_0_SEQ_0_LEVEL_0_0\r\n" + //
+                "  LABEL IFEND_0_LEVEL_0_0\r\n" + //
+                "  a70 := 1\r\n" + //
+                "  a71 := a33 IADD a70\r\n" + //
+                "  a33 := a71\r\n" + //
+                "  a72 := 1\r\n" + //
+                "  a73 := a34 IRSHIFT a72\r\n" + //
+                "  a34 := a73\r\n" + //
+                "  CALL IntIsZero ( a34 -] a57 )\r\n" + //
+                "  a74 [| a60\r\n" + //
+                "  a75 := BNOT a74\r\n" + //
+                "  a65 := a75\r\n" + //
+                "  GOTO WHILECOND_0_SEQ_0_LEVEL_0_1\r\n" + //
+                "  LABEL WHILENEXT_0_SEQ_0_LEVEL_0_1\r\n" + //
+                "  LABEL WHILEEND_0_LEVEL_0_1\r\n" + //
+                "  a76 := 23\r\n" + //
+                "  a77 := a32 LT a76\r\n" + //
+                "  IF a77 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_1 ELSE IFNEXT_1_SEQ_0_LEVEL_0_1\r\n" + //
+                "  LABEL IFSTAT_1_SEQ_0_LEVEL_0_1\r\n" + //
+                "  a78 := 23\r\n" + //
+                "  a79 := a78 ISUB a32\r\n" + //
+                "  a36 := a79\r\n" + //
+                "  a80 := INOT a36\r\n" + //
+                "  a81 := 1\r\n" + //
+                "  a82 := a80 IADD a81\r\n" + //
+                "  a37 := a82\r\n" + //
+                "  a83 := 2147483648\r\n" + //
+                "  a84 := INOT a83\r\n" + //
+                "  a85 := a37 IAND a84\r\n" + //
+                "  a37 := a85\r\n" + //
+                "  a86 := 64\r\n" + //
+                "  a87 := a37 IOR a86\r\n" + //
+                "  a37 := a87\r\n" + //
+                "  a88 := 1\r\n" + //
+                "  a89 := a88 ILSHIFT a32\r\n" + //
+                "  a90 := 1\r\n" + //
+                "  a91 := a89 ISUB a90\r\n" + //
+                "  a39 := a91\r\n" + //
+                "  a92 := a27 IAND a39\r\n" + //
+                "  a38 := a92\r\n" + //
+                "  a93 := a38 ILSHIFT a36\r\n" + //
+                "  a38 := a93\r\n" + //
+                "  GOTO IFEND_1_LEVEL_0_1\r\n" + //
+                "  LABEL IFNEXT_1_SEQ_0_LEVEL_0_1\r\n" + //
+                "  a94 := 23\r\n" + //
+                "  a95 := a32 GT a94\r\n" + //
+                "  IF a95 EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
+                "  LABEL IFSTAT_1_SEQ_1_LEVEL_0\r\n" + //
+                "  a96 := 23\r\n" + //
+                "  a97 := a32 ISUB a96\r\n" + //
+                "  a36 := a97\r\n" + //
+                "  a37 := a36\r\n" + //
+                "  a98 := 1\r\n" + //
+                "  a99 := a98 ILSHIFT a32\r\n" + //
+                "  b10 := 1\r\n" + //
+                "  b11 := a99 ISUB b10\r\n" + //
+                "  a39 := b11\r\n" + //
+                "  b12 := a27 IAND a39\r\n" + //
+                "  a38 := b12\r\n" + //
+                "  b13 := a38 IRSHIFT a36\r\n" + //
+                "  a38 := b13\r\n" + //
+                "  GOTO IFEND_1_LEVEL_0_1\r\n" + //
+                "  LABEL IFNEXT_1_SEQ_1_LEVEL_0\r\n" + //
+                "  a37 := a32\r\n" + //
+                "  b14 := 1\r\n" + //
+                "  b15 := b14 ILSHIFT a32\r\n" + //
+                "  b16 := 1\r\n" + //
+                "  b17 := b15 ISUB b16\r\n" + //
+                "  a39 := b17\r\n" + //
+                "  b18 := a27 IAND a39\r\n" + //
+                "  a38 := b18\r\n" + //
+                "  GOTO IFEND_1_LEVEL_0_1\r\n" + //
+                "  LABEL IFNEXT_1_SEQ_2_LEVEL_0\r\n" + //
+                "  LABEL IFEND_1_LEVEL_0_1\r\n" + //
+                "  a31 := a38\r\n" + //
+                "  b19 := 23\r\n" + //
+                "  b20 := a37 ILSHIFT b19\r\n" + //
+                "  b21 := a31 IOR b20\r\n" + //
+                "  a31 := b21\r\n" + //
+                "  IF a30 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0_1 ELSE IFNEXT_2_SEQ_0_LEVEL_0_1\r\n" + //
+                "  LABEL IFSTAT_2_SEQ_0_LEVEL_0_1\r\n" + //
+                "  b22 := 1\r\n" + //
+                "  b23 := 31\r\n" + //
+                "  b24 := b22 ILSHIFT b23\r\n" + //
+                "  b25 := a31 IOR b24\r\n" + //
+                "  a31 := b25\r\n" + //
+                "  GOTO IFEND_2_LEVEL_0_1\r\n" + //
+                "  LABEL IFNEXT_2_SEQ_0_LEVEL_0_1\r\n" + //
+                "  LABEL IFEND_2_LEVEL_0_1\r\n" + //
+                "  CALL IntBinaryAsReal ( a31 -] b26 )\r\n" + //
+                "  b31 [| b29\r\n" + //
+                "  a28 := b31\r\n" + //
+                "  a29 |[ a28\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL IntIsNegative\r\n" + //
+                "  a44 [- a43\r\n" + //
+                "  a45 := FALSE\r\n" + //
+                "  a47 := 0\r\n" + //
+                "  a48 := 31\r\n" + //
+                "  a49 := a44 IRSHIFT a48\r\n" + //
+                "  a50 := 1\r\n" + //
+                "  a51 := a49 IAND a50\r\n" + //
+                "  a47 := a51\r\n" + //
+                "  a52 := 0\r\n" + //
+                "  a53 := a47 EQ a52\r\n" + //
+                "  IF a53 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0_0 ELSE IFNEXT_2_SEQ_0_LEVEL_0_0\r\n" + //
+                "  LABEL IFSTAT_2_SEQ_0_LEVEL_0_0\r\n" + //
+                "  a54 := FALSE\r\n" + //
+                "  a45 := a54\r\n" + //
+                "  GOTO IFEND_2_LEVEL_0_0\r\n" + //
+                "  LABEL IFNEXT_2_SEQ_0_LEVEL_0_0\r\n" + //
+                "  a55 := TRUE\r\n" + //
+                "  a45 := a55\r\n" + //
+                "  GOTO IFEND_2_LEVEL_0_0\r\n" + //
+                "  LABEL IFNEXT_2_SEQ_1_LEVEL_0_0\r\n" + //
+                "  LABEL IFEND_2_LEVEL_0_0\r\n" + //
+                "  a46 |[ a45\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL IntIsZero\r\n" + //
+                "  a58 [- a57\r\n" + //
+                "  a59 := FALSE\r\n" + //
+                "  a61 := 0\r\n" + //
+                "  a62 := a58 EQ a61\r\n" + //
+                "  IF a62 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0_0\r\n" + //
+                "  LABEL IFSTAT_1_SEQ_0_LEVEL_0_0\r\n" + //
+                "  a63 := TRUE\r\n" + //
+                "  a59 := a63\r\n" + //
+                "  GOTO IFEND_1_LEVEL_0_0\r\n" + //
+                "  LABEL IFNEXT_1_SEQ_0_LEVEL_0_0\r\n" + //
+                "  a64 := FALSE\r\n" + //
+                "  a59 := a64\r\n" + //
+                "  GOTO IFEND_1_LEVEL_0_0\r\n" + //
+                "  LABEL IFNEXT_1_SEQ_1_LEVEL_0_0\r\n" + //
+                "  LABEL IFEND_1_LEVEL_0_0\r\n" + //
+                "  a60 |[ a59\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL IntBinaryAsReal\r\n" + //
+                "  b27 [- b26\r\n" + //
+                "  b28 := 0.0\r\n" + //
+                "  b30 := 0\r\n" + //
+                "  IPARAM b30\r\n" + //
+                "  IPARAM b27\r\n" + //
+                "  IASM \"LDR %r, %a\"\r\n" + //
+                "  IPARAM b30\r\n" + //
+                "  IPARAM b28\r\n" + //
+                "  IASM \"STR %r, %a\"\r\n" + //
+                "  b29 |[ b28\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL RAdd\r\n" + //
+                "  b35 [- b34\r\n" + //
+                "  b37 [- b36\r\n" + //
+                "  b38 := 0.0\r\n" + //
+                "  b40 := 0\r\n" + //
+                "  b41 := 0\r\n" + //
+                "  b42 := 0\r\n" + //
+                "  b43 := 0\r\n" + //
+                "  b44 := 0\r\n" + //
+                "  b45 := 0\r\n" + //
+                "  b46 := 0\r\n" + //
+                "  b47 := 0\r\n" + //
+                "  b48 := 0\r\n" + //
+                "  b49 := 0\r\n" + //
+                "  b50 := 0\r\n" + //
+                "  b51 := 0\r\n" + //
+                "  CALL RealSign ( b35 -] b53 )\r\n" + //
+                "  b52 [| b56\r\n" + //
+                "  b41 := b52\r\n" + //
+                "  CALL RealSign ( b37 -] b53 )\r\n" + //
+                "  b68 [| b56\r\n" + //
+                "  b42 := b68\r\n" + //
+                "  CALL RealExponent ( b35 -] b70 )\r\n" + //
+                "  b69 [| b73\r\n" + //
+                "  b44 := b69\r\n" + //
+                "  CALL RealExponent ( b37 -] b70 )\r\n" + //
+                "  b84 [| b73\r\n" + //
+                "  b45 := b84\r\n" + //
+                "  CALL RealMantissa ( b35 -] b86 )\r\n" + //
+                "  b85 [| b89\r\n" + //
+                "  b46 := b85\r\n" + //
+                "  CALL RealMantissa ( b37 -] b86 )\r\n" + //
+                "  b94 [| b89\r\n" + //
+                "  b47 := b94\r\n" + //
+                "  b95 := b41 EQ b42\r\n" + //
+                "  IF b95 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_1 ELSE IFNEXT_0_SEQ_0_LEVEL_0_1\r\n" + //
+                "  LABEL IFSTAT_0_SEQ_0_LEVEL_0_1\r\n" + //
+                "  b51 := b41\r\n" + //
+                "  b96 := b44 EQ b45\r\n" + //
+                "  IF b96 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_1 ELSE IFNEXT_1_SEQ_0_LEVEL_1\r\n" + //
+                "  LABEL IFSTAT_1_SEQ_0_LEVEL_1\r\n" + //
+                "  b97 := b46 IADD b47\r\n" + //
+                "  b50 := b97\r\n" + //
+                "  b98 := 25\r\n" + //
+                "  b99 := b50 IRSHIFT b98\r\n" + //
+                "  c10 := 1\r\n" + //
+                "  c11 := b99 IAND c10\r\n" + //
+                "  b49 := c11\r\n" + //
+                "  c12 := b44 IADD b83\r\n" + //
+                "  b48 := c12\r\n" + //
+                "  c13 := 1\r\n" + //
+                "  c14 := b49 EQ c13\r\n" + //
+                "  IF c14 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_2 ELSE IFNEXT_2_SEQ_0_LEVEL_2\r\n" + //
+                "  LABEL IFSTAT_2_SEQ_0_LEVEL_2\r\n" + //
+                "  c15 := 1\r\n" + //
+                "  c16 := b48 IADD c15\r\n" + //
+                "  b48 := c16\r\n" + //
+                "  c17 := 1\r\n" + //
+                "  c18 := b50 IRSHIFT c17\r\n" + //
+                "  b50 := c18\r\n" + //
+                "  GOTO IFEND_2_LEVEL_2\r\n" + //
+                "  LABEL IFNEXT_2_SEQ_0_LEVEL_2\r\n" + //
+                "  LABEL IFEND_2_LEVEL_2\r\n" + //
+                "  c19 := 255\r\n" + //
+                "  c20 := b48 IAND c19\r\n" + //
+                "  c21 := 23\r\n" + //
+                "  c22 := c20 ILSHIFT c21\r\n" + //
+                "  b40 := c22\r\n" + //
+                "  c23 := b40 IOR b50\r\n" + //
+                "  b40 := c23\r\n" + //
+                "  c24 := 31\r\n" + //
+                "  c25 := b51 ILSHIFT c24\r\n" + //
+                "  c26 := b40 IOR c25\r\n" + //
+                "  b40 := c26\r\n" + //
+                "  GOTO IFEND_1_LEVEL_1\r\n" + //
+                "  LABEL IFNEXT_1_SEQ_0_LEVEL_1\r\n" + //
+                "  c27 := b44 GT b45\r\n" + //
+                "  IF c27 EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_1 ELSE IFNEXT_1_SEQ_1_LEVEL_1\r\n" + //
+                "  LABEL IFSTAT_1_SEQ_1_LEVEL_1\r\n" + //
+                "  c28 := b44 ISUB b45\r\n" + //
+                "  b43 := c28\r\n" + //
+                "  b45 := b44\r\n" + //
+                "  c29 := b44 IADD b83\r\n" + //
+                "  b48 := c29\r\n" + //
+                "  c30 := b47 IRSHIFT b43\r\n" + //
+                "  b47 := c30\r\n" + //
+                "  c31 := b46 IADD b47\r\n" + //
+                "  b50 := c31\r\n" + //
+                "  c32 := 25\r\n" + //
+                "  c33 := b50 IRSHIFT c32\r\n" + //
+                "  c34 := 1\r\n" + //
+                "  c35 := c33 IAND c34\r\n" + //
+                "  b49 := c35\r\n" + //
+                "  c36 := 1\r\n" + //
+                "\r\n" + //
+                "  c37 := b49 EQ c36\r\n" + //
+                "  IF c37 EQ TRUE THEN IFSTAT_4_SEQ_0_LEVEL_2 ELSE IFNEXT_4_SEQ_0_LEVEL_2\r\n" + //
+                "  LABEL IFSTAT_4_SEQ_0_LEVEL_2\r\n" + //
+                "  c38 := 1\r\n" + //
+                "  c39 := b48 IADD c38\r\n" + //
+                "  b48 := c39\r\n" + //
+                "  c40 := 1\r\n" + //
+                "  c41 := b50 IRSHIFT c40\r\n" + //
+                "  b50 := c41\r\n" + //
+                "  GOTO IFEND_4_LEVEL_2\r\n" + //
+                "  LABEL IFNEXT_4_SEQ_0_LEVEL_2\r\n" + //
+                "  LABEL IFEND_4_LEVEL_2\r\n" + //
+                "  c42 := 255\r\n" + //
+                "  c43 := b48 IAND c42\r\n" + //
+                "  c44 := 23\r\n" + //
+                "  c45 := c43 ILSHIFT c44\r\n" + //
+                "  b40 := c45\r\n" + //
+                "  c46 := 31\r\n" + //
+                "  c47 := b51 ILSHIFT c46\r\n" + //
+                "  c48 := b40 IOR c47\r\n" + //
+                "  b40 := c48\r\n" + //
+                "  c49 := b40 IOR b50\r\n" + //
+                "  b40 := c49\r\n" + //
+                "  GOTO IFEND_1_LEVEL_1\r\n" + //
+                "  LABEL IFNEXT_1_SEQ_1_LEVEL_1\r\n" + //
+                "  c50 := b45 ISUB b44\r\n" + //
+                "  b43 := c50\r\n" + //
+                "  b44 := b45\r\n" + //
+                "  c51 := b45 IADD b83\r\n" + //
+                "  b48 := c51\r\n" + //
+                "  c52 := b46 IRSHIFT b43\r\n" + //
+                "  b46 := c52\r\n" + //
+                "  c53 := b46 IADD b47\r\n" + //
+                "  b50 := c53\r\n" + //
+                "  c54 := 25\r\n" + //
+                "  c55 := b50 IRSHIFT c54\r\n" + //
+                "  c56 := 1\r\n" + //
+                "  c57 := c55 IAND c56\r\n" + //
+                "  b49 := c57\r\n" + //
+                "  c58 := 1\r\n" + //
+                "  c59 := b49 EQ c58\r\n" + //
+                "  IF c59 EQ TRUE THEN IFSTAT_6_SEQ_0_LEVEL_2 ELSE IFNEXT_6_SEQ_0_LEVEL_2\r\n" + //
+                "  LABEL IFSTAT_6_SEQ_0_LEVEL_2\r\n" + //
+                "  c60 := 1\r\n" + //
+                "  c61 := b48 IADD c60\r\n" + //
+                "  b48 := c61\r\n" + //
+                "  c62 := 1\r\n" + //
+                "  c63 := b50 IRSHIFT c62\r\n" + //
+                "  b50 := c63\r\n" + //
+                "  GOTO IFEND_6_LEVEL_2\r\n" + //
+                "  LABEL IFNEXT_6_SEQ_0_LEVEL_2\r\n" + //
+                "  LABEL IFEND_6_LEVEL_2\r\n" + //
+                "  c64 := 255\r\n" + //
+                "  c65 := b48 IAND c64\r\n" + //
+                "  c66 := 23\r\n" + //
+                "  c67 := c65 ILSHIFT c66\r\n" + //
+                "  b40 := c67\r\n" + //
+                "  c68 := 31\r\n" + //
+                "  c69 := b51 ILSHIFT c68\r\n" + //
+                "  c70 := b40 IOR c69\r\n" + //
+                "  b40 := c70\r\n" + //
+                "  c71 := b40 IOR b50\r\n" + //
+                "  b40 := c71\r\n" + //
+                "  GOTO IFEND_1_LEVEL_1\r\n" + //
+                "  LABEL IFNEXT_1_SEQ_2_LEVEL_1\r\n" + //
+                "  LABEL IFEND_1_LEVEL_1\r\n" + //
+                "  GOTO IFEND_0_LEVEL_0_1\r\n" + //
+                "  LABEL IFNEXT_0_SEQ_0_LEVEL_0_1\r\n" + //
+                "  c72 := 0\r\n" + //
+                "  c73 := b41 EQ c72\r\n" + //
+                "  c74 := 1\r\n" + //
+                "  c75 := b42 EQ c74\r\n" + //
+                "  c76 := c73 LAND c75\r\n" + //
+                "  IF c76 EQ TRUE THEN IFSTAT_9_SEQ_0_LEVEL_1 ELSE IFNEXT_9_SEQ_0_LEVEL_1\r\n" + //
+                "  LABEL IFSTAT_9_SEQ_0_LEVEL_1\r\n" + //
+                "  c77 := b47 GT b46\r\n" + //
+                "  IF c77 EQ TRUE THEN IFSTAT_10_SEQ_0_LEVEL_2 ELSE IFNEXT_10_SEQ_0_LEVEL_2\r\n" + //
+                "  LABEL IFSTAT_10_SEQ_0_LEVEL_2\r\n" + //
+                "  h8 := 1\r\n" + //
+                "  b51 := h8\r\n" + //
+                "  GOTO IFEND_10_LEVEL_2\r\n" + //
+                "  LABEL IFNEXT_10_SEQ_0_LEVEL_2\r\n" + //
+                "  h9 := 0\r\n" + //
+                "  b51 := h9\r\n" + //
+                "  GOTO IFEND_10_LEVEL_2\r\n" + //
+                "  LABEL IFNEXT_10_SEQ_1_LEVEL_2\r\n" + //
+                "  LABEL IFEND_10_LEVEL_2\r\n" + //
+                "  GOTO IFEND_9_LEVEL_1\r\n" + //
+                "  LABEL IFNEXT_9_SEQ_0_LEVEL_1\r\n" + //
+                "  i0 := 1\r\n" + //
+                "  i1 := b41 EQ i0\r\n" + //
+                "  i2 := 0\r\n" + //
+                "  i3 := b42 EQ i2\r\n" + //
+                "  c78 := i1 LAND i3\r\n" + //
+                "  IF c78 EQ TRUE THEN IFSTAT_12_SEQ_0_LEVEL_2 ELSE IFNEXT_12_SEQ_0_LEVEL_2\r\n" + //
+                "  LABEL IFSTAT_12_SEQ_0_LEVEL_2\r\n" + //
+                "  c79 := b47 GE b46\r\n" + //
+                "  IF c79 EQ TRUE THEN IFSTAT_13_SEQ_0_LEVEL_3 ELSE IFNEXT_13_SEQ_0_LEVEL_3\r\n" + //
+                "  LABEL IFSTAT_13_SEQ_0_LEVEL_3\r\n" + //
+                "  c80 := 0\r\n" + //
+                "  b51 := c80\r\n" + //
+                "  GOTO IFEND_13_LEVEL_3\r\n" + //
+                "  LABEL IFNEXT_13_SEQ_0_LEVEL_3\r\n" + //
+                "  c81 := 1\r\n" + //
+                "  b51 := c81\r\n" + //
+                "  GOTO IFEND_13_LEVEL_3\r\n" + //
+                "  LABEL IFNEXT_13_SEQ_1_LEVEL_3\r\n" + //
+                "  LABEL IFEND_13_LEVEL_3\r\n" + //
+                "  GOTO IFEND_12_LEVEL_2\r\n" + //
+                "  LABEL IFNEXT_12_SEQ_0_LEVEL_2\r\n" + //
+                "  LABEL IFEND_12_LEVEL_2\r\n" + //
+                "  c82 := b44 EQ b45\r\n" + //
+                "  IF c82 EQ TRUE THEN IFSTAT_15_SEQ_0_LEVEL_2 ELSE IFNEXT_15_SEQ_0_LEVEL_2\r\n" + //
+                "  LABEL IFSTAT_15_SEQ_0_LEVEL_2\r\n" + //
+                "  c83 := 0\r\n" + //
+                "  b50 := c83\r\n" + //
+                "  c84 := 25\r\n" + //
+                "  c85 := b50 IRSHIFT c84\r\n" + //
+                "  c86 := 1\r\n" + //
+                "  c87 := c85 IAND c86\r\n" + //
+                "  b49 := c87\r\n" + //
+                "  c88 := b44 IADD b83\r\n" + //
+                "  b48 := c88\r\n" + //
+                "  c89 := 1\r\n" + //
+                "  j6 := b49 EQ c89\r\n" + //
+                "  IF j6 EQ TRUE THEN IFSTAT_16_SEQ_0_LEVEL_3 ELSE IFNEXT_16_SEQ_0_LEVEL_3\r\n" + //
+                "  LABEL IFSTAT_16_SEQ_0_LEVEL_3\r\n" + //
+                "  j7 := 1\r\n" + //
+                "  j8 := b48 IADD j7\r\n" + //
+                "  b48 := j8\r\n" + //
+                "  j9 := 1\r\n" + //
+                "  k0 := b50 IRSHIFT j9\r\n" + //
+                "  b50 := k0\r\n" + //
+                "  GOTO IFEND_16_LEVEL_3\r\n" + //
+                "  LABEL IFNEXT_16_SEQ_0_LEVEL_3\r\n" + //
+                "  LABEL IFEND_16_LEVEL_3\r\n" + //
+                "  k1 := 255\r\n" + //
+                "  k2 := b48 IAND k1\r\n" + //
+                "  k3 := 23\r\n" + //
+                "  k4 := k2 ILSHIFT k3\r\n" + //
+                "  b40 := k4\r\n" + //
+                "  k5 := b40 IOR b50\r\n" + //
+                "  b40 := k5\r\n" + //
+                "  k6 := 31\r\n" + //
+                "  k7 := b51 ILSHIFT k6\r\n" + //
+                "  k8 := b40 IOR k7\r\n" + //
+                "  b40 := k8\r\n" + //
+                "  GOTO IFEND_15_LEVEL_2\r\n" + //
+                "  LABEL IFNEXT_15_SEQ_0_LEVEL_2\r\n" + //
+                "  k9 := b44 GT b45\r\n" + //
+                "  IF k9 EQ TRUE THEN IFSTAT_15_SEQ_1_LEVEL_2 ELSE IFNEXT_15_SEQ_1_LEVEL_2\r\n" + //
+                "  LABEL IFSTAT_15_SEQ_1_LEVEL_2\r\n" + //
+                "  l0 := b44 ISUB b45\r\n" + //
+                "  b43 := l0\r\n" + //
+                "  b45 := b44\r\n" + //
+                "  l1 := b44 IADD b83\r\n" + //
+                "  b48 := l1\r\n" + //
+                "  l2 := b47 IRSHIFT b43\r\n" + //
+                "  b47 := l2\r\n" + //
+                "  l3 := 1\r\n" + //
+                "  l4 := b41 EQ l3\r\n" + //
+                "  l5 := 0\r\n" + //
+                "  l6 := b42 EQ l5\r\n" + //
+                "  l7 := l4 LAND l6\r\n" + //
+                "  IF l7 EQ TRUE THEN IFSTAT_18_SEQ_0_LEVEL_3 ELSE IFNEXT_18_SEQ_0_LEVEL_3\r\n" + //
+                "  LABEL IFSTAT_18_SEQ_0_LEVEL_3\r\n" + //
+                "  l8 := b47 ISUB b46\r\n" + //
+                "  b50 := l8\r\n" + //
+                "  GOTO IFEND_18_LEVEL_3\r\n" + //
+                "  LABEL IFNEXT_18_SEQ_0_LEVEL_3\r\n" + //
+                "  l9 := b46 ISUB b47\r\n" + //
+                "  b50 := l9\r\n" + //
+                "  GOTO IFEND_18_LEVEL_3\r\n" + //
+                "  LABEL IFNEXT_18_SEQ_1_LEVEL_3\r\n" + //
+                "  LABEL IFEND_18_LEVEL_3\r\n" + //
+                "  m0 := 25\r\n" + //
+                "  m1 := b50 IRSHIFT m0\r\n" + //
+                "  m2 := 1\r\n" + //
+                "  m3 := m1 IAND m2\r\n" + //
+                "  b49 := m3\r\n" + //
+                "  m4 := 1\r\n" + //
+                "  m5 := b49 EQ m4\r\n" + //
+                "  IF m5 EQ TRUE THEN IFSTAT_19_SEQ_0_LEVEL_3 ELSE IFNEXT_19_SEQ_0_LEVEL_3\r\n" + //
+                "  LABEL IFSTAT_19_SEQ_0_LEVEL_3\r\n" + //
+                "  m6 := 1\r\n" + //
+                "  m7 := b48 IADD m6\r\n" + //
+                "  b48 := m7\r\n" + //
+                "  m8 := 1\r\n" + //
+                "  m9 := b50 IRSHIFT m8\r\n" + //
+                "  b50 := m9\r\n" + //
+                "  GOTO IFEND_19_LEVEL_3\r\n" + //
+                "  LABEL IFNEXT_19_SEQ_0_LEVEL_3\r\n" + //
+                "  LABEL IFEND_19_LEVEL_3\r\n" + //
+                "  n0 := 23\r\n" + //
+                "  n1 := b48 ILSHIFT n0\r\n" + //
+                "  b40 := n1\r\n" + //
+                "  n2 := 31\r\n" + //
+                "  n3 := b51 ILSHIFT n2\r\n" + //
+                "  n4 := b40 IOR n3\r\n" + //
+                "  b40 := n4\r\n" + //
+                "  n5 := b40 IOR b50\r\n" + //
+                "  b40 := n5\r\n" + //
+                "  GOTO IFEND_15_LEVEL_2\r\n" + //
+                "  LABEL IFNEXT_15_SEQ_1_LEVEL_2\r\n" + //
+                "  n6 := b45 ISUB b44\r\n" + //
+                "  b43 := n6\r\n" + //
+                "  b44 := b45\r\n" + //
+                "  n7 := b45 IADD b83\r\n" + //
+                "  b48 := n7\r\n" + //
+                "  n8 := b46 IRSHIFT b43\r\n" + //
+                "  b46 := n8\r\n" + //
+                "  n9 := 1\r\n" + //
+                "  o0 := b41 EQ n9\r\n" + //
+                "  o1 := 0\r\n" + //
+                "  o2 := b42 EQ o1\r\n" + //
+                "  o3 := o0 LAND o2\r\n" + //
+                "  IF o3 EQ TRUE THEN IFSTAT_21_SEQ_0_LEVEL_3 ELSE IFNEXT_21_SEQ_0_LEVEL_3\r\n" + //
+                "  LABEL IFSTAT_21_SEQ_0_LEVEL_3\r\n" + //
+                "  o4 := b47 ISUB b46\r\n" + //
+                "  b50 := o4\r\n" + //
+                "  GOTO IFEND_21_LEVEL_3\r\n" + //
+                "  LABEL IFNEXT_21_SEQ_0_LEVEL_3\r\n" + //
+                "  o5 := b46 ISUB b47\r\n" + //
+                "  b50 := o5\r\n" + //
+                "  GOTO IFEND_21_LEVEL_3\r\n" + //
+                "  LABEL IFNEXT_21_SEQ_1_LEVEL_3\r\n" + //
+                "  LABEL IFEND_21_LEVEL_3\r\n" + //
+                "  o6 := 25\r\n" + //
+                "  o7 := b50 IRSHIFT o6\r\n" + //
+                "  o8 := 1\r\n" + //
+                "  o9 := o7 IAND o8\r\n" + //
+                "  b49 := o9\r\n" + //
+                "  p0 := 1\r\n" + //
+                "  p1 := b49 EQ p0\r\n" + //
+                "  IF p1 EQ TRUE THEN IFSTAT_22_SEQ_0_LEVEL_3 ELSE IFNEXT_22_SEQ_0_LEVEL_3\r\n" + //
+                "  LABEL IFSTAT_22_SEQ_0_LEVEL_3\r\n" + //
+                "  p2 := 1\r\n" + //
+                "  p3 := b48 IADD p2\r\n" + //
+                "  b48 := p3\r\n" + //
+                "  p4 := 1\r\n" + //
+                "  p5 := b50 IRSHIFT p4\r\n" + //
+                "  b50 := p5\r\n" + //
+                "  GOTO IFEND_22_LEVEL_3\r\n" + //
+                "  LABEL IFNEXT_22_SEQ_0_LEVEL_3\r\n" + //
+                "  LABEL IFEND_22_LEVEL_3\r\n" + //
+                "  p6 := 255\r\n" + //
+                "  p7 := b48 IAND p6\r\n" + //
+                "  p8 := 23\r\n" + //
+                "  p9 := p7 ILSHIFT p8\r\n" + //
+                "  b40 := p9\r\n" + //
+                "  q0 := 31\r\n" + //
+                "  q1 := b51 ILSHIFT q0\r\n" + //
+                "  q2 := b40 IOR q1\r\n" + //
+                "  b40 := q2\r\n" + //
+                "  q3 := b40 IOR b50\r\n" + //
+                "  b40 := q3\r\n" + //
+                "  GOTO IFEND_15_LEVEL_2\r\n" + //
+                "  LABEL IFNEXT_15_SEQ_2_LEVEL_2\r\n" + //
+                "  LABEL IFEND_15_LEVEL_2\r\n" + //
+                "  GOTO IFEND_9_LEVEL_1\r\n" + //
+                "  LABEL IFNEXT_9_SEQ_1_LEVEL_1\r\n" + //
+                "  LABEL IFEND_9_LEVEL_1\r\n" + //
+                "  GOTO IFEND_0_LEVEL_0_1\r\n" + //
+                "  LABEL IFNEXT_0_SEQ_1_LEVEL_0_0\r\n" + //
+                "  LABEL IFEND_0_LEVEL_0_1\r\n" + //
+                "  CALL IntBinaryAsReal ( b40 -] b26 )\r\n" + //
+                "  q4 [| b29\r\n" + //
+                "  b38 := q4\r\n" + //
+                "  b39 |[ b38\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL RealSign\r\n" + //
+                "  b54 [- b53\r\n" + //
+                "  b55 := 0\r\n" + //
+                "  b57 := 0\r\n" + //
+                "  CALL RealBinaryAsInt ( b54 -] b59 )\r\n" + //
+                "  b58 [| b62\r\n" + //
+                "  b57 := b58\r\n" + //
+                "  b64 := 31\r\n" + //
+                "  b65 := b57 IRSHIFT b64\r\n" + //
+                "  b66 := 1\r\n" + //
+                "  b67 := b65 IAND b66\r\n" + //
+                "  b55 := b67\r\n" + //
+                "  b56 |[ b55\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL RealBinaryAsInt\r\n" + //
+                "  b60 [- b59\r\n" + //
+                "  b61 := 0\r\n" + //
+                "  b63 := 0.0\r\n" + //
+                "  IPARAM b63\r\n" + //
+                "  IPARAM b60\r\n" + //
+                "  IASM \"LDR %r, %a\"\r\n" + //
+                "  IPARAM b63\r\n" + //
+                "  IPARAM b61\r\n" + //
+                "  IASM \"STR %r, %a\"\r\n" + //
+                "  b62 |[ b61\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL RealExponent\r\n" + //
+                "  b71 [- b70\r\n" + //
+                "  b72 := 0\r\n" + //
+                "  b74 := 0\r\n" + //
+                "  b75 := 0\r\n" + //
+                "  CALL RealBinaryAsInt ( b71 -] b59 )\r\n" + //
+                "  b76 [| b62\r\n" + //
+                "  b74 := b76\r\n" + //
+                "  b77 := 23\r\n" + //
+                "  b78 := b74 IRSHIFT b77\r\n" + //
+                "  b79 := 255\r\n" + //
+                "  b80 := b78 IAND b79\r\n" + //
+                "  b75 := b80\r\n" + //
+                "  b81 := b75 ISUB b83\r\n" + //
+                "  b72 := b81\r\n" + //
+                "  b73 |[ b72\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL RealMantissa\r\n" + //
+                "  b87 [- b86\r\n" + //
+                "  b88 := 0\r\n" + //
+                "  b90 := 0\r\n" + //
+                "  CALL RealBinaryAsInt ( b87 -] b59 )\r\n" + //
+                "  b91 [| b62\r\n" + //
+                "  b90 := b91\r\n" + //
+                "  b92 := 8388607\r\n" + //
+                "  b93 := b90 IAND b92\r\n" + //
+                "  b88 := b93\r\n" + //
+                "  b89 |[ b88\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL RMul\r\n" + //
+                "  s1 [- c92\r\n" + //
+                "  s3 [- c93\r\n" + //
+                "  r0 := 0.0\r\n" + //
+                "  r1 := 0\r\n" + //
+                "  r2 := 0\r\n" + //
+                "  r3 := 0\r\n" + //
+                "  r4 := 0\r\n" + //
+                "  r5 := 0\r\n" + //
+                "  r6 := 0\r\n" + //
+                "  r7 := 0\r\n" + //
+                "  r8 := 0\r\n" + //
+                "  r9 := 0\r\n" + //
+                "  s0 := 0\r\n" + //
+                "  CALL RealSign ( s1 -] b53 )\r\n" + //
+                "  s2 [| b56\r\n" + //
+                "  r2 := s2\r\n" + //
+                "  CALL RealSign ( s3 -] b53 )\r\n" + //
+                "  s4 [| b56\r\n" + //
+                "  r3 := s4\r\n" + //
+                "  CALL RealExponent ( s1 -] b70 )\r\n" + //
+                "  s5 [| b73\r\n" + //
+                "  r4 := s5\r\n" + //
+                "  CALL RealExponent ( s3 -] b70 )\r\n" + //
+                "  s6 [| b73\r\n" + //
+                "  r5 := s6\r\n" + //
+                "  CALL RealMantissa ( s1 -] b86 )\r\n" + //
+                "  s7 [| b89\r\n" + //
+                "  r6 := s7\r\n" + //
+                "  CALL RealMantissa ( s3 -] b86 )\r\n" + //
+                "  s8 [| b89\r\n" + //
+                "  r7 := s8\r\n" + //
+                "  s9 := r2 NE r3\r\n" + //
+                "  IF s9 EQ TRUE THEN IFSTAT_26_SEQ_0_LEVEL_0 ELSE IFNEXT_26_SEQ_0_LEVEL_0\r\n" + //
+                "  LABEL IFSTAT_26_SEQ_0_LEVEL_0\r\n" + //
+                "  t0 := 1\r\n" + //
+                "  r8 := t0\r\n" + //
+                "  GOTO IFEND_26_LEVEL_0\r\n" + //
+                "  LABEL IFNEXT_26_SEQ_0_LEVEL_0\r\n" + //
+                "  t1 := 0\r\n" + //
+                "  r8 := t1\r\n" + //
+                "  GOTO IFEND_26_LEVEL_0\r\n" + //
+                "  LABEL IFNEXT_26_SEQ_1_LEVEL_0\r\n" + //
+                "  LABEL IFEND_26_LEVEL_0\r\n" + //
+                "  t2 := r6 IMUL r7\r\n" + //
+                "  r9 := t2\r\n" + //
+                "  t3 := r4 IADD r5\r\n" + //
+                "  t5 := t3 IADD b83\r\n" + //
+                "  s0 := t5\r\n" + //
+                "  t6 := 23\r\n" + //
+                "  t7 := s0 ILSHIFT t6\r\n" + //
+                "  r1 := t7\r\n" + //
+                "  t8 := 31\r\n" + //
+                "  t9 := r8 ILSHIFT t8\r\n" + //
+                "  u0 := r1 IOR t9\r\n" + //
+                "  r1 := u0\r\n" + //
+                "  u1 := r1 IOR r9\r\n" + //
+                "  r1 := u1\r\n" + //
+                "  CALL IntBinaryAsReal ( r1 -] b26 )\r\n" + //
+                "  u2 [| b29\r\n" + //
+                "  r0 := u2\r\n" + //
+                "  c94 |[ r0\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL p\r\n" + //
+                "  c96 [- c95\r\n" + //
+                "  c98 [- c97\r\n" + //
+                "  c99 := 0\r\n" + //
+                "  CALL IntToReal ( c98 -] a26 )\r\n" + //
+                "  d11 [| a29\r\n" + //
+                "  CALL RAdd ( c96 -] b34 , d11 -] b36 )\r\n" + //
+                "  d12 [| b39\r\n" + //
+                "  CALL Round ( d12 -] d14 )\r\n" + //
+                "  d13 [| d17\r\n" + //
+                "  c99 := d13\r\n" + //
+                "  d10 |[ c99\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL Round\r\n" + //
+                "  d15 [- d14\r\n" + //
+                "  d18 := 0.5\r\n" + //
+                "  CALL RAdd ( d15 -] b34 , d18 -] b36 )\r\n" + //
+                "  d19 [| b39\r\n" + //
+                "  CALL Floor ( d19 -] d20 )\r\n" + //
+                "  d16 [| d22\r\n" + //
+                "  d17 |[ d16\r\n" + //
+                " RETURN\r\n" + //
+                " PROC LABEL Floor\r\n" + //
+                "  d21 [- d20\r\n" + //
+                "  d22 |[ d21\r\n" + //
+                " RETURN\r\n";
         linkTestProgram(expectedResult, progSrc);
     }
 
@@ -1209,7 +1233,7 @@ public class MyLinkerTest {
     public void testExpressions(){
         String progSrc = "test_source/expressions.dcl";
         String expectedResult = "SYMBOL SECTION\r\n" + //
-                "DATA SECTION\r\n" + //
+                                "DATA SECTION\r\n" + //
                 " a := 0\r\n" + //
                 " b := a\r\n" + //
                 " c := 1.2\r\n" + //

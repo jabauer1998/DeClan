@@ -1129,7 +1129,9 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
     
     @Override
     public TypeCheckerQualities visitResult(Identifier ident){
-		if(!varEnvironment.entryExists(ident.getLexeme())){
+		if(ident.getLexeme().equals("realBias")){
+			return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+		} else if(!varEnvironment.entryExists(ident.getLexeme())){
 			errorLog.add("Couldnt find entry for " + ident.getLexeme(), ident.getStart());
 			return new TypeCheckerQualities(TypeCheckerQualities.NULL);
 		}
