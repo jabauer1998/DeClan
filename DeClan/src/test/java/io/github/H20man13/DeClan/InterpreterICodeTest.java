@@ -157,6 +157,13 @@ public class InterpreterICodeTest {
     }
 
     @Test
+    public void testSimpleConversion(){
+        StringReader realReader = new StringReader("5.0\n");
+        StringReader icodeReader = new StringReader("5.0\n");
+        testInterpreterWithICode("test_source/SingleConversion.dcl", realReader, icodeReader);
+    }
+
+    @Test
     public void testTest4(){
         StringReader intReader = new StringReader("2\n");
         StringReader icodeReader = new StringReader("2\n");

@@ -1244,4 +1244,18 @@ public class ICodeGeneratorTest {
 
         testDeclanFileOnICode(programName, expectedICode);
     }
+
+    @Test
+    public void testSingleConversion(){
+        String programName = "test_source/SingleConversion.dcl";
+        String expectedICode = "a := 5\r\n" + //
+                                "b := a\r\n" + //
+                                "c := 0.0\r\n" + //
+                                "d := EXTERNAL CALL IntToReal(b)\r\n" + //
+                                "c := d\r\n" + //
+                                "EXTERNAL CALL WriteReal(c)\r\n" + //
+                                "END\r\n";
+
+        testDeclanFileOnICode(programName, expectedICode);
+    }
 }

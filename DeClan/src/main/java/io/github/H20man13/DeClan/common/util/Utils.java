@@ -438,4 +438,20 @@ public class Utils {
 
      return result.toString();
   }
+
+  public static String to32BitBinary(Integer intVal){
+     StringBuilder sb = new StringBuilder();
+     String endString = Integer.toBinaryString(intVal);
+     int numZeros = 32 - endString.length();
+     for(int i = 0; i < numZeros; i++){
+        sb.append('0');
+     }
+     sb.append(endString);
+     return sb.toString();
+  }
+
+  public static String to32BitBinary(Float realValue){
+     Integer asInt = Float.floatToRawIntBits(realValue);
+     return to32BitBinary(asInt);
+  }
 }

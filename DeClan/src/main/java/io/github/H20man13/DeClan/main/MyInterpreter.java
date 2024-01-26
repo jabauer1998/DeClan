@@ -474,6 +474,17 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       String line = scanner.nextLine();
       scanner.close();
       return Integer.parseInt(line);
+    } else if(funcName.equals("readReal") || funcName.equals("ReadReal")){
+      Scanner scanner = new Scanner(standardIn);
+      String line = scanner.nextLine();
+      scanner.close();
+      return Float.parseFloat(line);
+    } else if(funcName.equals("realBinaryAsInt") || funcName.equals("RealBinaryAsInt")){
+      float argument = Utils.toReal(funcCall.getArguments().get(0).acceptResult(this));
+      return Float.floatToRawIntBits(argument);
+    } else if(funcName.equals("intBinaryAsReal") || funcName.equals("IntBinaryAsReal")){
+      int argument = Utils.toInt(funcCall.getArguments().get(0).acceptResult(this));
+      return Float.intBitsToFloat(argument);
     } else {
       ProcedureEntry fentry = procEnvironment.getEntry(funcName);
       List<ParamaterDeclaration> args = fentry.getArguments();

@@ -71,4 +71,9 @@ public class MyParserBasicTest {
     public void testTest4(){
         runParserOnSource("test_source/test4.dcl");
     }
+
+    @Test
+    public void testSingleConversion(){
+        runParserOnSource("test_source/SingleConversion.dcl");
+    }
 }

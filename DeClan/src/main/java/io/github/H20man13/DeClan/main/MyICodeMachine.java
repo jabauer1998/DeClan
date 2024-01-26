@@ -256,6 +256,11 @@ public class MyICodeMachine {
             this.tempReturnValue = Integer.parseInt(scanner.nextLine());
             scanner.close();
             this.machineState = State.RETURN;  
+        } else if(procedure.pname.equals("readReal") || procedure.pname.equals("ReadReal")){
+           Scanner scanner = new Scanner(standardIn);
+           this.tempReturnValue = Float.parseFloat(scanner.nextLine());
+           scanner.close();
+           this.machineState = State.RETURN;  
         } else if(procedure.pname.equals("RealBinaryAsInt") || procedure.pname.equals("realBinaryAsInt")){
             if(procedure.params.size() == 1){
                 Tuple<String, String> arg1 = procedure.params.get(0);
