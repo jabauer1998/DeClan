@@ -22,4 +22,19 @@ public class FloatingPointPlayground {
         assertTrue("Error expected \n" + binF1Result + "\n but found \n" + binF1, binF1.equals(binF1Result));
         assertTrue("Error expected \n" + binF2Result + "\n but found \n" + binF2, binF2.equals(binF2Result));
     }
+
+    @Test
+    public void testFloatingPointNegativeAndPositive2(){
+        Float f1 = 5.0f;
+        Float f2 = 5.0f;
+
+        String binF1 = Utils.to32BitBinary(f1);
+        String binF2 = Utils.to32BitBinary(f2);
+
+        String binF1Result = "01000000101000000000000000000000";
+        String binF2Result = "01000000101000000000000000000000";
+
+        assertTrue("Error expected \n" + binF1Result + "\n but found \n" + binF1, binF1.equals(binF1Result));
+        assertTrue("Error expected \n" + binF2Result + "\n but found \n" + binF2, binF2.equals(binF2Result));
+    }
 }

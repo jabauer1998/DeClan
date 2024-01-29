@@ -1251,9 +1251,40 @@ public class ICodeGeneratorTest {
         String expectedICode = "a := 5\r\n" + //
                                 "b := a\r\n" + //
                                 "c := 0.0\r\n" + //
-                                "d := EXTERNAL CALL IntToReal(b)\r\n" + //
-                                "c := d\r\n" + //
+                                "d := 0.0\r\n" + //
+                                "e := EXTERNAL CALL IntToReal(b)\r\n" + //
+                                "c := e\r\n" + //
                                 "EXTERNAL CALL WriteReal(c)\r\n" + //
+                                "END\r\n";
+
+        testDeclanFileOnICode(programName, expectedICode);
+    }
+
+    @Test
+    public void testSingleConversion2(){
+        String programName = "test_source/SingleConversion2.dcl";
+        String expectedICode = "a := 6.5\r\n" + //
+                                "b := a\r\n" + //
+                                "c := 0\r\n" + //
+                                "d := EXTERNAL CALL RealToInt(b)\r\n" + //
+                                "c := d\r\n" + //
+                                "EXTERNAL CALL WriteInt(c)\r\n" + //
+                                "END\r\n";
+
+        testDeclanFileOnICode(programName, expectedICode);
+    }
+
+    @Test
+    public void testRealAddition(){
+        String programName = "test_source/RealAddition.dcl";
+        String expectedICode = "a := 4.5\r\n" + //
+                                "b := a\r\n" + //
+                                "c := 8.5\r\n" + //
+                                "d := c\r\n" + //
+                                "e := 0.0\r\n" + //
+                                "f := EXTERNAL CALL RAdd(b, d)\r\n" + //
+                                "e := f\r\n" + //
+                                "EXTERNAL CALL WriteReal(e)\r\n" + //
                                 "END\r\n";
 
         testDeclanFileOnICode(programName, expectedICode);

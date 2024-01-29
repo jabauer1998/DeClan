@@ -76,4 +76,14 @@ public class MyParserBasicTest {
     public void testSingleConversion(){
         runParserOnSource("test_source/SingleConversion.dcl");
     }
+
+    @Test
+    public void testSingleConversion2(){
+        runParserOnSource("test_source/SingleConversion2.dcl");
+    }
+
+    @Test
+    public void testRealAddition(){
+        runParserOnSource("test_source/RealAddition.dcl");
+    }
 }
