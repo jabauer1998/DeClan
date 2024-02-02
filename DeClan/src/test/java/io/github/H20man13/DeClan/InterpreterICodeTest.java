@@ -177,4 +177,9 @@ public class InterpreterICodeTest {
     public void testRealAddition(){
         testInterpreterWithICode("test_source/RealAddition.dcl", nullReader, nullReader);
     }
+
+    @Test
+    public void testRealAddition2(){
+        testInterpreterWithICode("test_source/RealAddition2.dcl", nullReader, nullReader);
+    }
 }

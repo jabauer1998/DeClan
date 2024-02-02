@@ -86,4 +86,9 @@ public class MyParserBasicTest {
     public void testRealAddition(){
         runParserOnSource("test_source/RealAddition.dcl");
     }
+
+    @Test
+    public void testRealAddition2(){
+        runParserOnSource("test_source/RealAddition2.dcl");
+    }
 }

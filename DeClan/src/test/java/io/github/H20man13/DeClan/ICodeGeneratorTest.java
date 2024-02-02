@@ -1289,4 +1289,20 @@ public class ICodeGeneratorTest {
 
         testDeclanFileOnICode(programName, expectedICode);
     }
+
+    @Test
+    public void testRealAddition2(){
+        String programName = "test_source/RealAddition2.dcl";
+        String expectedICode = "a := 7.5\r\n" + //
+                                "b := a\r\n" + //
+                                "c := 49.5\r\n" + //
+                                "d := c\r\n" + //
+                                "e := 0.0\r\n" + //
+                                "f := EXTERNAL CALL RSub(d, b)\r\n" + //
+                                "e := f\r\n" + //
+                                "EXTERNAL CALL WriteReal(e)\r\n" + //
+                                "END\r\n";
+
+        testDeclanFileOnICode(programName, expectedICode);
+    }
 }
