@@ -1991,10 +1991,7 @@ public class AssemblerVisitor implements ArmAssemblerVisitor<Integer> {
     @Override
     public Integer visitRealNumber(RealNumberContext ctx) {
         String number = ctx.getText();
-        double asDouble = Double.parseDouble(number);
-        float asFloat = (float)asDouble;
-        long asLong = (long)asFloat;
-        int asInt = (int)asLong;
-        return asInt;
+        Float value = Float.parseFloat(number);
+        return Float.floatToRawIntBits(value);
     }
 }
