@@ -23,3 +23,11 @@ PROCEDURE ReadInt();
 	asm("STR R0, %a": result);
 	RETURN result
     END ReadInt;
+
+PROCEDURE ReadReal();
+    VAR result: REAL;
+    BEGIN
+        asm("SWI 5");
+        asm("STR R0, %a": result)
+	RETURN result
+    END ReadReal;

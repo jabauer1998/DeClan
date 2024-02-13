@@ -5,28 +5,51 @@ PROCEDURE INeg(n: INTEGER);
 	RETURN result
     END INeg;
 PROCEDURE Div (dividend: INTEGER; divisor: INTEGER);
-    VAR total: INTEGER; result: INTEGER;
+    VAR total: INTEGER; result: INTEGER; tempDividend: INTEGER; dividendLastOne: INTEGER; dividendLastDigit: INTEGER; dividendCount: INTEGER; dividendIndex: INTEGER; bitAtIndex: INTEGER; remainder: INTEGER;
     BEGIN
-	total := dividend;
-	result := 0;
-	WHILE ((total - divisor) > 0) DO
-	    total := total - divisor;
-	    result := result + 1
+	tempDividend := dividend;
+	dividendCount := 0;
+	dividendLastOne := 0;
+	WHILE(~IntIsZero(tempDividend)) DO
+	    dividendLastDigit := tempDividend BAND 1;
+	    IF (dividendLastDigit = 1) THEN
+	        dividendLastOne := dividendCount; 
+	    END;
+	    dividendCount := dividendCount + 1;
+	    tempDividend := tempDividend >> 1
 	END;
+
+	dividendIndex := dividendLastOne;
+	
+	tempDividend := dividend;
+	remainder := 0;
+	result := 0;
+	
+	WHILE(dividendIndex >= 0) DO
+	    bitAtIndex := (tempDividend >> dividendIndex) BAND 1;
+	    remainder := (remainder << 1) BOR bitAtIndex;
+	    IF (remainder >= divisor) THEN
+	        result := result BOR (1 << dividendIndex);
+		remainder := remainder - divisor;
+	    END;
+	    dividendIndex := dividendIndex - 1;
+	END;
+	
 	RETURN result
     END Div;
 PROCEDURE Divide (dividend: INTEGER; divisor: INTEGER);
-    VAR divResult: INTEGER; realResult: INTEGER;
+    VAR divResult: INTEGER; realDividend: REAL; realDivisor: REAL;
     BEGIN
-	divResult := Div(dividend, divisor);
-	realResult := IntToReal(divResult);
-	RETURN realResult
+	realDividend := IntToReal(dividend);
+	realDivisor := IntToReal(divisor);
+	divResult := RDivide(realDividend, realDivisor);
+	RETURN divResult
     END Divide;
 PROCEDURE Mod (dividend: INTEGER; divisor: INTEGER);
     VAR total: INTEGER; result: INTEGER;
     BEGIN
 	total := dividend;
-	WHILE((total - divisor) > 0) DO
+	WHILE((total - divisor) >= 0) DO
              total := total - divisor
 	END
 	RETURN total

@@ -1074,6 +1074,30 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 				errorLog.add("Error expected 1 argument into the RealScore method but found " + valArgs.size(), funcCall.getStart());
 				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
 			}
+		} else if(funcName.equals("MantissaNeg")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error in function MantissaNeg expected argument of type INTEGER", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the MantissaNeg method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("MantissaAbs")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error in function MantissaAbs expected argument of type INTEGER", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the MantissaAbs method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
 		} else if(funcName.equals("RealMantissa")){
 			if(valArgs.size() == 1){
 				Expression expArg = valArgs.get(0);
@@ -1111,7 +1135,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
 			}
 		} else {
-			errorLog.add("Noo known function defined in the local Program or in the Standard Library with the name of " + funcName, funcCall.getStart());
+			errorLog.add("No known function defined in the local Program or in the Standard Library with the name of " + funcName, funcCall.getStart());
 			return new TypeCheckerQualities(TypeCheckerQualities.NULL);
 		}
     }

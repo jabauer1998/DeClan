@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.util;
 
+import java.math.BigInteger;
+
 public class OpUtil {
     public static Object negate(Object val){
         if(val instanceof Integer) return -(Integer)val;
@@ -96,6 +98,7 @@ public class OpUtil {
     public static Object iMul(Object val1, Object val2){
         Integer iVal1 = Utils.toInt(val1);
         Integer iVal2 = Utils.toInt(val2);
+
         return iVal1 * iVal2;
     }
 
@@ -111,7 +114,7 @@ public class OpUtil {
         if(val1 instanceof Float && val2 instanceof Float) return Utils.toInt((Float)val1 / (Float)val2);
         else if(val1 instanceof Integer && val2 instanceof Float) return Utils.toInt((Integer)val1 / (Float)val2);
         else if(val1 instanceof Float && val2 instanceof Integer) return Utils.toInt((Float)val1 / (Integer)val2);
-        else if(val1 instanceof Integer && val2 instanceof Integer) return Utils.toInt((Integer)val1 / (Integer)val2);
+        else if(val1 instanceof Integer && val2 instanceof Integer) return Utils.toInt(((Integer)val1).floatValue() / ((Integer)val2).floatValue());
         else return null;
     }
 

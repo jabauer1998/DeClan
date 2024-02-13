@@ -1,5 +1,5 @@
 PROCEDURE RAdd(n1: REAL; n2: REAL);
-    VAR result: REAL; intResult: INTEGER; n1Sign: INTEGER; n2Sign: INTEGER; baseDif:INTEGER; n1Exp: INTEGER; n2Exp: INTEGER; n1Base: INTEGER; n2Base: INTEGER; resultExp: INTEGER; resultCarry: INTEGER; resultBase: INTEGER; resultSign: INTEGER;
+    VAR result: REAL; intResult: INTEGER; n1Sign: INTEGER; n2Sign: INTEGER; baseDif:INTEGER; n1Exp: INTEGER; n2Exp: INTEGER; n1Base: INTEGER; n2Base: INTEGER; resultExp: INTEGER; resultCarry: INTEGER; resultBase: INTEGER; resultSign: INTEGER; tempBase: INTEGER; lastOne: INTEGER; lastBit: INTEGER; count: INTEGER;
     BEGIN
 	n1Sign := RealSign(n1);
 	n2Sign := RealSign(n2);
@@ -7,113 +7,71 @@ PROCEDURE RAdd(n1: REAL; n2: REAL);
 	n2Exp := RealExponent(n2);
 	n1Base := RealMantissa(n1);
 	n2Base := RealMantissa(n2);
-	IF (n1Sign = n2Sign) THEN
-	  resultSign := n1Sign;
-	  IF (n1Exp = n2Exp) THEN
-	    resultBase := n1Base + n2Base;
-	    resultCarry := (resultBase >> 25) BAND 1;
-	    resultExp := n1Exp;
- 	    IF (resultCarry = 1) THEN
-	      resultExp := resultExp + 1;
-	      resultBase := resultBase >> 1;
-	    END;
-	    intResult := resultExp << 23;
-	    intResult := intResult BOR resultBase;
-	    intResult := intResult BOR (resultSign << 31);
-	  ELSIF (n1Exp > n2Exp) THEN
-	    baseDif := n1Exp - n2Exp;
-	    n2Exp := n1Exp;
-	    resultExp := n1Exp;
-	    n2Base := n2Base >> baseDif;
-	    resultBase := n1Base + n2Base;
-	    resultCarry := (resultBase >> 25) BAND 1;
-	    IF (resultCarry = 1) THEN
-	     resultExp := resultExp + 1;
-	     resultBase := resultBase >> 1;
-	    END;
-	    intResult := resultExp << 23;
-	    intResult := intResult BOR (resultSign << 31);
-	    intResult := intResult BOR resultBase;
-	  ELSE
-	    baseDif := n2Exp - n1Exp;
-	    n1Exp := n2Exp;
-	    resultExp := n2Exp;
-	    n1Base := n1Base >> baseDif;
-	    resultBase := n1Base + n2Base;
-	    resultCarry := (resultBase >> 25) BAND 1;
-	    IF (resultCarry = 1) THEN
-	     resultExp := resultExp + 1;
-	     resultBase := resultBase >> 1;
-	    END;
-	    intResult := resultExp << 23;
- 	    intResult := intResult BOR (resultSign << 31);
-	    intResult := intResult BOR resultBase;
-	  END
-	ELSE
-	  IF ((n1Sign = 0) & (n2Sign = 1)) THEN
-	    IF (n2Base > n1Base) THEN
-	      resultSign := 1;
-	    ELSE
-	      resultSign := 0;
-	    END
-	  ELSE
-	   IF ((n1Sign = 1) & (n2Sign = 0)) THEN
-	     IF (n2Base >= n1Base) THEN
-	       resultSign := 0;
-	     ELSE
-	       resultSign := 1;
-	     END
-	   END;
-	   IF (n1Exp = n2Exp) THEN
-	    resultBase := 0;
-	    resultCarry := (resultBase >> 25) BAND 1;
-	    resultExp := n1Exp;
- 	    IF (resultCarry = 1) THEN
-	      resultExp := resultExp + 1;
-	      resultBase := resultBase >> 1;
-	    END;
-	    intResult := resultExp << 23;
-	    intResult := intResult BOR resultBase;
-	    intResult := intResult BOR (resultSign << 31);
-	   ELSIF (n1Exp > n2Exp) THEN
-	    baseDif := n1Exp - n2Exp;
-	    n2Exp := n1Exp;
-	    resultExp := n1Exp;
-	    n2Base := n2Base >> baseDif;
-	    IF ((n1Sign = 1) & (n2Sign = 0)) THEN
-	      resultBase := n2Base - n1Base;
-	    ELSE
-	      resultBase := n1Base - n2Base;
-	    END;
-	    resultCarry := (resultBase >> 25) BAND 1;
-	    IF (resultCarry = 1) THEN
-	     resultExp := resultExp + 1;
-	     resultBase := resultBase >> 1;
-	    END;
-	    intResult := resultExp << 23;
-	    intResult := intResult BOR (resultSign << 31);
-	    intResult := intResult BOR resultBase;
-	   ELSE
-	    baseDif := n2Exp - n1Exp;
-	    n1Exp := n2Exp;
-	    resultExp := n2Exp;
-	    n1Base := n1Base >> baseDif;
-	    IF ((n1Sign = 1) & (n2Sign = 0)) THEN
-	      resultBase := n2Base - n1Base;
-	    ELSE
-	      resultBase := n1Base - n2Base;
-	    END;
-	    resultCarry := (resultBase >> 25) BAND 1;
-	    IF (resultCarry = 1) THEN
-	     resultExp := resultExp + 1;
-	     resultBase := resultBase >> 1;
-	    END;
-	    intResult := resultExp << 23;
- 	    intResult := intResult BOR (resultSign << 31);
-	    intResult := intResult BOR resultBase;
-	   END
-	  END
+	IF(n1Exp < n2Exp) THEN
+	  resultExp := n2Exp + realBias;
+	  baseDif := n2Exp - n1Exp;
+ 	  n1Base := n1Base >> baseDif
+	ELSIF(n1Exp > n2Exp) THEN
+	  resultExp := n1Exp + realBias;
+	  baseDif := n1Exp - n2Exp;
+	  n2Base := n2Base >> baseDif
+        ELSE
+	  resultExp := n1Exp + realBias;
 	END;
+
+	IF ((n1Sign = 0) & (n2Sign = 1)) THEN
+	    IF (n1Base > n2Base) THEN
+	        resultSign := 0;
+		resultBase := n1Base - n2Base
+	    ELSIF (n1Base < n2Base) THEN
+	 	resultSign := 1;
+		resultBase := n2Base - n1Base
+	    ELSE
+		resultSign := 0;
+		resultBase := 0
+	    END
+	ELSIF ((n1Sign = 1) & (n2Sign = 0)) THEN
+	    IF (n1Base > n2Base) THEN
+		resultSign := 1;
+	        resultBase := n1Base - n2Base
+	    ELSIF (n1Base < n2Base) THEN
+		resultSign := 0;
+		resultBase := n2Base - n1Base
+	    ELSE
+		resultSign := 0;
+		resultBase := 0
+	    END
+	ELSE
+	    resultSign := n1Sign;
+	    resultBase := n1Base + n2Base
+	END;
+
+	resultCarry := (resultBase >> 24) BAND 1;
+	IF (resultCarry = 1) THEN
+	    resultBase := resultBase >> 1;
+	    resultExp := resultExp + 1
+	END;
+
+	tempBase := resultBase;
+	count := 0;
+	WHILE (~IntIsZero(tempBase)) DO
+	     lastBit := tempBase BAND 1;
+	     IF (lastBit = 1) THEN
+		 lastOne := count
+	     END;
+	     count := count + 1;
+	     tempBase := tempBase >> 1
+	END;
+
+	IF(lastOne < 23) THEN
+	    baseDif := 23 - lastOne;
+	    resultBase := resultBase << baseDif;
+	    resultExp := resultExp - baseDif
+	END;
+
+	intResult := (resultExp BAND 0ffH) << 23;
+	intResult := intResult BOR (resultBase BAND 07FFFFFH);
+	intResult := intResult BOR (resultSign << 31);
 	result := IntBinaryAsReal(intResult)
 	RETURN result
     END RAdd;
@@ -124,7 +82,7 @@ PROCEDURE RSub(n1: REAL; n2: REAL);
 	RETURN result
     END RSub;
 PROCEDURE RMul(n1: REAL; n2: REAL);
-    VAR result: REAL; intResult: INTEGER; n1Sign: INTEGER; n2Sign: INTEGER; n1Exp: INTEGER; n2Exp: INTEGER; n1Base: INTEGER; n2Base: INTEGER; resultSign: INTEGER; resultBase: INTEGER; resultExp: INTEGER;
+    VAR result: REAL; intResult: INTEGER; n1Sign: INTEGER; n2Sign: INTEGER; n1Exp: INTEGER; n2Exp: INTEGER; n1Base: INTEGER; n2Base: INTEGER; resultSign: INTEGER; resultBase: INTEGER; resultExp: INTEGER; count: INTEGER; lastOne: INTEGER; tempBase: INTEGER; lastDigit: INTEGER; baseDif: INTEGER; n1LastOne: INTEGER; n1Count: INTEGER; n2LastOne: INTEGER; n2Count: INTEGER; n2BaseTemp: INTEGER; n1BaseTemp: INTEGER; n1LastDigit: INTEGER; n2LastDigit: INTEGER; lastOneTotal: INTEGER;
     BEGIN
 	n1Sign := RealSign(n1);
 	n2Sign := RealSign(n2);
@@ -132,21 +90,86 @@ PROCEDURE RMul(n1: REAL; n2: REAL);
 	n2Exp := RealExponent(n2);
 	n1Base := RealMantissa(n1);
 	n2Base := RealMantissa(n2);
+
+	WHILE((n1Base BAND 1) # 1) DO
+	    n1Base := n1Base >> 1
+	END;
+
+	n1Count := 0;
+	n1BaseTemp := n1Base;
+	WHILE(~IntIsZero(n1BaseTemp)) DO
+	    n1LastDigit := n1BaseTemp BAND 1;
+	    IF (n1LastDigit = 1) THEN
+		n1LastOne := n1Count;
+	    END;
+	    n1Count := n1Count + 1;
+	    n1BaseTemp := n1BaseTemp >> 1
+	END;
+
+	WHILE((n2Base BAND 1) # 1) DO
+	    n2Base := n2Base >> 1
+	END;
+
+	n2Count := 0;
+	n2BaseTemp := n2Base;
+	WHILE(~IntIsZero(n2BaseTemp)) DO
+	    n2LastDigit := n2BaseTemp BAND 1;
+	    IF (n2LastDigit = 1) THEN
+		n2LastOne := n2Count;
+	    END;
+	    n2Count := n2Count + 1;
+	    n2BaseTemp := n2BaseTemp >> 1
+	END;
+
+	lastOneTotal := n1LastOne + n2LastOne;
+
 	IF (n1Sign # n2Sign) THEN
 	     resultSign := 1
 	ELSE
 	     resultSign := 0
 	END;
-	resultBase := n1Base * n2Base;
+
 	resultExp := n1Exp + n2Exp;
-	intResult := resultExp << 23;
- 	intResult := intResult BOR (resultSign << 31);
-	intResult := intResult BOR resultBase;
+	resultBase := n1Base * n2Base;
+
+	IF (lastOneTotal < 23) THEN
+	    baseDif := 23 - lastOneTotal;
+	    resultBase := resultBase << baseDif
+	ELSIF (lastOneTotal > 23) THEN
+	    baseDif := lastOneTotal - 23;
+	    resultBase := resultBase >> baseDif
+	END;
+	
+	count := 0;
+	tempBase := resultBase;
+	WHILE (~IntIsZero(tempBase)) DO
+	    lastDigit := tempBase BAND 1;
+	    IF (lastDigit = 1) THEN
+		lastOne := count;
+	    END;
+	    count := count + 1;
+	    tempBase := tempBase >> 1
+	END;
+
+	IF (lastOne > 23) THEN
+	    baseDif := lastOne - 23;
+	    resultBase := resultBase >> baseDif;
+	    resultExp := resultExp + baseDif
+	ELSIF (lastOne < 23) THEN
+	    baseDif := 23 - lastOne;
+	    resultBase := resultBase << baseDif;
+	    resultExp := resultExp - baseDif
+	END;
+	
+	resultExp := resultExp + realBias;
+	intResult := (resultExp BAND 0FFH) << 23;
+ 	intResult := intResult BOR ((resultSign BAND 1) << 31);
+	intResult := intResult BOR (resultBase BAND 07FFFFFH);
 	result := IntBinaryAsReal(intResult)
 	RETURN result
     END RMul;
 PROCEDURE RDivide(n1: REAL; n2: REAL);
-    VAR result: REAL; intResult: INTEGER; n1Sign: INTEGER; n2Sign: INTEGER; n1Exp: INTEGER; n2Exp: INTEGER; n1Base: INTEGER; n2Base: INTEGER; resultSign: INTEGER; resultBase: INTEGER; resultExp: INTEGER;
+    VAR result: REAL; intResult: INTEGER; n1Sign: INTEGER; n2Sign: INTEGER; n1Exp: INTEGER; n2Exp: INTEGER; n1Base: INTEGER; n2Base: INTEGER; resultSign: INTEGER; resultBase: INTEGER; resultExp: INTEGER; n2Count: INTEGER; n2LastDigit: INTEGER; n2TempBase: INTEGER; n2FirstOne: INTEGER; n2LastOne: INTEGER; toShiftExp: INTEGER; toShiftBase: INTEGER; toShiftBack: INTEGER; resultLastOne: INTEGER; resultLastDigit: INTEGER; count: INTEGER; resultTempBase: INTEGER; n1DecimalPlace: INTEGER;
     BEGIN
 	n1Sign := RealSign(n1);
 	n2Sign := RealSign(n2);
@@ -154,16 +177,83 @@ PROCEDURE RDivide(n1: REAL; n2: REAL);
 	n2Exp := RealExponent(n2);
 	n1Base := RealMantissa(n1);
 	n2Base := RealMantissa(n2);
+
+	toShiftBase := 30 - 23;
+	n1Base := n1Base << toShiftBase;
+
+	n2Count := 0;
+	n2TempBase := n2Base;
+	WHILE((n2TempBase BAND 1) = 0) DO
+	    n2TempBase := n2TempBase >> 1;
+	    n2Count := n2Count + 1;
+	END;
+	n2FirstOne := n2Count;
+
+	toShiftBase := n2FirstOne;
+	n2Base := n2Base >> toShiftBase;
+
+	n2Count := 0;
+	n2TempBase := n2Base;
+	WHILE(~IntIsZero(n2TempBase)) DO
+	    n2LastDigit := n2TempBase BAND 1;
+	    IF(n2LastDigit = 1) THEN
+		n2LastOne := n2Count
+	    END;
+	    n2Count := n2Count + 1;
+	    n2TempBase := n2TempBase >> 1;
+	END;
+
+	toShiftExp := n2LastOne;
+	n1Exp := n1Exp - toShiftExp;
+	n2Exp := n2Exp - toShiftExp;
+
+	n1DecimalPlace := 30 - toShiftExp;
+
 	IF (n1Sign # n2Sign) THEN
 	     resultSign := 1
 	ELSE
 	     resultSign := 0
 	END;
-	resultBase := n1Base DIV n2Base;
+
 	resultExp := n1Exp - n2Exp;
-	intResult := resultExp << 23;
+	resultBase := n1Base DIV n2Base;
+
+	IF (n1DecimalPlace < 23) THEN
+	    toShiftBack := 23 - n1DecimalPlace + 1;
+	    resultBase := resultBase << toShiftBack;
+	ELSIF (n1DecimalPlace > 23) THEN
+	    toShiftBack := n1DecimalPlace - 23;
+	    resultBase := resultBase >> toShiftBack;
+	END;
+
+	count := 0;
+	resultTempBase := resultBase;
+	resultLastOne := 0;
+	WHILE(~IntIsZero(resultTempBase)) DO
+	    resultLastDigit := resultTempBase BAND 1;
+	    IF(resultLastDigit = 1) THEN
+		resultLastOne := count
+	    END;
+	    count := count + 1;
+	    resultTempBase := resultTempBase >> 1;
+	END;
+
+	IF (resultLastOne > 23) THEN
+	    toShiftExp := resultLastOne - 23;
+	    resultBase := resultBase >> toShiftExp;
+	    resultExp := resultExp + toShiftExp
+	ELSIF (resultLastOne < 23) THEN
+	    toShiftExp := 23 - resultLastOne;
+	    resultBase := resultBase << toShiftExp;
+	    resultExp := resultExp - toShiftExp
+	END;
+
+	resultExp := resultExp + realBias;
+	
+	intResult := (resultExp BAND 0ffH) << 23;
  	intResult := intResult BOR (resultSign << 31);
-	intResult := intResult BOR resultBase;
+	intResult := intResult BOR (resultBase BAND 07FFFFFH);
+
 	result := IntBinaryAsReal(intResult)
 	RETURN result
     END RDivide;
@@ -174,11 +264,12 @@ PROCEDURE RDiv(n1: REAL; n2: REAL);
 	RETURN result
     END RDiv;
 PROCEDURE RNeg(n: REAL);
-    VAR lastBit: INTEGER; intN: INTEGER; result: INTEGER;
+    VAR lastBit: INTEGER; intN: INTEGER; result: INTEGER; intResult: INTEGER;
     BEGIN
         lastBit := 1 << 31;
         intN := RealBinaryAsInt(n);
-	result := intN BXOR lastBit;
+	intResult := intN BXOR lastBit;
+	result := IntBinaryAsReal(intResult)
 	RETURN result
     END RNeg;
 PROCEDURE RLessThan(n1: REAL; n2: REAL);

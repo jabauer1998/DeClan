@@ -1305,4 +1305,100 @@ public class ICodeGeneratorTest {
 
         testDeclanFileOnICode(programName, expectedICode);
     }
+
+    @Test
+    public void testRealAddition3(){
+        String programName = "test_source/RealAddition3.dcl";
+        String expectedICode = "a := 50.0\r\n" + //
+                                "b := a\r\n" + //
+                                "c := 92.0\r\n" + //
+                                "d := c\r\n" + //
+                                "e := 0.0\r\n" + //
+                                "f := EXTERNAL CALL RSub(b, d)\r\n" + //
+                                "e := f\r\n" + //
+                                "EXTERNAL CALL WriteReal(e)\r\n" + //
+                                "END\r\n";
+
+        testDeclanFileOnICode(programName, expectedICode);
+    }
+
+    @Test
+    public void testRealMultiplication(){
+        String programName = "test_source/RealMultiplication.dcl";
+        String expectedICode = "a := 21.0\r\n" + //
+                                "b := a\r\n" + //
+                                "c := 2.0\r\n" + //
+                                "d := c\r\n" + //
+                                "e := 0.0\r\n" + //
+                                "f := EXTERNAL CALL RMul(b, d)\r\n" + //
+                                "e := f\r\n" + //
+                                "EXTERNAL CALL WriteReal(e)\r\n" + //
+                                "END\r\n";
+
+        testDeclanFileOnICode(programName, expectedICode);
+    }
+
+    @Test
+    public void testRealMultiplication2(){
+        String programName = "test_source/RealMultiplication2.dcl";
+        String expectedICode = "a := 80.56\r\n" + //
+                                "b := a\r\n" + //
+                                "c := 0.05\r\n" + //
+                                "d := c\r\n" + //
+                                "e := 0.0\r\n" + //
+                                "f := EXTERNAL CALL RMul(b, d)\r\n" + //
+                                "e := f\r\n" + //
+                                "EXTERNAL CALL WriteReal(e)\r\n" + //
+                                "END\r\n";
+
+        testDeclanFileOnICode(programName, expectedICode);
+    }
+
+    @Test
+    public void testIntegerDiv(){
+        String programName = "test_source/IntegerDiv.dcl";
+        String expectedICode = "a := 20\r\n" + //
+                                "b := a\r\n" + //
+                                "c := 5\r\n" + //
+                                "d := c\r\n" + //
+                                "e := 0\r\n" + //
+                                "f := EXTERNAL CALL Div(b, d)\r\n" + //
+                                "e := f\r\n" + //
+                                "EXTERNAL CALL WriteInt(e)\r\n" + //
+                                "END\r\n";
+
+        testDeclanFileOnICode(programName, expectedICode);
+    }
+
+    @Test
+    public void testIntegerDiv2(){
+        String programName = "test_source/IntegerDiv2.dcl";
+        String expectedICode = "a := 30\r\n" + //
+                                "b := a\r\n" + //
+                                "c := 8\r\n" + //
+                                "d := c\r\n" + //
+                                "e := 0\r\n" + //
+                                "f := EXTERNAL CALL Div(b, d)\r\n" + //
+                                "e := f\r\n" + //
+                                "EXTERNAL CALL WriteInt(e)\r\n" + //
+                                "END\r\n";
+
+        testDeclanFileOnICode(programName, expectedICode);
+    }
+
+    @Test
+    public void testRealDivision(){
+        String programName = "test_source/RealDivision.dcl";
+        String expectedICode = "a := 30.0\r\n" + //
+                                "b := a\r\n" + //
+                                "c := 2.0\r\n" + //
+                                "d := c\r\n" + //
+                                "e := 0.0\r\n" + //
+                                "f := EXTERNAL CALL RDivide(b, d)\r\n" + //
+                                "e := f\r\n" + //
+                                "EXTERNAL CALL WriteReal(e)\r\n" + //
+                                "END\r\n";
+
+        testDeclanFileOnICode(programName, expectedICode);
+    }
 }

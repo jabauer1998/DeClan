@@ -182,4 +182,39 @@ public class InterpreterICodeTest {
     public void testRealAddition2(){
         testInterpreterWithICode("test_source/RealAddition2.dcl", nullReader, nullReader);
     }
+
+    @Test
+    public void testRealAddition3(){
+        testInterpreterWithICode("test_source/RealAddition3.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testRealMultiplication(){
+        testInterpreterWithICode("test_source/RealMultiplication.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testRealMultiplication2(){
+        testInterpreterWithICode("test_source/RealMultiplication2.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testIntegerDiv(){
+        testInterpreterWithICode("test_source/IntegerDiv.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testIntegerDiv2(){
+        testInterpreterWithICode("test_source/IntegerDiv2.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testRealDivision(){
+        testInterpreterWithICode("test_source/RealDivision.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testRealDivision2(){
+        testInterpreterWithICode("test_source/RealDivision2.dcl", nullReader, nullReader);
+    }
 }

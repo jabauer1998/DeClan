@@ -91,4 +91,34 @@ public class MyParserBasicTest {
     public void testRealAddition2(){
         runParserOnSource("test_source/RealAddition2.dcl");
     }
+
+    @Test
+    public void testRealAddition3(){
+        runParserOnSource("test_source/RealMultiplication.dcl");
+    }
+
+    @Test
+    public void testRealMultiplication(){
+        runParserOnSource("test_source/RealMultiplication.dcl");
+    }
+
+    @Test
+    public void testRealMultiplication2(){
+        runParserOnSource("test_source/RealMultiplication2.dcl");
+    }
+
+    @Test
+    public void testIntegerDiv(){
+        runParserOnSource("test_source/IntegerDiv.dcl");
+    }
+
+    @Test
+    public void testIntegerDiv2(){
+        runParserOnSource("test_source/IntegerDiv2.dcl");
+    }
+
+    @Test
+    public void testRealDivision(){
+        runParserOnSource("test_source/RealDivision.dcl");
+    }
 }

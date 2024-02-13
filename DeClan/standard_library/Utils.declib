@@ -1,3 +1,4 @@
+CONST realBias = 127;
 PROCEDURE RealIsZero(r: REAL);
     VAR result: BOOLEAN; val: INTEGER;
     BEGIN
@@ -89,7 +90,7 @@ PROCEDURE RealMantissa(r: REAL);
     BEGIN
 	realAsInt := RealBinaryAsInt(r);
         result := realAsInt BAND 07FFFFFH
-	RETURN result
+	RETURN result BOR 0800000H
     END RealMantissa;
 PROCEDURE RealSign(r: REAL);
     VAR result: INTEGER; realAsInteger: INTEGER;
@@ -99,9 +100,32 @@ PROCEDURE RealSign(r: REAL);
 	RETURN result
     END RealSign;
 PROCEDURE RealExponent(r: REAL);
-    VAR result: INTEGER; realAsInteger: INTEGER;
+    VAR result: INTEGER; realAsInteger: INTEGER; exponent: INTEGER;
     BEGIN
 	realAsInteger := RealBinaryAsInt(r);
-        result := (realAsInteger >> 23) BAND 0ffH
+        exponent := (realAsInteger >> 23) BAND 0ffH;
+	result := exponent - realBias
 	RETURN result
     END RealExponent;
+PROCEDURE MantissaNeg(m: INTEGER);
+    VAR result: INTEGER; lastBit: INTEGER;
+    BEGIN
+	result := m BXOR 0FFFFFFH;
+	result := result + 1;
+	lastBit := (result >> 23) BAND 1;
+	IF (lastBit = 1) THEN
+	    result := result BAND 07FFFFFH;
+	    result := result BOR 080000000H;
+	END
+	RETURN result
+    END MantissaNeg;
+PROCEDURE MantissaAbs(m: INTEGER);
+   VAR result: INTEGER;
+   BEGIN
+	IF (IntIsNegative(m)) THEN
+	    result := MantissaNeg(m);
+	ELSE
+	    result := m;
+	END;
+	RETURN result
+   END MantissaAbs;

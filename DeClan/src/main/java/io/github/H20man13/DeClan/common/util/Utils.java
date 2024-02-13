@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.util;
 
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -326,6 +327,9 @@ public class Utils {
     public static Integer toInt(Object input){
         if(input instanceof Integer){
             return (Integer)input;
+        } else if(input instanceof BigInteger){
+            BigInteger lInput = (BigInteger)input;
+            return lInput.intValue();
         } else if(input instanceof Float){
             Float di = (Float)input;
             return di.intValue();
@@ -335,6 +339,25 @@ public class Utils {
                 return 1;
             } else {
                 return 0;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public static BigInteger toBigInt(Object input){
+        if(input instanceof Integer){
+            Integer inputInt = (Integer)input;
+            return new BigInteger(Integer.toString(inputInt));
+        } else if(input instanceof Float){
+            Float inputint = (Float)input;
+            return new BigInteger(Integer.toString(inputint.intValue()));
+        } else if(input instanceof Boolean){
+            Boolean inputBool = (Boolean)input;
+            if(inputBool){
+                return new BigInteger("1");
+            } else {
+                return new BigInteger("0");
             }
         } else {
             return null;

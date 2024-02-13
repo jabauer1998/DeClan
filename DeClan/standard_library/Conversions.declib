@@ -1,7 +1,8 @@
 PROCEDURE IntToReal(n: INTEGER);
-    VAR result: REAL; isNeg: BOOLEAN; intResult: INTEGER; furthestOne: INTEGER; count: INTEGER; tempN: INTEGER; lastBit: INTEGER; fullExponent: INTEGER; exponent: INTEGER; mantissa: INTEGER; mantissaMask: INTEGER; toShiftOver: INTEGER;
+    VAR result: REAL; absN: INTEGER; isNeg: BOOLEAN; intResult: INTEGER; furthestOne: INTEGER; count: INTEGER; tempN: INTEGER; lastBit: INTEGER; fullExponent: INTEGER; exponent: INTEGER; mantissa: INTEGER; mantissaMask: INTEGER; toShiftOver: INTEGER;
     BEGIN
-       tempN := n;
+       absN := Abs(n);
+       tempN := absN;
        count := 0;
        isNeg := IntIsNegative(n);
        WHILE ~IntIsZero(tempN) DO
@@ -12,25 +13,14 @@ PROCEDURE IntToReal(n: INTEGER);
           count := count + 1;
           tempN := tempN >> 1;
        END;
-       IF furthestOne < 23 THEN
-           fullExponent := 23 - furthestOne;
-           exponent := (BNOT fullExponent) + 1;
-           exponent := exponent BAND (BNOT 080000000H);
-           exponent := exponent BOR 040H;
-           mantissaMask := (1 << furthestOne) - 1;
-           mantissa := n BAND mantissaMask;
-           mantissa := mantissa << fullExponent
-       ELSIF furthestOne > 23 THEN
-          fullExponent := furthestOne - 23;
-          exponent := fullExponent;
-          mantissaMask := (1 << furthestOne) - 1;
-          mantissa := n BAND mantissaMask;
-          mantissa := mantissa >> fullExponent
-       ELSE
-          exponent := furthestOne;
-          mantissaMask := (1 << furthestOne) - 1;
-          mantissa := n BAND mantissaMask;
+       IF (furthestOne > 23) THEN
+	  absN := absN >> (furthestOne - 23);
+       ELSIF (furthestOne < 23) THEN
+	  absN := absN << (23 - furthestOne);
        END;
+       exponent := furthestOne + 127;
+       mantissaMask := 03fffffH;
+       mantissa := absN BAND mantissaMask;
        intResult := mantissa;
        intResult := intResult BOR (exponent << 23);
        IF isNeg THEN
@@ -45,8 +35,14 @@ PROCEDURE RealToInt(n: REAL);
 	exp := RealExponent(n);
 	mantissa := RealMantissa(n);
 	sign := RealSign(n);
-	fullMantissa := (1 << 23) BOR mantissa;
-	result := fullMantissa << exp;
+	IF exp > 0 THEN
+	   fullMantissa := mantissa << exp
+	ELSIF exp < 0 THEN
+	   fullMantissa := mantissa >> exp
+	ELSE
+	   fullMantissa := mantissa
+	END;
+	result := fullMantissa >> 23;
 	IF sign = 1 THEN
 	    result := ~result;
 	    result := result + 1;
