@@ -1341,9 +1341,9 @@ public class ICodeGeneratorTest {
     @Test
     public void testRealMultiplication2(){
         String programName = "test_source/RealMultiplication2.dcl";
-        String expectedICode = "a := 80.56\r\n" + //
+        String expectedICode = "a := 30.32\r\n" + //
                                 "b := a\r\n" + //
-                                "c := 0.05\r\n" + //
+                                "c := 2.0\r\n" + //
                                 "d := c\r\n" + //
                                 "e := 0.0\r\n" + //
                                 "f := EXTERNAL CALL RMul(b, d)\r\n" + //
@@ -1388,6 +1388,22 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testRealDivision(){
+        String programName = "test_source/RealDivision.dcl";
+        String expectedICode = "a := 30.0\r\n" + //
+                                "b := a\r\n" + //
+                                "c := 2.0\r\n" + //
+                                "d := c\r\n" + //
+                                "e := 0.0\r\n" + //
+                                "f := EXTERNAL CALL RDivide(b, d)\r\n" + //
+                                "e := f\r\n" + //
+                                "EXTERNAL CALL WriteReal(e)\r\n" + //
+                                "END\r\n";
+
+        testDeclanFileOnICode(programName, expectedICode);
+    }
+
+    @Test
+    public void testRealDivision2(){
         String programName = "test_source/RealDivision.dcl";
         String expectedICode = "a := 30.0\r\n" + //
                                 "b := a\r\n" + //

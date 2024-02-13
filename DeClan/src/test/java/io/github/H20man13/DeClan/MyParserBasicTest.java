@@ -121,4 +121,9 @@ public class MyParserBasicTest {
     public void testRealDivision(){
         runParserOnSource("test_source/RealDivision.dcl");
     }
+
+    @Test
+    public void testRealDivision2(){
+        runParserOnSource("test_source/RealDivision2.dcl");
+    }
 }

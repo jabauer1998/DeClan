@@ -47,16 +47,22 @@ PROCEDURE IntExp(n: INTEGER; exp: INTEGER);
 	RETURN result
     END IntExp;
 PROCEDURE Floor(n: REAL);
+    VAR result: INTEGER;
     BEGIN
-	RETURN n
+	result := RealToInt(n);
+	RETURN result
     END Floor;
 PROCEDURE Round(n: REAL);
+    VAR result: INTEGER;
     BEGIN
-    	RETURN Floor(n + 0.5)
+	result := Floor(n + 0.5);
+    	RETURN result
     END Round;
 PROCEDURE Ceil(n: REAL);
+    VAR result: INTEGER;
     BEGIN
-        RETURN -1 * Floor(-n)
+	result := Floor(n) + 1;
+	RETURN result
     END Ceil;
 
 
