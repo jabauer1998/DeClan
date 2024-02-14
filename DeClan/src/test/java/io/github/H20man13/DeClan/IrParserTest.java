@@ -3,7 +3,6 @@ package io.github.H20man13.DeClan;
 import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
-import java.util.List;
 
 import org.junit.Test;
 
@@ -11,8 +10,6 @@ import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.ErrorLog.LogItem;
 import io.github.H20man13.DeClan.common.ReaderSource;
-import io.github.H20man13.DeClan.common.icode.ICode;
-import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.main.MyIrLexer;
 import io.github.H20man13.DeClan.main.MyIrParser;
 
@@ -49,7 +46,7 @@ public class IrParserTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseInstructions();
+        parser.parseInstructions();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -70,7 +67,7 @@ public class IrParserTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseInstructions();
+        parser.parseInstructions();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -89,7 +86,7 @@ public class IrParserTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseInstructions();
+        parser.parseInstructions();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -108,7 +105,7 @@ public class IrParserTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> programICode = parser.parseInstructions();
+        parser.parseInstructions();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -139,7 +136,7 @@ public class IrParserTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        Prog programICode = parser.parseProgram();
+        parser.parseProgram();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -163,7 +160,7 @@ public class IrParserTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        Prog programICode = parser.parseProgram();
+        parser.parseProgram();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -188,7 +185,7 @@ public class IrParserTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        Prog programICode = parser.parseProgram();
+        parser.parseProgram();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -213,7 +210,7 @@ public class IrParserTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        Prog programICode = parser.parseProgram();
+        parser.parseProgram();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);

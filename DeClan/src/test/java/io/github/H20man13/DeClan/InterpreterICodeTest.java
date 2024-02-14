@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.List;
 
 import org.junit.Test;
 
@@ -17,12 +16,9 @@ import edu.depauw.declan.common.ErrorLog.LogItem;
 import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
-import io.github.H20man13.DeClan.common.icode.ICode;
-import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
-import io.github.H20man13.DeClan.main.MyICodeGenerator;
 import io.github.H20man13.DeClan.main.MyICodeMachine;
 import io.github.H20man13.DeClan.main.MyInterpreter;
 import io.github.H20man13.DeClan.main.MyIrLinker;
@@ -42,6 +38,7 @@ public class InterpreterICodeTest {
             MyDeClanLexer lexer = new MyDeClanLexer(source, errLog);
             MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
             Program prog = parser.parseProgram();
+            parser.close();
 
             MyStandardLibrary lib = new MyStandardLibrary(errLog);
         

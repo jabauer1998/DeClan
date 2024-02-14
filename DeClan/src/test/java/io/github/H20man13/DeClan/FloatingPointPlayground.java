@@ -58,7 +58,6 @@ public class FloatingPointPlayground {
 
 
         String resultBin = "11000010001010000000000000000000";
-        String actualResult = "101011000000000000000000";
 
         assertTrue("Error expected \n" + resultBin + "\n but found \n" + operationBin, resultBin.equals(operationBin));
     }

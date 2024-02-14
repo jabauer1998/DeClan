@@ -24,6 +24,7 @@ public class MyTypeCheckerTest {
             MyDeClanLexer lexer = new MyDeClanLexer(source, errLog);
             MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
             Program prog = parser.parseProgram();
+            parser.close();
             
             for(LogItem item: errLog){
                 assertTrue(item.toString(), false);

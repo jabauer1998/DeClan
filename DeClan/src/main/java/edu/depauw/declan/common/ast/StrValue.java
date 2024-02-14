@@ -1,7 +1,6 @@
 package edu.depauw.declan.common.ast;
 
 import java.lang.String;
-import java.lang.StringBuilder;
 
 import edu.depauw.declan.common.Position;
 
@@ -31,10 +30,10 @@ public class StrValue extends AbstractASTNode implements Expression {
 		return lexeme;
 	}
 
-        @Override
-        public String toString(){
-	  return '\"' + getLexeme() + '\"';
-        }
+	@Override
+	public String toString(){
+		return '\"' + getLexeme() + '\"';
+	}
 
 	@Override
 	public void accept(ASTVisitor visitor) {

@@ -1,7 +1,6 @@
 package edu.depauw.declan.common.ast;
 
 import java.lang.String;
-import java.lang.StringBuilder;
 
 import edu.depauw.declan.common.Position;
 

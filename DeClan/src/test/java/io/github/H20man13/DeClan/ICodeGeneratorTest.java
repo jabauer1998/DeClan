@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.StringReader;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
@@ -17,19 +16,11 @@ import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.Prog;
-import io.github.H20man13.DeClan.common.pat.P.ELSE;
-import io.github.H20man13.DeClan.common.pat.P.GOTO;
-import io.github.H20man13.DeClan.common.pat.P.IF;
-import io.github.H20man13.DeClan.common.pat.P.INEG;
-import io.github.H20man13.DeClan.common.pat.P.LABEL;
-import io.github.H20man13.DeClan.common.pat.P.THEN;
-import io.github.H20man13.DeClan.common.util.Utils;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.MyICodeGenerator;
 import io.github.H20man13.DeClan.main.MyIrLexer;
 import io.github.H20man13.DeClan.main.MyIrParser;
-import io.github.H20man13.DeClan.main.MyStandardLibrary;
 
 public class ICodeGeneratorTest {
     public static void testReaderSource(List<ICode> program, String programInput){
@@ -481,6 +472,8 @@ public class ICodeGeneratorTest {
                                "LABEL FOREND_0_LEVEL_0\r\n" + //
                                "EXTERNAL CALL WriteLn()\r\n" + //
                                "END\r\n";
+
+        testDeclanFileOnICode(programName, expectedICode);
     }
 
     @Test

@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Source;
-import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
@@ -26,7 +25,8 @@ public class MyParserBasicTest {
             ErrorLog errLog = new ErrorLog();
             MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
             MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
-            Program prog = parser.parseProgram();
+            parser.parseProgram();
+            parser.close();
         } catch(Exception exp){
             assertTrue(exp.toString(), false);
         }

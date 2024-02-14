@@ -2,10 +2,8 @@ package io.github.H20man13.DeClan;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.StringReader;
-import java.util.List;
 
 import org.junit.Test;
 
@@ -14,12 +12,10 @@ import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.ErrorLog.LogItem;
 import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.ReaderSource;
-import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
-import io.github.H20man13.DeClan.main.MyICodeGenerator;
 import io.github.H20man13.DeClan.main.MyICodeTypeChecker;
 import io.github.H20man13.DeClan.main.MyIrLexer;
 import io.github.H20man13.DeClan.main.MyIrLinker;
