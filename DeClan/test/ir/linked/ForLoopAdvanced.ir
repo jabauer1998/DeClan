@@ -1,0 +1,64 @@
+SYMBOL SECTION
+DATA SECTION
+ a := 0
+ b := 0
+CODE SECTION
+ c := 1
+ a := c
+ d := 10
+ LABEL FORBEG_0_LEVEL_0
+ IF a NE d THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
+ LABEL FORLOOP_0_LEVEL_0
+ e := 1
+ b := e
+ f := 10
+ LABEL FORBEG_1_LEVEL_1
+ IF b LT f THEN FORLOOP_1_LEVEL_1 ELSE FOREND_1_LEVEL_1
+ LABEL FORLOOP_1_LEVEL_1
+ CALL WriteInt ( b -> b14 )
+ g := 1
+ h := b IADD g
+ b := h
+ GOTO FORBEG_1_LEVEL_1
+ LABEL FOREND_1_LEVEL_1
+ CALL WriteLn (  )
+ i := 10
+ b := i
+ j := 0
+ LABEL FORBEG_2_LEVEL_1
+ IF b GT j THEN FORLOOP_2_LEVEL_1 ELSE FOREND_2_LEVEL_1
+ LABEL FORLOOP_2_LEVEL_1
+ CALL WriteInt ( b -> b14 )
+ k := 1
+ CALL INeg ( k -> b17 )
+ b16 <| b20
+ m := b IADD b16
+ b := m
+ GOTO FORBEG_2_LEVEL_1
+ LABEL FOREND_2_LEVEL_1
+ CALL WriteLn (  )
+ n := 1
+ o := a IADD n
+ a := o
+ GOTO FORBEG_0_LEVEL_0
+ LABEL FOREND_0_LEVEL_0
+END
+PROC SECTION
+ PROC LABEL WriteInt
+  b15 <- b14
+  IPARAM b15
+  IASM "LDR R0, %a"
+  IASM "SWI 1"
+ RETURN
+ PROC LABEL WriteLn
+  IASM "SWI 4"
+ RETURN
+ PROC LABEL INeg
+  b18 <- b17
+  b19 := 0
+  b21 := INOT b18
+  b22 := 1
+  b23 := b21 IADD b22
+  b19 := b23
+  b20 |< b19
+ RETURN

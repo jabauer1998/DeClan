@@ -51,6 +51,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
+    <project.SRC>${src}</project.SRC>
+    <project.OUT>${out}</project.OUT>
   </properties>
 
   <dependencies>
@@ -73,6 +75,77 @@
       <systemPath>${project.basedir}/libs/DeCLanModel-6x.jar</systemPath>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+        <id>assembly</id>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>exec-maven-plugin</artifactId>
+              <version>1.2.1</version>
+              <configuration>
+              <mainClass>io.github.H20man13.DeClan.main.MyCompilerDriver</mainClass>
+                <arguments>
+                  <argument>-a</argument>
+                  <argument>-f</argument>
+                  <argument>${project.OUT}</argument>
+                  <argument>-std</argument>
+                  <argument>-p</argument>
+                  <argument>${project.SRC}</argument>
+                </arguments>
+              </configuration>
+            </plugin>
+          </plugins>
+        </build>
+    </profile>
+    <profile>
+        <id>ir</id>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>exec-maven-plugin</artifactId>
+              <version>1.2.1</version>
+              <configuration>
+              <mainClass>io.github.H20man13.DeClan.main.MyCompilerDriver</mainClass>
+                <arguments>
+                  <argument>-e</argument>
+                  <argument>-f</argument>
+                  <argument>${project.OUT}</argument>
+                  <argument>-std</argument>
+                  <argument>-p</argument>
+                  <argument>${project.SRC}</argument>
+                </arguments>
+              </configuration>
+            </plugin>
+          </plugins>
+        </build>
+    </profile>
+    <profile>
+        <id>exe</id>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>exec-maven-plugin</artifactId>
+              <version>1.2.1</version>
+              <configuration>
+              <mainClass>io.github.H20man13.DeClan.main.MyCompilerDriver</mainClass>
+                <arguments>
+                  <argument>-f</argument>
+                  <argument>${project.OUT}</argument>
+                  <argument>-std</argument>
+                  <argument>-p</argument>
+                  <argument>${project.SRC}</argument>
+                </arguments>
+              </configuration>
+            </plugin>
+          </plugins>
+        </build>
+    </profile>
+  </profiles>
 
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
