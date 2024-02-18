@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.util.Utils;
+
 public class FlowGraph {
     private EntryNode entryNode;
     private ExitNode exitNode;
@@ -27,6 +29,41 @@ public class FlowGraph {
 
     public ExitNode getExit(){
         return exitNode;
+    }
+
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("ENTRY\n");
+        sb.append("DATA BLOCKS\n");
+        for(BlockNode block : dataBlocks){
+            StringBuilder innerSb = new StringBuilder();
+            innerSb.append(' ');
+            innerSb.append(block.toString());
+            innerSb.append('\n');
+            String insideString = Utils.formatStringToLeadingWhiteSpace(innerSb.toString());
+            sb.append(insideString);
+        }
+        sb.append("CODE BLOCKS\n");
+        for(BlockNode block: codeBlocks){
+            StringBuilder innerSb = new StringBuilder();
+            innerSb.append(' ');
+            innerSb.append(block.toString());
+            innerSb.append('\n');
+            String insideString = Utils.formatStringToLeadingWhiteSpace(innerSb.toString());
+            sb.append(insideString);
+        }
+        sb.append("EXIT\n");
+        sb.append("PROCEDURE BLOCKS\n");
+        for(BlockNode block: procedureBlocks){
+            StringBuilder innerSb = new StringBuilder();
+            innerSb.append(' ');
+            innerSb.append(block.toString());
+            innerSb.append('\n');
+            String insideString = Utils.formatStringToLeadingWhiteSpace(innerSb.toString());
+            sb.append(insideString);
+        }
+
+        return sb.toString();
     }
 
     public List<BlockNode> getBlocks(){

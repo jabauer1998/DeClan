@@ -14,4 +14,8 @@ public class ProcedureEntryNode extends BlockNode{
         super(block);
         this.block = block;
     }
+
+    public String toString(){
+        return block.toString();
+    }
 }

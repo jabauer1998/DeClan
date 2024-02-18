@@ -1,0 +1,41 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Assembly",
+            "request": "launch",
+            "mainClass": "io.github.H20man13.DeClan.main.MyCompilerDriver",
+            "projectName": "DeClan",
+            "args": "-d -std -a",
+            "cwd": "${workspaceFolder}/DeClan"
+        },
+        {
+            "type": "java",
+            "name": "Ir",
+            "request": "launch",
+            "mainClass": "io.github.H20man13.DeClan.main.MyCompilerDriver",
+            "projectName": "DeClan",
+            "args": "-d -std -e",
+            "cwd": "${workspaceFolder}/DeClan"
+        },
+        {
+            "type": "java",
+            "name": "Binary",
+            "request": "launch",
+            "mainClass": "io.github.H20man13.DeClan.main.MyCompilerDriver",
+            "projectName": "DeClan",
+            "args": "-d -std",
+            "cwd": "${workspaceFolder}/DeClan"
+        }
+    ]
+}

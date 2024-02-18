@@ -23,4 +23,18 @@ public class ProcedureBeginningBlock extends BasicBlock {
     public ProcLabel getLabel(){
         return label;
     }
+
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(label.toString());
+        sb.append("\n");
+        for(ParamAssign assign: paramaterAssignmants){
+            sb.append(assign.toString());
+            sb.append("\n");
+        }
+        sb.append(super.toString());
+        return sb.toString();
+    }
 }

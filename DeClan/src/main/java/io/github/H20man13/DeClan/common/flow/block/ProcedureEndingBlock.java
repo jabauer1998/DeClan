@@ -12,4 +12,13 @@ public class ProcedureEndingBlock extends BasicBlock {
         super(codeInBlock);
         this.ret = ret;
     }
+
+    @Override 
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(super.toString());
+        sb.append(ret.toString());
+        sb.append('\n');
+        return sb.toString();
+    }
 }

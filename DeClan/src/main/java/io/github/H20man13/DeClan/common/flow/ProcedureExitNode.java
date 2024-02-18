@@ -15,4 +15,9 @@ public class ProcedureExitNode extends BlockNode{
         super(block);
         this.block = block;
     }
+
+    @Override 
+    public String toString(){
+        return block.toString();
+    }
 }

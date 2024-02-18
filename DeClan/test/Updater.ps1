@@ -1,21 +1,81 @@
-function compile_ir{
+function clean_src{
+    param($directory)
+    Get-ChildItem -Directory "$directory" |
+    Foreach-Object {
+        clean_src -directory $_.FullName
+    }
+
+    Get-ChildItem -File "$directory" |
+    ForEach-Object {
+        Write-Host "Cleaning file at path -"
+        Write-Host "$_.FullName"
+        Remove-Item $_.FullName
+    }
+}
+function compile_file_into_ir{
     param($src)
-    Write-Host "Compiling Ir with src-\n$src\n"
-    $out = $src.replace(".dcl", ".ir").replace("test/declan", "test/ir/linked")
-    Write-Host "to output-\n$out\n"
-    mvn exec:java -f "$PSScriptRoot/../pom.xml" -P ir -Dout="$out" -Dsrc="$src"
+    Write-Host "Compiling Ir with src-"
+    Write-Host "$src"
+    $out = "$src".replace(".dcl", ".ir").replace("test\declan", "test\ir\linked")
+    Write-Host "to output-"
+    Write-Host "$out"
+    Write-Host "---------Output-Window-----------"
+    Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/../pom.xml' -P ir -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+    Write-Host "--------End-Output-Window--------"
+    if ($errorOutput -eq '') {
+        Write-Host "Source-"
+        Write-Host "$src"
+        Write-Host "Compiled to-"
+        Write-Host "$out"
+        Write-Host "successfully!!!"
+    } else {
+        Write-Host "Errors detected compilation aborted for ir at -"
+        Write-Host "$out"
+    }
 }
 
-function compile_assembly{
+function compile_file_into_assembly{
     param($src)
-    $out = $src.replace(".dcl", ".a").replace("test/declan", "test/assembly")
-    mvn exec:java -P assembly -DOut="$out" -DSrc="$src"
+    Write-Host "Compiling Declan in src-"
+    Write-Host "$src"
+    $out = "$src".replace(".dcl", ".a").replace("test\declan", "test\assembly")
+    Write-Host "to output assembly at-"
+    Write-Host "$out"
+    Write-Host "---------Output-Window-----------"
+    Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/../pom.xml' -P assembly -e -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+    Write-Host "--------End-Output-Window--------"
+    if ($errorOutput -eq '') {
+        Write-Host "Source-"
+        Write-Host "$src"
+        Write-Host "Compiled to-"
+        Write-Host "$out"
+        Write-Host "successfully!!!"
+    } else {
+        Write-Host "Errors detected compilation aborted for assembly at -"
+        Write-Host "$out"
+    }
 }
 
-function compile_binary{
+function compile_file_into_binary{
     param($src)
-    $out = $src.replace(".dcl", ".bin").replace("test/declan", "test/binary")
-    mvn exec:java -P binary -DOut="$out" -DSrc="$src"
+    Write-Host "Compiling Declan in src-"
+    Write-Host "$src"
+    $out = "$src".replace(".dcl", ".bin").replace("test\declan", "test\binary")
+    Write-Host "to output binary at-"
+    Write-Host "$out"
+    Write-Host "---------Output-Window-----------"
+    Invoke-Expression "mvn exec:java -f '$PSScriptRoot/../pom.xml' -q -e -P binary -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+    Write-Host "--------End-Output-Window--------"
+    if ($errorOutput -eq '') {
+        Write-Host "Source-"
+        Write-Host "$src"
+        Write-Host "Compiled to-"
+        Write-Host "$out"
+        Write-Host "successfully!!!"
+    } else {
+        Write-Host "Errors detected compilation aborted for binary at -"
+        Write-Host "$out"
+    }
 }
 
 function check_dependencies(){
@@ -38,32 +98,16 @@ function check_dependencies(){
 
 $depends = check_dependencies
 if ($depends -eq 0) {
-    compile_ir -src "$PSScriptRoot/declan/conversions.dcl"
-    compile_ir -src "$PSScriptRoot/declan/expressions.dcl"
-    compile_ir -src "$PSScriptRoot/declan/ForLoopAdvanced.dcl"
-    compile_ir -src "$PSScriptRoot/declan/ForLoopBasic.dcl"
-    compile_ir -src "$PSScriptRoot/declan/ForLoopBasic2.dcl"
-    compile_ir -src "$PSScriptRoot/declan/ForLoopBasic3.dcl"
-    compile_ir -src "$PSScriptRoot/declan/IfStatementAdvanced.dcl"
-    compile_ir -src "$PSScriptRoot/declan/IntegerDiv.dcl"
-    compile_ir -src "$PSScriptRoot/declan/IntegerDiv2.dcl"
-    compile_ir -src "$PSScriptRoot/declan/loops.dcl"
-    compile_ir -src "$PSScriptRoot/declan/RealAddition.dcl"
-    compile_ir -src "$PSScriptRoot/declan/RealAddition2.dcl"
-    compile_ir -src "$PSScriptRoot/declan/RealAddition3.dcl"
-    compile_ir -src "$PSScriptRoot/declan/RealDivision.dcl"
-    compile_ir -src "$PSScriptRoot/declan/RealDivision2.dcl"
-    compile_ir -src "$PSScriptRoot/declan/RealMultiplication.dcl"
-    compile_ir -src "$PSScriptRoot/declan/RealMultiplication2.dcl"
-    compile_ir -src "$PSScriptRoot/declan/RepeatLoopBasic.dcl"
-    compile_ir -src "$PSScriptRoot/declan/sample.dcl"
-    compile_ir -src "$PSScriptRoot/declan/SingleConversion.dcl"
-    compile_ir -src "$PSScriptRoot/declan/test.dcl"
-    compile_ir -src "$PSScriptRoot/declan/test2.dcl"
-    compile_ir -src "$PSScriptRoot/declan/test3.dcl"
-    compile_ir -src "$PSScriptRoot/declan/test4.dcl"
-    compile_ir -src "$PSScriptRoot/declan/WhileLoopAdvanced.dcl"
-    compile_ir -src "$PSScriptRoot/declan/WhileLoopBasic.dcl"
+    clean_src -directory "$PSScriptRoot/assembly"
+    clean_src -directory "$PSScriptRoot/binary"
+    clean_src -directory "$PSScriptRoot/ir"
+
+    Get-ChildItem -File "$PSScriptRoot/declan" |
+    Foreach-Object {
+        compile_file_into_ir -src $_.FullName
+        compile_file_into_assembly -src $_.FullName
+        compile_file_into_binary -src $_.FullName
+    }
 } elseif ($depends -eq -1) {
-    Write-Error "Check dependencies returned -1"
+    Write-Error "Dependency Check Failed!!!"
 }

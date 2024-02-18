@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -35,6 +36,22 @@ public class MyCompilerDriver {
         while(index < args.length){
             String argAtIndex = args[index];
             switch(argAtIndex){
+                case "-d":
+                    conf.addFlag("debug", "TRUE");
+                    index++;
+                    break;
+                case "-D":
+                    conf.addFlag("debug", "TRUE");
+                    index++;
+                    break;
+                case "--debug":
+                    conf.addFlag("debug", "TRUE");
+                    index++;
+                    break;
+                case "--Debug":
+                    conf.addFlag("debug", "TRUE");
+                    index++;
+                    break;
                 case "-f":
                     String value = args[index + 1];
                     index += 2;
@@ -275,6 +292,7 @@ public class MyCompilerDriver {
     }
 
     private static void setDefaults(Config cfg){
+        Scanner scanner = new Scanner(System.in);
         if(!cfg.containsFlag("optimize")){
             cfg.addFlag("optimize", "FALSE");
         }
@@ -294,6 +312,66 @@ public class MyCompilerDriver {
         if(!cfg.containsFlag("ir")){
             cfg.addFlag("ir", "FALSE");
         }
+
+        if(!cfg.containsFlag("debug")){
+            cfg.addFlag("debug", "FALSE");
+        }
+
+        boolean debugEnabled = cfg.getValueFromFlag("debug").equals("TRUE");
+        if(!cfg.containsFlag("program") && debugEnabled){
+            System.out.println("Error no program specified");
+            System.out.print("Please place path here: ");
+            String line = scanner.nextLine();
+            line = line.replace("\r", "");
+            line = line.replace("\n", "");
+            cfg.addFlag("program", line);
+        }
+
+        if(!cfg.containsFlag("library") && debugEnabled){
+            System.out.println("No libraries were specified...");
+            while(true){
+                System.out.print("Would you like to add any libraries to the build?[Y/N]: ");
+                String line = scanner.nextLine();
+                line = line.replace("\r", "");
+                line = line.replace("\n", "");
+                if(line.equals("Y")){
+                    int libraryCount = 0;
+                    StringBuilder libList = new StringBuilder();
+                    outer: while(true){
+                        System.out.println("Enter path of library number " + libraryCount + "-");
+                        System.out.print("here: ");
+                        String libLine = scanner.nextLine();
+                        libLine = libLine.replace("\r", "");
+                        libLine = libLine.replace("\n", "");
+                        if(libList.toString().equals("")){
+                            libList.append(libLine);
+                        } else {
+                            libList.append('#');
+                            libList.append(libLine);
+                        }
+
+                        while(true){
+                            System.out.print("Would you like to add another library?[Y/N]: ");
+                            String exitConfirm = scanner.nextLine();
+                            exitConfirm = exitConfirm.replace("\r", "");
+                            exitConfirm = exitConfirm.replace("\n", "");
+
+                            if(exitConfirm.equals("N")){
+                                break outer;
+                            } else if(exitConfirm.equals("Y")){
+                                break;
+                            }
+                        }
+                    }
+                    cfg.addFlag("library", libList.toString());
+                    break;
+                } else if(line.equals("N")){
+                    break;
+                }
+            }
+        }
+
+        scanner.close();
     }
 
     private static Program parseDeclanProgram(String programString, ErrorLog errLog) throws Exception{
@@ -336,7 +414,7 @@ public class MyCompilerDriver {
         return toRet;
     }
     public static void main(String[] args) throws Exception{
-        System.out.println(String.join(" ", args));
+        System.out.println("java MyCompilerDriver " + String.join(" ", args));
         Config cfg = parseConfig(args);
         
         ErrorLog errLog = new ErrorLog();
@@ -423,9 +501,10 @@ public class MyCompilerDriver {
             } else {
                 if(cfg.containsFlag("output")){
                     String outputDestination = cfg.getValueFromFlag("output");
-                    MyIrLinker linker = new MyIrLinker(errLog);
-                    
+
                     IrRegisterGenerator iGen = new IrRegisterGenerator();
+                    MyIrLinker linker = new MyIrLinker(errLog, iGen);
+                    
                     Library[] libArray = listAsArray(libs);
                     Prog prog = linker.performLinkage(program, libArray);
 

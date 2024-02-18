@@ -90,6 +90,11 @@ public class BlockNode implements FlowGraphNode {
     }
 
     @Override
+    public String toString(){
+        return block.toString();
+    }
+
+    @Override
     public List<ICode> getICode() {
         return block.getIcode();
     }

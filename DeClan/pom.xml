@@ -124,7 +124,7 @@
         </build>
     </profile>
     <profile>
-        <id>exe</id>
+        <id>binary</id>
         <build>
           <plugins>
             <plugin>

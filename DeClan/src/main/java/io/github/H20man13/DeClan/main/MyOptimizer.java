@@ -77,14 +77,8 @@ public class MyOptimizer {
     private Map<FlowGraphNode, Set<Exp>> earliest;
     private Map<ICode, Set<Exp>> used;
     private Set<Exp> globalFlowSet;
-    private IrRegisterGenerator gen;
 
     public MyOptimizer(Prog intermediateCode){
-        this(intermediateCode, new IrRegisterGenerator());
-    }
-
-    public MyOptimizer(Prog intermediateCode, IrRegisterGenerator gen){
-        this.gen = gen;
         this.intermediateCode = intermediateCode;
         this.latest = new HashMap<FlowGraphNode, Set<Exp>>();
         this.earliest = new HashMap<FlowGraphNode, Set<Exp>>();
@@ -153,16 +147,20 @@ public class MyOptimizer {
             List<ICode> instructionsInBlock = new LinkedList<ICode>();
             if(procFirsts.size() > 0){
                 Integer firstIndex = procFirsts.get(0);
-                Integer endIndex = firstIndex - 1;
-                List<ICode> codeInBlock = new LinkedList<ICode>();
-                for(int i = 0; i <= endIndex; i++){
+                Integer endIndex;
+                if(procFirsts.size() > 1){
+                    endIndex = procFirsts.get(1) - 1;
+                } else {
+                    endIndex = procedure.instructions.size() - 1;
+                }
+                for(int i = firstIndex; i <= endIndex; i++){
                     instructionsInBlock.add(procedure.instructions.get(i));
                 }
             }
 
             procedureBlocks.add(new ProcedureBeginningBlock(procedure.label, assignments, instructionsInBlock));
                 
-            for(int leaderIndex = 0; leaderIndex < procFirsts.size() - 1; leaderIndex++){
+            for(int leaderIndex = 1; leaderIndex < procFirsts.size() - 1; leaderIndex++){
                 int beginIndex = procFirsts.get(leaderIndex);
                 int endIndex;
                 if(leaderIndex + 1 < procFirsts.size()){
@@ -422,9 +420,9 @@ public class MyOptimizer {
             }
 
             List<ICode> procedureCode = procedure.instructions;
-            int internalSize = procedureCode.size();
-            for(int x = internalSize - 1; x >= 0; x--){
-                ICode icode = procedureCode.get(i);
+            int codeSize = procedureCode.size();
+            for(int x = codeSize - 1; x >= 0; x--){
+                ICode icode = procedureCode.get(x);
                 updateICodeLivelinessInformation(symbolTable, icode, x);
             }
                 
@@ -432,7 +430,7 @@ public class MyOptimizer {
             List<ParamAssign> paramaterAssignmants = procedure.paramAssign;
             int paramAssignSize = paramaterAssignmants.size();
             for(int z = paramAssignSize - 1; z >= 0; z--){
-                ParamAssign assign = paramaterAssignmants.get(i);
+                ParamAssign assign = paramaterAssignmants.get(z);
                 symbolTable.addEntry(assign.newPlace, new LiveInfo(false, z));
                 symbolTable.addEntry(assign.paramPlace, new LiveInfo(true, z));
                 livelinessInformation.put(assign, symbolTable.copy());
@@ -515,6 +513,7 @@ public class MyOptimizer {
 
     private void updateLiveLinessInformation() {
         Environment<String, LiveInfo> symbolTable = new Environment<String, LiveInfo>();
+        symbolTable.addScope();
         updateProcedureLivelinessInformation(symbolTable);
         updateCodeLivelinessInformation(symbolTable);
         updateVariableLivelinessInformation(symbolTable);
