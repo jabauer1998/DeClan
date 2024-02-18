@@ -16,32 +16,34 @@ import io.github.H20man13.DeClan.main.MyIrParser;
 import io.github.H20man13.DeClan.main.MyOptimizer;
 
 public class MyOptimizerTest {
-    private void comparePrograms(Prog prog1, String prog){
-        StringBuilder sb = new StringBuilder();
-
-        List<ICode> progICode = prog1.genFlatCode();
-
-        for(ICode progCode : progICode){
-            sb.append(progCode.toString());
-            sb.append('\n');
-        }
-        assertTrue("The optimized program equals \n\n" + sb.toString() + "\n\n and the original equals \n\n" + prog, sb.toString().equals(prog));
+    private void comparePrograms(Prog optimized, String expected){
+        String optimizedString = optimized.toString();
+        assertTrue("The optimized program equals \n\n" + optimizedString + "\n\n and the expected equals \n\n" + expected, optimizedString.equals(expected));
     }
 
     @Test
     public void testSimpleCommonSubExpressionElimination(){
-        String inputSource = "a := 1\n"
+        String inputSource = "SYMBOL SECTION\n"
+                           + "DATA SECTION\n"
+                           + "a := 1\n"
                            + "b := 2\n" 
                            + "i := a IADD b\n"
                            + "z := a IADD b\n"
                            + "f := z IADD i\n"
-                           + "END\n";
+                           + "CODE SECTION\n"
+                           + "END\n"
+                           + "PROC SECTION\n";
 
-        String targetSource = "a := 1\n"
-                            + "b := 2\n"
-                            + "i := a IADD b\n"
-                            + "f := i IADD i\n"
-                            + "END\n";
+        String targetSource = "SYMBOL SECTION\r\n"
+                            + "DATA SECTION\r\n"
+                            + " a := 1\r\n"
+                            + " b := 2\r\n"
+                            + " i := a IADD b\r\n"
+                            + " z := i\r\n"
+                            + " f := i IADD i\r\n"
+                            + "CODE SECTION\r\n"
+                            + "END\r\n"
+                            + "PROC SECTION\r\n";
 
         ErrorLog errLog = new ErrorLog();
         ReaderSource source = new ReaderSource(new StringReader(inputSource));
@@ -49,6 +51,7 @@ public class MyOptimizerTest {
         MyIrParser parser = new MyIrParser(lexer, errLog);
         Prog prog = parser.parseProgram();
         MyOptimizer optimizer = new MyOptimizer(prog);
+        optimizer.eliminateCommonSubExpressions();
         //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
         //It is called within the Optimizers constructor
         Prog optimizedProg = optimizer.getICode();

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.management.RuntimeErrorException;
+
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.AnticipatedExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.AvailableExpressionsAnalysis;
@@ -58,6 +60,7 @@ import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
+import io.github.H20man13.DeClan.common.icode.section.SymSec;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.LiveInfo;
 import io.github.H20man13.DeClan.common.symboltable.entry.ProcedureEntry;
@@ -185,9 +188,9 @@ public class MyOptimizer {
                 for(int i = beginIndex; i <= endIndex; i++){
                     basicBlockList.add(procedure.instructions.get(i));
                 }
-                procedureBlocks.add(new ProcedureEndingBlock(basicBlockList, procedure.returnStatement));
+                procedureBlocks.add(new ProcedureEndingBlock(basicBlockList, procedure.placement, procedure.returnStatement));
             } else {
-                procedureBlocks.add(new ProcedureEndingBlock(new LinkedList<ICode>(), procedure.returnStatement));
+                procedureBlocks.add(new ProcedureEndingBlock(new LinkedList<ICode>(), null, procedure.returnStatement));
             }
         }
 
@@ -398,11 +401,26 @@ public class MyOptimizer {
 
         linkUpFollowThrough(dataBlockNodes, codeBlockNodes);
 
-        EntryNode entry = new EntryNode(dataBlockNodes.get(0));
-        ExitNode exit = new ExitNode(codeBlockNodes.get(codeBlockNodes.size() - 1));
+        if(dataBlockNodes.size() == 0 && codeBlockNodes.size() == 0){
+            throw new RuntimeException("Data section and the Code Section are empty!!!");
+        }
 
+        EntryNode entry;
+        ExitNode exit;
+
+        int dataSize = dataBlockNodes.size();
+        int codeSize = codeBlockNodes.size();
+        if(dataSize > 0 && codeSize == 0){
+            entry = new EntryNode(dataBlockNodes.get(0));
+            exit = new ExitNode(dataBlockNodes.get(dataSize - 1));
+        } else if(dataSize == 0 && codeSize > 0){
+            entry = new EntryNode(codeBlockNodes.get(0));
+            exit = new ExitNode(codeBlockNodes.get(codeSize - 1));
+        } else {
+            entry = new EntryNode(dataBlockNodes.get(0));
+            exit = new ExitNode(codeBlockNodes.get(codeSize - 1));
+        }
         FlowGraph flowGraph = new FlowGraph(entry, dataBlockNodes, codeBlockNodes, procedureBlockNodes, exit);
-
         this.globalFlowGraph = flowGraph;
     }
 
@@ -519,12 +537,89 @@ public class MyOptimizer {
         updateVariableLivelinessInformation(symbolTable);
     }
 
+    public void rebuildFromFlowGraph(){
+        if(this.globalFlowGraph != null){
+            SymSec symbols = intermediateCode.symbols;
+            this.intermediateCode = null;
+            DataSec dataSec = new DataSec();
+            List<BlockNode> dataBlocks = this.globalFlowGraph.getDataBlocks();
+            for(BlockNode dataBlock: dataBlocks){
+                List<ICode> icodes = dataBlock.getICode();
+                for(ICode icode: icodes){
+                    dataSec.addInstruction(icode);
+                }
+            }
+
+            CodeSec codeSec = new CodeSec();
+            List<BlockNode> codeBlocks = this.globalFlowGraph.getCodeBlocks();
+            for(BlockNode codeBlock: codeBlocks){
+                List<ICode> icodes = codeBlock.getICode();
+                for(ICode icode: icodes){
+                    codeSec.addInstruction(icode);
+                }
+            }
+
+            ProcSec procSec = new ProcSec();
+            List<BlockNode> procBlocks = this.globalFlowGraph.getProcedureBlocks();
+            int i = 0;
+            int procBlockSize = procBlocks.size();
+            while(i < procBlockSize){
+                BlockNode blockAtStart = procBlocks.get(i);
+                if(blockAtStart instanceof ProcedureEntryNode){
+                    ProcedureEntryNode procedureEntry = (ProcedureEntryNode)blockAtStart;
+                    ProcedureBeginningBlock procedureEntryBlock = procedureEntry.getBlock();
+                    Proc newProcedure = new Proc(procedureEntryBlock.getLabel());
+                    List<ParamAssign> assigns = procedureEntryBlock.getParamaterAssignmants();
+                    for(ParamAssign assign: assigns){
+                        newProcedure.addParamater(assign);
+                    }
+
+                    List<ICode> instructions = procedureEntryBlock.getIcode();
+                    for(ICode icode: instructions){
+                        newProcedure.addInstruction(icode);
+                    }
+
+                    i++;
+                    while(i < procBlockSize){
+                        BlockNode nextBlock = procBlocks.get(i);
+                        if(nextBlock instanceof ProcedureExitNode){
+                            ProcedureExitNode procedureExitNode = (ProcedureExitNode)nextBlock;
+                            ProcedureEndingBlock endBlock = procedureExitNode.getBlock();
+                            List<ICode>icode = endBlock.getIcode();
+                            for(ICode code: icode){
+                                newProcedure.addInstruction(code);
+                            }
+                            InternalPlace place = endBlock.getPlacement();
+                            if(place != null){
+                                newProcedure.placement = place;
+                            }
+                            newProcedure.returnStatement = endBlock.getReturn();
+                            i++;
+                            break;
+                        } else {
+                            List<ICode> instrs = nextBlock.getICode();
+                            for(ICode instr: instrs){
+                                newProcedure.addInstruction(instr);
+                            }
+                            i++;
+                        }
+                    }
+
+                    procSec.addProcedure(newProcedure);
+                } 
+            }
+
+            this.intermediateCode = new Prog(symbols, dataSec, codeSec, procSec);
+        }
+    }
+
     public void eliminateCommonSubExpressions(){
         if(this.globalFlowGraph != null){
             for(BlockNode block: globalFlowGraph.getBlocks()){
                 DagGraph dag = buildDagForBlock(block, true);
                 regenerateICodeForBlock(block, dag);
             }
+            rebuildFromFlowGraph();
         }
     }
 

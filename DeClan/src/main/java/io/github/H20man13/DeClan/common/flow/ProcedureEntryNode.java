@@ -15,6 +15,10 @@ public class ProcedureEntryNode extends BlockNode{
         this.block = block;
     }
 
+    public ProcedureBeginningBlock getBlock(){
+        return block;
+    }
+
     public String toString(){
         return block.toString();
     }

@@ -73,4 +73,16 @@ public class FlowGraph {
         toRet.addAll(procedureBlocks);
         return toRet;
     }
+
+    public List<BlockNode> getDataBlocks(){
+        return dataBlocks;
+    }
+
+    public List<BlockNode> getCodeBlocks(){
+        return codeBlocks;
+    }
+
+    public List<BlockNode> getProcedureBlocks(){
+        return procedureBlocks;
+    }
 }
