@@ -15,6 +15,17 @@ public class Tuple<SourceType, DestType> {
     }
 
     @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append('(');
+        sb.append(source.toString());
+        sb.append(", ");
+        sb.append(dest.toString());
+        sb.append(')');
+        return sb.toString();
+    }
+
+    @Override
     public boolean equals(Object dest){
         if(dest instanceof Tuple){
             Tuple<SourceType, DestType> destConv = (Tuple<SourceType, DestType>)dest;
