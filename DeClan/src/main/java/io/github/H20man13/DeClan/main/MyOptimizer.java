@@ -643,12 +643,10 @@ public class MyOptimizer {
             case CONSTANT_PROPOGATION:
                 this.propAnal = null;
                 this.globalFlowGraph = null;
-                this.livelinessInformation = new HashMap<ICode, Environment<String, LiveInfo>>();
                 break;
             case DEAD_CODE_ELIMINATION:
                 this.liveAnal = null;
                 this.globalFlowGraph = null;
-                this.livelinessInformation = new HashMap<ICode, Environment<String, LiveInfo>>();
                 break;
         }
     }
