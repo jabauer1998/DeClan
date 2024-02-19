@@ -459,8 +459,7 @@ public class MyCompilerDriver {
                         boolean shouldOptimize = cfg.getValueFromFlag("optimize").equals("TRUE");
                         if(shouldOptimize){
                             MyOptimizer optimizer = new MyOptimizer(prog);
-                            optimizer.eliminateCommonSubExpressions();
-                            optimizer.runDataFlowAnalysis();
+                            optimizer.performCommonSubExpressionElimination();
                             optimizer.performConstantPropogation();
                             optimizer.performDeadCodeElimination();
                             prog = optimizer.getICode();
@@ -484,13 +483,12 @@ public class MyCompilerDriver {
                     if(cfg.containsFlag("optimize")){
                         boolean shouldOptimize = cfg.getValueFromFlag("optimize").equals("TRUE");
                         if(shouldOptimize){
-                            optimizer.eliminateCommonSubExpressions();
-                            optimizer.runDataFlowAnalysis();
+                            optimizer.performCommonSubExpressionElimination();
                             optimizer.performConstantPropogation();
                             optimizer.performDeadCodeElimination();
                             prog = optimizer.getICode();
                         } else {
-                            optimizer.runDataFlowAnalysis();
+                            optimizer.runLiveVariableAnalysis();
                         }
                     }
 
@@ -512,13 +510,12 @@ public class MyCompilerDriver {
                     if(cfg.containsFlag("optimize")){
                         boolean shouldOptimize = cfg.getValueFromFlag("optimize").equals("TRUE");
                         if(shouldOptimize){
-                            optimizer.eliminateCommonSubExpressions();
-                            optimizer.runDataFlowAnalysis();
+                            optimizer.performCommonSubExpressionElimination();
                             optimizer.performConstantPropogation();
                             optimizer.performDeadCodeElimination();
                             prog = optimizer.getICode();
                         } else {
-                            optimizer.runDataFlowAnalysis();
+                            optimizer.runLiveVariableAnalysis();
                         }
                     }
 

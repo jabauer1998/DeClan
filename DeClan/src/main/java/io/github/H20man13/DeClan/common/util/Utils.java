@@ -96,13 +96,22 @@ public class Utils {
         }
     }
 
-    public static Object getValueFromSet(Set<Tuple<String, Object>> tuples, String name){
-        for(Tuple<String, Object> tuple : tuples){
+    public static Exp getExpFromSet(Set<Tuple<String, Exp>> tuples, String name){
+        for(Tuple<String, Exp> tuple : tuples){
             if(tuple.source.equals(name)){
                 return tuple.dest;
             }
         }
         return null;
+    }
+
+    public static boolean containsExpInSet(Set<Tuple<String, Exp>> tuples, String name){
+        for(Tuple<String, Exp> tuple : tuples){
+            if(tuple.source.equals(name)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public static BinExp.Operator getBinOp(DagOperationNode.Op op){

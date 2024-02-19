@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.management.RuntimeErrorException;
 
+import edu.depauw.declan.model.SymbolTable;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.AnticipatedExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.AvailableExpressionsAnalysis;
@@ -81,6 +82,12 @@ public class MyOptimizer {
     private Map<ICode, Set<Exp>> used;
     private Set<Exp> globalFlowSet;
 
+    private enum OptName{
+        COMMON_SUB_EXPRESSION_ELIMINATION,
+        CONSTANT_PROPOGATION,
+        DEAD_CODE_ELIMINATION
+    }
+
     public MyOptimizer(Prog intermediateCode){
         this.intermediateCode = intermediateCode;
         this.latest = new HashMap<FlowGraphNode, Set<Exp>>();
@@ -88,8 +95,12 @@ public class MyOptimizer {
         this.used = new HashMap<ICode, Set<Exp>>();
         this.globalFlowSet = new HashSet<Exp>();
         this.livelinessInformation = new HashMap<ICode, Environment<String, LiveInfo>>();
-        this.updateLiveLinessInformation();
-        this.buildFlowGraph();
+        this.globalFlowGraph = null;
+        this.anticipatedAnal = null;
+        this.availableAnal = null;
+        this.postponableAnal = null;
+        this.usedAnal = null;
+        this.propAnal = null;
     }
 
     public LiveVariableAnalysis getLiveVariableAnalysis(){
@@ -105,7 +116,7 @@ public class MyOptimizer {
             int beginIndex = codeFirsts.get(leaderIndex);
             int endIndex;
             if(leaderIndex + 1 < codeFirsts.size()){
-                endIndex = codeFirsts.get(leaderIndex + 1);
+                endIndex = codeFirsts.get(leaderIndex + 1) - 1;
             } else {
                 endIndex = dataSec.intermediateCode.size() - 1;
             }
@@ -127,7 +138,7 @@ public class MyOptimizer {
             int beginIndex = codeFirsts.get(leaderIndex);
             int endIndex;
             if(leaderIndex + 1 < codeFirsts.size()){
-                endIndex = codeFirsts.get(leaderIndex + 1);
+                endIndex = codeFirsts.get(leaderIndex + 1) - 1;
             } else {
                 endIndex = code.intermediateCode.size() - 1;
             }
@@ -167,7 +178,7 @@ public class MyOptimizer {
                 int beginIndex = procFirsts.get(leaderIndex);
                 int endIndex;
                 if(leaderIndex + 1 < procFirsts.size()){
-                    endIndex = procFirsts.get(leaderIndex + 1);
+                    endIndex = procFirsts.get(leaderIndex + 1) - 1;
                 } else {
                     endIndex = procedure.instructions.size() - 1;
                 }
@@ -613,13 +624,49 @@ public class MyOptimizer {
         }
     }
 
-    public void eliminateCommonSubExpressions(){
-        if(this.globalFlowGraph != null){
+    public void performCommonSubExpressionElimination(){
+            setUpOptimization(OptName.COMMON_SUB_EXPRESSION_ELIMINATION);
             for(BlockNode block: globalFlowGraph.getBlocks()){
                 DagGraph dag = buildDagForBlock(block, true);
                 regenerateICodeForBlock(block, dag);
             }
             rebuildFromFlowGraph();
+            cleanUpOptimization(OptName.COMMON_SUB_EXPRESSION_ELIMINATION);
+    }
+
+    private void cleanUpOptimization(OptName name){
+        switch(name){
+            case COMMON_SUB_EXPRESSION_ELIMINATION:
+                this.globalFlowGraph = null;
+                this.livelinessInformation = new HashMap<ICode, Environment<String, LiveInfo>>();
+                break;
+            case CONSTANT_PROPOGATION:
+                this.propAnal = null;
+                this.globalFlowGraph = null;
+                this.livelinessInformation = new HashMap<ICode, Environment<String, LiveInfo>>();
+                break;
+            case DEAD_CODE_ELIMINATION:
+                this.liveAnal = null;
+                this.globalFlowGraph = null;
+                this.livelinessInformation = new HashMap<ICode, Environment<String, LiveInfo>>();
+                break;
+        }
+    }
+
+    private void setUpOptimization(OptName name){
+        switch(name){
+            case COMMON_SUB_EXPRESSION_ELIMINATION:
+                updateLiveLinessInformation();
+                buildFlowGraph();
+                break;
+            case CONSTANT_PROPOGATION:
+                buildFlowGraph();
+                runConstantPropogationAnalysis();
+                break;
+            case DEAD_CODE_ELIMINATION:
+                buildFlowGraph();
+                runLiveVariableAnalysis();
+                break;
         }
     }
 
@@ -1044,28 +1091,19 @@ public class MyOptimizer {
     }
 
     private void runConstantPropogationAnalysis(){
+        if(this.globalFlowGraph == null){
+            buildFlowGraph();
+        }
         this.propAnal = new ConstantPropogationAnalysis(this.globalFlowGraph);
         this.propAnal.run();
     }
 
-    private void runLiveVariableAnalysis(){
+    public void runLiveVariableAnalysis(){
+        if(this.globalFlowGraph == null){
+            buildFlowGraph();
+        }
         this.liveAnal = new LiveVariableAnalysis(this.globalFlowGraph);
         this.liveAnal.run();
-    }
-
-    public void runDataFlowAnalysis(){
-        if(this.globalFlowGraph != null){
-            //buildGlobalExpressionSemilattice();
-            runLiveVariableAnalysis();
-            //runAvailableExpressionAnalysis();
-            //runAnticipatedExpressionAnalysis();
-            //buildEarliest();
-            //buildUsedExpressions();  
-            //runPosponableExpressionAnalysis();
-            //buildLatest();
-            //runUsedExpressionAnalysis();
-            runConstantPropogationAnalysis();
-        }
     }
 
     /*
@@ -1129,6 +1167,7 @@ public class MyOptimizer {
     */
 
     public void performDeadCodeElimination(){
+        setUpOptimization(OptName.DEAD_CODE_ELIMINATION);
         for(BlockNode block : this.globalFlowGraph.getBlocks()){
             List<ICode> result = new LinkedList<ICode>();
             for(ICode icode : block.getICode()){
@@ -1150,56 +1189,92 @@ public class MyOptimizer {
             }
             block.getBlock().setICode(result);
         }
+        rebuildFromFlowGraph();
+        cleanUpOptimization(OptName.DEAD_CODE_ELIMINATION);
     }
 
     public void performConstantPropogation(){
-        for(BlockNode block : this.globalFlowGraph.getBlocks()){
-            List<ICode> icodeList = block.getICode();
-            for(int i = 0; i < icodeList.size(); i++){
-                ICode icode = icodeList.get(i);
-                Set<Tuple<String, Object>> values = this.propAnal.getInstructionInputSet(icode);
-                if(icode instanceof Assign){
-                    Assign varICode = (Assign)icode;
-                    if(varICode.value instanceof IdentExp){
-                        IdentExp identVal = (IdentExp)varICode.value;
-                        Object result = Utils.getValueFromSet(values, identVal.ident);
-                        Exp resultExp = Utils.valueToExp(result);
-                        if(resultExp != null){
-                            varICode.value = resultExp;
-                        }
-                    } else if(varICode.value instanceof BinExp){
-                        BinExp binExpVal = (BinExp)varICode.value;
-
-                        if(binExpVal.left instanceof IdentExp){
-                            IdentExp identLeft = (IdentExp)binExpVal.left;
-                            Object result = Utils.getValueFromSet(values, identLeft.ident);
-                            Exp resultExp = Utils.valueToExp(result);
-                            if(resultExp != null)
-                                binExpVal.left = resultExp;
-                        }
-
-                        if(binExpVal.right instanceof IdentExp){
-                            IdentExp identRight = (IdentExp)binExpVal.right;
-                            Object result = Utils.getValueFromSet(values, identRight.ident);
-                            Exp resultExp = Utils.valueToExp(result);
-                            if(resultExp != null){
-                                binExpVal.right = resultExp;
+            setUpOptimization(OptName.CONSTANT_PROPOGATION);
+            for(BlockNode block : this.globalFlowGraph.getBlocks()){
+                List<ICode> icodeList = block.getICode();
+                for(int i = 0; i < icodeList.size(); i++){
+                    ICode icode = icodeList.get(i);
+                    Set<Tuple<String, Exp>> values = this.propAnal.getInstructionInputSet(icode);
+                    if(icode instanceof Assign){
+                        Assign varICode = (Assign)icode;
+                        if(varICode.value instanceof IdentExp){
+                            IdentExp identVal = (IdentExp)varICode.value;
+                            String sourceVal = identVal.ident;
+                            while(Utils.containsExpInSet(values, sourceVal)){
+                                Exp rightHandSide = Utils.getExpFromSet(values, sourceVal);
+                                if(rightHandSide instanceof IdentExp){
+                                    identVal = (IdentExp)rightHandSide;
+                                    sourceVal = identVal.ident;
+                                } else if(rightHandSide.isConstant()){
+                                    varICode.value = rightHandSide;
+                                    break;
+                                } else {
+                                    break;
+                                }
                             }
-                        }
-                    } else if(varICode.value instanceof UnExp){
-                        UnExp unExpVal = (UnExp)varICode.value;
-
-                        if(unExpVal.right instanceof IdentExp){
+                        } else if(varICode.value instanceof BinExp){
+                            BinExp binExpVal = (BinExp)varICode.value;
+    
+                            if(binExpVal.left instanceof IdentExp){
+                                IdentExp identLeft = (IdentExp)binExpVal.left;
+                                String sourceVal = identLeft.ident;
+                                while(Utils.containsExpInSet(values, sourceVal)){
+                                    Exp rightHandSide = Utils.getExpFromSet(values, sourceVal);
+                                    if(rightHandSide instanceof IdentExp){
+                                        identLeft = (IdentExp)rightHandSide;
+                                        sourceVal = identLeft.ident;
+                                    } else if(rightHandSide.isConstant()){
+                                        varICode.value = rightHandSide;
+                                        break;
+                                    } else {
+                                        break;
+                                    }
+                                }
+                            }
+    
+                            if(binExpVal.right instanceof IdentExp){
+                                IdentExp identRight = (IdentExp)binExpVal.right;
+                                String sourceVal = identRight.ident;
+                                while(Utils.containsExpInSet(values, sourceVal)){
+                                    Exp rightHandSide = Utils.getExpFromSet(values, sourceVal);
+                                    if(rightHandSide instanceof IdentExp){
+                                        identRight = (IdentExp)rightHandSide;
+                                        sourceVal = identRight.ident;
+                                    } else if(rightHandSide.isConstant()){
+                                        varICode.value = rightHandSide;
+                                        break;
+                                    } else {
+                                        break;
+                                    }
+                                }
+                            }
+                        } else if(varICode.value instanceof UnExp){
+                            UnExp unExpVal = (UnExp)varICode.value;
+    
                             IdentExp identRight = (IdentExp)unExpVal.right;
-                            Object result = Utils.getValueFromSet(values, identRight.ident);
-                            Exp resultExp = Utils.valueToExp(result);
-                            if(resultExp != null){
-                                unExpVal.right = resultExp;
+                            String sourceVal = identRight.ident;
+                            while(Utils.containsExpInSet(values, sourceVal)){
+                                Exp rightHandSide = Utils.getExpFromSet(values, sourceVal);
+                                if(rightHandSide instanceof IdentExp){
+                                    identRight = (IdentExp)rightHandSide;
+                                    sourceVal = identRight.ident;
+                                } else if(rightHandSide.isConstant()){
+                                    varICode.value = rightHandSide;
+                                    break;
+                                } else {
+                                    break;
+                                }
                             }
                         }
                     }
                 }
             }
-        }
+            rebuildFromFlowGraph();
+            cleanUpOptimization(OptName.CONSTANT_PROPOGATION);
     }
 }

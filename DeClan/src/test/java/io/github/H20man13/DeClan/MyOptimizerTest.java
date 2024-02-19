@@ -51,7 +51,7 @@ public class MyOptimizerTest {
         MyIrParser parser = new MyIrParser(lexer, errLog);
         Prog prog = parser.parseProgram();
         MyOptimizer optimizer = new MyOptimizer(prog);
-        optimizer.eliminateCommonSubExpressions();
+        optimizer.performCommonSubExpressionElimination();
         //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
         //It is called within the Optimizers constructor
         Prog optimizedProg = optimizer.getICode();
@@ -61,7 +61,10 @@ public class MyOptimizerTest {
 
     @Test
     public void testComplexCommonSubExpressionElimination(){
-        String inputSource = "LABEL block1\n"
+        String inputSource = "SYMBOL SECTION\n"
+                           + "DATA SECTION\n"
+                           + "CODE SECTION\n"
+                           + "LABEL block1\n"
                            + "a := 1\n"
                            + "b := 2\n" 
                            + "i := a IADD b\n"
@@ -69,17 +72,22 @@ public class MyOptimizerTest {
                            + "f := z IADD i\n"
                            + "LABEL block2\n"
                            + "IF z EQ TRUE THEN block1 ELSE block2\n"
-                           + "END\n";
+                           + "END\n"
+                           + "PROC SECTION\n";
 
-        String targetSource = "LABEL block1\n"
-                            + "a := 1\n"
-                            + "b := 2\n"
-                            + "i := a IADD b\n"
-                            + "z := i\n"
-                            + "f := i IADD i\n"
-                            + "LABEL block2\n"
-                            + "IF z EQ TRUE THEN block1 ELSE block2\n"
-                            + "END\n";
+        String targetSource = "SYMBOL SECTION\r\n" + //
+                        "DATA SECTION\r\n" + //
+                        "CODE SECTION\r\n" + //
+                        " LABEL block1\r\n" + //
+                        " a := 1\r\n" + //
+                        " b := 2\r\n" + //
+                        " i := a IADD b\r\n" + //
+                        " z := i\r\n" + //
+                        " f := i IADD i\r\n" + //
+                        " LABEL block2\r\n" + //
+                        " IF z EQ TRUE THEN block1 ELSE block2\r\n" + //
+                        "END\r\n" + //
+                        "PROC SECTION\r\n";
 
         ErrorLog errLog = new ErrorLog();
         ReaderSource source = new ReaderSource(new StringReader(inputSource));
@@ -87,33 +95,39 @@ public class MyOptimizerTest {
         MyIrParser parser = new MyIrParser(lexer, errLog);
         Prog prog = parser.parseProgram();
         MyOptimizer optimizer = new MyOptimizer(prog);
-        //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
-        //It is called within the Optimizers constructor
-        Prog optimizedProg = optimizer.getICode();
+        optimizer.performCommonSubExpressionElimination();
 
+        Prog optimizedProg = optimizer.getICode();
         comparePrograms(optimizedProg, targetSource);
     }
     
     @Test 
     public void testDeadCodeElimination(){
-        String inputSource = "LABEL block1\n"
+        String inputSource = "SYMBOL SECTION\n"
+                           + "DATA SECTION\n"
+                           + "CODE SECTION\n"
+                           + "LABEL block1\n"
                            + "a := 1\n"
                            + "b := 60\n" 
                            + "i := a IADD a\n"
                            + "g := i IADD a\n"
-                           + "PROC func ( g -> x )\n"
-                           + "f <- g\n"
+                           + "CALL func ( i -> x )\n"
+                           + "f <- z\n"
                            + "IF f EQ TRUE THEN block1 ELSE block1\n"
-                           + "END\n";
+                           + "END\n"
+                           + "PROC SECTION\n";
 
-        String targetSource = "LABEL block1\n" + //
-                              "a := 1\n" + //
-                              "i := a IADD a\n" + //
-                              "g := i IADD a\n" + //
-                              "PROC func ( g -> x )\n" + //
-                              "f <- g\n" + //
-                              "IF f EQ TRUE THEN block1 ELSE block1\n" + //
-                              "END\n";
+        String targetSource =   "SYMBOL SECTION\r\n" + //
+                                "DATA SECTION\r\n" + //
+                                "CODE SECTION\r\n" + //
+                                " LABEL block1\r\n" + //
+                                " a := 1\r\n" + //
+                                " i := a IADD a\r\n" + //
+                                " CALL func ( i -> x )\r\n" + //
+                                " f <- z\r\n" + //
+                                " IF f EQ TRUE THEN block1 ELSE block1\r\n" + //
+                                "END\r\n" + //
+                                "PROC SECTION\r\n";
 
         ErrorLog errLog = new ErrorLog();
         ReaderSource source = new ReaderSource(new StringReader(inputSource));
@@ -121,7 +135,6 @@ public class MyOptimizerTest {
         MyIrParser parser = new MyIrParser(lexer, errLog);
         Prog prog = parser.parseProgram();
         MyOptimizer optimizer = new MyOptimizer(prog);
-        optimizer.runDataFlowAnalysis();
         optimizer.performDeadCodeElimination();
         //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
         //It is called within the Optimizers constructor
@@ -132,19 +145,27 @@ public class MyOptimizerTest {
     
     @Test
     public void testConstantPropogation(){
-        String inputSource = "a := 1\n"
-                           + "b := 2\n" 
+        String inputSource = "SYMBOL SECTION\n"
+                           + "DATA SECTION\n" 
+                           + "a := 1\n"
+                           + "b := 2\n"
+                           + "CODE SECTION\n"
                            + "i := a IADD b\n"
                            + "z := a IADD i\n"
                            + "f := z IADD i\n"
-                           + "END\n";
+                           + "END\n"
+                           + "PROC SECTION\n";
 
-        String targetSource = "a := 1\n"
-                            + "b := 2\n"
-                            + "i := 1 IADD 2\n"
-                            + "z := 1 IADD i\n"
-                            + "f := z IADD i\n"
-                            + "END\n";
+        String targetSource = "SYMBOL SECTION\r\n"
+                            + "DATA SECTION\r\n"
+                            + " a := 1\r\n"
+                            + " b := 2\r\n"
+                            + "CODE SECTION\r\n"
+                            + " i := 1 IADD 2\r\n"
+                            + " z := 1 IADD i\r\n"
+                            + " f := z IADD i\r\n"
+                            + "END\r\n"
+                            + "PROC SECTION\r\n";
 
         ErrorLog errLog = new ErrorLog();
         ReaderSource source = new ReaderSource(new StringReader(inputSource));
@@ -153,8 +174,7 @@ public class MyOptimizerTest {
         Prog prog = parser.parseProgram();
         
         MyOptimizer optimizer = new MyOptimizer(prog);
-        optimizer.runDataFlowAnalysis();
-        optimizer.performConstantPropogation();
+         optimizer.performConstantPropogation();
         //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
         //It is called within the Optimizers constructor
         Prog optimizedProg = optimizer.getICode();

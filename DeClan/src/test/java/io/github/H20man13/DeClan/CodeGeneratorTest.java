@@ -50,8 +50,7 @@ public class CodeGeneratorTest {
             Prog program = gen.generateProgramIr(prog);
 
             MyOptimizer optimizer = new MyOptimizer(program);
-            optimizer.eliminateCommonSubExpressions();
-            optimizer.runDataFlowAnalysis();
+            optimizer.performCommonSubExpressionElimination();
             optimizer.performDeadCodeElimination();
 
             MyCodeGenerator codeGenerator = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), program, rGen, errLog); 

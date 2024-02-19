@@ -16,39 +16,41 @@ import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
+import io.github.H20man13.DeClan.common.icode.exp.Exp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.util.OpUtil;
 import io.github.H20man13.DeClan.common.util.Utils;
 
-public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>> {
+public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Exp>> {
 
-    private Map<ICode, Set<Tuple<String, Object>>> constDefinitions;
-    private Map<ICode, Set<Tuple<String, Object>>> killDefinitions;
+    private Map<ICode, Set<Tuple<String, Exp>>> constDefinitions;
+    private Map<ICode, Set<Tuple<String, Exp>>> killDefinitions;
 
     public ConstantPropogationAnalysis(FlowGraph flowGraph) {
-        super(flowGraph, Direction.FORWARDS, new Function<List<Set<Tuple<String, Object>>>, Set<Tuple<String, Object>>>(){
+        super(flowGraph, Direction.FORWARDS, new Function<List<Set<Tuple<String, Exp>>>, Set<Tuple<String, Exp>>>(){
             @Override
-            public Set<Tuple<String, Object>> apply(List<Set<Tuple<String, Object>>> list) {
-                Set<Tuple<String, Object>> resultSet = new HashSet<Tuple<String, Object>>();
-                HashMap<String, Set<Object>> hashMap = new HashMap<String, Set<Object>>();
+            public Set<Tuple<String, Exp>> apply(List<Set<Tuple<String, Exp>>> list) {
+                Set<Tuple<String, Exp>> resultSet = new HashSet<Tuple<String, Exp>>();
+                HashMap<String, Set<Exp>> hashMap = new HashMap<String, Set<Exp>>();
 
-                for(Set<Tuple<String, Object>> set : list){
-                    for(Tuple<String, Object> tup : set){
+                for(Set<Tuple<String, Exp>> set : list){
+                    for(Tuple<String, Exp> tup : set){
                         String tupName = tup.source;
                         if(!hashMap.containsKey(tupName)){
-                            hashMap.put(tupName, new HashSet<Object>());
+                            hashMap.put(tupName, new HashSet<Exp>());
                         }
 
-                        Set<Object> objList = hashMap.get(tupName);
+                        Set<Exp> objList = hashMap.get(tupName);
                         objList.add(tup.dest);
                     }
                 }
 
                 for(String key : hashMap.keySet()){
-                    Set<Object> objValues = hashMap.get(key);
+                    Set<Exp> objValues = hashMap.get(key);
                     if(objValues.size() == 1){
-                        for(Object val :  objValues){
-                            resultSet.add(new Tuple<String, Object>(key, val));
+                        for(Exp val :  objValues){
+                            resultSet.add(new Tuple<String, Exp>(key, val));
                         }
                     }
                 }
@@ -57,18 +59,20 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>>
             }
         });
 
-        this.constDefinitions = new HashMap<ICode, Set<Tuple<String, Object>>>();
-        this.killDefinitions = new HashMap<ICode, Set<Tuple<String, Object>>>();
+        this.constDefinitions = new HashMap<ICode, Set<Tuple<String, Exp>>>();
+        this.killDefinitions = new HashMap<ICode, Set<Tuple<String, Exp>>>();
 
         for(BlockNode block : flowGraph.getBlocks()){
             for(ICode icode : block.getICode()){
-                Set<Tuple<String, Object>> setTuples = new HashSet<Tuple<String, Object>>();
-                Set<Tuple<String, Object>> killTuples = new HashSet<Tuple<String, Object>>();
+                Set<Tuple<String, Exp>> setTuples = new HashSet<Tuple<String, Exp>>();
+                Set<Tuple<String, Exp>> killTuples = new HashSet<Tuple<String, Exp>>();
                 if(icode instanceof Assign){
                     Assign assICode = (Assign)icode;
                     if(assICode.isConstant()){
-                        Object val = Utils.getValue(assICode.value);
-                        Tuple<String, Object> newTuple = new Tuple<String, Object>(assICode.place, val);
+                        Tuple<String, Exp> newTuple = new Tuple<String, Exp>(assICode.place, assICode.value);
+                        setTuples.add(newTuple);
+                    } else if(assICode.value instanceof IdentExp){
+                        Tuple<String, Exp> newTuple = new Tuple<String,Exp>(assICode.place, assICode.value);
                         setTuples.add(newTuple);
                     } else if(assICode.value instanceof BinExp){
                         BinExp exp = (BinExp)assICode.value;
@@ -122,9 +126,11 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>>
                                 default:
                                     result = null;
                             }
-
-                            Tuple<String, Object> newTuple = new Tuple<String, Object>(assICode.place, result);
-                            setTuples.add(newTuple);
+                            Exp expResult = Utils.valueToExp(result);
+                            if(result != null && expResult != null){
+                                Tuple<String, Exp> newTuple = new Tuple<String, Exp>(assICode.place, expResult);
+                                setTuples.add(newTuple);
+                            }
                         }
                     } else if(assICode.value instanceof UnExp){
                         UnExp exp = (UnExp)assICode.value;
@@ -144,14 +150,19 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>>
                                     result = null;
                             }
 
-                            Tuple<String, Object> newTuple = new Tuple<String, Object>(assICode.place, result);
-                            setTuples.add(newTuple);
+                            Exp expResult = Utils.valueToExp(result);
+
+                            if(result != null && expResult != null){
+                                Tuple<String, Exp> newTuple = new Tuple<String, Exp>(assICode.place, expResult);
+                                setTuples.add(newTuple);
+                            }
                         }
                     } else {
-                        Tuple<String, Object> killTuple = new Tuple<String, Object>(assICode.place, null);
+                        Tuple<String, Exp> killTuple = new Tuple<String, Exp>(assICode.place, null);
                         killTuples.add(killTuple);
                     }
                 }
+
                 constDefinitions.put(icode, setTuples);
                 killDefinitions.put(icode, killTuples);
             }
@@ -159,15 +170,15 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Object>>
     }
 
     @Override
-    public Set<Tuple<String, Object>> transferFunction(FlowGraphNode block, ICode instruction, Set<Tuple<String, Object>> inputSet){
-        Set<Tuple<String, Object>> result = new HashSet<Tuple<String, Object>>();
+    public Set<Tuple<String, Exp>> transferFunction(FlowGraphNode block, ICode instruction, Set<Tuple<String, Exp>> inputSet){
+        Set<Tuple<String, Exp>> result = new HashSet<Tuple<String, Exp>>();
         result.addAll(inputSet);
 
-        Set<Tuple<String, Object>> finalResult = new HashSet<Tuple<String, Object>>();
+        Set<Tuple<String, Exp>> finalResult = new HashSet<Tuple<String, Exp>>();
 
-        for(Tuple<String, Object> killTuple : killDefinitions.get(instruction)){
+        for(Tuple<String, Exp> killTuple : killDefinitions.get(instruction)){
             String killText = killTuple.source;
-            for(Tuple<String, Object> singleResult : result){
+            for(Tuple<String, Exp> singleResult : result){
                 if(!killText.equals(singleResult.source)){
                     finalResult.add(singleResult);
                 }
