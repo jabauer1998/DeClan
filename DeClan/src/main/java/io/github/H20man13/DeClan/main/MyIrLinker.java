@@ -52,11 +52,6 @@ public class MyIrLinker {
         this.gen = new IrRegisterGenerator();
     }
 
-    public MyIrLinker(ErrorLog errLog, IrRegisterGenerator iGen){
-        this.errLog = errLog;
-        this.gen = iGen;
-    }
-
     private static Prog generateProgram(ErrorLog errorLog, Program prog){
         MyICodeGenerator iGen = new MyICodeGenerator(errorLog);
         return iGen.generateProgramIr(prog);
