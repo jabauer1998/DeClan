@@ -37,6 +37,7 @@ import io.github.H20man13.DeClan.common.icode.exp.IntExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
+import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
 import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
 import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
@@ -145,7 +146,7 @@ public class MyCodeGenerator {
         initMultiplyAndAccumulate22();
 
         //Init Proc with Return Pattern
-        initProcWithReturn0();
+        initCallWithReturn0();
 
         //Init Add Patterns
         initAdd0();
@@ -428,6 +429,9 @@ public class MyCodeGenerator {
 
         //Init Label Pattern
         initLabel0();
+        
+        //Init Proc Label Pattern
+        initProcLabel0();
 
         //Init End Pattern
         initEnd0();
@@ -436,7 +440,7 @@ public class MyCodeGenerator {
         initReturn0();
 
         //Init Proc Pattern
-        initProc0();
+        initCall0();
 
         //Init Inline Assembly Pattern
         initInline0();
@@ -2136,8 +2140,8 @@ public class MyCodeGenerator {
         });
     }
 
-    private void initProcWithReturn0(){
-        codeGenFunctions.put(Pattern.procWithReturn0, new Callable<Void>() {
+    private void initCallWithReturn0(){
+        codeGenFunctions.put(Pattern.callWithReturn0, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                 ICode icode = intermediateCode.get(i);
@@ -9826,6 +9830,19 @@ public class MyCodeGenerator {
         });
     }
 
+    private void initProcLabel0(){
+        codeGenFunctions.put(Pattern.procLabel0, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                ICode icode = intermediateCode.get(i);
+                ProcLabel labelICode = (ProcLabel)icode;
+                cGen.setLabel(labelICode.label);
+                rGen.freeTempRegs();
+                return null;
+            }
+        });
+    }
+
     private void initEnd0(){
         codeGenFunctions.put(Pattern.end0, new Callable<Void>() {
             @Override
@@ -9851,8 +9868,8 @@ public class MyCodeGenerator {
         });
     }
 
-    private void initProc0(){
-        codeGenFunctions.put(Pattern.proc0, new Callable<Void>() {
+    private void initCall0(){
+        codeGenFunctions.put(Pattern.call0, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                 ICode icode = intermediateCode.get(i);

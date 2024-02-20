@@ -14,6 +14,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Source;
+import edu.depauw.declan.common.ErrorLog.LogItem;
 import edu.depauw.declan.common.ast.Library;
 import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.Config;
@@ -671,6 +672,10 @@ public class MyCompilerDriver {
                     */
                 }
             }
+        }
+
+        for(LogItem err: errLog){
+            System.err.println(err);
         }
     }
 }

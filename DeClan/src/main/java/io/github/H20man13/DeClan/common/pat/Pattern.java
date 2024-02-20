@@ -60,7 +60,7 @@ public class Pattern {
 
     //The Next pattern we will initialize is a Function call followed by a return Placement
     //There will be a pattern for just standard function Calls without a return as well
-    public static P procWithReturn0 = P.PAT(P.PAT(P.PROC(), P.ID()),
+    public static P callWithReturn0 = P.PAT(P.PAT(P.CALL(), P.ID()),
                                             P.PAT(P.ID(), P.EXTERNAL(), P.PLACE(), P.ID()));
 
     public static P add0 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.ID()));
@@ -316,8 +316,9 @@ public class Pattern {
     public static P internalReturnPlacement0 = P.PAT(P.ID(), P.INTERNAL(), P.PLACE(), P.ID());
     public static P goto0 = P.PAT(P.GOTO(), P.ID());
     public static P label0 = P.PAT(P.LABEL(), P.ID());
+    public static P procLabel0 = P.PAT(P.PROC(), P.LABEL(), P.ID());
     public static P end0 = P.END();
     public static P return0 = P.RETURN();
-    public static P proc0 = P.PAT(P.PROC(), P.ID());
+    public static P call0 = P.PAT(P.CALL(), P.ID());
     public static P inline0 = P.INLINE();
 }

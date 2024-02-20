@@ -47,7 +47,7 @@ public class Call implements ICode {
 
 	@Override
 	public P asPattern() {
-		return P.PAT(P.PROC(), P.ID());
+		return P.PAT(P.CALL(), P.ID());
 	}
 
 	@Override

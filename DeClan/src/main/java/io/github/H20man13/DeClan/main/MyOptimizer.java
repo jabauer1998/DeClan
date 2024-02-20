@@ -160,21 +160,23 @@ public class MyOptimizer {
             List<ParamAssign> assignments = procedure.paramAssign;
             List<ICode> instructionsInBlock = new LinkedList<ICode>();
             if(procFirsts.size() > 0){
-                Integer firstIndex = procFirsts.get(0);
+                Integer firstIndex = 0;
                 Integer endIndex;
-                if(procFirsts.size() > 1){
-                    endIndex = procFirsts.get(1) - 1;
+                if(procFirsts.size() > 0){
+                    endIndex = procFirsts.get(0);
                 } else {
                     endIndex = procedure.instructions.size() - 1;
                 }
                 for(int i = firstIndex; i <= endIndex; i++){
                     instructionsInBlock.add(procedure.instructions.get(i));
                 }
+            } else {
+                instructionsInBlock = procedure.instructions;
             }
 
             procedureBlocks.add(new ProcedureBeginningBlock(procedure.label, assignments, instructionsInBlock));
                 
-            for(int leaderIndex = 1; leaderIndex < procFirsts.size() - 1; leaderIndex++){
+            for(int leaderIndex = 0; leaderIndex < procFirsts.size() - 1; leaderIndex++){
                 int beginIndex = procFirsts.get(leaderIndex);
                 int endIndex;
                 if(leaderIndex + 1 < procFirsts.size()){
@@ -191,7 +193,7 @@ public class MyOptimizer {
                 procedureBlocks.add(new BasicBlock(basicBlockList));
             }
 
-            if(procFirsts.size() > 1){
+            if(procFirsts.size() > 0){
                 int beginIndex = procFirsts.get(procFirsts.size() - 1);
                 int endIndex = procedure.instructions.size() - 1;
 
@@ -201,7 +203,7 @@ public class MyOptimizer {
                 }
                 procedureBlocks.add(new ProcedureEndingBlock(basicBlockList, procedure.placement, procedure.returnStatement));
             } else {
-                procedureBlocks.add(new ProcedureEndingBlock(new LinkedList<ICode>(), null, procedure.returnStatement));
+                procedureBlocks.add(new ProcedureEndingBlock(new LinkedList<ICode>(), procedure.placement, procedure.returnStatement));
             }
         }
 
