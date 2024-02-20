@@ -34,7 +34,7 @@ public class LiveVariableAnalysis extends Analysis<String> {
         this.useSets = new HashMap<ICode, Set<String>>();
         
         for(BlockNode block : flowGraph.getBlocks()){
-            for(ICode code : block.getICode()){
+            for(ICode code : block.getAllICode()){
                 Set<String> instructionDef = new HashSet<String>();
                 Set<String> instructionUse = new HashSet<String>();
                 if(code instanceof Assign){

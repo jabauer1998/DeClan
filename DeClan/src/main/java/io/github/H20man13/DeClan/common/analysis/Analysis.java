@@ -159,7 +159,7 @@ public abstract class Analysis<SetType> {
 
                     blockInputs.put(block, inputSet);
 
-                    for(ICode instr : block.getICode()){
+                    for(ICode instr : block.getAllICode()){
                         instructionInputs.put(instr, inputSet);
                         inputSet = transferFunction(block, instr, inputSet);
                         instructionOutputs.put(instr, inputSet);
@@ -198,7 +198,7 @@ public abstract class Analysis<SetType> {
 
                     blockOutputs.put(block, outputSet);
 
-                    List<ICode> icodeList = block.getICode();
+                    List<ICode> icodeList = block.getAllICode();
                     for(int i = icodeList.size() - 1; i >= 0; i--){
                         ICode icode = icodeList.get(i);
                         instructionOutputs.put(icode, outputSet);

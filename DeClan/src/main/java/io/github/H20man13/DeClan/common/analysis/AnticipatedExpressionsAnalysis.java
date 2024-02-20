@@ -27,7 +27,7 @@ public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
         killSets =  new HashMap<ICode, Set<Exp>>();
 
         for(BlockNode block : flowGraph.getBlocks()){
-            List<ICode> codeList = block.getICode();
+            List<ICode> codeList = block.getAllICode();
             for(int i = codeList.size() - 1; i >= 0; i--){
                 Set<Exp> instructionKill = new HashSet<Exp>();
                 Set<Exp> instructionGen = new HashSet<Exp>();

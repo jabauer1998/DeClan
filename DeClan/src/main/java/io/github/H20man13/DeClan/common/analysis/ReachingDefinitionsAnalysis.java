@@ -26,7 +26,7 @@ public class ReachingDefinitionsAnalysis extends Analysis<ICode> {
         
         Map<String, List<ICode>> declsDeclared = new HashMap<String, List<ICode>>();
         for(BlockNode block : flowGraph.getBlocks()){
-            List<ICode> decls = block.getICode();
+            List<ICode> decls = block.getAllICode();
             for(ICode decl : decls){
                 if(decl instanceof Assign){
                     Assign assDecl = (Assign)decl;

@@ -63,7 +63,7 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Exp>> {
         this.killDefinitions = new HashMap<ICode, Set<Tuple<String, Exp>>>();
 
         for(BlockNode block : flowGraph.getBlocks()){
-            for(ICode icode : block.getICode()){
+            for(ICode icode : block.getAllICode()){
                 Set<Tuple<String, Exp>> setTuples = new HashSet<Tuple<String, Exp>>();
                 Set<Tuple<String, Exp>> killTuples = new HashSet<Tuple<String, Exp>>();
                 if(icode instanceof Assign){
