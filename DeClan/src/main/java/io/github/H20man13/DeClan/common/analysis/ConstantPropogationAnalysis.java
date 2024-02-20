@@ -176,12 +176,11 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Exp>> {
 
         Set<Tuple<String, Exp>> finalResult = new HashSet<Tuple<String, Exp>>();
 
-        for(Tuple<String, Exp> killTuple : killDefinitions.get(instruction)){
-            String killText = killTuple.source;
-            for(Tuple<String, Exp> singleResult : result){
-                if(!killText.equals(singleResult.source)){
-                    finalResult.add(singleResult);
-                }
+        Set<Tuple<String, Exp>> killSet = killDefinitions.get(instruction);
+        for(Tuple<String, Exp> res: result){
+            String resTest = res.source;
+            if(!Utils.containsExpInSet(killSet, resTest)){
+                finalResult.add(res);
             }
         }
 

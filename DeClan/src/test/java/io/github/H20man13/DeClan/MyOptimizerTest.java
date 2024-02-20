@@ -174,7 +174,7 @@ public class MyOptimizerTest {
         Prog prog = parser.parseProgram();
         
         MyOptimizer optimizer = new MyOptimizer(prog);
-         optimizer.performConstantPropogation();
+        optimizer.performConstantPropogation();
         //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
         //It is called within the Optimizers constructor
         Prog optimizedProg = optimizer.getICode();

@@ -1222,12 +1222,12 @@ public class MyOptimizer {
                                 IdentExp identLeft = (IdentExp)binExpVal.left;
                                 String sourceVal = identLeft.ident;
                                 while(Utils.containsExpInSet(values, sourceVal)){
-                                    Exp rightHandSide = Utils.getExpFromSet(values, sourceVal);
-                                    if(rightHandSide instanceof IdentExp){
-                                        identLeft = (IdentExp)rightHandSide;
+                                    Exp leftExp = Utils.getExpFromSet(values, sourceVal);
+                                    if(leftExp instanceof IdentExp){
+                                        identLeft = (IdentExp)leftExp;
                                         sourceVal = identLeft.ident;
-                                    } else if(rightHandSide.isConstant()){
-                                        varICode.value = rightHandSide;
+                                    } else if(leftExp.isConstant()){
+                                        binExpVal.left = leftExp;
                                         break;
                                     } else {
                                         break;
@@ -1244,7 +1244,7 @@ public class MyOptimizer {
                                         identRight = (IdentExp)rightHandSide;
                                         sourceVal = identRight.ident;
                                     } else if(rightHandSide.isConstant()){
-                                        varICode.value = rightHandSide;
+                                        binExpVal.right = rightHandSide;
                                         break;
                                     } else {
                                         break;
@@ -1262,7 +1262,7 @@ public class MyOptimizer {
                                     identRight = (IdentExp)rightHandSide;
                                     sourceVal = identRight.ident;
                                 } else if(rightHandSide.isConstant()){
-                                    varICode.value = rightHandSide;
+                                    unExpVal.right = rightHandSide;
                                     break;
                                 } else {
                                     break;
