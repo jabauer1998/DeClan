@@ -21,7 +21,10 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Inline;
+import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
+import io.github.H20man13.DeClan.common.icode.SymEntry;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -33,12 +36,16 @@ import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
+import io.github.H20man13.DeClan.common.icode.procedure.Call;
 import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
+import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
+import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
 import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
+import io.github.H20man13.DeClan.common.icode.section.SymSec;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.LiveInfo;
@@ -486,4 +493,213 @@ public class Utils {
      Integer asInt = Float.floatToRawIntBits(realValue);
      return to32BitBinary(asInt);
   }
+
+  public static boolean labelExistsInICode(String label, ICode instr){
+        if(instr instanceof Label){
+            Label instrLabel = (Label)instr;
+            if(instrLabel.label.equals(label))
+                return true;
+        } else if(instr instanceof Goto){
+            Goto instrGoto = (Goto)instr;
+            if(instrGoto.label.equals(label))
+                return true;
+        } else if(instr instanceof If){
+            If instrIf = (If)instr;
+            if(instrIf.ifTrue.equals(label))
+                return true;
+
+            if(instrIf.ifFalse.equals(label))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static boolean placeExistsInICode(String place, ICode dataCode){
+        if(dataCode instanceof Assign){
+            Assign assign = (Assign)dataCode;
+            
+            if(assign.place.equals(place))
+                return true;
+
+            Exp value = assign.value;
+            if(value instanceof IdentExp){
+                IdentExp identVal = (IdentExp)value;
+                if(identVal.ident.equals(place))
+                    return true;
+            } else if(value instanceof UnExp){
+                UnExp unaryVal = (UnExp)value;
+                if(unaryVal.right instanceof IdentExp){
+                    IdentExp rightVal = (IdentExp)unaryVal.right;
+                    if(rightVal.ident.equals(place))
+                        return true;
+                }
+            } else if(value instanceof BinExp){
+                BinExp binVal = (BinExp)value;
+                
+                if(binVal.left instanceof IdentExp){
+                    IdentExp leftVal = (IdentExp)binVal.left;
+                    if(leftVal.ident.equals(place))
+                        return true;
+                }
+
+                if(binVal.right instanceof IdentExp){
+                    IdentExp rightVal = (IdentExp)binVal.right;
+                    if(rightVal.ident.equals(place))
+                        return true;
+                }
+            }
+        } else if(dataCode instanceof If){
+            If ifStat = (If)dataCode;
+            BinExp expression = ifStat.exp;
+
+            if(expression.left instanceof IdentExp){
+                IdentExp leftIdent = (IdentExp)expression.left;
+                if(leftIdent.ident.equals(place))
+                    return true;
+            }
+
+            if(expression.right instanceof IdentExp){
+                IdentExp rightIdent = (IdentExp)expression.right;
+                if(rightIdent.ident.equals(place))
+                    return true;
+            }
+        } else if(dataCode instanceof ExternalPlace){
+            ExternalPlace placement = (ExternalPlace)dataCode;
+            if(placement.place.equals(place))
+                return true;
+
+            if(placement.retPlace.equals(place))
+                return true;
+        } else if(dataCode instanceof InternalPlace){
+            InternalPlace placement = (InternalPlace)dataCode;
+            if(placement.place.equals(place))
+                return true;
+            
+            if(placement.retPlace.equals(place))
+                return true;
+        } else if(dataCode instanceof Inline){
+            Inline inlineAssembly = (Inline)dataCode;
+            for(String arg : inlineAssembly.param){
+                if(arg.equals(place))
+                    return true;
+            }
+        } else if(dataCode instanceof ExternalCall){
+            ExternalCall call = (ExternalCall)dataCode;
+            for(String arg: call.arguments){
+                if(arg.equals(place))
+                    return true;
+            }
+        } else if(dataCode instanceof Call){
+            Call call = (Call)dataCode;
+            for(Tuple<String, String> arg : call.params){
+                if(arg.source.equals(place))
+                    return true;
+
+                if(arg.dest.equals(place))
+                    return true;
+            }
+        } else if(dataCode instanceof ParamAssign){
+            ParamAssign assign = (ParamAssign)dataCode;
+            if(assign.newPlace.equals(place))
+                return true;
+
+            if(assign.paramPlace.equals(place))
+                return true;
+        } else {
+            return false;
+        }
+        return false;
+    }
+
+    public static boolean labelExistsInProgram(String label, Prog program){
+        if(labelExistsInLibrary(label, program))
+            return true;
+
+        CodeSec codeSec = program.code;
+        for(int i = 0; i < codeSec.getLength(); i++){
+            ICode instr = codeSec.getInstruction(i);
+            if(labelExistsInICode(label, instr))
+                return true;
+        }
+
+        return false;
+    }
+
+    public static boolean placeExistsInProgram(String place, Prog program){
+        if(placeExistsInLibrary(place, program))
+            return true;
+
+        CodeSec codeSec = program.code;
+        for(int i = 0; i < codeSec.getLength(); i++){
+            ICode instr = codeSec.getInstruction(i);
+            if(placeExistsInICode(place, instr))
+                return true;
+        }
+
+        return false;
+    }
+
+    public static boolean labelExistsInLibrary(String label, Lib lib){
+        ProcSec procedures = lib.procedures;
+        for(int i = 0; i < procedures.getLength(); i++){
+            Proc procedure = procedures.getProcedureByIndex(i);
+            if(labelExistsInProcedure(label, procedure))
+                return true;
+        }
+
+        return false;
+    }
+
+    public static boolean placeExistsInLibrary(String place, Lib lib){
+        SymSec symbols = lib.symbols;
+        for(int i = 0; i < symbols.getLength(); i++){
+            SymEntry entry = symbols.getEntryByIndex(i);
+            if(entry.icodePlace.equals(place))
+                return true;
+        }
+
+        DataSec dataCodes = lib.variables;
+        for(int i = 0; i < dataCodes.getLength(); i++){
+            ICode dataCode = dataCodes.getInstruction(i);
+            if(placeExistsInICode(place, dataCode))
+                return true;
+        }
+
+        ProcSec procedures = lib.procedures;
+        for(int i = 0; i < procedures.getLength(); i++){
+            Proc procedure = procedures.getProcedureByIndex(i);
+            if(placeExistsInProcedure(place, procedure))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static boolean placeExistsInProcedure(String place, Proc procedure){
+        for(ParamAssign assign: procedure.paramAssign){
+            if(placeExistsInICode(place, assign))
+                return true;
+        }
+
+        for(ICode icode : procedure.instructions){
+            if(placeExistsInICode(place, icode))
+                return true;
+        }
+
+        if(procedure.placement != null)
+            if(placeExistsInICode(place, procedure.placement))
+                return true;
+
+        return false;
+    }
+
+    private static boolean labelExistsInProcedure(String label, Proc procedure){
+        for(ICode icode : procedure.instructions){
+            if(labelExistsInICode(label, icode))
+                return true;
+        }
+
+        return false;
+    }
 }

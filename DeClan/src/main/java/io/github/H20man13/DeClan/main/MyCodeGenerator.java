@@ -56,11 +56,15 @@ public class MyCodeGenerator {
 
     private int i;
 
-    public MyCodeGenerator(LiveVariableAnalysis analysis, Prog program, IrRegisterGenerator iGen, ErrorLog errorLog){
+    public MyCodeGenerator(LiveVariableAnalysis analysis, Prog program, ErrorLog errorLog){
         this.intermediateCode = program.genFlatCode();
         this.cGen = new ArmCodeGenerator();
         this.rGen = new ArmRegisterGenerator(cGen, analysis);
-        this.iGen = iGen;
+        this.iGen = new IrRegisterGenerator();
+        String place;
+        do{
+            place = iGen.genNext();
+        } while(Utils.placeExistsInProgram(place, program));
         this.errorLog = errorLog;
         this.codeGenFunctions = new HashMap<>();
         this.i = 0;

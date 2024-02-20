@@ -414,7 +414,6 @@ public class MyCompilerDriver {
         return toRet;
     }
     public static void main(String[] args) throws Exception{
-        System.out.println("java MyCompilerDriver " + String.join(" ", args));
         Config cfg = parseConfig(args);
         
         ErrorLog errLog = new ErrorLog();
@@ -475,7 +474,6 @@ public class MyCompilerDriver {
                     String outputDestination = cfg.getValueFromFlag("output");
                     MyIrLinker linker = new MyIrLinker(errLog);
                     
-                    IrRegisterGenerator iGen = new IrRegisterGenerator();
                     Library[] newLibs = listAsArray(libs);
                     Prog prog = linker.performLinkage(program, newLibs);
 
@@ -493,16 +491,13 @@ public class MyCompilerDriver {
                     }
 
                     FileWriter outputWriter = new FileWriter(outputDestination);
-                    MyCodeGenerator cGen = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), prog, iGen, errLog);
+                    MyCodeGenerator cGen = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), prog, errLog);
                     cGen.codeGen(outputWriter);
                 }
             } else {
                 if(cfg.containsFlag("output")){
                     String outputDestination = cfg.getValueFromFlag("output");
-
-                    IrRegisterGenerator iGen = new IrRegisterGenerator();
-                    MyIrLinker linker = new MyIrLinker(errLog, iGen);
-                    
+                    MyIrLinker linker = new MyIrLinker(errLog);
                     Library[] libArray = listAsArray(libs);
                     Prog prog = linker.performLinkage(program, libArray);
 
@@ -519,9 +514,9 @@ public class MyCompilerDriver {
                         }
                     }
 
-                    String tempOutput = outputDestination + ".a.temp";
+                    String tempOutput = outputDestination.replace(".bin", ".a.temp");
                     FileWriter outputWriter = new FileWriter(tempOutput);
-                    MyCodeGenerator cGen = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), prog, iGen, errLog);
+                    MyCodeGenerator cGen = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), prog, errLog);
                     cGen.codeGen(outputWriter);
                     outputWriter.close();
 
@@ -602,7 +597,6 @@ public class MyCompilerDriver {
                     
                     Library startingLibrary = libs.remove(0);
                     Library[] libsAsArray = listAsArray(libs);
-                    IrRegisterGenerator iGen = new IrRegisterGenerator();
                     Lib lib = linker.performLinkage(startingLibrary, libsAsArray);
 
                     /*
@@ -632,7 +626,6 @@ public class MyCompilerDriver {
                     
                     Library startingLibrary = libs.remove(0);
                     Library[] libsAsArray = listAsArray(libs);
-                    IrRegisterGenerator iGen = new IrRegisterGenerator();
                     Lib library = linker.performLinkage(startingLibrary, libsAsArray);
 
                     /*
@@ -652,7 +645,7 @@ public class MyCompilerDriver {
 
                     */
 
-                    String tempOutput = outputDestination + ".a.temp";
+                    String tempOutput = outputDestination.replace(".bin", ".a.temp");
                     //FileWriter outputWriter = new FileWriter(tempOutput);
                     //MyCodeGenerator cGen = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), prog, iGen, errLog);
                     //cGen.codeGen(outputWriter);

@@ -42,8 +42,7 @@ public class ICodeGeneratorTest {
             MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
             Program prog = parser.parseProgram();
             
-            IrRegisterGenerator gen = new IrRegisterGenerator();
-            MyICodeGenerator igen = new MyICodeGenerator(errLog, gen);
+            MyICodeGenerator igen = new MyICodeGenerator(errLog);
             
             Prog program = igen.generateProgramIr(prog);
 

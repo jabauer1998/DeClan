@@ -93,7 +93,7 @@ public class MyICodeGenerator{
   private IrBuilderContext ctx;
   private IrRegisterGenerator gen;
 
-  public MyICodeGenerator(ErrorLog errorLog, IrRegisterGenerator Gen) {
+  public MyICodeGenerator(ErrorLog errorLog) {
     this.errorLog = errorLog;
     this.ctx = new IrBuilderContext();
     this.gen = new IrRegisterGenerator();
