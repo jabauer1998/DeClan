@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.flow.block;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -22,6 +23,17 @@ public class ProcedureEndingBlock extends BasicBlock {
 
     public Return getReturn(){
         return ret;
+    }
+
+    @Override
+    public List<ICode> getAllICode(){
+        LinkedList<ICode> icode = new LinkedList<ICode>();
+        icode.addAll(super.getAllICode());
+        if(placement != null){
+            icode.add(placement);
+        }
+        icode.add(ret);
+        return icode;
     }
 
     @Override 

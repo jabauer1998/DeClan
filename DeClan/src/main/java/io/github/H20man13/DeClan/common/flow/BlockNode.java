@@ -98,4 +98,9 @@ public class BlockNode implements FlowGraphNode {
     public List<ICode> getICode() {
         return block.getIcode();
     }
+
+    @Override
+    public List<ICode> getAllICode(){
+        return block.getIcode();
+    }
 }

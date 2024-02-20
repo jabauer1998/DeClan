@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.flow;
 
+import java.util.List;
 import java.util.Map;
 
 import io.github.H20man13.DeClan.common.flow.block.ProcedureBeginningBlock;
@@ -18,6 +19,11 @@ public class ProcedureExitNode extends BlockNode{
 
     public ProcedureEndingBlock getBlock(){
         return block;
+    }
+
+    @Override
+    public List<ICode> getAllICode(){
+        return block.getAllICode();
     }
 
     @Override 

@@ -10,6 +10,7 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 
 public interface FlowGraphNode {
     public List<ICode> getICode();
+    public List<ICode> getAllICode();
     @Override
     public String toString();
 }

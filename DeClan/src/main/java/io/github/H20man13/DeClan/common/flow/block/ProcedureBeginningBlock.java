@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.flow.block;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -14,6 +15,14 @@ public class ProcedureBeginningBlock extends BasicBlock {
         super(initialICode);
         this.paramaterAssignmants = assignments;
         this.label = label;
+    }
+
+    public List<ICode> getAllICode(){
+        LinkedList<ICode> icode = new LinkedList<ICode>();
+        icode.add(label);
+        icode.addAll(paramaterAssignmants);
+        icode.addAll(super.getAllICode());
+        return icode;
     }
 
     public List<ParamAssign> getParamaterAssignmants(){

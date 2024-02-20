@@ -16,6 +16,10 @@ public class BasicBlock {
         return this.codeInBlock;
     }
 
+    public List<ICode> getAllICode(){
+        return this.codeInBlock;
+    }
+
     public void setICode(List<ICode> list){
         this.codeInBlock = list;
     }
