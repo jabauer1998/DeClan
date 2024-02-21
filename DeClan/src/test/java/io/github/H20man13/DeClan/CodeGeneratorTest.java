@@ -55,18 +55,16 @@ public class CodeGeneratorTest {
             optimizer.performCommonSubExpressionElimination();
             optimizer.performDeadCodeElimination();
 
-            MyCodeGenerator codeGenerator = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), program, errLog); 
-            
-            StringWriter writer = new StringWriter();
-            codeGenerator.codeGen(writer);
+            String outputFile = fileName.replace("test/declan", "test/temp").replace(".dcl", ".tmp");
+
+            MyCodeGenerator codeGenerator = new MyCodeGenerator(outputFile, optimizer.getLiveVariableAnalysis(), program, errLog); 
+            codeGenerator.codeGen();
 
             for(LogItem item : errLog){
                 assertTrue(item.toString(), false);
             }
 
-            String outputString = writer.toString();
-
-            StringReader outputStringReader = new StringReader(outputString);
+            FileReader outputStringReader = new FileReader(outputFile);
             FileReader expectedResultReader = new FileReader(expectedResultFile);
 
             Scanner outputStringScanner = new Scanner(outputStringReader);
@@ -80,7 +78,9 @@ public class CodeGeneratorTest {
                 lineNumber++;
             }
 
-            StringReader assemblerStringReader = new StringReader(outputString);
+            outputStringReader.close();
+
+            FileReader assemblerStringReader = new FileReader(outputFile);
             ANTLRInputStream inputString = new ANTLRInputStream(assemblerStringReader);
             ArmAssemblerLexer armLexer = new ArmAssemblerLexer(inputString);
             CommonTokenStream tokStream = new CommonTokenStream(armLexer);
