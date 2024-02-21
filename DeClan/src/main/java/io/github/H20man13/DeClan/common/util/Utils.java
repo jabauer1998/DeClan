@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.util;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -701,5 +702,12 @@ public class Utils {
         }
 
         return false;
+    }
+
+    public static void deleteFile(String fileName){
+        File file = new File(fileName);
+        if(file.exists()){
+            file.delete();
+        }
     }
 }

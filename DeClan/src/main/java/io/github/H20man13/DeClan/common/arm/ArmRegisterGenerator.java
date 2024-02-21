@@ -107,7 +107,7 @@ public class ArmRegisterGenerator {
         return var;
     }
 
-    public String getTempReg(String place, ICode icode){
+    public String getTempReg(String place, ICode icode) throws Exception{
         Set<String> vars = liveAnal.getInstructionInputSet(icode);
         for(String key : getVars()){
             if(!vars.contains(key)){
@@ -138,7 +138,7 @@ public class ArmRegisterGenerator {
         }
     }
 
-    public String getReg(String place, ICode icode){
+    public String getReg(String place, ICode icode) throws Exception{
         //Prior to any instruction we need to de allocate any dead variables
         Set<String> vars = liveAnal.getInstructionInputSet(icode);
         for(String key : getVars()){

@@ -491,9 +491,8 @@ public class MyCompilerDriver {
                         }
                     }
 
-                    FileWriter outputWriter = new FileWriter(outputDestination);
-                    MyCodeGenerator cGen = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), prog, errLog);
-                    cGen.codeGen(outputWriter);
+                    MyCodeGenerator cGen = new MyCodeGenerator(outputDestination, optimizer.getLiveVariableAnalysis(), prog, errLog);
+                    cGen.codeGen();
                 }
             } else {
                 if(cfg.containsFlag("output")){
@@ -516,10 +515,8 @@ public class MyCompilerDriver {
                     }
 
                     String tempOutput = outputDestination.replace(".bin", ".a.temp");
-                    FileWriter outputWriter = new FileWriter(tempOutput);
-                    MyCodeGenerator cGen = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), prog, errLog);
-                    cGen.codeGen(outputWriter);
-                    outputWriter.close();
+                    MyCodeGenerator cGen = new MyCodeGenerator(tempOutput, optimizer.getLiveVariableAnalysis(), prog, errLog);
+                    cGen.codeGen();
 
                     ANTLRInputStream inputStream = new ANTLRInputStream(tempOutput);
                     ArmAssemblerLexer lexer = new ArmAssemblerLexer(inputStream);
@@ -537,6 +534,7 @@ public class MyCompilerDriver {
                     }
 
                     binaryWriter.close();
+                    Utils.deleteFile(tempOutput);
                 }
             }
         } else if(cfg.containsFlag("library")){

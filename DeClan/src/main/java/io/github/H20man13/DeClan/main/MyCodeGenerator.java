@@ -57,19 +57,23 @@ public class MyCodeGenerator {
 
     private int i;
 
-    public MyCodeGenerator(LiveVariableAnalysis analysis, Prog program, ErrorLog errorLog){
-        this.intermediateCode = program.genFlatCode();
-        this.cGen = new ArmCodeGenerator();
-        this.rGen = new ArmRegisterGenerator(cGen, analysis);
-        this.iGen = new IrRegisterGenerator();
-        String place;
-        do{
-            place = iGen.genNext();
-        } while(Utils.placeExistsInProgram(place, program));
-        this.errorLog = errorLog;
-        this.codeGenFunctions = new HashMap<>();
-        this.i = 0;
-        initCodeGenFunctions();
+    public MyCodeGenerator(String outputFile, LiveVariableAnalysis analysis, Prog program, ErrorLog errorLog){
+        try{
+            this.intermediateCode = program.genFlatCode();
+            this.cGen = new ArmCodeGenerator(outputFile);
+            this.rGen = new ArmRegisterGenerator(cGen, analysis);
+            this.iGen = new IrRegisterGenerator();
+            String place;
+            do{
+                place = iGen.genNext();
+            } while(Utils.placeExistsInProgram(place, program));
+            this.errorLog = errorLog;
+            this.codeGenFunctions = new HashMap<>();
+            this.i = 0;
+            initCodeGenFunctions();
+        } catch(Exception exp){
+            errorLog.add(exp.toString(), new Position(i, 0));
+        }
     }
 
 
@@ -96,7 +100,7 @@ public class MyCodeGenerator {
         }
     }
 
-    public void codeGen(Writer writer){
+    public void codeGen(){
         try{
             int size = intermediateCode.size();
 
@@ -112,7 +116,7 @@ public class MyCodeGenerator {
                 }
             }
 
-            cGen.writeToStream(writer);
+            cGen.writeToStream();
         } catch(Exception exp) {
             errorLog.add(exp.toString(), new Position(i, 0));
         }
@@ -9934,7 +9938,7 @@ public class MyCodeGenerator {
     private void initInternalPlacement0(){
         codeGenFunctions.put(Pattern.internalReturnPlacement0, new Callable<Void>() {
             @Override
-            public Void call(){
+            public Void call() throws Exception{
                 ICode icode = intermediateCode.get(i);
                 InternalPlace placement = (InternalPlace)icode;
 
