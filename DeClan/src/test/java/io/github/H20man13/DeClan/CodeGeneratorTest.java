@@ -25,6 +25,7 @@ import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.Prog;
+import io.github.H20man13.DeClan.common.util.Utils;
 import io.github.H20man13.DeClan.main.MyCodeGenerator;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
@@ -89,6 +90,8 @@ public class CodeGeneratorTest {
 
             outputStringScanner.close();
             expectedResultScanner.close();
+
+            Utils.deleteFile(outputFile);
         } catch(Exception exp){
             assertTrue(exp.toString(), false);
         }
