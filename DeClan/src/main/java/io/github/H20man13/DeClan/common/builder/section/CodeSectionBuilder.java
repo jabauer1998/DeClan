@@ -38,9 +38,9 @@ public class CodeSectionBuilder extends StatementBuilder implements CompletableB
     }
 
     @Override
-    public String buildParamaterAssignment(String place) {
+    public String buildParamaterAssignment(String place, Assign.Type type) {
         String gened = gen.genNext();
-        this.intermediateCode.add(factory.produceParamAssignment(gened, place));
+        this.intermediateCode.add(factory.produceParamAssignment(gened, place, type));
         return gened;
     }
 }

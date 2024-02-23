@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.icode.Assign.Scope;
+
 public class DagOperationNode implements DagNode {
     public enum Op{
         IADD, ISUB, IDIV, IMOD, LAND, 
@@ -20,9 +22,11 @@ public class DagOperationNode implements DagNode {
     private List<String> identifiers;
     private boolean nodeIsKilled;
     private Op operation;
+    private ValueType type;
+    private ScopeType scope;
 
     
-    public DagOperationNode(String identifier, Op operation, List<DagNode> children){
+    public DagOperationNode(ScopeType scope, String identifier, Op operation, List<DagNode> children, ValueType type){
         this.children = new LinkedList<DagNode>();
         this.children.addAll(children);
         for(DagNode child : children){
@@ -33,6 +37,8 @@ public class DagOperationNode implements DagNode {
         this.nodeIsKilled = false;
         this.operation = operation;
         this.ancestors = new ArrayList<>();
+        this.scope = scope;
+        this.type = type;
     }
 
     public List<String> getIdentifiers(){
@@ -61,8 +67,10 @@ public class DagOperationNode implements DagNode {
         if(dagNode instanceof DagOperationNode){
             DagOperationNode opNode = (DagOperationNode)dagNode;
             boolean operationsAreEqual = opNode.operation == this.operation;
+            boolean scopesAreEqual = opNode.scope == this.scope;
+            boolean typesAreEqual = opNode.type == this.type;
             boolean childrenAreEqual = compareChildren(opNode);
-            return operationsAreEqual && childrenAreEqual;
+            return operationsAreEqual && scopesAreEqual && typesAreEqual && childrenAreEqual;
         } else {
             return false;
         }
@@ -110,5 +118,15 @@ public class DagOperationNode implements DagNode {
 
     public Op getOperator(){
         return this.operation;
+    }
+
+    @Override
+    public ScopeType getScopeType() {
+        return this.scope;
+    }
+
+    @Override
+    public ValueType getValueType() {
+        return this.type;
     }
 }

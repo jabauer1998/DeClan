@@ -22,8 +22,6 @@ import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
-import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.IntEntry;
@@ -106,28 +104,8 @@ public class MyICodeTypeChecker {
 
     private boolean typeCheckPossibleAssignmentsAndParamaters(ICode icode){
         if(icode instanceof Assign) return typeCheckPossibleAssignment((Assign)icode);
-        else if(icode instanceof ParamAssign) return typeCheckPossibleParamAssign((ParamAssign)icode);
         else if(icode instanceof Call) return typeCheckPossibleParamaters((Call)icode);
-        else if(icode instanceof ExternalPlace) return typeCheckPossibleReturn((ExternalPlace)icode);
         return true;
-    }
-
-    private boolean typeCheckPossibleParamAssign(ParamAssign assign){
-        if(variableQualities.entryExists(assign.paramPlace)){
-            TypeCheckerQualities qual = variableQualities.getEntry(assign.paramPlace);
-            variableQualities.addEntry(assign.newPlace, qual);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean typeCheckPossibleReturn(ExternalPlace returnAssign){
-        if(variableQualities.entryExists(returnAssign.retPlace)){
-            TypeCheckerQualities qual = variableQualities.getEntry(returnAssign.retPlace);
-            variableQualities.addEntry(returnAssign.place, qual);
-            return true;
-        }
-        return false;
     }
 
     private boolean typeCheckPossibleAssignment(Assign assign){

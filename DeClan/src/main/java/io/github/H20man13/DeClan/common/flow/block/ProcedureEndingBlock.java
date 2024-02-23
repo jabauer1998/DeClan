@@ -3,21 +3,21 @@ package io.github.H20man13.DeClan.common.flow.block;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.Return;
-import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
 
 public class ProcedureEndingBlock extends BasicBlock {
     private Return ret;
-    private InternalPlace placement;
+    private Assign placement;
     
-    public ProcedureEndingBlock(List<ICode> codeInBlock, InternalPlace place, Return ret) {
+    public ProcedureEndingBlock(List<ICode> codeInBlock, Assign place, Return ret) {
         super(codeInBlock);
         this.placement = place;
         this.ret = ret;
     }
 
-    public InternalPlace getPlacement(){
+    public Assign getPlacement(){
         return placement;
     }
 

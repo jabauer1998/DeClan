@@ -10,6 +10,7 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Return;
+import io.github.H20man13.DeClan.common.icode.Assign.Scope;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -24,9 +25,6 @@ import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
 import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
-import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class MyIrFactory {
@@ -40,28 +38,28 @@ public class MyIrFactory {
         return new End();
     }
 
-    public Assign produceVariableAssignment(String place, String variableName){
-        return new Assign(place, new IdentExp(variableName));
+    public Assign produceVariableAssignment(Assign.Scope scope, String place, String variableName, Assign.Type type){
+        return new Assign(scope, place, new IdentExp(variableName), type);
     }
 
-    public ParamAssign produceParamAssignment(String place, String value){
-        return new ParamAssign(place, value);
+    public Assign produceParamAssignment(String place, String value, Assign.Type type){
+        return new Assign(Assign.Scope.PARAM, place, new IdentExp(value), type);
     }
 
-    public Assign produceBooleanAssignment(String place, boolean trueOrFalse){
-        return new Assign(place, new BoolExp(trueOrFalse));
+    public Assign produceBooleanAssignment(Assign.Scope scope, String place, boolean trueOrFalse){
+        return new Assign(scope, place, new BoolExp(trueOrFalse), Assign.Type.BOOL);
     }
 
-    public Assign produceRealAssignment(String place, float value){
-        return new Assign(place, new RealExp(value));
+    public Assign produceRealAssignment(Assign.Scope scope, String place, float value){
+        return new Assign(scope, place, new RealExp(value), Assign.Type.REAL);
     }
 
-    public Assign produceIntAssignment(String place, int value){
-        return new Assign(place, new IntExp(value));
+    public Assign produceIntAssignment(Assign.Scope scope, String place, int value){
+        return new Assign(scope, place, new IntExp(value), Assign.Type.INT);
     }
 
-    public Assign produceStringAssignment(String place, String value){
-        return new Assign(place, new StrExp(value));
+    public Assign produceStringAssignment(Assign.Scope scope, String place, String value){
+        return new Assign(scope, place, new StrExp(value), Assign.Type.STRING);
     }
 
     public Return produceReturnStatement(){
@@ -80,8 +78,8 @@ public class MyIrFactory {
         return new ExternalCall(funcName, args);
     }
 
-    public Assign produceExternalProcedureAssignment(String place, String funcName, List<String> args){
-        return new Assign(place, new ExternalCall(funcName, args));
+    public Assign produceExternalProcedureAssignment(Assign.Scope scope, String place, String funcName, List<String> args, Assign.Type type){
+        return new Assign(scope, place, new ExternalCall(funcName, args), type);
     }
 
     public If produceIfStatement(Exp test, String ifTrue, String ifFalse){
@@ -102,20 +100,20 @@ public class MyIrFactory {
         return new ProcLabel(name);
     }
 
-    public Assign produceUnaryOperation(String place, UnExp value){
-        return new Assign(place, value);
+    public Assign produceUnaryOperation(Assign.Scope scope, String place, UnExp value, Assign.Type type){
+        return new Assign(scope, place, value, type);
     }
 
-    public Assign produceBinaryOperation(String place, BinExp value){
-        return new Assign(place, value);
+    public Assign produceBinaryOperation(Assign.Scope scope, String place, BinExp value, Assign.Type type){
+        return new Assign(scope, place, value, type);
     }
 
-    public ExternalPlace procuceExternalReturnPlacement(String place, String returnPlace){
-        return new ExternalPlace(place, returnPlace);
+    public Assign procuceExternalReturnPlacement(String place, String returnPlace, Assign.Type type){
+        return new Assign(Scope.EXTERNAL_RETURN, place, new IdentExp(returnPlace), type);
     }
 
-    public InternalPlace produceInternalReturnPlacement(String place, String returnPlace){
-        return new InternalPlace(place, returnPlace);
+    public Assign produceInternalReturnPlacement(String place, String returnPlace, Assign.Type type){
+        return new Assign(Scope.INTERNAL_RETURN, place, new IdentExp(returnPlace), type);
     }
 
     public Inline produceInlineAssembly(String asm, List<String> param){

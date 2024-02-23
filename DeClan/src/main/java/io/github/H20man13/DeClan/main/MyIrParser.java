@@ -17,6 +17,8 @@ import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.SymEntry;
+import io.github.H20man13.DeClan.common.icode.Assign.Scope;
+import io.github.H20man13.DeClan.common.icode.Assign.Type;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -30,9 +32,6 @@ import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
 import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
-import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
@@ -41,6 +40,7 @@ import io.github.H20man13.DeClan.common.icode.section.SymSec;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.token.IrToken;
 import io.github.H20man13.DeClan.common.token.IrTokenType;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class MyIrParser {
@@ -189,15 +189,20 @@ public class MyIrParser {
         match(IrTokenType.LABEL);
         IrToken id = match(IrTokenType.ID);
         ProcLabel label = new ProcLabel(id.getLexeme());
-        List<ParamAssign> paramAssignments = new LinkedList<ParamAssign>();
+        List<Assign> paramAssignments = new LinkedList<Assign>();
         List<ICode> instructions = new LinkedList<ICode>();
-        InternalPlace place = null;
+        Assign place = null;
         while(!willMatch(IrTokenType.RETURN)){
             ICode instruction = parseInstruction();
-            if(instruction instanceof ParamAssign){
-                paramAssignments.add((ParamAssign)instruction);
-            } else if(instruction instanceof InternalPlace){
-                place = (InternalPlace)instruction;
+            if(instruction instanceof Assign){
+                Assign assign = (Assign)instruction;
+                if(assign.getScope() == Scope.PARAM){
+                    paramAssignments.add(assign);
+                } else if(assign.getScope() == Scope.INTERNAL_RETURN){
+                    place = assign;  
+                } else {
+                    instructions.add(instruction);
+                }
             } else {
                 instructions.add(instruction);
             }
@@ -302,7 +307,7 @@ public class MyIrParser {
 
         Exp right = parsePrimaryExpression();
 
-        BinExp expr = new BinExp(left, Utils.toBinOp(op.getType()), right);
+        BinExp expr = new BinExp(left, ConversionUtils.toBinOp(op.getType()), right);
         return expr;
     }
 
@@ -398,7 +403,7 @@ public class MyIrParser {
 
                 Exp exp2 = parsePrimaryExpression();
 
-                return new BinExp(exp1, Utils.toBinOp(op.getType()), exp2);
+                return new BinExp(exp1, ConversionUtils.toBinOp(op.getType()), exp2);
             }else {
                 return exp1;
             }
@@ -423,31 +428,72 @@ public class MyIrParser {
     }
 
     private Assign parseDataAssignment(){
+        Scope scope;
+        if(willMatch(IrTokenType.EXTERNAL)){
+            skip();
+            match(IrTokenType.RETURN);
+            scope = Scope.EXTERNAL_RETURN;
+        } else if(willMatch(IrTokenType.GLOBAL)) {
+            skip();
+            scope = Scope.GLOBAL;
+        } else {
+            scope = Scope.LOCAL;
+        }
         IrToken id = match(IrTokenType.ID);
         match(IrTokenType.ASSIGN);
         Exp expression = parseExpression();
-        return new Assign(id.getLexeme(), expression);
+        match(IrTokenType.COLON);
+
+        Type assignType;
+        if(willMatch(IrTokenType.REAL)){
+            skip();
+            assignType = Type.REAL; 
+        } else if(willMatch(IrTokenType.BOOL)){
+            skip();
+            assignType = Type.BOOL;
+        } else {
+            match(IrTokenType.INT);
+            assignType = Type.INT;
+        }
+        return new Assign(scope, id.getLexeme(), expression, assignType);
     }
 
     private ICode parseAssignment(){
-        IrToken id = match(IrTokenType.ID);
-
-        if(willMatch(IrTokenType.EPLACE)){
+        Assign.Scope scope;
+        if(willMatch(IrTokenType.EXTERNAL)){
             skip();
-            IrToken id2 = match(IrTokenType.ID);
-            return new ExternalPlace(id.getLexeme(), id2.getLexeme());
-        } else if(willMatch(IrTokenType.IPLACE)){
+            match(IrTokenType.RETURN);
+            scope = Scope.EXTERNAL_RETURN;
+        } else if(willMatch(IrTokenType.INTERNAL)){
             skip();
-            IrToken id2 = match(IrTokenType.ID);
-            return new InternalPlace(id.getLexeme(), id2.getLexeme());  
-        } else if(willMatch(IrTokenType.PARAM_ASSIGN)) {
+            match(IrTokenType.RETURN);
+            scope = Scope.INTERNAL_RETURN;
+        } else if(willMatch(IrTokenType.PARAM)){
             skip();
-            IrToken id2 = match(IrTokenType.ID);
-            return new ParamAssign(id.getLexeme(), id2.getLexeme());
+            scope = Scope.PARAM;
+        } else if(willMatch(IrTokenType.GLOBAL)) {
+            skip();
+            scope = Scope.GLOBAL;
         } else {
-            match(IrTokenType.ASSIGN);
-            Exp expression = parseExpression();
-            return new Assign(id.getLexeme(), expression);
+            scope = Scope.LOCAL;
         }
+
+        IrToken id = match(IrTokenType.ID);
+        match(IrTokenType.ASSIGN);
+        Exp expression = parseExpression();
+
+        match(IrTokenType.COLON);
+        Type assignType;
+        if(willMatch(IrTokenType.REAL)){
+            skip();
+            assignType = Type.REAL; 
+        } else if(willMatch(IrTokenType.BOOL)){
+            skip();
+            assignType = Type.BOOL;
+        } else {
+            match(IrTokenType.INT);
+            assignType = Type.INT;
+        }
+        return new Assign(scope, id.getLexeme(), expression, assignType);
     }
 }

@@ -24,7 +24,8 @@ import io.github.H20man13.DeClan.common.dag.DagNodeFactory;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.dag.DagValueNode;
 import io.github.H20man13.DeClan.common.dag.DagVariableNode;
-import io.github.H20man13.DeClan.common.dag.DagVariableNode.VariableType;
+import io.github.H20man13.DeClan.common.dag.DagNode.ScopeType;
+import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.EntryNode;
 import io.github.H20man13.DeClan.common.flow.ExitNode;
@@ -54,9 +55,6 @@ import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
-import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
@@ -65,6 +63,7 @@ import io.github.H20man13.DeClan.common.icode.section.SymSec;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.LiveInfo;
 import io.github.H20man13.DeClan.common.symboltable.entry.ProcedureEntry;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class MyOptimizer {
@@ -157,7 +156,7 @@ public class MyOptimizer {
         List<BasicBlock> procedureBlocks = new LinkedList<BasicBlock>();
         for(Proc procedure : proc.procedures){
             List<Integer> procFirsts = findFirstsInICode(procedure.instructions, true);
-            List<ParamAssign> assignments = procedure.paramAssign;
+            List<Assign> assignments = procedure.paramAssign;
             List<ICode> instructionsInBlock = new LinkedList<ICode>();
             if(procFirsts.size() > 0){
                 Integer firstIndex = 0;
@@ -444,9 +443,9 @@ public class MyOptimizer {
         for(int i = size - 1; i >= 0; i--){
             Proc procedure = procedures.get(i);
             if(procedure.placement != null){
-                InternalPlace returnPlacement = procedure.placement;
+                Assign returnPlacement = procedure.placement;
                 symbolTable.addEntry(returnPlacement.place, new LiveInfo(false, i));
-                symbolTable.addEntry(returnPlacement.retPlace, new LiveInfo(true, i));
+                symbolTable.addEntry(returnPlacement.value.toString(), new LiveInfo(true, i));
                 livelinessInformation.put(returnPlacement, symbolTable.copy());
             }
 
@@ -458,12 +457,12 @@ public class MyOptimizer {
             }
                 
 
-            List<ParamAssign> paramaterAssignmants = procedure.paramAssign;
+            List<Assign> paramaterAssignmants = procedure.paramAssign;
             int paramAssignSize = paramaterAssignmants.size();
             for(int z = paramAssignSize - 1; z >= 0; z--){
-                ParamAssign assign = paramaterAssignmants.get(z);
-                symbolTable.addEntry(assign.newPlace, new LiveInfo(false, z));
-                symbolTable.addEntry(assign.paramPlace, new LiveInfo(true, z));
+                Assign assign = paramaterAssignmants.get(z);
+                symbolTable.addEntry(assign.place, new LiveInfo(false, z));
+                symbolTable.addEntry(assign.value.toString(), new LiveInfo(true, z));
                 livelinessInformation.put(assign, symbolTable.copy());
             }
         }
@@ -514,10 +513,6 @@ public class MyOptimizer {
             for(Tuple<String, String> param : ((Call)icode).params){
                 symbolTable.addEntry(param.source, new LiveInfo(true, x));
             }
-        } else if(icode instanceof ExternalPlace){
-            ExternalPlace place = (ExternalPlace)icode;
-            symbolTable.addEntry(place.retPlace, new LiveInfo(true, x));
-            symbolTable.addEntry(place.place, new LiveInfo(false, x));
         }
         livelinessInformation.put(icode, symbolTable.copy());
     }
@@ -582,8 +577,8 @@ public class MyOptimizer {
                     ProcedureEntryNode procedureEntry = (ProcedureEntryNode)blockAtStart;
                     ProcedureBeginningBlock procedureEntryBlock = procedureEntry.getBlock();
                     Proc newProcedure = new Proc(procedureEntryBlock.getLabel());
-                    List<ParamAssign> assigns = procedureEntryBlock.getParamaterAssignmants();
-                    for(ParamAssign assign: assigns){
+                    List<Assign> assigns = procedureEntryBlock.getParamaterAssignmants();
+                    for(Assign assign: assigns){
                         newProcedure.addParamater(assign);
                     }
 
@@ -602,7 +597,7 @@ public class MyOptimizer {
                             for(ICode code: icode){
                                 newProcedure.addInstruction(code);
                             }
-                            InternalPlace place = endBlock.getPlacement();
+                            Assign place = endBlock.getPlacement();
                             if(place != null){
                                 newProcedure.placement = place;
                             }
@@ -703,13 +698,16 @@ public class MyOptimizer {
                 identifier = node.getIdentifiers().get(0);
             }
 
+            ScopeType scope = node.getScopeType();
+            ValueType type = node.getValueType();
+
             if(node instanceof DagOperationNode){
                 DagOperationNode node2 = (DagOperationNode)node;
 
                 if(node2.getChildren().size() == 2){
                     //Its a Binary Operation
                     DagOperationNode.Op op = node2.getOperator();
-                    BinExp.Operator op2 = Utils.getBinOp(op);
+                    BinExp.Operator op2 = ConversionUtils.getBinOp(op);
 
                     DagNode child1 = node2.getChildren().get(0);
                     DagNode child2 = node2.getChildren().get(1);
@@ -722,11 +720,11 @@ public class MyOptimizer {
 
                     BinExp binExp = new BinExp(exp1, op2, exp2);
 
-                    result.add(new Assign(identifier, binExp));
+                    result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, binExp, ConversionUtils.dagValueTypeToAssignType(type)));
                 } else if(node2.getChildren().size() == 1) {
                     //Its a Unary Operation
                     DagOperationNode.Op op = node2.getOperator();
-                    UnExp.Operator op2 = Utils.getUnOp(op);
+                    UnExp.Operator op2 = ConversionUtils.getUnOp(op);
 
                     DagNode child1 = node2.getChildren().get(0);
 
@@ -736,34 +734,19 @@ public class MyOptimizer {
 
                     UnExp unExp = new UnExp(op2, exp1);
 
-                    result.add(new Assign(identifier, unExp));
+                    result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, unExp, ConversionUtils.dagValueTypeToAssignType(type)));
                 }
             } else if(node instanceof DagValueNode){
                 DagValueNode valNode = (DagValueNode)node;
                 Object value = valNode.getValue();
-                Exp resultExp = Utils.valueToExp(value);
-                result.add(new Assign(identifier, resultExp));
+                Exp resultExp = ConversionUtils.valueToExp(value);
+                result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, resultExp, ConversionUtils.dagValueTypeToAssignType(type)));
             } else if(node instanceof DagVariableNode){
                 DagVariableNode varNode = (DagVariableNode)node;
-                VariableType type = varNode.getType();
-                if(type == VariableType.DEFAULT){
-                    DagNode child = varNode.getChild();
-                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
-                    IdentExp ident1 = new IdentExp(identifier1);
-                    result.add(new Assign(identifier, ident1));
-                } else if(type == VariableType.PARAM){
-                    DagNode child = varNode.getChild();
-                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
-                    result.add(new ParamAssign(identifier, identifier1));
-                } else if(type == VariableType.EXTERNAL_RET){
-                    DagNode child = varNode.getChild();
-                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
-                    result.add(new ExternalPlace(identifier, identifier1));
-                } else if(type == VariableType.INTERNAL_RET){
-                    DagNode child = varNode.getChild();
-                    String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
-                    result.add(new InternalPlace(identifier, identifier1));
-                }
+                DagNode child = varNode.getChild();
+                String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
+                IdentExp ident1 = new IdentExp(identifier1);
+                result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, ident1, ConversionUtils.dagValueTypeToAssignType(type)));
             } else if(node instanceof DagInlineAssemblyNode){
                 DagInlineAssemblyNode dagNode = (DagInlineAssemblyNode)node;
                 List<String> children = new LinkedList<String>();
@@ -777,7 +760,7 @@ public class MyOptimizer {
 
             for(String ident : isAlive){
                 IdentExp ident1 = new IdentExp(identifier);
-                result.add(new Assign(ident, ident1));
+                result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), ident, ident1, ConversionUtils.dagValueTypeToAssignType(type)));
             }
         }
 
@@ -816,7 +799,7 @@ public class MyOptimizer {
                         dag.addDagNode(right);
                     }
 
-                    DagNode newNode = Utils.createBinaryNode(exp.op, assignICode.place, left, right);
+                    DagNode newNode = Utils.createBinaryNode(assignICode.getScope(), exp.op, assignICode.place, left, right);
 
                     DagNode exists = dag.getDagNode(newNode);
                     if(exists == null || !optimized){
@@ -834,7 +817,7 @@ public class MyOptimizer {
                         dag.addDagNode(right);
                     }
 
-                    DagNode newNode = Utils.createUnaryNode(exp.op, assignICode.place, right);
+                    DagNode newNode = Utils.createUnaryNode(assignICode.getScope(), exp.op, assignICode.place, right);
 
                     DagNode exists = dag.getDagNode(newNode);
                     if(exists == null || !optimized){
@@ -852,7 +835,7 @@ public class MyOptimizer {
                         dag.addDagNode(right);
                     }
 
-                    DagNode newNode = factory.createDefaultVariableNode(assignICode.place, right);
+                    DagNode newNode = factory.createDefaultVariableNode(assignICode.place, right, assignICode.getType());
 
                     DagNode exists = dag.getDagNode(newNode);
                     if(exists == null || !optimized){
@@ -862,19 +845,19 @@ public class MyOptimizer {
                     }
                 } else if(assignICode.value instanceof BoolExp){
                     BoolExp boolICode = (BoolExp)assignICode.value;
-                    DagNode newNode = factory.createBooleanNode(assignICode.place, boolICode.trueFalse);
+                    DagNode newNode = factory.createBooleanNode(assignICode.getScope(), assignICode.place, boolICode.trueFalse);
                     dag.addDagNode(newNode);
                 } else if(assignICode.value instanceof IntExp){
                     IntExp intICode = (IntExp)assignICode.value;
-                    DagNode newNode = factory.createIntNode(assignICode.place, intICode.value);
+                    DagNode newNode = factory.createIntNode(assignICode.getScope(), assignICode.place, intICode.value);
                     dag.addDagNode(newNode);
                 } else if(assignICode.value instanceof RealExp){
                     RealExp realICode = (RealExp)assignICode.value;
-                    DagNode newNode = factory.createRealNode(assignICode.place, realICode.realValue);
+                    DagNode newNode = factory.createRealNode(assignICode.getScope(), assignICode.place, realICode.realValue);
                     dag.addDagNode(newNode);
                 } else if(assignICode.value instanceof StrExp){
                     StrExp strICode = (StrExp)assignICode.value;
-                    DagNode newNode = factory.createStringNode(assignICode.place, strICode.value);
+                    DagNode newNode = factory.createStringNode(assignICode.getScope(), assignICode.place, strICode.value);
                     dag.addDagNode(newNode);
                 }
             } else if(icode instanceof Inline){
@@ -895,57 +878,6 @@ public class MyOptimizer {
                 DagNode exists = dag.getDagNode(newNode);
                 if(exists == null){
                     dag.addDagNode(newNode);
-                }
-            } else if(icode instanceof ExternalPlace){
-                ExternalPlace place = (ExternalPlace)icode;
-                DagNode right = dag.searchForLatestChild(place.retPlace);
-
-                if(right == null){
-                    right = factory.createNullNode(place.retPlace);
-                    dag.addDagNode(right);
-                }
-
-                DagNode newNode = factory.createExternalReturnVariableNode(place.place, right);
-
-                DagNode exists = dag.getDagNode(newNode);
-                if(exists == null || !optimized){
-                    dag.addDagNode(newNode);
-                } else {
-                    exists.addIdentifier(place.place);
-                }
-            } else if(icode instanceof InternalPlace){
-                InternalPlace place = (InternalPlace)icode;
-                DagNode right = dag.searchForLatestChild(place.retPlace);
-
-                if(right == null){
-                    right = factory.createNullNode(place.retPlace);
-                    dag.addDagNode(right);
-                }
-
-                DagNode newNode = factory.createInternalReturnVariableNode(place.place, right);
-
-                DagNode exists = dag.getDagNode(newNode);
-                if(exists == null || !optimized){
-                    dag.addDagNode(newNode);
-                } else {
-                    exists.addIdentifier(place.place);
-                }
-            }else if(icode instanceof ParamAssign){
-                ParamAssign paramAssign = (ParamAssign)icode;
-                DagNode right = dag.searchForLatestChild(paramAssign.paramPlace);
-
-                if(right == null){
-                    right = factory.createNullNode(paramAssign.paramPlace);
-                    dag.addDagNode(right);
-                }
-
-                DagNode newNode = factory.createParamVariableNode(paramAssign.newPlace, right);
-
-                DagNode exists = dag.getDagNode(newNode);
-                if(exists == null || !optimized){
-                    dag.addDagNode(newNode);
-                } else {
-                    exists.addIdentifier(paramAssign.newPlace);
                 }
             }
         }
@@ -1177,12 +1109,6 @@ public class MyOptimizer {
                     if(liveVariables.contains(assICode.place)){
                         result.add(assICode);
                     }
-                } else if(icode instanceof ExternalPlace){
-                    ExternalPlace assICode = (ExternalPlace)icode;
-                    Set<String> liveVariables = this.liveAnal.getInstructionOutputSet(icode);
-                    if(liveVariables.contains(assICode.place)){
-                        result.add(assICode);
-                    }  
                 } else {
                     result.add(icode);
                 }

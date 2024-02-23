@@ -1,0 +1,124 @@
+SYMBOL SECTION
+DATA SECTION
+ a := 0
+ b := 0
+ c := 0
+CODE SECTION
+ CALL ReadInt (  )
+ b14 <| b16
+ a := b14
+ k := 0
+ b := k
+ LABEL FORBEG_0_LEVEL_0
+ IF b LT a THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
+ LABEL FORLOOP_0_LEVEL_0
+ CALL F ( b -> b17 )
+ l <| b20
+ c := l
+ CALL WriteInt ( c -> b43 )
+ CALL Fact ( b -> b45 )
+ m <| b48
+ c := m
+ CALL WriteInt ( c -> b43 )
+ CALL WriteLn (  )
+ n := 1
+ o := b IADD n
+ b := o
+ GOTO FORBEG_0_LEVEL_0
+ LABEL FOREND_0_LEVEL_0
+END
+PROC SECTION
+ PROC LABEL ReadInt
+  b15 := 0
+  IASM "SWI 3"
+  IPARAM b15
+  IASM "STR R0, %a"
+  b16 |< b15
+ RETURN
+ PROC LABEL F
+  b18 <- b17
+  b21 := 0
+  b19 := 0
+  b22 := 0
+  b23 := b18 EQ b22
+  IF b23 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0_0
+  LABEL IFSTAT_1_SEQ_0_LEVEL_0_0
+  b24 := 1
+  b19 := b24
+  GOTO IFEND_1_LEVEL_0_0
+  LABEL IFNEXT_1_SEQ_0_LEVEL_0_0
+  b25 := 1
+  b26 := b18 ISUB b25
+  CALL F ( b26 -> b17 )
+  b27 <| b20
+  b21 := b27
+  CALL M ( b21 -> b28 )
+  b41 <| b31
+  b19 := b41
+  b42 := b18 ISUB b19
+  b19 := b42
+  GOTO IFEND_1_LEVEL_0_0
+  LABEL IFNEXT_1_SEQ_1_LEVEL_0_0
+  LABEL IFEND_1_LEVEL_0_0
+  b20 |< b19
+ RETURN
+ PROC LABEL M
+  b29 <- b28
+  b32 := 0
+  b30 := 0
+  b33 := 0
+  b34 := b29 EQ b33
+  IF b34 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0_0
+  LABEL IFSTAT_0_SEQ_0_LEVEL_0_0
+  b35 := 0
+  b30 := b35
+  GOTO IFEND_0_LEVEL_0_0
+  LABEL IFNEXT_0_SEQ_0_LEVEL_0_0
+  b36 := 1
+  b37 := b29 ISUB b36
+  CALL M ( b37 -> b28 )
+  b38 <| b31
+  b32 := b38
+  CALL F ( b32 -> b17 )
+  b39 <| b20
+  b30 := b39
+  b40 := b29 ISUB b30
+  b30 := b40
+  GOTO IFEND_0_LEVEL_0_0
+  LABEL IFNEXT_0_SEQ_1_LEVEL_0_0
+  LABEL IFEND_0_LEVEL_0_0
+  b31 |< b30
+ RETURN
+ PROC LABEL WriteInt
+  b44 <- b43
+  IPARAM b44
+  IASM "LDR R0, %a"
+  IASM "SWI 1"
+ RETURN
+ PROC LABEL Fact
+  b46 <- b45
+  b49 := 0
+  b47 := 0
+  b50 := 0
+  b51 := b46 EQ b50
+  IF b51 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0_0 ELSE IFNEXT_2_SEQ_0_LEVEL_0_0
+  LABEL IFSTAT_2_SEQ_0_LEVEL_0_0
+  b52 := 1
+  b47 := b52
+  GOTO IFEND_2_LEVEL_0_0
+  LABEL IFNEXT_2_SEQ_0_LEVEL_0_0
+  b53 := 1
+  b54 := b46 ISUB b53
+  CALL Fact ( b54 -> b45 )
+  b55 <| b48
+  b49 := b55
+  b56 := b46 IMUL b49
+  b47 := b56
+  GOTO IFEND_2_LEVEL_0_0
+  LABEL IFNEXT_2_SEQ_1_LEVEL_0_0
+  LABEL IFEND_2_LEVEL_0_0
+  b48 |< b47
+ RETURN
+ PROC LABEL WriteLn
+  IASM "SWI 4"
+ RETURN

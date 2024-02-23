@@ -101,6 +101,7 @@ if ($depends -eq 0) {
     clean_src -directory "$PSScriptRoot/assembly"
     clean_src -directory "$PSScriptRoot/binary"
     clean_src -directory "$PSScriptRoot/ir"
+    clean_src -directory "$PSScriptRoot/temp"
 
     Get-ChildItem -File "$PSScriptRoot/declan" |
     Foreach-Object {

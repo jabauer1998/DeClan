@@ -518,22 +518,31 @@ public class MyCompilerDriver {
                     MyCodeGenerator cGen = new MyCodeGenerator(tempOutput, optimizer.getLiveVariableAnalysis(), prog, errLog);
                     cGen.codeGen();
 
-                    ANTLRInputStream inputStream = new ANTLRInputStream(tempOutput);
+                    FileReader tempReader = new FileReader(tempOutput);
+                    ANTLRInputStream inputStream = new ANTLRInputStream(tempReader);
                     ArmAssemblerLexer lexer = new ArmAssemblerLexer(inputStream);
                     CommonTokenStream stream = new CommonTokenStream(lexer);
                     ArmAssemblerParser parser = new ArmAssemblerParser(stream);
                     ProgramContext armProgram = parser.program();
-                    AssemblerVisitor assembler = new AssemblerVisitor();
-                    List<Integer> assembledCode = assembler.assembleCode(armProgram);
+                    tempReader.close();
 
-                    FileWriter binaryWriter = new FileWriter(outputDestination);
-                    for(Integer binaryLine : assembledCode){
-                        String lineText = Utils.to32BitBinary(binaryLine);
-                        binaryWriter.append(lineText);
-                        binaryWriter.append("\r\n");
+                    int numSyntaxErrors = parser.getNumberOfSyntaxErrors();
+                    if(numSyntaxErrors > 0){
+                        System.err.println("Found " + numSyntaxErrors + " syntax errors");
+                    } else {
+                        AssemblerVisitor assembler = new AssemblerVisitor();
+                        List<Integer> assembledCode = assembler.assembleCode(armProgram);
+
+                        FileWriter binaryWriter = new FileWriter(outputDestination);
+                        for(Integer binaryLine : assembledCode){
+                            String lineText = Utils.to32BitBinary(binaryLine);
+                            binaryWriter.append(lineText);
+                            binaryWriter.append("\r\n");
+                        }
+
+                        binaryWriter.close();
                     }
 
-                    binaryWriter.close();
                     Utils.deleteFile(tempOutput);
                 }
             }

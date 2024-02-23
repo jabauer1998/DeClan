@@ -3,6 +3,18 @@ package io.github.H20man13.DeClan.common.dag;
 import java.util.List;
 
 public interface DagNode {
+    public enum ScopeType{
+        GLOBAL,
+        EXTERNAL_RETURN,
+        INTERNAL_RETURN,
+        LOCAL,
+        PARAM
+    }
+
+    public enum ValueType{
+        STRING, INT, REAL, BOOL 
+    }
+
     public boolean containsId(String ident);
     @Override
     public boolean equals(Object dagNode);
@@ -12,4 +24,6 @@ public interface DagNode {
     public void deleteAncestor(DagNode ancestor);
     public boolean isRoot();
     public List<DagNode> getChildren();
+    public ScopeType getScopeType();
+    public ValueType getValueType();
 }

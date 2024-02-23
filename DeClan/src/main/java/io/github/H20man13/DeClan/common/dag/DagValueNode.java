@@ -6,21 +6,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DagValueNode implements DagNode{
-    public enum ValueType{
-        INT, REAL, BOOL, STRING
-    }
 
     private List<String> identifiers;
     private List<DagNode> ancestors;
     private Object value;
     private ValueType type;
+    private ScopeType scope;
 
-    public DagValueNode(String identifier, ValueType type, Object value){
+    public DagValueNode(ScopeType scope, String identifier, Object value, ValueType type){
         this.identifiers = new LinkedList<String>();
         this.identifiers.add(identifier);
         this.value = value;
         this.type = type;
         this.ancestors = new ArrayList<DagNode>();
+        this.scope = scope;
+        this.type = type;
     }
 
     @Override
@@ -79,5 +79,15 @@ public class DagValueNode implements DagNode{
 
     public Object getValue(){
         return value;
+    }
+
+    @Override
+    public ScopeType getScopeType() {
+        return this.scope;
+    }
+
+    @Override
+    public ValueType getValueType() {
+        return this.type;
     }
 }

@@ -27,12 +27,10 @@ import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
 import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
-import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.IntEntry;
 import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.OpUtil;
 import io.github.H20man13.DeClan.common.util.Utils;
 
@@ -103,26 +101,30 @@ public class MyICodeMachine {
                     else if(instruction instanceof End) interpretEndStatement((End)instruction, programLength);
                     else if(instruction instanceof Return) interpretReturnStatement((Return)instruction, programLength);
                     else if(instruction instanceof Label) interpretLabelStatement((Label)instruction, programLength);
-                    else if(instruction instanceof ParamAssign) interpretParamAssignment((ParamAssign)instruction, programLength);
-                    else if(instruction instanceof InternalPlace) interpretInternalPlacement((InternalPlace)instruction, programLength);
                     else {
                         errorAndExit("Unexpected icode instruction found " + instruction.getClass(), this.programCounter, programLength);
                     }
                     continue;
                 case RETURN:
-                    if(instruction instanceof ExternalPlace){
+                    if(instruction instanceof Assign){
                         //Then we need to perform this assignment before deallocating the stacks
-                        ExternalPlace placement = (ExternalPlace)instruction;
-                        if(tempReturnValue != null){
-                            variableValues.addEntry(placement.place, new VariableEntry(false, tempReturnValue));
-                            tempReturnValue = null;
-                        }else if(variableValues.entryExists(placement.retPlace)){
-                            VariableEntry entry = variableValues.getEntry(placement.retPlace);
-                            //Now we need to Deallocate the Top of the Stack
-                            variableValues.removeScope();
-                            variableValues.addEntry(placement.place, entry);
+                        Assign placement = (Assign)instruction;
+                        if(placement.getScope() == Assign.Scope.EXTERNAL_RETURN){
+                            if(tempReturnValue != null){
+                                variableValues.addEntry(placement.place, new VariableEntry(false, tempReturnValue));
+                                tempReturnValue = null;
+                            } else if(variableValues.entryExists(placement.value.toString())){
+                                VariableEntry entry = variableValues.getEntry(placement.value.toString());
+                                //Now we need to Deallocate the Top of the Stack
+                                variableValues.removeScope();
+                                variableValues.addEntry(placement.place, entry);
+                            } else {
+                                errorAndExit("Return variable " + placement.value.toString() + "was not allocated correctly", this.programCounter, programLength);
+                            }
                         } else {
-                            errorAndExit("Return variable " + placement.retPlace + "was not allocated correctly", this.programCounter, programLength);
+                            //De incriment the program counter
+                            this.programCounter--;
+                            variableValues.removeScope();
                         }
                     } else {
                         //Deincriment the program counter in order to have the same icode but in the init state\
@@ -146,25 +148,6 @@ public class MyICodeMachine {
             this.variableValues.addEntry(place, new VariableEntry(false, result));
         } else {
             errorAndExit("Error expression in assignment evaluated to null", programCounter, programLength);
-        }
-    }
-
-    private void interpretParamAssignment(ParamAssign assign, int programLength){
-        String place = assign.newPlace;
-        if(variableValues.entryExists(assign.paramPlace)){
-            VariableEntry result = this.variableValues.getEntry(assign.paramPlace);
-            this.variableValues.addEntry(place, result);
-        } else {
-            errorAndExit("Error in " + assign + " cant find param " + assign.paramPlace, programCounter, programLength);
-        }
-    }
-
-    private void interpretInternalPlacement(InternalPlace placement, int programLength){
-        if(variableValues.entryExists(placement.retPlace)){
-            VariableEntry entry = variableValues.getEntry(placement.retPlace);
-            variableValues.addEntry(placement.place, entry);
-        } else {
-            errorAndExit("Error in " + placement + " cant find " + placement.retPlace, programCounter, programLength);
         }
     }
 
@@ -334,7 +317,7 @@ public class MyICodeMachine {
         else if(expression instanceof UnExp) return interpretUnExp((UnExp)expression, programLength);
         else if(expression instanceof IdentExp) return interpretIdentExp((IdentExp)expression, programLength);
         else {
-            return Utils.getValue(expression);
+            return ConversionUtils.getValue(expression);
         }
     }
 
@@ -357,7 +340,7 @@ public class MyICodeMachine {
         Object right = null;
 
         if(expression.right.isConstant()){
-            right = Utils.getValue(expression.right);
+            right = ConversionUtils.getValue(expression.right);
         } else if(variableValues.entryExists(expression.right.toString())) {
             VariableEntry entry = variableValues.getEntry(expression.right.toString());
             right = entry.getValue();
@@ -384,7 +367,7 @@ public class MyICodeMachine {
         Object left = null;
         Object right = null;
         if(expression.left.isConstant()){
-            left = Utils.getValue(expression.left);
+            left = ConversionUtils.getValue(expression.left);
         } else if(variableValues.entryExists(expression.left.toString())) {
             VariableEntry entry = variableValues.getEntry(expression.left.toString());
             left = entry.getValue();
@@ -393,7 +376,7 @@ public class MyICodeMachine {
         }
 
         if(expression.right.isConstant()){
-            right = Utils.getValue(expression.right);
+            right = ConversionUtils.getValue(expression.right);
         } else if(variableValues.entryExists(expression.right.toString())) {
             VariableEntry entry = variableValues.getEntry(expression.right.toString());
             right = entry.getValue();

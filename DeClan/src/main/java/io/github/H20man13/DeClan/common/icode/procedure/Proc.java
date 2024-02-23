@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
@@ -12,12 +13,12 @@ import io.github.H20man13.DeClan.common.util.Utils;
 
 public class Proc implements ICode {
     public ProcLabel label;
-    public List<ParamAssign> paramAssign;
+    public List<Assign> paramAssign;
     public List<ICode> instructions;
-    public InternalPlace placement;
+    public Assign placement;
     public Return returnStatement;
 
-    public Proc(ProcLabel label, List<ParamAssign> paramAssign, List<ICode> instructions, InternalPlace place, Return returnStatement){
+    public Proc(ProcLabel label, List<Assign> paramAssign, List<ICode> instructions, Assign place, Return returnStatement){
         this.label = label;
         this.paramAssign = paramAssign;
         this.instructions = instructions;
@@ -27,7 +28,7 @@ public class Proc implements ICode {
 
     public Proc(ProcLabel label){
         this.label = label;
-        this.paramAssign = new LinkedList<ParamAssign>();
+        this.paramAssign = new LinkedList<Assign>();
         this.instructions = new LinkedList<ICode>();
         this.placement = null;
         this.returnStatement = new Return();
@@ -37,7 +38,7 @@ public class Proc implements ICode {
         return this.instructions.get(index);
     }
 
-    public ParamAssign getParamater(int index){
+    public Assign getParamater(int index){
         return this.paramAssign.get(index);
     }
 
@@ -49,7 +50,7 @@ public class Proc implements ICode {
         return this.instructions.size();
     }
 
-    public void addParamater(ParamAssign assign){
+    public void addParamater(Assign assign){
         this.paramAssign.add(assign);
     }
 
@@ -115,8 +116,8 @@ public class Proc implements ICode {
                 return false;
 
             for(int i = 0; i < paramAssign.size(); i++){
-                ParamAssign assign1 = paramAssign.get(i);
-                ParamAssign assign2 = objProc.paramAssign.get(i);
+                Assign assign1 = paramAssign.get(i);
+                Assign assign2 = objProc.paramAssign.get(i);
 
                 if(!assign1.equals(assign2))
                     return false;
@@ -155,7 +156,7 @@ public class Proc implements ICode {
         StringBuilder sb = new StringBuilder();
         sb.append(label.toString());
         sb.append("\r\n");
-        for(ParamAssign assign: paramAssign){
+        for(Assign assign: paramAssign){
             StringBuilder innerSb = new StringBuilder();
             innerSb.append("  ");
             innerSb.append(assign.toString());
@@ -191,7 +192,7 @@ public class Proc implements ICode {
 
         toRet.addAll(label.genFlatCode());
 
-        for(ParamAssign assign : paramAssign){
+        for(Assign assign : paramAssign){
             toRet.addAll(assign.genFlatCode());
         }
 

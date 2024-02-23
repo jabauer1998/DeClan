@@ -37,7 +37,7 @@ public class DataSectionBuilder extends AssignmentBuilder implements Completable
     }
 
     @Override
-    public String buildParamaterAssignment(String place) {
+    public String buildParamaterAssignment(String place, Assign.Type type) {
         return null;
     }
 }

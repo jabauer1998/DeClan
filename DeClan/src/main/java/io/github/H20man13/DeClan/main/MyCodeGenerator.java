@@ -39,9 +39,6 @@ import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
-import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
@@ -448,12 +445,6 @@ public class MyCodeGenerator {
 
         //Init Inline Assembly Pattern
         initInline0();
-
-        //Init Param Assign Pattern
-        initParamAssign0();
-
-        //Init Internal Placement pattern (aka the special assignment prior to a Return)
-        initInternalPlacement0();
     }
 
     private void initMultiplyAndAccumulate0(){
@@ -2155,13 +2146,13 @@ public class MyCodeGenerator {
                 int totalReturnStackLengthInBytes = totalReturnStackLength * 4;
 
                 ICode retICode = intermediateCode.get(i + 1);
-                ExternalPlace returnPlacement = (ExternalPlace)retICode;
+                Assign returnPlacement = (Assign)retICode;
                 //The First thing we need to do is allocate all the code we can for the Paramaters
                 int toAllocateToStack = totalReturnStackLengthInBytes + 8;
                 int toPlaceReturnAddressOnStack = toAllocateToStack;
                 int offset = toAllocateToStack;
                 offset -= 4;
-                cGen.addVariable(returnPlacement.retPlace, offset);
+                cGen.addVariable(returnPlacement.value.toString(), offset);
                 for(Tuple<String, String> param: procICode.params){
                     offset -= 4;
                     cGen.addVariable(param.dest, VariableLength.WORD, offset);
@@ -2183,8 +2174,8 @@ public class MyCodeGenerator {
                 cGen.addInstruction("BL " + procICode.pname);
 
                 //Now to load the Return value from the Stack
-                String temp = rGen.getTempReg(returnPlacement.retPlace, retICode);
-                cGen.addInstruction("LDR " + temp + ", " + returnPlacement.retPlace);
+                String temp = rGen.getTempReg(returnPlacement.value.toString(), retICode);
+                cGen.addInstruction("LDR " + temp + ", " + returnPlacement.value.toString());
                 cGen.addInstruction("LDR " + temp + ", [R13, -"+temp+"]");
 
                 cGen.addVariable(returnPlacement.place, VariableLength.WORD);
@@ -9914,47 +9905,6 @@ public class MyCodeGenerator {
             }
         });
     }
-
-    private void initParamAssign0(){
-        codeGenFunctions.put(Pattern.paramAssign0, new Callable<Void>() {
-           @Override
-           public Void call() throws Exception {
-                ICode icode = intermediateCode.get(i);
-                ParamAssign paramAssign = (ParamAssign)icode;
-
-                cGen.addVariable(paramAssign.newPlace, VariableLength.WORD);
-                
-                String offSetPlace = rGen.getReg(paramAssign.paramPlace, icode);
-                cGen.addInstruction("LDR " + offSetPlace + ", " + paramAssign.paramPlace);
-                cGen.addInstruction("LDR " + offSetPlace + ", [R13, -"+ offSetPlace +"]");
-                cGen.addInstruction("STR " + offSetPlace + ", " + paramAssign.newPlace);
-
-                rGen.freeTempRegs();
-                return null;
-           } 
-        });
-    }
-
-    private void initInternalPlacement0(){
-        codeGenFunctions.put(Pattern.internalReturnPlacement0, new Callable<Void>() {
-            @Override
-            public Void call() throws Exception{
-                ICode icode = intermediateCode.get(i);
-                InternalPlace placement = (InternalPlace)icode;
-
-                String reg1 = rGen.getReg(placement.retPlace, icode);
-                cGen.addInstruction("LDR " + reg1 + ", " + placement.retPlace);
-
-                String temp = rGen.getTempReg(placement.place, icode);
-                cGen.addInstruction("LDR " + temp + ", " + placement.place);
-                cGen.addInstruction("STR " + reg1 + ", [R13, -"+temp+"]");
-
-                return null;
-            }
-        });
-    }
-
-
 
     private void initInline0(){
         codeGenFunctions.put(Pattern.inline0, new Callable<Void>() {

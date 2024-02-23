@@ -1,6 +1,7 @@
 package io.github.H20man13.DeClan.common.icode.exp;
 
 import io.github.H20man13.DeClan.common.pat.P;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class UnExp implements Exp {
@@ -49,7 +50,7 @@ public class UnExp implements Exp {
     @Override
     public P asPattern(boolean hasContainer) {
         if(hasContainer){
-            return P.PAT(Utils.unOpToPattern(op), right.asPattern(false));
+            return P.PAT(ConversionUtils.unOpToPattern(op), right.asPattern(false));
         } else {
             return null;
         }

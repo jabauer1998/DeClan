@@ -18,8 +18,6 @@ import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
-import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.main.MyIrFactory;
 
@@ -28,8 +26,8 @@ public class ProcedureBuilder extends StatementBuilder implements CompletableBui
     private IrRegisterGenerator gen;
     private MyIrFactory factory;
     private ProcLabel label;
-    private List<ParamAssign> paramaters;
-    private InternalPlace returnPlace;
+    private List<Assign> paramaters;
+    private Assign returnPlace;
     private Return ret;
 
     public ProcedureBuilder(SymbolSectionBuilder symbols, IrBuilderContext ctx, IrRegisterGenerator gen, ErrorLog errLog){
@@ -49,14 +47,14 @@ public class ProcedureBuilder extends StatementBuilder implements CompletableBui
     public void resetBuilder() {
         super.resetBuilder();
         this.label = null;
-        this.paramaters = new LinkedList<ParamAssign>();
+        this.paramaters = new LinkedList<Assign>();
         this.returnPlace = null;
         this.ret = null;
     }
 
-    public String buildParamaterAssignment(String value){
+    public String buildParamaterAssignment(String value, Assign.Type type){
         String newPlace = gen.genNext();
-        paramaters.add(factory.produceParamAssignment(newPlace, value));
+        paramaters.add(factory.produceParamAssignment(newPlace, value, type));
         return newPlace;
     }
 
@@ -68,7 +66,7 @@ public class ProcedureBuilder extends StatementBuilder implements CompletableBui
         this.ret = factory.produceReturnStatement();
     }
 
-    public void buildInternalReturnPlacement(String dest, String source){
-        this.returnPlace = factory.produceInternalReturnPlacement(dest, source);
+    public void buildInternalReturnPlacement(String dest, String source, Assign.Type type){
+        this.returnPlace = factory.produceInternalReturnPlacement(dest, source, type);
     }
 }

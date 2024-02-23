@@ -1,0 +1,364 @@
+SYMBOL SECTION
+ b82 CONST INTERNAL realBias
+DATA SECTION
+ a := 7.5
+ b := a
+ c := 49.5
+ d := c
+ e := 0.0
+ b81 := 127
+ b82 := b81
+CODE SECTION
+ CALL RSub ( d -> b15 , b -> b17 )
+ b14 <| b20
+ e := b14
+ CALL WriteReal ( e -> c85 )
+END
+PROC SECTION
+ PROC LABEL RSub
+  b16 <- b15
+  b18 <- b17
+  b19 := 0.0
+  CALL RNeg ( b18 -> b21 )
+  b33 <| b22
+  CALL RAdd ( b16 -> b34 , b33 -> b36 )
+  c84 <| b39
+  b19 := c84
+  b20 |< b19
+ RETURN
+ PROC LABEL RNeg
+  K9 <- b21
+  K2 := 0
+  K3 := 0
+  K4 := 0
+  K5 := 0
+  K6 := 1
+  K7 := 31
+  K8 := K6 ILSHIFT K7
+  K2 := K8
+  CALL RealBinaryAsInt ( K9 -> b23 )
+  L0 <| b26
+  K3 := L0
+  L1 := K3 IXOR K2
+  K5 := L1
+  CALL IntBinaryAsReal ( K5 -> b28 )
+  L2 <| b31
+  K4 := L2
+  b22 |< K4
+ RETURN
+ PROC LABEL RealBinaryAsInt
+  b24 <- b23
+  b25 := 0
+  b27 := 0.0
+  IPARAM b27
+  IPARAM b24
+  IASM "LDR %r, %a"
+  IPARAM b27
+  IPARAM b25
+  IASM "STR %r, %a"
+  b26 |< b25
+ RETURN
+ PROC LABEL IntBinaryAsReal
+  b29 <- b28
+  b30 := 0.0
+  b32 := 0
+  IPARAM b32
+  IPARAM b29
+  IASM "LDR %r, %a"
+  IPARAM b32
+  IPARAM b30
+  IASM "STR %r, %a"
+  b31 |< b30
+ RETURN
+ PROC LABEL RAdd
+  b35 <- b34
+  b37 <- b36
+  b38 := 0.0
+  b40 := 0
+  b41 := 0
+  b42 := 0
+  b43 := 0
+  b44 := 0
+  b45 := 0
+  b46 := 0
+  b47 := 0
+  b48 := 0
+  b49 := 0
+  b50 := 0
+  b51 := 0
+  b52 := 0
+  b53 := 0
+  b54 := 0
+  b55 := 0
+  CALL RealSign ( b35 -> b57 )
+  b56 <| b60
+  b41 := b56
+  CALL RealSign ( b37 -> b57 )
+  b67 <| b60
+  b42 := b67
+  CALL RealExponent ( b35 -> b69 )
+  b68 <| b72
+  b44 := b68
+  CALL RealExponent ( b37 -> b69 )
+  b83 <| b72
+  b45 := b83
+  CALL RealMantissa ( b35 -> b85 )
+  b84 <| b88
+  b46 := b84
+  CALL RealMantissa ( b37 -> b85 )
+  b95 <| b88
+  b47 := b95
+  b96 := b44 LT b45
+  IF b96 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0_0
+  LABEL IFSTAT_0_SEQ_0_LEVEL_0_0
+  b97 := b45 IADD b82
+  b48 := b97
+  b98 := b45 ISUB b44
+  b43 := b98
+  b99 := b46 IRSHIFT b43
+  b46 := b99
+  GOTO IFEND_0_LEVEL_0_0
+  LABEL IFNEXT_0_SEQ_0_LEVEL_0_0
+  c10 := b44 GT b45
+  IF c10 EQ TRUE THEN IFSTAT_0_SEQ_1_LEVEL_0 ELSE IFNEXT_0_SEQ_1_LEVEL_0_0
+  LABEL IFSTAT_0_SEQ_1_LEVEL_0
+  c11 := b44 IADD b82
+  b48 := c11
+  c12 := b44 ISUB b45
+  b43 := c12
+  c13 := b47 IRSHIFT b43
+  b47 := c13
+  GOTO IFEND_0_LEVEL_0_0
+  LABEL IFNEXT_0_SEQ_1_LEVEL_0_0
+  c14 := b44 IADD b82
+  b48 := c14
+  GOTO IFEND_0_LEVEL_0_0
+  LABEL IFNEXT_0_SEQ_2_LEVEL_0
+  LABEL IFEND_0_LEVEL_0_0
+  c15 := 0
+  c16 := b41 EQ c15
+  c17 := 1
+  c18 := b42 EQ c17
+  c19 := c16 LAND c18
+  IF c19 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0_0
+  LABEL IFSTAT_1_SEQ_0_LEVEL_0_0
+  c20 := b46 GT b47
+  IF c20 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_1 ELSE IFNEXT_2_SEQ_0_LEVEL_1
+  LABEL IFSTAT_2_SEQ_0_LEVEL_1
+  c21 := 0
+  b51 := c21
+  c22 := b46 ISUB b47
+  b50 := c22
+  GOTO IFEND_2_LEVEL_1
+  LABEL IFNEXT_2_SEQ_0_LEVEL_1
+  c23 := b46 LT b47
+  IF c23 EQ TRUE THEN IFSTAT_2_SEQ_1_LEVEL_1 ELSE IFNEXT_2_SEQ_1_LEVEL_1
+  LABEL IFSTAT_2_SEQ_1_LEVEL_1
+  c24 := 1
+  b51 := c24
+  c25 := b47 ISUB b46
+  b50 := c25
+  GOTO IFEND_2_LEVEL_1
+  LABEL IFNEXT_2_SEQ_1_LEVEL_1
+  c26 := 0
+  b51 := c26
+  c27 := 0
+  b50 := c27
+  GOTO IFEND_2_LEVEL_1
+  LABEL IFNEXT_2_SEQ_2_LEVEL_1
+  LABEL IFEND_2_LEVEL_1
+  GOTO IFEND_1_LEVEL_0_0
+  LABEL IFNEXT_1_SEQ_0_LEVEL_0_0
+  c28 := 1
+  c29 := b41 EQ c28
+  c30 := 0
+  c31 := b42 EQ c30
+  c32 := c29 LAND c31
+  IF c32 EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0_0
+  LABEL IFSTAT_1_SEQ_1_LEVEL_0_0
+  c33 := b46 GT b47
+  IF c33 EQ TRUE THEN IFSTAT_4_SEQ_0_LEVEL_1 ELSE IFNEXT_4_SEQ_0_LEVEL_1
+  LABEL IFSTAT_4_SEQ_0_LEVEL_1
+  c34 := 1
+  b51 := c34
+  c35 := b46 ISUB b47
+  b50 := c35
+  GOTO IFEND_4_LEVEL_1
+  LABEL IFNEXT_4_SEQ_0_LEVEL_1
+  c36 := b46 LT b47
+  IF c36 EQ TRUE THEN IFSTAT_4_SEQ_1_LEVEL_1 ELSE IFNEXT_4_SEQ_1_LEVEL_1
+  LABEL IFSTAT_4_SEQ_1_LEVEL_1
+  c37 := 0
+  b51 := c37
+  c38 := b47 ISUB b46
+  b50 := c38
+  GOTO IFEND_4_LEVEL_1
+  LABEL IFNEXT_4_SEQ_1_LEVEL_1
+  c39 := 0
+  b51 := c39
+  c40 := 0
+  b50 := c40
+  GOTO IFEND_4_LEVEL_1
+  LABEL IFNEXT_4_SEQ_2_LEVEL_1
+  LABEL IFEND_4_LEVEL_1
+  GOTO IFEND_1_LEVEL_0_0
+  LABEL IFNEXT_1_SEQ_1_LEVEL_0_0
+  b51 := b41
+  c41 := b46 IADD b47
+  b50 := c41
+  GOTO IFEND_1_LEVEL_0_0
+  LABEL IFNEXT_1_SEQ_2_LEVEL_0
+  LABEL IFEND_1_LEVEL_0_0
+  c42 := 24
+  c43 := b50 IRSHIFT c42
+  c44 := 1
+  c45 := c43 IAND c44
+  b49 := c45
+  c46 := 1
+  c47 := b49 EQ c46
+  IF c47 EQ TRUE THEN IFSTAT_7_SEQ_0_LEVEL_0_0 ELSE IFNEXT_7_SEQ_0_LEVEL_0_0
+  LABEL IFSTAT_7_SEQ_0_LEVEL_0_0
+  c48 := 1
+  c49 := b50 IRSHIFT c48
+  b50 := c49
+  c50 := 1
+  c51 := b48 IADD c50
+  b48 := c51
+  GOTO IFEND_7_LEVEL_0_0
+  LABEL IFNEXT_7_SEQ_0_LEVEL_0_0
+  LABEL IFEND_7_LEVEL_0_0
+  b52 := b50
+  c52 := 0
+  b55 := c52
+  CALL IntIsZero ( b52 -> c54 )
+  c53 <| c57
+  c62 := BNOT c53
+  IF c62 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_0
+  LABEL WHILECOND_0_SEQ_0_LEVEL_0_0
+  IF c62 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILEEND_0_LEVEL_0_0
+  LABEL WHILESTAT_0_SEQ_0_LEVEL_0_0
+  c63 := 1
+  c64 := b52 IAND c63
+  b54 := c64
+  c65 := 1
+  c66 := b54 EQ c65
+  IF c66 EQ TRUE THEN IFSTAT_8_SEQ_0_LEVEL_0_0 ELSE IFNEXT_8_SEQ_0_LEVEL_0_0
+  LABEL IFSTAT_8_SEQ_0_LEVEL_0_0
+  b53 := b55
+  GOTO IFEND_8_LEVEL_0_0
+  LABEL IFNEXT_8_SEQ_0_LEVEL_0_0
+  LABEL IFEND_8_LEVEL_0_0
+  c67 := 1
+  c68 := b55 IADD c67
+  b55 := c68
+  g4 := 1
+  g5 := b52 IRSHIFT g4
+  b52 := g5
+  CALL IntIsZero ( b52 -> c54 )
+  g6 <| c57
+  g7 := BNOT g6
+  c62 := g7
+  GOTO WHILECOND_0_SEQ_0_LEVEL_0_0
+  LABEL WHILENEXT_0_SEQ_0_LEVEL_0_0
+  LABEL WHILEEND_0_LEVEL_0_0
+  g8 := 23
+  g9 := b53 LT g8
+  IF g9 EQ TRUE THEN IFSTAT_9_SEQ_0_LEVEL_0_0 ELSE IFNEXT_9_SEQ_0_LEVEL_0_0
+  LABEL IFSTAT_9_SEQ_0_LEVEL_0_0
+  c69 := 23
+  c70 := c69 ISUB b53
+  b43 := c70
+  c71 := b50 ILSHIFT b43
+  b50 := c71
+  c72 := b48 ISUB b43
+  b48 := c72
+  GOTO IFEND_9_LEVEL_0_0
+  LABEL IFNEXT_9_SEQ_0_LEVEL_0_0
+  LABEL IFEND_9_LEVEL_0_0
+  c73 := 255
+  c74 := b48 IAND c73
+  c75 := 23
+  c76 := c74 ILSHIFT c75
+  b40 := c76
+  c77 := 8388607
+  c78 := b50 IAND c77
+  c79 := b40 IOR c78
+  b40 := c79
+  c80 := 31
+  c81 := b51 ILSHIFT c80
+  c82 := b40 IOR c81
+  b40 := c82
+  CALL IntBinaryAsReal ( b40 -> b28 )
+  c83 <| b31
+  b38 := c83
+  b39 |< b38
+ RETURN
+ PROC LABEL RealSign
+  b58 <- b57
+  b59 := 0
+  b61 := 0
+  CALL RealBinaryAsInt ( b58 -> b23 )
+  b62 <| b26
+  b61 := b62
+  b63 := 31
+  b64 := b61 IRSHIFT b63
+  b65 := 1
+  b66 := b64 IAND b65
+  b59 := b66
+  b60 |< b59
+ RETURN
+ PROC LABEL RealExponent
+  b70 <- b69
+  b71 := 0
+  b73 := 0
+  b74 := 0
+  CALL RealBinaryAsInt ( b70 -> b23 )
+  b75 <| b26
+  b73 := b75
+  b76 := 23
+  b77 := b73 IRSHIFT b76
+  b78 := 255
+  b79 := b77 IAND b78
+  b74 := b79
+  b80 := b74 ISUB b82
+  b71 := b80
+  b72 |< b71
+ RETURN
+ PROC LABEL RealMantissa
+  b86 <- b85
+  b89 := 0
+  b90 := 0
+  CALL RealBinaryAsInt ( b86 -> b23 )
+  b91 <| b26
+  b90 := b91
+  b92 := 8388607
+  b93 := b90 IAND b92
+  b89 := b93
+  b94 := 8388608
+  b87 := b89 IOR b94
+  b88 |< b87
+ RETURN
+ PROC LABEL IntIsZero
+  c55 <- c54
+  c56 := FALSE
+  c58 := 0
+  c59 := c55 EQ c58
+  IF c59 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_1 ELSE IFNEXT_1_SEQ_0_LEVEL_0_1
+  LABEL IFSTAT_1_SEQ_0_LEVEL_0_1
+  c60 := TRUE
+  c56 := c60
+  GOTO IFEND_1_LEVEL_0_1
+  LABEL IFNEXT_1_SEQ_0_LEVEL_0_1
+  c61 := FALSE
+  c56 := c61
+  GOTO IFEND_1_LEVEL_0_1
+  LABEL IFNEXT_1_SEQ_1_LEVEL_0_1
+  LABEL IFEND_1_LEVEL_0_1
+  c57 |< c56
+ RETURN
+ PROC LABEL WriteReal
+  c86 <- c85
+  IPARAM c86
+  IASM "LDR R0, %a"
+  IASM "SWI 2"
+ RETURN

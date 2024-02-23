@@ -89,7 +89,7 @@ public class IrLexerTest {
 
     @Test
     public void testSymbols(){
-        String symbols = "( , ) := -> |< <| <-";
+        String symbols = "( , ) := ->";
         Source source = new ReaderSource(new StringReader(symbols));
         ErrorLog errLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(source, errLog);
@@ -100,9 +100,6 @@ public class IrLexerTest {
         tokTypes.add(IrTokenType.RPAR);
         tokTypes.add(IrTokenType.ASSIGN);
         tokTypes.add(IrTokenType.MAP);
-        tokTypes.add(IrTokenType.IPLACE);
-        tokTypes.add(IrTokenType.EPLACE);
-        tokTypes.add(IrTokenType.PARAM_ASSIGN);
 
         for(LogItem item : errLog){
             assertTrue(item.toString(), false);

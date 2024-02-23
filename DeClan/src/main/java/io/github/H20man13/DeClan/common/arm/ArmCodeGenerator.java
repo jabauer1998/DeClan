@@ -99,7 +99,7 @@ public class ArmCodeGenerator {
     public void setLabel(String label) throws IOException{
         if(!codeWritten){
             if(this.label != null){
-                addInstruction("MOV R0, R0\r\n");
+                addInstruction("MOV R0, R0");
                 this.label = null;
             }
             this.label = label;

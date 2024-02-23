@@ -5,9 +5,11 @@ import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Goto;
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.SymEntry;
+import io.github.H20man13.DeClan.common.icode.Assign.Scope;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
@@ -31,6 +33,7 @@ import io.github.H20man13.DeClan.common.symboltable.entry.StringEntry;
 import io.github.H20man13.DeClan.common.symboltable.entry.StringEntryList;
 import io.github.H20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
 import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 import static io.github.H20man13.DeClan.common.gen.IrRegisterGenerator.*;
@@ -105,12 +108,17 @@ public class MyICodeGenerator{
     this.interpreter = new MyInterpreter(errorLog, null, null, null);
   }
 
-  public Lib generateLibraryIr(Library lib){
+  public Lib generateLibraryIr(Library lib, Library... otherLibs){
     LibraryBuilder libBuilder = new LibraryBuilder(ctx, gen, errorLog);
     procEnvironment.addScope();
     varEnvironment.addScope();
     procArgs.addScope();
     typeChecker.addScope();
+
+    for(Library otherLib: otherLibs){
+      typeChecker.addScope();
+      otherLib.accept(typeChecker);
+    }
 
     DataSectionBuilder dataSecBuilder = libBuilder.getDataSectionBuilder();
     for(ConstDeclaration decl : lib.getConstDecls()){
@@ -120,7 +128,7 @@ public class MyICodeGenerator{
 
     for(VariableDeclaration decl : lib.getVarDecls()){
       decl.accept(typeChecker);
-      generateVariableIr(decl, dataSecBuilder);
+      generateVariableIr(Scope.GLOBAL, decl, dataSecBuilder);
     }
 
     loadFunctions(lib.getProcDecls());
@@ -139,12 +147,17 @@ public class MyICodeGenerator{
     return libBuilder.completeBuild();
   }
 
-  public Prog generateProgramIr(Program program) {
+  public Prog generateProgramIr(Program program, Library... otherLibs) {
     ProgramBuilder builder = new ProgramBuilder(ctx, gen, errorLog);
     procEnvironment.addScope();
     varEnvironment.addScope();
     procArgs.addScope();
     typeChecker.addScope();
+
+    for(Library otherLib: otherLibs){
+        typeChecker.addScope();
+        otherLib.accept(typeChecker);
+    }
 
     DataSectionBuilder variableBuilder = builder.getDataSectionBuilder(); 
     for(ConstDeclaration decl : program.getConstDecls()){
@@ -154,7 +167,7 @@ public class MyICodeGenerator{
 
     for (VariableDeclaration decl : program.getVarDecls()) {
       decl.accept(typeChecker);
-      generateVariableIr(decl, variableBuilder);
+      generateVariableIr(Scope.GLOBAL, decl, variableBuilder);
     }
 
     loadFunctions(program.getProcDecls());
@@ -162,7 +175,7 @@ public class MyICodeGenerator{
 
     CodeSectionBuilder codeBuilder = builder.getCodeSectionBuilder();
     for (Statement statement : program.getStatements()) {
-      generateStatementIr(statement, codeBuilder);
+      generateStatementIr(Scope.LOCAL, statement, codeBuilder);
     }
 
     ProcedureSectionBuilder procSectionBuilder = builder.getProcedureSectionBuilder();
@@ -185,25 +198,27 @@ public class MyICodeGenerator{
   public void generateConstantIr(ConstDeclaration constDecl, AssignmentBuilder builder) {
     Identifier id = constDecl.getIdentifier();
     Expression valueExpr = constDecl.getValue();
-    String value = generateExpressionIr(valueExpr, builder);
-    String place = builder.buildVariableAssignment(value);
+    String value = generateExpressionIr(Scope.LOCAL, valueExpr, builder);
+    TypeCheckerQualities qual = valueExpr.acceptResult(typeChecker);
+    Assign.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+    String place = builder.buildVariableAssignment(Scope.GLOBAL, value, type);
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
     SymbolSectionBuilder symbolBuilder = builder.getSymbolSectionBuilder();
     symbolBuilder.addSymEntry(SymEntry.CONST | SymEntry.INTERNAL, place, id.getLexeme());
   }
 
-  public void generateVariableIr(VariableDeclaration varDecl, AssignmentBuilder builder) {
+  public void generateVariableIr(Scope scope, VariableDeclaration varDecl, AssignmentBuilder builder) {
     Identifier id = varDecl.getIdentifier();
     Identifier type = varDecl.getType();
     String place = null;
     if(type.getLexeme().equals("STRING")){
-      place = builder.buildStringAssignment("\0");
+      place = builder.buildStringAssignment(scope, "\0");
     } else if(type.getLexeme().equals("REAL")) {
-      place = builder.buildNumAssignment("0.0");
+      place = builder.buildNumAssignment(scope, "0.0");
     } else if(type.getLexeme().equals("BOOLEAN")){
-      place = builder.buildBoolAssignment("FALSE");
+      place = builder.buildBoolAssignment(scope, "FALSE");
     } else {
-      place = builder.buildNumAssignment("0");
+      place = builder.buildNumAssignment(scope, "0");
     }
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
     SymbolSectionBuilder symBuilder = builder.getSymbolSectionBuilder();
@@ -240,10 +255,12 @@ public class MyICodeGenerator{
     builder.buildProcedureLabel(procedureName);
     paramEnvironment.addScope();
     varEnvironment.addScope();
+    typeChecker.addScope();
 
     StringEntryList list = procArgs.getEntry(procedureName);
     for(int i = 0; i < procDecl.getArguments().size(); i++){
       ParamaterDeclaration decl = procDecl.getArguments().get(i);
+      decl.accept(typeChecker);
       String actual = decl.getIdentifier().getLexeme();
       String alias = list.get(i);
       paramEnvironment.addEntry(actual, new StringEntry(alias));
@@ -252,31 +269,36 @@ public class MyICodeGenerator{
     List <Declaration> localVars = procDecl.getLocalVariables();
     for(int i = 0; i < localVars.size(); i++){
       Declaration localDecl = localVars.get(i);
+      localDecl.accept(typeChecker);
       if(localDecl instanceof VariableDeclaration){
-        generateVariableIr((VariableDeclaration)localVars.get(i), builder);
+        generateVariableIr(Scope.LOCAL, (VariableDeclaration)localVars.get(i), builder);
       }
     }
 
     List <Statement> exec = procDecl.getExecutionStatements();
     for(int i = 0; i < exec.size(); i++){
-	    generateStatementIr(exec.get(i), builder);
+      Statement stat = exec.get(i);
+      stat.accept(typeChecker);
+	    generateStatementIr(Scope.LOCAL, stat, builder);
     }
 
     Expression retExp = procDecl.getReturnStatement();
     if(retExp != null){
-      String retPlace = generateExpressionIr(retExp, builder);
+      TypeCheckerQualities qual = retExp.acceptResult(typeChecker); 
+      String retPlace = generateExpressionIr(Scope.LOCAL, retExp, builder);
       String returnPlace = procEnvironment.getEntry(procedureName).toString();
-      builder.buildInternalReturnPlacement(returnPlace, retPlace);
+      builder.buildInternalReturnPlacement(returnPlace, retPlace, ConversionUtils.typeCheckerQualitiesToAssignType(qual));
     }
     builder.buildReturnStatement();
+    typeChecker.removeVarScope();
     varEnvironment.removeScope();
     paramEnvironment.removeScope();
   }
 
-  public void generateStatementIr(Statement stat, StatementBuilder builder){
-    if(stat instanceof ProcedureCall) generateProcedureCallIr((ProcedureCall)stat, builder);
-    else if(stat instanceof Branch) generateBranchIr((Branch)stat, builder);
-    else if(stat instanceof Assignment) generateAssignmentIr((Assignment)stat, builder);
+  public void generateStatementIr(Scope scope, Statement stat, StatementBuilder builder){
+    if(stat instanceof ProcedureCall) generateProcedureCallIr(scope, (ProcedureCall)stat, builder);
+    else if(stat instanceof Branch) generateBranchIr(scope, (Branch)stat, builder);
+    else if(stat instanceof Assignment) generateAssignmentIr(scope, (Assignment)stat, builder);
     else if(stat instanceof Asm) generateInlineAssemblyIr((Asm)stat, builder);
     else if(stat instanceof EmptyStatement){
          //Do nothing
@@ -286,7 +308,7 @@ public class MyICodeGenerator{
     }
   }
         
-  public void generateProcedureCallIr(ProcedureCall procedureCall, StatementBuilder builder) {
+  public void generateProcedureCallIr(Scope scope, ProcedureCall procedureCall, StatementBuilder builder) {
     String funcName = procedureCall.getProcedureName().getLexeme();
     List<Expression> valArgs = procedureCall.getArguments();
 
@@ -296,7 +318,7 @@ public class MyICodeGenerator{
       List<Tuple<String, String>> valArgResults = new ArrayList<Tuple<String, String>>();
       for(int i = 0; i < valArgs.size(); i++){
         Expression valArg = valArgs.get(i);
-        String result = generateExpressionIr(valArg, builder);
+        String result = generateExpressionIr(Scope.LOCAL, valArg, builder);
         valArgResults.add(new Tuple<String, String>(result, argsToMap.get(i)));
       }
       builder.buildProcedureCall(funcName, valArgResults);
@@ -304,106 +326,110 @@ public class MyICodeGenerator{
       //Generate an External Procedure Call
       LinkedList<String> args = new LinkedList<String>();
       for(Expression valArg : valArgs){
-         String place = generateExpressionIr(valArg, builder);
+         String place = generateExpressionIr(scope, valArg, builder);
          args.add(place);
       }
       builder.buildExternalProcedureCall(funcName, args);
     }
   }
 
-  public void generateWhileBranchIr(WhileElifBranch whilebranch, StatementBuilder builder){
+  public void generateWhileBranchIr(Scope scope, WhileElifBranch whilebranch, StatementBuilder builder){
     Expression toCheck = whilebranch.getExpression();
     List<Statement> toExec = whilebranch.getExecStatements();
-    String test = generateExpressionIr(toCheck, builder);
+    String test = generateExpressionIr(scope, toCheck, builder);
     
     IdentExp ident = new IdentExp(test);
     builder.buildWhileLoopBeginning(ident);
 
     builder.incrimentWhileLoopLevel();
     for(int i = 0; i < toExec.size(); i++){
-      generateStatementIr(toExec.get(i), builder);
+      generateStatementIr(scope, toExec.get(i), builder);
     }
 
-    String test2 = generateExpressionIr(toCheck, builder);
-    builder.buildVariableAssignment(test, test2);
+    String test2 = generateExpressionIr(scope, toCheck, builder);
+    TypeCheckerQualities qual = toCheck.acceptResult(typeChecker);
+    Assign.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+    builder.buildVariableAssignment(scope, test, test2, type);
 
     builder.deIncrimentWhileLoopLevel();
 
     Branch nextBranch = whilebranch.getNextBranch();
     if(nextBranch != null) {
       builder.buildElseWhileLoopBeginning();
-      generateBranchIr(nextBranch, builder);
+      generateBranchIr(scope, nextBranch, builder);
     } else {
       builder.buildWhileLoopEnd();
     }
   }
     
-  public void generateBranchIr(Branch branch, StatementBuilder builder){
-    if(branch instanceof IfElifBranch) generateIfBranchIr((IfElifBranch)branch, builder);
-    else if(branch instanceof ElseBranch) generateElseBranchIr((ElseBranch)branch, builder);
-    else if(branch instanceof WhileElifBranch) generateWhileBranchIr((WhileElifBranch)branch, builder);
-    else if(branch instanceof RepeatBranch) generateRepeatLoopIr((RepeatBranch)branch, builder);
-    else if(branch instanceof ForBranch) generateForLoopIr((ForBranch)branch, builder);
+  public void generateBranchIr(Scope scope, Branch branch, StatementBuilder builder){
+    if(branch instanceof IfElifBranch) generateIfBranchIr(scope, (IfElifBranch)branch, builder);
+    else if(branch instanceof ElseBranch) generateElseBranchIr(scope, (ElseBranch)branch, builder);
+    else if(branch instanceof WhileElifBranch) generateWhileBranchIr(scope, (WhileElifBranch)branch, builder);
+    else if(branch instanceof RepeatBranch) generateRepeatLoopIr(scope, (RepeatBranch)branch, builder);
+    else if(branch instanceof ForBranch) generateForLoopIr(scope, (ForBranch)branch, builder);
     else {
       errorLog.add("Error unexpected branch type " + branch.getClass().getSimpleName(), branch.getStart());
     }
   }
-  public void generateIfBranchIr(IfElifBranch ifbranch, StatementBuilder builder){
+  public void generateIfBranchIr(Scope scope, IfElifBranch ifbranch, StatementBuilder builder){
     Expression toCheck = ifbranch.getExpression();
-    String test = generateExpressionIr(toCheck, builder);
+    String test = generateExpressionIr(scope, toCheck, builder);
     IdentExp ident = new IdentExp(test);
     builder.buildIfStatementBeginning(ident);
 
     builder.incrimentIfStatementLevel();
     List<Statement> toExec = ifbranch.getExecStatements();
     for(int i = 0; i < toExec.size(); i++){
-      generateStatementIr(toExec.get(i), builder);
+      generateStatementIr(scope, toExec.get(i), builder);
     }
     builder.deIncrimentIfStatementLevel();
 
     if(ifbranch.getNextBranch() != null) {
       builder.buildElseIfStatementBeginning();
-      generateBranchIr(ifbranch.getNextBranch(), builder);
+      generateBranchIr(scope, ifbranch.getNextBranch(), builder);
     } else {
       builder.buildIfStatementEnd();
     }
   }
 
-  public void generateElseBranchIr(ElseBranch elsebranch, StatementBuilder builder){
+  public void generateElseBranchIr(Scope scope, ElseBranch elsebranch, StatementBuilder builder){
     List<Statement> toExec = elsebranch.getExecStatements();
     builder.incrimentIfStatementLevel();
     for(int i = 0; i < toExec.size(); i++){
-      generateStatementIr(toExec.get(i), builder);
+      generateStatementIr(scope, toExec.get(i), builder);
     }
     builder.deIncrimentIfStatementLevel();
     builder.buildIfStatementEnd();
   }
 
-  public void generateRepeatLoopIr(RepeatBranch repeatbranch, StatementBuilder builder){
+  public void generateRepeatLoopIr(Scope scope, RepeatBranch repeatbranch, StatementBuilder builder){
     Expression toCheck = repeatbranch.getExpression();
     List<Statement> toExec = repeatbranch.getExecStatements();
-    String test = generateExpressionIr(toCheck, builder);
+    String test = generateExpressionIr(scope, toCheck, builder);
 
     builder.buildRepeatLoopBeginning(test);
 
     builder.incrimentRepeatLoopLevel();
     for(int i = 0; i < toExec.size(); i++){
-	    generateStatementIr(toExec.get(i), builder);
+	    generateStatementIr(scope, toExec.get(i), builder);
     }
     builder.deIncrimentRepeatLoopLevel();
 
-    String test2 = generateExpressionIr(toCheck, builder);
-    builder.buildVariableAssignment(test, test2);
+    String test2 = generateExpressionIr(scope, toCheck, builder);
+    TypeCheckerQualities qual = toCheck.acceptResult(typeChecker);
+    Assign.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+    builder.buildVariableAssignment(scope, test, test2, type);
 
     builder.buildRepeatLoopEnd();
   }
 
-  public void generateForLoopIr(ForBranch forbranch, StatementBuilder builder){
+  public void generateForLoopIr(Scope scope, ForBranch forbranch, StatementBuilder builder){
     Expression toMod = forbranch.getModifyExpression();
     List<Statement> toExec = forbranch.getExecStatements();
     if(toMod != null){
-        generateAssignmentIr(forbranch.getInitAssignment(), builder);
-        String target = generateExpressionIr(forbranch.getTargetExpression(), builder);
+        generateAssignmentIr(scope, forbranch.getInitAssignment(), builder);
+        String target = generateExpressionIr(scope, forbranch.getTargetExpression(), builder);
         
         IdentExp targetIdent = new IdentExp(target);
         StringEntry curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
@@ -437,11 +463,11 @@ public class MyICodeGenerator{
         
         builder.incrimentForLoopLevel();
         for(int i = 0; i < toExec.size(); i++){
-            generateStatementIr(toExec.get(i), builder);
+            generateStatementIr(scope, toExec.get(i), builder);
         }
         builder.deIncrimentForLoopLevel();
 
-        String incriment = generateExpressionIr(toMod, builder);
+        String incriment = generateExpressionIr(scope, toMod, builder);
         TypeCheckerQualities qual = toMod.acceptResult(typeChecker);
         if(qual.containsQualities(TypeCheckerQualities.REAL)){
           String result = null;
@@ -455,47 +481,50 @@ public class MyICodeGenerator{
                 builder.buildProcedureCall("RAdd", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("RAdd");
-                result = builder.buildExternalReturnPlacement(returnPlace.toString());
+                result = builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
               } else {
                  errorLog.add("Cant find the function RAdd that contains two arguments", forbranch.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(curvalue.toString());
                  args.add(incriment);
-                 result = builder.buildExternalFunctionCall("RAdd", args);
+                 result = builder.buildExternalFunctionCall(scope, "RAdd", args, Assign.Type.REAL);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(curvalue.toString());
                args.add(incriment);
-               result = builder.buildExternalFunctionCall("RAdd", args);
+               result = builder.buildExternalFunctionCall(scope, "RAdd", args, Assign.Type.REAL);
             }
-            builder.buildVariableAssignment(curvalue.toString(), result);
+            builder.buildVariableAssignment(scope, curvalue.toString(), result, Assign.Type.REAL);
         } else {
-          String result = builder.buildIntegerAdditionAssignment(new IdentExp(curvalue.toString()), new IdentExp(incriment));
-          builder.buildVariableAssignment(curvalue.toString(), result);
+          String result = builder.buildIntegerAdditionAssignment(scope, new IdentExp(curvalue.toString()), new IdentExp(incriment));
+          builder.buildVariableAssignment(scope, curvalue.toString(), result, Assign.Type.INT);
         }
 
         builder.buildForLoopEnd();
     } else {
-      generateAssignmentIr(forbranch.getInitAssignment(), builder);
-      String target = generateExpressionIr(forbranch.getTargetExpression(), builder);
+      generateAssignmentIr(scope, forbranch.getInitAssignment(), builder);
+      String target = generateExpressionIr(scope, forbranch.getTargetExpression(), builder);
       IdentExp targetIdent = new IdentExp(target);
       StringEntry curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
       IdentExp curvalueIdent = new IdentExp(curvalue.toString());
       builder.buildForLoopBeginning(curvalueIdent, BinExp.Operator.NE, targetIdent);
       builder.incrimentForLoopLevel();
       for(int i = 0; i < toExec.size(); i++){
-          generateStatementIr(toExec.get(i), builder);
+          generateStatementIr(scope, toExec.get(i), builder);
       }
       builder.deIncrimentForLoopLevel();
       builder.buildForLoopEnd();
     }
   }
         
-  public void generateAssignmentIr(Assignment assignment, AssignmentBuilder builder) {
+  public void generateAssignmentIr(Scope scope, Assignment assignment, AssignmentBuilder builder) {
     StringEntry place = varEnvironment.getEntry(assignment.getVariableName().getLexeme());
-    String value = generateExpressionIr(assignment.getVariableValue(), builder);
-    builder.buildVariableAssignment(place.toString(), value);
+    Expression exp = assignment.getVariableValue();
+    String value = generateExpressionIr(scope, exp, builder);
+    TypeCheckerQualities qual = exp.acceptResult(typeChecker);
+    Assign.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+    builder.buildVariableAssignment(scope, place.toString(), value, type);
   }
 
   public void generateInlineAssemblyIr(Asm asm, StatementBuilder builder) {
@@ -507,7 +536,9 @@ public class MyICodeGenerator{
        }
        else if(paramEnvironment.entryExists(param)){
           StringEntry icodeParam = paramEnvironment.getEntry(param);
-          String result = builder.buildParamaterAssignment(icodeParam.toString());
+          TypeCheckerQualities qual = typeChecker.getVarType(param);
+          Assign.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+          String result = builder.buildParamaterAssignment(icodeParam.toString(), type);
           icodeParams.add(result);
           varEnvironment.addEntry(param, new StringEntry(result));
        } else {
@@ -519,14 +550,14 @@ public class MyICodeGenerator{
   }
 
   
-  public String generateExpressionIr(Expression exp, AssignmentBuilder builder){
-    if(exp instanceof BinaryOperation) return generateBinaryOperationIr((BinaryOperation)exp, builder);
-    else if(exp instanceof FunctionCall) return generateFunctionCallIr((FunctionCall)exp, builder);
-    else if(exp instanceof UnaryOperation) return generateUnaryOperationIr((UnaryOperation)exp, builder);
+  public String generateExpressionIr(Scope scope, Expression exp, AssignmentBuilder builder){
+    if(exp instanceof BinaryOperation) return generateBinaryOperationIr(scope, (BinaryOperation)exp, builder);
+    else if(exp instanceof FunctionCall) return generateFunctionCallIr(scope, (FunctionCall)exp, builder);
+    else if(exp instanceof UnaryOperation) return generateUnaryOperationIr(scope, (UnaryOperation)exp, builder);
     else if(exp instanceof Identifier) return generateIdentifierIr((Identifier)exp, builder);
-    else if(exp instanceof NumValue) return generateNumberIr((NumValue)exp, builder);
-    else if(exp instanceof BoolValue) return generateBooleanIr((BoolValue)exp, builder);
-    else if(exp instanceof StrValue) return generateStringIr((StrValue)exp, builder);
+    else if(exp instanceof NumValue) return generateNumberIr(scope, (NumValue)exp, builder);
+    else if(exp instanceof BoolValue) return generateBooleanIr(scope, (BoolValue)exp, builder);
+    else if(exp instanceof StrValue) return generateStringIr(scope, (StrValue)exp, builder);
     else {
       errorLog.add("Error Invalid Expression Type found when generating Ir", exp.getStart());
       return "NOTFOUND";
@@ -534,12 +565,12 @@ public class MyICodeGenerator{
   }
   
   
-  public String generateBinaryOperationIr(BinaryOperation binaryOperation, AssignmentBuilder builder) {
-      String leftValue = generateExpressionIr(binaryOperation.getLeft(), builder);
+  public String generateBinaryOperationIr(Scope scope, BinaryOperation binaryOperation, AssignmentBuilder builder) {
+      String leftValue = generateExpressionIr(scope, binaryOperation.getLeft(), builder);
       IdentExp leftIdent = new IdentExp(leftValue);
       TypeCheckerQualities leftType = binaryOperation.getLeft().acceptResult(typeChecker);
       
-      String rightValue = generateExpressionIr(binaryOperation.getRight(), builder);
+      String rightValue = generateExpressionIr(scope, binaryOperation.getRight(), builder);
       IdentExp rightIdent = new IdentExp(rightValue);
       TypeCheckerQualities rightType = binaryOperation.getRight().acceptResult(typeChecker);
 
@@ -552,16 +583,16 @@ public class MyICodeGenerator{
                args.add(new Tuple<String,String>(leftValue, params.get(0)));
                builder.buildProcedureCall("RealToBool", args);
                StringEntry entry = procEnvironment.getEntry("RealToBool");
-               leftValue = builder.buildExternalReturnPlacement(entry.toString());
+               leftValue = builder.buildExternalReturnPlacement(entry.toString(), Assign.Type.BOOL);
              } else {
               LinkedList<String> args = new LinkedList<String>();
               args.add(leftValue);
-              leftValue = builder.buildExternalFunctionCall("RealToBool", args);
+              leftValue = builder.buildExternalFunctionCall(scope, "RealToBool", args, Assign.Type.BOOL);
              }
            } else {
              LinkedList<String> args = new LinkedList<String>();
              args.add(leftValue);
-             leftValue = builder.buildExternalFunctionCall("RealToBool", args);
+             leftValue = builder.buildExternalFunctionCall(scope, "RealToBool", args, Assign.Type.BOOL);
            }
         } else if(leftType.containsQualities(TypeCheckerQualities.INTEGER)){
           if(procArgs.entryExists("IntToBool") && procEnvironment.entryExists("IntToBool")){
@@ -571,16 +602,16 @@ public class MyICodeGenerator{
                 args.add(new Tuple<String,String>(leftValue, params.get(0)));
                 builder.buildProcedureCall("IntToBool", args);
                 StringEntry entry = procEnvironment.getEntry("IntToBool");
-                leftValue = builder.buildExternalReturnPlacement(entry.toString());
+                leftValue = builder.buildExternalReturnPlacement(entry.toString(), Assign.Type.BOOL);
             } else {
               LinkedList<String> args = new LinkedList<String>();
               args.add(leftValue);
-              leftValue = builder.buildExternalFunctionCall("IntToBool", args);
+              leftValue = builder.buildExternalFunctionCall(scope, "IntToBool", args, Assign.Type.BOOL);
             }
           } else {
             LinkedList<String> args = new LinkedList<String>();
             args.add(leftValue);
-            leftValue = builder.buildExternalFunctionCall("IntToBool", args);
+            leftValue = builder.buildExternalFunctionCall(scope, "IntToBool", args, Assign.Type.BOOL);
           }
         }
 
@@ -592,16 +623,16 @@ public class MyICodeGenerator{
                args.add(new Tuple<String,String>(rightValue, params.get(0)));
                builder.buildProcedureCall("RealToBool", args);
                StringEntry entry = procEnvironment.getEntry("RealToBool");
-               rightValue = builder.buildExternalReturnPlacement(entry.toString());
+               rightValue = builder.buildExternalReturnPlacement(entry.toString(), Assign.Type.BOOL);
              } else {
               LinkedList<String> args = new LinkedList<String>();
               args.add(leftValue);
-              rightValue = builder.buildExternalFunctionCall("RealToBool", args);
+              rightValue = builder.buildExternalFunctionCall(scope, "RealToBool", args, Assign.Type.BOOL);
              }
            } else {
              LinkedList<String> args = new LinkedList<String>();
              args.add(leftValue);
-             rightValue = builder.buildExternalFunctionCall("RealToBool", args);
+             rightValue = builder.buildExternalFunctionCall(scope, "RealToBool", args, Assign.Type.BOOL);
            }
         } else if(rightType.containsQualities(TypeCheckerQualities.INTEGER)){
           if(procArgs.entryExists("IntToBool") && procEnvironment.entryExists("IntToBool")){
@@ -611,22 +642,22 @@ public class MyICodeGenerator{
                args.add(new Tuple<String,String>(rightValue, params.get(0)));
                builder.buildProcedureCall("IntToBool", args);
                StringEntry entry = procEnvironment.getEntry("IntToBool");
-               rightValue = builder.buildExternalReturnPlacement(entry.toString());
+               rightValue = builder.buildExternalReturnPlacement(entry.toString(), Assign.Type.BOOL);
              } else {
               LinkedList<String> args = new LinkedList<String>();
               args.add(leftValue);
-              rightValue = builder.buildExternalFunctionCall("IntToBool", args);
+              rightValue = builder.buildExternalFunctionCall(scope, "IntToBool", args, Assign.Type.BOOL);
              }
            } else {
              LinkedList<String> args = new LinkedList<String>();
              args.add(leftValue);
-             rightValue = builder.buildExternalFunctionCall("IntToBool", args);
+             rightValue = builder.buildExternalFunctionCall(scope, "IntToBool", args, Assign.Type.BOOL);
            }
         }
 
         switch(binaryOperation.getOperator()){
-          case AND: return builder.buildLogicalAndAssignment(new IdentExp(leftValue), new IdentExp(rightValue));
-          case OR: return builder.buildLogicalOrAssignment(new IdentExp(leftValue), new IdentExp(rightValue));
+          case AND: return builder.buildLogicalAndAssignment(scope, new IdentExp(leftValue), new IdentExp(rightValue));
+          case OR: return builder.buildLogicalOrAssignment(scope, new IdentExp(leftValue), new IdentExp(rightValue));
           default: return leftValue;
         }
       } else if(leftType.containsQualities(TypeCheckerQualities.REAL) || rightType.containsQualities(TypeCheckerQualities.REAL)){
@@ -638,16 +669,16 @@ public class MyICodeGenerator{
                args.add(new Tuple<String,String>(leftValue, params.get(0)));
                builder.buildProcedureCall("IntToReal", args);
                StringEntry entry = procEnvironment.getEntry("IntToReal");
-               leftValue = builder.buildExternalReturnPlacement(entry.toString());
+               leftValue = builder.buildExternalReturnPlacement(entry.toString(), Assign.Type.REAL);
              } else {
               LinkedList<String> args = new LinkedList<String>();
               args.add(leftValue);
-              leftValue = builder.buildExternalFunctionCall("IntToReal", args);
+              leftValue = builder.buildExternalFunctionCall(scope, "IntToReal", args, Assign.Type.REAL);
              }
            } else {
              LinkedList<String> args = new LinkedList<String>();
              args.add(leftValue);
-             leftValue = builder.buildExternalFunctionCall("IntToReal", args);
+             leftValue = builder.buildExternalFunctionCall(scope, "IntToReal", args, Assign.Type.REAL);
            }
         }
 
@@ -659,16 +690,16 @@ public class MyICodeGenerator{
                args.add(new Tuple<String,String>(rightValue, params.get(0)));
                builder.buildProcedureCall("IntToReal", args);
                StringEntry entry = procEnvironment.getEntry("IntToReal");
-               rightValue = builder.buildExternalReturnPlacement(entry.toString());
+               rightValue = builder.buildExternalReturnPlacement(entry.toString(), Assign.Type.REAL);
              } else {
               LinkedList<String> args = new LinkedList<String>();
               args.add(rightValue);
-              rightValue = builder.buildExternalFunctionCall("IntToReal", args);
+              rightValue = builder.buildExternalFunctionCall(scope, "IntToReal", args, Assign.Type.REAL);
              }
            } else {
              LinkedList<String> args = new LinkedList<String>();
              args.add(rightValue);
-             rightValue = builder.buildExternalFunctionCall("IntToReal", args);
+             rightValue = builder.buildExternalFunctionCall(scope, "IntToReal", args, Assign.Type.REAL);
            }
         }
       
@@ -684,19 +715,19 @@ public class MyICodeGenerator{
                 builder.buildProcedureCall("RAdd", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("RAdd");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
               } else {
                  errorLog.add("Cant find the function RAdd that contains two arguments", binaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("RAdd", args);
+                 return builder.buildExternalFunctionCall(scope, "RAdd", args, Assign.Type.REAL);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("RAdd", args);
+               return builder.buildExternalFunctionCall(scope, "RAdd", args, Assign.Type.REAL);
             }
           case MINUS: 
             if(procArgs.entryExists("RSub") && procEnvironment.entryExists("RSub")){
@@ -709,19 +740,19 @@ public class MyICodeGenerator{
                 builder.buildProcedureCall("RSub", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("RDivide");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
               } else {
                  errorLog.add("Cant find the function Subtract that contains two arguments", binaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("RSub", args);
+                 return builder.buildExternalFunctionCall(scope, "RSub", args, Assign.Type.REAL);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("RSub", args);
+               return builder.buildExternalFunctionCall(scope, "RSub", args, Assign.Type.REAL);
             }
           case TIMES: 
             if(procArgs.entryExists("RMul") && procEnvironment.entryExists("RMul")){
@@ -734,19 +765,19 @@ public class MyICodeGenerator{
                 builder.buildProcedureCall("RDivide", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("RMul");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
               } else {
                  errorLog.add("Cant find the function Divide that contains two arguments", binaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("RMul", args);
+                 return builder.buildExternalFunctionCall(scope, "RMul", args, Assign.Type.REAL);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("RMul", args);
+               return builder.buildExternalFunctionCall(scope, "RMul", args, Assign.Type.REAL);
             }
           case DIVIDE:
             if(procArgs.entryExists("RDivide") && procEnvironment.entryExists("RDivide")){
@@ -759,23 +790,23 @@ public class MyICodeGenerator{
                 builder.buildProcedureCall("RDivide", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("RDivide");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
               } else {
                  errorLog.add("Cant find the function Divide that contains two arguments", binaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("RDivide", args);
+                 return builder.buildExternalFunctionCall(scope, "RDivide", args, Assign.Type.REAL);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("RDivide", args);
+               return builder.buildExternalFunctionCall(scope, "RDivide", args, Assign.Type.REAL);
             }
           case DIV:
             if(procArgs.entryExists("RDiv") && procEnvironment.entryExists("RDiv")){
-              StringEntryList params = procArgs.getEntry("Div");
+              StringEntryList params = procArgs.getEntry("RDiv");
               if(params.size() >= 2){
                 LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
                 args.add(new Tuple<String,String>(leftValue, params.get(0)));
@@ -783,20 +814,20 @@ public class MyICodeGenerator{
 
                 builder.buildProcedureCall("RDiv", args);
 
-                StringEntry returnPlace = procEnvironment.getEntry("Div");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                StringEntry returnPlace = procEnvironment.getEntry("RDiv");
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
               } else {
                  errorLog.add("Cant find the function Div that contains two arguments", binaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("RDiv", args);
+                 return builder.buildExternalFunctionCall(scope, "RDiv", args, Assign.Type.REAL);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("RDiv", args);
+               return builder.buildExternalFunctionCall(scope, "RDiv", args, Assign.Type.REAL);
             }
           case LE:
             if(procArgs.entryExists("RLessThanOrEqualTo") && procEnvironment.entryExists("RLessThanOrEqualTo")){
@@ -809,19 +840,19 @@ public class MyICodeGenerator{
                 builder.buildProcedureCall("RLessThanOrEqualTo", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("RLessThanOrEqualTo");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.BOOL);
               } else {
                  errorLog.add("Cant find the function RLessThanOrEqualTo that contains two arguments", binaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("RLessThanOrEqualTo", args);
+                 return builder.buildExternalFunctionCall(scope, "RLessThanOrEqualTo", args, Assign.Type.BOOL);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("RLessThanOrEqualTo", args);
+               return builder.buildExternalFunctionCall(scope, "RLessThanOrEqualTo", args, Assign.Type.BOOL);
             }
           case LT:
             if(procArgs.entryExists("RLessThan") && procEnvironment.entryExists("RLessThan")){
@@ -834,19 +865,19 @@ public class MyICodeGenerator{
                 builder.buildProcedureCall("RLessThan", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("RLessThan");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.BOOL);
               } else {
                  errorLog.add("Cant find the function RLessThan that contains two arguments", binaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("RLessThan", args);
+                 return builder.buildExternalFunctionCall(scope, "RLessThan", args, Assign.Type.BOOL);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("RLessThan", args);
+               return builder.buildExternalFunctionCall(scope, "RLessThan", args, Assign.Type.BOOL);
             }
           case GE:
             if(procArgs.entryExists("RGreaterThanOrEqualTo") && procEnvironment.entryExists("RGreaterThanOrEqualTo")){
@@ -859,19 +890,19 @@ public class MyICodeGenerator{
                 builder.buildProcedureCall("RGreaterThanOrEqualTo", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("RGreaterThanOrEqualTo");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.BOOL);
               } else {
                  errorLog.add("Cant find the function RGreaterThanOrEqualTo that contains two arguments", binaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("RGreaterThanOrEqualTo", args);
+                 return builder.buildExternalFunctionCall(scope, "RGreaterThanOrEqualTo", args, Assign.Type.BOOL);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("RGreaterThanOrEqualTo", args);
+               return builder.buildExternalFunctionCall(scope, "RGreaterThanOrEqualTo", args, Assign.Type.BOOL);
             }
           case GT:
             if(procArgs.entryExists("RGreaterThan") && procEnvironment.entryExists("RGreaterThan")){
@@ -884,19 +915,19 @@ public class MyICodeGenerator{
                 builder.buildProcedureCall("RGreaterThan", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("RGreaterThan");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.BOOL);
               } else {
                  errorLog.add("Cant find the function RGreaterThan that contains two arguments", binaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("RGreaterThan", args);
+                 return builder.buildExternalFunctionCall(scope, "RGreaterThan", args, Assign.Type.BOOL);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("RGreaterThan", args);
+               return builder.buildExternalFunctionCall(scope, "RGreaterThan", args, Assign.Type.BOOL);
             }
           case EQ:
             if(procArgs.entryExists("REqualTo") && procEnvironment.entryExists("REqualTo")){
@@ -909,19 +940,19 @@ public class MyICodeGenerator{
                 builder.buildProcedureCall("REqualTo", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("REqualTo");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.BOOL);
               } else {
                  errorLog.add("Cant find the function REqualTo that contains two arguments", binaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("REqualTo", args);
+                 return builder.buildExternalFunctionCall(scope, "REqualTo", args, Assign.Type.BOOL);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("REqualTo", args);
+               return builder.buildExternalFunctionCall(scope, "REqualTo", args, Assign.Type.BOOL);
             }
           case NE: 
             if(procArgs.entryExists("RNotEqualTo") && procEnvironment.entryExists("RNotEqualTo")){
@@ -934,27 +965,27 @@ public class MyICodeGenerator{
                 builder.buildProcedureCall("RNotEqualTo", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("RNotEqualTo");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.BOOL);
               } else {
                  errorLog.add("Cant find the function RNotEqualTo that contains two arguments", binaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("RNotEqualTo", args);
+                 return builder.buildExternalFunctionCall(scope, "RNotEqualTo", args, Assign.Type.BOOL);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("RNotEqualTo", args);
+               return builder.buildExternalFunctionCall(scope, "RNotEqualTo", args, Assign.Type.BOOL);
             }
           default: return leftValue;
       }
     } else {
       switch (binaryOperation.getOperator()){
-        case PLUS: return builder.buildIntegerAdditionAssignment(leftIdent, rightIdent);
-        case MINUS: return builder.buildIntegerSubtractionAssignment(leftIdent, rightIdent);
-        case TIMES: return builder.buildIntegerMultiplicationAssignment(leftIdent, rightIdent);
+        case PLUS: return builder.buildIntegerAdditionAssignment(scope, leftIdent, rightIdent);
+        case MINUS: return builder.buildIntegerSubtractionAssignment(scope, leftIdent, rightIdent);
+        case TIMES: return builder.buildIntegerMultiplicationAssignment(scope, leftIdent, rightIdent);
         case DIV: 
           if(procArgs.entryExists("Div") && procEnvironment.entryExists("Div")){
               StringEntryList params = procArgs.getEntry("Div");
@@ -966,19 +997,19 @@ public class MyICodeGenerator{
                 builder.buildProcedureCall("Div", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("Div");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.INT);
               } else {
                  errorLog.add("Cant find the function Div that contains two arguments", binaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("Div", args);
+                 return builder.buildExternalFunctionCall(scope, "Div", args, Assign.Type.INT);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("Div", args);
+               return builder.buildExternalFunctionCall(scope, "Div", args, Assign.Type.INT);
             }
         case DIVIDE: 
             if(procArgs.entryExists("Divide") && procEnvironment.entryExists("Divide")){
@@ -991,40 +1022,42 @@ public class MyICodeGenerator{
                 builder.buildProcedureCall("Divide", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("Divide");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
               } else {
                  errorLog.add("Cant find the function Divide that contains two arguments", binaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(leftValue);
                  args.add(rightValue);
-                 return builder.buildExternalFunctionCall("Divide", args);
+                 return builder.buildExternalFunctionCall(scope, "Divide", args, Assign.Type.REAL);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(leftValue);
                args.add(rightValue);
-               return builder.buildExternalFunctionCall("Divide", args);
+               return builder.buildExternalFunctionCall(scope, "Divide", args, Assign.Type.REAL);
             }
-        case MOD: return builder.buildIntegerModuloAssignment(leftValue, rightValue);
-        case LE: return builder.buildLessThanOrEqualAssignment(leftIdent, rightIdent);
-        case LT: return builder.buildLessThanAssignment(leftIdent, rightIdent);
-        case GE: return builder.buildGreaterThanOrEqualToAssignment(leftIdent, rightIdent);
-        case GT: return builder.buildGreaterThanAssignment(leftIdent, rightIdent);
-        case BAND: return builder.buildIntegerAndAssignment(leftIdent, rightIdent);
-        case BOR: return builder.buildIntegerOrAssignment(leftIdent, rightIdent);
-        case BXOR: return builder.buildIntegerExclusiveOrAssignment(leftIdent, rightIdent);
-        case LSHIFT: return builder.buildLeftShiftAssignment(leftIdent, rightIdent);
-        case RSHIFT: return builder.buildRightShiftAssignment(leftIdent, rightIdent);
-        case EQ: return builder.buildEqualityAssignment(leftIdent, rightIdent);
-        case NE: return builder.buildInequalityAssignment(leftIdent, rightIdent);
+        case MOD: return builder.buildIntegerModuloAssignment(scope, leftValue, rightValue);
+        case LE: return builder.buildLessThanOrEqualAssignment(scope, leftIdent, rightIdent);
+        case LT: return builder.buildLessThanAssignment(scope, leftIdent, rightIdent);
+        case GE: return builder.buildGreaterThanOrEqualToAssignment(scope, leftIdent, rightIdent);
+        case GT: return builder.buildGreaterThanAssignment(scope, leftIdent, rightIdent);
+        case BAND: return builder.buildIntegerAndAssignment(scope, leftIdent, rightIdent);
+        case BOR: return builder.buildIntegerOrAssignment(scope, leftIdent, rightIdent);
+        case BXOR: return builder.buildIntegerExclusiveOrAssignment(scope, leftIdent, rightIdent);
+        case LSHIFT: return builder.buildLeftShiftAssignment(scope, leftIdent, rightIdent);
+        case RSHIFT: return builder.buildRightShiftAssignment(scope, leftIdent, rightIdent);
+        case EQ: return builder.buildEqualityAssignment(scope, leftIdent, rightIdent);
+        case NE: return builder.buildInequalityAssignment(scope, leftIdent, rightIdent);
         default: return leftValue;
       }
     }
   }
 
-  public String generateFunctionCallIr(FunctionCall funcCall, AssignmentBuilder builder) {
+  public String generateFunctionCallIr(Scope scope, FunctionCall funcCall, AssignmentBuilder builder) {
     String funcName = funcCall.getFunctionName().getLexeme();
     List<Expression> valArgs = funcCall.getArguments();
+    TypeCheckerQualities returnType = funcCall.acceptResult(typeChecker);
+    Assign.Type retType = ConversionUtils.typeCheckerQualitiesToAssignType(returnType);
     if(procArgs.entryExists(funcName)){
       //Build Internal Function Call Sequence
       StringEntryList argsToMap = procArgs.getEntry(funcName);
@@ -1032,27 +1065,27 @@ public class MyICodeGenerator{
 
       for(int i = 0; i < valArgs.size(); i++){
         Expression valArg = valArgs.get(i);
-	      String result = generateExpressionIr(valArg, builder);
+	      String result = generateExpressionIr(scope, valArg, builder);
 	      valArgResults.add(new Tuple<String, String>(result, argsToMap.get(i)));
       }
       builder.buildProcedureCall(funcName, valArgResults);
       StringEntry returnPlace = procEnvironment.getEntry(funcName);
-      return builder.buildExternalReturnPlacement(returnPlace.toString());
+      return builder.buildExternalReturnPlacement(returnPlace.toString(), retType);
     } else {
       //Build external function call
       LinkedList<String> procedureArgs = new LinkedList<String>();
       for(Expression arg : valArgs){
-        String place = generateExpressionIr(arg, builder);
+        String place = generateExpressionIr(scope, arg, builder);
         procedureArgs.add(place);
       }
 
-      String retPlace = builder.buildExternalFunctionCall(funcName, procedureArgs);
+      String retPlace = builder.buildExternalFunctionCall(scope, funcName, procedureArgs, retType);
       return retPlace;
     }
   }
 
-  public String generateUnaryOperationIr(UnaryOperation unaryOperation, AssignmentBuilder builder) {
-    String value = generateExpressionIr(unaryOperation.getExpression(), builder);
+  public String generateUnaryOperationIr(Scope scope, UnaryOperation unaryOperation, AssignmentBuilder builder) {
+    String value = generateExpressionIr(scope, unaryOperation.getExpression(), builder);
     IdentExp valueIdent = new IdentExp(value);
     TypeCheckerQualities rightType = unaryOperation.getExpression().acceptResult(typeChecker);
 
@@ -1065,16 +1098,16 @@ public class MyICodeGenerator{
                args.add(new Tuple<String,String>(value, params.get(0)));
                builder.buildProcedureCall("RealToBool", args);
                StringEntry entry = procEnvironment.getEntry("RealToBool");
-               value = builder.buildExternalReturnPlacement(entry.toString());
+               value = builder.buildExternalReturnPlacement(entry.toString(), Assign.Type.BOOL);
              } else {
               LinkedList<String> args = new LinkedList<String>();
               args.add(value);
-              value = builder.buildExternalFunctionCall("RealToBool", args);
+              value = builder.buildExternalFunctionCall(scope, "RealToBool", args, Assign.Type.BOOL);
              }
            } else {
              LinkedList<String> args = new LinkedList<String>();
              args.add(value);
-             value = builder.buildExternalFunctionCall("RealToBool", args);
+             value = builder.buildExternalFunctionCall(scope, "RealToBool", args, Assign.Type.BOOL);
            }
         } else if(rightType.containsQualities(TypeCheckerQualities.INTEGER)){
           if(procArgs.entryExists("IntToBool") && procEnvironment.entryExists("IntToBool")){
@@ -1084,20 +1117,20 @@ public class MyICodeGenerator{
                 args.add(new Tuple<String,String>(value, params.get(0)));
                 builder.buildProcedureCall("IntToBool", args);
                 StringEntry entry = procEnvironment.getEntry("IntToBool");
-                value = builder.buildExternalReturnPlacement(entry.toString());
+                value = builder.buildExternalReturnPlacement(entry.toString(), Assign.Type.BOOL);
             } else {
               LinkedList<String> args = new LinkedList<String>();
               args.add(value);
-              value = builder.buildExternalFunctionCall("IntToBool", args);
+              value = builder.buildExternalFunctionCall(scope, "IntToBool", args, Assign.Type.BOOL);
             }
           } else {
             LinkedList<String> args = new LinkedList<String>();
             args.add(value);
-            value = builder.buildExternalFunctionCall("IntToBool", args);
+            value = builder.buildExternalFunctionCall(scope, "IntToBool", args, Assign.Type.BOOL);
           }
         }
         Exp expVal = new IdentExp(value);
-        return builder.buildNotAssignment(expVal);
+        return builder.buildNotAssignment(scope, expVal);
     } else if(rightType.containsQualities(TypeCheckerQualities.REAL)){
       switch(unaryOperation.getOperator()){
         case MINUS: 
@@ -1107,19 +1140,18 @@ public class MyICodeGenerator{
                 LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
                 args.add(new Tuple<String,String>(value, params.get(0)));
                 builder.buildProcedureCall("RNeg", args);
-
                 StringEntry returnPlace = procEnvironment.getEntry("RNeg");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
               } else {
                  errorLog.add("Cant find the function RNeg that contains one argument", unaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(value);
-                 return builder.buildExternalFunctionCall("RNeg", args);
+                 return builder.buildExternalFunctionCall(scope, "RNeg", args, Assign.Type.REAL);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(value);
-               return builder.buildExternalFunctionCall("RNeg", args);
+               return builder.buildExternalFunctionCall(scope, "RNeg", args, Assign.Type.REAL);
             }
         default:
           errorLog.add("Error unexpected Operation for Real Value " + unaryOperation.getOperator(), unaryOperation.getStart());
@@ -1136,19 +1168,19 @@ public class MyICodeGenerator{
                 builder.buildProcedureCall("INeg", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("INeg");
-                return builder.buildExternalReturnPlacement(returnPlace.toString());
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.INT);
               } else {
                  errorLog.add("Cant find the function INeg that contains one argument", unaryOperation.getStart());
                  LinkedList<String> args = new LinkedList<String>();
                  args.add(value);
-                 return builder.buildExternalFunctionCall("INeg", args);
+                 return builder.buildExternalFunctionCall(scope, "INeg", args, Assign.Type.INT);
               }
             } else {
                LinkedList<String> args = new LinkedList<String>();
                args.add(value);
-               return builder.buildExternalFunctionCall("INeg", args);
+               return builder.buildExternalFunctionCall(scope, "INeg", args, Assign.Type.INT);
             }
-        case BNOT: return builder.buildIntegerNotAssignment(valueIdent);
+        case BNOT: return builder.buildIntegerNotAssignment(scope, valueIdent);
         default: return value;
 	    }
     }
@@ -1156,6 +1188,8 @@ public class MyICodeGenerator{
 
   public String generateIdentifierIr(Identifier identifier, AssignmentBuilder builder){
     SymbolSectionBuilder symBuilder = builder.getSymbolSectionBuilder();
+    TypeCheckerQualities qual = identifier.acceptResult(typeChecker);
+    Assign.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
     if(varEnvironment.inScope(identifier.getLexeme())){
       StringEntry place = varEnvironment.getEntry(identifier.getLexeme());
       if(place != null)
@@ -1166,7 +1200,7 @@ public class MyICodeGenerator{
       }
     } else if(paramEnvironment.entryExists(identifier.getLexeme())){
         StringEntry place = paramEnvironment.getEntry(identifier.toString());
-        String newPlace = builder.buildParamaterAssignment(place.toString());
+        String newPlace = builder.buildParamaterAssignment(place.toString(), type);
         varEnvironment.addEntry(identifier.getLexeme(), new StringEntry(newPlace));
         return newPlace;
     } else {
@@ -1187,18 +1221,18 @@ public class MyICodeGenerator{
     }
   }
 
-  public String generateNumberIr(NumValue numValue, AssignmentBuilder builder){
+  public String generateNumberIr(Scope scope, NumValue numValue, AssignmentBuilder builder){
       String rawnum = Utils.ifHexToInt(numValue.getLexeme());
-      return builder.buildNumAssignment(rawnum);
+      return builder.buildNumAssignment(scope, rawnum);
   }
 
-  public String generateBooleanIr(BoolValue boolValue, AssignmentBuilder builder){
+  public String generateBooleanIr(Scope scope, BoolValue boolValue, AssignmentBuilder builder){
       String lexeme = boolValue.getLexeme(); //change to hex if you need to otherwise unchanged
-      return builder.buildBoolAssignment(lexeme);
+      return builder.buildBoolAssignment(scope, lexeme);
   }
 
-  public String generateStringIr(StrValue strValue, AssignmentBuilder builder){
-      return builder.buildStringAssignment(strValue.getLexeme());
+  public String generateStringIr(Scope scope, StrValue strValue, AssignmentBuilder builder){
+      return builder.buildStringAssignment(scope, strValue.getLexeme());
   }
 
 

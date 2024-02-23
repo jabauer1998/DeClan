@@ -55,7 +55,8 @@ public class CodeGeneratorTest {
             MyOptimizer optimizer = new MyOptimizer(program);
             optimizer.performCommonSubExpressionElimination();
             optimizer.performDeadCodeElimination();
-
+            optimizer.runLiveVariableAnalysis();
+            
             String outputFile = fileName.replace("test/declan", "test/temp").replace(".dcl", ".tmp");
 
             MyCodeGenerator codeGenerator = new MyCodeGenerator(outputFile, optimizer.getLiveVariableAnalysis(), program, errLog); 

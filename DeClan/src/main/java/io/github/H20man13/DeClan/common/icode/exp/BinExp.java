@@ -1,6 +1,7 @@
 package io.github.H20man13.DeClan.common.icode.exp;
 
 import io.github.H20man13.DeClan.common.pat.P;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class BinExp implements Exp {
@@ -70,7 +71,7 @@ public class BinExp implements Exp {
     @Override
     public P asPattern(boolean hasContainer) {
         if(hasContainer)
-            return P.PAT(left.asPattern(false), Utils.binOpToPattern(op), right.asPattern(false));
+            return P.PAT(left.asPattern(false), ConversionUtils.binOpToPattern(op), right.asPattern(false));
         else
             return null;
     }

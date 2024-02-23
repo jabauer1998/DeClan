@@ -19,6 +19,7 @@ import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.OpUtil;
 import io.github.H20man13.DeClan.common.util.Utils;
 
@@ -77,8 +78,8 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Exp>> {
                     } else if(assICode.value instanceof BinExp){
                         BinExp exp = (BinExp)assICode.value;
                         if(exp.left.isConstant() && exp.right.isConstant()){
-                            Object val1 = Utils.getValue(exp.left);
-                            Object val2 = Utils.getValue(exp.right);
+                            Object val1 = ConversionUtils.getValue(exp.left);
+                            Object val2 = ConversionUtils.getValue(exp.right);
                             Object result = null;
                             switch (exp.op){
                                 case IADD: result = OpUtil.iAdd(val1, val2);
@@ -126,7 +127,7 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Exp>> {
                                 default:
                                     result = null;
                             }
-                            Exp expResult = Utils.valueToExp(result);
+                            Exp expResult = ConversionUtils.valueToExp(result);
                             if(result != null && expResult != null){
                                 Tuple<String, Exp> newTuple = new Tuple<String, Exp>(assICode.place, expResult);
                                 setTuples.add(newTuple);
@@ -135,7 +136,7 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Exp>> {
                     } else if(assICode.value instanceof UnExp){
                         UnExp exp = (UnExp)assICode.value;
                         if(exp.right.isConstant()){
-                            Object right = Utils.getValue(exp.right);
+                            Object right = ConversionUtils.getValue(exp.right);
                             Object result = null;
                             
                             switch(exp.op){
@@ -150,7 +151,7 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Exp>> {
                                     result = null;
                             }
 
-                            Exp expResult = Utils.valueToExp(result);
+                            Exp expResult = ConversionUtils.valueToExp(result);
 
                             if(result != null && expResult != null){
                                 Tuple<String, Exp> newTuple = new Tuple<String, Exp>(assICode.place, expResult);

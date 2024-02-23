@@ -8,6 +8,7 @@ import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.builder.section.SymbolSectionBuilder;
 import io.github.H20man13.DeClan.common.builder.template.ResetableBuilder;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -161,5 +162,5 @@ public abstract class StatementBuilder extends AssignmentBuilder implements Rese
         intermediateCode.add(factory.produceInlineAssembly(inlineAssembly, param));
     }
 
-    public abstract String buildParamaterAssignment(String place);
+    public abstract String buildParamaterAssignment(String place, Assign.Type type);
 }

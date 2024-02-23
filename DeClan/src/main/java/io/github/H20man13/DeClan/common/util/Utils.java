@@ -2,6 +2,7 @@ package io.github.H20man13.DeClan.common.util;
 
 import java.io.File;
 import java.math.BigInteger;
+import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +17,8 @@ import io.github.H20man13.DeClan.common.dag.DagNullNode;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.dag.DagValueNode;
 import io.github.H20man13.DeClan.common.dag.DagVariableNode;
+import io.github.H20man13.DeClan.common.dag.DagNode.ScopeType;
+import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
 import io.github.H20man13.DeClan.common.flow.block.BasicBlock;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.End;
@@ -34,14 +37,10 @@ import io.github.H20man13.DeClan.common.icode.exp.IntExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
-import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
 import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
-import io.github.H20man13.DeClan.common.icode.procedure.ExternalPlace;
-import io.github.H20man13.DeClan.common.icode.procedure.InternalPlace;
-import io.github.H20man13.DeClan.common.icode.procedure.ParamAssign;
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
@@ -50,6 +49,7 @@ import io.github.H20man13.DeClan.common.icode.section.SymSec;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.LiveInfo;
+import io.github.H20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
 import io.github.H20man13.DeClan.common.token.IrTokenType;
 
 public class Utils {
@@ -76,34 +76,6 @@ public class Utils {
         return false;
     }
 
-    public static BinExp.Operator toBinOp(IrTokenType type){
-        switch(type){
-            case NE: return BinExp.Operator.NE;
-            case EQ: return BinExp.Operator.EQ;
-            case GE: return BinExp.Operator.GE;
-            case GT: return BinExp.Operator.GT;
-            case LE: return BinExp.Operator.LE;
-            case LT: return BinExp.Operator.LT;
-            case RADD: return BinExp.Operator.RADD;
-            case RSUB: return BinExp.Operator.RSUB;
-            case RMUL: return BinExp.Operator.RMUL;
-            case IADD: return BinExp.Operator.IADD;
-            case ISUB: return BinExp.Operator.ISUB;
-            case IMUL: return BinExp.Operator.IMUL;
-            case IDIV: return BinExp.Operator.IDIV;
-            case RDIVIDE: return BinExp.Operator.RDIVIDE;
-            case IXOR: return BinExp.Operator.IXOR;
-            case IMOD: return BinExp.Operator.IMOD;
-            case LOR: return BinExp.Operator.LOR;
-            case LAND: return BinExp.Operator.LAND;
-            case IAND: return BinExp.Operator.IAND;
-            case IOR: return BinExp.Operator.IOR;
-            case IRSHIFT: return BinExp.Operator.IRSHIFT;
-            case ILSHIFT: return BinExp.Operator.ILSHIFT;
-            default: return null;
-        }
-    }
-
     public static Exp getExpFromSet(Set<Tuple<String, Exp>> tuples, String name){
         for(Tuple<String, Exp> tuple : tuples){
             if(tuple.source.equals(name)){
@@ -120,44 +92,6 @@ public class Utils {
             }
         }
         return false;
-    }
-
-    public static BinExp.Operator getBinOp(DagOperationNode.Op op){
-        switch(op){
-            case IADD: return BinExp.Operator.IADD;
-            case ISUB: return BinExp.Operator.ISUB;
-            case IMUL: return BinExp.Operator.IMUL;
-            case IDIV: return BinExp.Operator.IDIV;
-            case RADD: return BinExp.Operator.RADD;
-            case RSUB: return BinExp.Operator.RSUB;
-            case RMUL: return BinExp.Operator.RMUL;
-            case RDIVIDE: return BinExp.Operator.RDIVIDE;
-            case IMOD: return BinExp.Operator.IMOD;
-            case LAND: return BinExp.Operator.LAND;
-            case LOR: return BinExp.Operator.LOR;
-            case IAND: return BinExp.Operator.IAND;
-            case IOR: return BinExp.Operator.IOR;
-            case IXOR: return BinExp.Operator.IXOR;
-            case ILSHIFT: return BinExp.Operator.ILSHIFT;
-            case IRSHIFT: return BinExp.Operator.IRSHIFT;
-            case EQ: return BinExp.Operator.EQ;
-            case NE: return BinExp.Operator.NE;
-            case GE: return BinExp.Operator.GE;
-            case GT: return BinExp.Operator.GT;
-            case LE: return BinExp.Operator.LE;
-            case LT: return BinExp.Operator.LT;
-            default: return null;
-        }
-    }
-
-    public static UnExp.Operator getUnOp(DagOperationNode.Op op){
-        switch(op){
-            case INEG: return UnExp.Operator.INEG;
-            case RNEG: return UnExp.Operator.RNEG;
-            case BNOT: return UnExp.Operator.BNOT;
-            case INOT: return UnExp.Operator.INOT;
-            default: return null;
-        }
     }
 
     public static String getIdentifier(DagNode node, Environment<String, LiveInfo> table){
@@ -178,68 +112,42 @@ public class Utils {
         }
     }
 
-    public static Exp valueToExp(Object result) {
-        if(result instanceof Boolean){
-            return new BoolExp((boolean)result);
-        } else if(result instanceof Integer){
-            return new IntExp((int)result);
-        } else if(result instanceof String){
-            return new StrExp((String)result);
-        } else if(result instanceof Float){
-            return new RealExp((float)result);
-        } else {
-            return null;
-        }
-    }
-
-    public static Object getValue(Exp value) {
-        if(value instanceof BoolExp){
-            return ((BoolExp)value).trueFalse;
-        } else if(value instanceof IntExp){
-            return ((IntExp)value).value;
-        } else if(value instanceof RealExp){
-            return ((RealExp)value).realValue;
-        } else if(value instanceof StrExp){
-            return ((StrExp)value).value;
-        } else {
-            return null;
-        }
-    }
-
-    public static DagNode createBinaryNode(BinExp.Operator op, String place, DagNode left, DagNode right) {
+    public static DagNode createBinaryNode(Assign.Scope origScope, BinExp.Operator op, String place, DagNode left, DagNode right) {
+        ScopeType scope = ConversionUtils.assignScopeToDagScopeType(origScope);
         switch(op){
-            case IADD: return factory.createIntegerAdditionNode(place, left, right);
-            case ISUB: return factory.createIntegerSubtractionNode(place, left, right);
-            case IMUL: return factory.createIntegerMultiplicationNode(place, left, right);
-            case IDIV: return factory.createIntegerDivNode(place, left, right);
-            case RADD: return factory.createRealAdditionNode(place, left, right);
-            case RSUB: return factory.createRealSubtractionNode(place, left, right);
-            case RMUL: return factory.createRealMultiplicationNode(place, left, right);
-            case RDIVIDE: return factory.createRealDivisionNode(place, left, right);
-            case LAND: return factory.createLogicalAndNode(place, left, right);
-            case IAND: return factory.createBitwiseAndNode(place, left, right);
-            case IOR: return factory.createBitwiseOrNode(place, left, right);
-            case IXOR: return factory.createBitwiseXorNode(place, left, right);
-            case ILSHIFT: return factory.createLeftShiftNode(place, left, right);
-            case IRSHIFT: return factory.createRightShiftNode(place, left, right);
-            case IMOD: return factory.createIntegerModuleNode(place, left, right);
-            case LOR: return factory.createLogicalOrNode(place, left, right);
-            case GT: return factory.createGreaterThanNode(place, left, right);
-            case GE: return factory.createGreaterThanOrEqualNode(place, left, right);
-            case LT: return factory.createLessThanNode(place, left, right);
-            case LE: return factory.createLessThanOrEqualNode(place, left, right);
-            case EQ: return factory.createEqualsNode(place, left, right);
-            case NE: return factory.createNotEqualsNode(place, left, right);
+            case IADD: return factory.createIntegerAdditionNode(scope, place, left, right);
+            case ISUB: return factory.createIntegerSubtractionNode(scope, place, left, right);
+            case IMUL: return factory.createIntegerMultiplicationNode(scope, place, left, right);
+            case IDIV: return factory.createIntegerDivNode(scope, place, left, right);
+            case RADD: return factory.createRealAdditionNode(scope, place, left, right);
+            case RSUB: return factory.createRealSubtractionNode(scope, place, left, right);
+            case RMUL: return factory.createRealMultiplicationNode(scope, place, left, right);
+            case RDIVIDE: return factory.createRealDivisionNode(scope, place, left, right);
+            case LAND: return factory.createLogicalAndNode(scope, place, left, right);
+            case IAND: return factory.createBitwiseAndNode(scope, place, left, right);
+            case IOR: return factory.createBitwiseOrNode(scope, place, left, right);
+            case IXOR: return factory.createBitwiseXorNode(scope, place, left, right);
+            case ILSHIFT: return factory.createLeftShiftNode(scope, place, left, right);
+            case IRSHIFT: return factory.createRightShiftNode(scope, place, left, right);
+            case IMOD: return factory.createIntegerModuleNode(scope, place, left, right);
+            case LOR: return factory.createLogicalOrNode(scope, place, left, right);
+            case GT: return factory.createGreaterThanNode(scope, place, left, right);
+            case GE: return factory.createGreaterThanOrEqualNode(scope, place, left, right);
+            case LT: return factory.createLessThanNode(scope, place, left, right);
+            case LE: return factory.createLessThanOrEqualNode(scope, place, left, right);
+            case EQ: return factory.createEqualsNode(scope, place, left, right);
+            case NE: return factory.createNotEqualsNode(scope, place, left, right);
             default: return null;
         }
     }
 
-    public static DagNode createUnaryNode(UnExp.Operator op, String place, DagNode right){
+    public static DagNode createUnaryNode(Assign.Scope origScope, UnExp.Operator op, String place, DagNode right){
+        ScopeType scope = ConversionUtils.assignScopeToDagScopeType(origScope);
         switch(op){
-            case INEG: return factory.createIntegerNegationNode(place, right);
-            case RNEG: return factory.createRealNegationNode(place, right);
-            case BNOT: return factory.createNotNode(place, right);
-            case INOT: return factory.createBitwiseNotNode(place, right);
+            case INEG: return factory.createIntegerNegationNode(scope, place, right);
+            case RNEG: return factory.createRealNegationNode(scope, place, right);
+            case BNOT: return factory.createNotNode(scope, place, right);
+            case INOT: return factory.createBitwiseNotNode(scope, place, right);
             default: return null;
         }
     }
@@ -284,44 +192,6 @@ public class Utils {
         }
     }
 
-    public static P binOpToPattern(BinExp.Operator op){
-        switch(op){
-            case IADD: return P.IADD();
-            case ISUB: return P.ISUB();
-            case IMUL: return P.IMUL();
-            case IDIV: return P.IDIV();
-            case LAND: return P.BAND();
-            case IMOD: return P.IMOD();
-            case RMUL: return P.RMUL();
-            case RDIVIDE: return P.RDIVIDE();
-            case RADD: return P.RADD();
-            case RSUB: return P.RSUB();
-            case IAND: return P.IAND();
-            case IOR: return P.IOR();
-            case IXOR: return P.IXOR();
-            case ILSHIFT: return P.LSHIFT();
-            case IRSHIFT: return P.RSHIFT();
-            case LOR: return P.BOR();
-            case GT: return P.GT();
-            case GE: return P.GE();
-            case LT: return P.LT();
-            case LE: return P.LE();
-            case EQ: return P.EQ();
-            case NE: return P.NE();
-            default: return null;
-        }
-    }
-
-    public static P unOpToPattern(UnExp.Operator op){
-        switch(op){
-            case INEG: return P.INEG();
-            case BNOT: return P.BNOT();
-            case RNEG: return P.RNEG();
-            case INOT: return P.INOT();
-            default: return null;
-        }
-    }
-
     public static Float toReal(Object input){
         if(input instanceof Integer){
             Integer inti = (Integer)input;
@@ -356,25 +226,6 @@ public class Utils {
                 return 1;
             } else {
                 return 0;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    public static BigInteger toBigInt(Object input){
-        if(input instanceof Integer){
-            Integer inputInt = (Integer)input;
-            return new BigInteger(Integer.toString(inputInt));
-        } else if(input instanceof Float){
-            Float inputint = (Float)input;
-            return new BigInteger(Integer.toString(inputint.intValue()));
-        } else if(input instanceof Boolean){
-            Boolean inputBool = (Boolean)input;
-            if(inputBool){
-                return new BigInteger("1");
-            } else {
-                return new BigInteger("0");
             }
         } else {
             return null;
@@ -565,20 +416,6 @@ public class Utils {
                 if(rightIdent.ident.equals(place))
                     return true;
             }
-        } else if(dataCode instanceof ExternalPlace){
-            ExternalPlace placement = (ExternalPlace)dataCode;
-            if(placement.place.equals(place))
-                return true;
-
-            if(placement.retPlace.equals(place))
-                return true;
-        } else if(dataCode instanceof InternalPlace){
-            InternalPlace placement = (InternalPlace)dataCode;
-            if(placement.place.equals(place))
-                return true;
-            
-            if(placement.retPlace.equals(place))
-                return true;
         } else if(dataCode instanceof Inline){
             Inline inlineAssembly = (Inline)dataCode;
             for(String arg : inlineAssembly.param){
@@ -600,13 +437,6 @@ public class Utils {
                 if(arg.dest.equals(place))
                     return true;
             }
-        } else if(dataCode instanceof ParamAssign){
-            ParamAssign assign = (ParamAssign)dataCode;
-            if(assign.newPlace.equals(place))
-                return true;
-
-            if(assign.paramPlace.equals(place))
-                return true;
         } else {
             return false;
         }
@@ -678,7 +508,7 @@ public class Utils {
     }
 
     private static boolean placeExistsInProcedure(String place, Proc procedure){
-        for(ParamAssign assign: procedure.paramAssign){
+        for(Assign assign: procedure.paramAssign){
             if(placeExistsInICode(place, assign))
                 return true;
         }

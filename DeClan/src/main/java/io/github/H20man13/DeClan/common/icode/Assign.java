@@ -9,10 +9,37 @@ import io.github.H20man13.DeClan.common.pat.P;
 public class Assign implements ICode{
     public String place;
     public Exp value;
+    private Scope scope;
+    private Type type;
 
-    public Assign(String place, Exp value){
+    public enum Scope{
+       GLOBAL,
+       LOCAL,
+       PARAM,
+       EXTERNAL_RETURN,
+       INTERNAL_RETURN
+    }
+
+    public enum Type{
+        BOOL,
+        REAL,
+        INT,
+        STRING
+    }
+
+    public Assign(Scope scope, String place, Exp value, Type type){
+        this.scope = scope;
         this.place = place;
         this.value = value;
+        this.type = type;
+    }
+
+    public Scope getScope(){
+        return scope;
+    }
+
+    public Type getType(){
+        return type;
     }
 
     @Override

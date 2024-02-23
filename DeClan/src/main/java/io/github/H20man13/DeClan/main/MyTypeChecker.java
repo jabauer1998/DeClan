@@ -137,6 +137,10 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 			varEnvironment.removeScope();
 		}
 	}
+
+	public TypeCheckerQualities getVarType(String var){
+		return varEnvironment.getEntry(var);
+	}
     
     @Override
     public void visit(Program program) {

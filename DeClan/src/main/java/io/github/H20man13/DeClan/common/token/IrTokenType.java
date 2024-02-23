@@ -36,6 +36,7 @@ public enum IrTokenType {
     INOT,
     IRSHIFT,
     ILSHIFT,
+    IPARAM,
     INEG,
     RNEG,
     BNOT,
@@ -48,7 +49,6 @@ public enum IrTokenType {
     END,
     RETURN,
     IASM,
-    IPARAM,
     SECTION,
     CODE,
     DATA,
@@ -56,18 +56,25 @@ public enum IrTokenType {
     SYMBOL,
     INTERNAL,
     CONST,
+    GLOBAL,
     
     //Operators
     ASSIGN,
-    IPLACE,
-    EPLACE,
     MAP,
-    PARAM_ASSIGN,
+    PARAM,
+
+    //Assign Types
+    INT,
+    REAL,
+    BOOL,
 
     //Other Misc Symbols
     COMMA,
     LPAR,
-    RPAR;
+    RPAR,
+    COLON,
+    LBRACK,
+    RBRACK;
 
     public static final Map<String, IrTokenType> reservedIr;
     private static final Map<Character, IrTokenType> singleOperators;
@@ -143,7 +150,6 @@ public enum IrTokenType {
         addKeyword(END);
         addKeyword(RETURN);
         addKeyword(IASM);
-        addKeyword(IPARAM);
         addKeyword(SECTION);
         addKeyword(CODE);
         addKeyword(DATA);
@@ -151,17 +157,23 @@ public enum IrTokenType {
         addKeyword(INTERNAL);
         addKeyword(SYMBOL);
         addKeyword(CONST);
+        addKeyword(PARAM);
+        addKeyword(INT);
+        addKeyword(REAL);
+        addKeyword(BOOL);
+        addKeyword(IPARAM);
+        addKeyword(GLOBAL);
 
         dualOperators = new HashMap<>();
         addDualOp(":=", ASSIGN);
         addDualOp("->", MAP);
-        addDualOp("<|", EPLACE);
-        addDualOp("|<", IPLACE);
-        addDualOp("<-", PARAM_ASSIGN);
 
         singleOperators = new HashMap<>();
         addSingleOp(',', COMMA);
         addSingleOp('(', LPAR);
         addSingleOp(')', RPAR);
+        addSingleOp(':', COLON);
+        addSingleOp('[', LBRACK);
+        addSingleOp(']', RBRACK);
     }
 }
