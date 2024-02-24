@@ -442,7 +442,7 @@ public class MyIrParser {
         IrToken id = match(IrTokenType.ID);
         match(IrTokenType.ASSIGN);
         Exp expression = parseExpression();
-        match(IrTokenType.COLON);
+        match(IrTokenType.SEPERATOR);
 
         match(IrTokenType.LBRACK);
         Type assignType;
@@ -484,7 +484,7 @@ public class MyIrParser {
         match(IrTokenType.ASSIGN);
         Exp expression = parseExpression();
 
-        match(IrTokenType.COLON);
+        match(IrTokenType.SEPERATOR);
         match(IrTokenType.LBRACK);
         Type assignType;
         if(willMatch(IrTokenType.REAL)){

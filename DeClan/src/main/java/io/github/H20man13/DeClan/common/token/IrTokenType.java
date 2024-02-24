@@ -72,7 +72,7 @@ public enum IrTokenType {
     COMMA,
     LPAR,
     RPAR,
-    COLON,
+    SEPERATOR,
     LBRACK,
     RBRACK;
 
@@ -172,7 +172,7 @@ public enum IrTokenType {
         addSingleOp(',', COMMA);
         addSingleOp('(', LPAR);
         addSingleOp(')', RPAR);
-        addSingleOp(':', COLON);
+        addSingleOp('|', SEPERATOR);
         addSingleOp('[', LBRACK);
         addSingleOp(']', RBRACK);
     }

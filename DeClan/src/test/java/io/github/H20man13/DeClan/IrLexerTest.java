@@ -40,7 +40,7 @@ public class IrLexerTest {
 
     @Test
     public void testKeywords(){
-        String keywords = "LABEL IF TRUE FALSE THEN ELSE GOTO CALL PROC IADD RADD ISUB RSUB BNOT IMUL RMUL IDIV RDIV IMOD LT GT GE LE NE EQ IASM IPARAM SECTION EXTERNAL INTERNAL CONST CODE DATA";
+        String keywords = "LABEL IF TRUE FALSE THEN ELSE GOTO CALL PROC IADD RADD ISUB RSUB BNOT IMUL RMUL IDIV RDIV IMOD LT GT GE LE NE EQ IASM IPARAM SECTION EXTERNAL INTERNAL CONST CODE DATA GLOBAL PARAM";
         Source source = new ReaderSource(new StringReader(keywords));
         ErrorLog errLog = new ErrorLog();
         MyIrLexer lex = new MyIrLexer(source, errLog);
@@ -79,6 +79,8 @@ public class IrLexerTest {
         tokTypes.add(IrTokenType.CONST);
         tokTypes.add(IrTokenType.CODE);
         tokTypes.add(IrTokenType.DATA);
+        tokTypes.add(IrTokenType.GLOBAL);
+        tokTypes.add(IrTokenType.PARAM);
 
         for(LogItem item : errLog){
             assertTrue(item.toString(), false);
@@ -89,7 +91,7 @@ public class IrLexerTest {
 
     @Test
     public void testSymbols(){
-        String symbols = "( , ) := ->";
+        String symbols = "( , ) := -> | [ ]";
         Source source = new ReaderSource(new StringReader(symbols));
         ErrorLog errLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(source, errLog);
@@ -100,6 +102,9 @@ public class IrLexerTest {
         tokTypes.add(IrTokenType.RPAR);
         tokTypes.add(IrTokenType.ASSIGN);
         tokTypes.add(IrTokenType.MAP);
+        tokTypes.add(IrTokenType.COLON);
+        tokTypes.add(IrTokenType.LBRACK);
+        tokTypes.add(IrTokenType.RBRACK);
 
         for(LogItem item : errLog){
             assertTrue(item.toString(), false);

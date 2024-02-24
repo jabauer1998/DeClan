@@ -58,26 +58,26 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testBinaryOp(){
-        String program = "x := 456\r\n"
-                       + "z := 48393\r\n"
-                       + "v := x IADD z\r\n"
-                       + "y := v ISUB v\r\n"
-                       + "e := y IMUL g\r\n"
-                       + "v := x RADD z\r\n"
-                       + "y := v RSUB v\r\n"
-                       + "e := y RMUL g\r\n"
-                       + "y := z LOR x\r\n"
-                       + "Z := b IOR x\r\n"
-                       + "g := v LAND z\r\n"
-                       + "d := v IAND z\r\n"
-                       + "e := v ILSHIFT x\r\n"
-                       + "d := b IRSHIFT f\r\n"
-                       + "e := v LT x\r\n"
-                       + "e := i GT g\r\n"
-                       + "f := u LE j\r\n"
-                       + "h := y GE o\r\n"
-                       + "j := h NE u\r\n"
-                       + "y := y EQ u\r\n";
+        String program = "x := 456 : [INT]\r\n"
+                       + "z := 48393 : [INT]\r\n"
+                       + "v := x IADD z : [INT]\r\n"
+                       + "y := v ISUB v : [INT]\r\n"
+                       + "e := y IMUL g : [INT]\r\n"
+                       + "v := x RADD z : [REAL]\r\n"
+                       + "y := v RSUB v : [REAL]\r\n"
+                       + "e := y RMUL g : [REAL]\r\n"
+                       + "y := z LOR x : [BOOL]\r\n"
+                       + "Z := b IOR x : [INT]\r\n"
+                       + "g := v LAND z : [BOOL]\r\n"
+                       + "d := v IAND z : [INT]\r\n"
+                       + "e := v ILSHIFT x : [INT]\r\n"
+                       + "d := b IRSHIFT f : [INT]\r\n"
+                       + "e := v LT x : [BOOL]\r\n"
+                       + "e := i GT g : [BOOL]\r\n"
+                       + "f := u LE j : [BOOL]\r\n"
+                       + "h := y GE o : [BOOL]\r\n"
+                       + "j := h NE u : [BOOL]\r\n"
+                       + "y := y EQ u : [BOOL]\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
