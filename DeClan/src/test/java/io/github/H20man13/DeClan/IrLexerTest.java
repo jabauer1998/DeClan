@@ -102,7 +102,7 @@ public class IrLexerTest {
         tokTypes.add(IrTokenType.RPAR);
         tokTypes.add(IrTokenType.ASSIGN);
         tokTypes.add(IrTokenType.MAP);
-        tokTypes.add(IrTokenType.COLON);
+        tokTypes.add(IrTokenType.SEPERATOR);
         tokTypes.add(IrTokenType.LBRACK);
         tokTypes.add(IrTokenType.RBRACK);
 

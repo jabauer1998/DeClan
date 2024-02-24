@@ -29,7 +29,8 @@ public class IrToken {
 
     @Override
     public String toString(){
-        StringBuilder result = new StringBuilder(lexeme);
+        StringBuilder result = new StringBuilder();
+        result.append(type.toString());
 		if (lexeme != null) {
 			result.append(" ").append(lexeme);
 		}
