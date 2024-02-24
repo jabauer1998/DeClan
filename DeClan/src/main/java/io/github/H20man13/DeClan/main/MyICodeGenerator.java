@@ -690,20 +690,20 @@ public class MyICodeGenerator{
           if(procArgs.entryExists("IntToReal") && procEnvironment.entryExists("IntToReal")){
              StringEntryList params = procArgs.getEntry("IntToReal");
              if(params.size() >= 1){
-               LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-               args.add(new Tuple<String,String>(rightValue, params.get(0)));
+               LinkedList<Assign> args = new LinkedList<Assign>();
+               args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(rightValue), Assign.Type.INT));
                builder.buildProcedureCall("IntToReal", args);
                StringEntry entry = procEnvironment.getEntry("IntToReal");
                rightValue = builder.buildExternalReturnPlacement(entry.toString(), Assign.Type.REAL);
              } else {
-              LinkedList<String> args = new LinkedList<String>();
-              args.add(rightValue);
+              LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+              args.add(new Tuple<String, Assign.Type>(rightValue, Assign.Type.INT));
               rightValue = builder.buildExternalFunctionCall(scope, "IntToReal", args, Assign.Type.REAL);
              }
            } else {
-             LinkedList<String> args = new LinkedList<String>();
-             args.add(rightValue);
-             rightValue = builder.buildExternalFunctionCall(scope, "IntToReal", args, Assign.Type.REAL);
+            LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+            args.add(new Tuple<String, Assign.Type>(rightValue, Assign.Type.INT));
+            rightValue = builder.buildExternalFunctionCall(scope, "IntToReal", args, Assign.Type.REAL);
            }
         }
       
@@ -712,9 +712,9 @@ public class MyICodeGenerator{
             if(procArgs.entryExists("RAdd") && procEnvironment.entryExists("RAdd")){
               StringEntryList params = procArgs.getEntry("RAdd");
               if(params.size() >= 2){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(leftValue, params.get(0)));
-                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(leftValue), Assign.Type.REAL));
+                args.add(new Assign(Scope.ARGUMENT, params.get(1), new IdentExp(rightValue), Assign.Type.REAL));
 
                 builder.buildProcedureCall("RAdd", args);
 
@@ -722,74 +722,74 @@ public class MyICodeGenerator{
                 return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
               } else {
                  errorLog.add("Cant find the function RAdd that contains two arguments", binaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(leftValue);
-                 args.add(rightValue);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String,Assign.Type>(leftValue, Assign.Type.REAL));
+                 args.add(new Tuple<String, Assign.Type>(rightValue, Assign.Type.REAL));
                  return builder.buildExternalFunctionCall(scope, "RAdd", args, Assign.Type.REAL);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(leftValue);
-               args.add(rightValue);
-               return builder.buildExternalFunctionCall(scope, "RAdd", args, Assign.Type.REAL);
+              LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+              args.add(new Tuple<String,Assign.Type>(leftValue, Assign.Type.REAL));
+              args.add(new Tuple<String, Assign.Type>(rightValue, Assign.Type.REAL));
+              return builder.buildExternalFunctionCall(scope, "RAdd", args, Assign.Type.REAL);
             }
           case MINUS: 
             if(procArgs.entryExists("RSub") && procEnvironment.entryExists("RSub")){
               StringEntryList params = procArgs.getEntry("RSub");
               if(params.size() >= 2){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(leftValue, params.get(0)));
-                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(leftValue), Assign.Type.REAL));
+                args.add(new Assign(Scope.ARGUMENT, params.get(1), new IdentExp(rightValue), Assign.Type.REAL));
 
                 builder.buildProcedureCall("RSub", args);
 
-                StringEntry returnPlace = procEnvironment.getEntry("RDivide");
+                StringEntry returnPlace = procEnvironment.getEntry("RSub");
                 return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
               } else {
                  errorLog.add("Cant find the function Subtract that contains two arguments", binaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(leftValue);
-                 args.add(rightValue);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String,Assign.Type>(leftValue, Assign.Type.REAL));
+                 args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
                  return builder.buildExternalFunctionCall(scope, "RSub", args, Assign.Type.REAL);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(leftValue);
-               args.add(rightValue);
-               return builder.buildExternalFunctionCall(scope, "RSub", args, Assign.Type.REAL);
+              LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+              args.add(new Tuple<String,Assign.Type>(leftValue, Assign.Type.REAL));
+              args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
+              return builder.buildExternalFunctionCall(scope, "RSub", args, Assign.Type.REAL);
             }
           case TIMES: 
             if(procArgs.entryExists("RMul") && procEnvironment.entryExists("RMul")){
               StringEntryList params = procArgs.getEntry("RMul");
               if(params.size() >= 2){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(leftValue, params.get(0)));
-                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(leftValue), Assign.Type.REAL));
+                args.add(new Assign(Scope.ARGUMENT, params.get(1), new IdentExp(rightValue), Assign.Type.REAL));
 
-                builder.buildProcedureCall("RDivide", args);
+                builder.buildProcedureCall("RMul", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("RMul");
                 return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
               } else {
                  errorLog.add("Cant find the function Divide that contains two arguments", binaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(leftValue);
-                 args.add(rightValue);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String, Assign.Type>(leftValue, Assign.Type.REAL));
+                 args.add(new Tuple<String, Assign.Type>(rightValue, Assign.Type.REAL));
                  return builder.buildExternalFunctionCall(scope, "RMul", args, Assign.Type.REAL);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(leftValue);
-               args.add(rightValue);
+               LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+               args.add(new Tuple<String, Assign.Type>(leftValue, Assign.Type.REAL));
+               args.add(new Tuple<String, Assign.Type>(rightValue, Assign.Type.REAL));
                return builder.buildExternalFunctionCall(scope, "RMul", args, Assign.Type.REAL);
             }
           case DIVIDE:
             if(procArgs.entryExists("RDivide") && procEnvironment.entryExists("RDivide")){
               StringEntryList params = procArgs.getEntry("RDivide");
               if(params.size() >= 2){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(leftValue, params.get(0)));
-                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(leftValue), Assign.Type.REAL));
+                args.add(new Assign(Scope.ARGUMENT, params.get(1), new IdentExp(rightValue), Assign.Type.REAL));
 
                 builder.buildProcedureCall("RDivide", args);
 
@@ -797,49 +797,49 @@ public class MyICodeGenerator{
                 return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
               } else {
                  errorLog.add("Cant find the function Divide that contains two arguments", binaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(leftValue);
-                 args.add(rightValue);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String, Assign.Type>(leftValue, Assign.Type.REAL));
+                 args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
                  return builder.buildExternalFunctionCall(scope, "RDivide", args, Assign.Type.REAL);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(leftValue);
-               args.add(rightValue);
-               return builder.buildExternalFunctionCall(scope, "RDivide", args, Assign.Type.REAL);
+              LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+              args.add(new Tuple<String, Assign.Type>(leftValue, Assign.Type.REAL));
+              args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
+              return builder.buildExternalFunctionCall(scope, "RDivide", args, Assign.Type.REAL);
             }
           case DIV:
             if(procArgs.entryExists("RDiv") && procEnvironment.entryExists("RDiv")){
               StringEntryList params = procArgs.getEntry("RDiv");
               if(params.size() >= 2){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(leftValue, params.get(0)));
-                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(leftValue), Assign.Type.REAL));
+                args.add(new Assign(Scope.ARGUMENT, params.get(1), new IdentExp(rightValue), Assign.Type.REAL));
 
                 builder.buildProcedureCall("RDiv", args);
 
                 StringEntry returnPlace = procEnvironment.getEntry("RDiv");
-                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
+                return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.INT);
               } else {
                  errorLog.add("Cant find the function Div that contains two arguments", binaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(leftValue);
-                 args.add(rightValue);
-                 return builder.buildExternalFunctionCall(scope, "RDiv", args, Assign.Type.REAL);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String, Assign.Type>(leftValue, Assign.Type.REAL));
+                 args.add(new Tuple<String, Assign.Type>(rightValue, Assign.Type.REAL));
+                 return builder.buildExternalFunctionCall(scope, "RDiv", args, Assign.Type.INT);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(leftValue);
-               args.add(rightValue);
-               return builder.buildExternalFunctionCall(scope, "RDiv", args, Assign.Type.REAL);
+              LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+              args.add(new Tuple<String, Assign.Type>(leftValue, Assign.Type.REAL));
+              args.add(new Tuple<String, Assign.Type>(rightValue, Assign.Type.REAL));
+              return builder.buildExternalFunctionCall(scope, "RDiv", args, Assign.Type.INT);
             }
           case LE:
             if(procArgs.entryExists("RLessThanOrEqualTo") && procEnvironment.entryExists("RLessThanOrEqualTo")){
               StringEntryList params = procArgs.getEntry("RLessThanOrEqualTo");
               if(params.size() >= 2){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(leftValue, params.get(0)));
-                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(leftValue), Assign.Type.REAL));
+                args.add(new Assign(Scope.ARGUMENT, params.get(1), new IdentExp(rightValue), Assign.Type.REAL));
 
                 builder.buildProcedureCall("RLessThanOrEqualTo", args);
 
@@ -847,24 +847,24 @@ public class MyICodeGenerator{
                 return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.BOOL);
               } else {
                  errorLog.add("Cant find the function RLessThanOrEqualTo that contains two arguments", binaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(leftValue);
-                 args.add(rightValue);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String, Assign.Type>(leftValue, Assign.Type.REAL));
+                 args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
                  return builder.buildExternalFunctionCall(scope, "RLessThanOrEqualTo", args, Assign.Type.BOOL);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(leftValue);
-               args.add(rightValue);
+               LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+               args.add(new Tuple<String, Assign.Type>(leftValue, Assign.Type.REAL));
+               args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
                return builder.buildExternalFunctionCall(scope, "RLessThanOrEqualTo", args, Assign.Type.BOOL);
             }
           case LT:
             if(procArgs.entryExists("RLessThan") && procEnvironment.entryExists("RLessThan")){
               StringEntryList params = procArgs.getEntry("RLessThan");
               if(params.size() >= 2){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(leftValue, params.get(0)));
-                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(leftValue), Assign.Type.REAL));
+                args.add(new Assign(Scope.ARGUMENT, params.get(1), new IdentExp(rightValue), Assign.Type.REAL));
 
                 builder.buildProcedureCall("RLessThan", args);
 
@@ -872,24 +872,24 @@ public class MyICodeGenerator{
                 return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.BOOL);
               } else {
                  errorLog.add("Cant find the function RLessThan that contains two arguments", binaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(leftValue);
-                 args.add(rightValue);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String,Assign.Type>(leftValue, Assign.Type.REAL));
+                 args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
                  return builder.buildExternalFunctionCall(scope, "RLessThan", args, Assign.Type.BOOL);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(leftValue);
-               args.add(rightValue);
-               return builder.buildExternalFunctionCall(scope, "RLessThan", args, Assign.Type.BOOL);
+               LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                args.add(new Tuple<String,Assign.Type>(leftValue, Assign.Type.REAL));
+                args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
+                return builder.buildExternalFunctionCall(scope, "RLessThan", args, Assign.Type.BOOL);
             }
           case GE:
             if(procArgs.entryExists("RGreaterThanOrEqualTo") && procEnvironment.entryExists("RGreaterThanOrEqualTo")){
               StringEntryList params = procArgs.getEntry("RGreaterThanOrEqualTo");
               if(params.size() >= 2){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(leftValue, params.get(0)));
-                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(leftValue), Assign.Type.REAL));
+                args.add(new Assign(Scope.ARGUMENT, params.get(1), new IdentExp(rightValue), Assign.Type.REAL));
 
                 builder.buildProcedureCall("RGreaterThanOrEqualTo", args);
 
@@ -897,24 +897,24 @@ public class MyICodeGenerator{
                 return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.BOOL);
               } else {
                  errorLog.add("Cant find the function RGreaterThanOrEqualTo that contains two arguments", binaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(leftValue);
-                 args.add(rightValue);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String,Assign.Type>(leftValue, Assign.Type.REAL));
+                 args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
                  return builder.buildExternalFunctionCall(scope, "RGreaterThanOrEqualTo", args, Assign.Type.BOOL);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(leftValue);
-               args.add(rightValue);
-               return builder.buildExternalFunctionCall(scope, "RGreaterThanOrEqualTo", args, Assign.Type.BOOL);
+              LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+              args.add(new Tuple<String,Assign.Type>(leftValue, Assign.Type.REAL));
+              args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
+              return builder.buildExternalFunctionCall(scope, "RGreaterThanOrEqualTo", args, Assign.Type.BOOL);
             }
           case GT:
             if(procArgs.entryExists("RGreaterThan") && procEnvironment.entryExists("RGreaterThan")){
               StringEntryList params = procArgs.getEntry("RGreaterThan");
               if(params.size() >= 2){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(leftValue, params.get(0)));
-                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(leftValue), Assign.Type.REAL));
+                args.add(new Assign(Scope.ARGUMENT, params.get(1), new IdentExp(rightValue), Assign.Type.REAL));
 
                 builder.buildProcedureCall("RGreaterThan", args);
 
@@ -922,24 +922,24 @@ public class MyICodeGenerator{
                 return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.BOOL);
               } else {
                  errorLog.add("Cant find the function RGreaterThan that contains two arguments", binaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(leftValue);
-                 args.add(rightValue);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String, Assign.Type>(leftValue, Assign.Type.REAL));
+                 args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
                  return builder.buildExternalFunctionCall(scope, "RGreaterThan", args, Assign.Type.BOOL);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(leftValue);
-               args.add(rightValue);
+               LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+               args.add(new Tuple<String, Assign.Type>(leftValue, Assign.Type.REAL));
+               args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
                return builder.buildExternalFunctionCall(scope, "RGreaterThan", args, Assign.Type.BOOL);
             }
           case EQ:
             if(procArgs.entryExists("REqualTo") && procEnvironment.entryExists("REqualTo")){
               StringEntryList params = procArgs.getEntry("REqualTo");
               if(params.size() >= 2){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(leftValue, params.get(0)));
-                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(leftValue), Assign.Type.REAL));
+                args.add(new Assign(Scope.ARGUMENT, params.get(1), new IdentExp(rightValue), Assign.Type.REAL));
 
                 builder.buildProcedureCall("REqualTo", args);
 
@@ -947,24 +947,24 @@ public class MyICodeGenerator{
                 return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.BOOL);
               } else {
                  errorLog.add("Cant find the function REqualTo that contains two arguments", binaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(leftValue);
-                 args.add(rightValue);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String,Assign.Type>(leftValue, Assign.Type.REAL));
+                 args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
                  return builder.buildExternalFunctionCall(scope, "REqualTo", args, Assign.Type.BOOL);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(leftValue);
-               args.add(rightValue);
+               LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+               args.add(new Tuple<String,Assign.Type>(leftValue, Assign.Type.REAL));
+               args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
                return builder.buildExternalFunctionCall(scope, "REqualTo", args, Assign.Type.BOOL);
             }
           case NE: 
             if(procArgs.entryExists("RNotEqualTo") && procEnvironment.entryExists("RNotEqualTo")){
               StringEntryList params = procArgs.getEntry("RNotEqualTo");
               if(params.size() >= 2){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(leftValue, params.get(0)));
-                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(leftValue), Assign.Type.REAL));
+                args.add(new Assign(Scope.ARGUMENT, params.get(1), new IdentExp(rightValue), Assign.Type.REAL));
 
                 builder.buildProcedureCall("RNotEqualTo", args);
 
@@ -972,16 +972,16 @@ public class MyICodeGenerator{
                 return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.BOOL);
               } else {
                  errorLog.add("Cant find the function RNotEqualTo that contains two arguments", binaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(leftValue);
-                 args.add(rightValue);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String,Assign.Type>(leftValue, Assign.Type.REAL));
+                 args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
                  return builder.buildExternalFunctionCall(scope, "RNotEqualTo", args, Assign.Type.BOOL);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(leftValue);
-               args.add(rightValue);
-               return builder.buildExternalFunctionCall(scope, "RNotEqualTo", args, Assign.Type.BOOL);
+               LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                args.add(new Tuple<String,Assign.Type>(leftValue, Assign.Type.REAL));
+                args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.REAL));
+                return builder.buildExternalFunctionCall(scope, "RNotEqualTo", args, Assign.Type.BOOL);
             }
           default: return leftValue;
       }
@@ -994,9 +994,9 @@ public class MyICodeGenerator{
           if(procArgs.entryExists("Div") && procEnvironment.entryExists("Div")){
               StringEntryList params = procArgs.getEntry("Div");
               if(params.size() >= 2){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(leftValue, params.get(0)));
-                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(leftValue), Assign.Type.INT));
+                args.add(new Assign(Scope.ARGUMENT, params.get(1), new IdentExp(rightValue), Assign.Type.INT));
 
                 builder.buildProcedureCall("Div", args);
 
@@ -1004,24 +1004,24 @@ public class MyICodeGenerator{
                 return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.INT);
               } else {
                  errorLog.add("Cant find the function Div that contains two arguments", binaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(leftValue);
-                 args.add(rightValue);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String, Assign.Type>(leftValue, Assign.Type.INT));
+                 args.add(new Tuple<String, Assign.Type>(rightValue, Assign.Type.INT));
                  return builder.buildExternalFunctionCall(scope, "Div", args, Assign.Type.INT);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(leftValue);
-               args.add(rightValue);
+               LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+               args.add(new Tuple<String, Assign.Type>(leftValue, Assign.Type.INT));
+               args.add(new Tuple<String, Assign.Type>(rightValue, Assign.Type.INT));
                return builder.buildExternalFunctionCall(scope, "Div", args, Assign.Type.INT);
             }
         case DIVIDE: 
             if(procArgs.entryExists("Divide") && procEnvironment.entryExists("Divide")){
               StringEntryList params = procArgs.getEntry("Divide");
               if(params.size() >= 2){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(leftValue, params.get(0)));
-                args.add(new Tuple<String,String>(rightValue, params.get(1)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(leftValue), Assign.Type.INT));
+                args.add(new Assign(Scope.ARGUMENT, params.get(1), new IdentExp(rightValue), Assign.Type.INT));
 
                 builder.buildProcedureCall("Divide", args);
 
@@ -1029,15 +1029,15 @@ public class MyICodeGenerator{
                 return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
               } else {
                  errorLog.add("Cant find the function Divide that contains two arguments", binaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(leftValue);
-                 args.add(rightValue);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String,Assign.Type>(leftValue, Assign.Type.INT));
+                 args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.INT));
                  return builder.buildExternalFunctionCall(scope, "Divide", args, Assign.Type.REAL);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(leftValue);
-               args.add(rightValue);
+               LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+               args.add(new Tuple<String,Assign.Type>(leftValue, Assign.Type.INT));
+               args.add(new Tuple<String,Assign.Type>(rightValue, Assign.Type.INT));
                return builder.buildExternalFunctionCall(scope, "Divide", args, Assign.Type.REAL);
             }
         case MOD: return builder.buildIntegerModuloAssignment(scope, leftValue, rightValue);
@@ -1065,22 +1065,26 @@ public class MyICodeGenerator{
     if(procArgs.entryExists(funcName)){
       //Build Internal Function Call Sequence
       StringEntryList argsToMap = procArgs.getEntry(funcName);
-      List<Tuple<String, String>> valArgResults = new ArrayList<>();
+      List<Assign> valArgResults = new ArrayList<Assign>();
 
       for(int i = 0; i < valArgs.size(); i++){
         Expression valArg = valArgs.get(i);
+        TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
+        Assign.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
 	      String result = generateExpressionIr(scope, valArg, builder);
-	      valArgResults.add(new Tuple<String, String>(result, argsToMap.get(i)));
+	      valArgResults.add(new Assign(Scope.ARGUMENT, argsToMap.get(i), new IdentExp(result), type));
       }
       builder.buildProcedureCall(funcName, valArgResults);
       StringEntry returnPlace = procEnvironment.getEntry(funcName);
       return builder.buildExternalReturnPlacement(returnPlace.toString(), retType);
     } else {
       //Build external function call
-      LinkedList<String> procedureArgs = new LinkedList<String>();
+      LinkedList<Tuple<String, Assign.Type>> procedureArgs = new LinkedList<Tuple<String, Assign.Type>>();
       for(Expression arg : valArgs){
         String place = generateExpressionIr(scope, arg, builder);
-        procedureArgs.add(place);
+        TypeCheckerQualities qual = arg.acceptResult(typeChecker);
+        Assign.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+        procedureArgs.add(new Tuple<String, Assign.Type>(place, type));
       }
 
       String retPlace = builder.buildExternalFunctionCall(scope, funcName, procedureArgs, retType);
@@ -1098,38 +1102,38 @@ public class MyICodeGenerator{
           if(procArgs.entryExists("RealToBool") && procEnvironment.entryExists("RealToBool")){
              StringEntryList params = procArgs.getEntry("RealToBool");
              if(params.size() >= 1){
-               LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-               args.add(new Tuple<String,String>(value, params.get(0)));
-               builder.buildProcedureCall("RealToBool", args);
-               StringEntry entry = procEnvironment.getEntry("RealToBool");
-               value = builder.buildExternalReturnPlacement(entry.toString(), Assign.Type.BOOL);
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(value), Assign.Type.REAL));
+                builder.buildProcedureCall("RealToBool", args);
+                StringEntry entry = procEnvironment.getEntry("RealToBool");
+                value = builder.buildExternalReturnPlacement(entry.toString(), Assign.Type.BOOL);
              } else {
-              LinkedList<String> args = new LinkedList<String>();
-              args.add(value);
-              value = builder.buildExternalFunctionCall(scope, "RealToBool", args, Assign.Type.BOOL);
+                LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                args.add(new Tuple<String, Assign.Type>(value, Assign.Type.REAL));
+                value = builder.buildExternalFunctionCall(scope, "RealToBool", args, Assign.Type.BOOL);
              }
            } else {
-             LinkedList<String> args = new LinkedList<String>();
-             args.add(value);
+             LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+             args.add(new Tuple<String, Assign.Type>(value, Assign.Type.REAL));
              value = builder.buildExternalFunctionCall(scope, "RealToBool", args, Assign.Type.BOOL);
            }
         } else if(rightType.containsQualities(TypeCheckerQualities.INTEGER)){
           if(procArgs.entryExists("IntToBool") && procEnvironment.entryExists("IntToBool")){
             StringEntryList params = procArgs.getEntry("IntToBool");
             if(params.size() >= 1){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(value, params.get(0)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(value), Assign.Type.INT));
                 builder.buildProcedureCall("IntToBool", args);
                 StringEntry entry = procEnvironment.getEntry("IntToBool");
                 value = builder.buildExternalReturnPlacement(entry.toString(), Assign.Type.BOOL);
             } else {
-              LinkedList<String> args = new LinkedList<String>();
-              args.add(value);
+              LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+              args.add(new Tuple<String,Assign.Type>(value, Assign.Type.INT));
               value = builder.buildExternalFunctionCall(scope, "IntToBool", args, Assign.Type.BOOL);
             }
           } else {
-            LinkedList<String> args = new LinkedList<String>();
-            args.add(value);
+            LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+            args.add(new Tuple<String,Assign.Type>(value, Assign.Type.INT));
             value = builder.buildExternalFunctionCall(scope, "IntToBool", args, Assign.Type.BOOL);
           }
         }
@@ -1141,20 +1145,20 @@ public class MyICodeGenerator{
           if(procArgs.entryExists("RNeg") && procEnvironment.entryExists("RNeg")){
               StringEntryList params = procArgs.getEntry("RNeg");
               if(params.size() >= 1){
-                LinkedList<Tuple<String, String>> args = new LinkedList<Tuple<String, String>>();
-                args.add(new Tuple<String,String>(value, params.get(0)));
+                LinkedList<Assign> args = new LinkedList<Assign>();
+                args.add(new Assign(Scope.ARGUMENT, params.get(0), new IdentExp(value), Assign.Type.REAL));
                 builder.buildProcedureCall("RNeg", args);
                 StringEntry returnPlace = procEnvironment.getEntry("RNeg");
                 return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.REAL);
               } else {
                  errorLog.add("Cant find the function RNeg that contains one argument", unaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(value);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String,Assign.Type>(value, Assign.Type.REAL));
                  return builder.buildExternalFunctionCall(scope, "RNeg", args, Assign.Type.REAL);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(value);
+               LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+               args.add(new Tuple<String,Assign.Type>(value, Assign.Type.REAL));
                return builder.buildExternalFunctionCall(scope, "RNeg", args, Assign.Type.REAL);
             }
         default:
@@ -1175,13 +1179,13 @@ public class MyICodeGenerator{
                 return builder.buildExternalReturnPlacement(returnPlace.toString(), Assign.Type.INT);
               } else {
                  errorLog.add("Cant find the function INeg that contains one argument", unaryOperation.getStart());
-                 LinkedList<String> args = new LinkedList<String>();
-                 args.add(value);
+                 LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+                 args.add(new Tuple<String,Assign.Type>(value, Assign.Type.INT));
                  return builder.buildExternalFunctionCall(scope, "INeg", args, Assign.Type.INT);
               }
             } else {
-               LinkedList<String> args = new LinkedList<String>();
-               args.add(value);
+               LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+               args.add(new Tuple<String,Assign.Type>(value, Assign.Type.INT));
                return builder.buildExternalFunctionCall(scope, "INeg", args, Assign.Type.INT);
             }
         case BNOT: return builder.buildIntegerNotAssignment(scope, valueIdent);

@@ -194,9 +194,9 @@ public class MyICodeMachine {
     private void interpretProcedureCall(Call procedure, int programLength){
         if(procedure.pname.equals("WriteInt")){
             if(procedure.params.size() == 1){
-                Tuple<String, String> arg1 = procedure.params.get(0);
-                if(variableValues.entryExists(arg1.source)){
-                    VariableEntry entry = variableValues.getEntry(arg1.source);
+                Assign arg1 = procedure.params.get(0);
+                if(variableValues.entryExists(arg1.value.toString())){
+                    VariableEntry entry = variableValues.getEntry(arg1.value.toString());
                     try{
                         Object val = entry.getValue();
                         Integer toInt = Utils.toInt(val);
@@ -205,7 +205,7 @@ public class MyICodeMachine {
                         errorAndExit(exp.toString(), programCounter, programLength);
                     }
                 } else {
-                    errorAndExit("Error paramater " + arg1.source + " does not exist in function " + procedure, programCounter, programLength);
+                    errorAndExit("Error paramater " + arg1.value.toString() + " does not exist in function " + procedure, programCounter, programLength);
                 }
             } else {
                 errorAndExit("In procedure call " + procedure + " expected 1 argument for function call " + procedure.pname, programCounter, programLength);
@@ -218,9 +218,9 @@ public class MyICodeMachine {
             }
         } else if(procedure.pname.equals("WriteReal")){
             if(procedure.params.size() == 1){
-                Tuple<String, String> arg1 = procedure.params.get(0);
-                if(variableValues.entryExists(arg1.source)){
-                    VariableEntry entry = variableValues.getEntry(arg1.source);
+                Assign arg1 = procedure.params.get(0);
+                if(variableValues.entryExists(arg1.value.toString())){
+                    VariableEntry entry = variableValues.getEntry(arg1.value.toString());
                     try{
                         Object val = entry.getValue();
                         Float dVal = Utils.toReal(val);
@@ -229,7 +229,7 @@ public class MyICodeMachine {
                         errorAndExit(exp.toString(), programCounter, programLength);
                     }
                 } else {
-                    errorAndExit("Error paramater " + arg1.source + " does not exist in function " + procedure, programCounter, programLength);
+                    errorAndExit("Error paramater " + arg1.value.toString() + " does not exist in function " + procedure, programCounter, programLength);
                 }
             } else {
                 errorAndExit("In procedure call " + procedure + " expected 1 argument for function call " + procedure.pname, programCounter, programLength);
@@ -247,8 +247,8 @@ public class MyICodeMachine {
         } else if(procedure.pname.equals("RealBinaryAsInt") || procedure.pname.equals("realBinaryAsInt")){
             if(procedure.params.size() == 1){
                 Assign arg1 = procedure.params.get(0);
-                if(variableValues.entryExists(arg1.source)){
-                    VariableEntry entry = variableValues.getEntry(arg1.source);
+                if(variableValues.entryExists(arg1.value.toString())){
+                    VariableEntry entry = variableValues.getEntry(arg1.value.toString());
                     Object val = entry.getValue();
                     if(val != null){
                         Float valFloat = (Float)val;
@@ -256,19 +256,19 @@ public class MyICodeMachine {
                         tempReturnValue = toRet;
                         machineState = State.RETURN;
                     } else {
-                        errorAndExit("In procedure " + procedure + " paramater " + arg1.source + " has a null value", programCounter, programLength);
+                        errorAndExit("In procedure " + procedure + " paramater " + arg1.value.toString() + " has a null value", programCounter, programLength);
                     }
                 } else {
-                    errorAndExit("Error paramater " + arg1.source + " does not exist in function " + procedure, programCounter, programLength);
+                    errorAndExit("Error paramater " + arg1.value.toString() + " does not exist in function " + procedure, programCounter, programLength);
                 }
             } else {
                 errorAndExit("In procedure call " + procedure + " expected 1 argument for function call " + procedure.pname, programCounter, programLength);
             }
         } else if(procedure.pname.equals("IntBinaryAsReal") || procedure.pname.equals("intBinaryAsReal")){
             if(procedure.params.size() == 1){
-                Tuple<String, String> arg1 = procedure.params.get(0);
-                if(variableValues.entryExists(arg1.source)){
-                    VariableEntry entry = variableValues.getEntry(arg1.source);
+                Assign arg1 = procedure.params.get(0);
+                if(variableValues.entryExists(arg1.value.toString())){
+                    VariableEntry entry = variableValues.getEntry(arg1.value.toString());
                     Object val = entry.getValue();
                     if(val != null){
                         Integer valInt = (Integer)val;
@@ -276,10 +276,10 @@ public class MyICodeMachine {
                         tempReturnValue = toRet;
                         machineState = State.RETURN;
                     } else {
-                        errorAndExit("In function " + procedure + " value of argument " + arg1.source + " is null", programCounter, programLength);
+                        errorAndExit("In function " + procedure + " value of argument " + arg1.value.toString() + " is null", programCounter, programLength);
                     }
                 } else {
-                    errorAndExit("Error paramater " + arg1.source + " does not exist in function " + procedure, programCounter, programLength);
+                    errorAndExit("Error paramater " + arg1.value.toString() + " does not exist in function " + procedure, programCounter, programLength);
                 }
             }  else {
                 errorAndExit("In procedure call " + procedure + " expected 1 argument for function call " + procedure.pname, programCounter, programLength);
@@ -288,12 +288,12 @@ public class MyICodeMachine {
             this.returnStack.push(this.programCounter);
         
             List<VariableEntry> argVals = new ArrayList<VariableEntry>();
-            for(Tuple<String, String> arg : procedure.params){
-                if(this.variableValues.entryExists(arg.source)){
-                    VariableEntry argSource = this.variableValues.getEntry(arg.source);
+            for(Assign arg : procedure.params){
+                if(this.variableValues.entryExists(arg.value.toString())){
+                    VariableEntry argSource = this.variableValues.getEntry(arg.value.toString());
                     argVals.add(argSource);
                 } else {
-                    errorAndExit("Error in procedure call " + procedure + " cant find argument " + arg.source, programCounter, programLength);
+                    errorAndExit("Error in procedure call " + procedure + " cant find argument " + arg.value.toString(), programCounter, programLength);
                 }
             }
 
@@ -301,9 +301,9 @@ public class MyICodeMachine {
                 this.variableValues.addScope();
 
                 for(int i = 0; i < procedure.params.size(); i++){
-                    Tuple<String, String> newArg = procedure.params.get(i);
+                    Assign newArg = procedure.params.get(i);
                     VariableEntry sourceVal = argVals.get(i);
-                    this.variableValues.addEntry(newArg.dest, sourceVal);
+                    this.variableValues.addEntry(newArg.place, sourceVal);
                 }
 
                 IntEntry newAddress = this.labelAddresses.getEntry(procedure.pname);

@@ -128,7 +128,7 @@ public class MyICodeTypeChecker {
                     if(localQual.containsQualities(TypeCheckerQualities.BOOLEAN) && paramQual.missingQualities(TypeCheckerQualities.BOOLEAN)
                     || localQual.containsQualities(TypeCheckerQualities.INTEGER) && paramQual.missingQualities(TypeCheckerQualities.INTEGER)
                     || localQual.containsQualities(TypeCheckerQualities.REAL) && paramQual.missingQualities(TypeCheckerQualities.REAL)){
-                        errLog.add("Error in function call " + proc.pname + ": param " + param.dest + " takes in a paramater of type " + paramQual + " the first call but takes in a paramater of type " + localQual + " the ext time from param " + param.source, new Position(instructionNumber, 0));
+                        errLog.add("Error in function call " + proc.pname + ": param " + param.place + " takes in a paramater of type " + paramQual + " the first call but takes in a paramater of type " + localQual + " the ext time from param " + param.value.toString(), new Position(instructionNumber, 0));
                     }
                 } else {
                     TypeCheckerQualities sourceQual = variableQualities.getEntry(param.value.toString());

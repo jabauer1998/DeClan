@@ -88,9 +88,9 @@ public class MyIrLinker {
 
                                         int numArgs = funcCall.params.size();
                                         for(int argIndex = 0; argIndex < numArgs; argIndex++){
-                                            Tuple<String, String> arg = funcCall.params.get(argIndex);
-                                            if(libSymbols.containsEntryWithICodePlace(arg.source, SymEntry.EXTERNAL)){
-                                                SymEntry entry = libSymbols.getEntryByICodePlace(arg.source, SymEntry.EXTERNAL);
+                                            Assign arg = funcCall.params.get(argIndex);
+                                            if(libSymbols.containsEntryWithICodePlace(arg.value.toString(), SymEntry.EXTERNAL)){
+                                                SymEntry entry = libSymbols.getEntryByICodePlace(arg.value.toString(), SymEntry.EXTERNAL);
                                                 if(!newTable.containsEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                                     fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newTable, dataInstructions, codeSec, procSec);
                                                 if(newTable.containsEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL)){
@@ -99,7 +99,7 @@ public class MyIrLinker {
                                                         replacePlaceInLib(library, entry.icodePlace, newEntry.icodePlace);
                                                 }
                                             } else {
-                                                fetchInternalDependentInstructions(library, program, libraries, arg.source, newTable, dataInstructions, codeSec, procSec);
+                                                fetchInternalDependentInstructions(library, program, libraries, arg.value.toString(), newTable, dataInstructions, codeSec, procSec);
                                             }
                                         }
 
@@ -241,13 +241,13 @@ public class MyIrLinker {
                                         if(numberOfArgsInCall != numberOfArgsInProc){
                                             errLog.add("In call " + call.toString() + " expected " + numberOfArgsInCall + " but found procedure with " + numberOfArgsInProc + " arguments", new Position(libIndex, 0));
                                         } else {
-                                            List<Tuple<String, String>> newArgs = new LinkedList<Tuple<String, String>>();
+                                            List<Assign> newArgs = new LinkedList<Assign>();
                                             for(int argIndex = 0; argIndex < numberOfArgsInCall; argIndex++){
-                                                String place = call.arguments.get(argIndex);
+                                                Tuple<String, Assign.Type> value = call.arguments.get(argIndex);
                                                 Tuple<String, String> newArg = new Tuple<String,String>("", "");
                                                 
-                                                if(libSymbols.containsEntryWithICodePlace(place, SymEntry.EXTERNAL)){
-                                                    SymEntry entry = libSymbols.getEntryByICodePlace(place, SymEntry.EXTERNAL);
+                                                if(libSymbols.containsEntryWithICodePlace(value.source, SymEntry.EXTERNAL)){
+                                                    SymEntry entry = libSymbols.getEntryByICodePlace(value.source, SymEntry.EXTERNAL);
                                                     if(!newTable.containsEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                                         fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newTable, dataInstructions, codeSec, procSec);
                                                     if(newTable.containsEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL)){
@@ -256,7 +256,7 @@ public class MyIrLinker {
                                                             replacePlaceInLib(library, entry.icodePlace, newEntry.icodePlace);
                                                     }
                                                 } else {
-                                                    fetchInternalDependentInstructions(library, program, libraries, place, newTable, dataInstructions, codeSec, procSec);
+                                                    fetchInternalDependentInstructions(library, program, libraries, value.source, newTable, dataInstructions, codeSec, procSec);
                                                 }
 
                                                 newArg.source = place;
@@ -2174,11 +2174,11 @@ public class MyIrLinker {
                                 } else {
                                     List<Assign> newArgs = new LinkedList<Assign>();
                                     for(int argIndex = 0; argIndex < numberOfArgsInCall; argIndex++){
-                                        String value = call.arguments.get(argIndex);
+                                        Tuple<String, Assign.Type> value = call.arguments.get(argIndex);
                                         Assign newArg;
 
-                                        if(libSymbols.containsEntryWithICodePlace(place, SymEntry.EXTERNAL)){
-                                            SymEntry entry = libSymbols.getEntryByICodePlace(place, SymEntry.EXTERNAL);
+                                        if(libSymbols.containsEntryWithICodePlace(value.source, SymEntry.EXTERNAL)){
+                                            SymEntry entry = libSymbols.getEntryByICodePlace(value.source, SymEntry.EXTERNAL);
                                             if(!symbolTable.containsEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                                 fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, symbolTable, dataSection, codeSection, procedureSec, library);
                                             if(symbolTable.containsEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL)){
@@ -2187,12 +2187,12 @@ public class MyIrLinker {
                                                     replacePlaceInLib(library, entry.icodePlace, newEntry.icodePlace);
                                             }
                                         } else {
-                                            fetchInternalDependentInstructions(library, prog, libraries, place, symbolTable, dataSection, codeSection, procedureSec);
+                                            fetchInternalDependentInstructions(library, prog, libraries, value.source, symbolTable, dataSection, codeSection, procedureSec);
                                         }
 
                                         String place = fetchedProcedure.paramAssign.get(argIndex).value.toString();
 
-                                        newArg = new Assign(Scope.ARGUMENT, place, value, null)
+                                        newArg = new Assign(Scope.ARGUMENT, place, new IdentExp(value.source), value.dest);
                                     }
 
                                     Call newCall = new Call(call.procedureName, newArgs);
