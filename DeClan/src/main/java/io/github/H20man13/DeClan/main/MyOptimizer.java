@@ -712,8 +712,8 @@ public class MyOptimizer {
                     DagNode child1 = node2.getChildren().get(0);
                     DagNode child2 = node2.getChildren().get(1);
 
-                    String identifier1 = Utils.getIdentifier(child1, liveAtEndOfBlock);
-                    String identifier2 = Utils.getIdentifier(child2, liveAtEndOfBlock);
+                    String identifier1 = getIdentifier(child1, liveAtEndOfBlock);
+                    String identifier2 = getIdentifier(child2, liveAtEndOfBlock);
 
                     IdentExp exp1 = new IdentExp(identifier1);
                     IdentExp exp2 = new IdentExp(identifier2);
@@ -728,7 +728,7 @@ public class MyOptimizer {
 
                     DagNode child1 = node2.getChildren().get(0);
 
-                    String identifier1 = Utils.getIdentifier(child1, liveAtEndOfBlock);
+                    String identifier1 = getIdentifier(child1, liveAtEndOfBlock);
 
                     IdentExp exp1 = new IdentExp(identifier1);
 
@@ -744,14 +744,14 @@ public class MyOptimizer {
             } else if(node instanceof DagVariableNode){
                 DagVariableNode varNode = (DagVariableNode)node;
                 DagNode child = varNode.getChild();
-                String identifier1 = Utils.getIdentifier(child, liveAtEndOfBlock);
+                String identifier1 = MyOptimizer.getIdentifier(child, liveAtEndOfBlock);
                 IdentExp ident1 = new IdentExp(identifier1);
                 result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, ident1, ConversionUtils.dagValueTypeToAssignType(type)));
             } else if(node instanceof DagInlineAssemblyNode){
                 DagInlineAssemblyNode dagNode = (DagInlineAssemblyNode)node;
                 List<String> children = new LinkedList<String>();
                 for(DagNode child : dagNode.getChildren()){
-                    String ident = Utils.getIdentifier(child, liveAtEndOfBlock);
+                    String ident = MyOptimizer.getIdentifier(child, liveAtEndOfBlock);
                     children.add(ident);
                 }
                 List<String> operationList = dagNode.getIdentifiers();
@@ -773,6 +773,24 @@ public class MyOptimizer {
         }
         
         block.getBlock().setICode(result);
+    }
+
+    private static String getIdentifier(DagNode node, Environment<String, LiveInfo> table){
+        List<String> identifiers = node.getIdentifiers();
+        for(String identifier : identifiers){
+            if(table.entryExists(identifier)){
+                LiveInfo life = table.getEntry(identifier);
+                if(life.isAlive){
+                    return identifier;
+                }
+            }
+        }
+
+        if(identifiers.size() > 0){
+            return identifiers.get(0);
+        } else {
+            return null;
+        }
     }
 
     private static DagGraph buildDagForBlock(BlockNode block, boolean optimized){

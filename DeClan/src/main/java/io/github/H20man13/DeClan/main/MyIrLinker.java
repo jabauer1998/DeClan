@@ -1,18 +1,13 @@
 package io.github.H20man13.DeClan.main;
 
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Position;
-import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.ast.Library;
 import edu.depauw.declan.common.ast.Program;
-import edu.depauw.declan.model.SymbolTable;
-import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.gen.LabelGenerator;
@@ -26,7 +21,6 @@ import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.SymEntry;
 import io.github.H20man13.DeClan.common.icode.Assign.Scope;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
-import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;

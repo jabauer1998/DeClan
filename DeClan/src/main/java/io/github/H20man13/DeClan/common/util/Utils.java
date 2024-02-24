@@ -94,24 +94,6 @@ public class Utils {
         return false;
     }
 
-    public static String getIdentifier(DagNode node, Environment<String, LiveInfo> table){
-        List<String> identifiers = node.getIdentifiers();
-        for(String identifier : identifiers){
-            if(table.entryExists(identifier)){
-                LiveInfo life = table.getEntry(identifier);
-                if(life.isAlive){
-                    return identifier;
-                }
-            }
-        }
-
-        if(identifiers.size() > 0){
-            return identifiers.get(0);
-        } else {
-            return null;
-        }
-    }
-
     public static DagNode createBinaryNode(Assign.Scope origScope, BinExp.Operator op, String place, DagNode left, DagNode right) {
         ScopeType scope = ConversionUtils.assignScopeToDagScopeType(origScope);
         switch(op){

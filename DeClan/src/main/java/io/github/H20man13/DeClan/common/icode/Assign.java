@@ -44,7 +44,25 @@ public class Assign implements ICode{
 
     @Override
 	public String toString() {
-		return place + " := " + value.toString();
+        StringBuilder sb = new StringBuilder();
+        if(this.scope == Scope.EXTERNAL_RETURN){
+            sb.append("EXTERNAL RETURN ");
+        } else if(this.scope == Scope.INTERNAL_RETURN){
+            sb.append("INTERNAL RETURN ");
+        } else if(this.scope == Scope.PARAM){
+            sb.append("PARAM ");
+        } else if(this.scope == Scope.GLOBAL){
+            sb.append("GLOBAL ");
+        }
+
+        sb.append(place);
+        sb.append(" := ");
+        sb.append(value.toString());
+        sb.append(" : ");
+        sb.append('[');
+        sb.append(this.type);
+        sb.append(']');
+		return sb.toString();
 	}
 
     @Override

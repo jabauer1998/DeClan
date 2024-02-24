@@ -77,7 +77,7 @@ public class MyIrLexer {
                         state = state.COMMENT;
                         source.advance();
                         continue;
-                    } else if(IrTokenType.contSingleOpToken(c) || c == ':' || c == '-' || c == '<' || c == '|'){
+                    } else if(IrTokenType.contSingleOpToken(c) || c == ':' || c == '-'){
                         state = state.OP;
                         lexeme.append(c);
                         source.advance();

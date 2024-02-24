@@ -444,6 +444,7 @@ public class MyIrParser {
         Exp expression = parseExpression();
         match(IrTokenType.COLON);
 
+        match(IrTokenType.LBRACK);
         Type assignType;
         if(willMatch(IrTokenType.REAL)){
             skip();
@@ -455,6 +456,7 @@ public class MyIrParser {
             match(IrTokenType.INT);
             assignType = Type.INT;
         }
+        match(IrTokenType.RBRACK);
         return new Assign(scope, id.getLexeme(), expression, assignType);
     }
 
@@ -483,6 +485,7 @@ public class MyIrParser {
         Exp expression = parseExpression();
 
         match(IrTokenType.COLON);
+        match(IrTokenType.LBRACK);
         Type assignType;
         if(willMatch(IrTokenType.REAL)){
             skip();
@@ -494,6 +497,7 @@ public class MyIrParser {
             match(IrTokenType.INT);
             assignType = Type.INT;
         }
+        match(IrTokenType.RBRACK);
         return new Assign(scope, id.getLexeme(), expression, assignType);
     }
 }
