@@ -246,7 +246,7 @@ public class MyICodeMachine {
            this.machineState = State.RETURN;  
         } else if(procedure.pname.equals("RealBinaryAsInt") || procedure.pname.equals("realBinaryAsInt")){
             if(procedure.params.size() == 1){
-                Tuple<String, String> arg1 = procedure.params.get(0);
+                Assign arg1 = procedure.params.get(0);
                 if(variableValues.entryExists(arg1.source)){
                     VariableEntry entry = variableValues.getEntry(arg1.source);
                     Object val = entry.getValue();

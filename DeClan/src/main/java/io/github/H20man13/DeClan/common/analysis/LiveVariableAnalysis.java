@@ -71,9 +71,9 @@ public class LiveVariableAnalysis extends Analysis<String> {
                     }
                 } else if(code instanceof Call){
                     Call placement = (Call)code;
-                    for(Tuple<String, String> arg : placement.params){
-                        instructionDef.add(arg.dest);
-                        instructionUse.add(arg.source);
+                    for(Assign arg : placement.params){
+                        instructionDef.add(arg.place);
+                        instructionUse.add(arg.value.toString());
                     }
                 }
                 defSets.put(code, instructionDef);

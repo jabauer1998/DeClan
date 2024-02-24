@@ -120,19 +120,19 @@ public class MyICodeTypeChecker {
 
     private boolean typeCheckPossibleParamaters(Call proc){
         boolean allFound = true;
-        for(Tuple<String, String> param : proc.params){
-            if(variableQualities.entryExists(param.source)){
-                if(variableQualities.entryExists(param.dest)){
-                    TypeCheckerQualities localQual = variableQualities.getEntry(param.source);
-                    TypeCheckerQualities paramQual = variableQualities.getEntry(param.dest);
+        for(Assign param : proc.params){
+            if(variableQualities.entryExists(param.value.toString())){
+                if(variableQualities.entryExists(param.place)){
+                    TypeCheckerQualities localQual = variableQualities.getEntry(param.value.toString());
+                    TypeCheckerQualities paramQual = variableQualities.getEntry(param.place);
                     if(localQual.containsQualities(TypeCheckerQualities.BOOLEAN) && paramQual.missingQualities(TypeCheckerQualities.BOOLEAN)
                     || localQual.containsQualities(TypeCheckerQualities.INTEGER) && paramQual.missingQualities(TypeCheckerQualities.INTEGER)
                     || localQual.containsQualities(TypeCheckerQualities.REAL) && paramQual.missingQualities(TypeCheckerQualities.REAL)){
                         errLog.add("Error in function call " + proc.pname + ": param " + param.dest + " takes in a paramater of type " + paramQual + " the first call but takes in a paramater of type " + localQual + " the ext time from param " + param.source, new Position(instructionNumber, 0));
                     }
                 } else {
-                    TypeCheckerQualities sourceQual = variableQualities.getEntry(param.source);
-                    variableQualities.addEntry(param.dest, sourceQual);
+                    TypeCheckerQualities sourceQual = variableQualities.getEntry(param.value.toString());
+                    variableQualities.addEntry(param.place, sourceQual);
                 }
             } else {
                 allFound = false;

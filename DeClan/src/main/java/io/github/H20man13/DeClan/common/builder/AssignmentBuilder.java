@@ -104,9 +104,9 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
 
     public String buildIntegerModuloAssignment(Scope scope, String left, String right){
         String place = gen.genNext();
-        List<String> args = new LinkedList<String>();
-        args.add(left);
-        args.add(right);
+        List<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+        args.add(new Tuple<String,Assign.Type>(left, Assign.Type.INT));
+        args.add(new Tuple<String, Assign.Type>(right, Assign.Type.INT));
         intermediateCode.add(factory.produceExternalProcedureAssignment(scope, place, "Mod", args, Assign.Type.INT));
         return place;
     }
@@ -212,15 +212,15 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
         return place;
     }
 
-    public void buildProcedureCall(String name, List<Tuple<String, String>> args){
+    public void buildProcedureCall(String name, List<Assign> args){
         intermediateCode.add(factory.produceProcedure(name, args));
     }
 
-    public void buildExternalProcedureCall(String funcName, List<String> args){
+    public void buildExternalProcedureCall(String funcName, List<Tuple<String, Assign.Type>> args){
         intermediateCode.add(factory.produceExternalProcedure(funcName, args));
     }
 
-    public String buildExternalFunctionCall(Scope scope, String funcName, List<String> args, Assign.Type type){
+    public String buildExternalFunctionCall(Scope scope, String funcName, List<Tuple<String, Assign.Type>> args, Assign.Type type){
         String place = gen.genNext();
         intermediateCode.add(factory.produceExternalProcedureAssignment(scope, place, funcName, args, type));
         return place;

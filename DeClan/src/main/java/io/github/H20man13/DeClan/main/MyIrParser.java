@@ -344,12 +344,10 @@ public class MyIrParser {
         IrToken procName = match(IrTokenType.ID);
         match(IrTokenType.LPAR);
         
-        List<Tuple<String, String>> args = new LinkedList<>();
+        List<Assign> args = new LinkedList<>();
         do{
-            IrToken from = match(IrTokenType.ID);
-            match(IrTokenType.MAP);
-            IrToken to = match(IrTokenType.ID);
-            args.add(new Tuple<String, String>(from.getLexeme(), to.getLexeme()));
+            Assign assign = parseArgument();
+            args.add(assign);
         } while(skipIfYummy(IrTokenType.COMMA));
 
         match(IrTokenType.RPAR);
@@ -414,17 +412,67 @@ public class MyIrParser {
         match(IrTokenType.EXTERNAL);
         match(IrTokenType.CALL);
         IrToken funcName = match(IrTokenType.ID);
-        LinkedList<String> args = new LinkedList<String>();
+        LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
         match(IrTokenType.LPAR);
-        if(willMatch(IrTokenType.ID)){
+        if(willMatch(IrTokenType.LPAR)){
             do{
+                match(IrTokenType.LPAR);
                 IrToken arg = match(IrTokenType.ID);
-                args.add(arg.getLexeme());
+                match(IrTokenType.COMMA);
+                match(IrTokenType.LBRACK);
+
+                Assign.Type type;
+                if(willMatch(IrTokenType.STRING)){
+                    skip();
+                    type = Assign.Type.STRING;
+                } else if(willMatch(IrTokenType.BOOL)){
+                    skip();
+                    type = Assign.Type.BOOL;
+                } else if(willMatch(IrTokenType.REAL)){
+                    skip();
+                    type = Assign.Type.REAL;
+                } else {
+                    match(IrTokenType.INT);
+                    type = Assign.Type.INT;
+                }
+
+                match(IrTokenType.RBRACK);
+                match(IrTokenType.RPAR);
+                args.add(new Tuple<String, Assign.Type>(arg.getLexeme(), type));
             } while(skipIfYummy(IrTokenType.COMMA));
         }
         match(IrTokenType.RPAR);
 
         return new ExternalCall(funcName.getLexeme(), args);
+    }
+
+    private Assign parseArgument(){
+        match(IrTokenType.LPAR);
+        IrToken value = match(IrTokenType.ID);
+        match(IrTokenType.COMMA);
+        IrToken place = match(IrTokenType.ID);
+        match(IrTokenType.RPAR);
+        
+        match(IrTokenType.SEPERATOR);
+
+        match(IrTokenType.LBRACK);
+        Assign.Type type;
+        if(willMatch(IrTokenType.BOOL)){
+            skip();
+            type = Assign.Type.BOOL;
+        } else if(willMatch(IrTokenType.STRING)){
+            skip();
+            type = Assign.Type.STRING;
+        } else if(willMatch(IrTokenType.REAL)){
+            skip();
+            type = Assign.Type.REAL;
+        } else {
+            match(IrTokenType.INT);
+            type = Assign.Type.INT;
+        }
+        match(IrTokenType.RBRACK);
+
+        return new Assign(Scope.ARGUMENT, place.getLexeme(), new IdentExp(value.getLexeme()), type);
     }
 
     private Assign parseDataAssignment(){

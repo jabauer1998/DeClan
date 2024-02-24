@@ -70,15 +70,15 @@ public class MyIrFactory {
         return new Goto(name);
     }
 
-    public Call produceProcedure(String funcName, List<Tuple<String, String>> argResults){
+    public Call produceProcedure(String funcName, List<Assign> argResults){
         return new Call(funcName, argResults);
     }
 
-    public ExternalCall produceExternalProcedure(String funcName, List<String> args){
+    public ExternalCall produceExternalProcedure(String funcName, List<Tuple<String, Assign.Type>> args){
         return new ExternalCall(funcName, args);
     }
 
-    public Assign produceExternalProcedureAssignment(Assign.Scope scope, String place, String funcName, List<String> args, Assign.Type type){
+    public Assign produceExternalProcedureAssignment(Assign.Scope scope, String place, String funcName, List<Tuple<String, Assign.Type>> args, Assign.Type type){
         return new Assign(scope, place, new ExternalCall(funcName, args), type);
     }
 

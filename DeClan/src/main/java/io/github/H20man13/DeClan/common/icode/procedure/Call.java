@@ -4,14 +4,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Call implements ICode {
 	public String pname;
-	public List<Tuple<String, String>> params;
+	public List<Assign> params;
 
-	public Call(String pname, List<Tuple<String, String>> params) {
+	public Call(String pname, List<Assign> params) {
 		this.pname = pname;
 		this.params = params;
 	}
@@ -19,19 +20,18 @@ public class Call implements ICode {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("CALL " + pname + " ( ");
+		sb.append("CALL " + pname + "(");
+
 		boolean first = true;
-		for (Tuple<String, String> param : params) {
+		for (Assign param : params) {
 			if (first) {
 				first = false;
 			} else {
-				sb.append(" , ");
+				sb.append(", ");
 			}
-			sb.append(param.source);
-			sb.append(" -> ");
-			sb.append(param.dest);
+			sb.append(param.toString());
 		}
-		sb.append(" )");
+		sb.append(")");
 		return sb.toString();
 	}
 
@@ -62,8 +62,8 @@ public class Call implements ICode {
 				return false;
 
 			for(int i = 0; i < params.size(); i++){
-				Tuple<String, String> arg1 = objCall.params.get(i);
-				Tuple<String, String> arg2 = params.get(i);
+				Assign arg1 = objCall.params.get(i);
+				Assign arg2 = params.get(i);
 
 				if(!arg1.equals(arg2))
 					return false;

@@ -406,17 +406,17 @@ public class Utils {
             }
         } else if(dataCode instanceof ExternalCall){
             ExternalCall call = (ExternalCall)dataCode;
-            for(String arg: call.arguments){
-                if(arg.equals(place))
+            for(Tuple<String, Assign.Type> arg: call.arguments){
+                if(arg.source.equals(place))
                     return true;
             }
         } else if(dataCode instanceof Call){
             Call call = (Call)dataCode;
-            for(Tuple<String, String> arg : call.params){
-                if(arg.source.equals(place))
+            for(Assign arg : call.params){
+                if(arg.place.equals(place))
                     return true;
 
-                if(arg.dest.equals(place))
+                if(arg.value.toString().equals(place))
                     return true;
             }
         } else {

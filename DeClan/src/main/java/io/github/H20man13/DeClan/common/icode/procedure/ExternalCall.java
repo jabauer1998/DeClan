@@ -3,15 +3,17 @@ package io.github.H20man13.DeClan.common.icode.procedure;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class ExternalCall implements ICode, Exp {
     public String procedureName;
-    public List<String> arguments;
+    public List<Tuple<String, Assign.Type>> arguments;
     
-    public ExternalCall(String procedureName, List<String> arguments){
+    public ExternalCall(String procedureName, List<Tuple<String, Assign.Type>> arguments){
         this.procedureName = procedureName;
         this.arguments = arguments;
     }
@@ -43,8 +45,8 @@ public class ExternalCall implements ICode, Exp {
                 return false;
 
             for(int i = 0; i < arguments.size(); i++){
-                String arg1 = call.arguments.get(i);
-                String arg2 = arguments.get(i);
+                Tuple<String, Assign.Type> arg1 = call.arguments.get(i);
+                Tuple<String, Assign.Type> arg2 = arguments.get(i);
 
                 if(!arg1.equals(arg2))
                     return false;
@@ -65,7 +67,12 @@ public class ExternalCall implements ICode, Exp {
         sb.append('(');
 
         for(int i = 0; i < arguments.size(); i++){
-            sb.append(arguments.get(i));
+            Tuple<String, Assign.Type> arg = arguments.get(i);
+            sb.append('(');
+            sb.append(arg.source);
+            sb.append(", [");
+            sb.append(arg.dest);
+            sb.append("])");
             if(i < arguments.size() - 1){
                 sb.append(", ");
             }

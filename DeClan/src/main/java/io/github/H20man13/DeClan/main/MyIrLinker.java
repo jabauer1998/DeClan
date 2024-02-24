@@ -2172,11 +2172,11 @@ public class MyIrLinker {
                                 if(numberOfArgsInCall != numberOfArgsInProc){
                                     errLog.add("In call " + call.toString() + " expected " + numberOfArgsInCall + " but found procedure with " + numberOfArgsInProc + " arguments", new Position(i, 0));
                                 } else {
-                                    List<Tuple<String, String>> newArgs = new LinkedList<Tuple<String, String>>();
+                                    List<Assign> newArgs = new LinkedList<Assign>();
                                     for(int argIndex = 0; argIndex < numberOfArgsInCall; argIndex++){
-                                        String place = call.arguments.get(argIndex);
-                                        Tuple<String, String> newArg = new Tuple<String,String>("", "");
-                                    
+                                        String value = call.arguments.get(argIndex);
+                                        Assign newArg;
+
                                         if(libSymbols.containsEntryWithICodePlace(place, SymEntry.EXTERNAL)){
                                             SymEntry entry = libSymbols.getEntryByICodePlace(place, SymEntry.EXTERNAL);
                                             if(!symbolTable.containsEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
@@ -2190,9 +2190,9 @@ public class MyIrLinker {
                                             fetchInternalDependentInstructions(library, prog, libraries, place, symbolTable, dataSection, codeSection, procedureSec);
                                         }
 
-                                        newArg.source = place;
-                                        newArg.dest = fetchedProcedure.paramAssign.get(argIndex).value.toString();
-                                        newArgs.add(newArg);
+                                        String place = fetchedProcedure.paramAssign.get(argIndex).value.toString();
+
+                                        newArg = new Assign(Scope.ARGUMENT, place, value, null)
                                     }
 
                                     Call newCall = new Call(call.procedureName, newArgs);

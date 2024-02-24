@@ -13,19 +13,20 @@ public class Assign implements ICode{
     private Type type;
 
     public enum Scope{
-       GLOBAL,
-       LOCAL,
-       PARAM,
-       EXTERNAL_RETURN,
-       INTERNAL_RETURN
-    }
-
-    public enum Type{
-        BOOL,
-        REAL,
-        INT,
-        STRING
-    }
+        GLOBAL,
+        LOCAL,
+        PARAM,
+        EXTERNAL_RETURN,
+        INTERNAL_RETURN,
+        ARGUMENT,
+     }
+ 
+     public enum Type{
+         BOOL,
+         REAL,
+         INT,
+         STRING
+     }
 
     public Assign(Scope scope, String place, Exp value, Type type){
         this.scope = scope;
@@ -45,24 +46,37 @@ public class Assign implements ICode{
     @Override
 	public String toString() {
         StringBuilder sb = new StringBuilder();
-        if(this.scope == Scope.EXTERNAL_RETURN){
-            sb.append("EXTERNAL RETURN ");
-        } else if(this.scope == Scope.INTERNAL_RETURN){
-            sb.append("INTERNAL RETURN ");
-        } else if(this.scope == Scope.PARAM){
-            sb.append("PARAM ");
-        } else if(this.scope == Scope.GLOBAL){
-            sb.append("GLOBAL ");
-        }
 
-        sb.append(place);
-        sb.append(" := ");
-        sb.append(value.toString());
-        sb.append(" | ");
-        sb.append('[');
-        sb.append(this.type);
-        sb.append(']');
-		return sb.toString();
+        if(this.scope == Scope.ARGUMENT){
+            sb.append('(');
+            sb.append(this.value.toString());
+            sb.append(" -> ");
+            sb.append(this.place);
+            sb.append(')');
+            sb.append('[');
+            sb.append(this.type);
+            sb.append(']');
+            return sb.toString();
+        } else {
+            if(this.scope == Scope.EXTERNAL_RETURN){
+                sb.append("EXTERNAL RETURN ");
+            } else if(this.scope == Scope.INTERNAL_RETURN){
+                sb.append("INTERNAL RETURN ");
+            } else if(this.scope == Scope.PARAM){
+                sb.append("PARAM ");
+            } else if(this.scope == Scope.GLOBAL){
+                sb.append("GLOBAL ");
+            }
+
+            sb.append(place);
+            sb.append(" := ");
+            sb.append(value.toString());
+            sb.append(" | ");
+            sb.append('[');
+            sb.append(this.type);
+            sb.append(']');
+            return sb.toString();
+        }
 	}
 
     @Override
