@@ -510,8 +510,9 @@ public class MyOptimizer {
                 symbolTable.addEntry(rightIdent.ident, new LiveInfo(true, x));
             }
         } else if(icode instanceof Call){
-            for(Tuple<String, String> param : ((Call)icode).params){
-                symbolTable.addEntry(param.source, new LiveInfo(true, x));
+            Call icodeCall = (Call)icode;
+            for(Assign param : icodeCall.params){
+                symbolTable.addEntry(param.value.toString(), new LiveInfo(true, x));
             }
         }
         livelinessInformation.put(icode, symbolTable.copy());

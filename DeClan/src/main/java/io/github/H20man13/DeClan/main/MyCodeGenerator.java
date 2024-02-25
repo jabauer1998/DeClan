@@ -2153,21 +2153,30 @@ public class MyCodeGenerator {
                 int offset = toAllocateToStack;
                 offset -= 4;
                 cGen.addVariable(returnPlacement.value.toString(), offset);
-                for(Tuple<String, String> param: procICode.params){
-                    offset -= 4;
-                    cGen.addVariable(param.dest, VariableLength.WORD, offset);
+                for(Assign param: procICode.params){
+                    if(param.getType() == Assign.Type.REAL){
+                        offset -= 4;
+                        cGen.addVariable(param.place, VariableLength.WORD, offset);
+                    } else if(param.getType() == Assign.Type.BOOL){
+                        offset -= 1;
+                        cGen.addVariable(param.place, VariableLength.WORD, offset);
+                    } else {
+                        offset -= 4;
+                        cGen.addVariable(param.place, VariableLength.WORD, offset);
+                    } 
                 }
                 
                 cGen.addInstruction("ADD R13, R13, #" + toAllocateToStack);
                 cGen.addInstruction("STR R14, [R13, #-"+toPlaceReturnAddressOnStack+"]");
                 for(int x = 0; x < totalLength; x++){
-                    Tuple<String, String> sourceDest = procICode.params.get(x);
+                    Assign sourceDest = procICode.params.get(x);
 
                     String offSetRegister = iGen.genNext();
                     String offReg = rGen.getTempReg(offSetRegister, procICode);
-                    cGen.addInstruction("LDR " + offReg + ", " + sourceDest.dest);
+                    cGen.addInstruction("LDR " + offReg + ", " + sourceDest.place);
 
-                    String reg = rGen.getReg(sourceDest.source, procICode); 
+                    String reg = rGen.getReg(sourceDest.value.toString(), procICode);
+                    //TODO finish later 
                     cGen.addInstruction("LDR " + reg + ", " + sourceDest.source);
                     cGen.addInstruction("STR " + reg +  ", [R13,-" + offReg + "]");
                 }
