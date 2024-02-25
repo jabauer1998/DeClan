@@ -160,6 +160,7 @@ public enum IrTokenType {
         addKeyword(INT);
         addKeyword(REAL);
         addKeyword(BOOL);
+        addKeyword(STRING);
         addKeyword(IPARAM);
         addKeyword(GLOBAL);
 

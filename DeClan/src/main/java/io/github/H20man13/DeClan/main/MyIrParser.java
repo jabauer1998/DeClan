@@ -537,6 +537,9 @@ public class MyIrParser {
         } else if(willMatch(IrTokenType.BOOL)){
             skip();
             assignType = Type.BOOL;
+        } else if(willMatch(IrTokenType.STRING)){
+            skip();
+            assignType = Type.STRING;  
         } else {
             match(IrTokenType.INT);
             assignType = Type.INT;

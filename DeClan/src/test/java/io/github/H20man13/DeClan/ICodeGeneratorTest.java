@@ -161,16 +161,16 @@ public class ICodeGeneratorTest {
                        + "INTERNAL RETURN z := 48 [INT]\r\n"
                        + "RETURN\r\n";
 
-        String flatProgram = "t := 899\r\n"
-                           + "g := 89\r\n"
-                           + "f := 98\r\n"
-                           + "CALL func ( t -> x , g -> y , f -> z )\r\n"
-                           + "x <- z\r\n"
+        String flatProgram = "t := 899 [INT]\r\n"
+                           + "g := 89 [INT]\r\n"
+                           + "f := 98 [INT]\r\n"
+                           + "CALL func ((t -> x)[INT], (g -> y)[INT], (f -> z)[INT])\r\n"
+                           + "EXTERNAL RETURN x := z [INT]\r\n"
                            + "END\r\n"
                            + "PROC LABEL func\r\n"
-                           + "x := 78\r\n"
-                           + "y := 79\r\n"
-                           + "z := 48\r\n"
+                           + "x := 78 [INT]\r\n"
+                           + "y := 79 [INT]\r\n"
+                           + "INTERNAL RETURN z := 48 [INT]\r\n"
                            + "RETURN\r\n";
 
 
@@ -189,7 +189,7 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testStringDecl(){
-        String program = "t := \"Text Here\"\r\n";
+        String program = "t := \"Text Here\" [STRING]\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
