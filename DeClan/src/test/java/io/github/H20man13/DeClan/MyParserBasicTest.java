@@ -34,96 +34,96 @@ public class MyParserBasicTest {
 
     @Test
     public void testConversions(){
-        runParserOnSource("test_source/conversions.dcl");
+        runParserOnSource("test/declan/conversions.dcl");
     }
 
     @Test
     public void testExpressions(){
-        runParserOnSource("test_source/expressions.dcl");
+        runParserOnSource("test/declan/expressions.dcl");
     }
 
     @Test
     public void testLoops(){
-        runParserOnSource("test_source/loops.dcl");
+        runParserOnSource("test/declan/loops.dcl");
     }
 
     @Test
     public void testSample(){
-        runParserOnSource("test_source/sample.dcl");
+        runParserOnSource("test/declan/sample.dcl");
     }
 
     @Test
     public void testTest(){
-        runParserOnSource("test_source/test.dcl");
+        runParserOnSource("test/declan/test.dcl");
     }
 
     @Test
     public void testTest2(){
-        runParserOnSource("test_source/test2.dcl");
+        runParserOnSource("test/declan/test2.dcl");
     }
 
     @Test
     public void testTest3(){
-        runParserOnSource("test_source/test3.dcl");
+        runParserOnSource("test/declan/test3.dcl");
     }
 
     @Test
     public void testTest4(){
-        runParserOnSource("test_source/test4.dcl");
+        runParserOnSource("test/declan/test4.dcl");
     }
 
     @Test
     public void testSingleConversion(){
-        runParserOnSource("test_source/SingleConversion.dcl");
+        runParserOnSource("test/declan/SingleConversion.dcl");
     }
 
     @Test
     public void testSingleConversion2(){
-        runParserOnSource("test_source/SingleConversion2.dcl");
+        runParserOnSource("test/declan/SingleConversion2.dcl");
     }
 
     @Test
     public void testRealAddition(){
-        runParserOnSource("test_source/RealAddition.dcl");
+        runParserOnSource("test/declan/RealAddition.dcl");
     }
 
     @Test
     public void testRealAddition2(){
-        runParserOnSource("test_source/RealAddition2.dcl");
+        runParserOnSource("test/declan/RealAddition2.dcl");
     }
 
     @Test
     public void testRealAddition3(){
-        runParserOnSource("test_source/RealMultiplication.dcl");
+        runParserOnSource("test/declan/RealMultiplication.dcl");
     }
 
     @Test
     public void testRealMultiplication(){
-        runParserOnSource("test_source/RealMultiplication.dcl");
+        runParserOnSource("test/declan/RealMultiplication.dcl");
     }
 
     @Test
     public void testRealMultiplication2(){
-        runParserOnSource("test_source/RealMultiplication2.dcl");
+        runParserOnSource("test/declan/RealMultiplication2.dcl");
     }
 
     @Test
     public void testIntegerDiv(){
-        runParserOnSource("test_source/IntegerDiv.dcl");
+        runParserOnSource("test/declan/IntegerDiv.dcl");
     }
 
     @Test
     public void testIntegerDiv2(){
-        runParserOnSource("test_source/IntegerDiv2.dcl");
+        runParserOnSource("test/declan/IntegerDiv2.dcl");
     }
 
     @Test
     public void testRealDivision(){
-        runParserOnSource("test_source/RealDivision.dcl");
+        runParserOnSource("test/declan/RealDivision.dcl");
     }
 
     @Test
     public void testRealDivision2(){
-        runParserOnSource("test_source/RealDivision2.dcl");
+        runParserOnSource("test/declan/RealDivision2.dcl");
     }
 }
