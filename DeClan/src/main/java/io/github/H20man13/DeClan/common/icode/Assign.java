@@ -71,8 +71,7 @@ public class Assign implements ICode{
             sb.append(place);
             sb.append(" := ");
             sb.append(value.toString());
-            sb.append(" | ");
-            sb.append('[');
+            sb.append(" [");
             sb.append(this.type);
             sb.append(']');
             return sb.toString();
