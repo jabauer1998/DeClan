@@ -449,7 +449,7 @@ public class MyIrParser {
     private Assign parseArgument(){
         match(IrTokenType.LPAR);
         IrToken value = match(IrTokenType.ID);
-        match(IrTokenType.COMMA);
+        match(IrTokenType.MAP);
         IrToken place = match(IrTokenType.ID);
         match(IrTokenType.RPAR);
 

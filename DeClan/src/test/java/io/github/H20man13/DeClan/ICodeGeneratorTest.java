@@ -58,26 +58,26 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testBinaryOp(){
-        String program = "x := 456 : [INT]\r\n"
-                       + "z := 48393 : [INT]\r\n"
-                       + "v := x IADD z : [INT]\r\n"
-                       + "y := v ISUB v : [INT]\r\n"
-                       + "e := y IMUL g : [INT]\r\n"
-                       + "v := x RADD z : [REAL]\r\n"
-                       + "y := v RSUB v : [REAL]\r\n"
-                       + "e := y RMUL g : [REAL]\r\n"
-                       + "y := z LOR x : [BOOL]\r\n"
-                       + "Z := b IOR x : [INT]\r\n"
-                       + "g := v LAND z : [BOOL]\r\n"
-                       + "d := v IAND z : [INT]\r\n"
-                       + "e := v ILSHIFT x : [INT]\r\n"
-                       + "d := b IRSHIFT f : [INT]\r\n"
-                       + "e := v LT x : [BOOL]\r\n"
-                       + "e := i GT g : [BOOL]\r\n"
-                       + "f := u LE j : [BOOL]\r\n"
-                       + "h := y GE o : [BOOL]\r\n"
-                       + "j := h NE u : [BOOL]\r\n"
-                       + "y := y EQ u : [BOOL]\r\n";
+        String program = "x := 456 [INT]\r\n"
+                       + "z := 48393 [INT]\r\n"
+                       + "v := x IADD z [INT]\r\n"
+                       + "y := v ISUB v [INT]\r\n"
+                       + "e := y IMUL g [INT]\r\n"
+                       + "v := x RADD z [REAL]\r\n"
+                       + "y := v RSUB v [REAL]\r\n"
+                       + "e := y RMUL g [REAL]\r\n"
+                       + "y := z LOR x [BOOL]\r\n"
+                       + "Z := b IOR x [INT]\r\n"
+                       + "g := v LAND z [BOOL]\r\n"
+                       + "d := v IAND z [INT]\r\n"
+                       + "e := v ILSHIFT x [INT]\r\n"
+                       + "d := b IRSHIFT f [INT]\r\n"
+                       + "e := v LT x [BOOL]\r\n"
+                       + "e := i GT g [BOOL]\r\n"
+                       + "f := u LE j [BOOL]\r\n"
+                       + "h := y GE o [BOOL]\r\n"
+                       + "j := h NE u [BOOL]\r\n"
+                       + "y := y EQ u [BOOL]\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -94,8 +94,8 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testUnaryOp(){
-        String program = "x := 38393\r\n"
-                       + "z := BNOT y\r\n";
+        String program = "x := 38393 [INT]\r\n"
+                       + "z := BNOT y [BOOL]\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -111,8 +111,8 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testBooleanAssignment(){
-        String program = "v := FALSE\r\n"
-                       + "z := TRUE\r\n";
+        String program = "v := FALSE [BOOL]\r\n"
+                       + "z := TRUE [BOOL]\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -128,8 +128,8 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testNumAssignment(){
-        String program = "x := 89309\r\n"
-                       + "z := 438.343\r\n";
+        String program = "x := 89309 [INT]\r\n"
+                       + "z := 438.343 [INT]\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -148,17 +148,17 @@ public class ICodeGeneratorTest {
         String program = "SYMBOL SECTION\r\n"
                        + "DATA SECTION\r\n"
                        + "CODE SECTION\r\n"
-                       + "t := 899\r\n"
-                       + "g := 89\r\n"
-                       + "f := 98\r\n"
-                       + "CALL func ( t -> x , g -> y , f -> z )\r\n"
-                       + "x <- z\r\n"
+                       + "t := 899 [INT]\r\n"
+                       + "g := 89 [INT]\r\n"
+                       + "f := 98 [INT]\r\n"
+                       + "CALL func ((t -> x)[INT], (g -> y)[INT], (f -> z)[INT])\r\n"
+                       + "EXTERNAL RETURN x := z [INT]\r\n"
                        + "END\r\n"
                        + "PROC SECTION\r\n"
                        + "PROC LABEL func\r\n"
-                       + "x := 78\r\n"
-                       + "y := 79\r\n"
-                       + "z := 48\r\n"
+                       + "x := 78 [INT]\r\n"
+                       + "y := 79 [INT]\r\n"
+                       + "INTERNAL RETURN z := 48 [INT]\r\n"
                        + "RETURN\r\n";
 
         String flatProgram = "t := 899\r\n"
