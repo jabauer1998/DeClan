@@ -249,7 +249,12 @@ public class MyIrParser {
         } else if(willMatch(IrTokenType.CALL)){
             return parseProcedureCall();  
         } else if(willMatch(IrTokenType.EXTERNAL)){
-            return parseExternalCall();  
+            skip();
+            if(willMatch(IrTokenType.CALL)){
+                return parseExternalCall();
+            } else {
+                return parseExternalReturn();
+            }  
         } else {
             return parseAssignment();
         }
@@ -412,7 +417,6 @@ public class MyIrParser {
     }
 
     private ExternalCall parseExternalCall(){
-        match(IrTokenType.EXTERNAL);
         match(IrTokenType.CALL);
         IrToken funcName = match(IrTokenType.ID);
         LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
@@ -474,6 +478,31 @@ public class MyIrParser {
         match(IrTokenType.RBRACK);
 
         return new Assign(Scope.ARGUMENT, place.getLexeme(), new IdentExp(value.getLexeme()), type);
+    }
+
+    private ICode parseExternalReturn(){
+        match(IrTokenType.RETURN);
+        IrToken place = match(IrTokenType.ID);
+        match(IrTokenType.ASSIGN);
+        Exp exp = parseExpression();
+        Assign.Type type;
+        match(IrTokenType.LBRACK);
+        if(willMatch(IrTokenType.STRING)){
+            skip();
+            type = Assign.Type.STRING;
+        } else if(willMatch(IrTokenType.BOOL)){
+            skip();
+            type = Assign.Type.BOOL;
+        } else if(willMatch(IrTokenType.REAL)){
+            skip();
+            type = Assign.Type.REAL;
+        } else {
+            match(IrTokenType.INT);
+            type = Assign.Type.INT;
+        }
+        match(IrTokenType.RBRACK);
+
+        return new Assign(Scope.EXTERNAL_RETURN, place.getLexeme(), exp, type);
     }
 
     private ICode parseAssignment(){
