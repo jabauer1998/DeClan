@@ -226,7 +226,9 @@ public class MyIrParser {
         while(willMatch(IrTokenType.LABEL) || willMatch(IrTokenType.IF) 
         || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) 
         || willMatch(IrTokenType.RETURN) || willMatch(IrTokenType.IASM) 
-        || willMatch(IrTokenType.IPARAM) || willMatch(IrTokenType.CALL)){
+        || willMatch(IrTokenType.IPARAM) || willMatch(IrTokenType.CALL) 
+        || willMatch(IrTokenType.EXTERNAL) || willMatch(IrTokenType.INTERNAL)
+        || willMatch(IrTokenType.PARAM) || willMatch(IrTokenType.GLOBAL)){
             ICode instr = parseInstruction();
             toRet.add(instr);
         }
