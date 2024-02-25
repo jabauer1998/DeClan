@@ -145,8 +145,9 @@ public class MyIrParser {
         match(IrTokenType.DATA);
         match(IrTokenType.SECTION);
         List<ICode> assignments = new LinkedList<ICode>();
-        while(willMatch(IrTokenType.ID)){
-            ICode icode = parseDataAssignment();
+        while(willMatch(IrTokenType.ID) || willMatch(IrTokenType.GLOBAL) 
+        || willMatch(IrTokenType.CALL) || willMatch(IrTokenType.EXTERNAL)){
+            ICode icode = parseInstruction();
             assignments.add(icode);
         }
         return new DataSec(assignments);
@@ -473,38 +474,6 @@ public class MyIrParser {
         match(IrTokenType.RBRACK);
 
         return new Assign(Scope.ARGUMENT, place.getLexeme(), new IdentExp(value.getLexeme()), type);
-    }
-
-    private Assign parseDataAssignment(){
-        Scope scope;
-        if(willMatch(IrTokenType.EXTERNAL)){
-            skip();
-            match(IrTokenType.RETURN);
-            scope = Scope.EXTERNAL_RETURN;
-        } else if(willMatch(IrTokenType.GLOBAL)) {
-            skip();
-            scope = Scope.GLOBAL;
-        } else {
-            scope = Scope.LOCAL;
-        }
-        IrToken id = match(IrTokenType.ID);
-        match(IrTokenType.ASSIGN);
-        Exp expression = parseExpression();
-
-        match(IrTokenType.LBRACK);
-        Type assignType;
-        if(willMatch(IrTokenType.REAL)){
-            skip();
-            assignType = Type.REAL; 
-        } else if(willMatch(IrTokenType.BOOL)){
-            skip();
-            assignType = Type.BOOL;
-        } else {
-            match(IrTokenType.INT);
-            assignType = Type.INT;
-        }
-        match(IrTokenType.RBRACK);
-        return new Assign(scope, id.getLexeme(), expression, assignType);
     }
 
     private ICode parseAssignment(){
