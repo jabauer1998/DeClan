@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.StringReader;
 import java.util.List;
+import java.util.Scanner;
 
 import org.junit.Test;
 
@@ -23,15 +24,27 @@ import io.github.H20man13.DeClan.main.MyIrLexer;
 import io.github.H20man13.DeClan.main.MyIrParser;
 
 public class ICodeGeneratorTest {
-    public static void testReaderSource(List<ICode> program, String programInput){
-        StringBuilder sb = new StringBuilder();
+    public static void testReaderSource(Prog program, String programInput){
+        try{
+            FileReader expectedReader = new FileReader(programInput);
+            Scanner expectedScanner = new Scanner(expectedReader);
 
-        for(ICode iCode : program){
-            sb.append(iCode.toString());
-            sb.append("\r\n");
+            StringReader actualReader = new StringReader(program.toString());
+            Scanner actualScanner = new Scanner(actualReader);
+
+            int lineNumber = 0;
+            while(actualScanner.hasNext() && expectedScanner.hasNext()){
+                String actualLine = actualScanner.nextLine();
+                String expectedLine = expectedScanner.nextLine();
+                assertTrue("At line " + lineNumber + "expected \n...\n\n" + expectedLine + "\n\n but found \n\n" + actualLine, expectedLine.equals(actualLine));
+                lineNumber++;
+            }
+
+            expectedScanner.close();
+            actualScanner.close();
+        } catch(FileNotFoundException exp){
+            assertTrue(exp.toString(), false);
         }
-
-        assertTrue("Expected \n...\n\n" + programInput + "\n\n but found \n\n" + sb.toString(), programInput.equals(sb.toString()));
     }
 
     private static void testDeclanFileOnICode(String programName){
@@ -46,10 +59,7 @@ public class ICodeGeneratorTest {
             MyICodeGenerator igen = new MyICodeGenerator(errLog);
             
             Prog program = igen.generateProgramIr(prog);
-
-            List<ICode> flatCode = program.genFlatCode();
-
-            testReaderSource(flatCode, expectedOutput);
+            testReaderSource(program, expectedOutput);
 
             parser.close();
         } catch(FileNotFoundException exp) {
@@ -59,34 +69,38 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testBinaryOp(){
-        String program = "x := 456 [INT]\r\n"
-                       + "z := 48393 [INT]\r\n"
-                       + "v := x IADD z [INT]\r\n"
-                       + "y := v ISUB v [INT]\r\n"
-                       + "e := y IMUL g [INT]\r\n"
-                       + "v := x RADD z [REAL]\r\n"
-                       + "y := v RSUB v [REAL]\r\n"
-                       + "e := y RMUL g [REAL]\r\n"
-                       + "y := z LOR x [BOOL]\r\n"
-                       + "Z := b IOR x [INT]\r\n"
-                       + "g := v LAND z [BOOL]\r\n"
-                       + "d := v IAND z [INT]\r\n"
-                       + "e := v ILSHIFT x [INT]\r\n"
-                       + "d := b IRSHIFT f [INT]\r\n"
-                       + "e := v LT x [BOOL]\r\n"
-                       + "e := i GT g [BOOL]\r\n"
-                       + "f := u LE j [BOOL]\r\n"
-                       + "h := y GE o [BOOL]\r\n"
-                       + "j := h NE u [BOOL]\r\n"
-                       + "y := y EQ u [BOOL]\r\n";
+        String program = "SYMBOL SECTION\r\n"
+                       + "DATA SECTION\r\n"
+                       + "CODE SECTION\r\n"
+                       + " x := 456 [INT]\r\n"
+                       + " z := 48393 [INT]\r\n"
+                       + " v := x IADD z [INT]\r\n"
+                       + " y := v ISUB v [INT]\r\n"
+                       + " e := y IMUL g [INT]\r\n"
+                       + " v := x RADD z [REAL]\r\n"
+                       + " y := v RSUB v [REAL]\r\n"
+                       + " e := y RMUL g [REAL]\r\n"
+                       + " y := z LOR x [BOOL]\r\n"
+                       + " Z := b IOR x [INT]\r\n"
+                       + " g := v LAND z [BOOL]\r\n"
+                       + " d := v IAND z [INT]\r\n"
+                       + " e := v ILSHIFT x [INT]\r\n"
+                       + " d := b IRSHIFT f [INT]\r\n"
+                       + " e := v LT x [BOOL]\r\n"
+                       + " e := i GT g [BOOL]\r\n"
+                       + " f := u LE j [BOOL]\r\n"
+                       + " h := y GE o [BOOL]\r\n"
+                       + " j := h NE u [BOOL]\r\n"
+                       + " y := y EQ u [BOOL]\r\n"
+                       + "END\r\n"
+                       + "PROC SECTION\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> prog = parser.parseInstructions();
-
+        Prog prog = parser.parseProgram();
         assertTrue(!parser.containsErrors());
 
         testReaderSource(prog, program);
@@ -103,7 +117,7 @@ public class ICodeGeneratorTest {
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        List<ICode> prog = parser.parseInstructions();
+        Program prog = parser.parseProgram();
 
         assertTrue(!parser.containsErrors());
 
@@ -251,7 +265,7 @@ public class ICodeGeneratorTest {
 
         assertTrue(!parser.containsErrors());
 
-        testReaderSource(programICode.genFlatCode(), expectedResult);
+        testReaderSource(programICode, expectedResult);
     }
 
     

@@ -253,6 +253,22 @@ public class MyCompilerDriver {
                     conf.addFlag("optimize", "TRUE");
                     index++;
                     break;
+                case "-n":
+                    conf.addFlag("nolink", "TRUE");
+                    index++;
+                    break;
+                case "-N":
+                    conf.addFlag("nolink", "TRUE");
+                    index++;
+                    break;
+                case "--Nolink":
+                    conf.addFlag("nolink", "TRUE");
+                    index++;
+                    break;
+                case "--nolink":
+                    conf.addFlag("nolink", "TRUE");
+                    index++;
+                    break;
                 case "-std":
                     conf.addFlag("std", "TRUE");
                     index++;
@@ -296,6 +312,10 @@ public class MyCompilerDriver {
         Scanner scanner = new Scanner(System.in);
         if(!cfg.containsFlag("optimize")){
             cfg.addFlag("optimize", "FALSE");
+        }
+
+        if(!cfg.containsFlag("nolink")){
+            cfg.addFlag("nolink", "FALSE");
         }
 
         if(!cfg.containsFlag("output")){
@@ -451,24 +471,38 @@ public class MyCompilerDriver {
             if(emitIr){
                 if(cfg.containsFlag("output")){
                     String outputDestination = cfg.getValueFromFlag("output");
-                    MyIrLinker linker = new MyIrLinker(errLog);
-                    Library[] libsArray = listAsArray(libs);
-                    Prog prog = linker.performLinkage(program, libsArray);
-
-                    if(cfg.containsFlag("optimize")){
-                        boolean shouldOptimize = cfg.getValueFromFlag("optimize").equals("TRUE");
-                        if(shouldOptimize){
-                            MyOptimizer optimizer = new MyOptimizer(prog);
-                            optimizer.performCommonSubExpressionElimination();
-                            optimizer.performConstantPropogation();
-                            optimizer.performDeadCodeElimination();
-                            prog = optimizer.getICode();
-                        }
+                    boolean noLink = false;
+                    if(cfg.containsFlag("nolink")){
+                        noLink = cfg.getValueFromFlag("nolink").equals("TRUE");
                     }
 
-                    FileWriter writer = new FileWriter(outputDestination);
-                    writer.write(prog.toString());
-                    writer.close();
+                    if(noLink){
+                        MyICodeGenerator iCodeGenerator = new MyICodeGenerator(errLog);
+                        Prog prog = iCodeGenerator.generateProgramIr(program);
+
+                        FileWriter writer = new FileWriter(outputDestination);
+                        writer.write(prog.toString());
+                        writer.close();
+                    } else {
+                        MyIrLinker linker = new MyIrLinker(errLog);
+                        Library[] libsArray = listAsArray(libs);
+                        Prog prog = linker.performLinkage(program, libsArray);
+
+                        if(cfg.containsFlag("optimize")){
+                            boolean shouldOptimize = cfg.getValueFromFlag("optimize").equals("TRUE");
+                            if(shouldOptimize){
+                                MyOptimizer optimizer = new MyOptimizer(prog);
+                                optimizer.performCommonSubExpressionElimination();
+                                optimizer.performConstantPropogation();
+                                optimizer.performDeadCodeElimination();
+                                prog = optimizer.getICode();
+                            }
+                        }
+
+                        FileWriter writer = new FileWriter(outputDestination);
+                        writer.write(prog.toString());
+                        writer.close();
+                    }
                 }
             } else if(emitAssembly){
                 if(cfg.containsFlag("output")){

@@ -129,7 +129,7 @@ public class MyIrParser {
         return new Lib(sym, data, proc);
     }
 
-    public SymSec parseSymbolSection(){
+    private SymSec parseSymbolSection(){
         match(IrTokenType.SYMBOL);
         match(IrTokenType.SECTION);
 
@@ -141,7 +141,7 @@ public class MyIrParser {
         return new SymSec(symEntries);
     }
 
-    public DataSec parseDataSection(){
+    private DataSec parseDataSection(){
         match(IrTokenType.DATA);
         match(IrTokenType.SECTION);
         List<ICode> assignments = new LinkedList<ICode>();
@@ -153,7 +153,7 @@ public class MyIrParser {
         return new DataSec(assignments);
     }
 
-    public ProcSec parseProcedureSection(){
+    private ProcSec parseProcedureSection(){
         match(IrTokenType.PROC);
         match(IrTokenType.SECTION);
         List<Proc> procedures = new LinkedList<Proc>();
@@ -164,7 +164,7 @@ public class MyIrParser {
         return new ProcSec(procedures);
     }
 
-    public SymEntry parseSymbolEntry(){
+    private SymEntry parseSymbolEntry(){
         int resultMask = 0;
         IrToken irPlace = match(IrTokenType.ID);
         if(willMatch(IrTokenType.CONST)){
@@ -185,7 +185,7 @@ public class MyIrParser {
         return new SymEntry(resultMask, irPlace.getLexeme(), declanIdent.getLexeme());
     }
 
-    public Proc parseProcedure(){
+    private Proc parseProcedure(){
         match(IrTokenType.PROC);
         match(IrTokenType.LABEL);
         IrToken id = match(IrTokenType.ID);
@@ -214,7 +214,7 @@ public class MyIrParser {
         return new Proc(label, paramAssignments, instructions, place, ret);
     }
 
-    public CodeSec parseCodeSection(){
+    private CodeSec parseCodeSection(){
         match(IrTokenType.CODE);
         match(IrTokenType.SECTION);
         List<ICode> instructions = parseInstructions();
@@ -236,7 +236,7 @@ public class MyIrParser {
         return toRet;
     }
 
-    public ICode parseInstruction(){
+    private ICode parseInstruction(){
         Position start = currentPosition;
         if(willMatch(IrTokenType.IF)){
            return parseIfStatement();
