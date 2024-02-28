@@ -389,6 +389,7 @@ public class MyIrParser {
         if(willMatch(IrTokenType.INEG) || willMatch(IrTokenType.RNEG) || willMatch(IrTokenType.BNOT)) {
             return parseUnaryExpression();
         } else if(willMatch(IrTokenType.EXTERNAL)){
+            skip();
             return parseExternalCall();  
         } else {
             Exp exp1 = parsePrimaryExpression();
