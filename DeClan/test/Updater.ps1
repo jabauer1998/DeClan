@@ -16,10 +16,10 @@ function compile_file_into_ir{
     param($src, $nolink)
     Write-Host "Compiling Ir with src-"
     Write-Host "$src"
-    if ($nolink -eq ''){
-        $out = "$src".replace(".dcl", ".ir").replace("test\declan", "test\ir\linked")
-    } else {
+    if ($nolink){
         $out = "$src".replace(".dcl", ".ir").replace("test\declan", "test\ir\linkable")
+    } else {
+        $out = "$src".replace(".dcl", ".ir").replace("test\declan", "test\ir\linked")
     }
     Write-Host "to output-"
     Write-Host "$out"
@@ -107,6 +107,9 @@ function check_dependencies(){
 function list_contains(){
     param($list, $elem)
     $to_ret = $list -contains "$elem"
+    if($to_ret -eq ''){
+        $to_ret = $false
+    }
     return $to_ret
 }
 
@@ -162,16 +165,17 @@ if($commands["help"] -eq $true){
     if ($depends -eq 0) {
         Get-ChildItem -File "$PSScriptRoot/declan" |
         Foreach-Object {
-            if(($noArgs -eq $true) -or ($commands["all"] -eq $true) -or (($commands["ir"] -eq $true) -and ($commands["no_link"] -eq $true))){
+            Write-Host $noArgs -or $commands["all"] -or ($commands["ir"] -and $commands["no_link"])
+            if($noArgs -or $commands["all"] -or ($commands["ir"] -and $commands["no_link"])){
                 compile_file_into_ir -src $_.FullName -nolink $true
             }
-            if(($noArgs -eq $true) -or ($commands["all"] -eq $true) -or (($commands["ir"] -eq $true) -and ($commands["no_link"] -eq $false))){
-                compile_file_into_ir -src $_.FullName
+            if($noArgs -or $commands["all"] -or ($commands["ir"] -and (-not $commands["no_link"]))){
+                compile_file_into_ir -src $_.FullName -nolink $false
             }
-            if(($noArgs -eq $true) -or ($commands["all"] -eq $true) -or ($commands["assembly"] -eq $true)){
+            if($noArgs -or $commands["all"] -or $commands["assembly"]){
                 compile_file_into_assembly -src $_.FullName
             }
-            if(($noArgs -eq $true) -or ($commands["all"] -eq $true) -or ($commands["binary"] -eq $true)){
+            if($noArgs -or $commands["all"] -or $commands["binary"]){
                 compile_file_into_binary -src $_.FullName
             }
         }
