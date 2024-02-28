@@ -1,0 +1,16 @@
+SYMBOL SECTION
+ b CONST INTERNAL i1
+ d CONST INTERNAL i2
+ e INTERNAL result
+DATA SECTION
+ a := 20 [INT]
+ GLOBAL b := a [INT]
+ c := 5 [INT]
+ GLOBAL d := c [INT]
+ GLOBAL e := 0 [INT]
+CODE SECTION
+ f := EXTERNAL CALL Div((b, [INT]), (d, [INT])) [INT]
+ e := f [INT]
+ EXTERNAL CALL WriteInt((e, [INT]))
+END
+PROC SECTION

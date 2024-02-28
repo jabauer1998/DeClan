@@ -1,0 +1,13 @@
+SYMBOL SECTION
+ b CONST INTERNAL r
+ c INTERNAL result
+DATA SECTION
+ a := 6.5 [REAL]
+ GLOBAL b := a [REAL]
+ GLOBAL c := 0 [INT]
+CODE SECTION
+ d := EXTERNAL CALL RealToInt((b, [REAL])) [INT]
+ c := d [INT]
+ EXTERNAL CALL WriteInt((c, [INT]))
+END
+PROC SECTION

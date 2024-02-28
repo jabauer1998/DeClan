@@ -1,0 +1,59 @@
+SYMBOL SECTION
+ a INTERNAL x
+ b INTERNAL n
+ c INTERNAL n2
+ d INTERNAL x2
+ A INTERNAL m
+DATA SECTION
+ GLOBAL a := 0 [INT]
+ GLOBAL b := 0 [INT]
+ GLOBAL c := 0.0 [REAL]
+ GLOBAL d := 0.0 [REAL]
+CODE SECTION
+ h := 1 [INT]
+ b := h [INT]
+ i := 1.0 [REAL]
+ c := i [REAL]
+ j := 2 [INT]
+ a := j [INT]
+ k := 2.0 [REAL]
+ d := k [REAL]
+ EXTERNAL CALL WriteInt((b, [INT]))
+ EXTERNAL CALL WriteReal((c, [REAL]))
+ EXTERNAL CALL WriteReal((d, [REAL]))
+ EXTERNAL CALL WriteLn()
+ l := EXTERNAL CALL Divide((b, [INT]), (a, [INT])) [REAL]
+ EXTERNAL CALL WriteReal((l, [REAL]))
+ m := 5 [INT]
+ n := b IADD m [INT]
+ o := 6 [INT]
+ p := b IADD o [INT]
+ q := n IMUL p [INT]
+ EXTERNAL CALL WriteInt((q, [INT]))
+ r := 4 [INT]
+ s := a IADD r [INT]
+ t := 5.0 [REAL]
+ u := EXTERNAL CALL IntToReal((a, [INT])) [REAL]
+ v := EXTERNAL CALL RAdd((u, [REAL]), (t, [REAL])) [REAL]
+ w := EXTERNAL CALL IntToReal((s, [INT])) [REAL]
+ x := EXTERNAL CALL RMul((w, [REAL]), (v, [REAL])) [REAL]
+ EXTERNAL CALL WriteReal((x, [REAL]))
+ EXTERNAL CALL WriteLn()
+ y := 3.1415 [REAL]
+ CALL p((b -> e)[INT], (y -> f)[REAL])
+ EXTERNAL RETURN z := g [INT]
+ a := z [INT]
+ EXTERNAL CALL WriteReal((d, [REAL]))
+ EXTERNAL CALL WriteLn()
+END
+PROC SECTION
+ PROC LABEL p
+  PARAM B := f [REAL]
+  PARAM C := e [INT]
+  A := 0 [INT]
+  D := EXTERNAL CALL IntToReal((C, [INT])) [REAL]
+  E := EXTERNAL CALL RAdd((B, [REAL]), (D, [REAL])) [REAL]
+  F := EXTERNAL CALL Round((E, [REAL])) [INT]
+  A := F [INT]
+  INTERNAL RETURN g := A [INT]
+ RETURN
