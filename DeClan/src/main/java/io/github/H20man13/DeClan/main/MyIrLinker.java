@@ -1354,7 +1354,7 @@ public class MyIrLinker {
                 newProcedure.addParamater(assign);
             }
 
-            if(procedure.placement != null && procedure.placement.getScope() == Scope.EXTERNAL_RETURN){
+            if(procedure.placement != null && procedure.placement.getScope() == Scope.INTERNAL_RETURN){
                 Assign placement = procedure.placement;
                 if(!placeIsUniqueToProgramOrLibrary(placement.value.toString(), prog, libraries, library)){
                     String place = null;
@@ -1687,7 +1687,7 @@ public class MyIrLinker {
                 newProcedure.addParamater(assign);
             }
 
-            if(procedure.placement != null){
+            if(procedure.placement != null && procedure.placement.getScope() == Scope.INTERNAL_RETURN){
                 Assign placement = procedure.placement;
                 if(!placeIsUniqueToLibrary(placement.place, single, libraries, library)){
                     String place = null;
@@ -2366,7 +2366,7 @@ public class MyIrLinker {
                         newProcedure.addParamater(assign);
                     }
 
-                    if(procedure.placement != null){
+                    if(procedure.placement != null && procedure.placement.getScope() == Scope.INTERNAL_RETURN){
                         Assign placement = procedure.placement;
                         if(!placeIsUniqueToLibrary(placement.value.toString(), single, libraries, library)){
                             String place = null;
