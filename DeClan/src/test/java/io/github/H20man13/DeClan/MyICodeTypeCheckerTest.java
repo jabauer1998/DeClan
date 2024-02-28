@@ -52,7 +52,7 @@ public class MyICodeTypeCheckerTest {
         MyStandardLibrary lib = new MyStandardLibrary(errLog);
         MyIrLinker linker = new MyIrLinker(errLog);
 
-        Prog icodeProg = linker.performLinkage(prog, lib.ioLibrary(), lib.mathLibrary());
+        Prog icodeProg = linker.performLinkage(prog, lib.ioLibrary(), lib.mathLibrary(), lib.conversionsLibrary(), lib.intLibrary(), lib.realLibrary(), lib.utilsLibrary());
 
         MyICodeTypeChecker typeChecker = new MyICodeTypeChecker(icodeProg, errLog);
         typeChecker.runTypeChecker();
@@ -91,33 +91,37 @@ public class MyICodeTypeCheckerTest {
 
     @Test
     public void testProg1(){
-        String source = "a := 456\n"
-                      + "b := 48393\n"
-                      + "c := 8.23\n"
-                      + "c2 := TRUE\n"
-                      + "c3 := FALSE\n"
-                      + "d := a IADD b\n"
-                      + "e := b ISUB a\n"
-                      + "f := d IMOD e\n"
-                      + "g := a IMUL b\n"
-                      + "h := c RADD f\n"
-                      + "i := h RSUB c\n"
-                      + "j := b RMUL i\n"
-                      + "k := c2 LOR c3\n"
-                      + "l := b IOR g\n"
-                      + "m := l IDIV a\n"
-                      + "n := m RDIVIDE c\n"
-                      + "o := k LAND c3\n"
-                      + "p := a IAND a\n"
-                      + "q := p ILSHIFT b\n"
-                      + "r := b IRSHIFT f\n"
-                      + "s := r LT c\n"
-                      + "t := i GT g\n"
-                      + "u := p LE j\n"
-                      + "v := r GE n\n"
-                      + "w := n NE n\n"
-                      + "x := j EQ h\n"
-                      + "END\n";
+        String source = "SYMBOL SECTION\n"
+                      + "DATA SECTION\n"
+                      + "GLOBAL a := 456 [INT]\n"
+                      + "GLOBAL b := 48393 [INT]\n"
+                      + "GLOBAL c := 8.23 [REAL]\n"
+                      + "GLOBAL c2 := TRUE [BOOL]\n"
+                      + "GLOBAL c3 := FALSE [BOOL]\n"
+                      + "GLOBAL d := a IADD b [INT]\n"
+                      + "GLOBAL e := b ISUB a [INT]\n"
+                      + "GLOBAL f := d IMOD e [INT]\n"
+                      + "GLOBAL g := a IMUL b [INT]\n"
+                      + "h := c RADD f [REAL]\n"
+                      + "i := h RSUB c [REAL]\n"
+                      + "j := b RMUL i [REAL]\n"
+                      + "k := c2 LOR c3 [BOOL]\n"
+                      + "l := b IOR g [INT]\n"
+                      + "m := l IDIV a [INT]\n"
+                      + "n := m RDIVIDE c [REAL]\n"
+                      + "o := k LAND c3 [BOOL]\n"
+                      + "p := a IAND a [INT]\n"
+                      + "q := p ILSHIFT b [INT]\n"
+                      + "r := b IRSHIFT f [INT]\n"
+                      + "s := r LT c [BOOL]\n"
+                      + "t := i GT g [BOOL]\n"
+                      + "u := p LE j [BOOL]\n"
+                      + "v := r GE n [BOOL]\n"
+                      + "CODE SECTION\n"
+                      + "w := n NE n [BOOL]\n"
+                      + "x := j EQ h [BOOL]\n"
+                      + "END\n"
+                      + "PROC SECTION\n";
         MyICodeTypeChecker tC = runTypeCheckerOnIrStringSource(source);
         assertTypeCheckerQualities(tC, "a", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "b", TypeCheckerQualities.INTEGER);
@@ -149,23 +153,28 @@ public class MyICodeTypeCheckerTest {
 
     @Test
     public void testProg2(){
-        String source = "LABEL func1\n"
-                      + "a <- param1\n"
-                      + "b := a IADD a\n"
-                      + "PROC func2 ( b -> param2 )\n"
-                      + "c <& return2\n"
-                      + "return1 := c RADD c\n"
+        String source = "SYMBOL SECTION\n"
+                      + "DATA SECTION\n"
+                      + "CODE SECTION\n"
+                      + "g := 30 [INT]\n"
+                      + "CALL func1 ((g -> param1)[INT])\n"
+                      + "EXTERNAL RETURN h := return1 [INT]\n"
+                      + "END\n"
+                      + "PROC SECTION\n"
+                      + "PROC LABEL func1\n"
+                      + "PARAM a := param1 [INT]\n"
+                      + "PARAM b := a IADD a [INT]\n"
+                      + "CALL func2 ((b->param2)[INT])\n"
+                      + "EXTERNAL RETURN c := return2 [INT]\n"
+                      + "INTERNAL RETURN return1 := c [INT]\n"
                       + "RETURN\n"
-                      + "LABEL func2\n"
-                      + "d <- param2\n"
-                      + "e := d IMUL d\n"
-                      + "f := e IMOD d\n"
-                      + "return2 := f\n"
-                      + "RETURN\n"
-                      + "g := 30\n"
-                      + "PROC func1 ( g -> param1 )\n"
-                      + "h <& return1\n"
-                      + "END\n";
+                      + "PROC LABEL func2\n"
+                      + "PARAM d := param2 [INT]\n"
+                      + "e := d IMUL d [INT]\n"
+                      + "f := e IMOD d [INT]\n"
+                      + "INTERNAL RETURN return2 := f [INT]\n"
+                      + "RETURN\n";
+
         MyICodeTypeChecker tC = runTypeCheckerOnIrStringSource(source);
         assertTypeCheckerQualities(tC, "a", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "b", TypeCheckerQualities.INTEGER);
@@ -173,83 +182,83 @@ public class MyICodeTypeCheckerTest {
         assertTypeCheckerQualities(tC, "param2", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "c", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "return2", TypeCheckerQualities.INTEGER);
-        assertTypeCheckerQualities(tC, "return1", TypeCheckerQualities.REAL);
+        assertTypeCheckerQualities(tC, "return1", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "d", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "e", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "f", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "g", TypeCheckerQualities.INTEGER);
-        assertTypeCheckerQualities(tC, "h", TypeCheckerQualities.REAL);
+        assertTypeCheckerQualities(tC, "h", TypeCheckerQualities.INTEGER);
     }
 
     @Test
     public void testConversions(){
-        String source = "test_source/conversions.dcl";
+        String source = "test/declan/conversions.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testExpressions(){
-        String source = "test_source/expressions.dcl";
+        String source = "test/declan/expressions.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testForLoopAdvanced(){
-        String source = "test_source/ForLoopAdvanced.dcl";
+        String source = "test/declan/ForLoopAdvanced.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testForLoopBasic(){
-        String source = "test_source/ForLoopBasic.dcl";
+        String source = "test/declan/ForLoopBasic.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testForLoopBasic2(){
-        String source = "test_source/ForLoopBasic2.dcl";
+        String source = "test/declan/ForLoopBasic2.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testForLoopBasic3(){
-        String source = "test_source/ForLoopBasic.dcl";
+        String source = "test/declan/ForLoopBasic.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void ifStatementAdvanced(){
-        String source = "test_source/IfStatementAdvanced.dcl";
+        String source = "test/declan/IfStatementAdvanced.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void ifStatementBasic(){
-        String source = "test_source/IfStatementBasic.dcl";
+        String source = "test/declan/IfStatementBasic.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testLoops(){
-        String source = "test_source/loops.dcl";
+        String source = "test/declan/loops.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testRepeatLoopBasic(){
-        String source = "test_source/RepeatLoopBasic.dcl";
+        String source = "test/declan/RepeatLoopBasic.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testSample(){
-        String source = "test_source/sample.dcl";
+        String source = "test/declan/sample.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testTest(){
-        String source = "test_source/test.dcl";
+        String source = "test/declan/test.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 }
