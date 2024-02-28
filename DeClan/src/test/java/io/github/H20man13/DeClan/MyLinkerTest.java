@@ -22,6 +22,45 @@ import io.github.H20man13.DeClan.main.MyIrParser;
 import io.github.H20man13.DeClan.main.MyStandardLibrary;
 
 public class MyLinkerTest {
+    private static void linkTestProgram(String prgSrc){
+        ErrorLog log = new ErrorLog();
+        Scanner actualScanner = null;
+        Scanner expectedScanner = null;
+        try{
+            FileReader reader = new FileReader(prgSrc);
+            Source source = new ReaderSource(reader);
+            MyDeClanLexer lexer = new MyDeClanLexer(source, log);
+            MyDeClanParser parser = new MyDeClanParser(lexer, log);
+            Program prog = parser.parseProgram();
+            parser.close();
+            MyStandardLibrary lib = new MyStandardLibrary(log);
+            MyIrLinker linker = new MyIrLinker(log);
+            Prog irCode = linker.performLinkage(prog, lib.ioLibrary(), lib.mathLibrary(), lib.conversionsLibrary(), lib.intLibrary(), lib.realLibrary(), lib.utilsLibrary());
+            String outputFile = prgSrc.replace("test/declan", "test/ir/linked").replace(".dcl", ".ir");
+            FileReader fileReader = new FileReader(outputFile);
+            expectedScanner = new Scanner(fileReader);
+            StringReader sReader = new StringReader(irCode.toString());
+            actualScanner = new Scanner(sReader);
+            int lineNumber = 0;
+            while(expectedScanner.hasNextLine() && actualScanner.hasNextLine()){
+                String expectedLine = expectedScanner.nextLine();
+                String actualLine = actualScanner.nextLine();
+                assertTrue("Expected: " + expectedLine + "\n\nbut found: " + actualLine + "\n at line " + lineNumber, expectedLine.equals(actualLine));
+                lineNumber++;
+            }
+            expectedScanner.close();
+            actualScanner.close();
+        } catch(Exception exp){
+            if(expectedScanner != null){
+                expectedScanner.close();
+            }
+            if(actualScanner != null){
+                actualScanner.close();
+            }
+            assertTrue(exp.toString(), false);
+        }
+    }
+    
     private static void compareProgramStrings(String resultProgram, String expectedProgram){
         String[] resultLines = resultProgram.split("(\n|(\r\n))");
         String[] expLines = resultProgram.split("\r\n");
@@ -387,45 +426,6 @@ public class MyLinkerTest {
                     " RETURN\r\n";
 
         linkProgramStrings(exp, prog1, lib1, lib2);
-    }
-
-    private static void linkTestProgram(String prgSrc){
-        ErrorLog log = new ErrorLog();
-        Scanner actualScanner = null;
-        Scanner expectedScanner = null;
-        try{
-            FileReader reader = new FileReader(prgSrc);
-            Source source = new ReaderSource(reader);
-            MyDeClanLexer lexer = new MyDeClanLexer(source, log);
-            MyDeClanParser parser = new MyDeClanParser(lexer, log);
-            Program prog = parser.parseProgram();
-            parser.close();
-            MyStandardLibrary lib = new MyStandardLibrary(log);
-            MyIrLinker linker = new MyIrLinker(log);
-            Prog irCode = linker.performLinkage(prog, lib.ioLibrary(), lib.mathLibrary(), lib.conversionsLibrary(), lib.intLibrary(), lib.realLibrary(), lib.utilsLibrary());
-            String outputFile = prgSrc.replace("test/declan", "test/ir/linked").replace(".dcl", ".ir");
-            FileReader fileReader = new FileReader(outputFile);
-            expectedScanner = new Scanner(fileReader);
-            StringReader sReader = new StringReader(irCode.toString());
-            actualScanner = new Scanner(sReader);
-            int lineNumber = 0;
-            while(expectedScanner.hasNextLine() && actualScanner.hasNextLine()){
-                String expectedLine = expectedScanner.nextLine();
-                String actualLine = actualScanner.nextLine();
-                assertTrue("Expected: " + expectedLine + "\n\nbut found: " + actualLine + "\n at line " + lineNumber, expectedLine.equals(actualLine));
-                lineNumber++;
-            }
-            expectedScanner.close();
-            actualScanner.close();
-        } catch(Exception exp){
-            if(expectedScanner != null){
-                expectedScanner.close();
-            }
-            if(actualScanner != null){
-                actualScanner.close();
-            }
-            assertTrue(exp.toString(), false);
-        }
     }
 
     @Test
