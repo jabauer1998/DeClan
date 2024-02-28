@@ -165,7 +165,6 @@ if($commands["help"] -eq $true){
     if ($depends -eq 0) {
         Get-ChildItem -File "$PSScriptRoot/declan" |
         Foreach-Object {
-            Write-Host $noArgs -or $commands["all"] -or ($commands["ir"] -and $commands["no_link"])
             if($noArgs -or $commands["all"] -or ($commands["ir"] -and $commands["no_link"])){
                 compile_file_into_ir -src $_.FullName -nolink $true
             }
