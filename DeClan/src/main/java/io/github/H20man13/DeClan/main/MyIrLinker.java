@@ -1182,7 +1182,7 @@ public class MyIrLinker {
 
                             Call newCall = new Call(call.procedureName, newArgs);
                             newProcedure.addInstruction(newCall);
-                            Assign newPlace = new Assign(Scope.EXTERNAL_RETURN, assignment.place, new IdentExp(fetchedProcedure.placement.place), procedure.placement.getType());
+                            Assign newPlace = new Assign(Scope.EXTERNAL_RETURN, assignment.place, new IdentExp(fetchedProcedure.placement.place), fetchedProcedure.placement.getType());
                             newProcedure.addInstruction(newPlace);
 
                             continue;
