@@ -23,29 +23,14 @@ import io.github.H20man13.DeClan.main.MyStandardLibrary;
 
 public class MyLinkerTest {
     private static void compareProgramStrings(String resultProgram, String expectedProgram){
-        
-        assertTrue("Error expected -\n\n" + expectedProgram + "\n\n but found -\n\n" + resultProgram, resultProgram.equals(expectedProgram));
-        /* 
-        int line = 0;
-        int position = 0;
+        String[] resultLines = resultProgram.split("(\n|(\r\n))");
+        String[] expLines = resultProgram.split("\r\n");
 
-        int shorterLength = (resultProgram.length() < expectedProgram.length()) ? resultProgram.length() : expectedProgram.length();
-        for(int i = 0; i < shorterLength; i++){
-            char resultChar = resultProgram.charAt(i);
-            char expectedChar = expectedProgram.charAt(i);
-            assertTrue("Error got " + resultChar + " but expected " + expectedChar + " at line " + line + " and position " + position, resultChar == expectedChar);
-            if(resultChar == '\r'){
-                line++;
-                position = 0;
-            } else {
-                position++;
-            }
+        for(int i = 0; i < resultLines.length; i++){
+            String resultLine = resultLines[i];
+            String expLine = expLines[i];
+            assertTrue("Expected \n" + expLine + "\n\n but found \n\n" + resultLine + "\n\n at line " + i, expLine.equals(resultLine));
         }
-
-        assertTrue("Result program length is equal to " + resultProgram.length() + "and expected program length is " + expectedProgram.length(), resultProgram.length() == expectedProgram.length());
-
-        assertTrue("Result program --\n\n" + resultProgram + "\n\n is not equal to expected program \n\n" + expectedProgram, resultProgram.equals(expectedProgram));
-        */
     }
 
     private static void regenerateProgram(Prog  prog, String expected){
@@ -257,54 +242,54 @@ public class MyLinkerTest {
         String prog1 = "SYMBOL SECTION\n"
                      + "v EXTERNAL lib1VariableName\n"
                      + "DATA SECTION\n"
-                     + " a := 20\n"
-                     + " b := 500\n"
+                     + " GLOBAL a := 20 [INT]\n"
+                     + " GLOBAL b := 500 [INT]\n"
                      + "CODE SECTION\n"
-                     + " d := EXTERNAL CALL func2 ( )\n"
-                     + " g := d IADD v\n"
+                     + " d := EXTERNAL CALL func2 () [INT]\n"
+                     + " g := d IADD v [INT]\n"
                      + "END\n"
                      + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
                     + "a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
                     + "DATA SECTION\n"
-                    + "a := 3\n"
+                    + " GLOBAL a := 3 [INT]\n"
                     + "PROC SECTION\n"
                     + " PROC LABEL func2\n"
-                    + "  b := EXTERNAL CALL func1 ( )\n"
-                    + "  c := b ISUB a\n"
-                    + "  d |< c\n"
+                    + "  b := EXTERNAL CALL func1() [INT]\n"
+                    + "  c := b ISUB a [INT]\n"
+                    + "  INTERNAL RETURN d := c [INT]\n"
                     + " RETURN\n";
 
         String lib2 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
                     + "PROC SECTION\n"
                     + "PROC LABEL func1\n"
-                    + "a := 3\n"
-                    + "b |< a\n"
+                    + " a := 3 [INT]\n"
+                    + " INTERNAL RETURN b := a [INT]\n"
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
                     " j INTERNAL lib1VariableName\r\n" + //
                     "DATA SECTION\r\n" + //
-                    " a := 20\r\n" + //
-                    " b := 500\r\n" + //
-                    " j := 3\r\n" + //
+                    " GLOBAL a := 20 [INT]\r\n" + //
+                    " GLOBAL b := 500 [INT]\r\n" + //
+                    " GLOBAL j := 3 [INT]\r\n" + //
                     "CODE SECTION\r\n" + //
-                    " CALL func2 (  )\r\n" + //
-                    " e <| d\r\n" + //
-                    " g := e IADD j\r\n" + //
+                    " CALL func2 ( ) [INT]\r\n" + //
+                    " EXTERNAL RETURN e := d [INT]\r\n" + //
+                    " g := e IADD j [INT]\r\n" + //
                     "END\r\n" + //
                     "PROC SECTION\r\n" + //
                     " PROC LABEL func2\r\n" + //
-                    "  CALL func1 (  )\r\n" + //
-                    "  f <| i\r\n" + //
-                    "  c := f ISUB j\r\n" + //
-                    "  d |< c\r\n" + //
+                    "  CALL func1() [INT]\r\n" + //
+                    "  EXTERNAL RETURN f := i [INT]\r\n" + //
+                    "  c := f ISUB j [INT]\r\n" + //
+                    "  INTERNAL RETURN d := c [INT]\r\n" + //
                     " RETURN\r\n" + //
                     " PROC LABEL func1\r\n" + //
-                    "  h := 3\r\n" + //
-                    "  i |< h\r\n" + //
+                    "  h := 3 [INT]\r\n" + //
+                    "  INTERNAL RETURN i := h [INT]\r\n" + //
                     " RETURN\r\n";
 
          linkProgramStrings(exp, prog1, lib1, lib2);
@@ -315,15 +300,15 @@ public class MyLinkerTest {
         String prog1 = "SYMBOL SECTION\n"
                       + "v EXTERNAL lib1VariableName\n"
                       + "DATA SECTION\n"
-                      + " a := 20\n"
-                      + " b := 500\n"
+                      + " GLOBAL a := 20 [INT]\n"
+                      + " GLOBAL b := 500 [INT]\n"
                       + "CODE SECTION\n"
-                      + " d := EXTERNAL CALL func2 ( )\n"
-                      + " g := d IADD v\n"
+                      + " d := EXTERNAL CALL func2 ( ) [INT]\n"
+                      + " g := d IADD v [INT]\n"
                       + "LABEL begin2\n"
                       + "IF g EQ v THEN begin ELSE end\n"
                       + "LABEL begin\n"
-                      + " g := d IADD v\n"
+                      + "g := d IADD v [INT]\n"
                       + "GOTO begin2\n"
                       + "LABEL end\n"
                       + "END\n"
@@ -332,73 +317,73 @@ public class MyLinkerTest {
         String lib1 = "SYMBOL SECTION\n"
                       + "a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
                       + "DATA SECTION\n"
-                      + "a := 3\n"
+                      + "GLOBAL a := 3 [INT]\n"
                       + "PROC SECTION\n"
                       + " PROC LABEL func2\n"
-                      + "  b := EXTERNAL CALL func1 ( )\n"
-                      + "  c := b ISUB a\n"
+                      + "  b := EXTERNAL CALL func1 () [INT]\n"
+                      + "  c := b ISUB a [INT]\n"
                       + "  LABEL begin2\n"
                       + "  IF c EQ b THEN begin ELSE end\n"
                       + "  LABEL begin\n"
-                      + "  e := c IADD b\n"
+                      + "  e := c IADD b [INT]\n"
                       + "  GOTO begin2\n"
                       + "  LABEL end\n"
-                      + "  d |< e\n"
+                      + "  INTERNAL RETURN d := e [INT]\n"
                       + " RETURN\n";
 
         String lib2 = "SYMBOL SECTION\n"
                       + "DATA SECTION\n"
                       + "PROC SECTION\n"
                       + "PROC LABEL func1\n"
-                      + "  a := 3\n"
+                      + "  a := 3 [INT]\n"
                       + "  LABEL begin2\n"
                       + "  IF a EQ a THEN begin ELSE end\n"
                       + "  LABEL begin\n"
-                      + "  e := a IADD a\n"
+                      + "  e := a IADD a [INT]\n"
                       + "  GOTO begin2\n"
                       + "  LABEL end\n"
-                      + "  b |< e\n"
+                      + " INTERNAL RETURN b := e [INT]\n"
                       + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
                     " l INTERNAL lib1VariableName\r\n" + //
                     "DATA SECTION\r\n" + //
-                    " a := 20\r\n" + //
-                    " b := 500\r\n" + //
-                    " l := 3\r\n" + //
+                    " GLOBAL a := 20 [INT]\r\n" + //
+                    " GLOBAL b := 500 [INT]\r\n" + //
+                    " GLOBAL l := 3 [INT]\r\n" + //
                     "CODE SECTION\r\n" + //
-                    " CALL func2 (  )\r\n" + //
-                    " f <| d\r\n" + //
-                    " g := f IADD l\r\n" + //
+                    " CALL func2 () [INT]\r\n" + //
+                    " EXTERNAL RETURN f := d [INT]\r\n" + //
+                    " g := f IADD l [INT]\r\n" + //
                     " LABEL begin2\r\n" + //
                     " IF g EQ l THEN begin ELSE end\r\n" + //
                     " LABEL begin\r\n" + //
-                    " g := f IADD l\r\n" + //
+                    " g := f IADD l [INT]\r\n" + //
                     " GOTO begin2\r\n" + //
                     " LABEL end\r\n" + //
                     "END\r\n" + //
                     "PROC SECTION\r\n" + //
                     " PROC LABEL func2\r\n" + //
                     "  CALL func1 (  )\r\n" + //
-                    "  i <| j\r\n" + //
-                    "  c := i ISUB l\r\n" + //
+                    "  EXTERNAL RETURN i := j [INT]\r\n" + //
+                    "  c := i ISUB l [INT]\r\n" + //
                     "  LABEL begin2_1\r\n" + //
                     "  IF c EQ i THEN begin_1 ELSE end_1\r\n" + //
                     "  LABEL begin_1\r\n" + //
-                    "  h := c IADD i\r\n" + //
+                    "  h := c IADD i [INT]\r\n" + //
                     "  GOTO begin2_1\r\n" + //
                     "  LABEL end_1\r\n" + //
-                    "  d |< h\r\n" + //
+                    "  INTERNAL RETURN d := h [INT]\r\n" + //
                     " RETURN\r\n" + //
                     " PROC LABEL func1\r\n" + //
-                    "  k := 3\r\n" + //
+                    "  k := 3 [INT]\r\n" + //
                     "  LABEL begin2_0\r\n" + //
                     "  IF k EQ k THEN begin_0 ELSE end_0\r\n" + //
                     "  LABEL begin_0\r\n" + //
-                    "  e := k IADD k\r\n" + //
+                    "  e := k IADD k [INT]\r\n" + //
                     "  GOTO begin2_0\r\n" + //
                     "  LABEL end_0\r\n" + //
-                    "  j |< e\r\n" + //
+                    "  INTERNAL RETURN j := e [INT]\r\n" + //
                     " RETURN\r\n";
 
         linkProgramStrings(exp, prog1, lib1, lib2);
