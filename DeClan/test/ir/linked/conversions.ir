@@ -1165,9 +1165,9 @@ PROC SECTION
   PARAM e62 := e61 [INT]
   e63 := 0 [INT]
   CALL IntToReal((e62 -> b28)[INT])
-  EXTERNAL RETURN e65 := b31 [INT]
+  EXTERNAL RETURN e65 := b31 [REAL]
   CALL RAdd((e60 -> d34)[REAL], (e65 -> d36)[REAL])
-  EXTERNAL RETURN e66 := d39 [INT]
+  EXTERNAL RETURN e66 := d39 [REAL]
   CALL Round((e66 -> e68)[REAL])
   EXTERNAL RETURN e67 := e71 [INT]
   e63 := e67 [INT]
