@@ -245,7 +245,6 @@ public class MyIrLinker {
                                             List<Assign> newArgs = new LinkedList<Assign>();
                                             for(int argIndex = 0; argIndex < numberOfArgsInCall; argIndex++){
                                                 Tuple<String, Assign.Type> value = call.arguments.get(argIndex);
-                                                Tuple<String, String> newArg = new Tuple<String,String>("", "");
                                                 
                                                 if(libSymbols.containsEntryWithICodePlace(value.source, SymEntry.EXTERNAL)){
                                                     SymEntry entry = libSymbols.getEntryByICodePlace(value.source, SymEntry.EXTERNAL);
@@ -2177,6 +2176,7 @@ public class MyIrLinker {
                                         String place = fetchedProcedure.paramAssign.get(argIndex).value.toString();
 
                                         newArg = new Assign(Scope.ARGUMENT, place, new IdentExp(value.source), value.dest);
+                                        newArgs.add(newArg);
                                     }
 
                                     Call newCall = new Call(call.procedureName, newArgs);
