@@ -264,12 +264,12 @@ PROCEDURE RDiv(n1: REAL; n2: REAL);
 	RETURN result
     END RDiv;
 PROCEDURE RNeg(n: REAL);
-    VAR lastBit: INTEGER; intN: INTEGER; result: INTEGER; intResult: INTEGER;
+    VAR lastBit: INTEGER; intN: INTEGER; result: REAL; intResult: INTEGER;
     BEGIN
         lastBit := 1 << 31;
         intN := RealBinaryAsInt(n);
-	intResult := intN BXOR lastBit;
-	result := IntBinaryAsReal(intResult)
+		intResult := intN BXOR lastBit;
+		result := IntBinaryAsReal(intResult)
 	RETURN result
     END RNeg;
 PROCEDURE RLessThan(n1: REAL; n2: REAL);
