@@ -25,22 +25,22 @@ public class MyOptimizerTest {
     public void testSimpleCommonSubExpressionElimination(){
         String inputSource = "SYMBOL SECTION\n"
                            + "DATA SECTION\n"
-                           + "a := 1\n"
-                           + "b := 2\n" 
-                           + "i := a IADD b\n"
-                           + "z := a IADD b\n"
-                           + "f := z IADD i\n"
+                           + "GLOBAL a := 1 [INT]\n"
+                           + "GLOBAL b := 2 [INT]\n" 
+                           + "i := a IADD b [INT]\n"
+                           + "z := a IADD b [INT]\n"
+                           + "f := z IADD i [INT]\n"
                            + "CODE SECTION\n"
                            + "END\n"
                            + "PROC SECTION\n";
 
         String targetSource = "SYMBOL SECTION\r\n"
                             + "DATA SECTION\r\n"
-                            + " a := 1\r\n"
-                            + " b := 2\r\n"
-                            + " i := a IADD b\r\n"
-                            + " z := i\r\n"
-                            + " f := i IADD i\r\n"
+                            + " GLOBAL a := 1 [INT]\r\n"
+                            + " GLOBAL b := 2 [INT]\r\n"
+                            + " i := a IADD b [INT]\r\n"
+                            + " z := i [INT]\r\n"
+                            + " f := i IADD i [INT]\r\n"
                             + "CODE SECTION\r\n"
                             + "END\r\n"
                             + "PROC SECTION\r\n";
@@ -65,13 +65,13 @@ public class MyOptimizerTest {
                            + "DATA SECTION\n"
                            + "CODE SECTION\n"
                            + "LABEL block1\n"
-                           + "a := 1\n"
-                           + "b := 2\n" 
-                           + "i := a IADD b\n"
-                           + "z := a IADD b\n"
-                           + "f := z IADD i\n"
-                           + "LABEL block2\n"
-                           + "IF z EQ TRUE THEN block1 ELSE block2\n"
+                           + " a := 1 [INT]\n"
+                           + " b := 2 [INT]\n" 
+                           + " i := a IADD b [INT]\n"
+                           + " z := a IADD b [INT]\n"
+                           + " f := z IADD i [INT]\n"
+                           + " LABEL block2\n"
+                           + " IF z EQ TRUE THEN block1 ELSE block2\n"
                            + "END\n"
                            + "PROC SECTION\n";
 
@@ -79,11 +79,11 @@ public class MyOptimizerTest {
                         "DATA SECTION\r\n" + //
                         "CODE SECTION\r\n" + //
                         " LABEL block1\r\n" + //
-                        " a := 1\r\n" + //
-                        " b := 2\r\n" + //
-                        " i := a IADD b\r\n" + //
-                        " z := i\r\n" + //
-                        " f := i IADD i\r\n" + //
+                        " a := 1 [INT]\r\n" + //
+                        " b := 2 [INT]\r\n" + //
+                        " i := a IADD b [INT]\r\n" + //
+                        " z := i [INT]\r\n" + //
+                        " f := i IADD i [INT]\r\n" + //
                         " LABEL block2\r\n" + //
                         " IF z EQ TRUE THEN block1 ELSE block2\r\n" + //
                         "END\r\n" + //
@@ -107,12 +107,12 @@ public class MyOptimizerTest {
                            + "DATA SECTION\n"
                            + "CODE SECTION\n"
                            + "LABEL block1\n"
-                           + "a := 1\n"
-                           + "b := 60\n" 
-                           + "i := a IADD a\n"
-                           + "g := i IADD a\n"
-                           + "CALL func ( i -> x )\n"
-                           + "f <- z\n"
+                           + "a := 1 [INT]\n"
+                           + "b := 60 [INT]\n" 
+                           + "i := a IADD a [INT]\n"
+                           + "g := i IADD a [INT]\n"
+                           + "CALL func ((i -> x)[INT])\n"
+                           + "EXTERNAL RETURN f := z [INT]\n"
                            + "IF f EQ TRUE THEN block1 ELSE block1\n"
                            + "END\n"
                            + "PROC SECTION\n";
@@ -121,10 +121,10 @@ public class MyOptimizerTest {
                                 "DATA SECTION\r\n" + //
                                 "CODE SECTION\r\n" + //
                                 " LABEL block1\r\n" + //
-                                " a := 1\r\n" + //
-                                " i := a IADD a\r\n" + //
-                                " CALL func ( i -> x )\r\n" + //
-                                " f <- z\r\n" + //
+                                " a := 1 [INT]\r\n" + //
+                                " i := a IADD a [INT]\r\n" + //
+                                " CALL func((i -> x)[INT])\r\n" + //
+                                " EXTERNAL RETURN f := z [INT]\r\n" + //
                                 " IF f EQ TRUE THEN block1 ELSE block1\r\n" + //
                                 "END\r\n" + //
                                 "PROC SECTION\r\n";
@@ -147,23 +147,23 @@ public class MyOptimizerTest {
     public void testConstantPropogation(){
         String inputSource = "SYMBOL SECTION\n"
                            + "DATA SECTION\n" 
-                           + "a := 1\n"
-                           + "b := 2\n"
+                           + "GLOBAL a := 1 [INT]\n"
+                           + "GLOBAL b := 2 [INT]\n"
                            + "CODE SECTION\n"
-                           + "i := a IADD b\n"
-                           + "z := a IADD i\n"
-                           + "f := z IADD i\n"
+                           + "i := a IADD b [INT]\n"
+                           + "z := a IADD i [INT]\n"
+                           + "f := z IADD i [INT]\n"
                            + "END\n"
                            + "PROC SECTION\n";
 
         String targetSource = "SYMBOL SECTION\r\n"
                             + "DATA SECTION\r\n"
-                            + " a := 1\r\n"
-                            + " b := 2\r\n"
+                            + " GLOBAL a := 1 [INT]\r\n"
+                            + " GLOBAL b := 2 [INT]\r\n"
                             + "CODE SECTION\r\n"
-                            + " i := 1 IADD 2\r\n"
-                            + " z := 1 IADD i\r\n"
-                            + " f := z IADD i\r\n"
+                            + " i := 1 IADD 2 [INT]\r\n"
+                            + " z := 1 IADD i [INT]\r\n"
+                            + " f := z IADD i [INT]\r\n"
                             + "END\r\n"
                             + "PROC SECTION\r\n";
 
