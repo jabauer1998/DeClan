@@ -26,16 +26,16 @@ PROC SECTION
   b28 := 0 [INT]
   b29 := 0 [INT]
   b30 := 0 [INT]
-  CALL Abs()
+  CALL Abs((b16 -> b32)[INT])
   EXTERNAL RETURN b31 := b35 [INT]
   b19 := b31 [INT]
   b24 := b19 [INT]
   b46 := 0 [INT]
   b23 := b46 [INT]
-  CALL IntIsNegative()
+  CALL IntIsNegative((b16 -> b48)[INT])
   EXTERNAL RETURN b47 := b51 [BOOL]
   b20 := b47 [BOOL]
-  CALL IntIsZero()
+  CALL IntIsZero((b24 -> b62)[INT])
   EXTERNAL RETURN b61 := b65 [BOOL]
   b70 := BNOT b61 [BOOL]
   IF b70 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_0
@@ -59,7 +59,7 @@ PROC SECTION
   b77 := 1 [INT]
   b78 := b24 IRSHIFT b77 [INT]
   b24 := b78 [INT]
-  CALL IntIsZero()
+  CALL IntIsZero((b24 -> b62)[INT])
   EXTERNAL RETURN b79 := b65 [BOOL]
   b80 := BNOT b79 [BOOL]
   b70 := b80 [BOOL]
@@ -124,7 +124,7 @@ PROC SECTION
   b34 := b33 [INT]
   GOTO IFEND_0_LEVEL_0_0
   LABEL IFNEXT_0_SEQ_0_LEVEL_0_0
-  CALL INeg()
+  CALL INeg((b33 -> b39)[INT])
   EXTERNAL RETURN b38 := b42 [INT]
   b34 := b38 [INT]
   GOTO IFEND_0_LEVEL_0_0

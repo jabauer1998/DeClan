@@ -20,13 +20,13 @@ PROC SECTION
   b20 := 0 [INT]
   b21 := 0 [INT]
   b22 := 0 [INT]
-  CALL RealExponent()
+  CALL RealExponent((b16 -> b24)[REAL])
   EXTERNAL RETURN b23 := b27 [INT]
   b19 := b23 [INT]
-  CALL RealMantissa()
+  CALL RealMantissa((b16 -> b44)[REAL])
   EXTERNAL RETURN b43 := b47 [INT]
   b20 := b43 [INT]
-  CALL RealSign()
+  CALL RealSign((b16 -> b55)[REAL])
   EXTERNAL RETURN b54 := b58 [INT]
   b21 := b54 [INT]
   b65 := 0 [INT]
@@ -73,7 +73,7 @@ PROC SECTION
   b26 := 0 [INT]
   b28 := 0 [INT]
   b29 := 0 [INT]
-  CALL RealBinaryAsInt()
+  CALL RealBinaryAsInt((b25 -> b31)[REAL])
   EXTERNAL RETURN b30 := b34 [INT]
   b28 := b30 [INT]
   b36 := 23 [INT]
@@ -101,7 +101,7 @@ PROC SECTION
   PARAM b45 := b44 [REAL]
   b48 := 0 [INT]
   b49 := 0 [INT]
-  CALL RealBinaryAsInt()
+  CALL RealBinaryAsInt((b45 -> b31)[REAL])
   EXTERNAL RETURN b50 := b34 [INT]
   b49 := b50 [INT]
   b51 := 8388607 [INT]
@@ -115,7 +115,7 @@ PROC SECTION
   PARAM b56 := b55 [REAL]
   b57 := 0 [INT]
   b59 := 0 [INT]
-  CALL RealBinaryAsInt()
+  CALL RealBinaryAsInt((b56 -> b31)[REAL])
   EXTERNAL RETURN b60 := b34 [INT]
   b59 := b60 [INT]
   b61 := 31 [INT]

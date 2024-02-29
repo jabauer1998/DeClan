@@ -123,7 +123,7 @@ PROC SECTION
   b61 := b65 [INT]
   b66 := 0 [INT]
   b59 := b66 [INT]
-  CALL IntIsZero()
+  CALL IntIsZero((b58 -> b68)[INT])
   EXTERNAL RETURN b67 := b71 [BOOL]
   b76 := BNOT b67 [BOOL]
   IF b76 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_0
@@ -147,7 +147,7 @@ PROC SECTION
   b83 := 1 [INT]
   b84 := b58 IRSHIFT b83 [INT]
   b58 := b84 [INT]
-  CALL IntIsZero()
+  CALL IntIsZero((b58 -> b68)[INT])
   EXTERNAL RETURN b85 := b71 [BOOL]
   b86 := BNOT b85 [BOOL]
   b76 := b86 [BOOL]

@@ -66,16 +66,16 @@ PROC SECTION
   b38 := 0 [INT]
   b39 := 0 [INT]
   b40 := 0 [INT]
-  CALL Abs()
+  CALL Abs((b26 -> b42)[INT])
   EXTERNAL RETURN b41 := b45 [INT]
   b29 := b41 [INT]
   b34 := b29 [INT]
   b56 := 0 [INT]
   b33 := b56 [INT]
-  CALL IntIsNegative()
+  CALL IntIsNegative((b26 -> b58)[INT])
   EXTERNAL RETURN b57 := b61 [BOOL]
   b30 := b57 [BOOL]
-  CALL IntIsZero()
+  CALL IntIsZero((b34 -> b72)[INT])
   EXTERNAL RETURN b71 := b75 [BOOL]
   b80 := BNOT b71 [BOOL]
   IF b80 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_1 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_1
@@ -99,7 +99,7 @@ PROC SECTION
   b87 := 1 [INT]
   b88 := b34 IRSHIFT b87 [INT]
   b34 := b88 [INT]
-  CALL IntIsZero()
+  CALL IntIsZero((b34 -> b72)[INT])
   EXTERNAL RETURN b89 := b75 [BOOL]
   b90 := BNOT b89 [BOOL]
   b80 := b90 [BOOL]
@@ -164,7 +164,7 @@ PROC SECTION
   b44 := b43 [INT]
   GOTO IFEND_0_LEVEL_0_1
   LABEL IFNEXT_0_SEQ_0_LEVEL_0_1
-  CALL INeg()
+  CALL INeg((b43 -> b49)[INT])
   EXTERNAL RETURN b48 := b52 [INT]
   b44 := b48 [INT]
   GOTO IFEND_0_LEVEL_0_1
@@ -263,22 +263,22 @@ PROC SECTION
   l2 := 0 [INT]
   l3 := 0 [INT]
   l4 := 0 [INT]
-  CALL RealSign()
+  CALL RealSign((l5 -> c44)[REAL])
   EXTERNAL RETURN l6 := c47 [INT]
   c34 := l6 [INT]
-  CALL RealSign()
+  CALL RealSign((l7 -> c44)[REAL])
   EXTERNAL RETURN l8 := c47 [INT]
   c35 := l8 [INT]
-  CALL RealExponent()
+  CALL RealExponent((l5 -> c59)[REAL])
   EXTERNAL RETURN l9 := c62 [INT]
   c36 := l9 [INT]
-  CALL RealExponent()
+  CALL RealExponent((l7 -> c59)[REAL])
   EXTERNAL RETURN m0 := c62 [INT]
   c37 := m0 [INT]
-  CALL RealMantissa()
+  CALL RealMantissa((l5 -> c73)[REAL])
   EXTERNAL RETURN m1 := c76 [INT]
   c38 := m1 [INT]
-  CALL RealMantissa()
+  CALL RealMantissa((l7 -> c73)[REAL])
   EXTERNAL RETURN m2 := c76 [INT]
   c39 := m2 [INT]
   m3 := 1 [INT]
@@ -303,7 +303,7 @@ PROC SECTION
   n3 := 0 [INT]
   k7 := n3 [INT]
   l1 := c38 [INT]
-  CALL IntIsZero()
+  CALL IntIsZero((l1 -> b72)[INT])
   EXTERNAL RETURN n4 := b75 [BOOL]
   n5 := BNOT n4 [BOOL]
   IF n5 EQ TRUE THEN WHILESTAT_4_SEQ_0_LEVEL_0_0 ELSE WHILENEXT_4_SEQ_0_LEVEL_0_0
@@ -327,7 +327,7 @@ PROC SECTION
   o2 := 1 [INT]
   o3 := l1 IRSHIFT o2 [INT]
   l1 := o3 [INT]
-  CALL IntIsZero()
+  CALL IntIsZero((l1 -> b72)[INT])
   EXTERNAL RETURN o4 := b75 [BOOL]
   o5 := BNOT o4 [BOOL]
   n5 := o5 [BOOL]
@@ -356,7 +356,7 @@ PROC SECTION
   p6 := 0 [INT]
   k9 := p6 [INT]
   l0 := c39 [INT]
-  CALL IntIsZero()
+  CALL IntIsZero((l0 -> b72)[INT])
   EXTERNAL RETURN p7 := b75 [BOOL]
   p8 := BNOT p7 [BOOL]
   IF p8 EQ TRUE THEN WHILESTAT_8_SEQ_0_LEVEL_0 ELSE WHILENEXT_8_SEQ_0_LEVEL_0
@@ -380,7 +380,7 @@ PROC SECTION
   q5 := 1 [INT]
   q6 := l0 IRSHIFT q5 [INT]
   l0 := q6 [INT]
-  CALL IntIsZero()
+  CALL IntIsZero((l0 -> b72)[INT])
   EXTERNAL RETURN q7 := b75 [BOOL]
   q8 := BNOT q7 [BOOL]
   p8 := q8 [BOOL]
@@ -431,7 +431,7 @@ PROC SECTION
   s5 := 0 [INT]
   c43 := s5 [INT]
   k3 := c41 [INT]
-  CALL IntIsZero()
+  CALL IntIsZero((k3 -> b72)[INT])
   EXTERNAL RETURN s6 := b75 [BOOL]
   s7 := BNOT s6 [BOOL]
   IF s7 EQ TRUE THEN WHILESTAT_10_SEQ_0_LEVEL_0 ELSE WHILENEXT_10_SEQ_0_LEVEL_0
@@ -455,7 +455,7 @@ PROC SECTION
   t4 := 1 [INT]
   t5 := k3 IRSHIFT t4 [INT]
   k3 := t5 [INT]
-  CALL IntIsZero()
+  CALL IntIsZero((k3 -> b72)[INT])
   EXTERNAL RETURN t6 := b75 [BOOL]
   t7 := BNOT t6 [BOOL]
   s7 := t7 [BOOL]
@@ -506,7 +506,7 @@ PROC SECTION
   w2 := c41 IAND w1 [INT]
   w3 := c33 IOR w2 [INT]
   c33 := w3 [INT]
-  CALL IntBinaryAsReal()
+  CALL IntBinaryAsReal((c33 -> c22)[INT])
   EXTERNAL RETURN w4 := c25 [REAL]
   c31 := w4 [REAL]
   INTERNAL RETURN c32 := c31 [REAL]
@@ -515,7 +515,7 @@ PROC SECTION
   PARAM c45 := c44 [REAL]
   c46 := 0 [INT]
   c48 := 0 [INT]
-  CALL RealBinaryAsInt()
+  CALL RealBinaryAsInt((c45 -> c50)[REAL])
   EXTERNAL RETURN c49 := c53 [INT]
   c48 := c49 [INT]
   c55 := 31 [INT]
@@ -542,7 +542,7 @@ PROC SECTION
   c61 := 0 [INT]
   c63 := 0 [INT]
   c64 := 0 [INT]
-  CALL RealBinaryAsInt()
+  CALL RealBinaryAsInt((c60 -> c50)[REAL])
   EXTERNAL RETURN c65 := c53 [INT]
   c63 := c65 [INT]
   c66 := 23 [INT]
@@ -558,7 +558,7 @@ PROC SECTION
   PARAM c74 := c73 [REAL]
   c77 := 0 [INT]
   c78 := 0 [INT]
-  CALL RealBinaryAsInt()
+  CALL RealBinaryAsInt((c74 -> c50)[REAL])
   EXTERNAL RETURN c79 := c53 [INT]
   c78 := c79 [INT]
   c80 := 8388607 [INT]

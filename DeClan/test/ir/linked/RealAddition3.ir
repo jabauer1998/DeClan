@@ -297,7 +297,7 @@ PROC SECTION
   PARAM b58 := b57 [REAL]
   b59 := 0 [INT]
   b61 := 0 [INT]
-  CALL RealBinaryAsInt()
+  CALL RealBinaryAsInt((b58 -> b23)[REAL])
   EXTERNAL RETURN b62 := b26 [INT]
   b61 := b62 [INT]
   b63 := 31 [INT]
@@ -312,7 +312,7 @@ PROC SECTION
   b71 := 0 [INT]
   b73 := 0 [INT]
   b74 := 0 [INT]
-  CALL RealBinaryAsInt()
+  CALL RealBinaryAsInt((b70 -> b23)[REAL])
   EXTERNAL RETURN b75 := b26 [INT]
   b73 := b75 [INT]
   b76 := 23 [INT]
@@ -328,7 +328,7 @@ PROC SECTION
   PARAM b86 := b85 [REAL]
   b89 := 0 [INT]
   b90 := 0 [INT]
-  CALL RealBinaryAsInt()
+  CALL RealBinaryAsInt((b86 -> b23)[REAL])
   EXTERNAL RETURN b91 := b26 [INT]
   b90 := b91 [INT]
   b92 := 8388607 [INT]

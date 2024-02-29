@@ -29,7 +29,7 @@ PROC SECTION
   b25 := b29 [INT]
   b30 := 0 [INT]
   b23 := b30 [INT]
-  CALL IntIsZero()
+  CALL IntIsZero((b22 -> b32)[INT])
   EXTERNAL RETURN b31 := b35 [BOOL]
   b40 := BNOT b31 [BOOL]
   IF b40 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_0
@@ -53,7 +53,7 @@ PROC SECTION
   b47 := 1 [INT]
   b48 := b22 IRSHIFT b47 [INT]
   b22 := b48 [INT]
-  CALL IntIsZero()
+  CALL IntIsZero((b22 -> b32)[INT])
   EXTERNAL RETURN b49 := b35 [BOOL]
   b50 := BNOT b49 [BOOL]
   b40 := b50 [BOOL]
