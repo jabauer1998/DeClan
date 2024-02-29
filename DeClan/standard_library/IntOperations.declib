@@ -38,7 +38,7 @@ PROCEDURE Div (dividend: INTEGER; divisor: INTEGER);
 	RETURN result
     END Div;
 PROCEDURE Divide (dividend: INTEGER; divisor: INTEGER);
-    VAR divResult: INTEGER; realDividend: REAL; realDivisor: REAL;
+    VAR divResult: REAL; realDividend: REAL; realDivisor: REAL;
     BEGIN
 	realDividend := IntToReal(dividend);
 	realDivisor := IntToReal(divisor);
