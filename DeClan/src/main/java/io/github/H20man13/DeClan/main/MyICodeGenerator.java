@@ -175,6 +175,7 @@ public class MyICodeGenerator{
 
     CodeSectionBuilder codeBuilder = builder.getCodeSectionBuilder();
     for (Statement statement : program.getStatements()) {
+      statement.accept(typeChecker);
       generateStatementIr(Scope.LOCAL, statement, codeBuilder);
     }
 
@@ -255,12 +256,10 @@ public class MyICodeGenerator{
     builder.buildProcedureLabel(procedureName);
     paramEnvironment.addScope();
     varEnvironment.addScope();
-    typeChecker.addScope();
 
     StringEntryList list = procArgs.getEntry(procedureName);
     for(int i = 0; i < procDecl.getArguments().size(); i++){
       ParamaterDeclaration decl = procDecl.getArguments().get(i);
-      decl.accept(typeChecker);
       String actual = decl.getIdentifier().getLexeme();
       String alias = list.get(i);
       paramEnvironment.addEntry(actual, new StringEntry(alias));
@@ -269,7 +268,6 @@ public class MyICodeGenerator{
     List <Declaration> localVars = procDecl.getLocalVariables();
     for(int i = 0; i < localVars.size(); i++){
       Declaration localDecl = localVars.get(i);
-      localDecl.accept(typeChecker);
       if(localDecl instanceof VariableDeclaration){
         generateVariableIr(Scope.LOCAL, (VariableDeclaration)localVars.get(i), builder);
       }
@@ -278,7 +276,6 @@ public class MyICodeGenerator{
     List <Statement> exec = procDecl.getExecutionStatements();
     for(int i = 0; i < exec.size(); i++){
       Statement stat = exec.get(i);
-      stat.accept(typeChecker);
 	    generateStatementIr(Scope.LOCAL, stat, builder);
     }
 
@@ -290,7 +287,6 @@ public class MyICodeGenerator{
       builder.buildInternalReturnPlacement(returnPlace, retPlace, ConversionUtils.typeCheckerQualitiesToAssignType(qual));
     }
     builder.buildReturnStatement();
-    typeChecker.removeVarScope();
     varEnvironment.removeScope();
     paramEnvironment.removeScope();
   }
