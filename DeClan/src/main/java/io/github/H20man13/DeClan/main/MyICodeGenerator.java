@@ -513,7 +513,93 @@ public class MyICodeGenerator{
     Expression exp = assignment.getVariableValue();
     String value = generateExpressionIr(scope, exp, builder);
     TypeCheckerQualities qual = exp.acceptResult(typeChecker);
-    Assign.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+    TypeCheckerQualities convType = assignment.getVariableName().acceptResult(typeChecker);
+    if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.REAL)){
+      if(procEnvironment.entryExists("RealToInt")){
+        String argDest = procArgs.getEntry("RealToInt").getFirst();
+        List<Assign> args = new LinkedList<Assign>();
+        args.add(new Assign(Scope.ARGUMENT, argDest, new IdentExp(value), Assign.Type.REAL));
+        builder.buildProcedureCall("RealToInt", args);
+
+        String retPlace = procEnvironment.getEntry("RealToInt").toString();
+        value = builder.buildExternalReturnPlacement(retPlace.toString(), Assign.Type.INT);
+      } else {
+        List<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+        args.add(new Tuple<String,Assign.Type>(value, Assign.Type.REAL));
+        value = builder.buildExternalFunctionCall(scope, "RealToInt", args, Assign.Type.INT);
+      }
+    } else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
+      if(procEnvironment.entryExists("IntToReal")){
+        String argDest = procArgs.getEntry("IntToReal").getFirst();
+        List<Assign> args = new LinkedList<Assign>();
+        args.add(new Assign(Scope.ARGUMENT, argDest, new IdentExp(value), Assign.Type.INT));
+        builder.buildProcedureCall("IntToReal", args);
+
+        String retPlace = procEnvironment.getEntry("IntToReal").toString();
+        value = builder.buildExternalReturnPlacement(retPlace.toString(), Assign.Type.REAL);
+      } else {
+        List<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+        args.add(new Tuple<String,Assign.Type>(value, Assign.Type.INT));
+        value = builder.buildExternalFunctionCall(scope, "IntToReal", args, Assign.Type.REAL);
+      }
+    } else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
+      if(procEnvironment.entryExists("IntToBool")){
+        String argDest = procArgs.getEntry("IntToBool").getFirst();
+        List<Assign> args = new LinkedList<Assign>();
+        args.add(new Assign(Scope.ARGUMENT, argDest, new IdentExp(value), Assign.Type.INT));
+        builder.buildProcedureCall("IntToBool", args);
+
+        String retPlace = procEnvironment.getEntry("IntToBool").toString();
+        value = builder.buildExternalReturnPlacement(retPlace.toString(), Assign.Type.BOOL);
+      } else {
+        List<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+        args.add(new Tuple<String,Assign.Type>(value, Assign.Type.INT));
+        value = builder.buildExternalFunctionCall(scope, "IntToBool", args, Assign.Type.BOOL);
+      }
+    } else if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
+      if(procEnvironment.entryExists("BoolToInt")){
+        String argDest = procArgs.getEntry("BoolToInt").getFirst();
+        List<Assign> args = new LinkedList<Assign>();
+        args.add(new Assign(Scope.ARGUMENT, argDest, new IdentExp(value), Assign.Type.BOOL));
+        builder.buildProcedureCall("BoolToInt", args);
+
+        String retPlace = procEnvironment.getEntry("BoolToInt").toString();
+        value = builder.buildExternalReturnPlacement(retPlace.toString(), Assign.Type.INT);
+      } else {
+        List<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+        args.add(new Tuple<String,Assign.Type>(value, Assign.Type.BOOL));
+        value = builder.buildExternalFunctionCall(scope, "BoolToInt", args, Assign.Type.INT);
+      }
+    } else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.REAL)){
+      if(procEnvironment.entryExists("RealToBool")){
+        String argDest = procArgs.getEntry("RealToBool").getFirst();
+        List<Assign> args = new LinkedList<Assign>();
+        args.add(new Assign(Scope.ARGUMENT, argDest, new IdentExp(value), Assign.Type.REAL));
+        builder.buildProcedureCall("RealToBool", args);
+
+        String retPlace = procEnvironment.getEntry("RealToBool").toString();
+        value = builder.buildExternalReturnPlacement(retPlace.toString(), Assign.Type.BOOL);
+      } else {
+        List<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+        args.add(new Tuple<String,Assign.Type>(value, Assign.Type.REAL));
+        value = builder.buildExternalFunctionCall(scope, "RealToBool", args, Assign.Type.BOOL);
+      }
+    } else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
+      if(procEnvironment.entryExists("BoolToReal")){
+        String argDest = procArgs.getEntry("BoolToReal").getFirst();
+        List<Assign> args = new LinkedList<Assign>();
+        args.add(new Assign(Scope.ARGUMENT, argDest, new IdentExp(value), Assign.Type.BOOL));
+        builder.buildProcedureCall("BoolToReal", args);
+
+        String retPlace = procEnvironment.getEntry("BoolToReal").toString();
+        value = builder.buildExternalReturnPlacement(retPlace.toString(), Assign.Type.REAL);
+      } else {
+        List<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
+        args.add(new Tuple<String,Assign.Type>(value, Assign.Type.BOOL));
+        value = builder.buildExternalFunctionCall(scope, "BoolToReal", args, Assign.Type.REAL);
+      }
+    }
+    Assign.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(convType);
     builder.buildVariableAssignment(scope, place.toString(), value, type);
   }
 
