@@ -127,6 +127,14 @@ public class ConversionUtils {
         else return Assign.Type.INT;
     }
 
+    public static TypeCheckerQualities assignTypeToTypeCheckerQualities(Assign.Type type){
+        if(type == Assign.Type.INT) return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+        else if(type == Assign.Type.BOOL) return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+        else if(type == Assign.Type.REAL) return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+        else if(type == Assign.Type.STRING) return new TypeCheckerQualities(TypeCheckerQualities.STRING);
+        else return new TypeCheckerQualities(TypeCheckerQualities.NA);
+    }
+
     public static ValueType assignTypeToDagValueType(Assign.Type type){
         if(type == Assign.Type.BOOL) return ValueType.BOOL;
         else if(type == Assign.Type.STRING) return ValueType.STRING;

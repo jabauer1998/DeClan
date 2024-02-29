@@ -28,6 +28,7 @@ import io.github.H20man13.DeClan.common.symboltable.entry.IntEntry;
 import io.github.H20man13.DeClan.common.symboltable.entry.NullEntry;
 import io.github.H20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
 import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
 public class MyICodeTypeChecker {
     private List<ICode> inputICode;
@@ -109,10 +110,19 @@ public class MyICodeTypeChecker {
     }
 
     private boolean typeCheckPossibleAssignment(Assign assign){
-        Assign assignICode = (Assign)assign;
-        TypeCheckerQualities qual = typeCheckExpression(assignICode.value);
+        TypeCheckerQualities qual = typeCheckExpression(assign.value);
+        Assign.Type displayedType = assign.getType();
+
+        if((qual.containsQualities(TypeCheckerQualities.INTEGER) && displayedType != Assign.Type.INT)
+        || (qual.containsQualities(TypeCheckerQualities.REAL) && displayedType != Assign.Type.REAL)
+        || (qual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedType != Assign.Type.BOOL)
+        || (qual.containsQualities(TypeCheckerQualities.STRING) && displayedType != Assign.Type.STRING)){
+            errLog.add("Error in assignment " + assign + " expression is of type " + qual.toString() + " but is utilized in assignment of type " + displayedType, new Position(instructionNumber, 0));
+        }
+
         if(qual.missingQualities(TypeCheckerQualities.NA)){
-            variableQualities.addEntry(assignICode.place, qual);
+            TypeCheckerQualities newType = ConversionUtils.assignTypeToTypeCheckerQualities(displayedType);
+            variableQualities.addEntry(assign.place, newType);
             return true;
         }
         return false;
@@ -122,17 +132,24 @@ public class MyICodeTypeChecker {
         boolean allFound = true;
         for(Assign param : proc.params){
             if(variableQualities.entryExists(param.value.toString())){
-                if(variableQualities.entryExists(param.place)){
-                    TypeCheckerQualities localQual = variableQualities.getEntry(param.value.toString());
-                    TypeCheckerQualities paramQual = variableQualities.getEntry(param.place);
-                    if(localQual.containsQualities(TypeCheckerQualities.BOOLEAN) && paramQual.missingQualities(TypeCheckerQualities.BOOLEAN)
-                    || localQual.containsQualities(TypeCheckerQualities.INTEGER) && paramQual.missingQualities(TypeCheckerQualities.INTEGER)
-                    || localQual.containsQualities(TypeCheckerQualities.REAL) && paramQual.missingQualities(TypeCheckerQualities.REAL)){
-                        errLog.add("Error in function call " + proc.pname + ": param " + param.place + " takes in a paramater of type " + paramQual + " the first call but takes in a paramater of type " + localQual + " the ext time from param " + param.value.toString(), new Position(instructionNumber, 0));
-                    }
+                TypeCheckerQualities sourceQual = variableQualities.getEntry(param.value.toString());
+                Assign.Type displayedParamType = param.getType();
+                if((sourceQual.containsQualities(TypeCheckerQualities.INTEGER) && displayedParamType != Assign.Type.INT)
+                || (sourceQual.containsQualities(TypeCheckerQualities.REAL) && displayedParamType != Assign.Type.REAL)
+                || (sourceQual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedParamType != Assign.Type.BOOL)
+                || (sourceQual.containsQualities(TypeCheckerQualities.STRING) && displayedParamType != Assign.Type.STRING)){
+                    errLog.add("Error in function call " + proc.pname + ": param " + param.value.toString() + " is of type " + sourceQual.toString() + " but it is used in paramater assignment of type " + displayedParamType.toString(), new Position(instructionNumber, 0));
+                }
+                if(!variableQualities.entryExists(param.place)){
+                    variableQualities.addEntry(param.place, ConversionUtils.assignTypeToTypeCheckerQualities(displayedParamType));
                 } else {
-                    TypeCheckerQualities sourceQual = variableQualities.getEntry(param.value.toString());
-                    variableQualities.addEntry(param.place, sourceQual);
+                    TypeCheckerQualities qual = variableQualities.getEntry(param.place);
+                    if((qual.containsQualities(TypeCheckerQualities.INTEGER) && displayedParamType != Assign.Type.INT)
+                    || (qual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedParamType != Assign.Type.BOOL)
+                    || (qual.containsQualities(TypeCheckerQualities.STRING) && displayedParamType != Assign.Type.STRING)
+                    || (qual.containsQualities(TypeCheckerQualities.REAL) && displayedParamType != Assign.Type.REAL)){
+                        errLog.add("Error in function call " + proc.pname + ": param " + param.place + " is of type " + sourceQual.toString() + " but it is given a value in paramater assignment of type " + displayedParamType.toString(), new Position(instructionNumber, 0));
+                    }
                 }
             } else {
                 allFound = false;

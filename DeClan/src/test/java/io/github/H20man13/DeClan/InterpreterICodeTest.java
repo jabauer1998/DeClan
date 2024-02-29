@@ -74,144 +74,144 @@ public class InterpreterICodeTest {
 
     @Test
     public void testConversions(){
-        testInterpreterWithICode("test_source/conversions.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/conversions.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testExpressions(){
-        testInterpreterWithICode("test_source/expressions.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/expressions.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testIfStatementBasic(){
-        testInterpreterWithICode("test_source/IfStatementBasic.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/IfStatementBasic.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testIfStatementAdvanced(){
-        testInterpreterWithICode("test_source/IfStatementAdvanced.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/IfStatementAdvanced.dcl", nullReader, nullReader);
     }
 
     
     @Test
     public void testLoops(){
-        testInterpreterWithICode("test_source/loops.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/loops.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testWhileLoopBasic(){
-        testInterpreterWithICode("test_source/WhileLoopBasic.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/WhileLoopBasic.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testWhileLoopAdvanced(){
-        testInterpreterWithICode("test_source/WhileLoopAdvanced.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/WhileLoopAdvanced.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testForLoopBasic(){
-        testInterpreterWithICode("test_source/ForLoopBasic.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/ForLoopBasic.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testForLoopBasic2(){
-        testInterpreterWithICode("test_source/ForLoopBasic2.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/ForLoopBasic2.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testForLoopBasic3(){
-        testInterpreterWithICode("test_source/ForLoopBasic3.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/ForLoopBasic3.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testForLoopAdvanced(){
-        testInterpreterWithICode("test_source/ForLoopAdvanced.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/ForLoopAdvanced.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testRepeatLoopBasic(){
-        testInterpreterWithICode("test_source/RepeatLoopBasic.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/RepeatLoopBasic.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testSample(){
-        testInterpreterWithICode("test_source/sample.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/sample.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testTest(){
-        testInterpreterWithICode("test_source/test.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/test.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testTest2(){
-        testInterpreterWithICode("test_source/test2.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/test2.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testTest3(){
-        testInterpreterWithICode("test_source/test3.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/test3.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testSimpleConversion(){
-        testInterpreterWithICode("test_source/SingleConversion.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/SingleConversion.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testSimpleConversion2(){
-        testInterpreterWithICode("test_source/SingleConversion2.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/SingleConversion2.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testTest4(){
         StringReader intReader = new StringReader("2\n");
         StringReader icodeReader = new StringReader("2\n");
-        testInterpreterWithICode("test_source/test4.dcl", intReader, icodeReader);
+        testInterpreterWithICode("test/declan/test4.dcl", intReader, icodeReader);
     }
 
     @Test
     public void testRealAddition(){
-        testInterpreterWithICode("test_source/RealAddition.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/RealAddition.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testRealAddition2(){
-        testInterpreterWithICode("test_source/RealAddition2.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/RealAddition2.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testRealAddition3(){
-        testInterpreterWithICode("test_source/RealAddition3.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/RealAddition3.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testRealMultiplication(){
-        testInterpreterWithICode("test_source/RealMultiplication.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/RealMultiplication.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testRealMultiplication2(){
-        testInterpreterWithICode("test_source/RealMultiplication2.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/RealMultiplication2.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testIntegerDiv(){
-        testInterpreterWithICode("test_source/IntegerDiv.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/IntegerDiv.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testIntegerDiv2(){
-        testInterpreterWithICode("test_source/IntegerDiv2.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/IntegerDiv2.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testRealDivision(){
-        testInterpreterWithICode("test_source/RealDivision.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/RealDivision.dcl", nullReader, nullReader);
     }
 
     @Test
     public void testRealDivision2(){
-        testInterpreterWithICode("test_source/RealDivision2.dcl", nullReader, nullReader);
+        testInterpreterWithICode("test/declan/RealDivision2.dcl", nullReader, nullReader);
     }
 }

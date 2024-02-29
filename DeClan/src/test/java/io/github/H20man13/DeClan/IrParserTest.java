@@ -17,29 +17,29 @@ public class IrParserTest {
 
     @Test
     public void testBinaryOp(){
-        String program = "x := 456 | [INT]\n"
-                       + "z := 48393 | [INT]\n"
-                       + "v := x IADD z | [INT]\n"
-                       + "y := v ISUB v | [INT]\n"
-                       + "g := v IMOD y | [INT]\n"
-                       + "e := y IMUL g | [INT]\n"
-                       + "y := v RADD g | [REAL]\n"
-                       + "z := v RSUB g | [REAL]\n"
-                       + "t := x RMUL x | [REAL]\n"
-                       + "y := z LOR x | [BOOL]\n"
-                       + "z := r IDIV r | [INT]\n"
-                       + "z := v RDIV y | [REAL]\n"
-                       + "g := v LAND z | [BOOL]\n"
-                       + "g := v IAND x | [INT]\n"
-                       + "f := t IOR e | [INT]\n"
-                       + "z := g ILSHIFT f | [INT]\n"
-                       + "c := r IRSHIFT y | [INT]\n"
-                       + "e := v LT x | [BOOL]\n"
-                       + "e := i GT g | [BOOL]\n"
-                       + "f := u LE j | [BOOL]\n"
-                       + "h := y GE o | [BOOL]\n"
-                       + "j := h NE u | [BOOL]\n"
-                       + "y := y EQ u | [BOOL]\n";
+        String program = "x := 456 [INT]\n"
+                       + "z := 48393 [INT]\n"
+                       + "v := x IADD z [INT]\n"
+                       + "y := v ISUB v [INT]\n"
+                       + "g := v IMOD y [INT]\n"
+                       + "e := y IMUL g [INT]\n"
+                       + "y := v RADD g [REAL]\n"
+                       + "z := v RSUB g [REAL]\n"
+                       + "t := x RMUL x [REAL]\n"
+                       + "y := z LOR x [BOOL]\n"
+                       + "z := r IDIV r [INT]\n"
+                       + "z := v RDIV y [REAL]\n"
+                       + "g := v LAND z [BOOL]\n"
+                       + "g := v IAND x [INT]\n"
+                       + "f := t IOR e [INT]\n"
+                       + "z := g ILSHIFT f [INT]\n"
+                       + "c := r IRSHIFT y [INT]\n"
+                       + "e := v LT x [BOOL]\n"
+                       + "e := i GT g [BOOL]\n"
+                       + "f := u LE j [BOOL]\n"
+                       + "h := y GE o [BOOL]\n"
+                       + "j := h NE u [BOOL]\n"
+                       + "y := y EQ u [BOOL]\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -58,10 +58,10 @@ public class IrParserTest {
 
     @Test
     public void testUnaryOp(){
-        String program = "x := 38393 | [INT]\n"
-                       + "y := INEG x | [INT]\n"
-                       + "y := RNEG x | [REAL]\n"
-                       + "z := BNOT y | [BOOL]\n";
+        String program = "x := 38393 [INT]\n"
+                       + "y := INEG x [INT]\n"
+                       + "y := RNEG x [REAL]\n"
+                       + "z := BNOT y [BOOL]\n";
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
@@ -78,8 +78,8 @@ public class IrParserTest {
 
     @Test
     public void testBooleanAssignment(){
-        String program = "v := FALSE | [BOOL]\n"
-                       + "z := TRUE | [BOOL]\n";
+        String program = "v := FALSE [BOOL]\n"
+                       + "z := TRUE [BOOL]\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -97,8 +97,8 @@ public class IrParserTest {
 
     @Test
     public void testNumAssignment(){
-        String program = "x := 89309 | [INT]\n"
-                       + "z := 438.343 | [INT]\n";
+        String program = "x := 89309 [INT]\n"
+                       + "z := 438.343 [INT]\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -118,17 +118,17 @@ public class IrParserTest {
     public void testProcedureCall(){
         String program = "SYMBOL SECTION\n" 
                        + "DATA SECTION\n"
-                       + "t := 899 | [INT]\n"
-                       + "g := 89 | [INT]\n"
-                       + "f := 98 | [INT]\n"
+                       + "t := 899 [INT]\n"
+                       + "g := 89 [INT]\n"
+                       + "f := 98 [INT]\n"
                        + "CODE SECTION\n"
-                       + "CALL func (t -> x, g -> y, f -> z)\n"
+                       + "CALL func ((t -> x)[INT], (g -> y)[INT], (f -> z)[INT])\n"
                        + "END\n"
                        + "PROC SECTION\n"
                        + "PROC LABEL func\n"
-                       + "x := 78 | [INT]\n"
-                       + "y := 79 | [INT]\n"
-                       + "z := 48 | [INT]\n"
+                       + "x := 78 [INT]\n"
+                       + "y := 79 [INT]\n"
+                       + "z := 48 [INT]\n"
                        + "RETURN\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
@@ -149,9 +149,9 @@ public class IrParserTest {
     public void testStringDecl(){
         String program = "SYMBOL SECTION\n"
                        + "DATA SECTION\n"
-                       + "t := \"Text Here\"\n"
+                       + "t := \"Text Here\" [STRING]\n"
                        + "CODE SECTION\n"
-                       + "t := \"Text Here Too\"\n"
+                       + "t := \"Text Here Too\" [STRING]\n"
                        + "END\n"
                        + "PROC SECTION\n";
 
