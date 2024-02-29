@@ -44,7 +44,7 @@ PROCEDURE RealToInt(n: REAL);
 	END;
 	result := fullMantissa >> 23;
 	IF sign = 1 THEN
-	    result := ~result;
+	    result := BNOT result;
 	    result := result + 1;
 	END
 	RETURN result
