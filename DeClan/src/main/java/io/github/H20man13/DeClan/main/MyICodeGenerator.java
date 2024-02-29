@@ -108,17 +108,12 @@ public class MyICodeGenerator{
     this.interpreter = new MyInterpreter(errorLog, null, null, null);
   }
 
-  public Lib generateLibraryIr(Library lib, Library... otherLibs){
+  public Lib generateLibraryIr(Library lib){
     LibraryBuilder libBuilder = new LibraryBuilder(ctx, gen, errorLog);
     procEnvironment.addScope();
     varEnvironment.addScope();
     procArgs.addScope();
     typeChecker.addScope();
-
-    for(Library otherLib: otherLibs){
-      typeChecker.addScope();
-      otherLib.accept(typeChecker);
-    }
 
     DataSectionBuilder dataSecBuilder = libBuilder.getDataSectionBuilder();
     for(ConstDeclaration decl : lib.getConstDecls()){
@@ -147,17 +142,12 @@ public class MyICodeGenerator{
     return libBuilder.completeBuild();
   }
 
-  public Prog generateProgramIr(Program program, Library... otherLibs) {
+  public Prog generateProgramIr(Program program) {
     ProgramBuilder builder = new ProgramBuilder(ctx, gen, errorLog);
     procEnvironment.addScope();
     varEnvironment.addScope();
     procArgs.addScope();
     typeChecker.addScope();
-
-    for(Library otherLib: otherLibs){
-        typeChecker.addScope();
-        otherLib.accept(typeChecker);
-    }
 
     DataSectionBuilder variableBuilder = builder.getDataSectionBuilder(); 
     for(ConstDeclaration decl : program.getConstDecls()){
