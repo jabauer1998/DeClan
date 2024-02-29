@@ -194,14 +194,14 @@ PROC SECTION
   LABEL IFNEXT_8_SEQ_0_LEVEL_0_0
   LABEL IFEND_8_LEVEL_0_0
   c53 := 1 [INT]
-  c54 := b36 IADD c53 [INT]
-  b36 := c54 [INT]
+  g3 := b36 IADD c53 [INT]
+  b36 := g3 [INT]
   g4 := 1 [INT]
   g5 := b33 IRSHIFT g4 [INT]
   b33 := g5 [INT]
   CALL IntIsZero((b33 -> c40)[INT])
-  EXTERNAL RETURN g6 := c43 [BOOL]
-  c55 := BNOT g6 [BOOL]
+  EXTERNAL RETURN c54 := c43 [BOOL]
+  c55 := BNOT c54 [BOOL]
   c48 := c55 [BOOL]
   GOTO WHILECOND_0_SEQ_0_LEVEL_0_0
   LABEL WHILENEXT_0_SEQ_0_LEVEL_0_0
@@ -314,16 +314,16 @@ PROC SECTION
   INTERNAL RETURN c43 := c42 [BOOL]
  RETURN
  PROC LABEL IntBinaryAsReal
-  PARAM g9 := c73 [INT]
-  g7 := 0.0 [REAL]
-  g8 := 0 [INT]
-  IPARAM g8
-  IPARAM g9
-  IASM "LDR %r, %a"
-  IPARAM g8
+  PARAM g8 := c73 [INT]
+  g6 := 0.0 [REAL]
+  g7 := 0 [INT]
   IPARAM g7
+  IPARAM g8
+  IASM "LDR %r, %a"
+  IPARAM g7
+  IPARAM g6
   IASM "STR %r, %a"
-  INTERNAL RETURN c74 := g7 [REAL]
+  INTERNAL RETURN c74 := g6 [REAL]
  RETURN
  PROC LABEL WriteReal
   PARAM c76 := c75 [REAL]
