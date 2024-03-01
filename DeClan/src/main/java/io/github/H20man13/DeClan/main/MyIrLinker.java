@@ -2774,7 +2774,7 @@ public class MyIrLinker {
 
             List<Tuple<String, Assign.Type>> newArgs = new LinkedList<Tuple<String, Assign.Type>>();
             for(Tuple<String, Assign.Type> arg : call.arguments){
-                if(arg.equals(oldPlace))
+                if(arg.source.equals(oldPlace))
                     newArgs.add(new Tuple<String,Assign.Type>(newPlace, arg.dest));
                 else
                     newArgs.add(arg);
