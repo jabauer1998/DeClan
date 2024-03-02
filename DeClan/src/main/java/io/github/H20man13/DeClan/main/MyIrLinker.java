@@ -113,13 +113,8 @@ public class MyIrLinker {
                                             replacePlaceInLib(library, assignLib.place, newPlace);
                                         }
 
-                                        if(!instructionExistsInNewProgram(funcCall, dataInstructions)){
-                                            dataInstructions.addInstruction(funcCall);
-                                        }
-
-                                        if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
-                                            dataInstructions.addInstruction(assignLib);
-                                        }
+                                        dataInstructions.addInstruction(funcCall);
+                                        dataInstructions.addInstruction(assignLib);
                                     }
                                 } else {
                                     Exp exp = assignLib.value;
@@ -146,11 +141,8 @@ public class MyIrLinker {
 
                                             replacePlaceInLib(library, assignLib.place, place);
                                         }
-
-                                        if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
-                                            dataInstructions.addInstruction(assignLib);
-                                            newTable.addEntry(libEntry);
-                                        }
+                                        dataInstructions.addInstruction(assignLib);
+                                        newTable.addEntry(libEntry);
                                     } else if(exp instanceof UnExp){
                                         UnExp unary = (UnExp)exp;
                                         if(unary.right instanceof IdentExp){
@@ -178,10 +170,8 @@ public class MyIrLinker {
                                             replacePlaceInLib(library, assignLib.place, place);
                                         }
 
-                                        if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
-                                            dataInstructions.addInstruction(assignLib);
-                                            newTable.addEntry(libEntry);
-                                        }
+                                        dataInstructions.addInstruction(assignLib);
+                                        newTable.addEntry(libEntry);
                                     } else if(exp instanceof BinExp){
                                         BinExp binary = (BinExp)exp;
 
@@ -226,10 +216,8 @@ public class MyIrLinker {
                                             replacePlaceInLib(library, assignLib.place, place);
                                         }
 
-                                        if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
-                                            dataInstructions.addInstruction(assignLib);
-                                            newTable.addEntry(libEntry);
-                                        }
+                                        dataInstructions.addInstruction(assignLib);
+                                        newTable.addEntry(libEntry);
                                     } else if(exp instanceof ExternalCall){
                                         ExternalCall call = (ExternalCall)exp;
                                         if(!procSec.containsProcedure(call.procedureName))
@@ -273,17 +261,14 @@ public class MyIrLinker {
                                             }
 
                                             Call newCall = new Call(call.procedureName, newArgs);
-                                            if(!instructionExistsInNewProgram(newCall, dataInstructions)){
-                                                dataInstructions.addInstruction(newCall);
-                                            }
+                                            dataInstructions.addInstruction(newCall);
 
                                             String toRetFrom = fetchedProcedure.placement.place;
                                             String toRetTo = assignLib.place;
                                             Assign newPlace = new Assign(Scope.EXTERNAL_RETURN, toRetTo, new IdentExp(toRetFrom), assignLib.getType());
-                                            if(!instructionExistsInNewProgram(newPlace, dataInstructions)){
-                                                dataInstructions.addInstruction(newPlace);
-                                                newTable.addEntry(libEntry);
-                                            }
+                                            
+                                            dataInstructions.addInstruction(newPlace);
+                                            newTable.addEntry(libEntry);
                                         }
                                     } else {
                                         if(!placeIsUniqueToProgramOrLibrary(assignLib.place, program, libraries, library)){
@@ -295,10 +280,8 @@ public class MyIrLinker {
                                             replacePlaceInLib(library, assignLib.place, place);
                                         }
 
-                                        if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
-                                            dataInstructions.addInstruction(assignLib);
-                                            newTable.addEntry(libEntry);
-                                        } 
+                                        dataInstructions.addInstruction(assignLib);
+                                        newTable.addEntry(libEntry); 
                                     }
                                 }
 
@@ -349,10 +332,8 @@ public class MyIrLinker {
                                         replacePlaceInLib(library, assignLib.place, place);
                                     }
 
-                                    if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
-                                        dataInstructions.addInstruction(assignLib);
-                                        newTable.addEntry(libEntry);
-                                    }
+                                    dataInstructions.addInstruction(assignLib);
+                                    newTable.addEntry(libEntry);
                                 } else if(exp instanceof UnExp){
                                     UnExp unary = (UnExp)exp;
                                     if(unary.right instanceof IdentExp){
@@ -379,10 +360,8 @@ public class MyIrLinker {
                                         replacePlaceInLib(library, assignLib.place, place);
                                     }
 
-                                    if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
-                                        dataInstructions.addInstruction(assignLib);
-                                        newTable.addEntry(libEntry);
-                                    }
+                                    dataInstructions.addInstruction(assignLib);
+                                    newTable.addEntry(libEntry);
                                 } else if(exp instanceof BinExp){
                                     BinExp binary = (BinExp)exp;
 
@@ -426,10 +405,8 @@ public class MyIrLinker {
                                         replacePlaceInLib(library, assignLib.place, place);
                                     }
 
-                                    if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
-                                        dataInstructions.addInstruction(assignLib);
-                                        newTable.addEntry(libEntry);
-                                    }
+                                    dataInstructions.addInstruction(assignLib);
+                                    newTable.addEntry(libEntry);
                                 } else if(exp instanceof ExternalCall){
                                     ExternalCall call = (ExternalCall)exp;
                                     if(!procSec.containsProcedure(call.procedureName))
@@ -472,17 +449,13 @@ public class MyIrLinker {
                                         }
 
                                         Call newCall = new Call(call.procedureName, newArgs);
-                                        if(!instructionExistsInNewProgram(newCall, dataInstructions)){
-                                            dataInstructions.addInstruction(newCall);
-                                        }
+                                        dataInstructions.addInstruction(newCall);
 
                                         String toRetFrom = fetchedProcedure.placement.place;
                                         String toRetTo = assignLib.place;
                                         Assign newPlace = new Assign(Scope.EXTERNAL_RETURN, toRetTo, new IdentExp(toRetFrom), assignLib.getType());
-                                        if(!instructionExistsInNewProgram(newPlace, dataInstructions)){
-                                            dataInstructions.addInstruction(newPlace);
-                                            newTable.addEntry(libEntry);
-                                        }
+                                        dataInstructions.addInstruction(newPlace);
+                                        newTable.addEntry(libEntry);
                                     }
                                 } else {
                                     if(!placeIsUniqueToLibrary(assignLib.place, single, libraries, library)){
@@ -493,10 +466,9 @@ public class MyIrLinker {
                                         replacePlaceInLib(library, assignLib.place, place);
                                     }
 
-                                    if(!instructionExistsInNewProgram(assignLib, dataInstructions)){
-                                        dataInstructions.addInstruction(assignLib);
-                                        newTable.addEntry(libEntry);
-                                    }
+                                    
+                                    dataInstructions.addInstruction(assignLib);
+                                    newTable.addEntry(libEntry);
                                 }
                                 break loop;
                             }
@@ -549,13 +521,8 @@ public class MyIrLinker {
                                 replacePlaceInLib(currentLib, assign.place, newPlace);
                             }
 
-                            if(!instructionExistsInNewProgram(funcCall, dataInstructions)){
-                                dataInstructions.addInstruction(funcCall);
-                            }
-
-                            if(!instructionExistsInNewProgram(assign, dataInstructions)){
-                                dataInstructions.addInstruction(assign);
-                            }
+                            dataInstructions.addInstruction(funcCall);
+                            dataInstructions.addInstruction(assign);
                         }
                     } else {
                         Exp exp = assign.value;
@@ -582,12 +549,10 @@ public class MyIrLinker {
                                 replacePlaceInLib(currentLib, assign.place, place);
                             }
 
-                            if(!instructionExistsInNewProgram(assign, dataInstructions)){
-                                dataInstructions.addInstruction(assign);
-                                if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
-                                    SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
-                                }
+                            dataInstructions.addInstruction(assign);
+                            if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
+                                SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
+                                newTable.addEntry(entry);
                             }
                         } else if(exp instanceof UnExp){
                             UnExp unary = (UnExp)exp;
@@ -615,12 +580,10 @@ public class MyIrLinker {
                                 replacePlaceInLib(currentLib, assign.place, place);
                             }
 
-                            if(!instructionExistsInNewProgram(assign, dataInstructions)){
-                                dataInstructions.addInstruction(assign);
-                                if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
-                                    SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
-                                }
+                            dataInstructions.addInstruction(assign);
+                            if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
+                                SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
+                                newTable.addEntry(entry);
                             }
                         } else if(exp instanceof BinExp){
                             BinExp binary = (BinExp)exp;
@@ -665,12 +628,10 @@ public class MyIrLinker {
                                 replacePlaceInLib(currentLib, assign.place, place);
                             }
 
-                            if(!instructionExistsInNewProgram(assign, dataInstructions)){
-                                dataInstructions.addInstruction(assign);
-                                if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
-                                    SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
-                                }
+                            dataInstructions.addInstruction(assign);
+                            if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
+                                SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
+                                newTable.addEntry(entry);
                             }
                         } else if(exp instanceof ExternalCall){
                             ExternalCall call = (ExternalCall)exp;
@@ -716,19 +677,15 @@ public class MyIrLinker {
                                 }
 
                                 Call newCall = new Call(call.procedureName, newArgs);
-                                if(!instructionExistsInNewProgram(newCall, dataInstructions)){
-                                    dataInstructions.addInstruction(newCall);
-                                }
+                                dataInstructions.addInstruction(newCall);
 
                                 String toRetFrom = fetchedProcedure.placement.place;
                                 String toRetTo = assign.place;
                                 Assign newPlace = new Assign(Scope.EXTERNAL_RETURN, toRetTo, new IdentExp(toRetFrom), assign.getType());
-                                if(!instructionExistsInNewProgram(newPlace, dataInstructions)){
-                                    dataInstructions.addInstruction(newPlace);
-                                    if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
-                                        SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                        newTable.addEntry(entry);
-                                    }
+                                dataInstructions.addInstruction(newPlace);
+                                if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
+                                    SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
+                                    newTable.addEntry(entry);
                                 }
                             }
                         } else {
@@ -740,12 +697,10 @@ public class MyIrLinker {
                                 replacePlaceInLib(currentLib, assign.place, place);
                             }
 
-                            if(!instructionExistsInNewProgram(assign, dataInstructions)){
-                                dataInstructions.addInstruction(assign);
-                                if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
-                                    SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
-                                }
+                            dataInstructions.addInstruction(assign);
+                            if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
+                                SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
+                                newTable.addEntry(entry);
                             }
                         }
                     }
@@ -797,13 +752,8 @@ public class MyIrLinker {
                                 replacePlaceInLib(currentLib, assign.place, newPlace);
                             }
 
-                            if(!instructionExistsInNewProgram(funcCall, dataInstructions)){
-                                dataInstructions.addInstruction(funcCall);
-                            }
-
-                            if(!instructionExistsInNewProgram(assign, dataInstructions)){
-                                dataInstructions.addInstruction(assign);
-                            }
+                            dataInstructions.addInstruction(funcCall);
+                            dataInstructions.addInstruction(assign);
                         }
                     } else {
                         Exp exp = assign.value;
@@ -831,12 +781,10 @@ public class MyIrLinker {
                                 replacePlaceInLib(currentLib, assign.place, place);
                             }
 
-                            if(!instructionExistsInNewProgram(assign, dataInstructions)){
-                                dataInstructions.addInstruction(assign);
-                                if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
-                                    SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
-                                }
+                            dataInstructions.addInstruction(assign);
+                            if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
+                                SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
+                                newTable.addEntry(entry);
                             }
                         } else if(exp instanceof UnExp){
                             UnExp unary = (UnExp)exp;
@@ -865,12 +813,10 @@ public class MyIrLinker {
                                 replacePlaceInLib(currentLib, assign.place, place);
                             }
 
-                            if(!instructionExistsInNewProgram(assign, dataInstructions)){
-                                dataInstructions.addInstruction(assign);
-                                if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
-                                    SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
-                                }
+                            dataInstructions.addInstruction(assign);
+                            if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
+                                SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
+                                newTable.addEntry(entry);
                             }
                         } else if(exp instanceof BinExp){
                             BinExp binary = (BinExp)exp;
@@ -916,12 +862,10 @@ public class MyIrLinker {
                                 replacePlaceInLib(currentLib, assign.place, place);
                             }
 
-                            if(!instructionExistsInNewProgram(assign, dataInstructions)){
-                                dataInstructions.addInstruction(assign);
-                                if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
-                                    SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
-                                }
+                            dataInstructions.addInstruction(assign);
+                            if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
+                                SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
+                                newTable.addEntry(entry);
                             }
                         } else if(exp instanceof ExternalCall){
                             ExternalCall call = (ExternalCall)exp;
@@ -966,19 +910,15 @@ public class MyIrLinker {
                                 }
 
                                 Call newCall = new Call(call.procedureName, newArgs);
-                                if(!instructionExistsInNewProgram(newCall, dataInstructions)){
-                                    dataInstructions.addInstruction(newCall);
-                                }
+                                dataInstructions.addInstruction(newCall);
 
                                 String toRetFrom = fetchedProcedure.placement.place;
                                 String toRetTo = assign.place;
                                 Assign newPlace = new Assign(Scope.EXTERNAL_RETURN, toRetTo, new IdentExp(toRetFrom), assign.getType());
-                                if(!instructionExistsInNewProgram(newPlace, dataInstructions)){
-                                    dataInstructions.addInstruction(newPlace);
-                                    if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
-                                        SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                        newTable.addEntry(entry);
-                                    }
+                                dataInstructions.addInstruction(newPlace);
+                                if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
+                                    SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
+                                    newTable.addEntry(entry);
                                 }
                             }
                         } else {
@@ -991,12 +931,10 @@ public class MyIrLinker {
                                 replacePlaceInLib(currentLib, assign.place, place);
                             }
 
-                            if(!instructionExistsInNewProgram(assign, dataInstructions)){
-                                dataInstructions.addInstruction(assign);
-                                if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
-                                    SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
-                                }
+                            dataInstructions.addInstruction(assign);
+                            if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
+                                SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
+                                newTable.addEntry(entry);
                             }
                         }
                     }
@@ -2922,16 +2860,6 @@ public class MyIrLinker {
         return true;
     }
 
-    private static boolean instructionExistsInNewProgram(ICode codeToSearch, DataSec dataSec){
-        for(int i = 0; i < dataSec.getLength(); i++){
-            ICode icode = dataSec.getInstruction(i);
-            if(icode.equals(codeToSearch))
-                return true;
-        }
-
-        return false;
-    }
-
     private void linkDataSections(Prog startingProgram, Lib[] libraries, SymSec symbolTable, DataSec dataSec, CodeSec codeSec, ProcSec procedures){
         SymSec programSymbolTable = startingProgram.symbols;
         DataSec programDataSec = startingProgram.variables;
@@ -3039,17 +2967,12 @@ public class MyIrLinker {
                         }
 
                         Call newCall = new Call(call.procedureName, newArgs);
-
-                        if(!instructionExistsInNewProgram(newCall, dataSec)){
-                            dataSec.addInstruction(newCall);
-                        }
+                        dataSec.addInstruction(newCall);
 
                         String toRetFrom = procedure.placement.place;
                         String toRetTo = assign.place;
                         Assign newPlace = new Assign(Scope.EXTERNAL_RETURN, toRetTo, new IdentExp(toRetFrom), assign.getType());
-                        if(!instructionExistsInNewProgram(newPlace, dataSec)){
-                            dataSec.addInstruction(newPlace);
-                        }
+                        dataSec.addInstruction(newPlace);
 
                         continue;
                     }
@@ -3088,11 +3011,7 @@ public class MyIrLinker {
                     }
 
                     Call newCall = new Call(call.procedureName, newArgs);
-
-                    if(!instructionExistsInNewProgram(newCall, dataSec)){
-                        dataSec.addInstruction(newCall);
-                    }
-
+                    dataSec.addInstruction(newCall);
                     continue;
                 }
             }
@@ -3206,17 +3125,12 @@ public class MyIrLinker {
                         }
 
                         Call newCall = new Call(call.procedureName, newArgs);
-
-                        if(!instructionExistsInNewProgram(newCall, dataSec)){
-                            dataSec.addInstruction(newCall);
-                        }
+                        dataSec.addInstruction(newCall);
 
                         String toRetFrom = procedure.placement.place;
                         String toRetTo = assign.place;
                         Assign newPlace = new Assign(Scope.EXTERNAL_RETURN, toRetTo, new IdentExp(toRetFrom), assign.getType());
-                        if(!instructionExistsInNewProgram(newPlace, dataSec)){
-                            dataSec.addInstruction(newPlace);
-                        }
+                        dataSec.addInstruction(newPlace);
 
                         continue;
                     }
@@ -3254,10 +3168,7 @@ public class MyIrLinker {
                     }
 
                     Call newCall = new Call(call.procedureName, newArgs);
-
-                    if(!instructionExistsInNewProgram(newCall, dataSec)){
-                        dataSec.addInstruction(newCall);
-                    }
+                    dataSec.addInstruction(newCall);
 
                     continue;
                 }
