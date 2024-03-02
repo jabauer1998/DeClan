@@ -6,10 +6,10 @@ SYMBOL SECTION
  g INTERNAL e
  h INTERNAL f
  i INTERNAL g
- t INTERNAL j
- y EXTERNAL h
- z EXTERNAL i
- D INTERNAL k
+ v CONST INTERNAL h
+ z CONST INTERNAL i
+ A INTERNAL j
+ I INTERNAL k
 DATA SECTION
  a := 42 [INT]
  GLOBAL b := a [INT]
@@ -40,39 +40,46 @@ CODE SECTION
 END
 PROC SECTION
  PROC LABEL Foo
-  PARAM u := j [INT]
-  t := 0 [INT]
-  t := b [INT]
+  PARAM B := j [INT]
+  t := EXTERNAL CALL IntToReal((b, [INT])) [REAL]
+  u := EXTERNAL CALL REqualTo((t, [REAL]), (d, [REAL])) [BOOL]
+  v := u [BOOL]
+  w := 355 [INT]
+  x := 113 [INT]
+  y := EXTERNAL CALL Divide((w, [INT]), (x, [INT])) [REAL]
+  z := y [REAL]
+  A := 0 [INT]
+  A := b [INT]
   LABEL FORBEG_0_LEVEL_0
-  IF t GT u THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
+  IF A GT B THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
   LABEL FORLOOP_0_LEVEL_0
   CALL Bar()
-  v := 20 [INT]
-  w := EXTERNAL CALL INeg((v, [INT])) [INT]
-  x := t IADD w [INT]
-  t := x [INT]
+  C := 20 [INT]
+  D := EXTERNAL CALL INeg((C, [INT])) [INT]
+  E := A IADD D [INT]
+  A := E [INT]
   GOTO FORBEG_0_LEVEL_0
   LABEL FOREND_0_LEVEL_0
-  A := 3.1415927 [REAL]
-  B := EXTERNAL CALL RGreaterThan((z, [REAL]), (A, [REAL])) [BOOL]
-  C := y LAND B [BOOL]
-  INTERNAL RETURN m := C [BOOL]
+  F := 3.1415927 [REAL]
+  G := EXTERNAL CALL RGreaterThan((z, [REAL]), (F, [REAL])) [BOOL]
+  H := v LAND G [BOOL]
+  INTERNAL RETURN m := H [BOOL]
  RETURN
  PROC LABEL Bar
-  D := FALSE [BOOL]
-  E := 1 [INT]
-  F := e IADD E [INT]
-  e := F [INT]
-  G := BNOT i [BOOL]
-  IF G EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
+  I := FALSE [BOOL]
+  J := 1 [INT]
+  K := e IADD J [INT]
+  e := K [INT]
+  L := BNOT i [BOOL]
+  IF L EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
-  H := TRUE [BOOL]
-  i := H [BOOL]
-  I := 0 [INT]
-  J := 0 [INT]
-  CALL Foo((f -> j)[INT], (I -> k)[INT], (J -> l)[INT])
-  EXTERNAL RETURN K := m [BOOL]
-  D := K [BOOL]
+  M := TRUE [BOOL]
+  i := M [BOOL]
+  N := 0 [INT]
+  O := 0 [INT]
+  CALL Foo((f -> j)[INT], (N -> k)[INT], (O -> l)[INT])
+  EXTERNAL RETURN P := m [BOOL]
+  I := P [BOOL]
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFEND_1_LEVEL_0
