@@ -118,7 +118,7 @@ public class MyICodeGenerator{
     DataSectionBuilder dataSecBuilder = libBuilder.getDataSectionBuilder();
     for(ConstDeclaration decl : lib.getConstDecls()){
       decl.accept(typeChecker);
-      generateConstantIr(decl, dataSecBuilder);
+      generateConstantIr(Scope.GLOBAL, decl, dataSecBuilder);
     }
 
     for(VariableDeclaration decl : lib.getVarDecls()){
@@ -152,7 +152,7 @@ public class MyICodeGenerator{
     DataSectionBuilder variableBuilder = builder.getDataSectionBuilder(); 
     for(ConstDeclaration decl : program.getConstDecls()){
       decl.accept(typeChecker);
-      generateConstantIr(decl, variableBuilder);      
+      generateConstantIr(Scope.GLOBAL, decl, variableBuilder);      
     }
 
     for (VariableDeclaration decl : program.getVarDecls()) {
@@ -186,13 +186,13 @@ public class MyICodeGenerator{
     return builder.completeBuild();
   }
 
-  public void generateConstantIr(ConstDeclaration constDecl, AssignmentBuilder builder) {
+  public void generateConstantIr(Scope scope, ConstDeclaration constDecl, AssignmentBuilder builder) {
     Identifier id = constDecl.getIdentifier();
     Expression valueExpr = constDecl.getValue();
     String value = generateExpressionIr(Scope.LOCAL, valueExpr, builder);
     TypeCheckerQualities qual = valueExpr.acceptResult(typeChecker);
     Assign.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
-    String place = builder.buildVariableAssignment(Scope.GLOBAL, value, type);
+    String place = builder.buildVariableAssignment(scope, value, type);
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
     SymbolSectionBuilder symbolBuilder = builder.getSymbolSectionBuilder();
     symbolBuilder.addSymEntry(SymEntry.CONST | SymEntry.INTERNAL, place, id.getLexeme());
@@ -259,7 +259,9 @@ public class MyICodeGenerator{
     for(int i = 0; i < localVars.size(); i++){
       Declaration localDecl = localVars.get(i);
       if(localDecl instanceof VariableDeclaration){
-        generateVariableIr(Scope.LOCAL, (VariableDeclaration)localVars.get(i), builder);
+        generateVariableIr(Scope.LOCAL, (VariableDeclaration)localDecl, builder);
+      } else if(localDecl instanceof ConstDeclaration){
+        generateConstantIr(Scope.LOCAL, (ConstDeclaration)localDecl, builder);
       }
     }
 
