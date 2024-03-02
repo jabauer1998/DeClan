@@ -99,11 +99,11 @@ public class MyICodeMachine {
                       Assign assign = (Assign)instruction;
                       Scope assignScope = assign.getScope();
                       if(assignScope == Scope.ARGUMENT || assignScope == Scope.GLOBAL
-                      || assignScope == Scope.LOCAL || assignScope == Scope.INTERNAL_RETURN){
+                      || assignScope == Scope.LOCAL || assignScope == Scope.INTERNAL_RETURN
+                      || assignScope == Scope.PARAM){
                         interpretAssignment(assign, programLength);
                       } else {
-                        errLog.add("Error found an External Return Statement without a corresponding function call", new Position(this.programCounter, 0));
-                        return;
+                        errorAndExit("Error found an External Return Statement without a corresponding function call", this.programCounter, programLength);
                       }  
                     }
                     else if(instruction instanceof Call) interpretProcedureCall((Call)instruction, programLength);
