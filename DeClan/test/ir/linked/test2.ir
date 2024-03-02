@@ -80,7 +80,7 @@ PROC SECTION
   IF b25 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_0_SEQ_0_LEVEL_0_0
   b44 := 1 [INT]
-  CALL WriteInt((C -> b45)[INT])
+  CALL WriteInt((b44 -> b45)[INT])
   b47 := 1 [INT]
   b48 := b24 ISUB b47 [INT]
   b49 := 2 [INT]
@@ -96,11 +96,11 @@ PROC SECTION
   c18 := 1 [INT]
   CALL INeg((c18 -> b15)[INT])
   EXTERNAL RETURN c19 := b18 [INT]
-  CALL WriteInt((K -> b45)[INT])
+  CALL WriteInt((c19 -> b45)[INT])
   GOTO IFEND_0_LEVEL_0_1
   LABEL IFNEXT_0_SEQ_1_LEVEL_0_0
   c20 := 0 [INT]
-  CALL WriteInt((L -> b45)[INT])
+  CALL WriteInt((c20 -> b45)[INT])
   c21 := 2 [INT]
   CALL Div((b24 -> b51)[INT], (c21 -> b53)[INT])
   EXTERNAL RETURN c22 := b56 [INT]

@@ -22,7 +22,7 @@ CODE SECTION
  CALL WriteLn()
  CALL Divide((b -> b19)[INT], (a -> b21)[INT])
  EXTERNAL RETURN b18 := b24 [REAL]
- CALL WriteReal((l -> b16)[REAL])
+ CALL WriteReal((b18 -> b16)[REAL])
  m := 5 [INT]
  n := b IADD m [INT]
  o := 6 [INT]
@@ -40,7 +40,7 @@ CODE SECTION
  EXTERNAL RETURN e42 := b31 [REAL]
  CALL RMul((e42 -> e44)[REAL], (d33 -> e45)[REAL])
  EXTERNAL RETURN e43 := e47 [REAL]
- CALL WriteReal((x -> b16)[REAL])
+ CALL WriteReal((e43 -> b16)[REAL])
  CALL WriteLn()
  y := 3.1415 [REAL]
  CALL p((b -> e61)[INT], (y -> e59)[REAL])

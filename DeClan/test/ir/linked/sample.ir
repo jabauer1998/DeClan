@@ -20,7 +20,7 @@ CODE SECTION
  EXTERNAL RETURN b24 := b28 [REAL]
  CALL RMul((b24 -> c29)[REAL], (l -> c30)[REAL])
  EXTERNAL RETURN c28 := c32 [REAL]
- CALL WriteReal((n -> c83)[REAL])
+ CALL WriteReal((c28 -> c83)[REAL])
  CALL WriteLn()
 END
 PROC SECTION

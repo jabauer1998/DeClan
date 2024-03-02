@@ -21,6 +21,7 @@ DATA SECTION
  m := k IADD l [INT]
  n := j IMUL m [INT]
  GLOBAL o := n [INT]
+ CALL IntToReal((b -> b28)[INT])
  EXTERNAL RETURN d69 := b31 [REAL]
  CALL RMul((d69 -> d71)[REAL], (d -> d72)[REAL])
  EXTERNAL RETURN d70 := d74 [REAL]
@@ -88,7 +89,7 @@ CODE SECTION
  S := 10 [INT]
  CALL Divide((o -> e96)[INT], (S -> e98)[INT])
  EXTERNAL RETURN f55 := f11 [REAL]
- CALL WriteReal((T -> e92)[REAL])
+ CALL WriteReal((f55 -> e92)[REAL])
  GOTO IFEND_0_LEVEL_0
  LABEL IFNEXT_0_SEQ_1_LEVEL_0
  LABEL IFEND_0_LEVEL_0
