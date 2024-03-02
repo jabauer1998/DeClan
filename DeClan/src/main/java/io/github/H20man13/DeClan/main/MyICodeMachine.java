@@ -19,6 +19,7 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
+import io.github.H20man13.DeClan.common.icode.Assign.Scope;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
@@ -94,7 +95,17 @@ public class MyICodeMachine {
             ICode instruction = instructions.get(this.programCounter);
             switch(this.machineState){
                 case INIT:
-                    if(instruction instanceof Assign) interpretAssignment((Assign)instruction, programLength);
+                    if(instruction instanceof Assign){
+                      Assign assign = (Assign)instruction;
+                      Scope assignScope = assign.getScope();
+                      if(assignScope == Scope.ARGUMENT || assignScope == Scope.GLOBAL
+                      || assignScope == Scope.LOCAL || assignScope == Scope.INTERNAL_RETURN){
+                        interpretAssignment(assign, programLength);
+                      } else {
+                        errLog.add("Error found an External Return Statement without a corresponding function call", new Position(this.programCounter, 0));
+                        return;
+                      }  
+                    }
                     else if(instruction instanceof Call) interpretProcedureCall((Call)instruction, programLength);
                     else if(instruction instanceof If) interpretIfStatement((If)instruction, programLength);
                     else if(instruction instanceof Goto) interpretGotoStatement((Goto)instruction, programLength);
