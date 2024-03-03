@@ -1,14 +1,14 @@
 CONST realBias = 127;
 PROCEDURE RealIsZero(r: REAL);
-    VAR result: BOOLEAN; val: INTEGER;
+    VAR result: BOOLEAN; val: INTEGER; exp: INTEGER;
     BEGIN
         val := RealMantissa(r);
-	IF val = 0 THEN
-	   result := TRUE
-	ELSE
-	   result := FALSE
-	END
-	RETURN result
+		IF val = 0 THEN
+			result := TRUE
+		ELSE
+			result := FALSE
+		END
+		RETURN result
     END RealIsZero;
 PROCEDURE IntIsZero(n: INTEGER);
     VAR result: BOOLEAN;
@@ -57,40 +57,20 @@ PROCEDURE RealIsPositive(r: REAL);
     VAR result: BOOLEAN; realAsInteger: INTEGER; thirtyFirstBit: INTEGER;
     BEGIN
         thirtyFirstBit := RealSign(r);
-	IF thirtyFirstBit = 0 THEN
-	    result := TRUE
-	ELSE
-	    result := FALSE
-	END
+		IF thirtyFirstBit = 0 THEN
+			result := TRUE
+		ELSE
+			result := FALSE
+		END
 	RETURN result
     END RealIsPositive;
-PROCEDURE RealScore(r: REAL);
-    VAR result: INTEGER; exponent: INTEGER; value: INTEGER; firstOne: INTEGER; temp: INTEGER; count: INTEGER; firstBit: INTEGER;
-    BEGIN
-	exponent := RealExponent(r); 
-	value := RealMantissa(r);
-	IF value = 0 THEN
-	    result := value;
-	ELSE
-	    count := 0;
-	    WHILE value # 0 DO
-		firstBit := value BAND 1;
-		IF firstBit = 1 THEN
-		    firstOne := count;
-		END;
-		value := value >> 1;
-		count := count + 1
-	    END;
-	    result := (23 - firstOne) + exponent;
-	END
-	RETURN result
-    END RealScore;
 PROCEDURE RealMantissa(r: REAL);
-    VAR result: INTEGER; realAsInt: INTEGER; significand: INTEGER;
+    VAR result: INTEGER; realAsInt: INTEGER; significand: INTEGER; exp: INTEGER;
     BEGIN
+		exp := RealExponent(r);
 		realAsInt := RealBinaryAsInt(r);
         significand := realAsInt BAND 07FFFFFH;
-		IF significand = 0 THEN
+		IF (significand = 0) & (exp = 0) THEN
 			result := significand
 		ELSE
 			result := significand BOR 0800000H
