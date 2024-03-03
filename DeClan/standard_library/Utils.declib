@@ -86,11 +86,16 @@ PROCEDURE RealScore(r: REAL);
 	RETURN result
     END RealScore;
 PROCEDURE RealMantissa(r: REAL);
-    VAR result: INTEGER; realAsInt: INTEGER;
+    VAR result: INTEGER; realAsInt: INTEGER; significand: INTEGER;
     BEGIN
-	realAsInt := RealBinaryAsInt(r);
-        result := realAsInt BAND 07FFFFFH
-	RETURN result BOR 0800000H
+		realAsInt := RealBinaryAsInt(r);
+        significand := realAsInt BAND 07FFFFFH;
+		IF significand = 0 THEN
+			result := significand
+		ELSE
+			result := significand BOR 0800000H
+		END
+	RETURN result
     END RealMantissa;
 PROCEDURE RealSign(r: REAL);
     VAR result: INTEGER; realAsInteger: INTEGER;
