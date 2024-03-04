@@ -9,7 +9,7 @@ SYMBOL SECTION
  v CONST INTERNAL h
  z CONST INTERNAL i
  A INTERNAL j
- I INTERNAL k
+ K INTERNAL k
 DATA SECTION
  a := 42 [INT]
  GLOBAL b := a [INT]
@@ -60,26 +60,34 @@ PROC SECTION
   A := E [INT]
   GOTO FORBEG_0_LEVEL_0
   LABEL FOREND_0_LEVEL_0
-  F := 3.1415927 [REAL]
-  G := EXTERNAL CALL RGreaterThan((z, [REAL]), (F, [REAL])) [BOOL]
-  H := v LAND G [BOOL]
-  INTERNAL RETURN m := H [BOOL]
+  F := "H is " [STRING]
+  EXTERNAL CALL WriteString((F, [STRING]))
+  EXTERNAL CALL WriteInt((v, [BOOL]))
+  EXTERNAL CALL WriteLn()
+  G := "I is " [STRING]
+  EXTERNAL CALL WriteString((G, [STRING]))
+  EXTERNAL CALL WriteReal((z, [REAL]))
+  EXTERNAL CALL WriteLn()
+  H := 3.1415927 [REAL]
+  I := EXTERNAL CALL RGreaterThan((z, [REAL]), (H, [REAL])) [BOOL]
+  J := v LAND I [BOOL]
+  INTERNAL RETURN m := J [BOOL]
  RETURN
  PROC LABEL Bar
-  I := FALSE [BOOL]
-  J := 1 [INT]
-  K := e IADD J [INT]
-  e := K [INT]
-  L := BNOT i [BOOL]
-  IF L EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
+  K := FALSE [BOOL]
+  L := 1 [INT]
+  M := e IADD L [INT]
+  e := M [INT]
+  N := BNOT i [BOOL]
+  IF N EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
-  M := TRUE [BOOL]
-  i := M [BOOL]
-  N := 0 [INT]
-  O := 0 [INT]
-  CALL Foo((f -> j)[INT], (N -> k)[INT], (O -> l)[INT])
-  EXTERNAL RETURN P := m [BOOL]
-  I := P [BOOL]
+  O := TRUE [BOOL]
+  i := O [BOOL]
+  P := 0 [INT]
+  Q := 0 [INT]
+  CALL Foo((f -> j)[INT], (P -> k)[INT], (Q -> l)[INT])
+  EXTERNAL RETURN R := m [BOOL]
+  K := R [BOOL]
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFEND_1_LEVEL_0

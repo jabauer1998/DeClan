@@ -458,7 +458,13 @@ public class ICodeGeneratorTest {
 
     @Test
     public void testRealDivision2(){
-        String programName = "test/declan/RealDivision.dcl";
+        String programName = "test/declan/RealDivision2.dcl";
+        testDeclanFileOnICode(programName);
+    }
+
+    @Test
+    public void testRealDivision3(){
+        String programName = "test/declan/RealDivision3.dcl";
         testDeclanFileOnICode(programName);
     }
 }

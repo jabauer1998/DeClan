@@ -28,16 +28,16 @@ public class OpUtil {
     }
 
     public static Object notEqual(Object val1, Object val2){
-        if(val1 instanceof Float || val2 instanceof Float) return Utils.toReal(val1) != Utils.toReal(val2);
-        else if(val1 instanceof Integer || val2 instanceof Integer) return Utils.toInt(val1) != Utils.toInt(val2);
-        else if(val1 instanceof Boolean || val2 instanceof Boolean) return Utils.toBool(val1) != Utils.toBool(val2);
+        if(val1 instanceof Float || val2 instanceof Float) return !Utils.toReal(val1).equals(Utils.toReal(val2));
+        else if(val1 instanceof Integer || val2 instanceof Integer) return !Utils.toInt(val1).equals(Utils.toInt(val2));
+        else if(val1 instanceof Boolean || val2 instanceof Boolean) return !Utils.toBool(val1).equals(Utils.toBool(val2));
         else return null;
     }
 
     public static Object equal(Object val1, Object val2){
-        if(val1 instanceof Float || val2 instanceof Float) return Utils.toReal(val1) == Utils.toReal(val2);
-        else if(val1 instanceof Integer || val2 instanceof Integer) return Utils.toInt(val1) == Utils.toInt(val2);
-        else if(val1 instanceof Boolean || val2 instanceof Boolean) return Utils.toBool(val1) == Utils.toBool(val2);
+        if(val1 instanceof Float || val2 instanceof Float) return Utils.toReal(val1).equals(Utils.toReal(val2));
+        else if(val1 instanceof Integer || val2 instanceof Integer) return Utils.toInt(val1).equals(Utils.toInt(val2));
+        else if(val1 instanceof Boolean || val2 instanceof Boolean) return Utils.toBool(val1).equals(Utils.toBool(val2));
         else return null;
     }
 

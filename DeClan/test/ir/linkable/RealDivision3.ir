@@ -1,0 +1,43 @@
+SYMBOL SECTION
+ b CONST INTERNAL a
+ d CONST INTERNAL b
+ e INTERNAL result
+ f INTERNAL aAsReal
+ g INTERNAL bAsReal
+DATA SECTION
+ a := 355 [INT]
+ GLOBAL b := a [INT]
+ c := 113 [INT]
+ GLOBAL d := c [INT]
+ GLOBAL e := 0.0 [REAL]
+ GLOBAL f := 0.0 [REAL]
+ GLOBAL g := 0.0 [REAL]
+CODE SECTION
+ h := "A as Int: " [STRING]
+ EXTERNAL CALL WriteString((h, [STRING]))
+ EXTERNAL CALL WriteInt((b, [INT]))
+ EXTERNAL CALL WriteLn()
+ i := "B as Int: " [STRING]
+ EXTERNAL CALL WriteString((i, [STRING]))
+ EXTERNAL CALL WriteInt((d, [INT]))
+ EXTERNAL CALL WriteLn()
+ j := EXTERNAL CALL IntToReal((b, [INT])) [REAL]
+ f := j [REAL]
+ k := EXTERNAL CALL IntToReal((d, [INT])) [REAL]
+ g := k [REAL]
+ l := "A as Real: " [STRING]
+ EXTERNAL CALL WriteString((l, [STRING]))
+ EXTERNAL CALL WriteReal((f, [REAL]))
+ EXTERNAL CALL WriteLn()
+ m := "B as Real: " [STRING]
+ EXTERNAL CALL WriteString((m, [STRING]))
+ EXTERNAL CALL WriteReal((g, [REAL]))
+ EXTERNAL CALL WriteLn()
+ n := EXTERNAL CALL RDivide((f, [REAL]), (g, [REAL])) [REAL]
+ e := n [REAL]
+ o := "Result as real: " [STRING]
+ EXTERNAL CALL WriteString((o, [STRING]))
+ EXTERNAL CALL WriteReal((e, [REAL]))
+ EXTERNAL CALL WriteLn()
+END
+PROC SECTION
