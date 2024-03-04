@@ -14,12 +14,12 @@ PROCEDURE IntToReal(n: INTEGER);
           tempN := tempN >> 1;
        END;
        IF (furthestOne > 23) THEN
-	  absN := absN >> (furthestOne - 23);
+	      absN := absN >> (furthestOne - 23);
        ELSIF (furthestOne < 23) THEN
-	  absN := absN << (23 - furthestOne);
+	      absN := absN << (23 - furthestOne);
        END;
        exponent := furthestOne + 127;
-       mantissaMask := 03fffffH;
+       mantissaMask := 07fffffH;
        mantissa := absN BAND mantissaMask;
        intResult := mantissa;
        intResult := intResult BOR (exponent << 23);
