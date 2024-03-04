@@ -159,7 +159,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     } else if(procName.equals("WriteString") || procName.equals("PrintString")) {
       Object value = (Object)procedureCall.getArguments().get(0).acceptResult(this);
       try{
-        standardOutput.append("" + value);
+        standardOutput.append(value.toString());
        } catch(IOException exp){}
     } else if(procName.equals("ASSERT")){
       boolean value = Utils.toBool(procedureCall.getArguments().get(0).acceptResult(this));

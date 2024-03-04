@@ -186,10 +186,8 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 		String type = varDecl.getType().getLexeme();
 		if(!varEnvironment.inScope(id.getLexeme())){
 			TypeCheckerQualities quals = StringToType(type);
-			if(quals.containsQualities(TypeCheckerQualities.STRING)){
-				errorLog.add("Variable " + id.getLexeme() + "is of invalid type " + type, id.getStart());
-			} else if(quals.containsQualities(TypeCheckerQualities.VOID)){
-				errorLog.add("Variable " + id.getLexeme() + "is of invalid type " + type, id.getStart());
+			if(quals.containsQualities(TypeCheckerQualities.VOID)){
+				errorLog.add("Variable " + id.getLexeme() + " is of invalid type " + type, id.getStart());
 			} else {
 				varEnvironment.addEntry(id.getLexeme(), quals);
 			}
