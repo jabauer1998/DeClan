@@ -12,7 +12,7 @@ CODE SECTION
  CALL RAdd((b -> b15)[REAL], (d -> b17)[REAL])
  EXTERNAL RETURN b14 := b20 [REAL]
  e := b14 [REAL]
- CALL WriteReal((e -> c85)[REAL])
+ CALL WriteReal((e -> c89)[REAL])
 END
 PROC SECTION
  PROC LABEL RAdd
@@ -229,13 +229,13 @@ PROC SECTION
   c78 := b31 IAND c77 [INT]
   c79 := b21 IOR c78 [INT]
   b21 := c79 [INT]
-  i1 := 31 [INT]
-  i2 := b32 ILSHIFT i1 [INT]
-  i3 := b21 IOR i2 [INT]
-  b21 := i3 [INT]
-  CALL IntBinaryAsReal((b21 -> c80)[INT])
-  EXTERNAL RETURN i4 := c83 [REAL]
-  b19 := i4 [REAL]
+  c80 := 31 [INT]
+  c81 := b32 ILSHIFT c80 [INT]
+  c82 := b21 IOR c81 [INT]
+  b21 := c82 [INT]
+  CALL IntBinaryAsReal((b21 -> c84)[INT])
+  EXTERNAL RETURN c83 := c87 [REAL]
+  b19 := c83 [REAL]
   INTERNAL RETURN b20 := b19 [REAL]
  RETURN
  PROC LABEL RealSign
@@ -333,20 +333,20 @@ PROC SECTION
   INTERNAL RETURN c51 := c50 [BOOL]
  RETURN
  PROC LABEL IntBinaryAsReal
-  PARAM c81 := c80 [INT]
-  c82 := 0.0 [REAL]
-  c84 := 0 [INT]
-  IPARAM c84
-  IPARAM c81
+  PARAM c85 := c84 [INT]
+  c86 := 0.0 [REAL]
+  c88 := 0 [INT]
+  IPARAM c88
+  IPARAM c85
   IASM "LDR %r, %a"
-  IPARAM c84
-  IPARAM c82
+  IPARAM c88
+  IPARAM c86
   IASM "STR %r, %a"
-  INTERNAL RETURN c83 := c82 [REAL]
+  INTERNAL RETURN c87 := c86 [REAL]
  RETURN
  PROC LABEL WriteReal
-  PARAM c86 := c85 [REAL]
-  IPARAM c86
+  PARAM c90 := c89 [REAL]
+  IPARAM c90
   IASM "LDR R0, %a"
   IASM "SWI 2"
  RETURN

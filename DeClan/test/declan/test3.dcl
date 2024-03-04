@@ -10,7 +10,6 @@ PROCEDURE Foo(VAR arg1: INTEGER; arg2, arg3: REAL);
     FOR j := a TO arg1 BY -20 DO
       Bar();
     END;
-    WriteString("H is 255");
     RETURN h & (i > 3.14159265)
   END Foo;
 PROCEDURE Bar();
