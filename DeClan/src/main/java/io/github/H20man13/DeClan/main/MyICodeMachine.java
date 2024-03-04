@@ -245,6 +245,24 @@ public class MyICodeMachine {
             } else {
                 errorAndExit("In procedure call " + procedure + " expected 1 argument for function call " + procedure.pname, programCounter, programLength);
             }
+        } else if(procedure.pname.equals("writeString") || procedure.pname.equals("WriteString")){
+                if(procedure.params.size() == 1){
+                    Assign arg1 = procedure.params.get(0);
+                    if(variableValues.entryExists(arg1.value.toString())){
+                        VariableEntry entry = variableValues.getEntry(arg1.value.toString());
+                        try{
+                            Object val = entry.getValue();
+                            String sVal = val.toString();
+                            standardOutput.append(sVal);
+                        } catch(IOException exp){
+                            errorAndExit(exp.toString(), programCounter, programLength);
+                        }
+                    } else {
+                        errorAndExit("Error paramater " + arg1.value.toString() + " does not exist in function " + procedure, programCounter, programLength);
+                    }
+                } else {
+                    errorAndExit("In procedure call " + procedure + " expected 1 argument for function call " + procedure.pname, programCounter, programLength);
+                }
         } else if(procedure.pname.equals("readInt") || procedure.pname.equals("ReadInt")){
             Scanner scanner = new Scanner(standardIn);
             this.tempReturnValue = Integer.parseInt(scanner.nextLine());
