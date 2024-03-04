@@ -214,4 +214,9 @@ public class InterpreterICodeTest {
     public void testRealDivision2(){
         testInterpreterWithICode("test/declan/RealDivision2.dcl", nullReader, nullReader);
     }
+
+    @Test
+    public void testRealDivision3(){
+        testInterpreterWithICode("test/declan/RealDivision3.dcl", nullReader, nullReader);
+    }
 }
