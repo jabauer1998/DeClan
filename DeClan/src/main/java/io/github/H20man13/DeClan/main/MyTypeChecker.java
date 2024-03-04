@@ -575,6 +575,18 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 				errorLog.add("Error expected 1 argument into the RealBinaryAsInt method but found " + valArgs.size(), funcCall.getStart());
 				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
 			}
+		} else if(funcName.equals("StringAsAddress")){
+			if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.STRING)){
+					errorLog.add("Error in function String as Address expected argument of type String", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the StringAsAddress method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
 		} else if(funcName.equals("IntBinaryAsReal")){
 			if(valArgs.size() == 1){
 				Expression expArg = valArgs.get(0);
@@ -1196,9 +1208,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 		String type = declaration.getType().getLexeme();
 		if(!varEnvironment.inScope(id.getLexeme())){
 			TypeCheckerQualities qual = StringToType(type);
-			if(qual.containsQualities(TypeCheckerQualities.STRING)){
-				errorLog.add("Variable " + id.getLexeme() + "is of invalid type " + type, id.getStart());
-			} else if(qual.containsQualities(TypeCheckerQualities.VOID)){
+			if(qual.containsQualities(TypeCheckerQualities.VOID)){
 				errorLog.add("Variable " + id.getLexeme() + "is of invalid type " + type, id.getStart());
 			} else {
 				varEnvironment.addEntry(id.getLexeme(), qual);

@@ -131,3 +131,10 @@ PROCEDURE IntBinaryAsBool(n: INTEGER);
         asm("STRB %r, %a": temp, result)
         RETURN result
     END IntBinaryAsBool;
+PROCEDURE StringAsAddress(s: STRING);
+   VAR result: INTEGER; temp: INTEGER;
+   BEGIN
+      asm("LDR %r, %a": temp, s);
+      asm("STR %r, %a": temp, result);
+      RETURN result
+   END StringAsAddress;
