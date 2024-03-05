@@ -90,7 +90,7 @@ PROC SECTION
   b91 := 127 [INT]
   b92 := b22 IADD b91 [INT]
   b27 := b92 [INT]
-  b93 := 4194303 [INT]
+  b93 := 8388607 [INT]
   b29 := b93 [INT]
   b94 := b19 IAND b29 [INT]
   b28 := b94 [INT]

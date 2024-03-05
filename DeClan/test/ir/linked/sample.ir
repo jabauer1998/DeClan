@@ -130,7 +130,7 @@ PROC SECTION
   c11 := 127 [INT]
   c12 := b32 IADD c11 [INT]
   b37 := c12 [INT]
-  c13 := 4194303 [INT]
+  c13 := 8388607 [INT]
   b39 := c13 [INT]
   c14 := b29 IAND b39 [INT]
   b38 := c14 [INT]

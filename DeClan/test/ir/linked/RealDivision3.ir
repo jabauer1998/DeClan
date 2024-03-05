@@ -221,7 +221,7 @@ PROC SECTION
   c21 := 127 [INT]
   c22 := b50 IADD c21 [INT]
   b55 := c22 [INT]
-  c23 := 4194303 [INT]
+  c23 := 8388607 [INT]
   b57 := c23 [INT]
   c24 := b47 IAND b57 [INT]
   b56 := c24 [INT]

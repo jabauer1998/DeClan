@@ -161,7 +161,7 @@ PROC SECTION
   c14 := 127 [INT]
   c15 := b35 IADD c14 [INT]
   b40 := c15 [INT]
-  c16 := 4194303 [INT]
+  c16 := 8388607 [INT]
   b42 := c16 [INT]
   c17 := b32 IAND b42 [INT]
   b41 := c17 [INT]
