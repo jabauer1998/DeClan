@@ -17,6 +17,7 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.Assign.Scope;
@@ -112,6 +113,7 @@ public class MyICodeMachine {
                     else if(instruction instanceof End) interpretEndStatement((End)instruction, programLength);
                     else if(instruction instanceof Return) interpretReturnStatement((Return)instruction, programLength);
                     else if(instruction instanceof Label) interpretLabelStatement((Label)instruction, programLength);
+                    else if(instruction instanceof Inline) interpretInlineAssembly((Inline)instruction, programLength);
                     else {
                         errorAndExit("Unexpected icode instruction found " + instruction.getClass(), this.programCounter, programLength);
                     }
@@ -150,6 +152,50 @@ public class MyICodeMachine {
         }
         this.labelAddresses.removeScope();
         this.variableValues.removeScope();
+    }
+
+    private void interpretInlineAssembly(Inline instruction, int programLength) {
+        if(instruction.inlineAssembly.startsWith("MULL")){
+            //Then it is a multiply long instruction and we have to simulate that here
+            List<String> paramaters = instruction.param;
+            if(paramaters.size() == 4){
+                //First get the two source paramaters
+                String param1 = paramaters.get(2);
+                VariableEntry entry1 = variableValues.getEntry(param1);
+                String param2 = paramaters.get(3);
+                VariableEntry entry2 = variableValues.getEntry(param2);
+
+                Object obj1 = entry1.getValue();
+                Object obj2 = entry2.getValue();
+
+                if(!(obj1 instanceof Integer) || !(obj2 instanceof Integer)){
+                    errorAndExit("Error in MULL function inline assembly expected both arguments to be of type Integer but found obj1=" + obj1.getClass().getSimpleName() + " and obj2=" + obj2.getClass().getSimpleName(), this.programCounter, programLength);
+                }
+
+                Integer int1 = (Integer)obj1;
+                Integer int2 = (Integer)obj2;
+
+                Long long1 = int1.longValue();
+                Long long2 = int2.longValue();
+
+                Long result = long1 * long2;
+
+                Long smallLongMask = 0x7fffffffl;
+                Long smallLong = result & smallLongMask;
+                Long largeLong = (result >> 31) & smallLongMask;
+
+                Integer smallInt = smallLong.intValue();
+                Integer largeInt = largeLong.intValue();
+
+                String largeRegister = paramaters.get(1);
+                String smallRegister = paramaters.get(0);
+                variableValues.addEntry(largeRegister, new VariableEntry(false, largeInt));
+                variableValues.addEntry(smallRegister, new VariableEntry(false, smallInt));
+            } else {
+                errorAndExit("Error in MULL function in inline assembly expected 4 arguments but found " + paramaters.size(), programCounter, programLength);
+            }
+        }
+        //Otherwise we just ignore the instruction
     }
 
     private void interpretAssignment(Assign assign, int programLength){

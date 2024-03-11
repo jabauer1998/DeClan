@@ -362,7 +362,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 				errorLog.add("Variable in Assignment " + name + " is of type " + entry + " but expression is of type " + expression, assignment.getStart());
 			}
 		} else {
-			errorLog.add("Undeclared Variable " , assignment.getVariableName().getStart());
+			errorLog.add("Undeclared Variable " + assignment.getVariableName().toString() + " in " + assignment.toString(), assignment.getStart());
 		}
     }
   
