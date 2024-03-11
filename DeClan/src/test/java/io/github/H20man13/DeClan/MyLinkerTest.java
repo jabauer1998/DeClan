@@ -573,6 +573,12 @@ public class MyLinkerTest {
     }
 
     @Test
+    public void testRealMultiplication3(){
+        String progSrc = "test/declan/RealMultiplication3.dcl";
+        linkTestProgram(progSrc);
+    }
+
+    @Test
     public void testIntegerDiv(){
         String progSrc = "test/declan/IntegerDiv.dcl";
         linkTestProgram(progSrc);

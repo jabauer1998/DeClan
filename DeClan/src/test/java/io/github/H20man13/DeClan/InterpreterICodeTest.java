@@ -196,6 +196,11 @@ public class InterpreterICodeTest {
     }
 
     @Test
+    public void testRealMultiplication3(){
+        testInterpreterWithICode("test/declan/RealMultiplication3.dcl", nullReader, nullReader);
+    }
+
+    @Test
     public void testIntegerDiv(){
         testInterpreterWithICode("test/declan/IntegerDiv.dcl", nullReader, nullReader);
     }

@@ -439,6 +439,12 @@ public class ICodeGeneratorTest {
     }
 
     @Test
+    public void testRealMultipliation3(){
+        String programName = "test/declan/RealMultiplication3.dcl";
+        testDeclanFileOnICode(programName);
+    }
+
+    @Test
     public void testIntegerDiv(){
         String programName = "test/declan/IntegerDiv.dcl";
         testDeclanFileOnICode(programName);
