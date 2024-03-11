@@ -143,7 +143,7 @@ PROCEDURE RMul(n1: REAL; n2: REAL);
 			lastOne := count
 		END;
 		count := count + 1;
-		lastHi := hiBase BAND 1;
+		lastHi := tempHi BAND 1;
 		tempHi := tempHi >> 1;
 		tempLow := tempLow >> 1;
 		tempLow := tempLow BOR (lastHi << 30);
@@ -211,7 +211,7 @@ PROCEDURE RMul(n1: REAL; n2: REAL);
 			lastOne := count
 		END;
 		count := count + 1;
-		lastHi := hiBase BAND 1;
+		lastHi := tempHi BAND 1;
 		tempHi := tempHi >> 1;
 		tempLow := tempLow >> 1;
 		tempLow := tempLow BOR (lastHi << 30);
