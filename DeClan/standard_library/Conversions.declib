@@ -29,7 +29,7 @@ PROCEDURE IntToReal(n: INTEGER);
         IF isNeg THEN
             intResult := intResult BOR (1 << 31);
         END
-       END
+       END;
        result := IntBinaryAsReal(intResult)
        RETURN result
     END IntToReal;
