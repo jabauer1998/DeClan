@@ -260,9 +260,6 @@ PROCEDURE RDivide(n1: REAL; n2: REAL);
 	n1Base := RealMantissa(n1);
 	n2Base := RealMantissa(n2);
 
-	WriteString("n1Base is ");
-	WriteInt(n1Base);
-	WriteLn();
 	toShiftBase := 30 - 23;
 	n1Base := n1Base << toShiftBase;
 
@@ -291,13 +288,6 @@ PROCEDURE RDivide(n1: REAL; n2: REAL);
 	toShiftExp := n2LastOne;
 	n1Exp := n1Exp - toShiftExp;
 	n2Exp := n2Exp - toShiftExp;
-
-	WriteString("n1Base is ");
-	WriteInt(n1Base);
-	WriteLn();
-	WriteString("n2Base is ");
-	WriteInt(n2Base);
-	WriteLn();
 
 	n1DecimalPlace := 30 - toShiftExp;
 	resultDecimalPlace := n1DecimalPlace;
