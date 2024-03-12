@@ -595,4 +595,10 @@ public class MyLinkerTest {
         String progSrc = "test/declan/RealDivision.dcl";
         linkTestProgram(progSrc);
     }
+
+    @Test
+    public void testRealDivision4(){
+        String progSrc = "test/declan/RealDivision4.dcl";
+        linkTestProgram(progSrc);
+    }
 }

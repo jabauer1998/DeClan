@@ -67,7 +67,7 @@ PROCEDURE RealIsPositive(r: REAL);
 PROCEDURE RealMantissa(r: REAL);
     VAR result: INTEGER; realAsInt: INTEGER; significand: INTEGER; exp: INTEGER;
     BEGIN
-		exp := RealExponent(r);
+		exp := RealExponent(r) + 127;
 		realAsInt := RealBinaryAsInt(r);
         significand := realAsInt BAND 07FFFFFH;
 		IF (significand = 0) & (exp = 0) THEN
@@ -88,7 +88,7 @@ PROCEDURE RealExponent(r: REAL);
     VAR result: INTEGER; realAsInteger: INTEGER; exponent: INTEGER;
     BEGIN
 	realAsInteger := RealBinaryAsInt(r);
-        exponent := (realAsInteger >> 23) BAND 0ffH;
+    exponent := (realAsInteger >> 23) BAND 0ffH;
 	result := exponent - realBias
 	RETURN result
     END RealExponent;
