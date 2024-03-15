@@ -21,7 +21,7 @@ PROCEDURE IntToReal(n: INTEGER);
         ELSIF (furthestOne < 23) THEN
             absN := absN << (23 - furthestOne);
         END;
-        exponent := furthestOne + 127;
+        exponent := furthestOne + realBias;
         mantissaMask := 07fffffH;
         mantissa := absN BAND mantissaMask;
         intResult := mantissa;

@@ -2,7 +2,7 @@ CONST realBias = 127;
 PROCEDURE RealIsZero(r: REAL);
     VAR result: BOOLEAN; val: INTEGER; exp: INTEGER;
     BEGIN
-        val := RealMantissa(r);
+        val := RealBinaryAsInt(r);
 		IF val = 0 THEN
 			result := TRUE
 		ELSE
@@ -67,10 +67,9 @@ PROCEDURE RealIsPositive(r: REAL);
 PROCEDURE RealMantissa(r: REAL);
     VAR result: INTEGER; realAsInt: INTEGER; significand: INTEGER; exp: INTEGER;
     BEGIN
-		exp := RealExponent(r) + 127;
 		realAsInt := RealBinaryAsInt(r);
         significand := realAsInt BAND 07FFFFFH;
-		IF (significand = 0) & (exp = 0) THEN
+		IF RealIsZero(r) THEN
 			result := significand
 		ELSE
 			result := significand BOR 0800000H
