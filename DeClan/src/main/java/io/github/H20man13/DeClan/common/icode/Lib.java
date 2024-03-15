@@ -20,6 +20,12 @@ public class Lib implements ICode {
         this.symbols = symbols;
     }
 
+    public Lib(){
+        this.variables = new DataSec();
+        this.procedures = new ProcSec();
+        this.symbols = new SymSec();
+    }
+
     @Override
     public boolean isConstant() {
         return false;

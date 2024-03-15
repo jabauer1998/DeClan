@@ -18,6 +18,11 @@ public class Prog extends Lib implements ICode {
         this.code = code;
     }
 
+    public Prog(){
+        super();
+        this.code = new CodeSec();
+    }
+
     @Override
     public boolean isConstant() {
         return false;
