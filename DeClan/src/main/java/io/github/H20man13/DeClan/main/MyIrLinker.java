@@ -365,7 +365,7 @@ public class MyIrLinker {
                                     }
 
                                     dataInstructions.addInstruction(assignLib);
-                                    if(newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
+                                    if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
                                         newTable.addEntry(libEntry);
                                     }
                                 } else if(exp instanceof UnExp){
@@ -397,7 +397,7 @@ public class MyIrLinker {
                                     }
 
                                     dataInstructions.addInstruction(assignLib);
-                                    if(newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
+                                    if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
                                         newTable.addEntry(libEntry);
                                     }
                                 } else if(exp instanceof BinExp){
@@ -448,7 +448,7 @@ public class MyIrLinker {
                                     }
 
                                     dataInstructions.addInstruction(assignLib);
-                                    if(newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
+                                    if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
                                         newTable.addEntry(libEntry);
                                     }
                                 } else if(exp instanceof ExternalCall){
@@ -501,7 +501,7 @@ public class MyIrLinker {
                                         String toRetTo = assignLib.place;
                                         Assign newPlace = new Assign(Scope.EXTERNAL_RETURN, toRetTo, new IdentExp(toRetFrom), assignLib.getType());
                                         dataInstructions.addInstruction(newPlace);
-                                        if(newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
+                                        if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
                                             newTable.addEntry(libEntry);
                                         }
                                     }
@@ -516,7 +516,7 @@ public class MyIrLinker {
 
                                     
                                     dataInstructions.addInstruction(assignLib);
-                                    if(newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
+                                    if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
                                         newTable.addEntry(libEntry);
                                     }
                                 }
