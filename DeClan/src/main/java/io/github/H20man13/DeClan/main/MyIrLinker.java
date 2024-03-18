@@ -149,8 +149,9 @@ public class MyIrLinker {
 
                                             replacePlaceInLib(library, assignLib.place, place);
                                         }
+
                                         dataInstructions.addInstruction(assignLib);
-                                        if(newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
+                                        if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
                                             newTable.addEntry(libEntry);
                                         }
                                     } else if(exp instanceof UnExp){
