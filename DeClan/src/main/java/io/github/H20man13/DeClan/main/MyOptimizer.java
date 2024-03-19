@@ -882,7 +882,7 @@ public class MyOptimizer {
             } else if(icode instanceof Inline){
                 Inline inline = (Inline)icode;
                 LinkedList<DagNode> children = new LinkedList<DagNode>();
-                for(String param : inline.param){
+                for(String param : inline.params){
                     DagNode child = dag.searchForLatestChild(param);
                     if(child == null){
                         child = factory.createNullNode(param);

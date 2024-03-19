@@ -94,4 +94,39 @@ public class ExternalCall implements ICode, Exp {
     public P asPattern(boolean hasContainer) {
         return asPattern();
     }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        LinkedList<Tuple<String, Assign.Type>> newArgs = new LinkedList<Tuple<String, Assign.Type>>();
+        for(Tuple<String, Assign.Type> arg: arguments){
+            if(arg.source.equals(from)){
+                newArgs.add(new Tuple<String, Assign.Type>(to, arg.dest));
+            } else {
+                newArgs.add(arg);
+            }
+        }
+        this.arguments = newArgs;
+    }
+
+    @Override
+    public boolean containsPlace(String place) {
+        for(Tuple<String, Assign.Type> arg: arguments){
+            if(arg.source.equals(place))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean containsLabel(String label) {
+        if(this.procedureName.equals(label))
+            return true;
+        return false;
+    }
+
+    @Override
+    public void replaceLabel(String from, String to) {
+        if(this.procedureName.equals(from))
+            this.procedureName = to;
+    }
 }

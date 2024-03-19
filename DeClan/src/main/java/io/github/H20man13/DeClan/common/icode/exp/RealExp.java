@@ -42,4 +42,14 @@ public class RealExp implements Exp {
             return P.REAL();
         }
     }
+
+    @Override
+    public boolean containsPlace(String place) {
+        return false;
+    }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        //Do nothing
+    }
 }

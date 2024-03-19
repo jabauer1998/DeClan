@@ -100,4 +100,36 @@ public class CodeSec implements ICode {
         resultList.add(new End());
         return resultList;
     }
+
+    @Override
+    public boolean containsPlace(String place) {
+        for(ICode icode: intermediateCode){
+            if(icode.containsPlace(place))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean containsLabel(String label) {
+        for(ICode icode: intermediateCode){
+            if(icode.containsLabel(label))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        for(ICode icode: intermediateCode){
+            icode.replacePlace(from, to);
+        }
+    }
+
+    @Override
+    public void replaceLabel(String from, String to) {
+        for(ICode icode: intermediateCode){
+            icode.replaceLabel(from, to);
+        }
+    }
 }

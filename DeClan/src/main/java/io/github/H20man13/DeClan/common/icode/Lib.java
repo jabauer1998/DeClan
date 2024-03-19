@@ -65,11 +65,56 @@ public class Lib implements ICode {
         return sb.toString();
     }
 
+    public boolean dataSectionContainsInstruction(ICode icode){
+        int variablesLength = variables.getLength();
+        for(int i = 0; i < variablesLength; i++){
+            ICode instructionAtIndex = variables.getInstruction(i);
+            if(instructionAtIndex.equals(icode))
+                return true;
+        }
+
+        return false;
+    }
+
+    public boolean containsPlace(String place){
+        if(symbols.containsPlace(place))
+            return true;
+        if(variables.containsPlace(place))
+            return true;
+        if(procedures.containsPlace(place))
+            return true;
+
+        return false;
+    }
+
+    public boolean containsLabel(String label){
+        if(variables.containsLabel(label))
+            return true;
+
+        if(procedures.containsLabel(label))
+            return true;
+
+        return false;
+    }
+
     @Override
     public List<ICode> genFlatCode() {
         LinkedList<ICode> resultList = new LinkedList<ICode>();
         resultList.addAll(variables.genFlatCode());
         resultList.addAll(procedures.genFlatCode());
         return resultList;
+    }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        symbols.replacePlace(from, to);
+        variables.replacePlace(from, to);
+        procedures.replacePlace(from, to);
+    }
+
+    @Override
+    public void replaceLabel(String from, String to) {
+        variables.replaceLabel(from, to);
+        procedures.replaceLabel(from, to);
     }
 }

@@ -75,4 +75,21 @@ public class BinExp implements Exp {
         else
             return null;
     }
+
+    @Override
+    public boolean containsPlace(String place) {
+        if(left.containsPlace(place))
+            return true;
+
+        if(right.containsPlace(place))
+            return true;
+
+        return false;
+    }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        left.replacePlace(from, to);
+        right.replacePlace(from, to);
+    }
 }

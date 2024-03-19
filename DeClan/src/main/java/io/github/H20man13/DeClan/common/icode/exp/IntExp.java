@@ -42,4 +42,14 @@ public class IntExp implements Exp {
             return P.INT();
         }
     }
+
+    @Override
+    public boolean containsPlace(String place) {
+        return false;
+    }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        //Do nothing
+    }
 }

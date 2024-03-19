@@ -7,11 +7,11 @@ import io.github.H20man13.DeClan.common.pat.P;
 
 public class Inline implements ICode{
     public String inlineAssembly;
-    public List<String> param;
+    public List<String> params;
 
     public Inline(String inlineAssembly, List<String> param){
         this.inlineAssembly = inlineAssembly;
-        this.param = param;
+        this.params = param;
     }
 
     @Override
@@ -37,12 +37,12 @@ public class Inline implements ICode{
             if(!inLine.inlineAssembly.equals(inlineAssembly))
                 return false;
 
-            if(inLine.param.size() != param.size())
+            if(inLine.params.size() != params.size())
                 return false;
 
-            int size = param.size();
+            int size = params.size();
             for(int i = 0; i < size; i++){
-                if(!param.get(i).equals(inLine.param.get(i)))
+                if(!params.get(i).equals(inLine.params.get(i)))
                     return false;
             }
 
@@ -55,7 +55,7 @@ public class Inline implements ICode{
     @Override
     public String toString(){
         StringBuilder inlineAssemblyBuilder = new StringBuilder();
-        for(String str : param){
+        for(String str : params){
             inlineAssemblyBuilder.append("IPARAM ");
             inlineAssemblyBuilder.append(str);
             inlineAssemblyBuilder.append('\n');
@@ -72,5 +72,37 @@ public class Inline implements ICode{
         LinkedList<ICode> list = new LinkedList<ICode>();
         list.add(this);
         return list;
+    }
+
+    @Override
+    public boolean containsPlace(String place) {
+        for(String param: params){
+            if(param.equals(place))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean containsLabel(String label) {
+        return false;
+    }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        LinkedList<String> newList = new LinkedList<>();
+        for(String param: params){
+            if(param.equals(from)){
+                newList.add(to);
+            } else {
+                newList.add(param);
+            }
+        }
+        this.params = newList;
+    }
+
+    @Override
+    public void replaceLabel(String from, String to) {
+        //Do nothing
     }
 }

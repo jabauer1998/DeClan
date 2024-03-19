@@ -55,4 +55,16 @@ public class UnExp implements Exp {
             return null;
         }
     }
+
+    @Override
+    public boolean containsPlace(String place) {
+        if(right.containsPlace(place))
+            return true;
+        return false;
+    }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        right.replacePlace(from, to);
+    }
 }

@@ -157,7 +157,7 @@ public class MyICodeMachine {
     private void interpretInlineAssembly(Inline instruction, int programLength) {
         if(instruction.inlineAssembly.startsWith("MULL")){
             //Then it is a multiply long instruction and we have to simulate that here
-            List<String> paramaters = instruction.param;
+            List<String> paramaters = instruction.params;
             if(paramaters.size() == 4){
                 //First get the two source paramaters
                 String param1 = paramaters.get(2);

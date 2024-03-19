@@ -56,4 +56,32 @@ public class If implements ICode {
 		icode.add(this);
 		return icode;
 	}
+
+	@Override
+	public boolean containsPlace(String place) {
+		return exp.containsPlace(place);
+	}
+
+	@Override
+	public boolean containsLabel(String label) {
+		if(this.ifTrue.equals(label))
+			return true;
+		if(this.ifFalse.equals(label))
+			return true;
+		return false;
+	}
+
+	@Override
+	public void replacePlace(String from, String to) {
+		exp.replacePlace(from, to);
+	}
+
+	@Override
+	public void replaceLabel(String from, String to) {
+		if(this.ifTrue.equals(from))
+			this.ifTrue = to;
+
+		if(this.ifFalse.equals(from))
+			this.ifFalse = to;
+	}
 }

@@ -113,4 +113,37 @@ public class ProcSec implements ICode {
         }
         return resultList;
     }
+
+    @Override
+    public boolean containsPlace(String place) {
+        for(Proc proc: procedures){
+            if(proc.containsPlace(place))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean containsLabel(String label) {
+        for(Proc proc: procedures){
+            if(proc.containsLabel(label)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void replacePlace(String from, String to){
+        for(Proc procedure: procedures){
+            procedure.replacePlace(from, to);
+        }
+    }
+
+    @Override
+    public void replaceLabel(String from, String to) {
+        for(Proc procedure: procedures){
+            procedure.replaceLabel(from, to);
+        }
+    }
 }

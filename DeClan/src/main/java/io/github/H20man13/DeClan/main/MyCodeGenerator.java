@@ -63,7 +63,7 @@ public class MyCodeGenerator {
             String place;
             do{
                 place = iGen.genNext();
-            } while(Utils.placeExistsInProgram(place, program));
+            } while(program.containsPlace(place));
             this.errorLog = errorLog;
             this.codeGenFunctions = new HashMap<>();
             this.i = 0;
@@ -9927,7 +9927,7 @@ public class MyCodeGenerator {
                 StringBuilder resultInstruction = new StringBuilder();
                 int index = 0;
                 int paramIndex = 0;
-                List<String> params = inline.param;
+                List<String> params = inline.params;
                 while(index < instruction.length()){
                     char letterAtFirstIndex = instruction.charAt(index);
                     if(letterAtFirstIndex == '%'){

@@ -160,4 +160,30 @@ public class SymSec implements ICode {
         resultList.add(this);
         return resultList;
     }
+
+    @Override
+    public boolean containsPlace(String place) {
+        for(SymEntry entry: entries){
+            if(entry.containsPlace(place))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean containsLabel(String label) {
+        return false;
+    }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        for(SymEntry entry: entries){
+            entry.replacePlace(from, to);
+        }
+    }
+
+    @Override
+    public void replaceLabel(String from, String to) {
+        //Do nothing
+    }
 }

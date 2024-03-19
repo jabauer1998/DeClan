@@ -98,4 +98,36 @@ public class DataSec implements ICode {
         }
         return resultList;
     }
+
+    @Override
+    public boolean containsPlace(String place) {
+        for(ICode variables: intermediateCode){
+            if(variables.containsPlace(place))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean containsLabel(String label) {
+        for(ICode variables: intermediateCode){
+            if(variables.containsLabel(label)) 
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        for(ICode intCode: intermediateCode){
+            intCode.replacePlace(from, to);
+        }
+    }
+
+    @Override
+    public void replaceLabel(String from, String to) {
+        for(ICode intCode: intermediateCode){
+            intCode.replaceLabel(from, to);
+        }
+    }
 }

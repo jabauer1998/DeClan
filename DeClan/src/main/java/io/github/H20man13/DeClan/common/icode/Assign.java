@@ -113,4 +113,29 @@ public class Assign implements ICode{
         linkedList.add(this);
         return linkedList;
     }
+
+    @Override
+    public boolean containsPlace(String place) {
+        if(this.place.equals(place))
+            return true;
+
+        return this.value.containsPlace(place);
+    }
+
+    @Override
+    public boolean containsLabel(String label) {
+        return false;
+    }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        if(this.place.equals(from))
+            this.place = to;
+        value.replacePlace(from, to);
+    }
+
+    @Override
+    public void replaceLabel(String from, String to) {
+        //Do nothing
+    }
 }

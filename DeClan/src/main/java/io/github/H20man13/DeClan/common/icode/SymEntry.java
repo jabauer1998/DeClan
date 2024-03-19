@@ -50,6 +50,18 @@ public class SymEntry implements ICode {
     }
 
     @Override
+    public boolean containsPlace(String place){
+        if(icodePlace.equals(place))
+            return true;
+        return false;
+    }
+
+    @Override
+    public boolean containsLabel(String label){
+        return false;
+    }
+
+    @Override
     public boolean equals(Object obj){
         if(obj instanceof SymEntry){
             SymEntry entry = (SymEntry)obj;
@@ -85,5 +97,16 @@ public class SymEntry implements ICode {
         LinkedList<ICode> list = new LinkedList<ICode>();
         list.add(this);
         return list;
+    }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        if(icodePlace.equals(from))
+            this.icodePlace = to;    
+    }
+
+    @Override
+    public void replaceLabel(String from, String to) {
+        //Do nothing this is just a place holder
     }
 }

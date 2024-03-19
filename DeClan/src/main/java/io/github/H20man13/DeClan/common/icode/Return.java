@@ -41,4 +41,24 @@ public class Return implements ICode {
 		list.add(this);
 		return list;
 	}
+
+	@Override
+	public boolean containsPlace(String place) {
+		return false;
+	}
+
+	@Override
+	public boolean containsLabel(String label) {
+		return false;
+	}
+
+	@Override
+	public void replacePlace(String from, String to) {
+		//Do nothing this is just a placeholder
+	}
+
+	@Override
+	public void replaceLabel(String from, String to) {
+		//Do nothing this is just a placeholder
+	}
 }

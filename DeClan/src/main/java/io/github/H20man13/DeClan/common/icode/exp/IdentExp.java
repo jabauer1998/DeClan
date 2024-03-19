@@ -42,4 +42,18 @@ public class IdentExp implements Exp{
             return P.ID();
         }
     }
+
+    @Override
+    public boolean containsPlace(String place) {
+        if(this.ident.equals(place))
+            return true;
+
+        return false;
+    }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        if(this.ident.equals(from))
+            this.ident = to;
+    }
 }

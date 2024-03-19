@@ -49,4 +49,25 @@ public class Goto implements ICode {
 		linkedList.add(this);
 		return linkedList;
 	}
+
+	@Override
+	public boolean containsPlace(String place) {
+		return false;
+	}
+
+	@Override
+	public boolean containsLabel(String label) {
+		return this.label.equals(label);
+	}
+
+	@Override
+	public void replacePlace(String from, String to) {
+		//Do nothing
+	}
+
+	@Override
+	public void replaceLabel(String from, String to) {
+		if(this.label.equals(from))
+			this.label = to;
+	}
 }

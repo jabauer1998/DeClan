@@ -42,5 +42,15 @@ public class StrExp implements Exp{
             return P.STR();
         }
     }
+
+    @Override
+    public boolean containsPlace(String place) {
+        return false;
+    }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        //Do nothing
+    }
     
 }

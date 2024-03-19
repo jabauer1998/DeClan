@@ -11,4 +11,8 @@ public interface ICode {
     public P asPattern();
     public boolean equals(Object object);
     public List<ICode> genFlatCode();
+    public boolean containsPlace(String place);
+    public boolean containsLabel(String label);
+    public void replacePlace(String from, String to);
+    public void replaceLabel(String from, String to);
 }

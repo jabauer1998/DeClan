@@ -11,6 +11,8 @@ public interface Exp {
     public boolean isBranch();
 
     public boolean isConstant();
+    public boolean containsPlace(String place);
+    public void replacePlace(String from, String to);
 
     public P asPattern(boolean hasContainer);
 }

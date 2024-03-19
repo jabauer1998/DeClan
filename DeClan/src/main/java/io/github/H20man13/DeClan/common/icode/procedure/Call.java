@@ -81,4 +81,32 @@ public class Call implements ICode {
 		resultList.add(this);
 		return resultList;
 	}
+
+	@Override
+	public boolean containsPlace(String place){
+		for(Assign assign: params)
+			if(assign.containsPlace(place))
+				return true;
+
+		return false;
+	}
+
+	@Override
+	public boolean containsLabel(String label) {
+		if(pname.equals(label))
+			return true;
+		return false;
+	}
+
+	@Override
+	public void replacePlace(String from, String to) {
+		for(Assign assign: params)
+			assign.replacePlace(from, to);
+	}
+
+	@Override
+	public void replaceLabel(String from, String to) {
+		if(pname.equals(from))
+			pname = to;
+	}
 }

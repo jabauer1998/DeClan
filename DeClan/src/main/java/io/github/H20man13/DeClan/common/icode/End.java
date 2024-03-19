@@ -40,4 +40,24 @@ public class End implements ICode {
 		linkedList.add(this);
 		return linkedList;
 	}
+
+	@Override
+	public boolean containsPlace(String place) {
+		return false;
+	}
+
+	@Override
+	public boolean containsLabel(String label) {
+		return false;
+	}
+
+	@Override
+	public void replacePlace(String from, String to) {
+		//Do nothing
+	}
+
+	@Override
+	public void replaceLabel(String from, String to) {
+		//Do nothing
+	}
 }

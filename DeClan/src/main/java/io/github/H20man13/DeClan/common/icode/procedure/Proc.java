@@ -207,4 +207,59 @@ public class Proc implements ICode {
 
         return toRet;
     }
+
+    @Override
+    public boolean containsPlace(String place) {
+        for(Assign assign: paramAssign){
+            if(assign.containsPlace(place))
+                return true;
+        }
+
+        for(ICode instruction: instructions){
+            if(instruction.containsPlace(place))
+                return true;
+        }
+
+        if(this.placement != null)
+            if(this.placement.containsPlace(place))
+                return true;
+
+        return false;
+    }
+
+    @Override
+    public boolean containsLabel(String label) {
+        if(this.label.containsLabel(label))
+            return true;
+
+        for(ICode instruction: instructions){
+            if(instruction.containsLabel(label))
+                return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void replacePlace(String from, String to) {
+        for(Assign assign: paramAssign){
+            assign.replacePlace(from, to);
+        }
+
+        for(ICode instruction: instructions){
+            instruction.replacePlace(from, to);
+        }
+
+        if(this.placement != null)
+            placement.replacePlace(from, to);
+    }
+
+    @Override
+    public void replaceLabel(String from, String to) {
+        this.label.replaceLabel(from, to);
+
+        for(ICode instruction: instructions){
+            instruction.replaceLabel(from, to);
+        }
+    }
 }

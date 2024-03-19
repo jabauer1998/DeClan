@@ -71,4 +71,30 @@ public class Prog extends Lib implements ICode {
         sb.append(procedures.toString());
         return sb.toString();
     }
+
+    @Override
+    public void replaceLabel(String from, String to){
+        super.replaceLabel(from, to);
+        code.replaceLabel(from, to);
+    }
+
+    @Override
+    public void replacePlace(String from, String to){
+        super.replacePlace(from, to);
+        code.replacePlace(from, to);
+    }
+
+    @Override
+    public boolean containsLabel(String label){
+        if(super.containsLabel(label))
+            return true;
+        return code.containsLabel(label);
+    }
+
+    @Override
+    public boolean containsPlace(String place){
+        if(super.containsPlace(place))
+            return true;
+        return code.containsPlace(place);
+    }
 }

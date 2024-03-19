@@ -27,4 +27,25 @@ public abstract class Label implements ICode {
 
 	@Override
 	public abstract List<ICode> genFlatCode();
+
+	@Override
+	public void replaceLabel(String from, String to){
+		if(this.label.equals(from))
+			this.label = to;
+	}
+
+	@Override
+	public boolean containsLabel(String label){
+		return this.label.equals(label);
+	}
+
+	@Override
+	public boolean containsPlace(String place){
+		return false;
+	}
+
+	@Override
+	public void replacePlace(String from, String to){
+		//Do nothing
+	}
 }

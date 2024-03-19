@@ -40,5 +40,5 @@ public class ProcLabel extends Label {
         LinkedList<ICode> resultList = new LinkedList<ICode>();
         resultList.add(this);
         return resultList;
-    }
+    }    
 }
