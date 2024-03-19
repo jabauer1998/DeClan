@@ -1,14 +1,11 @@
 SYMBOL SECTION
  e92 CONST INTERNAL realBias
- e92 CONST INTERNAL realBias
 DATA SECTION
  a := 6 [INT]
  GLOBAL b := a [INT]
  c := 7 [INT]
  GLOBAL d := c [INT]
  GLOBAL e := 0 [INT]
- e44 := 127 [INT]
- GLOBAL e92 := e44 [INT]
  e44 := 127 [INT]
  GLOBAL e92 := e44 [INT]
 CODE SECTION

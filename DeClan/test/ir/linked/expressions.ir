@@ -1,6 +1,5 @@
 SYMBOL SECTION
  f17 CONST INTERNAL realBias
- f17 CONST INTERNAL realBias
 DATA SECTION
  a := 0 [INT]
  GLOBAL b := a [INT]
@@ -13,8 +12,6 @@ DATA SECTION
  GLOBAL f17 := e47 [INT]
  CALL IntToReal((b -> d58)[INT])
  EXTERNAL RETURN d57 := d61 [REAL]
- e47 := 127 [INT]
- GLOBAL f17 := e47 [INT]
  CALL RAdd((d44 -> e60)[REAL], (d57 -> e62)[REAL])
  EXTERNAL RETURN e59 := e65 [REAL]
  GLOBAL i := e59 [REAL]
