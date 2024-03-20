@@ -3,9 +3,10 @@ package io.github.H20man13.DeClan.common.icode;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class SymEntry implements ICode {
+public class SymEntry implements ICode, Copyable<SymEntry> {
     private int symType;
     public String icodePlace;
     public String declanIdent;
@@ -103,6 +104,11 @@ public class SymEntry implements ICode {
     public void replacePlace(String from, String to) {
         if(icodePlace.equals(from))
             this.icodePlace = to;    
+    }
+
+    @Override
+    public SymEntry copy(){
+        return new SymEntry(symType, icodePlace, declanIdent);
     }
 
     @Override

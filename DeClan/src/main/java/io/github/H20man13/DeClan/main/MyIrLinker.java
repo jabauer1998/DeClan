@@ -157,7 +157,7 @@ public class MyIrLinker {
                                         if(!newProgram.dataSectionContainsInstruction(assignLib)){
                                             dataInstructions.addInstruction(assignLib);
                                             if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
-                                                newTable.addEntry(libEntry);
+                                                newTable.addEntry(libEntry.copy());
                                             }
                                         }
                                     } else if(exp instanceof UnExp){
@@ -193,7 +193,7 @@ public class MyIrLinker {
                                         if(!newProgram.dataSectionContainsInstruction(assignLib)){
                                             dataInstructions.addInstruction(assignLib);
                                             if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
-                                                newTable.addEntry(libEntry);
+                                                newTable.addEntry(libEntry.copy());
                                             }
                                         }
                                     } else if(exp instanceof BinExp){
@@ -242,12 +242,13 @@ public class MyIrLinker {
                                             } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
 
                                             library.replacePlace(assignLib.place, place);
+                                            newProgram.replacePlace(assignLib.place, place);
                                         }
 
                                         if(!newProgram.dataSectionContainsInstruction(assignLib)){
                                             dataInstructions.addInstruction(assignLib);
                                             if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
-                                                newTable.addEntry(libEntry);
+                                                newTable.addEntry(libEntry.copy());
                                             }
                                         }
                                     } else if(exp instanceof ExternalCall){
@@ -304,7 +305,7 @@ public class MyIrLinker {
                                                 dataInstructions.addInstruction(newCall);
                                                 dataInstructions.addInstruction(newPlace);
                                                 if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
-                                                    newTable.addEntry(libEntry);
+                                                    newTable.addEntry(libEntry.copy());
                                                 }
                                             }
                                         }
@@ -322,7 +323,7 @@ public class MyIrLinker {
                                         if(!newProgram.dataSectionContainsInstruction(assignLib)){
                                             dataInstructions.addInstruction(assignLib);
                                             if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
-                                                newTable.addEntry(libEntry);
+                                                newTable.addEntry(libEntry.copy());
                                             }
                                         }
                                     }
@@ -384,7 +385,7 @@ public class MyIrLinker {
                                     if(!newLib.dataSectionContainsInstruction(assignLib)){
                                         dataInstructions.addInstruction(assignLib);
                                         if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
-                                            newTable.addEntry(libEntry);
+                                            newTable.addEntry(libEntry.copy());
                                         }
                                     }
                                 } else if(exp instanceof UnExp){
@@ -419,7 +420,7 @@ public class MyIrLinker {
                                     if(!newLib.dataSectionContainsInstruction(assignLib)){
                                         dataInstructions.addInstruction(assignLib);
                                         if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
-                                            newTable.addEntry(libEntry);
+                                            newTable.addEntry(libEntry.copy());
                                         }
                                     }
                                 } else if(exp instanceof BinExp){
@@ -473,7 +474,7 @@ public class MyIrLinker {
                                     if(!newLib.dataSectionContainsInstruction(assignLib)){
                                         dataInstructions.addInstruction(assignLib);
                                         if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
-                                            newTable.addEntry(libEntry);
+                                            newTable.addEntry(libEntry.copy());
                                         }
                                     }
                                 } else if(exp instanceof ExternalCall){
@@ -529,7 +530,7 @@ public class MyIrLinker {
                                            dataInstructions.addInstruction(newCall);
                                             dataInstructions.addInstruction(newPlace);
                                             if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
-                                                newTable.addEntry(libEntry);
+                                                newTable.addEntry(libEntry.copy());
                                             }
                                         }
                                     }
@@ -546,7 +547,7 @@ public class MyIrLinker {
                                     if(!newLib.dataSectionContainsInstruction(assignLib)){
                                         dataInstructions.addInstruction(assignLib);
                                         if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
-                                            newTable.addEntry(libEntry);
+                                            newTable.addEntry(libEntry.copy());
                                         }
                                     }
                                 }
@@ -644,7 +645,7 @@ public class MyIrLinker {
                                 dataInstructions.addInstruction(assign);
                                 if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
                                     SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
+                                    newTable.addEntry(entry.copy());
                                 }
                             }
                         } else if(exp instanceof UnExp){
@@ -680,7 +681,7 @@ public class MyIrLinker {
                                 dataInstructions.addInstruction(assign);
                                 if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
                                     SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
+                                    newTable.addEntry(entry.copy());
                                 }
                             }
                         } else if(exp instanceof BinExp){
@@ -735,7 +736,7 @@ public class MyIrLinker {
                                 dataInstructions.addInstruction(assign);
                                 if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
                                     SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
+                                    newTable.addEntry(entry.copy());
                                 }
                             }
                         } else if(exp instanceof ExternalCall){
@@ -794,7 +795,7 @@ public class MyIrLinker {
                                     dataInstructions.addInstruction(newPlace);
                                     if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
                                         SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                        newTable.addEntry(entry);
+                                        newTable.addEntry(entry.copy());
                                     }
                                 }
                             }
@@ -812,7 +813,7 @@ public class MyIrLinker {
                                 dataInstructions.addInstruction(assign);
                                 if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
                                     SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
+                                    newTable.addEntry(entry.copy());
                                 }
                             }
                         }
@@ -909,7 +910,7 @@ public class MyIrLinker {
                                 dataInstructions.addInstruction(assign);
                                 if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
                                     SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
+                                    newTable.addEntry(entry.copy());
                                 }
                             }
                         } else if(exp instanceof UnExp){
@@ -946,7 +947,7 @@ public class MyIrLinker {
                                 dataInstructions.addInstruction(assign);
                                 if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
                                     SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
+                                    newTable.addEntry(entry.copy());
                                 }
                             }
                         } else if(exp instanceof BinExp){
@@ -1002,7 +1003,7 @@ public class MyIrLinker {
                                 dataInstructions.addInstruction(assign);
                                 if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
                                     SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
+                                    newTable.addEntry(entry.copy());
                                 }
                             }
                         } else if(exp instanceof ExternalCall){
@@ -1060,7 +1061,7 @@ public class MyIrLinker {
                                     dataInstructions.addInstruction(newPlace);
                                     if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
                                         SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                        newTable.addEntry(entry);
+                                        newTable.addEntry(entry.copy());
                                     }
                                 }
                             }
@@ -1079,7 +1080,7 @@ public class MyIrLinker {
                                 dataInstructions.addInstruction(assign);
                                 if(libSymbols.containsEntryWithICodePlace(assign.place, SymEntry.INTERNAL)){
                                     SymEntry entry = libSymbols.getEntryByICodePlace(assign.place, SymEntry.INTERNAL);
-                                    newTable.addEntry(entry);
+                                    newTable.addEntry(entry.copy());
                                 }
                             }
                         }
@@ -1812,6 +1813,7 @@ public class MyIrLinker {
                     }while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                     library.replacePlace(assign.value.toString(), place);
+                    newLib.replacePlace(assign.value.toString(), place);
                 }
 
                 if(!placeIsUniqueToLibrary(assign.place, single, libraries, library)){
@@ -2211,6 +2213,7 @@ public class MyIrLinker {
                             } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                             library.replacePlace(placement.place, place);
+                            newProg.replacePlace(placement.place, place);
                         }
 
                         if(libSymbols.containsEntryWithICodePlace(placement.value.toString(), SymEntry.EXTERNAL)){
@@ -3035,6 +3038,7 @@ public class MyIrLinker {
                         } while(!placeIsUniqueToProgramOrLibrary(place, startingProgram, libraries, startingProgram));
 
                         startingProgram.replacePlace(assign.place, place);
+                        newProg.replacePlace(assign.place, place);
                     }
                 
                     if(!procedures.containsProcedure(call.procedureName))
