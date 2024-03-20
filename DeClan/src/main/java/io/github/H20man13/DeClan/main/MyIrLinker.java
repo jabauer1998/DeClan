@@ -117,6 +117,7 @@ public class MyIrLinker {
                                             } while(!placeIsUniqueToProgramOrLibrary(newPlace, program, libraries, library));
 
                                             library.replacePlace(assignLib.place, newPlace);
+                                            newProgram.replacePlace(assignLib.place, newPlace);
                                         }
 
                                         if(!newProgram.dataSectionContainsInstruction(funcCall) && !newProgram.dataSectionContainsInstruction(assignLib)){
@@ -150,6 +151,7 @@ public class MyIrLinker {
                                             } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
 
                                             library.replacePlace(assignLib.place, place);
+                                            newProgram.replacePlace(assignLib.place, place);
                                         }
 
                                         if(!newProgram.dataSectionContainsInstruction(assignLib)){
@@ -185,6 +187,7 @@ public class MyIrLinker {
                                             } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
 
                                             library.replacePlace(assignLib.place, place);
+                                            newProgram.replacePlace(assignLib.place, place);
                                         }
 
                                         if(!newProgram.dataSectionContainsInstruction(assignLib)){
@@ -289,6 +292,7 @@ public class MyIrLinker {
                                                 } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
 
                                                 library.replacePlace(assignLib.place, place);
+                                                newProgram.replacePlace(assignLib.place, place);
                                             }
 
                                             Call newCall = new Call(call.procedureName, newArgs);
@@ -312,6 +316,7 @@ public class MyIrLinker {
                                             } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, library));
 
                                             library.replacePlace(assignLib.place, place);
+                                            newProgram.replacePlace(assignLib.place, place);
                                         }
 
                                         if(!newProgram.dataSectionContainsInstruction(assignLib)){
@@ -373,6 +378,7 @@ public class MyIrLinker {
                                             place = gen.genNext();
                                         } while(!placeIsUniqueToLibrary(place, single, libraries, library));
                                         library.replacePlace(assignLib.place, place);
+                                        newLib.replacePlace(assignLib.place, place);
                                     }
 
                                     if(!newLib.dataSectionContainsInstruction(assignLib)){
@@ -407,6 +413,7 @@ public class MyIrLinker {
                                             place = gen.genNext();
                                         } while(!placeIsUniqueToLibrary(place, single, libraries, library));
                                         library.replacePlace(assignLib.place, place);
+                                        newLib.replacePlace(assignLib.place, place);
                                     }
 
                                     if(!newLib.dataSectionContainsInstruction(assignLib)){
@@ -460,6 +467,7 @@ public class MyIrLinker {
                                             place = gen.genNext();
                                         } while(!placeIsUniqueToLibrary(place, single, libraries, library));
                                         library.replacePlace(assignLib.place, place);
+                                        newLib.replacePlace(assignLib.place, place);
                                     }
 
                                     if(!newLib.dataSectionContainsInstruction(assignLib)){
@@ -509,6 +517,7 @@ public class MyIrLinker {
                                                 place = gen.genNext();
                                             } while(!placeIsUniqueToLibrary(place, single, libraries, library));
                                             library.replacePlace(assignLib.place, place);
+                                            newLib.replacePlace(assignLib.place, place);
                                         }
 
                                         Call newCall = new Call(call.procedureName, newArgs);
@@ -531,6 +540,7 @@ public class MyIrLinker {
                                             place = gen.genNext();
                                         } while(!placeIsUniqueToLibrary(place, single, libraries, library));
                                         library.replacePlace(assignLib.place, place);
+                                        newLib.replacePlace(assignLib.place, place);
                                     }
 
                                     if(!newLib.dataSectionContainsInstruction(assignLib)){
@@ -594,6 +604,7 @@ public class MyIrLinker {
                                 } while(!placeIsUniqueToLibrary(newPlace, single, libraries, currentLib));
 
                                 currentLib.replacePlace(assign.place, newPlace);
+                                newLib.replacePlace(assign.place, newPlace);
                             }
 
                             if(!newLib.dataSectionContainsInstruction(funcCall) && !newLib.dataSectionContainsInstruction(assign)){
@@ -626,6 +637,7 @@ public class MyIrLinker {
                                     place = gen.genNext();
                                 } while(!placeIsUniqueToLibrary(place, single, libraries, currentLib));
                                 currentLib.replacePlace(assign.place, place);
+                                newLib.replacePlace(assign.place, place);
                             }
 
                             if(!newLib.dataSectionContainsInstruction(assign)){
@@ -661,6 +673,7 @@ public class MyIrLinker {
                                     place = gen.genNext();
                                 } while(!placeIsUniqueToLibrary(place, single, libraries, currentLib));
                                 currentLib.replacePlace(assign.place, place);
+                                newLib.replacePlace(assign.place, place);
                             }
 
                             if(!newLib.dataSectionContainsInstruction(assign)){
@@ -715,6 +728,7 @@ public class MyIrLinker {
                                     place = gen.genNext();
                                 } while(!placeIsUniqueToLibrary(place, single, libraries, currentLib));
                                 currentLib.replacePlace(assign.place, place);
+                                newLib.replacePlace(assign.place, place);
                             }
 
                             if(!newLib.dataSectionContainsInstruction(assign)){
@@ -767,6 +781,7 @@ public class MyIrLinker {
                                         place = gen.genNext();
                                     } while(!placeIsUniqueToLibrary(place, single, libraries, currentLib));
                                     currentLib.replacePlace(assign.place, place);
+                                    newLib.replacePlace(assign.place, place);
                                 }
 
                                 Call newCall = new Call(call.procedureName, newArgs);
@@ -790,6 +805,7 @@ public class MyIrLinker {
                                     place = gen.genNext();
                                 } while(!placeIsUniqueToLibrary(place, single, libraries, currentLib));
                                 currentLib.replacePlace(assign.place, place);
+                                newLib.replacePlace(assign.place, place);
                             }
 
                             if(!newLib.dataSectionContainsInstruction(assign)){
@@ -852,6 +868,7 @@ public class MyIrLinker {
                                 } while(!placeIsUniqueToProgramOrLibrary(newPlace, program, libraries, currentLib));
 
                                 currentLib.replacePlace(assign.place, newPlace);
+                                newProgram.replacePlace(assign.place, newPlace);
                             }
 
                             if(!newProgram.dataSectionContainsInstruction(funcCall) && !newProgram.dataSectionContainsInstruction(assign)){
@@ -885,6 +902,7 @@ public class MyIrLinker {
                                 } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, currentLib));
 
                                 currentLib.replacePlace(assign.place, place);
+                                newProgram.replacePlace(assign.place, place);
                             }
 
                             if(!newProgram.dataSectionContainsInstruction(assign)){
@@ -921,6 +939,7 @@ public class MyIrLinker {
                                 } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, currentLib));
 
                                 currentLib.replacePlace(assign.place, place);
+                                newProgram.replacePlace(assign.place, place);
                             }
 
                             if(!newProgram.dataSectionContainsInstruction(assign)){
@@ -976,6 +995,7 @@ public class MyIrLinker {
                                 } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, currentLib));
 
                                 currentLib.replacePlace(assign.place, place);
+                                newProgram.replacePlace(assign.place, place);
                             }
 
                             if(!newProgram.dataSectionContainsInstruction(assign)){
@@ -1027,6 +1047,7 @@ public class MyIrLinker {
                                     } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, currentLib));
 
                                     currentLib.replacePlace(assign.place, place);
+                                    newProgram.replacePlace(assign.place, place);
                                 }
 
                                 Call newCall = new Call(call.procedureName, newArgs);
@@ -1051,6 +1072,7 @@ public class MyIrLinker {
                                 } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, currentLib));
 
                                 currentLib.replacePlace(assign.place, place);
+                                newProgram.replacePlace(assign.place, place);
                             }
 
                             if(!newProgram.dataSectionContainsInstruction(assign)){
@@ -1088,6 +1110,7 @@ public class MyIrLinker {
                     }while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, program));
 
                     program.replacePlace(assign.value.toString(), place);
+                    newProg.replacePlace(assign.value.toString(), place);
                 }
 
                 if(!placeIsUniqueToProgramOrLibrary(assign.place, program, libraries, program)){
@@ -1097,6 +1120,7 @@ public class MyIrLinker {
                     } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, program));
 
                     program.replacePlace(assign.place, place);
+                    newProg.replacePlace(assign.place, place);
                 }
 
                 newProcedure.addParamater(assign);
@@ -1111,6 +1135,7 @@ public class MyIrLinker {
                     } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, program));
 
                     program.replacePlace(placement.value.toString(), place);
+                    newProg.replacePlace(placement.value.toString(), place);
                 }
 
                 if(!placeIsUniqueToProgramOrLibrary(placement.place, program, libraries, program)){
@@ -1120,6 +1145,7 @@ public class MyIrLinker {
                     } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, program));
 
                     program.replacePlace(placement.place, place);
+                    newProg.replacePlace(placement.place, place);
                 }
 
                 if(libSymbols.containsEntryWithICodePlace(placement.value.toString(), SymEntry.EXTERNAL)){
@@ -1152,6 +1178,7 @@ public class MyIrLinker {
                             newPlace = gen.genNext();
                         } while(!placeIsUniqueToProgramOrLibrary(newPlace, program, libraries, program));
                         program.replacePlace(assignment.place, newPlace);
+                        newProg.replacePlace(assignment.place, newPlace);
                     }
 
                     Exp assignExp = assignment.value;
@@ -1425,6 +1452,7 @@ public class MyIrLinker {
                     }while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                     library.replacePlace(assign.value.toString(), place);
+                    newProg.replacePlace(assign.value.toString(), place);
                 }
 
                 if(!placeIsUniqueToProgramOrLibrary(assign.place, prog, libraries, library)){
@@ -1434,6 +1462,7 @@ public class MyIrLinker {
                     } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                     library.replacePlace(assign.place, place);
+                    newProg.replacePlace(assign.place, place);
                 }
 
                 newProcedure.addParamater(assign);
@@ -1448,6 +1477,7 @@ public class MyIrLinker {
                     } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                     library.replacePlace(placement.value.toString(), place);
+                    newProg.replacePlace(placement.value.toString(), place);
                 }
 
                 if(!placeIsUniqueToProgramOrLibrary(placement.place, prog, libraries, library)){
@@ -1457,6 +1487,7 @@ public class MyIrLinker {
                     } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                     library.replacePlace(placement.place, place);
+                    newProg.replacePlace(placement.place, place);
                 }
 
                 if(libSymbols.containsEntryWithICodePlace(placement.value.toString(), SymEntry.EXTERNAL)){
@@ -1489,6 +1520,7 @@ public class MyIrLinker {
                             newPlace = gen.genNext();
                         } while(!placeIsUniqueToProgramOrLibrary(newPlace, prog, libraries, library));
                         library.replacePlace(assignment.place, newPlace);
+                        newProg.replacePlace(assignment.place, newPlace);
                     }
 
                     Exp assignExp = assignment.value;
@@ -1789,6 +1821,7 @@ public class MyIrLinker {
                     } while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                     library.replacePlace(assign.place, place);
+                    newLib.replacePlace(assign.place, place);
                 }
 
                 newProcedure.addParamater(assign);
@@ -1803,6 +1836,7 @@ public class MyIrLinker {
                     } while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                     library.replacePlace(placement.place, place);
+                    newLib.replacePlace(placement.place, place);
                 }
 
                 if(!placeIsUniqueToLibrary(placement.value.toString(), single, libraries, library)){
@@ -1812,6 +1846,7 @@ public class MyIrLinker {
                     } while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                     library.replacePlace(placement.value.toString(), place);
+                    newLib.replacePlace(placement.value.toString(), place);
                 }
 
                 if(libSymbols.containsEntryWithICodePlace(placement.value.toString(), SymEntry.EXTERNAL)){
@@ -1844,6 +1879,7 @@ public class MyIrLinker {
                             newPlace = gen.genNext();
                         } while(!placeIsUniqueToLibrary(newPlace, single, libraries, library));
                         library.replacePlace(assignment.place, newPlace);
+                        newLib.replacePlace(assignment.place, newPlace);
                     }
 
                     Exp assignExp = assignment.value;
@@ -2140,6 +2176,7 @@ public class MyIrLinker {
                             }while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                             library.replacePlace(assign.value.toString(), place);
+                            newProg.replacePlace(assign.value.toString(), place);
                         }
 
                         if(!placeIsUniqueToProgramOrLibrary(assign.place, prog, libraries, library)){
@@ -2149,6 +2186,7 @@ public class MyIrLinker {
                             } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                             library.replacePlace(assign.place, place);
+                            newProg.replacePlace(assign.place, place);
                         }
 
                         newProcedure.addParamater(assign);
@@ -2163,6 +2201,7 @@ public class MyIrLinker {
                             } while(!placeIsUniqueToProgramOrLibrary(place, prog, libraries, library));
 
                             library.replacePlace(placement.value.toString(), place);
+                            newProg.replacePlace(placement.value.toString(), place);
                         }
 
                         if(!placeIsUniqueToProgramOrLibrary(placement.place, prog, libraries, library)){
@@ -2205,6 +2244,7 @@ public class MyIrLinker {
                                     newPlace = gen.genNext();
                                 } while(!placeIsUniqueToProgramOrLibrary(newPlace, prog, libraries, library));
                                 library.replacePlace(assignment.place, newPlace);
+                                newProg.replacePlace(assignment.place, newPlace);
                             }
 
                             Exp assignExp = assignment.value;
@@ -2505,6 +2545,7 @@ public class MyIrLinker {
                             }while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                             library.replacePlace(assign.value.toString(), place);
+                            newLib.replacePlace(assign.value.toString(), place);
                         }
 
                         if(!placeIsUniqueToLibrary(assign.place, single, libraries, library)){
@@ -2514,6 +2555,7 @@ public class MyIrLinker {
                             } while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                             library.replacePlace(assign.place, place);
+                            newLib.replacePlace(assign.place, place);
                         }
 
                         newProcedure.addParamater(assign);
@@ -2528,6 +2570,7 @@ public class MyIrLinker {
                             } while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                             library.replacePlace(placement.value.toString(), place);
+                            newLib.replacePlace(placement.value.toString(), place);
                         }
 
                         if(!placeIsUniqueToLibrary(placement.place, single, libraries, library)){
@@ -2537,6 +2580,7 @@ public class MyIrLinker {
                             } while(!placeIsUniqueToLibrary(place, single, libraries, library));
 
                             library.replacePlace(placement.place, place);
+                            newLib.replacePlace(placement.place, place);
                         }
 
                         if(libSymbols.containsEntryWithICodePlace(placement.value.toString(), SymEntry.EXTERNAL)){
@@ -2569,6 +2613,7 @@ public class MyIrLinker {
                                     newPlace = gen.genNext();
                                 } while(!placeIsUniqueToLibrary(newPlace, single, libraries, library));
                                 library.replacePlace(assignment.place, newPlace);
+                                newLib.replacePlace(assignment.place, newPlace);
                             }
 
                             Exp assignExp = assignment.value;
@@ -3164,6 +3209,7 @@ public class MyIrLinker {
                         } while(!placeIsUniqueToLibrary(place, startingLibrary, libraries, startingLibrary));
 
                         startingLibrary.replacePlace(assign.place, place);
+                        newLib.replacePlace(assign.place, place);
                     }
                 
                     if(!procedures.containsProcedure(call.procedureName))
@@ -3341,6 +3387,7 @@ public class MyIrLinker {
                         } while(!placeIsUniqueToProgramOrLibrary(place, program, libraries, program));
 
                         program.replacePlace(assignment.place, place);
+                        newProg.replacePlace(assignment.place, place);
                     }
                 
                     if(!procedureSec.containsProcedure(call.procedureName))
