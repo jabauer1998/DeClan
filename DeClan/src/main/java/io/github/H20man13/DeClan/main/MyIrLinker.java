@@ -813,7 +813,7 @@ public class MyIrLinker {
         ProcSec procSec = newProgram.procedures;
         SymSec newTable = newProgram.symbols;
         DataSec dataInstructions = newProgram.variables;
-        for(int i = 0; i < data.intermediateCode.size(); i++){
+        for(int i = 0; i < data.getLength(); i++){
             ICode icodeLib = data.getInstruction(i);
             if(icodeLib instanceof Assign){
                 Assign assign = (Assign)icodeLib;
@@ -1505,7 +1505,7 @@ public class MyIrLinker {
                                     newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                 }
                             }
-                        } else {
+                        } else if(!newProcedure.containsPlace(ident.ident)) {
                             fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
                         }
                     } else if(assignExp instanceof UnExp){
@@ -1524,7 +1524,7 @@ public class MyIrLinker {
                                         newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                     }
                                 }
-                            } else {
+                            } else if(!newProcedure.containsPlace(ident.ident)) {
                                 fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
                             }
                         }
@@ -1544,7 +1544,7 @@ public class MyIrLinker {
                                         newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                     }
                                 }
-                            } else {
+                            } else if(!newProcedure.containsPlace(leftExp.ident)) {
                                 fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
                             }
                         }
@@ -1562,7 +1562,7 @@ public class MyIrLinker {
                                         newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                     }
                                 }
-                            } else {
+                            } else if(!newProcedure.containsPlace(rightExp.ident)) {
                                 fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
                             }
                         }
@@ -1594,7 +1594,7 @@ public class MyIrLinker {
                                             newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                         }
                                     }
-                                } else {
+                                } else if(!newProcedure.containsPlace(value.source)) {
                                     fetchInternalDependentInstructions(library, prog, libraries, value.source, newProg);
                                 }
 
@@ -1627,7 +1627,7 @@ public class MyIrLinker {
                                     newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                 }
                             }
-                        } else {
+                        } else if(!newProcedure.containsPlace(leftExp.ident)) {
                             fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
                         }
                     }
@@ -1645,7 +1645,7 @@ public class MyIrLinker {
                                     newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                 }
                             }
-                        } else {
+                        } else if(!newProcedure.containsPlace(rightExp.ident)) {
                             fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
                         }
                     }
@@ -1695,7 +1695,7 @@ public class MyIrLinker {
                                         newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                     }
                                 }
-                            } else {
+                            } else if(!newProcedure.containsPlace(value.source)) {
                                 fetchInternalDependentInstructions(library, prog, libraries, value.source, newProg);
                             }
 
@@ -1727,7 +1727,7 @@ public class MyIrLinker {
                                     newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                 }
                             }
-                        } else {
+                        } else if(!newProcedure.containsPlace(place)) {
                             fetchInternalDependentInstructions(library, prog, libraries, place, newProg);
                         }
                     }
@@ -1860,7 +1860,7 @@ public class MyIrLinker {
                                     newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                 }
                             }
-                        } else {
+                        } else if(!newProcedure.containsPlace(ident.ident)){
                             fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
                         }
                     } else if(assignExp instanceof UnExp){
@@ -1879,7 +1879,7 @@ public class MyIrLinker {
                                         newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                     }
                                 }
-                            } else {
+                            } else if(!newProcedure.containsPlace(ident.ident)) {
                                 fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
                             }
                         }
@@ -1899,7 +1899,7 @@ public class MyIrLinker {
                                         newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                     }
                                 }
-                            } else {
+                            } else if(!newProcedure.containsPlace(leftExp.ident)) {
                                 fetchInternalDependentInstructions(library, single, libraries, leftExp.ident, newLib);
                             }
                         }
@@ -1917,7 +1917,7 @@ public class MyIrLinker {
                                         newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                     }
                                 }
-                            } else {
+                            } else if(!newProcedure.containsPlace(rightExp.ident)) {
                                 fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
                             }
                         }
@@ -1950,7 +1950,7 @@ public class MyIrLinker {
                                             newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                         }
                                     }
-                                } else {
+                                } else if(!newProcedure.containsPlace(value.source)){
                                     fetchInternalDependentInstructions(library, single, libraries, value.source, newLib);
                                 }
 
@@ -1984,7 +1984,7 @@ public class MyIrLinker {
                                     newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                 }
                             }
-                        } else {
+                        } else if(!newProcedure.containsPlace(leftExp.ident)) {
                             fetchInternalDependentInstructions(library, single, libraries, leftExp.ident, newLib);
                         }
                     }
@@ -2002,7 +2002,7 @@ public class MyIrLinker {
                                     newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                 }
                             }
-                        } else {
+                        } else if(!newProcedure.containsPlace(rightExp.ident)) {
                             fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
                         }
                     }
@@ -2052,7 +2052,7 @@ public class MyIrLinker {
                                         newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                     }
                                 }
-                            } else {
+                            } else if(!newProcedure.containsPlace(value.source)) {
                                 fetchInternalDependentInstructions(library, single, libraries, value.source, newLib);
                             }
 
@@ -2084,7 +2084,7 @@ public class MyIrLinker {
                                     newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                 }
                             }
-                        } else {
+                        } else if(!newProcedure.containsPlace(place)) {
                             fetchInternalDependentInstructions(library, single, libraries, place, newLib);
                         }
                     }
@@ -2221,7 +2221,7 @@ public class MyIrLinker {
                                             newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                         }
                                     }
-                                } else {
+                                } else if(!newProcedure.containsPlace(ident.ident)) {
                                     fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
                                 }
                             } else if(assignExp instanceof UnExp){
@@ -2240,7 +2240,7 @@ public class MyIrLinker {
                                                 newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                             }
                                         }
-                                    } else {
+                                    } else if(!newProcedure.containsPlace(ident.ident)) {
                                         fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
                                     }
                                 }
@@ -2260,7 +2260,7 @@ public class MyIrLinker {
                                                 newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                             }
                                         }
-                                    } else {
+                                    } else if(!newProcedure.containsPlace(leftExp.ident)) {
                                         fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
                                     }
                                 }
@@ -2278,7 +2278,7 @@ public class MyIrLinker {
                                                 newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                             }
                                         }
-                                    } else {
+                                    } else if(!newProcedure.containsPlace(rightExp.ident)){
                                         fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
                                     }
                                 }
@@ -2311,7 +2311,7 @@ public class MyIrLinker {
                                                     newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                                 }
                                             }
-                                        } else {
+                                        } else if(!newProcedure.containsPlace(value.source)){
                                             fetchInternalDependentInstructions(library, prog, libraries, value.source, newProg);
                                         }
 
@@ -2346,7 +2346,7 @@ public class MyIrLinker {
                                             newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                         }
                                     }
-                                } else {
+                                } else if(!newProcedure.containsPlace(leftExp.ident)) {
                                     fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
                                 }
                             }
@@ -2364,7 +2364,7 @@ public class MyIrLinker {
                                             newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                         }
                                     }
-                                } else {
+                                } else if(!newProcedure.containsPlace(rightExp.ident)){
                                     fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
                                 }
                             }
@@ -2414,7 +2414,7 @@ public class MyIrLinker {
                                                 newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                             }
                                         }
-                                    } else {
+                                    } else if(!newProcedure.containsPlace(value.source)) {
                                         fetchInternalDependentInstructions(library, prog, libraries, value.source, newProg);
                                     }
 
@@ -2446,7 +2446,7 @@ public class MyIrLinker {
                                             newProg.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                         }
                                     }
-                                } else {
+                                } else if(!newProcedure.containsPlace(place)) {
                                     fetchInternalDependentInstructions(library, prog, libraries, place, newProg);
                                 }
                             }
@@ -2585,7 +2585,7 @@ public class MyIrLinker {
                                             newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                         }
                                     }
-                                } else {
+                                } else if(!newProcedure.containsPlace(ident.ident)) {
                                     fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
                                 }
                             } else if(assignExp instanceof UnExp){
@@ -2604,7 +2604,7 @@ public class MyIrLinker {
                                                 newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                             }
                                         }
-                                    } else {
+                                    } else if(!newProcedure.containsPlace(ident.ident)) {
                                         fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
                                     }
                                 }
@@ -2624,7 +2624,7 @@ public class MyIrLinker {
                                                 newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                             }
                                         }
-                                    } else {
+                                    } else if(!newProcedure.containsPlace(leftExp.ident)) {
                                         fetchInternalDependentInstructions(library, single, libraries, leftExp.ident, newLib);
                                     }
                                 }
@@ -2642,7 +2642,7 @@ public class MyIrLinker {
                                                 newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                             }
                                         }
-                                    } else {
+                                    } else if(!newProcedure.containsPlace(rightExp.ident)) {
                                         fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
                                     }
                                 }
@@ -2674,7 +2674,7 @@ public class MyIrLinker {
                                                     newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                                 }
                                             }
-                                        } else {
+                                        } else if(!newProcedure.containsPlace(value.source)) {
                                             fetchInternalDependentInstructions(library, single, libraries, value.source, newLib);
                                         }
 
@@ -2708,7 +2708,7 @@ public class MyIrLinker {
                                             newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                         }
                                     }
-                                } else {
+                                } else if(!newProcedure.containsPlace(leftExp.ident)) {
                                     fetchInternalDependentInstructions(library, single, libraries, leftExp.ident, newLib);
                                 }
                             }
@@ -2726,7 +2726,7 @@ public class MyIrLinker {
                                             newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                         }
                                     }
-                                } else {
+                                } else if(!newProcedure.containsPlace(rightExp.ident)) {
                                     fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
                                 }
                             }
@@ -2776,7 +2776,7 @@ public class MyIrLinker {
                                                 newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                             }
                                         }
-                                    } else {
+                                    } else if(!newProcedure.containsPlace(value.source)) {
                                         fetchInternalDependentInstructions(library, single, libraries, value.source, newLib);
                                     }
                                     String place = fetchedProcedure.paramAssign.get(argIndex).value.toString();
@@ -2807,7 +2807,7 @@ public class MyIrLinker {
                                             newLib.replacePlace(entry.icodePlace, newEntry.icodePlace);
                                         }
                                     }
-                                } else {
+                                } else if(!newProcedure.containsPlace(place)) {
                                     fetchInternalDependentInstructions(library, single, libraries, place, newLib);
                                 }
                             }
@@ -2840,25 +2840,6 @@ public class MyIrLinker {
                     break loop;
                 }
             }
-        }
-    }
-
-    private static void replaceLabelInICode(ICode icode, String oldLabel, String newLabel){
-        if(icode instanceof Label){
-            Label label = (Label)icode;
-            if(label.label.equals(oldLabel))
-                label.label = newLabel;
-        } else if(icode instanceof Goto){
-            Goto gotoLabel = (Goto)icode;
-            if(gotoLabel.label.equals(oldLabel))
-                gotoLabel.label = newLabel;
-        } else if(icode instanceof If){
-            If ifLabel = (If)icode;
-            if(ifLabel.ifTrue.equals(oldLabel))
-                ifLabel.ifTrue = newLabel;
-
-            if(ifLabel.ifFalse.equals(oldLabel))
-                ifLabel.ifFalse = newLabel;
         }
     }
 
