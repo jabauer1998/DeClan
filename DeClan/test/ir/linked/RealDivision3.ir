@@ -1,5 +1,5 @@
 SYMBOL SECTION
- b CONST INTERNAL realBias
+ e55 CONST INTERNAL realBias
 DATA SECTION
  a := 355 [INT]
  GLOBAL b := a [INT]
@@ -560,8 +560,8 @@ PROC SECTION
   IF Z8 EQ TRUE THEN IFSTAT_32_SEQ_0_LEVEL_0 ELSE IFNEXT_32_SEQ_0_LEVEL_0
   LABEL IFSTAT_32_SEQ_0_LEVEL_0
   Z9 := 23 [INT]
-  b := Z9 ISUB Q2 [INT]
-  Q0 := b [INT]
+  e55 := Z9 ISUB Q2 [INT]
+  Q0 := e55 [INT]
   a10 := P2 ILSHIFT Q0 [INT]
   P2 := a10 [INT]
   a11 := Q1 ISUB Q0 [INT]
@@ -630,7 +630,7 @@ PROC SECTION
   CALL WriteString((a32 -> d44)[STRING])
   CALL WriteInt((a33 -> d70)[INT])
   CALL WriteLn()
-  a34 := P3 IADD b [INT]
+  a34 := P3 IADD e55 [INT]
   P3 := a34 [INT]
   a35 := "Result exp is " [STRING]
   CALL WriteString((a35 -> d44)[STRING])

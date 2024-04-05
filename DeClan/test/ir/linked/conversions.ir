@@ -1,5 +1,5 @@
 SYMBOL SECTION
- b CONST INTERNAL realBias
+ e48 CONST INTERNAL realBias
 DATA SECTION
  GLOBAL a := 0 [INT]
  GLOBAL b := 0 [INT]
@@ -34,7 +34,7 @@ CODE SECTION
  t := 5.0 [REAL]
  CALL IntToReal((a -> d58)[INT])
  EXTERNAL RETURN f96 := d61 [REAL]
- CALL RAdd((f96 -> f98)[REAL], (t -> b)[REAL])
+ CALL RAdd((f96 -> f98)[REAL], (t -> g10)[REAL])
  EXTERNAL RETURN f97 := g13 [REAL]
  CALL IntToReal((s -> d58)[INT])
  EXTERNAL RETURN h22 := d61 [REAL]
@@ -500,8 +500,8 @@ PROC SECTION
   IF Z8 EQ TRUE THEN IFSTAT_32_SEQ_0_LEVEL_0 ELSE IFNEXT_32_SEQ_0_LEVEL_0
   LABEL IFSTAT_32_SEQ_0_LEVEL_0
   Z9 := 23 [INT]
-  b := Z9 ISUB Q2 [INT]
-  Q0 := b [INT]
+  e48 := Z9 ISUB Q2 [INT]
+  Q0 := e48 [INT]
   a10 := P2 ILSHIFT Q0 [INT]
   P2 := a10 [INT]
   a11 := Q1 ISUB Q0 [INT]
@@ -570,7 +570,7 @@ PROC SECTION
   CALL WriteString((a32 -> f78)[STRING])
   CALL WriteInt((a33 -> d44)[INT])
   CALL WriteLn()
-  a34 := P3 IADD b [INT]
+  a34 := P3 IADD e48 [INT]
   P3 := a34 [INT]
   a35 := "Result exp is " [STRING]
   CALL WriteString((a35 -> f78)[STRING])
@@ -837,7 +837,7 @@ PROC SECTION
  RETURN
  PROC LABEL RAdd
   PARAM f99 := f98 [REAL]
-  PARAM g11 := b [REAL]
+  PARAM g11 := g10 [REAL]
   g12 := 0.0 [REAL]
   g14 := 0 [INT]
   g15 := 0 [INT]
@@ -876,7 +876,7 @@ PROC SECTION
   g36 := g18 LT g19 [BOOL]
   IF g36 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
   LABEL IFSTAT_0_SEQ_0_LEVEL_0
-  g37 := g19 IADD b [INT]
+  g37 := g19 IADD e48 [INT]
   g22 := g37 [INT]
   g38 := g19 ISUB g18 [INT]
   g17 := g38 [INT]
@@ -887,7 +887,7 @@ PROC SECTION
   g40 := g18 GT g19 [BOOL]
   IF g40 EQ TRUE THEN IFSTAT_0_SEQ_1_LEVEL_0 ELSE IFNEXT_0_SEQ_1_LEVEL_0
   LABEL IFSTAT_0_SEQ_1_LEVEL_0
-  g41 := g18 IADD b [INT]
+  g41 := g18 IADD e48 [INT]
   g22 := g41 [INT]
   g42 := g18 ISUB g19 [INT]
   g17 := g42 [INT]
@@ -895,7 +895,7 @@ PROC SECTION
   g21 := g43 [INT]
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_1_LEVEL_0
-  g44 := g18 IADD b [INT]
+  g44 := g18 IADD e48 [INT]
   g22 := g44 [INT]
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_2_LEVEL_0
@@ -1640,7 +1640,7 @@ PROC SECTION
   GOTO IFEND_27_LEVEL_0
   LABEL IFNEXT_27_SEQ_3_LEVEL_0
   LABEL IFEND_27_LEVEL_0
-  M9 := k0 IADD b [INT]
+  M9 := k0 IADD e48 [INT]
   k0 := M9 [INT]
   N0 := 255 [INT]
   N1 := k0 IAND N0 [INT]
@@ -1668,7 +1668,7 @@ PROC SECTION
   h31 := 0 [INT]
   CALL IntToReal((h30 -> d58)[INT])
   EXTERNAL RETURN h33 := d61 [REAL]
-  CALL RAdd((h28 -> f98)[REAL], (h33 -> b)[REAL])
+  CALL RAdd((h28 -> f98)[REAL], (h33 -> g10)[REAL])
   EXTERNAL RETURN h34 := g13 [REAL]
   CALL Round((h34 -> h36)[REAL])
   EXTERNAL RETURN h35 := h39 [INT]
@@ -1679,7 +1679,7 @@ PROC SECTION
   PARAM h37 := h36 [REAL]
   h38 := 0 [INT]
   h40 := 0.5 [REAL]
-  CALL RAdd((h37 -> f98)[REAL], (h40 -> b)[REAL])
+  CALL RAdd((h37 -> f98)[REAL], (h40 -> g10)[REAL])
   EXTERNAL RETURN h41 := g13 [REAL]
   CALL Floor((h41 -> h42)[REAL])
   EXTERNAL RETURN h49 := h45 [INT]
