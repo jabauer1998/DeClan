@@ -97,15 +97,11 @@ public class ExternalCall implements ICode, Exp {
 
     @Override
     public void replacePlace(String from, String to) {
-        LinkedList<Tuple<String, Assign.Type>> newArgs = new LinkedList<Tuple<String, Assign.Type>>();
         for(Tuple<String, Assign.Type> arg: arguments){
             if(arg.source.equals(from)){
-                newArgs.add(new Tuple<String, Assign.Type>(to, arg.dest));
-            } else {
-                newArgs.add(arg);
+                arg.source = to;
             }
         }
-        this.arguments = newArgs;
     }
 
     @Override

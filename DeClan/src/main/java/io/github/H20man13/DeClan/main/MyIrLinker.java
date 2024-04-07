@@ -2489,7 +2489,6 @@ public class MyIrLinker {
                                             SymEntry newEntry = symbolTable.getEntryByIdentifier(entry.declanIdent, SymEntry.INTERNAL).copy();
                                             if(!entry.icodePlace.equals(newEntry.icodePlace)){
                                                 library.replacePlace(entry.icodePlace, newEntry.icodePlace);
-                                                
                                             }
                                         }
                                     } else if(!newProcedure.containsPlace(value.source)) {
