@@ -1,79 +1,81 @@
 SYMBOL SECTION
- e21 CONST INTERNAL realBias
+ e19 CONST INTERNAL realBias
 DATA SECTION
  a := 50.0 [REAL]
  GLOBAL b := a [REAL]
  c := 92.0 [REAL]
  GLOBAL d := c [REAL]
  GLOBAL e := 0.0 [REAL]
- e20 := 127 [INT]
- GLOBAL e21 := e20 [INT]
+ e18 := 127 [INT]
+ GLOBAL e19 := e18 [INT]
 CODE SECTION
- CALL RSub((b -> d45)[REAL], (d -> d47)[REAL])
- EXTERNAL RETURN d44 := d50 [REAL]
- e := d44 [REAL]
- CALL WriteReal((e -> f43)[REAL])
+ CALL RSub((b -> d43)[REAL], (d -> d45)[REAL])
+ EXTERNAL RETURN d42 := d48 [REAL]
+ e := d42 [REAL]
+ CALL WriteReal((e -> f41)[REAL])
 END
 PROC SECTION
  PROC LABEL RSub
+  PARAM d44 := d43 [REAL]
   PARAM d46 := d45 [REAL]
-  PARAM d48 := d47 [REAL]
-  d49 := 0.0 [REAL]
-  CALL RNeg((d48 -> d51)[REAL])
-  EXTERNAL RETURN i8 := d52 [REAL]
-  CALL RAdd((d46 -> d63)[REAL], (i8 -> d65)[REAL])
-  EXTERNAL RETURN i9 := d68 [REAL]
-  d49 := i9 [REAL]
-  INTERNAL RETURN d50 := d49 [REAL]
+  d47 := 0.0 [REAL]
+  CALL RNeg((d46 -> d49)[REAL])
+  EXTERNAL RETURN i8 := d50 [REAL]
+  CALL RAdd((d44 -> d61)[REAL], (i8 -> d63)[REAL])
+  EXTERNAL RETURN i9 := d66 [REAL]
+  d47 := i9 [REAL]
+  INTERNAL RETURN d48 := d47 [REAL]
  RETURN
  PROC LABEL RNeg
-  PARAM a68 := d51 [REAL]
-  a61 := 0 [INT]
+  PARAM a66 := d49 [REAL]
+  a59 := 0 [INT]
+  a60 := 0 [INT]
+  a61 := 0.0 [REAL]
   a62 := 0 [INT]
-  a63 := 0.0 [REAL]
-  a64 := 0 [INT]
-  a65 := 1 [INT]
-  a66 := 31 [INT]
-  a67 := a65 ILSHIFT a66 [INT]
-  a61 := a67 [INT]
-  CALL RealBinaryAsInt((a68 -> d53)[REAL])
-  EXTERNAL RETURN a69 := d56 [INT]
-  a62 := a69 [INT]
-  a70 := a62 IXOR a61 [INT]
-  a64 := a70 [INT]
-  CALL IntBinaryAsReal((a64 -> d58)[INT])
-  EXTERNAL RETURN a71 := d61 [REAL]
-  a63 := a71 [REAL]
-  INTERNAL RETURN d52 := a63 [REAL]
+  a63 := 1 [INT]
+  a64 := 31 [INT]
+  a65 := a63 ILSHIFT a64 [INT]
+  a59 := a65 [INT]
+  CALL RealBinaryAsInt((a66 -> d51)[REAL])
+  EXTERNAL RETURN a67 := d54 [INT]
+  a60 := a67 [INT]
+  a68 := a60 IXOR a59 [INT]
+  a62 := a68 [INT]
+  CALL IntBinaryAsReal((a62 -> d56)[INT])
+  EXTERNAL RETURN a69 := d59 [REAL]
+  a61 := a69 [REAL]
+  INTERNAL RETURN d50 := a61 [REAL]
  RETURN
  PROC LABEL RealBinaryAsInt
-  PARAM d54 := d53 [REAL]
-  d55 := 0 [INT]
-  d57 := 0.0 [REAL]
-  IPARAM d57
-  IPARAM d54
-  IASM "LDR %r, %a"
-  IPARAM d57
+  PARAM d52 := d51 [REAL]
+  d53 := 0 [INT]
+  d55 := 0.0 [REAL]
   IPARAM d55
+  IPARAM d52
+  IASM "LDR %r, %a"
+  IPARAM d55
+  IPARAM d53
   IASM "STR %r, %a"
-  INTERNAL RETURN d56 := d55 [INT]
+  INTERNAL RETURN d54 := d53 [INT]
  RETURN
  PROC LABEL IntBinaryAsReal
-  PARAM d59 := d58 [INT]
-  d60 := 0.0 [REAL]
-  d62 := 0 [INT]
-  IPARAM d62
-  IPARAM d59
-  IASM "LDR %r, %a"
-  IPARAM d62
+  PARAM d57 := d56 [INT]
+  d58 := 0.0 [REAL]
+  d60 := 0 [INT]
   IPARAM d60
+  IPARAM d57
+  IASM "LDR %r, %a"
+  IPARAM d60
+  IPARAM d58
   IASM "STR %r, %a"
-  INTERNAL RETURN d61 := d60 [REAL]
+  INTERNAL RETURN d59 := d58 [REAL]
  RETURN
  PROC LABEL RAdd
+  PARAM d62 := d61 [REAL]
   PARAM d64 := d63 [REAL]
-  PARAM d66 := d65 [REAL]
-  d67 := 0.0 [REAL]
+  d65 := 0.0 [REAL]
+  d67 := 0 [INT]
+  d68 := 0 [INT]
   d69 := 0 [INT]
   d70 := 0 [INT]
   d71 := 0 [INT]
@@ -88,313 +90,311 @@ PROC SECTION
   d80 := 0 [INT]
   d81 := 0 [INT]
   d82 := 0 [INT]
-  d83 := 0 [INT]
-  d84 := 0 [INT]
-  CALL RealSign((d64 -> d86)[REAL])
-  EXTERNAL RETURN d85 := d89 [INT]
-  d70 := d85 [INT]
-  CALL RealSign((d66 -> d86)[REAL])
-  EXTERNAL RETURN d96 := d89 [INT]
-  d71 := d96 [INT]
-  CALL RealExponent((d64 -> d98)[REAL])
-  EXTERNAL RETURN d97 := e11 [INT]
-  d73 := d97 [INT]
-  CALL RealExponent((d66 -> d98)[REAL])
-  EXTERNAL RETURN e22 := e11 [INT]
-  d74 := e22 [INT]
-  CALL RealMantissa((d64 -> e24)[REAL])
-  EXTERNAL RETURN e23 := e27 [INT]
-  d75 := e23 [INT]
-  CALL RealMantissa((d66 -> e24)[REAL])
-  EXTERNAL RETURN e48 := e27 [INT]
-  d76 := e48 [INT]
-  e49 := d73 LT d74 [BOOL]
-  IF e49 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_1 ELSE IFNEXT_0_SEQ_0_LEVEL_0_1
+  CALL RealSign((d62 -> d84)[REAL])
+  EXTERNAL RETURN d83 := d87 [INT]
+  d68 := d83 [INT]
+  CALL RealSign((d64 -> d84)[REAL])
+  EXTERNAL RETURN d94 := d87 [INT]
+  d69 := d94 [INT]
+  CALL RealExponent((d62 -> d96)[REAL])
+  EXTERNAL RETURN d95 := d99 [INT]
+  d71 := d95 [INT]
+  CALL RealExponent((d64 -> d96)[REAL])
+  EXTERNAL RETURN e20 := d99 [INT]
+  d72 := e20 [INT]
+  CALL RealMantissa((d62 -> e22)[REAL])
+  EXTERNAL RETURN e21 := e25 [INT]
+  d73 := e21 [INT]
+  CALL RealMantissa((d64 -> e22)[REAL])
+  EXTERNAL RETURN e46 := e25 [INT]
+  d74 := e46 [INT]
+  e47 := d71 LT d72 [BOOL]
+  IF e47 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_1 ELSE IFNEXT_0_SEQ_0_LEVEL_0_1
   LABEL IFSTAT_0_SEQ_0_LEVEL_0_1
-  e50 := d74 IADD e21 [INT]
-  d77 := e50 [INT]
-  e51 := d74 ISUB d73 [INT]
-  d72 := e51 [INT]
-  e52 := d75 IRSHIFT d72 [INT]
-  d75 := e52 [INT]
+  e48 := d72 IADD e19 [INT]
+  d75 := e48 [INT]
+  e49 := d72 ISUB d71 [INT]
+  d70 := e49 [INT]
+  e50 := d73 IRSHIFT d70 [INT]
+  d73 := e50 [INT]
   GOTO IFEND_0_LEVEL_0_1
   LABEL IFNEXT_0_SEQ_0_LEVEL_0_1
-  e53 := d73 GT d74 [BOOL]
-  IF e53 EQ TRUE THEN IFSTAT_0_SEQ_1_LEVEL_0 ELSE IFNEXT_0_SEQ_1_LEVEL_0_1
+  e51 := d71 GT d72 [BOOL]
+  IF e51 EQ TRUE THEN IFSTAT_0_SEQ_1_LEVEL_0 ELSE IFNEXT_0_SEQ_1_LEVEL_0_1
   LABEL IFSTAT_0_SEQ_1_LEVEL_0
-  e54 := d73 IADD e21 [INT]
-  d77 := e54 [INT]
-  e55 := d73 ISUB d74 [INT]
-  d72 := e55 [INT]
-  e56 := d76 IRSHIFT d72 [INT]
-  d76 := e56 [INT]
+  e52 := d71 IADD e19 [INT]
+  d75 := e52 [INT]
+  e53 := d71 ISUB d72 [INT]
+  d70 := e53 [INT]
+  e54 := d74 IRSHIFT d70 [INT]
+  d74 := e54 [INT]
   GOTO IFEND_0_LEVEL_0_1
   LABEL IFNEXT_0_SEQ_1_LEVEL_0_1
-  e57 := d73 IADD e21 [INT]
-  d77 := e57 [INT]
+  e55 := d71 IADD e19 [INT]
+  d75 := e55 [INT]
   GOTO IFEND_0_LEVEL_0_1
   LABEL IFNEXT_0_SEQ_2_LEVEL_0
   LABEL IFEND_0_LEVEL_0_1
-  e58 := 0 [INT]
-  e59 := d70 EQ e58 [BOOL]
-  e60 := 1 [INT]
-  e61 := d71 EQ e60 [BOOL]
-  e62 := e59 LAND e61 [BOOL]
-  IF e62 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0_0
+  e56 := 0 [INT]
+  e57 := d68 EQ e56 [BOOL]
+  e58 := 1 [INT]
+  e59 := d69 EQ e58 [BOOL]
+  e60 := e57 LAND e59 [BOOL]
+  IF e60 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0_0
-  e63 := d75 GT d76 [BOOL]
-  IF e63 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_1_0 ELSE IFNEXT_2_SEQ_0_LEVEL_1_0
+  e61 := d73 GT d74 [BOOL]
+  IF e61 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_1_0 ELSE IFNEXT_2_SEQ_0_LEVEL_1_0
   LABEL IFSTAT_2_SEQ_0_LEVEL_1_0
-  e64 := 0 [INT]
-  d80 := e64 [INT]
-  e65 := d75 ISUB d76 [INT]
-  d79 := e65 [INT]
+  e62 := 0 [INT]
+  d78 := e62 [INT]
+  e63 := d73 ISUB d74 [INT]
+  d77 := e63 [INT]
   GOTO IFEND_2_LEVEL_1_0
   LABEL IFNEXT_2_SEQ_0_LEVEL_1_0
-  e66 := d75 LT d76 [BOOL]
-  IF e66 EQ TRUE THEN IFSTAT_2_SEQ_1_LEVEL_1_0 ELSE IFNEXT_2_SEQ_1_LEVEL_1_0
+  e64 := d73 LT d74 [BOOL]
+  IF e64 EQ TRUE THEN IFSTAT_2_SEQ_1_LEVEL_1_0 ELSE IFNEXT_2_SEQ_1_LEVEL_1_0
   LABEL IFSTAT_2_SEQ_1_LEVEL_1_0
-  e67 := 1 [INT]
-  d80 := e67 [INT]
-  e68 := d76 ISUB d75 [INT]
-  d79 := e68 [INT]
+  e65 := 1 [INT]
+  d78 := e65 [INT]
+  e66 := d74 ISUB d73 [INT]
+  d77 := e66 [INT]
   GOTO IFEND_2_LEVEL_1_0
   LABEL IFNEXT_2_SEQ_1_LEVEL_1_0
-  e69 := 0 [INT]
-  d80 := e69 [INT]
-  e70 := 0 [INT]
-  d79 := e70 [INT]
+  e67 := 0 [INT]
+  d78 := e67 [INT]
+  e68 := 0 [INT]
+  d77 := e68 [INT]
   GOTO IFEND_2_LEVEL_1_0
   LABEL IFNEXT_2_SEQ_2_LEVEL_1
   LABEL IFEND_2_LEVEL_1_0
   GOTO IFEND_1_LEVEL_0_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0_0
-  e71 := 1 [INT]
-  e72 := d70 EQ e71 [BOOL]
-  e73 := 0 [INT]
-  e74 := d71 EQ e73 [BOOL]
-  e75 := e72 LAND e74 [BOOL]
-  IF e75 EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0_0
+  e69 := 1 [INT]
+  e70 := d68 EQ e69 [BOOL]
+  e71 := 0 [INT]
+  e72 := d69 EQ e71 [BOOL]
+  e73 := e70 LAND e72 [BOOL]
+  IF e73 EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0_0
   LABEL IFSTAT_1_SEQ_1_LEVEL_0
-  e76 := d75 GT d76 [BOOL]
-  IF e76 EQ TRUE THEN IFSTAT_4_SEQ_0_LEVEL_1 ELSE IFNEXT_4_SEQ_0_LEVEL_1
+  e74 := d73 GT d74 [BOOL]
+  IF e74 EQ TRUE THEN IFSTAT_4_SEQ_0_LEVEL_1 ELSE IFNEXT_4_SEQ_0_LEVEL_1
   LABEL IFSTAT_4_SEQ_0_LEVEL_1
-  e77 := 1 [INT]
-  d80 := e77 [INT]
-  e78 := d75 ISUB d76 [INT]
-  d79 := e78 [INT]
+  e75 := 1 [INT]
+  d78 := e75 [INT]
+  e76 := d73 ISUB d74 [INT]
+  d77 := e76 [INT]
   GOTO IFEND_4_LEVEL_1
   LABEL IFNEXT_4_SEQ_0_LEVEL_1
-  e79 := d75 LT d76 [BOOL]
-  IF e79 EQ TRUE THEN IFSTAT_4_SEQ_1_LEVEL_1 ELSE IFNEXT_4_SEQ_1_LEVEL_1
+  e77 := d73 LT d74 [BOOL]
+  IF e77 EQ TRUE THEN IFSTAT_4_SEQ_1_LEVEL_1 ELSE IFNEXT_4_SEQ_1_LEVEL_1
   LABEL IFSTAT_4_SEQ_1_LEVEL_1
-  e80 := 0 [INT]
-  d80 := e80 [INT]
-  e81 := d76 ISUB d75 [INT]
-  d79 := e81 [INT]
+  e78 := 0 [INT]
+  d78 := e78 [INT]
+  e79 := d74 ISUB d73 [INT]
+  d77 := e79 [INT]
   GOTO IFEND_4_LEVEL_1
   LABEL IFNEXT_4_SEQ_1_LEVEL_1
-  e82 := 0 [INT]
-  d80 := e82 [INT]
-  e83 := 0 [INT]
-  d79 := e83 [INT]
+  e80 := 0 [INT]
+  d78 := e80 [INT]
+  e81 := 0 [INT]
+  d77 := e81 [INT]
   GOTO IFEND_4_LEVEL_1
   LABEL IFNEXT_4_SEQ_2_LEVEL_1
   LABEL IFEND_4_LEVEL_1
   GOTO IFEND_1_LEVEL_0_0
   LABEL IFNEXT_1_SEQ_1_LEVEL_0_0
-  d80 := d70 [INT]
-  e84 := d75 IADD d76 [INT]
-  d79 := e84 [INT]
+  d78 := d68 [INT]
+  e82 := d73 IADD d74 [INT]
+  d77 := e82 [INT]
   GOTO IFEND_1_LEVEL_0_0
   LABEL IFNEXT_1_SEQ_2_LEVEL_0
   LABEL IFEND_1_LEVEL_0_0
-  e85 := 24 [INT]
-  e86 := d79 IRSHIFT e85 [INT]
+  e83 := 24 [INT]
+  e84 := d77 IRSHIFT e83 [INT]
+  e85 := 1 [INT]
+  e86 := e84 IAND e85 [INT]
+  d76 := e86 [INT]
   e87 := 1 [INT]
-  e88 := e86 IAND e87 [INT]
-  d78 := e88 [INT]
-  e89 := 1 [INT]
-  e90 := d78 EQ e89 [BOOL]
-  IF e90 EQ TRUE THEN IFSTAT_7_SEQ_0_LEVEL_0_0 ELSE IFNEXT_7_SEQ_0_LEVEL_0_0
+  e88 := d76 EQ e87 [BOOL]
+  IF e88 EQ TRUE THEN IFSTAT_7_SEQ_0_LEVEL_0_0 ELSE IFNEXT_7_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_7_SEQ_0_LEVEL_0_0
+  e89 := 1 [INT]
+  e90 := d77 IRSHIFT e89 [INT]
+  d77 := e90 [INT]
   e91 := 1 [INT]
-  e92 := d79 IRSHIFT e91 [INT]
-  d79 := e92 [INT]
-  e93 := 1 [INT]
-  e94 := d77 IADD e93 [INT]
-  d77 := e94 [INT]
+  e92 := d75 IADD e91 [INT]
+  d75 := e92 [INT]
   GOTO IFEND_7_LEVEL_0_0
   LABEL IFNEXT_7_SEQ_0_LEVEL_0_0
   LABEL IFEND_7_LEVEL_0_0
-  d81 := d79 [INT]
-  e95 := 0 [INT]
-  d84 := e95 [INT]
-  CALL IntIsZero((d81 -> e97)[INT])
-  EXTERNAL RETURN e96 := f10 [BOOL]
-  f15 := BNOT e96 [BOOL]
-  IF f15 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_0
+  d79 := d77 [INT]
+  e93 := 0 [INT]
+  d82 := e93 [INT]
+  CALL IntIsZero((d79 -> e95)[INT])
+  EXTERNAL RETURN e94 := e98 [BOOL]
+  f13 := BNOT e94 [BOOL]
+  IF f13 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_0
   LABEL WHILECOND_0_SEQ_0_LEVEL_0_0
-  IF f15 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILEEND_0_LEVEL_0_0
+  IF f13 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILEEND_0_LEVEL_0_0
   LABEL WHILESTAT_0_SEQ_0_LEVEL_0_0
+  f14 := 1 [INT]
+  f15 := d79 IAND f14 [INT]
+  d81 := f15 [INT]
   f16 := 1 [INT]
-  f17 := d81 IAND f16 [INT]
-  d83 := f17 [INT]
-  f18 := 1 [INT]
-  f19 := d83 EQ f18 [BOOL]
-  IF f19 EQ TRUE THEN IFSTAT_8_SEQ_0_LEVEL_0_0 ELSE IFNEXT_8_SEQ_0_LEVEL_0_0
+  f17 := d81 EQ f16 [BOOL]
+  IF f17 EQ TRUE THEN IFSTAT_8_SEQ_0_LEVEL_0_0 ELSE IFNEXT_8_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_8_SEQ_0_LEVEL_0_0
-  d82 := d84 [INT]
+  d80 := d82 [INT]
   GOTO IFEND_8_LEVEL_0_0
   LABEL IFNEXT_8_SEQ_0_LEVEL_0_0
   LABEL IFEND_8_LEVEL_0_0
+  f18 := 1 [INT]
+  f19 := d82 IADD f18 [INT]
+  d82 := f19 [INT]
   f20 := 1 [INT]
-  f21 := d84 IADD f20 [INT]
-  d84 := f21 [INT]
-  f22 := 1 [INT]
-  f23 := d81 IRSHIFT f22 [INT]
-  d81 := f23 [INT]
-  CALL IntIsZero((d81 -> e97)[INT])
-  EXTERNAL RETURN f24 := f10 [BOOL]
-  f25 := BNOT f24 [BOOL]
-  f15 := f25 [BOOL]
+  f21 := d79 IRSHIFT f20 [INT]
+  d79 := f21 [INT]
+  CALL IntIsZero((d79 -> e95)[INT])
+  EXTERNAL RETURN f22 := e98 [BOOL]
+  f23 := BNOT f22 [BOOL]
+  f13 := f23 [BOOL]
   GOTO WHILECOND_0_SEQ_0_LEVEL_0_0
   LABEL WHILENEXT_0_SEQ_0_LEVEL_0_0
   LABEL WHILEEND_0_LEVEL_0_0
-  f26 := 23 [INT]
-  f27 := d82 LT f26 [BOOL]
-  IF f27 EQ TRUE THEN IFSTAT_9_SEQ_0_LEVEL_0_0 ELSE IFNEXT_9_SEQ_0_LEVEL_0_0
+  f24 := 23 [INT]
+  f25 := d80 LT f24 [BOOL]
+  IF f25 EQ TRUE THEN IFSTAT_9_SEQ_0_LEVEL_0_0 ELSE IFNEXT_9_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_9_SEQ_0_LEVEL_0_0
-  f28 := 23 [INT]
-  f29 := f28 ISUB d82 [INT]
-  d72 := f29 [INT]
-  f30 := d79 ILSHIFT d72 [INT]
-  d79 := f30 [INT]
-  f31 := d77 ISUB d72 [INT]
-  d77 := f31 [INT]
+  f26 := 23 [INT]
+  f27 := f26 ISUB d80 [INT]
+  d70 := f27 [INT]
+  f28 := d77 ILSHIFT d70 [INT]
+  d77 := f28 [INT]
+  f29 := d75 ISUB d70 [INT]
+  d75 := f29 [INT]
   GOTO IFEND_9_LEVEL_0_0
   LABEL IFNEXT_9_SEQ_0_LEVEL_0_0
   LABEL IFEND_9_LEVEL_0_0
-  f32 := 255 [INT]
-  f33 := d77 IAND f32 [INT]
-  f34 := 23 [INT]
-  f35 := f33 ILSHIFT f34 [INT]
-  d69 := f35 [INT]
-  f36 := 8388607 [INT]
-  f37 := d79 IAND f36 [INT]
-  f38 := d69 IOR f37 [INT]
-  d69 := f38 [INT]
-  f39 := 31 [INT]
-  f40 := d80 ILSHIFT f39 [INT]
-  f41 := d69 IOR f40 [INT]
-  d69 := f41 [INT]
-  CALL IntBinaryAsReal((d69 -> d58)[INT])
-  EXTERNAL RETURN f42 := d61 [REAL]
-  d67 := f42 [REAL]
-  INTERNAL RETURN d68 := d67 [REAL]
+  f30 := 255 [INT]
+  f31 := d75 IAND f30 [INT]
+  f32 := 23 [INT]
+  f33 := f31 ILSHIFT f32 [INT]
+  d67 := f33 [INT]
+  f34 := 8388607 [INT]
+  f35 := d77 IAND f34 [INT]
+  f36 := d67 IOR f35 [INT]
+  d67 := f36 [INT]
+  f37 := 31 [INT]
+  f38 := d78 ILSHIFT f37 [INT]
+  f39 := d67 IOR f38 [INT]
+  d67 := f39 [INT]
+  CALL IntBinaryAsReal((d67 -> d56)[INT])
+  EXTERNAL RETURN f40 := d59 [REAL]
+  d65 := f40 [REAL]
+  INTERNAL RETURN d66 := d65 [REAL]
  RETURN
  PROC LABEL RealSign
-  PARAM d87 := d86 [REAL]
+  PARAM d85 := d84 [REAL]
+  d86 := 0 [INT]
   d88 := 0 [INT]
-  d90 := 0 [INT]
-  CALL RealBinaryAsInt((d87 -> d53)[REAL])
-  EXTERNAL RETURN d91 := d56 [INT]
-  d90 := d91 [INT]
-  d92 := 31 [INT]
-  d93 := d90 IRSHIFT d92 [INT]
-  d94 := 1 [INT]
-  d95 := d93 IAND d94 [INT]
-  d88 := d95 [INT]
-  INTERNAL RETURN d89 := d88 [INT]
+  CALL RealBinaryAsInt((d85 -> d51)[REAL])
+  EXTERNAL RETURN d89 := d54 [INT]
+  d88 := d89 [INT]
+  d90 := 31 [INT]
+  d91 := d88 IRSHIFT d90 [INT]
+  d92 := 1 [INT]
+  d93 := d91 IAND d92 [INT]
+  d86 := d93 [INT]
+  INTERNAL RETURN d87 := d86 [INT]
  RETURN
  PROC LABEL RealExponent
-  PARAM d99 := d98 [REAL]
+  PARAM d97 := d96 [REAL]
+  d98 := 0 [INT]
   e10 := 0 [INT]
-  e12 := 0 [INT]
-  e13 := 0 [INT]
-  CALL RealBinaryAsInt((d99 -> d53)[REAL])
-  EXTERNAL RETURN e14 := d56 [INT]
-  e12 := e14 [INT]
-  e15 := 23 [INT]
-  e16 := e12 IRSHIFT e15 [INT]
-  e17 := 255 [INT]
-  e18 := e16 IAND e17 [INT]
-  e13 := e18 [INT]
-  e19 := e13 ISUB e21 [INT]
-  e10 := e19 [INT]
-  INTERNAL RETURN e11 := e10 [INT]
+  e11 := 0 [INT]
+  CALL RealBinaryAsInt((d97 -> d51)[REAL])
+  EXTERNAL RETURN e12 := d54 [INT]
+  e10 := e12 [INT]
+  e13 := 23 [INT]
+  e14 := e10 IRSHIFT e13 [INT]
+  e15 := 255 [INT]
+  e16 := e14 IAND e15 [INT]
+  e11 := e16 [INT]
+  e17 := e11 ISUB e19 [INT]
+  d98 := e17 [INT]
+  INTERNAL RETURN d99 := d98 [INT]
  RETURN
  PROC LABEL RealMantissa
-  PARAM e25 := e24 [REAL]
+  PARAM e23 := e22 [REAL]
+  e24 := 0 [INT]
   e26 := 0 [INT]
+  e27 := 0 [INT]
   e28 := 0 [INT]
-  e29 := 0 [INT]
-  e30 := 0 [INT]
-  CALL RealBinaryAsInt((e25 -> d53)[REAL])
-  EXTERNAL RETURN e31 := d56 [INT]
-  e28 := e31 [INT]
-  e32 := 8388607 [INT]
-  e33 := e28 IAND e32 [INT]
-  e29 := e33 [INT]
-  CALL RealIsZero((e25 -> e34)[REAL])
-  EXTERNAL RETURN e45 := e37 [BOOL]
-  IF e45 EQ TRUE THEN IFSTAT_6_SEQ_0_LEVEL_0_0 ELSE IFNEXT_6_SEQ_0_LEVEL_0_0
-  LABEL IFSTAT_6_SEQ_0_LEVEL_0_0
+  CALL RealBinaryAsInt((e23 -> d51)[REAL])
+  EXTERNAL RETURN e29 := d54 [INT]
   e26 := e29 [INT]
+  e30 := 8388607 [INT]
+  e31 := e26 IAND e30 [INT]
+  e27 := e31 [INT]
+  CALL RealIsZero((e23 -> e32)[REAL])
+  EXTERNAL RETURN e43 := e35 [BOOL]
+  IF e43 EQ TRUE THEN IFSTAT_6_SEQ_0_LEVEL_0_0 ELSE IFNEXT_6_SEQ_0_LEVEL_0_0
+  LABEL IFSTAT_6_SEQ_0_LEVEL_0_0
+  e24 := e27 [INT]
   GOTO IFEND_6_LEVEL_0_0
   LABEL IFNEXT_6_SEQ_0_LEVEL_0_0
-  e46 := 8388608 [INT]
-  e47 := e29 IOR e46 [INT]
-  e26 := e47 [INT]
+  e44 := 8388608 [INT]
+  e45 := e27 IOR e44 [INT]
+  e24 := e45 [INT]
   GOTO IFEND_6_LEVEL_0_0
   LABEL IFNEXT_6_SEQ_1_LEVEL_0
   LABEL IFEND_6_LEVEL_0_0
-  INTERNAL RETURN e27 := e26 [INT]
+  INTERNAL RETURN e25 := e24 [INT]
  RETURN
  PROC LABEL RealIsZero
-  PARAM e35 := e34 [REAL]
-  e36 := FALSE [BOOL]
-  e38 := 0 [INT]
+  PARAM e33 := e32 [REAL]
+  e34 := FALSE [BOOL]
+  e36 := 0 [INT]
+  e37 := 0 [INT]
+  CALL RealBinaryAsInt((e33 -> d51)[REAL])
+  EXTERNAL RETURN e38 := d54 [INT]
+  e36 := e38 [INT]
   e39 := 0 [INT]
-  CALL RealBinaryAsInt((e35 -> d53)[REAL])
-  EXTERNAL RETURN e40 := d56 [INT]
-  e38 := e40 [INT]
-  e41 := 0 [INT]
-  e42 := e38 EQ e41 [BOOL]
-  IF e42 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0_0
+  e40 := e36 EQ e39 [BOOL]
+  IF e40 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_0_SEQ_0_LEVEL_0_0
-  e43 := TRUE [BOOL]
-  e36 := e43 [BOOL]
+  e41 := TRUE [BOOL]
+  e34 := e41 [BOOL]
   GOTO IFEND_0_LEVEL_0_0
   LABEL IFNEXT_0_SEQ_0_LEVEL_0_0
-  e44 := FALSE [BOOL]
-  e36 := e44 [BOOL]
+  e42 := FALSE [BOOL]
+  e34 := e42 [BOOL]
   GOTO IFEND_0_LEVEL_0_0
   LABEL IFNEXT_0_SEQ_1_LEVEL_0_0
   LABEL IFEND_0_LEVEL_0_0
-  INTERNAL RETURN e37 := e36 [BOOL]
+  INTERNAL RETURN e35 := e34 [BOOL]
  RETURN
  PROC LABEL IntIsZero
-  PARAM e98 := e97 [INT]
-  e99 := FALSE [BOOL]
-  f11 := 0 [INT]
-  f12 := e98 EQ f11 [BOOL]
-  IF f12 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_1 ELSE IFNEXT_1_SEQ_0_LEVEL_0_1
+  PARAM e96 := e95 [INT]
+  e97 := FALSE [BOOL]
+  e99 := 0 [INT]
+  f10 := e96 EQ e99 [BOOL]
+  IF f10 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_1 ELSE IFNEXT_1_SEQ_0_LEVEL_0_1
   LABEL IFSTAT_1_SEQ_0_LEVEL_0_1
-  f13 := TRUE [BOOL]
-  e99 := f13 [BOOL]
+  f11 := TRUE [BOOL]
+  e97 := f11 [BOOL]
   GOTO IFEND_1_LEVEL_0_1
   LABEL IFNEXT_1_SEQ_0_LEVEL_0_1
-  f14 := FALSE [BOOL]
-  e99 := f14 [BOOL]
+  f12 := FALSE [BOOL]
+  e97 := f12 [BOOL]
   GOTO IFEND_1_LEVEL_0_1
   LABEL IFNEXT_1_SEQ_1_LEVEL_0
   LABEL IFEND_1_LEVEL_0_1
-  INTERNAL RETURN f10 := e99 [BOOL]
+  INTERNAL RETURN e98 := e97 [BOOL]
  RETURN
  PROC LABEL WriteReal
-  PARAM f44 := f43 [REAL]
-  IPARAM f44
+  PARAM f42 := f41 [REAL]
+  IPARAM f42
   IASM "LDR R0, %a"
   IASM "SWI 2"
  RETURN

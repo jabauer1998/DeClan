@@ -355,14 +355,6 @@ PROCEDURE RDivide(n1: REAL; n2: REAL);
 		END
 	END;
 
-	WriteString("Result exp is ");
-	WriteInt(resultExp);
-	WriteLn();
-
-	WriteString("Real bias is ");
-	WriteInt(realBias);
-	WriteLn();
-
 	resultExp := resultExp + realBias;
 
 	WriteString("Result exp is ");
