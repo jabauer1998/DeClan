@@ -1322,7 +1322,7 @@ PROC SECTION
   CALL WriteLn()
   a32 := "Real bias is " [STRING]
   CALL WriteString((a32 -> f91)[STRING])
-  CALL WriteInt((a33 -> g19)[INT])
+  CALL WriteInt((e35 -> g19)[INT])
   CALL WriteLn()
   a34 := P3 IADD e35 [INT]
   P3 := a34 [INT]
