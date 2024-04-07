@@ -8,28 +8,28 @@ CODE SECTION
  LABEL FORBEG_0_LEVEL_0
  IF a GT c THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
  LABEL FORLOOP_0_LEVEL_0
- CALL WriteInt((a -> d42)[INT])
+ CALL WriteInt((a -> d41)[INT])
  d := 1 [INT]
- CALL INeg((d -> d45)[INT])
- EXTERNAL RETURN d44 := d48 [INT]
- f := a IADD d44 [INT]
+ CALL INeg((d -> d44)[INT])
+ EXTERNAL RETURN d43 := d47 [INT]
+ f := a IADD d43 [INT]
  a := f [INT]
  GOTO FORBEG_0_LEVEL_0
  LABEL FOREND_0_LEVEL_0
 END
 PROC SECTION
  PROC LABEL WriteInt
-  PARAM d43 := d42 [INT]
-  IPARAM d43
+  PARAM d42 := d41 [INT]
+  IPARAM d42
   IASM "LDR R0, %a"
   IASM "SWI 1"
  RETURN
  PROC LABEL INeg
-  PARAM d46 := d45 [INT]
-  d47 := 0 [INT]
-  d49 := INOT d46 [INT]
-  d50 := 1 [INT]
-  d51 := d49 IADD d50 [INT]
-  d47 := d51 [INT]
-  INTERNAL RETURN d48 := d47 [INT]
+  PARAM d45 := d44 [INT]
+  d46 := 0 [INT]
+  d48 := INOT d45 [INT]
+  d49 := 1 [INT]
+  d50 := d48 IADD d49 [INT]
+  d46 := d50 [INT]
+  INTERNAL RETURN d47 := d46 [INT]
  RETURN

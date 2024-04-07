@@ -356,10 +356,6 @@ PROCEDURE RDivide(n1: REAL; n2: REAL);
 	END;
 
 	resultExp := resultExp + realBias;
-
-	WriteString("Result exp is ");
-	WriteInt(resultExp);
-	WriteLn();
 	
 	intResult := (resultExp BAND 0ffH) << 23;
  	intResult := intResult BOR (resultSign << 31);
