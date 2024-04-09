@@ -59,25 +59,25 @@ CODE SECTION
  EXTERNAL RETURN h17 := h23 [REAL]
  w := h17 [REAL]
  CALL WriteInt((b -> h24)[INT])
- CALL WriteReal((v -> h26)[REAL])
- CALL WriteReal((v -> h26)[REAL])
- CALL WriteReal((w -> h26)[REAL])
+ CALL WriteReal((v -> h27)[REAL])
+ CALL WriteReal((v -> h27)[REAL])
+ CALL WriteReal((w -> h27)[REAL])
  CALL WriteLn()
  CALL Div((o -> g37)[INT], (y -> g39)[INT])
- EXTERNAL RETURN h28 := g42 [INT]
- z := h28 [INT]
- CALL Divide((o -> h30)[INT], (y -> h32)[INT])
- EXTERNAL RETURN h29 := h35 [REAL]
- x := h29 [REAL]
+ EXTERNAL RETURN h30 := g42 [INT]
+ z := h30 [INT]
+ CALL Divide((o -> h32)[INT], (y -> h34)[INT])
+ EXTERNAL RETURN h31 := h37 [REAL]
+ x := h31 [REAL]
  CALL WriteInt((z -> h24)[INT])
- CALL WriteReal((x -> h26)[REAL])
+ CALL WriteReal((x -> h27)[REAL])
  CALL WriteLn()
- CALL Round((i -> h42)[REAL])
- EXTERNAL RETURN h41 := h45 [INT]
- CALL IntToReal((h41 -> d55)[INT])
- EXTERNAL RETURN h56 := d58 [REAL]
- x := h56 [REAL]
- CALL WriteReal((x -> h26)[REAL])
+ CALL Round((i -> h44)[REAL])
+ EXTERNAL RETURN h43 := h47 [INT]
+ CALL IntToReal((h43 -> d55)[INT])
+ EXTERNAL RETURN h58 := d58 [REAL]
+ x := h58 [REAL]
+ CALL WriteReal((x -> h27)[REAL])
  IF u EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
  LABEL IFSTAT_0_SEQ_0_LEVEL_0
  P := 2 [INT]
@@ -87,26 +87,26 @@ CODE SECTION
  GOTO IFEND_0_LEVEL_0
  LABEL IFNEXT_0_SEQ_0_LEVEL_0
  S := 10 [INT]
- CALL Divide((o -> h30)[INT], (S -> h32)[INT])
- EXTERNAL RETURN h57 := h35 [REAL]
- CALL WriteReal((h57 -> h26)[REAL])
+ CALL Divide((o -> h32)[INT], (S -> h34)[INT])
+ EXTERNAL RETURN h59 := h37 [REAL]
+ CALL WriteReal((h59 -> h27)[REAL])
  GOTO IFEND_0_LEVEL_0
  LABEL IFNEXT_0_SEQ_1_LEVEL_0
  LABEL IFEND_0_LEVEL_0
  CALL WriteLn()
  U := BNOT u [BOOL]
  CALL IntToReal((b -> d55)[INT])
- EXTERNAL RETURN h58 := d58 [REAL]
- CALL RGreaterThan((v -> h60)[REAL], (h58 -> h61)[REAL])
- EXTERNAL RETURN h59 := h62 [BOOL]
- X := U LAND h59 [BOOL]
+ EXTERNAL RETURN h60 := d58 [REAL]
+ CALL RGreaterThan((v -> h62)[REAL], (h60 -> h63)[REAL])
+ EXTERNAL RETURN h61 := h64 [BOOL]
+ X := U LAND h61 [BOOL]
  B := X [BOOL]
  Y := BNOT u [BOOL]
  CALL IntToReal((b -> d55)[INT])
- EXTERNAL RETURN h80 := d58 [REAL]
- CALL RGreaterThanOrEqualTo((v -> h82)[REAL], (h80 -> h83)[REAL])
- EXTERNAL RETURN h81 := h84 [BOOL]
- a1 := Y LOR h81 [BOOL]
+ EXTERNAL RETURN h82 := d58 [REAL]
+ CALL RGreaterThanOrEqualTo((v -> h84)[REAL], (h82 -> h85)[REAL])
+ EXTERNAL RETURN h83 := h86 [BOOL]
+ a1 := Y LOR h83 [BOOL]
  C := a1 [BOOL]
  a2 := B EQ C [BOOL]
  D := a2 [BOOL]
@@ -1753,57 +1753,67 @@ PROC SECTION
  RETURN
  PROC LABEL WriteInt
   PARAM h25 := h24 [INT]
+  h26 := 0 [INT]
+  IPARAM h26
+  IASM "MOV %r, R0"
   IPARAM h25
   IASM "LDR R0, %a"
   IASM "SWI 1"
+  IPARAM h26
+  IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteReal
-  PARAM h27 := h26 [REAL]
-  IPARAM h27
+  PARAM h28 := h27 [REAL]
+  h29 := 0 [INT]
+  IPARAM h29
+  IASM "MOV %r, R0"
+  IPARAM h28
   IASM "LDR R0, %a"
   IASM "SWI 2"
+  IPARAM h29
+  IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteLn
   IASM "SWI 4"
  RETURN
  PROC LABEL Divide
-  PARAM h31 := h30 [INT]
   PARAM h33 := h32 [INT]
-  h34 := 0.0 [REAL]
+  PARAM h35 := h34 [INT]
   h36 := 0.0 [REAL]
-  h37 := 0.0 [REAL]
-  CALL IntToReal((h31 -> d55)[INT])
-  EXTERNAL RETURN h38 := d58 [REAL]
-  h36 := h38 [REAL]
+  h38 := 0.0 [REAL]
+  h39 := 0.0 [REAL]
   CALL IntToReal((h33 -> d55)[INT])
-  EXTERNAL RETURN h39 := d58 [REAL]
-  h37 := h39 [REAL]
-  CALL RDivide((h36 -> g34)[REAL], (h37 -> g35)[REAL])
-  EXTERNAL RETURN h40 := g36 [REAL]
-  h34 := h40 [REAL]
-  INTERNAL RETURN h35 := h34 [REAL]
+  EXTERNAL RETURN h40 := d58 [REAL]
+  h38 := h40 [REAL]
+  CALL IntToReal((h35 -> d55)[INT])
+  EXTERNAL RETURN h41 := d58 [REAL]
+  h39 := h41 [REAL]
+  CALL RDivide((h38 -> g34)[REAL], (h39 -> g35)[REAL])
+  EXTERNAL RETURN h42 := g36 [REAL]
+  h36 := h42 [REAL]
+  INTERNAL RETURN h37 := h36 [REAL]
  RETURN
  PROC LABEL Round
-  PARAM h43 := h42 [REAL]
-  h44 := 0 [INT]
-  h46 := 0.5 [REAL]
-  CALL RAdd((h43 -> e57)[REAL], (h46 -> e59)[REAL])
-  EXTERNAL RETURN h47 := e62 [REAL]
-  CALL Floor((h47 -> h48)[REAL])
-  EXTERNAL RETURN h55 := h51 [INT]
-  h44 := h55 [INT]
-  INTERNAL RETURN h45 := h44 [INT]
+  PARAM h45 := h44 [REAL]
+  h46 := 0 [INT]
+  h48 := 0.5 [REAL]
+  CALL RAdd((h45 -> e57)[REAL], (h48 -> e59)[REAL])
+  EXTERNAL RETURN h49 := e62 [REAL]
+  CALL Floor((h49 -> h50)[REAL])
+  EXTERNAL RETURN h57 := h53 [INT]
+  h46 := h57 [INT]
+  INTERNAL RETURN h47 := h46 [INT]
  RETURN
  PROC LABEL Floor
-  PARAM h49 := h48 [REAL]
-  h50 := 0 [INT]
-  CALL RealToInt((h49 -> h53)[REAL])
-  EXTERNAL RETURN h52 := h54 [INT]
-  h50 := h52 [INT]
-  INTERNAL RETURN h51 := h50 [INT]
+  PARAM h51 := h50 [REAL]
+  h52 := 0 [INT]
+  CALL RealToInt((h51 -> h55)[REAL])
+  EXTERNAL RETURN h54 := h56 [INT]
+  h52 := h54 [INT]
+  INTERNAL RETURN h53 := h52 [INT]
  RETURN
  PROC LABEL RealToInt
-  PARAM d2 := h53 [REAL]
+  PARAM d2 := h55 [REAL]
   c7 := 0 [INT]
   c8 := 0 [INT]
   c9 := 0 [INT]
@@ -1853,11 +1863,11 @@ PROC SECTION
   GOTO IFEND_6_LEVEL_0
   LABEL IFNEXT_6_SEQ_0_LEVEL_0
   LABEL IFEND_6_LEVEL_0
-  INTERNAL RETURN h54 := c7 [INT]
+  INTERNAL RETURN h56 := c7 [INT]
  RETURN
  PROC LABEL RGreaterThan
-  PARAM b92 := h60 [REAL]
-  PARAM b94 := h61 [REAL]
+  PARAM b92 := h62 [REAL]
+  PARAM b94 := h63 [REAL]
   b81 := FALSE [BOOL]
   b82 := FALSE [BOOL]
   b83 := FALSE [BOOL]
@@ -1875,17 +1885,17 @@ PROC SECTION
   CALL RealIsZero((b94 -> f26)[REAL])
   EXTERNAL RETURN b95 := f29 [BOOL]
   b83 := b95 [BOOL]
-  CALL RealIsNegative((b92 -> h63)[REAL])
-  EXTERNAL RETURN b96 := h66 [BOOL]
+  CALL RealIsNegative((b92 -> h65)[REAL])
+  EXTERNAL RETURN b96 := h68 [BOOL]
   b84 := b96 [BOOL]
-  CALL RealIsNegative((b94 -> h63)[REAL])
-  EXTERNAL RETURN b97 := h66 [BOOL]
+  CALL RealIsNegative((b94 -> h65)[REAL])
+  EXTERNAL RETURN b97 := h68 [BOOL]
   b85 := b97 [BOOL]
-  CALL RealIsPositive((b92 -> h73)[REAL])
-  EXTERNAL RETURN b98 := h75 [BOOL]
+  CALL RealIsPositive((b92 -> h75)[REAL])
+  EXTERNAL RETURN b98 := h77 [BOOL]
   b86 := b98 [BOOL]
-  CALL RealIsPositive((b94 -> h73)[REAL])
-  EXTERNAL RETURN b99 := h75 [BOOL]
+  CALL RealIsPositive((b94 -> h75)[REAL])
+  EXTERNAL RETURN b99 := h77 [BOOL]
   b87 := b99 [BOOL]
   c10 := b82 LAND b83 [BOOL]
   IF c10 EQ TRUE THEN IFSTAT_58_SEQ_0_LEVEL_0 ELSE IFNEXT_58_SEQ_0_LEVEL_0
@@ -2008,41 +2018,41 @@ PROC SECTION
   GOTO IFEND_58_LEVEL_0
   LABEL IFNEXT_58_SEQ_5_LEVEL_0
   LABEL IFEND_58_LEVEL_0
-  INTERNAL RETURN h62 := b81 [BOOL]
+  INTERNAL RETURN h64 := b81 [BOOL]
  RETURN
  PROC LABEL RealIsNegative
-  PARAM h64 := h63 [REAL]
-  h65 := FALSE [BOOL]
-  h67 := 0 [INT]
-  CALL RealSign((h64 -> e80)[REAL])
-  EXTERNAL RETURN h68 := e83 [INT]
-  h67 := h68 [INT]
+  PARAM h66 := h65 [REAL]
+  h67 := FALSE [BOOL]
   h69 := 0 [INT]
-  h70 := h67 EQ h69 [BOOL]
-  IF h70 EQ TRUE THEN IFSTAT_3_SEQ_0_LEVEL_0 ELSE IFNEXT_3_SEQ_0_LEVEL_0
+  CALL RealSign((h66 -> e80)[REAL])
+  EXTERNAL RETURN h70 := e83 [INT]
+  h69 := h70 [INT]
+  h71 := 0 [INT]
+  h72 := h69 EQ h71 [BOOL]
+  IF h72 EQ TRUE THEN IFSTAT_3_SEQ_0_LEVEL_0 ELSE IFNEXT_3_SEQ_0_LEVEL_0
   LABEL IFSTAT_3_SEQ_0_LEVEL_0
-  h71 := FALSE [BOOL]
-  h65 := h71 [BOOL]
+  h73 := FALSE [BOOL]
+  h67 := h73 [BOOL]
   GOTO IFEND_3_LEVEL_0
   LABEL IFNEXT_3_SEQ_0_LEVEL_0
-  h72 := TRUE [BOOL]
-  h65 := h72 [BOOL]
+  h74 := TRUE [BOOL]
+  h67 := h74 [BOOL]
   GOTO IFEND_3_LEVEL_0
   LABEL IFNEXT_3_SEQ_1_LEVEL_0
   LABEL IFEND_3_LEVEL_0
-  INTERNAL RETURN h66 := h65 [BOOL]
+  INTERNAL RETURN h68 := h67 [BOOL]
  RETURN
  PROC LABEL RealIsPositive
-  PARAM h74 := h73 [REAL]
+  PARAM h76 := h75 [REAL]
   b7 := FALSE [BOOL]
   b8 := 0 [INT]
-  h76 := 0 [INT]
-  CALL RealSign((h74 -> e80)[REAL])
-  EXTERNAL RETURN h77 := e83 [INT]
-  h76 := h77 [INT]
   h78 := 0 [INT]
-  h79 := h76 EQ h78 [BOOL]
-  IF h79 EQ TRUE THEN IFSTAT_5_SEQ_0_LEVEL_0 ELSE IFNEXT_5_SEQ_0_LEVEL_0
+  CALL RealSign((h76 -> e80)[REAL])
+  EXTERNAL RETURN h79 := e83 [INT]
+  h78 := h79 [INT]
+  h80 := 0 [INT]
+  h81 := h78 EQ h80 [BOOL]
+  IF h81 EQ TRUE THEN IFSTAT_5_SEQ_0_LEVEL_0 ELSE IFNEXT_5_SEQ_0_LEVEL_0
   LABEL IFSTAT_5_SEQ_0_LEVEL_0
   c4 := TRUE [BOOL]
   b7 := c4 [BOOL]
@@ -2053,11 +2063,11 @@ PROC SECTION
   GOTO IFEND_5_LEVEL_0
   LABEL IFNEXT_5_SEQ_1_LEVEL_0
   LABEL IFEND_5_LEVEL_0
-  INTERNAL RETURN h75 := b7 [BOOL]
+  INTERNAL RETURN h77 := b7 [BOOL]
  RETURN
  PROC LABEL RGreaterThanOrEqualTo
-  PARAM c53 := h82 [REAL]
-  PARAM c55 := h83 [REAL]
+  PARAM c53 := h84 [REAL]
+  PARAM c55 := h85 [REAL]
   c42 := FALSE [BOOL]
   c43 := FALSE [BOOL]
   c44 := FALSE [BOOL]
@@ -2075,17 +2085,17 @@ PROC SECTION
   CALL RealIsZero((c55 -> f26)[REAL])
   EXTERNAL RETURN c56 := f29 [BOOL]
   c44 := c56 [BOOL]
-  CALL RealIsNegative((c53 -> h63)[REAL])
-  EXTERNAL RETURN c57 := h66 [BOOL]
+  CALL RealIsNegative((c53 -> h65)[REAL])
+  EXTERNAL RETURN c57 := h68 [BOOL]
   c45 := c57 [BOOL]
-  CALL RealIsNegative((c55 -> h63)[REAL])
-  EXTERNAL RETURN c58 := h66 [BOOL]
+  CALL RealIsNegative((c55 -> h65)[REAL])
+  EXTERNAL RETURN c58 := h68 [BOOL]
   c46 := c58 [BOOL]
-  CALL RealIsPositive((c53 -> h73)[REAL])
-  EXTERNAL RETURN c59 := h75 [BOOL]
+  CALL RealIsPositive((c53 -> h75)[REAL])
+  EXTERNAL RETURN c59 := h77 [BOOL]
   c47 := c59 [BOOL]
-  CALL RealIsPositive((c55 -> h73)[REAL])
-  EXTERNAL RETURN c60 := h75 [BOOL]
+  CALL RealIsPositive((c55 -> h75)[REAL])
+  EXTERNAL RETURN c60 := h77 [BOOL]
   c48 := c60 [BOOL]
   c61 := c43 LAND c44 [BOOL]
   IF c61 EQ TRUE THEN IFSTAT_69_SEQ_0_LEVEL_0 ELSE IFNEXT_69_SEQ_0_LEVEL_0
@@ -2208,5 +2218,5 @@ PROC SECTION
   GOTO IFEND_69_LEVEL_0
   LABEL IFNEXT_69_SEQ_5_LEVEL_0
   LABEL IFEND_69_LEVEL_0
-  INTERNAL RETURN h84 := c42 [BOOL]
+  INTERNAL RETURN h86 := c42 [BOOL]
  RETURN
