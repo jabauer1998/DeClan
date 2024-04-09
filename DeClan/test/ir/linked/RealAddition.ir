@@ -12,7 +12,7 @@ CODE SECTION
  CALL RAdd((b -> d42)[REAL], (d -> d44)[REAL])
  EXTERNAL RETURN d41 := d47 [REAL]
  e := d41 [REAL]
- CALL WriteReal((e -> f32)[REAL])
+ CALL WriteReal((e -> f28)[REAL])
 END
 PROC SECTION
  PROC LABEL RAdd
@@ -222,20 +222,20 @@ PROC SECTION
   LABEL IFEND_9_LEVEL_0_0
   f16 := 255 [INT]
   f17 := d56 IAND f16 [INT]
-  f18 := 23 [INT]
-  f19 := f17 ILSHIFT f18 [INT]
-  d48 := f19 [INT]
-  f20 := 8388607 [INT]
-  f21 := d58 IAND f20 [INT]
-  f22 := d48 IOR f21 [INT]
-  d48 := f22 [INT]
-  f23 := 31 [INT]
-  f24 := d59 ILSHIFT f23 [INT]
-  f25 := d48 IOR f24 [INT]
-  d48 := f25 [INT]
-  CALL IntBinaryAsReal((d48 -> f27)[INT])
-  EXTERNAL RETURN f26 := f30 [REAL]
-  d46 := f26 [REAL]
+  h6 := 23 [INT]
+  f18 := f17 ILSHIFT h6 [INT]
+  d48 := f18 [INT]
+  f19 := 8388607 [INT]
+  f20 := d58 IAND f19 [INT]
+  f21 := d48 IOR f20 [INT]
+  d48 := f21 [INT]
+  f22 := 31 [INT]
+  f23 := d59 ILSHIFT f22 [INT]
+  f24 := d48 IOR f23 [INT]
+  d48 := f24 [INT]
+  CALL IntBinaryAsReal((d48 -> f26)[INT])
+  EXTERNAL RETURN f25 := f27 [REAL]
+  d46 := f25 [REAL]
   INTERNAL RETURN d47 := d46 [REAL]
  RETURN
  PROC LABEL RealSign
@@ -350,25 +350,25 @@ PROC SECTION
   INTERNAL RETURN e84 := e83 [BOOL]
  RETURN
  PROC LABEL IntBinaryAsReal
-  PARAM f28 := f27 [INT]
-  f29 := 0.0 [REAL]
-  f31 := 0 [INT]
-  IPARAM f31
-  IPARAM f28
+  PARAM h9 := f26 [INT]
+  h7 := 0.0 [REAL]
+  h8 := 0 [INT]
+  IPARAM h8
+  IPARAM h9
   IASM "LDR %r, %a"
-  IPARAM f31
-  IPARAM f29
+  IPARAM h8
+  IPARAM h7
   IASM "STR %r, %a"
-  INTERNAL RETURN f30 := f29 [REAL]
+  INTERNAL RETURN f27 := h7 [REAL]
  RETURN
  PROC LABEL WriteReal
-  PARAM f33 := f32 [REAL]
-  f34 := 0 [INT]
-  IPARAM f34
+  PARAM f29 := f28 [REAL]
+  f30 := 0 [INT]
+  IPARAM f30
   IASM "MOV %r, R0"
-  IPARAM f33
+  IPARAM f29
   IASM "LDR R0, %a"
   IASM "SWI 2"
-  IPARAM f34
+  IPARAM f30
   IASM "MOV R0, %r"
  RETURN

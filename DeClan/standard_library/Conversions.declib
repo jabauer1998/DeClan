@@ -2,12 +2,20 @@ PROCEDURE IntToReal(n: INTEGER);
     VAR result: REAL; absN: INTEGER; isNeg: BOOLEAN; intResult: INTEGER; furthestOne: INTEGER; count: INTEGER; tempN: INTEGER; lastBit: INTEGER; fullExponent: INTEGER; exponent: INTEGER; mantissa: INTEGER; mantissaMask: INTEGER; toShiftOver: INTEGER;
     BEGIN
        absN := Abs(n);
+       WriteString("Abs n is: ");
+       WriteInt(absN);
+       WriteLn();
        tempN := absN;
        count := 0;
        isNeg := IntIsNegative(n);
+       WriteString("n is Neg: ");
+       WriteBool(isNeg);
+       WriteLn();
        IF (IntIsZero(tempN)) THEN
         intResult := 0
        ELSE
+        WriteString("Int is not zero");
+        WriteLn();
         WHILE ~IntIsZero(tempN) DO
           lastBit := tempN BAND 1;
           IF lastBit = 1 THEN
@@ -16,12 +24,26 @@ PROCEDURE IntToReal(n: INTEGER);
           count := count + 1;
           tempN := tempN >> 1;
         END;
+
+        WriteString("Furthest One is: ");
+        WriteInt(furthestOne);
+        WriteLn();
+
         IF (furthestOne > 23) THEN
             absN := absN >> (furthestOne - 23);
         ELSIF (furthestOne < 23) THEN
             absN := absN << (23 - furthestOne);
         END;
+
         exponent := furthestOne + realBias;
+
+        WriteString("Real Bias is: ");
+        WriteInt(realBias);
+        WriteLn();
+        
+        WriteString("Exponent is ");
+        WriteInt(exponent);
+        WriteLn();
         mantissaMask := 07fffffH;
         mantissa := absN BAND mantissaMask;
         intResult := mantissa;
@@ -30,6 +52,9 @@ PROCEDURE IntToReal(n: INTEGER);
             intResult := intResult BOR (1 << 31);
         END
        END;
+       WriteString("Int result is: ");
+       WriteInt(intResult);
+       WriteLn();
        result := IntBinaryAsReal(intResult)
        RETURN result
     END IntToReal;
