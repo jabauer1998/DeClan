@@ -267,6 +267,24 @@ public class MyICodeMachine {
             } else {
                 errorAndExit("In procedure call " + procedure + " expected 1 argument for function call " + procedure.pname, programCounter, programLength);
             }
+        } else if(procedure.pname.equals("WriteBool")){
+                if(procedure.params.size() == 1){
+                    Assign arg1 = procedure.params.get(0);
+                    if(variableValues.entryExists(arg1.value.toString())){
+                        VariableEntry entry = variableValues.getEntry(arg1.value.toString());
+                        try{
+                            Object val = entry.getValue();
+                            Boolean toBool = Utils.toBool(val);
+                            standardOutput.append(toBool.toString());
+                        } catch(IOException exp){
+                            errorAndExit(exp.toString(), programCounter, programLength);
+                        }
+                    } else {
+                        errorAndExit("Error paramater " + arg1.value.toString() + " does not exist in function " + procedure, programCounter, programLength);
+                    }
+                } else {
+                    errorAndExit("In procedure call " + procedure + " expected 1 argument for function call " + procedure.pname, programCounter, programLength);
+                }
         } else if(procedure.pname.equals("WriteLn")){
             try{
                 standardOutput.append("\n");
@@ -314,6 +332,11 @@ public class MyICodeMachine {
             this.tempReturnValue = Integer.parseInt(scanner.nextLine());
             scanner.close();
             this.machineState = State.RETURN;  
+        } else if(procedure.pname.equals("readBool") || procedure.pname.equals("ReadBool")){
+            Scanner scanner = new Scanner(standardIn);
+            this.tempReturnValue = Boolean.parseBoolean(scanner.nextLine());
+            scanner.close();
+            this.machineState = State.RETURN; 
         } else if(procedure.pname.equals("readReal") || procedure.pname.equals("ReadReal")){
            Scanner scanner = new Scanner(standardIn);
            this.tempReturnValue = Float.parseFloat(scanner.nextLine());

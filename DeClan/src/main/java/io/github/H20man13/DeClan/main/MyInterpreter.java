@@ -150,17 +150,23 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       Object value = procedureCall.getArguments().get(0).acceptResult(this);
       Float floatVal = Utils.toReal(value);
       try{
-        standardOutput.append("" + floatVal);
+        standardOutput.append(floatVal.toString());
       } catch(IOException exp){}
     } else if(procName.equals("WriteLn") || procName.equals("PrintLn")) {
        try{
         standardOutput.append("\n");
        } catch(IOException exp){}
+    } else if(procName.equals("WriteBool") || procName.equals("PrintBool")){
+        Object value = procedureCall.getArguments().get(0).acceptResult(this);
+        Boolean val = Utils.toBool(value);
+        try{
+         standardOutput.append(val.toString());
+        }catch(IOException exp){}
     } else if(procName.equals("WriteString") || procName.equals("PrintString")) {
       Object value = (Object)procedureCall.getArguments().get(0).acceptResult(this);
       try{
         standardOutput.append(value.toString());
-       } catch(IOException exp){}
+      }catch(IOException exp){}
     } else if(procName.equals("ASSERT")){
       boolean value = Utils.toBool(procedureCall.getArguments().get(0).acceptResult(this));
       Object toPrint = (Object)procedureCall.getArguments().get(1).acceptResult(this);
@@ -479,6 +485,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       String line = scanner.nextLine();
       scanner.close();
       return Float.parseFloat(line);
+    } else if(funcName.equals("readBool") || funcName.equals("ReadBool")){
+      Scanner scanner = new Scanner(standardIn);
+      String line = scanner.nextLine();
+      scanner.close();
+      return Boolean.parseBoolean(line);
     } else if(funcName.equals("realBinaryAsInt") || funcName.equals("RealBinaryAsInt")){
       float argument = Utils.toReal(funcCall.getArguments().get(0).acceptResult(this));
       return Float.floatToRawIntBits(argument);
