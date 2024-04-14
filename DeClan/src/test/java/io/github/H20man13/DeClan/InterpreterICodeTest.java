@@ -132,7 +132,6 @@ public class InterpreterICodeTest {
     public void testRepeatLoopBasic(){
         testInterpreterWithICode("test/declan/RepeatLoopBasic.dcl", nullReader, nullReader);
     }
-
     @Test
     public void testSample(){
         testInterpreterWithICode("test/declan/sample.dcl", nullReader, nullReader);

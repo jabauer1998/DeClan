@@ -2902,17 +2902,61 @@ public class MyIrLinker {
     }
 
     private static boolean placeIsUniqueToProgramOrLibrary(String place, Prog program, Lib[] libraries, Lib libraryToIgnore){
-        if(!program.equals(libraryToIgnore))
-            if(program.containsPlace(place))
-                return false;
+        if(libraryToIgnore.containsExternalSymbol(place)){
+            SymEntry origEntry = libraryToIgnore.getExternalSymbol(place);
 
-        for(Lib library : libraries){
-            if(!library.equals(libraryToIgnore))
-                if(library.containsPlace(place))
+            int libsWithInternal = 0;
+            if(!program.equals(libraryToIgnore)){
+                if(program.containsExternalSymbol(place)){
+                    SymEntry entryToMatch = program.getExternalSymbol(place);
+                    if(!origEntry.declanIdent.equals(entryToMatch.declanIdent))
+                        return false;
+                } else if(program.containsInternalSymbol(place)){
+                    SymEntry entryToMatch = program.getInternalSymbol(place);
+                    if(origEntry.declanIdent.equals(entryToMatch.declanIdent))
+                        libsWithInternal++;
+                    else
+                        return false;
+                } else if (program.containsPlace(place)) {
                     return false;
-        }
+                }
+            }
 
-        return true;
+            for(Lib library : libraries){
+                if(!library.equals(libraryToIgnore)){
+                    if(library.containsExternalSymbol(place)){
+                        SymEntry entryToMatch = library.getExternalSymbol(place);
+                        if(!origEntry.declanIdent.equals(entryToMatch.declanIdent))
+                            return false;
+                    } else if(library.containsInternalSymbol(place)){
+                        SymEntry entryToMatch = library.getInternalSymbol(place);
+                        if(origEntry.declanIdent.equals(entryToMatch.declanIdent)) {
+                            libsWithInternal++;
+                            if(libsWithInternal > 1)
+                                return false;
+                        } else { 
+                            return false;
+                        }
+                    } else if (library.containsPlace(place)) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        } else {
+            if(!program.equals(libraryToIgnore))
+                if(program.containsPlace(place))
+                    return false;
+
+            for(Lib library : libraries){
+                if(!library.equals(libraryToIgnore))
+                    if(library.containsPlace(place))
+                        return false;
+            }
+
+            return true;
+        }
     }
 
     private static boolean labelIsUniqueToProgramOrLibrary(String label, Prog program, Lib[] libraries, Lib libraryToIgnore){
@@ -2931,18 +2975,62 @@ public class MyIrLinker {
         return true;
     }
 
-    private static boolean placeIsUniqueToLibrary(String place, Lib library, Lib[] libraries, Lib libToIgnore){
-        if(!library.equals(libToIgnore))
-            if(library.containsPlace(place))
-                return false;
+    private static boolean placeIsUniqueToLibrary(String place, Lib library, Lib[] libraries, Lib libraryToIgnore){
+        if(libraryToIgnore.containsExternalSymbol(place)){
+            SymEntry origEntry = libraryToIgnore.getExternalSymbol(place);
 
-        for(Lib lib : libraries){
-            if(!lib.equals(libToIgnore))
-                if(lib.containsPlace(place))
+            int libsWithInternal = 0;
+            if(!library.equals(libraryToIgnore)){
+                if(library.containsExternalSymbol(place)){
+                    SymEntry entryToMatch = library.getExternalSymbol(place);
+                    if(!origEntry.declanIdent.equals(entryToMatch.declanIdent))
+                        return false;
+                } else if(library.containsInternalSymbol(place)){
+                    SymEntry entryToMatch = library.getInternalSymbol(place);
+                    if(origEntry.declanIdent.equals(entryToMatch.declanIdent))
+                        libsWithInternal++;
+                    else
+                        return false;
+                } else if (library.containsPlace(place)) {
                     return false;
-        }
+                }
+            }
 
-        return true;
+            for(Lib lib : libraries){
+                if(!lib.equals(libraryToIgnore)){
+                    if(lib.containsExternalSymbol(place)){
+                        SymEntry entryToMatch = lib.getExternalSymbol(place);
+                        if(!origEntry.declanIdent.equals(entryToMatch.declanIdent))
+                            return false;
+                    } else if(lib.containsInternalSymbol(place)){
+                        SymEntry entryToMatch = lib.getInternalSymbol(place);
+                        if(origEntry.declanIdent.equals(entryToMatch.declanIdent)) {
+                            libsWithInternal++;
+                            if(libsWithInternal > 1)
+                                return false;
+                        } else { 
+                            return false;
+                        }
+                    } else if (lib.containsPlace(place)) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        } else {
+            if(!library.equals(libraryToIgnore))
+                if(library.containsPlace(place))
+                    return false;
+
+            for(Lib lib : libraries){
+                if(!lib.equals(libraryToIgnore))
+                    if(lib.containsPlace(place))
+                        return false;
+            }
+
+            return true;
+        }
     }
 
     private static boolean labelIsUniqueToLibrary(String label, Lib library, Lib[] libraries, Lib libToIgnore){

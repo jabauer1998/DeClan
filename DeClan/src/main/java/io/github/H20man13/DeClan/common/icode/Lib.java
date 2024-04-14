@@ -117,4 +117,20 @@ public class Lib implements ICode {
         variables.replaceLabel(from, to);
         procedures.replaceLabel(from, to);
     }
+
+    public boolean containsExternalSymbol(String place){
+        return symbols.containsEntryWithICodePlace(place, SymEntry.EXTERNAL);
+    }
+
+    public boolean containsInternalSymbol(String place){
+        return symbols.containsEntryWithICodePlace(place, SymEntry.INTERNAL);
+    }
+
+    public SymEntry getInternalSymbol(String place){
+        return symbols.getEntryByICodePlace(place, SymEntry.INTERNAL);
+    }
+
+    public SymEntry getExternalSymbol(String place){
+        return symbols.getEntryByICodePlace(place, SymEntry.EXTERNAL);
+    }
 }
