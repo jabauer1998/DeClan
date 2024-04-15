@@ -118,19 +118,35 @@ public class Lib implements ICode {
         procedures.replaceLabel(from, to);
     }
 
-    public boolean containsExternalSymbol(String place){
+    public boolean containsExternalSymbolByPlace(String place){
         return symbols.containsEntryWithICodePlace(place, SymEntry.EXTERNAL);
     }
 
-    public boolean containsInternalSymbol(String place){
+    public boolean containsInternalSymbolByPlace(String place){
         return symbols.containsEntryWithICodePlace(place, SymEntry.INTERNAL);
     }
 
-    public SymEntry getInternalSymbol(String place){
+    public boolean containsExternalSymbolByIdent(String ident){
+        return symbols.containsEntryWithIdentifier(ident, SymEntry.EXTERNAL);
+    }
+
+    public boolean containsInternalSymbolByIdent(String ident){
+        return symbols.containsEntryWithIdentifier(ident, SymEntry.INTERNAL);
+    }
+
+    public SymEntry getInternalSymbolByPlace(String place){
         return symbols.getEntryByICodePlace(place, SymEntry.INTERNAL);
     }
 
-    public SymEntry getExternalSymbol(String place){
+    public SymEntry getInternalSymbolByIdent(String ident){
+        return symbols.getEntryByIdentifier(ident, SymEntry.INTERNAL);
+    }
+
+    public SymEntry getExternalSymbolByPlace(String place){
         return symbols.getEntryByICodePlace(place, SymEntry.EXTERNAL);
+    }
+
+    public SymEntry getExternalSymbolByIdent(String ident){
+        return symbols.getEntryByIdentifier(ident, SymEntry.EXTERNAL);
     }
 }
