@@ -1,5 +1,4 @@
 SYMBOL SECTION
- d73 CONST INTERNAL realBias
 DATA SECTION
  a := 3.12145 [REAL]
  GLOBAL b := a [REAL]
@@ -7,12 +6,12 @@ DATA SECTION
  GLOBAL d := c [REAL]
  GLOBAL e := 0.0 [REAL]
  d72 := 127 [INT]
- GLOBAL e16 := d72 [INT]
+ GLOBAL d73 := d72 [INT]
 CODE SECTION
  CALL RMul((b -> d42)[REAL], (d -> d43)[REAL])
  EXTERNAL RETURN d41 := d44 [REAL]
  e := d41 [REAL]
- CALL WriteReal((e -> e22)[REAL])
+ CALL WriteReal((e -> e21)[REAL])
 END
 PROC SECTION
  PROC LABEL RMul
@@ -614,8 +613,8 @@ PROC SECTION
   O0 := j9 IAND N9 [INT]
   O1 := j1 IOR O0 [INT]
   j1 := O1 [INT]
-  CALL IntBinaryAsReal((j1 -> e17)[INT])
-  EXTERNAL RETURN O2 := e20 [REAL]
+  CALL IntBinaryAsReal((j1 -> e16)[INT])
+  EXTERNAL RETURN O2 := e19 [REAL]
   j0 := O2 [REAL]
   INTERNAL RETURN d44 := j0 [REAL]
  RETURN
@@ -658,7 +657,7 @@ PROC SECTION
   d69 := 255 [INT]
   d70 := d68 IAND d69 [INT]
   d65 := d70 [INT]
-  d71 := d65 ISUB e16 [INT]
+  d71 := d65 ISUB d73 [INT]
   d62 := d71 [INT]
   INTERNAL RETURN d63 := d62 [INT]
  RETURN
@@ -731,25 +730,25 @@ PROC SECTION
   INTERNAL RETURN e11 := e10 [BOOL]
  RETURN
  PROC LABEL IntBinaryAsReal
-  PARAM e18 := e17 [INT]
-  e19 := 0.0 [REAL]
-  e21 := 0 [INT]
-  IPARAM e21
-  IPARAM e18
+  PARAM e17 := e16 [INT]
+  e18 := 0.0 [REAL]
+  e20 := 0 [INT]
+  IPARAM e20
+  IPARAM e17
   IASM "LDR %r, %a"
-  IPARAM e21
-  IPARAM e19
+  IPARAM e20
+  IPARAM e18
   IASM "STR %r, %a"
-  INTERNAL RETURN e20 := e19 [REAL]
+  INTERNAL RETURN e19 := e18 [REAL]
  RETURN
  PROC LABEL WriteReal
-  PARAM e23 := e22 [REAL]
-  e24 := 0 [INT]
-  IPARAM e24
-  IASM "MOV %r, R0"
+  PARAM e22 := e21 [REAL]
+  e23 := 0 [INT]
   IPARAM e23
+  IASM "MOV %r, R0"
+  IPARAM e22
   IASM "LDR R0, %a"
   IASM "SWI 2"
-  IPARAM e24
+  IPARAM e23
   IASM "MOV R0, %r"
  RETURN

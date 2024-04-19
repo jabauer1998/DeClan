@@ -2,6 +2,7 @@ package io.github.H20man13.DeClan.common.icode.section;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.SymEntry;
@@ -50,13 +51,14 @@ public class SymSec implements ICode {
         return entries.size();
     }
 
-    public SymEntry getEntryByIdentifier(String ident, int mask){
-        for(SymEntry entry : entries){
+    public List<SymEntry> getEntriesByIdentifier(String ident, int mask){
+        LinkedList<SymEntry> entries = new LinkedList<SymEntry>();
+        for(SymEntry entry: this.entries){
             if(entry.declanIdent.equals(ident) && entry.containsQualities(mask)){
-                return entry;
+                entries.add(entry);
             }
         }
-        return null;
+        return entries;
     }
 
     public SymEntry removeEntryWithICodePlace(String place, int mask){
@@ -76,21 +78,13 @@ public class SymSec implements ICode {
         }
     }
 
-    public SymEntry removeEntryWithIdentifier(String ident, int mask){
-        int toRemove = -1;
-        for(int i = 0; i < entries.size(); i++){
-            SymEntry entry = entries.get(i);
-            if(entry.declanIdent.equals(ident) && entry.containsQualities(mask)){
-                toRemove = i;
-                break;
+    public void removeEntriesWithIdentifier(final String ident, final int mask){
+        entries.removeIf(new Predicate<SymEntry>() {
+            @Override
+            public boolean test(SymEntry entry) {
+                return entry.declanIdent.equals(ident) && entry.containsQualities(mask);
             }
-        }
-
-        if(toRemove != -1){
-            return entries.remove(toRemove);
-        } else {
-            return null;
-        }
+        });
     }
 
     public boolean containsEntryWithICodePlace(String place, int mask){

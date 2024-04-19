@@ -138,15 +138,15 @@ public class Lib implements ICode {
         return symbols.getEntryByICodePlace(place, SymEntry.INTERNAL);
     }
 
-    public SymEntry getInternalSymbolByIdent(String ident){
-        return symbols.getEntryByIdentifier(ident, SymEntry.INTERNAL);
+    public List<SymEntry> getInternalSymbolsByIdent(String ident){
+        return symbols.getEntriesByIdentifier(ident, SymEntry.INTERNAL);
     }
 
     public SymEntry getExternalSymbolByPlace(String place){
         return symbols.getEntryByICodePlace(place, SymEntry.EXTERNAL);
     }
 
-    public SymEntry getExternalSymbolByIdent(String ident){
-        return symbols.getEntryByIdentifier(ident, SymEntry.EXTERNAL);
+    public List<SymEntry> getExternalSymbolsByIdent(String ident){
+        return symbols.getEntriesByIdentifier(ident, SymEntry.EXTERNAL);
     }
 }

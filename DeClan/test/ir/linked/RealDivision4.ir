@@ -1,5 +1,4 @@
 SYMBOL SECTION
- d73 CONST INTERNAL realBias
 DATA SECTION
  a := 1.0 [REAL]
  GLOBAL b := a [REAL]
@@ -7,7 +6,7 @@ DATA SECTION
  GLOBAL d := c [REAL]
  GLOBAL e := 0.0 [REAL]
  d72 := 127 [INT]
- GLOBAL e63 := d72 [INT]
+ GLOBAL d73 := d72 [INT]
 CODE SECTION
  CALL RDivide((b -> d42)[REAL], (d -> d43)[REAL])
  EXTERNAL RETURN d41 := d44 [REAL]
@@ -360,7 +359,7 @@ PROC SECTION
   d69 := 255 [INT]
   d70 := d68 IAND d69 [INT]
   d65 := d70 [INT]
-  d71 := d65 ISUB e63 [INT]
+  d71 := d65 ISUB d73 [INT]
   d62 := d71 [INT]
   INTERNAL RETURN d63 := d62 [INT]
  RETURN

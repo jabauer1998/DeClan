@@ -1,17 +1,14 @@
 SYMBOL SECTION
- b CONST INTERNAL realBias
 DATA SECTION
  a := 5 [INT]
  GLOBAL b := a [INT]
  GLOBAL c := 0.0 [REAL]
  GLOBAL d := 0.0 [REAL]
- e31 := 127 [INT]
- GLOBAL e32 := e31 [INT]
 CODE SECTION
  CALL IntToReal((b -> d42)[INT])
  EXTERNAL RETURN d41 := d45 [REAL]
  c := d41 [REAL]
- CALL WriteReal((c -> e48)[REAL])
+ CALL WriteReal((c -> e46)[REAL])
 END
 PROC SECTION
  PROC LABEL IntToReal
@@ -98,33 +95,33 @@ PROC SECTION
   GOTO IFEND_2_LEVEL_1_0
   LABEL IFNEXT_2_SEQ_1_LEVEL_1_0
   LABEL IFEND_2_LEVEL_1_0
-  e30 := d49 IADD e32 [INT]
+  e30 := d49 IADD b5 [INT]
   d54 := e30 [INT]
-  e33 := 8388607 [INT]
-  d56 := e33 [INT]
-  e34 := d46 IAND d56 [INT]
-  d55 := e34 [INT]
+  e31 := 8388607 [INT]
+  d56 := e31 [INT]
+  e32 := d46 IAND d56 [INT]
+  d55 := e32 [INT]
   d48 := d55 [INT]
-  e35 := 23 [INT]
-  e36 := d54 ILSHIFT e35 [INT]
-  e37 := d48 IOR e36 [INT]
-  d48 := e37 [INT]
+  e33 := 23 [INT]
+  e34 := d54 ILSHIFT e33 [INT]
+  e35 := d48 IOR e34 [INT]
+  d48 := e35 [INT]
   IF d47 EQ TRUE THEN IFSTAT_3_SEQ_0_LEVEL_1 ELSE IFNEXT_3_SEQ_0_LEVEL_1
   LABEL IFSTAT_3_SEQ_0_LEVEL_1
-  e38 := 1 [INT]
-  e39 := 31 [INT]
-  e40 := e38 ILSHIFT e39 [INT]
-  e41 := d48 IOR e40 [INT]
-  d48 := e41 [INT]
+  e36 := 1 [INT]
+  e37 := 31 [INT]
+  e38 := e36 ILSHIFT e37 [INT]
+  e39 := d48 IOR e38 [INT]
+  d48 := e39 [INT]
   GOTO IFEND_3_LEVEL_1
   LABEL IFNEXT_3_SEQ_0_LEVEL_1
   LABEL IFEND_3_LEVEL_1
   GOTO IFEND_0_LEVEL_0_1
   LABEL IFNEXT_0_SEQ_1_LEVEL_0_1
   LABEL IFEND_0_LEVEL_0_1
-  CALL IntBinaryAsReal((d48 -> e42)[INT])
-  EXTERNAL RETURN e47 := e45 [REAL]
-  d44 := e47 [REAL]
+  CALL IntBinaryAsReal((d48 -> e40)[INT])
+  EXTERNAL RETURN e45 := e43 [REAL]
+  d44 := e45 [REAL]
   INTERNAL RETURN d45 := d44 [REAL]
  RETURN
  PROC LABEL Abs
@@ -197,25 +194,25 @@ PROC SECTION
   INTERNAL RETURN d92 := d91 [BOOL]
  RETURN
  PROC LABEL IntBinaryAsReal
-  PARAM e43 := e42 [INT]
-  e44 := 0.0 [REAL]
-  e46 := 0 [INT]
-  IPARAM e46
-  IPARAM e43
-  IASM "LDR %r, %a"
-  IPARAM e46
+  PARAM e41 := e40 [INT]
+  e42 := 0.0 [REAL]
+  e44 := 0 [INT]
   IPARAM e44
+  IPARAM e41
+  IASM "LDR %r, %a"
+  IPARAM e44
+  IPARAM e42
   IASM "STR %r, %a"
-  INTERNAL RETURN e45 := e44 [REAL]
+  INTERNAL RETURN e43 := e42 [REAL]
  RETURN
  PROC LABEL WriteReal
-  PARAM e49 := e48 [REAL]
-  e50 := 0 [INT]
-  IPARAM e50
+  PARAM e47 := e46 [REAL]
+  e48 := 0 [INT]
+  IPARAM e48
   IASM "MOV %r, R0"
-  IPARAM e49
+  IPARAM e47
   IASM "LDR R0, %a"
   IASM "SWI 2"
-  IPARAM e50
+  IPARAM e48
   IASM "MOV R0, %r"
  RETURN
