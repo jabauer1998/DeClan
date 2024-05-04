@@ -1,7 +1,9 @@
 package io.github.H20man13.DeClan.common.icode.section;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
@@ -145,5 +147,68 @@ public class ProcSec implements ICode {
         for(Proc procedure: procedures){
             procedure.replaceLabel(from, to);
         }
+    }
+
+    @Override
+    public boolean containsParamater(String place) {
+        return false;
+    }
+
+    @Override
+    public Set<String> paramaterForFunctions(String place) {
+        HashSet<String> resultSet = new HashSet<String>();
+        for(Proc procedure: procedures){
+            Set<String> procedureResultSet = procedure.paramaterForFunctions(place);
+            resultSet.addAll(procedureResultSet);
+        }
+        return resultSet;
+    }
+
+    @Override
+    public Set<String> argumentInFunctions(String place) {
+        HashSet<String> resultSet = new HashSet<String>();
+        for(Proc procedure: procedures){
+            Set<String> procedureResultSet = procedure.argumentInFunctions(place);
+            resultSet.addAll(procedureResultSet);
+        }
+        return resultSet;
+    }
+
+    @Override
+    public boolean containsArgument(String place) {
+        for(Proc procedure: procedures){
+            if(procedure.containsArgument(place))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Set<String> internalReturnForFunctions(String place) {
+        HashSet<String> toRet = new HashSet<String>();
+        for(Proc procedure: procedures){
+            Set<String> toAdd = procedure.internalReturnForFunctions(place);
+            toRet.addAll(toAdd);
+        }
+        return toRet;
+    }
+
+    @Override
+    public Set<String> externalReturnForFunctions(String place) {
+        HashSet<String> toRet = new HashSet<String>();
+        for(Proc procedure: procedures){
+            Set<String> toAdd = procedure.externalReturnForFunctions(place);
+            toRet.addAll(toAdd);
+        }
+        return toRet;
+    }
+
+    @Override
+    public boolean containsReturn(String place) {
+        for(Proc proc: procedures){
+            if(proc.containsReturn(place))
+                return true;
+        }
+        return false;
     }
 }

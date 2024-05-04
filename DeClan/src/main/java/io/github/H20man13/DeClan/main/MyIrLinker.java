@@ -2486,31 +2486,55 @@ public class MyIrLinker {
     }
 
     private static boolean placeIsUniqueAcrossProgramAndLibraries(String place, Prog program, Lib[] libraries){
+        Set<String> internalReturnsRepresented = new HashSet<String>();
+        Set<String> argumentRepresented = new HashSet<String>();
+        Set<String> paramaterRepresented = new HashSet<String>();
+        Set<String> externalReturnsRepresented = new HashSet<String>();
         Set<String> externalIdentsRepresented = new HashSet<String>();
         Set<String> internalIdentsRepresented = new HashSet<String>();
         int localVariableCount = 0;
-
+        
         if(program.containsExternalSymbolByPlace(place)){
             externalIdentsRepresented.add(program.getExternalSymbolByPlace(place).declanIdent);
+        } else if(program.containsParamater(place)){
+            paramaterRepresented.addAll(program.paramaterForFunctions(place));
+        } else if(program.containsArgument(place)){
+            argumentRepresented.addAll(program.argumentInFunctions(place));  
+        } else if(program.containsReturn(place)){
+            internalReturnsRepresented.addAll(program.internalReturnForFunctions(place));
+            externalReturnsRepresented.addAll(program.externalReturnForFunctions(place));
         } else if(program.containsInternalSymbolByPlace(place)){
             internalIdentsRepresented.add(program.getInternalSymbolByPlace(place).declanIdent);
         } else if(program.containsPlace(place)) {
             localVariableCount++;
-        }
+        } 
 
         for(Lib lib: libraries){
             if(lib.containsExternalSymbolByPlace(place)){
                 externalIdentsRepresented.add(lib.getExternalSymbolByPlace(place).declanIdent);
             } else if(lib.containsInternalSymbolByPlace(place)){
                 internalIdentsRepresented.add(lib.getInternalSymbolByPlace(place).declanIdent);
+            } else if(lib.containsParamater(place)){
+                paramaterRepresented.addAll(lib.paramaterForFunctions(place));
+            } else if(lib.containsArgument(place)){
+                argumentRepresented.addAll(lib.argumentInFunctions(place));  
+            } else if(lib.containsReturn(place)){
+                internalReturnsRepresented.addAll(lib.internalReturnForFunctions(place));
+                externalReturnsRepresented.addAll(lib.externalReturnForFunctions(place));
             } else if(lib.containsPlace(place)){
                 localVariableCount++;
             }
         }
 
-        if(localVariableCount == 1 && externalIdentsRepresented.size() == 0 && internalIdentsRepresented.size() == 0){
+        if(localVariableCount == 1 && externalIdentsRepresented.isEmpty() 
+            && internalIdentsRepresented.isEmpty() && internalReturnsRepresented.isEmpty() 
+            && externalReturnsRepresented.isEmpty() && argumentRepresented.isEmpty() 
+            && paramaterRepresented.isEmpty()){
             return true;
-        } else if(externalIdentsRepresented.size() == 1 && internalIdentsRepresented.size() == 1 && localVariableCount == 0){
+        } else if(externalIdentsRepresented.size() == 1 && internalIdentsRepresented.size() == 1 
+                && argumentRepresented.isEmpty() && paramaterRepresented.isEmpty() 
+                && externalIdentsRepresented.isEmpty() && internalIdentsRepresented.isEmpty() 
+                && localVariableCount == 0){
             for(String externalIdent: externalIdentsRepresented){
                 for(String internalIdent: internalIdentsRepresented){
                     return externalIdent.equals(internalIdent);
@@ -2518,7 +2542,40 @@ public class MyIrLinker {
             }
             //Not Used
             return false;
-        } else if(internalIdentsRepresented.size() == 1 && externalIdentsRepresented.size() == 0 && localVariableCount == 0){
+        } else if(internalIdentsRepresented.size() == 1 && externalIdentsRepresented.isEmpty() 
+                && paramaterRepresented.isEmpty() && argumentRepresented.isEmpty() 
+                && internalReturnsRepresented.isEmpty() && externalReturnsRepresented.isEmpty() 
+                && localVariableCount == 0){
+            return true;
+        } else if(paramaterRepresented.size() == 1 && argumentRepresented.size() == 1
+                && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
+                && internalReturnsRepresented.isEmpty() && externalReturnsRepresented.isEmpty()
+                && localVariableCount == 0){
+            for(String paramaterFunc: paramaterRepresented){
+                for(String argumentFunc: argumentRepresented){
+                    return paramaterFunc.equals(argumentFunc);
+                }
+            }
+            return false; //Unused
+        } else if (paramaterRepresented.size() == 1 && argumentRepresented.isEmpty()
+            && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
+            && internalReturnsRepresented.isEmpty() && externalReturnsRepresented.isEmpty()
+            && localVariableCount == 0){
+            return true;
+        } else if(internalReturnsRepresented.size() == 1 && externalReturnsRepresented.size() == 1
+                && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
+                && argumentRepresented.isEmpty() && paramaterRepresented.isEmpty()
+                && localVariableCount == 0){
+            for(String internalReturn: internalReturnsRepresented){
+                for(String externalReturn: externalReturnsRepresented){
+                    return internalReturn.equals(externalReturn);
+                }
+            }
+            return false; //Unused
+        } else if(internalReturnsRepresented.size() == 1 && externalReturnsRepresented.isEmpty()
+        && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
+        && argumentRepresented.isEmpty() && paramaterRepresented.isEmpty()
+        && localVariableCount == 0){
             return true;
         } else {
             return false;
@@ -2611,31 +2668,55 @@ public class MyIrLinker {
     }
 
     private static boolean placeIsUniqueAcrossLibraries(String place, Lib library, Lib[] libraries){
+        Set<String> internalReturnsRepresented = new HashSet<String>();
+        Set<String> argumentRepresented = new HashSet<String>();
+        Set<String> paramaterRepresented = new HashSet<String>();
+        Set<String> externalReturnsRepresented = new HashSet<String>();
         Set<String> externalIdentsRepresented = new HashSet<String>();
         Set<String> internalIdentsRepresented = new HashSet<String>();
         int localVariableCount = 0;
-
+        
         if(library.containsExternalSymbolByPlace(place)){
             externalIdentsRepresented.add(library.getExternalSymbolByPlace(place).declanIdent);
+        } else if(library.containsParamater(place)){
+            paramaterRepresented.addAll(library.paramaterForFunctions(place));
+        } else if(library.containsArgument(place)){
+            argumentRepresented.addAll(library.argumentInFunctions(place));  
+        } else if(library.containsReturn(place)){
+            internalReturnsRepresented.addAll(library.internalReturnForFunctions(place));
+            externalReturnsRepresented.addAll(library.externalReturnForFunctions(place));
         } else if(library.containsInternalSymbolByPlace(place)){
             internalIdentsRepresented.add(library.getInternalSymbolByPlace(place).declanIdent);
         } else if(library.containsPlace(place)) {
             localVariableCount++;
-        }
+        } 
 
         for(Lib lib: libraries){
             if(lib.containsExternalSymbolByPlace(place)){
                 externalIdentsRepresented.add(lib.getExternalSymbolByPlace(place).declanIdent);
             } else if(lib.containsInternalSymbolByPlace(place)){
                 internalIdentsRepresented.add(lib.getInternalSymbolByPlace(place).declanIdent);
-            } else if(lib.containsPlace(place)) {
+            } else if(lib.containsParamater(place)){
+                paramaterRepresented.addAll(lib.paramaterForFunctions(place));
+            } else if(lib.containsArgument(place)){
+                argumentRepresented.addAll(lib.argumentInFunctions(place));  
+            } else if(lib.containsReturn(place)){
+                internalReturnsRepresented.addAll(lib.internalReturnForFunctions(place));
+                externalReturnsRepresented.addAll(lib.externalReturnForFunctions(place));
+            } else if(lib.containsPlace(place)){
                 localVariableCount++;
             }
         }
 
-        if(localVariableCount == 1 && externalIdentsRepresented.size() == 0 && internalIdentsRepresented.size() == 0){
+        if(localVariableCount == 1 && externalIdentsRepresented.isEmpty() 
+            && internalIdentsRepresented.isEmpty() && internalReturnsRepresented.isEmpty() 
+            && externalReturnsRepresented.isEmpty() && argumentRepresented.isEmpty() 
+            && paramaterRepresented.isEmpty()){
             return true;
-        } else if(externalIdentsRepresented.size() == 1 && internalIdentsRepresented.size() == 1 && localVariableCount == 0){
+        } else if(externalIdentsRepresented.size() == 1 && internalIdentsRepresented.size() == 1 
+                && argumentRepresented.isEmpty() && paramaterRepresented.isEmpty() 
+                && externalIdentsRepresented.isEmpty() && internalIdentsRepresented.isEmpty() 
+                && localVariableCount == 0){
             for(String externalIdent: externalIdentsRepresented){
                 for(String internalIdent: internalIdentsRepresented){
                     return externalIdent.equals(internalIdent);
@@ -2643,7 +2724,40 @@ public class MyIrLinker {
             }
             //Not Used
             return false;
-        } else if(internalIdentsRepresented.size() == 1 && externalIdentsRepresented.size() == 0 && localVariableCount == 0){
+        } else if(internalIdentsRepresented.size() == 1 && externalIdentsRepresented.isEmpty() 
+                && paramaterRepresented.isEmpty() && argumentRepresented.isEmpty() 
+                && internalReturnsRepresented.isEmpty() && externalReturnsRepresented.isEmpty() 
+                && localVariableCount == 0){
+            return true;
+        } else if(paramaterRepresented.size() == 1 && argumentRepresented.size() == 1
+                && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
+                && internalReturnsRepresented.isEmpty() && externalReturnsRepresented.isEmpty()
+                && localVariableCount == 0){
+            for(String paramaterFunc: paramaterRepresented){
+                for(String argumentFunc: argumentRepresented){
+                    return paramaterFunc.equals(argumentFunc);
+                }
+            }
+            return false; //Unused
+        } else if (paramaterRepresented.size() == 1 && argumentRepresented.isEmpty()
+            && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
+            && internalReturnsRepresented.isEmpty() && externalReturnsRepresented.isEmpty()
+            && localVariableCount == 0){
+            return true;
+        } else if(internalReturnsRepresented.size() == 1 && externalReturnsRepresented.size() == 1
+                && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
+                && argumentRepresented.isEmpty() && paramaterRepresented.isEmpty()
+                && localVariableCount == 0){
+            for(String internalReturn: internalReturnsRepresented){
+                for(String externalReturn: externalReturnsRepresented){
+                    return internalReturn.equals(externalReturn);
+                }
+            }
+            return false; //Unused
+        } else if(internalReturnsRepresented.size() == 1 && externalReturnsRepresented.isEmpty()
+        && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
+        && argumentRepresented.isEmpty() && paramaterRepresented.isEmpty()
+        && localVariableCount == 0){
             return true;
         } else {
             return false;

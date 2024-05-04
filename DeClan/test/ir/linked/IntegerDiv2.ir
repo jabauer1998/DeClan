@@ -6,7 +6,7 @@ DATA SECTION
  GLOBAL d := c [INT]
  GLOBAL e := 0 [INT]
 CODE SECTION
- CALL Div((b -> i8)[INT], (d -> j0)[INT])
+ CALL Div((b -> i8)[INT], (q5 -> j0)[INT])
  EXTERNAL RETURN i5 := j3 [INT]
  e := i5 [INT]
  CALL WriteInt((e -> q5)[INT])
@@ -29,7 +29,7 @@ PROC SECTION
   m9 := k4 [INT]
   k6 := 0 [INT]
   m6 := k6 [INT]
-  CALL IntIsZero((k3 -> k9)[INT])
+  CALL IntIsZero((n7 -> k9)[INT])
   EXTERNAL RETURN k8 := l2 [BOOL]
   n5 := BNOT k8 [BOOL]
   IF n5 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_0
@@ -53,7 +53,7 @@ PROC SECTION
   n0 := 1 [INT]
   n1 := n7 IRSHIFT n0 [INT]
   n7 := n1 [INT]
-  CALL IntIsZero((n2 -> k9)[INT])
+  CALL IntIsZero((n7 -> k9)[INT])
   EXTERNAL RETURN n3 := l2 [BOOL]
   n4 := BNOT n3 [BOOL]
   n5 := n4 [BOOL]

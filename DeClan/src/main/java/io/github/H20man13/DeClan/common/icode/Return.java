@@ -1,7 +1,9 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import io.github.H20man13.DeClan.common.pat.P;
 
@@ -60,5 +62,40 @@ public class Return implements ICode {
 	@Override
 	public void replaceLabel(String from, String to) {
 		//Do nothing this is just a placeholder
+	}
+
+	@Override
+	public boolean containsParamater(String place) {
+		return false;
+	}
+
+	@Override
+	public boolean containsArgument(String place) {
+		return false;
+	}
+
+	@Override
+	public Set<String> paramaterForFunctions(String place) {
+		return new HashSet<String>();
+	}
+
+	@Override
+	public Set<String> argumentInFunctions(String place) {
+		return new HashSet<String>();
+	}
+
+	@Override
+	public Set<String> internalReturnForFunctions(String place) {
+		return new HashSet<String>();
+	}
+
+	@Override
+	public Set<String> externalReturnForFunctions(String place) {
+		return new HashSet<String>();
+	}
+
+	@Override
+	public boolean containsReturn(String place) {
+		return false;
 	}
 }

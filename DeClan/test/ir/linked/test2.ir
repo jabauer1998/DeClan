@@ -13,7 +13,7 @@ CODE SECTION
  LABEL WHILECOND_0_SEQ_0_LEVEL_0_0
  IF h EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_0 ELSE WHILEEND_0_LEVEL_0_0
  LABEL WHILESTAT_0_SEQ_0_LEVEL_0_0
- CALL INeg((d -> i8)[INT])
+ CALL INeg((m3 -> i8)[INT])
  EXTERNAL RETURN j5 := j1 [INT]
  d := j5 [INT]
  j := 0 [INT]
@@ -72,7 +72,7 @@ PROC SECTION
   PARAM v5 := j6 [INT]
   m1 := FALSE [BOOL]
   j9 := 2 [INT]
-  CALL Mod((j7 -> k1)[INT], (j9 -> k3)[INT])
+  CALL Mod((v5 -> k1)[INT], (j9 -> k3)[INT])
   EXTERNAL RETURN k0 := k6 [INT]
   l9 := 0 [INT]
   m0 := k0 NE l9 [BOOL]
@@ -102,7 +102,7 @@ PROC SECTION
   v2 := 0 [INT]
   CALL WriteInt((v2 -> m3)[INT])
   v3 := 2 [INT]
-  CALL Div((u7 -> n0)[INT], (v3 -> n2)[INT])
+  CALL Div((v5 -> n0)[INT], (v3 -> n2)[INT])
   EXTERNAL RETURN v4 := n5 [INT]
   v5 := v4 [INT]
   GOTO IFEND_0_LEVEL_0_1
@@ -161,7 +161,7 @@ PROC SECTION
   r1 := o6 [INT]
   o8 := 0 [INT]
   q8 := o8 [INT]
-  CALL IntIsZero((o5 -> p1)[INT])
+  CALL IntIsZero((r9 -> p1)[INT])
   EXTERNAL RETURN p0 := p4 [BOOL]
   r7 := BNOT p0 [BOOL]
   IF r7 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_1 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_1
@@ -185,7 +185,7 @@ PROC SECTION
   r2 := 1 [INT]
   r3 := r9 IRSHIFT r2 [INT]
   r9 := r3 [INT]
-  CALL IntIsZero((r4 -> p1)[INT])
+  CALL IntIsZero((r9 -> p1)[INT])
   EXTERNAL RETURN r5 := p4 [BOOL]
   r6 := BNOT r5 [BOOL]
   r7 := r6 [BOOL]

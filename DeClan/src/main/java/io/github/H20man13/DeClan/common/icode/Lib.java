@@ -1,7 +1,9 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
@@ -134,6 +136,10 @@ public class Lib implements ICode {
         return symbols.containsEntryWithIdentifier(ident, SymEntry.INTERNAL);
     }
 
+    public boolean containsParamater(String place){
+        return procedures.containsParamater(place);
+    }
+
     public SymEntry getInternalSymbolByPlace(String place){
         return symbols.getEntryByICodePlace(place, SymEntry.INTERNAL);
     }
@@ -148,5 +154,53 @@ public class Lib implements ICode {
 
     public List<SymEntry> getExternalSymbolsByIdent(String ident){
         return symbols.getEntriesByIdentifier(ident, SymEntry.EXTERNAL);
+    }
+
+    @Override
+    public boolean containsArgument(String place) {
+        boolean variablesContainsArgument = variables.containsArgument(place);
+        boolean proceduresContainsArgument = procedures.containsArgument(place);
+        return variablesContainsArgument && proceduresContainsArgument;
+    }
+
+    @Override
+    public Set<String> paramaterForFunctions(String place) {
+        return procedures.paramaterForFunctions(place);
+    }
+
+    @Override
+    public Set<String> argumentInFunctions(String place) {
+        Set<String> newResult = new HashSet<String>();
+        Set<String> varResult = variables.argumentInFunctions(place);
+        Set<String> procResult = procedures.argumentInFunctions(place);
+        newResult.addAll(varResult);
+        newResult.addAll(procResult);
+        return newResult;
+    }
+
+    @Override
+    public Set<String> internalReturnForFunctions(String place) {
+        return procedures.internalReturnForFunctions(place);
+    }
+
+    @Override
+    public Set<String> externalReturnForFunctions(String place) {
+        Set<String> newResult = new HashSet<String>();
+        Set<String> varResult = variables.externalReturnForFunctions(place);
+        Set<String> procResult = procedures.externalReturnForFunctions(place);
+        newResult.addAll(varResult);
+        newResult.addAll(procResult);
+        return newResult;
+    }
+
+    @Override
+    public boolean containsReturn(String place) {
+        if(variables.containsReturn(place))
+            return true;
+
+        if(procedures.containsReturn(place))
+            return true;
+
+        return false;
     }
 }

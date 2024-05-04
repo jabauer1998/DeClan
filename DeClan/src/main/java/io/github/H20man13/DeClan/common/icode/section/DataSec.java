@@ -1,7 +1,9 @@
 package io.github.H20man13.DeClan.common.icode.section;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -129,5 +131,64 @@ public class DataSec implements ICode {
         for(ICode intCode: intermediateCode){
             intCode.replaceLabel(from, to);
         }
+    }
+
+    @Override
+    public boolean containsParamater(String place) {
+        return false;
+    }
+
+    @Override
+    public Set<String> paramaterForFunctions(String place) {
+        HashSet<String> newResult = new HashSet<String>();
+        for(ICode instruction: intermediateCode){
+            Set<String> instructionResult = instruction.paramaterForFunctions(place);
+            newResult.addAll(instructionResult);
+        }
+        return newResult;
+    }
+
+    @Override
+    public Set<String> argumentInFunctions(String place) {
+        HashSet<String> newResult = new HashSet<String>();
+        for(ICode instruction: intermediateCode){
+            Set<String> instructionResult = instruction.argumentInFunctions(place);
+            newResult.addAll(instructionResult);
+        }
+        return newResult;
+    }
+
+    @Override
+    public boolean containsArgument(String place) {
+        for(ICode instruction: intermediateCode){
+            if(instruction.containsArgument(place)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Set<String> internalReturnForFunctions(String place) {
+        return new HashSet<String>();
+    }
+
+    @Override
+    public Set<String> externalReturnForFunctions(String place) {
+        HashSet<String> toRet = new HashSet<String>();
+        for(ICode instr: intermediateCode){
+            Set<String> toAdd = instr.externalReturnForFunctions(place);
+            toRet.addAll(toAdd);
+        }
+        return toRet;
+    }
+
+    @Override
+    public boolean containsReturn(String place) {
+        for(ICode instr: intermediateCode){
+            if(instr.containsReturn(place))
+                return true;
+        }
+        return false;
     }
 }

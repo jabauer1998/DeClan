@@ -1,9 +1,12 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
+import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Assign implements ICode{
@@ -137,5 +140,57 @@ public class Assign implements ICode{
     @Override
     public void replaceLabel(String from, String to) {
         //Do nothing
+    }
+
+    @Override
+    public boolean containsParamater(String place) {
+        if(this.scope == Scope.PARAM){
+            return value.containsPlace(place);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean containsArgument(String place) {
+        if(this.scope == Scope.ARGUMENT){
+            return value.containsPlace(place);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public Set<String> paramaterForFunctions(String place) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'paramaterForFunctions'");
+    }
+
+    @Override
+    public Set<String> argumentInFunctions(String place) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'argumentInFunctions'");
+    }
+
+    @Override
+    public Set<String> internalReturnForFunctions(String place) {
+        return new HashSet<String>();
+    }
+
+    @Override
+    public Set<String> externalReturnForFunctions(String place) {
+        return new HashSet<String>();
+    }
+
+    @Override
+    public boolean containsReturn(String place) {
+        if(this.scope == Scope.EXTERNAL_RETURN)
+            return true;
+        else if(this.scope == Scope.INTERNAL_RETURN)
+            return true;
+        else if(this.value instanceof ExternalCall)
+            return true;
+
+        return false;
     }
 }

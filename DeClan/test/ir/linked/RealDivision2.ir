@@ -537,7 +537,7 @@ PROC SECTION
   w9 := v5 [INT]
   v7 := 0 [INT]
   w6 := v7 [INT]
-  CALL IntIsZero((v4 -> q1)[INT])
+  CALL IntIsZero((x7 -> q1)[INT])
   EXTERNAL RETURN v9 := q4 [BOOL]
   x5 := BNOT v9 [BOOL]
   IF x5 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0_1 ELSE WHILENEXT_0_SEQ_0_LEVEL_0_1
@@ -561,7 +561,7 @@ PROC SECTION
   x0 := 1 [INT]
   x1 := x7 IRSHIFT x0 [INT]
   x7 := x1 [INT]
-  CALL IntIsZero((x2 -> q1)[INT])
+  CALL IntIsZero((x7 -> q1)[INT])
   EXTERNAL RETURN x3 := q4 [BOOL]
   x4 := BNOT x3 [BOOL]
   x5 := x4 [BOOL]

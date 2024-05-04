@@ -1,7 +1,9 @@
 package io.github.H20man13.DeClan.common.icode.procedure;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.Assign;
@@ -108,5 +110,62 @@ public class Call implements ICode {
 	public void replaceLabel(String from, String to) {
 		if(pname.equals(from))
 			pname = to;
+	}
+
+	@Override
+	public boolean containsParamater(String place) {
+		for(Assign assign: params){
+			if(assign.place.equals(place)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public Set<String> paramaterForFunctions(String place) {
+		if(containsParamater(place)){
+			HashSet<String> toRet = new HashSet<String>();
+			toRet.add(pname);
+			return toRet;
+		} else {
+			return new HashSet<String>();
+		}
+	}
+
+	@Override
+	public Set<String> argumentInFunctions(String place) {
+		if(containsArgument(place)){
+			HashSet<String> toRet = new HashSet<String>();
+			toRet.add(pname);
+			return toRet;
+		} else {
+			return new HashSet<String>();
+		}
+	}
+
+	@Override
+	public boolean containsArgument(String place) {
+		for(Assign paramAssigns: params){
+			if(paramAssigns.value.containsPlace(place)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public Set<String> internalReturnForFunctions(String place) {
+		return new HashSet<String>();
+	}
+
+	@Override
+	public Set<String> externalReturnForFunctions(String place) {
+		return new HashSet<String>();
+	}
+
+	@Override
+	public boolean containsReturn(String place) {
+		return false;
 	}
 }

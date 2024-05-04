@@ -1,7 +1,9 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
@@ -96,5 +98,20 @@ public class Prog extends Lib implements ICode {
         if(super.containsPlace(place))
             return true;
         return code.containsPlace(place);
+    }
+
+    @Override
+    public boolean containsReturn(String place){
+        if(super.containsReturn(place))
+            return true;
+        return code.containsReturn(place);
+    }
+
+    @Override
+    public Set<String> externalReturnForFunctions(String place){
+        HashSet<String> toRet = new HashSet<String>();
+        toRet.addAll(super.externalReturnForFunctions(place));
+        toRet.addAll(code.externalReturnForFunctions(place));
+        return toRet;
     }
 }
