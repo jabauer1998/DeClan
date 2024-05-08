@@ -72,13 +72,11 @@ public class DagInlineAssemblyNode implements DagNode{
 
     @Override
     public ScopeType getScopeType() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getScopeType'");
+        return null;
     }
 
     @Override
     public ValueType getValueType() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getValueType'");
+        return null;
     }
 }

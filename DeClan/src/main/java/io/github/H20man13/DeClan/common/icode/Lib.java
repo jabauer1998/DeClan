@@ -194,13 +194,20 @@ public class Lib implements ICode {
     }
 
     @Override
-    public boolean containsReturn(String place) {
-        if(variables.containsReturn(place))
+    public boolean containsExternalReturn(String place) {
+        if(variables.containsExternalReturn(place))
             return true;
 
-        if(procedures.containsReturn(place))
+        if(procedures.containsExternalReturn(place))
             return true;
 
+        return false;
+    }
+
+    @Override
+    public boolean containsInternalReturn(String place) {
+        if(procedures.containsInternalReturn(place))
+            return true;
         return false;
     }
 }

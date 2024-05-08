@@ -151,6 +151,10 @@ public class ProcSec implements ICode {
 
     @Override
     public boolean containsParamater(String place) {
+        for(Proc procedure: procedures){
+            if(procedure.containsParamater(place))
+                return true;
+        }
         return false;
     }
 
@@ -204,9 +208,18 @@ public class ProcSec implements ICode {
     }
 
     @Override
-    public boolean containsReturn(String place) {
+    public boolean containsExternalReturn(String place) {
         for(Proc proc: procedures){
-            if(proc.containsReturn(place))
+            if(proc.containsExternalReturn(place))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean containsInternalReturn(String place){
+        for(Proc proc: procedures){
+            if(proc.containsInternalReturn(place))
                 return true;
         }
         return false;

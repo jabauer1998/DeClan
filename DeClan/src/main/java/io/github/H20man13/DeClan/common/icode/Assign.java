@@ -162,14 +162,12 @@ public class Assign implements ICode{
 
     @Override
     public Set<String> paramaterForFunctions(String place) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'paramaterForFunctions'");
+        return new HashSet<String>();
     }
 
     @Override
     public Set<String> argumentInFunctions(String place) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'argumentInFunctions'");
+        return new HashSet<String>();
     }
 
     @Override
@@ -183,14 +181,16 @@ public class Assign implements ICode{
     }
 
     @Override
-    public boolean containsReturn(String place) {
-        if(this.scope == Scope.EXTERNAL_RETURN)
-            return true;
-        else if(this.scope == Scope.INTERNAL_RETURN)
-            return true;
-        else if(this.value instanceof ExternalCall)
-            return true;
+    public boolean containsInternalReturn(String place) {
+        if(this.scope == Scope.INTERNAL_RETURN) 
+            return this.place.equals(place);
+        return false;
+    }
 
+    @Override
+    public boolean containsExternalReturn(String place){
+        if(this.scope == Scope.EXTERNAL_RETURN)
+            return this.value.containsPlace(place);
         return false;
     }
 }

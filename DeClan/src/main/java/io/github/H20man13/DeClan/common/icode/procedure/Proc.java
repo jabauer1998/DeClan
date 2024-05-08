@@ -333,13 +333,18 @@ public class Proc implements ICode {
     }
 
     @Override
-    public boolean containsReturn(String place) {
+    public boolean containsExternalReturn(String place) {
         for(ICode icode: instructions){
-            if(icode.containsReturn(place))
+            if(icode.containsExternalReturn(place))
                 return true;
         }
-        if(placement.containsReturn(place))
-            return true;
+        return false;
+    }
+
+    @Override
+    public boolean containsInternalReturn(String place) {
+        if(this.placement != null)
+            return this.placement.containsInternalReturn(place);
         return false;
     }
 }

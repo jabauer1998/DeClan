@@ -61,18 +61,16 @@ public class DagNullNode implements DagNode {
 
     @Override
     public List<String> getIdentifiers() {
-        return identifiers;
+        return new LinkedList<String>();
     }
 
     @Override
     public ScopeType getScopeType() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getScopeType'");
+        return null;
     }
 
     @Override
     public ValueType getValueType() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getValueType'");
+        return null;
     }
 }

@@ -97,26 +97,22 @@ public class AddressCalculatorVisitor implements ArmAssemblerVisitor<Integer> {
 
     @Override
     public Integer visit(ParseTree tree) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'visit'");
+        return null;
     }
 
     @Override
     public Integer visitChildren(RuleNode node) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'visitChildren'");
+        return null;
     }
 
     @Override
     public Integer visitTerminal(TerminalNode node) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'visitTerminal'");
+        return null;
     }
 
     @Override
     public Integer visitErrorNode(ErrorNode node) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'visitErrorNode'");
+        return null;
     }
 
     @Override

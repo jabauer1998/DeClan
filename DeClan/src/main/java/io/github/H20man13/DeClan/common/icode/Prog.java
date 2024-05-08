@@ -101,10 +101,10 @@ public class Prog extends Lib implements ICode {
     }
 
     @Override
-    public boolean containsReturn(String place){
-        if(super.containsReturn(place))
+    public boolean containsExternalReturn(String place){
+        if(super.containsExternalReturn(place))
             return true;
-        return code.containsReturn(place);
+        return code.containsExternalReturn(place);
     }
 
     @Override

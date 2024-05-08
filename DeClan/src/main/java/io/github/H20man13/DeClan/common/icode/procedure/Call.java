@@ -147,7 +147,7 @@ public class Call implements ICode {
 	@Override
 	public boolean containsArgument(String place) {
 		for(Assign paramAssigns: params){
-			if(paramAssigns.value.containsPlace(place)){
+			if(paramAssigns.place.equals(place)){
 				return true;
 			}
 		}
@@ -165,7 +165,12 @@ public class Call implements ICode {
 	}
 
 	@Override
-	public boolean containsReturn(String place) {
+	public boolean containsInternalReturn(String place) {
+		return false;
+	}
+
+	@Override
+	public boolean containsExternalReturn(String place) {
 		return false;
 	}
 }

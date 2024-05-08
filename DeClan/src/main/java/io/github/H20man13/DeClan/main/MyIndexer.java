@@ -298,12 +298,11 @@ public class MyIndexer implements ASTVisitor {
 
 	@Override
 	public void visit(Library library) {
-		
+		//Do nothing
 	}
 
 	@Override
 	public void visit(Asm asm) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'visit'");
+		//Do nothing
 	}
 }

@@ -186,11 +186,16 @@ public class CodeSec implements ICode {
     }
 
     @Override
-    public boolean containsReturn(String place) {
+    public boolean containsExternalReturn(String place) {
         for(ICode instr: intermediateCode){
-            if(instr.containsReturn(place))
+            if(instr.containsExternalReturn(place))
                 return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean containsInternalReturn(String place) {
         return false;
     }
 }

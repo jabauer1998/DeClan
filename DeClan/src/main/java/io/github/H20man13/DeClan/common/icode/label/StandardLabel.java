@@ -77,7 +77,12 @@ public class StandardLabel extends Label {
     }
 
     @Override
-    public boolean containsReturn(String place) {
+    public boolean containsInternalReturn(String place) {
+        return false;
+    }
+
+    @Override
+    public boolean containsExternalReturn(String place) {
         return false;
     }
 }

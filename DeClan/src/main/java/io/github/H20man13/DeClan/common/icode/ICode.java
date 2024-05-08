@@ -19,7 +19,8 @@ public interface ICode {
     public Set<String> internalReturnForFunctions(String place);
     public Set<String> externalReturnForFunctions(String place);
     public boolean containsArgument(String place);
-    public boolean containsReturn(String place);
+    public boolean containsInternalReturn(String place);
+    public boolean containsExternalReturn(String place);
     public boolean containsLabel(String label);
     public void replacePlace(String from, String to);
     public void replaceLabel(String from, String to);
