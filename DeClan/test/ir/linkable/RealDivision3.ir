@@ -17,42 +17,14 @@ DATA SECTION
  GLOBAL h := 0 [INT]
  GLOBAL i := 0 [INT]
 CODE SECTION
- j := "A as Int: " [STRING]
- EXTERNAL CALL WriteString((j, [STRING]))
- EXTERNAL CALL WriteInt((b, [INT]))
- EXTERNAL CALL WriteLn()
- k := "B as Int: " [STRING]
- EXTERNAL CALL WriteString((k, [STRING]))
- EXTERNAL CALL WriteInt((d, [INT]))
- EXTERNAL CALL WriteLn()
- l := EXTERNAL CALL IntToReal((b, [INT])) [REAL]
- f := l [REAL]
- m := EXTERNAL CALL IntToReal((d, [INT])) [REAL]
- g := m [REAL]
- n := "A as Real: " [STRING]
- EXTERNAL CALL WriteString((n, [STRING]))
- EXTERNAL CALL WriteReal((f, [REAL]))
- EXTERNAL CALL WriteLn()
- o := "B as Real: " [STRING]
- EXTERNAL CALL WriteString((o, [STRING]))
- EXTERNAL CALL WriteReal((g, [REAL]))
- EXTERNAL CALL WriteLn()
- p := EXTERNAL CALL RealBinaryAsInt((f, [REAL])) [INT]
- i := p [INT]
- q := EXTERNAL CALL RealBinaryAsInt((g, [REAL])) [INT]
- h := q [INT]
- r := "A as Real Int: " [STRING]
- EXTERNAL CALL WriteString((r, [STRING]))
- EXTERNAL CALL WriteInt((i, [INT]))
- EXTERNAL CALL WriteLn()
- s := "B as Real Int: " [STRING]
- EXTERNAL CALL WriteString((s, [STRING]))
- EXTERNAL CALL WriteInt((h, [INT]))
- EXTERNAL CALL WriteLn()
- t := EXTERNAL CALL RDivide((f, [REAL]), (g, [REAL])) [REAL]
- e := t [REAL]
- u := "Result as real: " [STRING]
- EXTERNAL CALL WriteString((u, [STRING]))
+ j := EXTERNAL CALL IntToReal((b, [INT])) [REAL]
+ f := j [REAL]
+ k := EXTERNAL CALL IntToReal((d, [INT])) [REAL]
+ g := k [REAL]
+ l := EXTERNAL CALL RDivide((f, [REAL]), (g, [REAL])) [REAL]
+ e := l [REAL]
+ m := "Result as real: " [STRING]
+ EXTERNAL CALL WriteString((m, [STRING]))
  EXTERNAL CALL WriteReal((e, [REAL]))
  EXTERNAL CALL WriteLn()
 END

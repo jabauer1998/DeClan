@@ -17,7 +17,7 @@ function compile_file_into_ir{
     Write-Host "Compiling Ir with src-"
     Write-Host "$src"
     if ($nolink){
-        $out = "$src".replace(".dcl", ".ir").replace("test\declan", "test\ir\linkable")
+        $out = "$src".replace(".declib", ".ilib").replace(".dcl", ".ir").replace("standard_library\declan", "standard_library\ir").replace("test\declan", "test\ir\linkable")
     } else {
         $out = "$src".replace(".dcl", ".ir").replace("test\declan", "test\ir\linked")
     }
@@ -25,9 +25,9 @@ function compile_file_into_ir{
     Write-Host "$out"
     Write-Host "---------Output-Window-----------"
     if ($nolink -eq ''){
-        Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/../pom.xml' -P ir -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+        Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/pom.xml' -P ir -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
     } else {
-        Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/../pom.xml' -P ir-nolink -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+        Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/pom.xml' -P ir-nolink -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
     }
     Write-Host "--------End-Output-Window--------"
     if ([string]::IsNullOrWhiteSpace($errorOutput)) {
@@ -50,7 +50,7 @@ function compile_file_into_assembly{
     Write-Host "to output assembly at-"
     Write-Host "$out"
     Write-Host "---------Output-Window-----------"
-    Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/../pom.xml' -P assembly -e -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+    Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/pom.xml' -P assembly -e -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
     Write-Host "--------End-Output-Window--------"
     if ([string]::IsNullOrWhiteSpace($errorOutput)) {
         Write-Host "Source-"
@@ -72,7 +72,7 @@ function compile_file_into_binary{
     Write-Host "to output binary at-"
     Write-Host "$out"
     Write-Host "---------Output-Window-----------"
-    Invoke-Expression "mvn exec:java -f '$PSScriptRoot/../pom.xml' -q -e -P binary -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+    Invoke-Expression "mvn exec:java -f '$PSScriptRoot/pom.xml' -q -e -P binary -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
     Write-Host "--------End-Output-Window--------"
     if ([string]::IsNullOrWhiteSpace($errorOutput)) {
         Write-Host "Source-"
@@ -130,6 +130,8 @@ function parse_commands(){
     $return_set.Add("clean", $containsClean)
     $containsNoLink = list_contains -list $arguments -elem "no_link"
     $return_set.Add("no_link", $containsNoLink)
+    $containsStdLib = list_contains -list $arguments -elem "std"
+    $return_set.Add("std", $containsStdLib)
     return $return_set
 }
 
@@ -163,7 +165,13 @@ if($commands["help"] -eq $true){
 
     $depends = check_dependencies
     if ($depends -eq 0) {
-        Get-ChildItem -File "$PSScriptRoot/declan" |
+        if($noArgs -or $commands["all"] -or $commands["std"] -or ($commands["ir"] -and $commands["no_link"])){
+            Get-ChildItem -File "$PSScriptRoot/standard_library/declan" |
+            Foreach-Object {
+                compile_file_into_ir -src $_.FullName -nolink $true
+            }
+        }
+        Get-ChildItem -File "$PSScriptRoot/test/declan" |
         Foreach-Object {
             if($noArgs -or $commands["all"] -or ($commands["ir"] -and $commands["no_link"])){
                 compile_file_into_ir -src $_.FullName -nolink $true

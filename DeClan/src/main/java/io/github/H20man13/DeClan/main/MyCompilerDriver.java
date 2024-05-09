@@ -609,28 +609,42 @@ public class MyCompilerDriver {
             if(emitIr){
                 if(cfg.containsFlag("output")){
                     String outputDestination = cfg.getValueFromFlag("output");
-                    MyIrLinker linker = new MyIrLinker(errLog);
-                    Library startingLibrary = libs.remove(0);
-                    Library[] libsAsArray = listAsArray(libs);
-                    Lib library = linker.performLinkage(startingLibrary, libsAsArray);
-
-                    if(cfg.containsFlag("optimize")){
-                        boolean shouldOptimize = cfg.getValueFromFlag("optimize").equals("TRUE");
-                        /* 
-                        if(shouldOptimize){
-                            MyOptimizer optimizer = new MyOptimizer(library);
-                            optimizer.eliminateCommonSubExpressions();
-                            optimizer.runDataFlowAnalysis();
-                            optimizer.performConstantPropogation();
-                            optimizer.performDeadCodeElimination();
-                            library = optimizer.getICode();
-                        }
-                        */
+                    boolean noLink = false;
+                    if(cfg.containsFlag("nolink")){
+                        noLink = cfg.getValueFromFlag("nolink").equals("TRUE");
                     }
+                    if(noLink){
+                        MyICodeGenerator iCodeGenerator = new MyICodeGenerator(errLog);
+                        Library startingLibrary = libs.remove(0);
+                        Lib resultLib = iCodeGenerator.generateLibraryIr(startingLibrary);
 
-                    FileWriter writer = new FileWriter(outputDestination);
-                    writer.write(library.toString());
-                    writer.close();
+                        FileWriter writer = new FileWriter(outputDestination);
+                        writer.write(resultLib.toString());
+                        writer.close();
+                    } else {
+                        MyIrLinker linker = new MyIrLinker(errLog);
+                        Library startingLibrary = libs.remove(0);
+                        Library[] libsAsArray = listAsArray(libs);
+                        Lib library = linker.performLinkage(startingLibrary, libsAsArray);
+
+                        if(cfg.containsFlag("optimize")){
+                            boolean shouldOptimize = cfg.getValueFromFlag("optimize").equals("TRUE");
+                            /* 
+                            if(shouldOptimize){
+                                MyOptimizer optimizer = new MyOptimizer(library);
+                                optimizer.eliminateCommonSubExpressions();
+                                optimizer.runDataFlowAnalysis();
+                                optimizer.performConstantPropogation();
+                                optimizer.performDeadCodeElimination();
+                                library = optimizer.getICode();
+                            }
+                            */
+                        }
+
+                        FileWriter writer = new FileWriter(outputDestination);
+                        writer.write(library.toString());
+                        writer.close();
+                    }
                 }
             } else if(emitAssembly){
                 if(cfg.containsFlag("output")){
