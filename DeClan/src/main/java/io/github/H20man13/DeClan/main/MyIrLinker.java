@@ -109,11 +109,11 @@ public class MyIrLinker {
                                                 }
                                             }
 
-                                            if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries)){
+                                            if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries, addedInstructions)){
                                                 String newPlace = null;    
                                                 do{
                                                     newPlace = gen.genNext();
-                                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries, addedInstructions));
 
                                                 replacePlaceAcrossProgramAndLibraries(assignLib.place, newPlace, program, libraries, library, addedInstructions);
                                             }
@@ -135,11 +135,11 @@ public class MyIrLinker {
                                                 fetchInternalDependentInstructions(library, program, libraries, identExp.ident, newProgram, addedInstructions);
                                             }
 
-                                            if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries)){
+                                            if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries, addedInstructions)){
                                                 String place = null;    
                                                 do{
                                                     place = gen.genNext();
-                                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                                                 replacePlaceAcrossProgramAndLibraries(assignLib.place, place, program, libraries, library, addedInstructions);
                                             }
@@ -161,11 +161,11 @@ public class MyIrLinker {
                                                 }
                                             }
 
-                                            if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries)){
+                                            if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries, addedInstructions)){
                                                 String place = null;    
                                                 do{
                                                     place = gen.genNext();
-                                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                                                 replacePlaceAcrossProgramAndLibraries(assignLib.place, place, program, libraries, library, addedInstructions);
                                             }
@@ -199,11 +199,11 @@ public class MyIrLinker {
                                                 }
                                             }
 
-                                            if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries)){
+                                            if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries, addedInstructions)){
                                                 String place = null;    
                                                 do{
                                                     place = gen.genNext();
-                                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                                                 replacePlaceAcrossProgramAndLibraries(assignLib.place, place, program, libraries, library, addedInstructions);
                                             }
@@ -255,21 +255,21 @@ public class MyIrLinker {
                                                 if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL))
                                                     newTable.addEntry(libEntry);
 
-                                                if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries)){
+                                                if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries, addedInstructions)){
                                                     String place = null;    
                                                     do{
                                                         place = gen.genNext();
-                                                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                                                     replacePlaceAcrossProgramAndLibraries(assignLib.place, place, program, libraries, library, addedInstructions);
                                                 }
                                             }
                                         } else {
-                                            if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries)){
+                                            if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries, addedInstructions)){
                                                 String place = null;    
                                                 do{
                                                     place = gen.genNext();
-                                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                                                 replacePlaceAcrossProgramAndLibraries(assignLib.place, place, program, libraries, library, addedInstructions);
                                             }
@@ -330,11 +330,11 @@ public class MyIrLinker {
                                                 }
                                             }
 
-                                            if(!placeIsUniqueAcrossLibraries(assignLib.place, single, libraries)){
+                                            if(!placeIsUniqueAcrossLibraries(assignLib.place, single, libraries, addedInstructions)){
                                                 String newPlace = null;    
                                                 do{
                                                     newPlace = gen.genNext();
-                                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries, addedInstructions));
 
                                                 replacePlaceAcrossLibraries(assignLib.place, newPlace, single, libraries, library, addedInstructions);
                                             }
@@ -356,11 +356,11 @@ public class MyIrLinker {
                                                 fetchInternalDependentInstructions(library, single, libraries, identExp.ident, newLib, addedInstructions);
                                             }
 
-                                            if(!placeIsUniqueAcrossLibraries(assignLib.place, single, libraries)){
+                                            if(!placeIsUniqueAcrossLibraries(assignLib.place, single, libraries, addedInstructions)){
                                                 String place = null;    
                                                 do{
                                                     place = gen.genNext();
-                                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
 
                                                 replacePlaceAcrossLibraries(assignLib.place, place, single, libraries, library, addedInstructions);
                                             }
@@ -382,11 +382,11 @@ public class MyIrLinker {
                                                 }
                                             }
 
-                                            if(!placeIsUniqueAcrossLibraries(assignLib.place, single, libraries)){
+                                            if(!placeIsUniqueAcrossLibraries(assignLib.place, single, libraries, addedInstructions)){
                                                 String place = null;    
                                                 do{
                                                     place = gen.genNext();
-                                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
                                                 
                                                 replacePlaceAcrossLibraries(assignLib.place, place, single, libraries, library, addedInstructions);
                                             }
@@ -420,11 +420,11 @@ public class MyIrLinker {
                                                 }
                                             }
 
-                                            if(!placeIsUniqueAcrossLibraries(assignLib.place, single, libraries)){
+                                            if(!placeIsUniqueAcrossLibraries(assignLib.place, single, libraries, addedInstructions)){
                                                 String place = null;    
                                                 do{
                                                     place = gen.genNext();
-                                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
                                                 
                                                 replacePlaceAcrossLibraries(assignLib.place, place, single, libraries, library, addedInstructions);
                                             }
@@ -476,21 +476,21 @@ public class MyIrLinker {
                                                 if(!newTable.containsEntryWithIdentifier(identName, SymEntry.INTERNAL))
                                                     newTable.addEntry(libEntry);
 
-                                                if(!placeIsUniqueAcrossLibraries(assignLib.place, single, libraries)){
+                                                if(!placeIsUniqueAcrossLibraries(assignLib.place, single, libraries, addedInstructions)){
                                                     String place = null;    
                                                     do{
                                                         place = gen.genNext();
-                                                    } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                                    } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
                                                     
                                                     replacePlaceAcrossLibraries(assignLib.place, place, single, libraries, library, addedInstructions);
                                                 }
                                             }
                                         } else {
-                                            if(!placeIsUniqueAcrossLibraries(assignLib.place, single, libraries)){
+                                            if(!placeIsUniqueAcrossLibraries(assignLib.place, single, libraries, addedInstructions)){
                                                 String place = null;    
                                                 do{
                                                     place = gen.genNext();
-                                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
                                                 
                                                 replacePlaceAcrossLibraries(assignLib.place, place, single, libraries, library, addedInstructions);
                                             }
@@ -542,11 +542,11 @@ public class MyIrLinker {
                                 }
                             }
 
-                            if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries)){
+                            if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries, addedInstructions)){
                                 String newPlace = null;    
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries, addedInstructions));
 
                                 replacePlaceAcrossLibraries(assign.place, newPlace, single, libraries, currentLib, addedInstructions);
                             }
@@ -573,11 +573,11 @@ public class MyIrLinker {
                                 fetchInternalDependentInstructions(currentLib, single, libraries, identExp.ident, newLib, addedInstructions);
                             }
 
-                            if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries)){
+                            if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries, addedInstructions)){
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
                                 
                                 replacePlaceAcrossLibraries(assign.place, place, single, libraries, currentLib, addedInstructions);
                             }
@@ -602,11 +602,11 @@ public class MyIrLinker {
                                 }
                             }
 
-                            if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries)){
+                            if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries, addedInstructions)){
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
                                 
                                 replacePlaceAcrossLibraries(assign.place, place, single, libraries, currentLib, addedInstructions);
                             }
@@ -643,11 +643,11 @@ public class MyIrLinker {
                                 }
                             }
 
-                            if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries)){
+                            if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries, addedInstructions)){
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
                                 
                                 replacePlaceAcrossLibraries(assign.place, place, single, libraries, currentLib, addedInstructions);
                             }
@@ -708,21 +708,21 @@ public class MyIrLinker {
                                         newTable.addEntry(entry);
                                 }
 
-                                if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries)){
+                                if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries, addedInstructions)){
                                     String place = null;    
                                     do{
                                         place = gen.genNext();
-                                    } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                    } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
                                     
                                     replacePlaceAcrossLibraries(assign.place, place, single, libraries, currentLib, addedInstructions);
                                 }
                             }
                         } else {
-                            if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries)){
+                            if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries, addedInstructions)){
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
                                 
                                 replacePlaceAcrossLibraries(assign.place, place, single, libraries, currentLib, addedInstructions);
                             }
@@ -773,11 +773,11 @@ public class MyIrLinker {
                                 }
                             }
 
-                            if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, program, libraries)){
+                            if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, program, libraries, addedInstructions)){
                                 String newPlace = null;    
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries, addedInstructions));
 
                                 replacePlaceAcrossProgramAndLibraries(assign.place, newPlace, program, libraries, currentLib, addedInstructions);
                             }
@@ -802,11 +802,11 @@ public class MyIrLinker {
                                 fetchInternalDependentInstructions(currentLib, program, libraries, identExp.ident, newProgram, addedInstructions);
                             }
 
-                            if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, program, libraries)){
+                            if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, program, libraries, addedInstructions)){
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                                 replacePlaceAcrossProgramAndLibraries(assign.place, place, program, libraries, currentLib, addedInstructions);
                             }
@@ -831,11 +831,11 @@ public class MyIrLinker {
                                 }
                             }
 
-                            if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, program, libraries)){
+                            if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, program, libraries, addedInstructions)){
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                                 replacePlaceAcrossProgramAndLibraries(assign.place, place, program, libraries, currentLib, addedInstructions);
                             }
@@ -872,11 +872,11 @@ public class MyIrLinker {
                                 }
                             }
 
-                            if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, program, libraries)){
+                            if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, program, libraries, addedInstructions)){
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                                 replacePlaceAcrossProgramAndLibraries(assign.place, place, program, libraries, currentLib, addedInstructions);
                             }
@@ -935,21 +935,21 @@ public class MyIrLinker {
                                         newTable.addEntry(entry);
                                 }
 
-                                if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, program, libraries)){
+                                if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, program, libraries, addedInstructions)){
                                     String place = null;    
                                     do{
                                         place = gen.genNext();
-                                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                                     replacePlaceAcrossProgramAndLibraries(assign.place, place, program, libraries, currentLib, addedInstructions);
                                 }
                             }
                         } else {
-                            if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, program, libraries)){
+                            if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, program, libraries, addedInstructions)){
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                                 replacePlaceAcrossProgramAndLibraries(assign.place, place, program, libraries, currentLib, addedInstructions);
                             }
@@ -982,20 +982,20 @@ public class MyIrLinker {
             for(int assignIndex = 0; assignIndex < procedure.paramAssign.size(); assignIndex++){
                 Assign assign = procedure.paramAssign.get(assignIndex);
 
-                if(!placeIsUniqueAcrossProgramAndLibraries(assign.value.toString(), program, libraries)){
+                if(!placeIsUniqueAcrossProgramAndLibraries(assign.value.toString(), program, libraries, addedInstructions)){
                     String place = null;
                     do{
                         place = gen.genNext();
-                    }while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                    }while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                     replacePlaceAcrossProgramAndLibraries(assign.value.toString(), place, program, libraries, program, addedInstructions);
                 }
 
-                if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, program, libraries)){
+                if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, program, libraries, addedInstructions)){
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                     replacePlaceAcrossProgramAndLibraries(assign.place, place, program, libraries, program, addedInstructions);
                 }
@@ -1005,20 +1005,20 @@ public class MyIrLinker {
 
             if(procedure.placement != null && procedure.placement.getScope() == Scope.INTERNAL_RETURN){
                 Assign placement = procedure.placement;
-                if(!placeIsUniqueAcrossProgramAndLibraries(placement.value.toString(), program, libraries)){
+                if(!placeIsUniqueAcrossProgramAndLibraries(placement.value.toString(), program, libraries, addedInstructions)){
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                     replacePlaceAcrossProgramAndLibraries(placement.value.toString(), place, program, libraries, program, addedInstructions);
                 }
 
-                if(!placeIsUniqueAcrossProgramAndLibraries(placement.place, program, libraries)){
+                if(!placeIsUniqueAcrossProgramAndLibraries(placement.place, program, libraries, addedInstructions)){
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                     replacePlaceAcrossProgramAndLibraries(placement.place, place, program, libraries, program, addedInstructions);
                 }
@@ -1040,11 +1040,11 @@ public class MyIrLinker {
                 if(icode instanceof Assign){
                     Assign assignment = (Assign)icode;
                     
-                    if(!placeIsUniqueAcrossProgramAndLibraries(assignment.place, program, libraries)){
+                    if(!placeIsUniqueAcrossProgramAndLibraries(assignment.place, program, libraries, addedInstructions)){
                         String newPlace = null;
                         do{
                             newPlace = gen.genNext();
-                        } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                        } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries, addedInstructions));
                         
                         replacePlaceAcrossProgramAndLibraries(assignment.place, newPlace, program, libraries, program, addedInstructions);
                     }
@@ -1258,20 +1258,20 @@ public class MyIrLinker {
             for(int assignIndex = 0; assignIndex < procedure.paramAssign.size(); assignIndex++){
                 Assign assign = procedure.paramAssign.get(assignIndex);
 
-                if(!placeIsUniqueAcrossProgramAndLibraries(assign.value.toString(), prog, libraries)){
+                if(!placeIsUniqueAcrossProgramAndLibraries(assign.value.toString(), prog, libraries, addedInstructions)){
                     String place = null;
                     do{
                         place = gen.genNext();
-                    }while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                    }while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries, addedInstructions));
 
                     replacePlaceAcrossProgramAndLibraries(assign.value.toString(), place, prog, libraries, library, addedInstructions);
                 }
 
-                if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, prog, libraries)){
+                if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, prog, libraries, addedInstructions)){
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries, addedInstructions));
 
                     replacePlaceAcrossProgramAndLibraries(assign.place, place, prog, libraries, library, addedInstructions);
                 }
@@ -1281,20 +1281,20 @@ public class MyIrLinker {
 
             if(procedure.placement != null && procedure.placement.getScope() == Scope.INTERNAL_RETURN){
                 Assign placement = procedure.placement;
-                if(!placeIsUniqueAcrossProgramAndLibraries(placement.value.toString(), prog, libraries)){
+                if(!placeIsUniqueAcrossProgramAndLibraries(placement.value.toString(), prog, libraries, addedInstructions)){
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries, addedInstructions));
 
                     replacePlaceAcrossProgramAndLibraries(placement.value.toString(), place, prog, libraries, library, addedInstructions);
                 }
 
-                if(!placeIsUniqueAcrossProgramAndLibraries(placement.place, prog, libraries)){
+                if(!placeIsUniqueAcrossProgramAndLibraries(placement.place, prog, libraries, addedInstructions)){
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries, addedInstructions));
 
                     replacePlaceAcrossProgramAndLibraries(placement.place, place, prog, libraries, library, addedInstructions);
                 }
@@ -1316,11 +1316,11 @@ public class MyIrLinker {
                 if(icode instanceof Assign){
                     Assign assignment = (Assign)icode;
                     
-                    if(!placeIsUniqueAcrossProgramAndLibraries(assignment.place, prog, libraries)){
+                    if(!placeIsUniqueAcrossProgramAndLibraries(assignment.place, prog, libraries, addedInstructions)){
                         String newPlace = null;
                         do{
                             newPlace = gen.genNext();
-                        } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                        } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries, addedInstructions));
                         
                         replacePlaceAcrossProgramAndLibraries(assignment.place, newPlace, prog, libraries, library, addedInstructions);
                     }
@@ -1553,20 +1553,20 @@ public class MyIrLinker {
             for(int assignIndex = 0; assignIndex < procedure.paramAssign.size(); assignIndex++){
                 Assign assign = procedure.paramAssign.get(assignIndex);
 
-                if(!placeIsUniqueAcrossLibraries(assign.value.toString(), single, libraries)){
+                if(!placeIsUniqueAcrossLibraries(assign.value.toString(), single, libraries, addedInstructions)){
                     String place = null;
                     do{
                         place = gen.genNext();
-                    }while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                    }while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
 
                     replacePlaceAcrossLibraries(assign.value.toString(), place, single, libraries, library, addedInstructions);
                 }
 
-                if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries)){
+                if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries, addedInstructions)){
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                    } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
 
                     replacePlaceAcrossLibraries(assign.place, place, single, libraries, library, addedInstructions);
                 }
@@ -1576,20 +1576,20 @@ public class MyIrLinker {
 
             if(procedure.placement != null && procedure.placement.getScope() == Scope.INTERNAL_RETURN){
                 Assign placement = procedure.placement;
-                if(!placeIsUniqueAcrossLibraries(placement.place, single, libraries)){
+                if(!placeIsUniqueAcrossLibraries(placement.place, single, libraries, addedInstructions)){
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                    } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
 
                     replacePlaceAcrossLibraries(placement.place, place, single, libraries, library, addedInstructions);
                 }
 
-                if(!placeIsUniqueAcrossLibraries(placement.value.toString(), single, libraries)){
+                if(!placeIsUniqueAcrossLibraries(placement.value.toString(), single, libraries, addedInstructions)){
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                    } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
 
                     replacePlaceAcrossLibraries(placement.value.toString(), place, single, libraries, library, addedInstructions);
                 }
@@ -1611,11 +1611,11 @@ public class MyIrLinker {
                 if(icode instanceof Assign){
                     Assign assignment = (Assign)icode;
                     
-                    if(!placeIsUniqueAcrossLibraries(assignment.place, single, libraries)){
+                    if(!placeIsUniqueAcrossLibraries(assignment.place, single, libraries, addedInstructions)){
                         String newPlace = null;
                         do{
                             newPlace = gen.genNext();
-                        } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                        } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries, addedInstructions));
                         
                         replacePlaceAcrossLibraries(assignment.place, newPlace, single, libraries, library, addedInstructions);
                     }
@@ -1853,20 +1853,20 @@ public class MyIrLinker {
                     for(int assignIndex = 0; assignIndex < procedure.paramAssign.size(); assignIndex++){
                         Assign assign = procedure.paramAssign.get(assignIndex);
 
-                        if(!placeIsUniqueAcrossProgramAndLibraries(assign.value.toString(), prog, libraries)){
+                        if(!placeIsUniqueAcrossProgramAndLibraries(assign.value.toString(), prog, libraries, addedInstructions)){
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            }while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                            }while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries, addedInstructions));
 
                             replacePlaceAcrossProgramAndLibraries(assign.value.toString(), place, prog, libraries, library, addedInstructions);
                         }
 
-                        if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, prog, libraries)){
+                        if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, prog, libraries, addedInstructions)){
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries, addedInstructions));
 
                             replacePlaceAcrossProgramAndLibraries(assign.place, place, prog, libraries, library, addedInstructions);
                         }
@@ -1876,20 +1876,20 @@ public class MyIrLinker {
 
                     if(procedure.placement != null && procedure.placement.getScope() == Scope.INTERNAL_RETURN){
                         Assign placement = procedure.placement;
-                        if(!placeIsUniqueAcrossProgramAndLibraries(placement.value.toString(), prog, libraries)){
+                        if(!placeIsUniqueAcrossProgramAndLibraries(placement.value.toString(), prog, libraries, addedInstructions)){
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries, addedInstructions));
 
                             replacePlaceAcrossProgramAndLibraries(placement.value.toString(), place, prog, libraries, library, addedInstructions);
                         }
 
-                        if(!placeIsUniqueAcrossProgramAndLibraries(placement.place, prog, libraries)){
+                        if(!placeIsUniqueAcrossProgramAndLibraries(placement.place, prog, libraries, addedInstructions)){
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries, addedInstructions));
 
                             replacePlaceAcrossProgramAndLibraries(placement.place, place, prog, libraries, library, addedInstructions);
                         }
@@ -1912,11 +1912,11 @@ public class MyIrLinker {
                         if(icode instanceof Assign){
                             Assign assignment = (Assign)icode;
                             
-                            if(!placeIsUniqueAcrossProgramAndLibraries(assignment.place, prog, libraries)){
+                            if(!placeIsUniqueAcrossProgramAndLibraries(assignment.place, prog, libraries, addedInstructions)){
                                 String newPlace = null;
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries, addedInstructions));
                                 
                                 replacePlaceAcrossProgramAndLibraries(assignment.place, newPlace, prog, libraries, library, addedInstructions);
                             }
@@ -2157,20 +2157,20 @@ public class MyIrLinker {
                     for(int assignIndex = 0; assignIndex < procedure.paramAssign.size(); assignIndex++){
                         Assign assign = procedure.paramAssign.get(assignIndex);
 
-                        if(!placeIsUniqueAcrossLibraries(assign.value.toString(), single, libraries)){
+                        if(!placeIsUniqueAcrossLibraries(assign.value.toString(), single, libraries, addedInstructions)){
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            }while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                            }while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
 
                             replacePlaceAcrossLibraries(assign.value.toString(), place, single, libraries, library, addedInstructions);
                         }
 
-                        if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries)){
+                        if(!placeIsUniqueAcrossLibraries(assign.place, single, libraries, addedInstructions)){
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                            } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
 
                             replacePlaceAcrossLibraries(assign.place, place, single, libraries, library, addedInstructions);
                         }
@@ -2180,20 +2180,20 @@ public class MyIrLinker {
 
                     if(procedure.placement != null && procedure.placement.getScope() == Scope.INTERNAL_RETURN){
                         Assign placement = procedure.placement;
-                        if(!placeIsUniqueAcrossLibraries(placement.value.toString(), single, libraries)){
+                        if(!placeIsUniqueAcrossLibraries(placement.value.toString(), single, libraries, addedInstructions)){
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                            } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
 
                             replacePlaceAcrossLibraries(placement.value.toString(), place, single, libraries, library, addedInstructions);
                         }
 
-                        if(!placeIsUniqueAcrossLibraries(placement.place, single, libraries)){
+                        if(!placeIsUniqueAcrossLibraries(placement.place, single, libraries, addedInstructions)){
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                            } while(!placeIsUniqueAcrossLibraries(place, single, libraries, addedInstructions));
 
                             replacePlaceAcrossLibraries(placement.place, place, single, libraries, library, addedInstructions);
                         }
@@ -2215,11 +2215,11 @@ public class MyIrLinker {
                         if(icode instanceof Assign){
                             Assign assignment = (Assign)icode;
                             
-                            if(!placeIsUniqueAcrossLibraries(assignment.place, single, libraries)){
+                            if(!placeIsUniqueAcrossLibraries(assignment.place, single, libraries, addedInstructions)){
                                 String newPlace = null;
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries, addedInstructions));
                                 
                                 replacePlaceAcrossLibraries(assignment.place, newPlace, single, libraries, library, addedInstructions);
                             }
@@ -2632,7 +2632,7 @@ public class MyIrLinker {
         }
     }
 
-    private static boolean placeIsUniqueAcrossProgramAndLibraries(String place, Prog program, Lib[] libraries){
+    private static boolean placeIsUniqueAcrossProgramAndLibraries(String place, Prog program, Lib[] libraries, Map<Lib, List<ICode>> addedInstructions){
         Set<String> internalReturnsRepresented = new HashSet<String>();
         Set<String> argumentRepresented = new HashSet<String>();
         Set<String> paramaterRepresented = new HashSet<String>();
@@ -2641,6 +2641,8 @@ public class MyIrLinker {
         Set<String> internalIdentsRepresented = new HashSet<String>();
         int localVariableCount = 0;
 
+
+        int programLocalVariableCount = 0;
         boolean programContainsExternalReturn = program.containsExternalReturn(place);
         if(programContainsExternalReturn){
             externalReturnsRepresented.addAll(program.externalReturnForFunctions(place));
@@ -2658,10 +2660,33 @@ public class MyIrLinker {
         } else if(program.containsInternalSymbolByPlace(place)){
             internalIdentsRepresented.add(program.getInternalSymbolByPlace(place).declanIdent);
         } else if(program.containsPlace(place) && !programContainsInternalReturn && !programContainsExternalReturn){
+            programLocalVariableCount++;
+        }
+        List<ICode> programAddedInstructions = addedInstructions.get(program);
+        for(ICode addedInstruction: programAddedInstructions){
+            boolean programAddedContainsExternalReturn = addedInstruction.containsExternalReturn(place);
+            if(programAddedContainsExternalReturn){
+                externalReturnsRepresented.addAll(addedInstruction.externalReturnForFunctions(place));
+            }
+            boolean programAddedContainsInternalReturn = addedInstruction.containsInternalReturn(place);
+            if(programAddedContainsInternalReturn){
+                internalReturnsRepresented.addAll(addedInstruction.internalReturnForFunctions(place));
+            }
+            if(addedInstruction.containsParamater(place)){
+                paramaterRepresented.addAll(addedInstruction.paramaterForFunctions(place));
+            } else if(addedInstruction.containsArgument(place)){
+                argumentRepresented.addAll(addedInstruction.argumentInFunctions(place));  
+            } else if(program.containsPlace(place) && !programAddedContainsInternalReturn && !programAddedContainsExternalReturn){
+                programLocalVariableCount++;
+            }
+        }
+
+        if(programLocalVariableCount > 0){
             localVariableCount++;
-        } 
+        }
 
         for(Lib lib: libraries){
+            int libLocalVariableCount = 0;
             boolean libContainsExternalReturn = lib.containsExternalReturn(place);
             if(libContainsExternalReturn){
                 externalReturnsRepresented.addAll(lib.externalReturnForFunctions(place));
@@ -2679,6 +2704,184 @@ public class MyIrLinker {
             } else if(lib.containsInternalSymbolByPlace(place)){
                 internalIdentsRepresented.add(lib.getInternalSymbolByPlace(place).declanIdent);
             } else if(lib.containsPlace(place) && !libContainsInternalReturn && !libContainsExternalReturn){
+                libLocalVariableCount++;
+            }
+
+            List<ICode> libAddedInstructions = addedInstructions.get(lib);
+            for(ICode addedInstruction: libAddedInstructions){
+                boolean libAddedContainsExternalReturn = addedInstruction.containsExternalReturn(place);
+                if(libAddedContainsExternalReturn){
+                    externalReturnsRepresented.addAll(addedInstruction.externalReturnForFunctions(place));
+                }
+                boolean libAddedContainsInternalReturn = addedInstruction.containsInternalReturn(place);
+                if(libAddedContainsInternalReturn){
+                    internalReturnsRepresented.addAll(addedInstruction.internalReturnForFunctions(place));
+                }
+                if(addedInstruction.containsParamater(place)){
+                    paramaterRepresented.addAll(addedInstruction.paramaterForFunctions(place));
+                } else if(addedInstruction.containsArgument(place)){
+                    argumentRepresented.addAll(addedInstruction.argumentInFunctions(place));  
+                } else if(addedInstruction.containsPlace(place) && !libAddedContainsInternalReturn && !libAddedContainsExternalReturn){
+                    libLocalVariableCount++;
+                }
+            }
+
+            if(libLocalVariableCount > 0){
+                localVariableCount++;
+            }
+        }
+
+        if(localVariableCount == 1 && externalIdentsRepresented.isEmpty() 
+            && internalIdentsRepresented.isEmpty() && internalReturnsRepresented.isEmpty() 
+            && externalReturnsRepresented.isEmpty() && argumentRepresented.isEmpty() 
+            && paramaterRepresented.isEmpty()){
+            return true;
+        } else if(externalIdentsRepresented.size() == 1 && internalIdentsRepresented.size() == 1 
+                && argumentRepresented.isEmpty() && paramaterRepresented.isEmpty() 
+                && externalIdentsRepresented.isEmpty() && internalIdentsRepresented.isEmpty() 
+                && localVariableCount == 0){
+            for(String externalIdent: externalIdentsRepresented){
+                for(String internalIdent: internalIdentsRepresented){
+                    return externalIdent.equals(internalIdent);
+                }
+            }
+            //Not Used
+            return false;
+        } else if(internalIdentsRepresented.size() == 1 && externalIdentsRepresented.isEmpty() 
+                && paramaterRepresented.isEmpty() && argumentRepresented.isEmpty() 
+                && internalReturnsRepresented.isEmpty() && externalReturnsRepresented.isEmpty() 
+                && localVariableCount == 0){
+            return true;
+        } else if(paramaterRepresented.size() == 1 && argumentRepresented.size() == 1
+                && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
+                && internalReturnsRepresented.isEmpty() && externalReturnsRepresented.isEmpty()
+                && localVariableCount == 0){
+            for(String paramaterFunc: paramaterRepresented){
+                for(String argumentFunc: argumentRepresented){
+                    return paramaterFunc.equals(argumentFunc);
+                }
+            }
+            return false; //Unused
+        } else if (paramaterRepresented.size() == 1 && argumentRepresented.isEmpty()
+            && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
+            && internalReturnsRepresented.isEmpty() && externalReturnsRepresented.isEmpty()
+            && localVariableCount == 0){
+            return true;
+        } else if(internalReturnsRepresented.size() == 1 && externalReturnsRepresented.size() == 1
+                && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
+                && argumentRepresented.isEmpty() && paramaterRepresented.isEmpty()
+                && localVariableCount == 0){
+            for(String internalReturn: internalReturnsRepresented){
+                for(String externalReturn: externalReturnsRepresented){
+                    return internalReturn.equals(externalReturn);
+                }
+            }
+            return false; //Unused
+        } else if(internalReturnsRepresented.size() == 1 && externalReturnsRepresented.isEmpty()
+        && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
+        && argumentRepresented.isEmpty() && paramaterRepresented.isEmpty()
+        && localVariableCount == 0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private static boolean placeIsUniqueAcrossLibraries(String place, Lib library, Lib[] libraries, Map<Lib, List<ICode>> addedInstructions){
+        Set<String> internalReturnsRepresented = new HashSet<String>();
+        Set<String> argumentRepresented = new HashSet<String>();
+        Set<String> paramaterRepresented = new HashSet<String>();
+        Set<String> externalReturnsRepresented = new HashSet<String>();
+        Set<String> externalIdentsRepresented = new HashSet<String>();
+        Set<String> internalIdentsRepresented = new HashSet<String>();
+        int localVariableCount = 0;
+
+        int singleLocalVariableCount = 0;
+        boolean libraryContainsExternalReturn = library.containsExternalReturn(place);
+        if(libraryContainsExternalReturn){
+            externalReturnsRepresented.addAll(library.externalReturnForFunctions(place));
+        }
+        boolean libraryContainsInternalReturn = library.containsInternalReturn(place);
+        if(libraryContainsInternalReturn){
+            internalReturnsRepresented.addAll(library.internalReturnForFunctions(place));
+        }
+        if(library.containsExternalSymbolByPlace(place)){
+            externalIdentsRepresented.add(library.getExternalSymbolByPlace(place).declanIdent);
+        } else if(library.containsParamater(place)){
+            paramaterRepresented.addAll(library.paramaterForFunctions(place));
+        } else if(library.containsArgument(place)){
+            argumentRepresented.addAll(library.argumentInFunctions(place));  
+        } else if(library.containsInternalSymbolByPlace(place)){
+            internalIdentsRepresented.add(library.getInternalSymbolByPlace(place).declanIdent);
+        } else if(library.containsPlace(place) && !libraryContainsInternalReturn && !libraryContainsExternalReturn){
+            singleLocalVariableCount++;
+        }
+        List<ICode> programAddedInstructions = addedInstructions.get(library);
+        for(ICode addedInstruction: programAddedInstructions){
+            boolean libraryAddedContainsExternalReturn = addedInstruction.containsExternalReturn(place);
+            if(libraryAddedContainsExternalReturn){
+                externalReturnsRepresented.addAll(addedInstruction.externalReturnForFunctions(place));
+            }
+            boolean libraryAddedContainsInternalReturn = addedInstruction.containsInternalReturn(place);
+            if(libraryAddedContainsInternalReturn){
+                internalReturnsRepresented.addAll(addedInstruction.internalReturnForFunctions(place));
+            }
+            if(addedInstruction.containsParamater(place)){
+                paramaterRepresented.addAll(addedInstruction.paramaterForFunctions(place));
+            } else if(addedInstruction.containsArgument(place)){
+                argumentRepresented.addAll(addedInstruction.argumentInFunctions(place));  
+            } else if(library.containsPlace(place) && !libraryAddedContainsInternalReturn && !libraryAddedContainsExternalReturn){
+                singleLocalVariableCount++;
+            }
+        }
+
+        if(singleLocalVariableCount > 0){
+            localVariableCount++;
+        }
+
+        for(Lib lib: libraries){
+            int libLocalVariableCount = 0;
+
+            boolean libContainsExternalReturn = lib.containsExternalReturn(place);
+            if(libContainsExternalReturn){
+                externalReturnsRepresented.addAll(lib.externalReturnForFunctions(place));
+            }
+            boolean libContainsInternalReturn = lib.containsInternalReturn(place);
+            if(libContainsInternalReturn){
+                internalReturnsRepresented.addAll(lib.internalReturnForFunctions(place));
+            }
+            if(lib.containsExternalSymbolByPlace(place)){
+                externalIdentsRepresented.add(lib.getExternalSymbolByPlace(place).declanIdent);
+            } else if(lib.containsParamater(place)){
+                paramaterRepresented.addAll(lib.paramaterForFunctions(place));
+            } else if(lib.containsArgument(place)){
+                argumentRepresented.addAll(lib.argumentInFunctions(place));  
+            } else if(lib.containsInternalSymbolByPlace(place)){
+                internalIdentsRepresented.add(lib.getInternalSymbolByPlace(place).declanIdent);
+            } else if(lib.containsPlace(place) && !libContainsInternalReturn && !libContainsExternalReturn){
+                libLocalVariableCount++;
+            }
+
+            List<ICode> libAddedInstructions = addedInstructions.get(lib);
+            for(ICode addedInstruction: libAddedInstructions){
+                boolean libAddedContainsExternalReturn = addedInstruction.containsExternalReturn(place);
+                if(libAddedContainsExternalReturn){
+                    externalReturnsRepresented.addAll(addedInstruction.externalReturnForFunctions(place));
+                }
+                boolean libAddedContainsInternalReturn = addedInstruction.containsInternalReturn(place);
+                if(libAddedContainsInternalReturn){
+                    internalReturnsRepresented.addAll(addedInstruction.internalReturnForFunctions(place));
+                }
+                if(addedInstruction.containsParamater(place)){
+                    paramaterRepresented.addAll(addedInstruction.paramaterForFunctions(place));
+                } else if(addedInstruction.containsArgument(place)){
+                    argumentRepresented.addAll(addedInstruction.argumentInFunctions(place));  
+                } else if(addedInstruction.containsPlace(place) && !libAddedContainsInternalReturn && !libAddedContainsExternalReturn){
+                    libLocalVariableCount++;
+                }
+            }
+
+            if(libLocalVariableCount > 0){
                 localVariableCount++;
             }
         }
@@ -2755,113 +2958,6 @@ public class MyIrLinker {
         return true;
     }
 
-    private static boolean placeIsUniqueAcrossLibraries(String place, Lib library, Lib[] libraries){
-        Set<String> internalReturnsRepresented = new HashSet<String>();
-        Set<String> argumentRepresented = new HashSet<String>();
-        Set<String> paramaterRepresented = new HashSet<String>();
-        Set<String> externalReturnsRepresented = new HashSet<String>();
-        Set<String> externalIdentsRepresented = new HashSet<String>();
-        Set<String> internalIdentsRepresented = new HashSet<String>();
-        int localVariableCount = 0;
-
-        boolean libraryContainsExternalReturn = library.containsExternalReturn(place);
-        if(libraryContainsExternalReturn){
-            externalReturnsRepresented.addAll(library.externalReturnForFunctions(place));
-        }
-        boolean libraryContainsInternalReturn = library.containsInternalReturn(place);
-        if(libraryContainsInternalReturn){
-            internalReturnsRepresented.addAll(library.internalReturnForFunctions(place));
-        }
-        if(library.containsExternalSymbolByPlace(place)){
-            externalIdentsRepresented.add(library.getExternalSymbolByPlace(place).declanIdent);
-        } else if(library.containsParamater(place)){
-            paramaterRepresented.addAll(library.paramaterForFunctions(place));
-        } else if(library.containsArgument(place)){
-            argumentRepresented.addAll(library.argumentInFunctions(place));  
-        } else if(library.containsInternalSymbolByPlace(place)){
-            internalIdentsRepresented.add(library.getInternalSymbolByPlace(place).declanIdent);
-        } else if(library.containsPlace(place) && !libraryContainsInternalReturn && !libraryContainsExternalReturn){
-            localVariableCount++;
-        } 
-
-        for(Lib lib: libraries){
-            boolean libContainsExternalReturn = lib.containsExternalReturn(place);
-            if(libContainsExternalReturn){
-                externalReturnsRepresented.addAll(lib.externalReturnForFunctions(place));
-            }
-            boolean libContainsInternalReturn = lib.containsInternalReturn(place);
-            if(libContainsInternalReturn){
-                internalReturnsRepresented.addAll(lib.internalReturnForFunctions(place));
-            }
-            if(lib.containsExternalSymbolByPlace(place)){
-                externalIdentsRepresented.add(lib.getExternalSymbolByPlace(place).declanIdent);
-            } else if(lib.containsParamater(place)){
-                paramaterRepresented.addAll(lib.paramaterForFunctions(place));
-            } else if(lib.containsArgument(place)){
-                argumentRepresented.addAll(lib.argumentInFunctions(place));  
-            } else if(lib.containsInternalSymbolByPlace(place)){
-                internalIdentsRepresented.add(lib.getInternalSymbolByPlace(place).declanIdent);
-            } else if(lib.containsPlace(place) && !libContainsInternalReturn && !libContainsExternalReturn){
-                localVariableCount++;
-            }
-        }
-
-        if(localVariableCount == 1 && externalIdentsRepresented.isEmpty() 
-            && internalIdentsRepresented.isEmpty() && internalReturnsRepresented.isEmpty() 
-            && externalReturnsRepresented.isEmpty() && argumentRepresented.isEmpty() 
-            && paramaterRepresented.isEmpty()){
-            return true;
-        } else if(externalIdentsRepresented.size() == 1 && internalIdentsRepresented.size() == 1 
-                && argumentRepresented.isEmpty() && paramaterRepresented.isEmpty() 
-                && externalIdentsRepresented.isEmpty() && internalIdentsRepresented.isEmpty() 
-                && localVariableCount == 0){
-            for(String externalIdent: externalIdentsRepresented){
-                for(String internalIdent: internalIdentsRepresented){
-                    return externalIdent.equals(internalIdent);
-                }
-            }
-            //Not Used
-            return false;
-        } else if(internalIdentsRepresented.size() == 1 && externalIdentsRepresented.isEmpty() 
-                && paramaterRepresented.isEmpty() && argumentRepresented.isEmpty() 
-                && internalReturnsRepresented.isEmpty() && externalReturnsRepresented.isEmpty() 
-                && localVariableCount == 0){
-            return true;
-        } else if(paramaterRepresented.size() == 1 && argumentRepresented.size() == 1
-                && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
-                && internalReturnsRepresented.isEmpty() && externalReturnsRepresented.isEmpty()
-                && localVariableCount == 0){
-            for(String paramaterFunc: paramaterRepresented){
-                for(String argumentFunc: argumentRepresented){
-                    return paramaterFunc.equals(argumentFunc);
-                }
-            }
-            return false; //Unused
-        } else if (paramaterRepresented.size() == 1 && argumentRepresented.isEmpty()
-            && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
-            && internalReturnsRepresented.isEmpty() && externalReturnsRepresented.isEmpty()
-            && localVariableCount == 0){
-            return true;
-        } else if(internalReturnsRepresented.size() == 1 && externalReturnsRepresented.size() == 1
-                && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
-                && argumentRepresented.isEmpty() && paramaterRepresented.isEmpty()
-                && localVariableCount == 0){
-            for(String internalReturn: internalReturnsRepresented){
-                for(String externalReturn: externalReturnsRepresented){
-                    return internalReturn.equals(externalReturn);
-                }
-            }
-            return false; //Unused
-        } else if(internalReturnsRepresented.size() == 1 && externalReturnsRepresented.isEmpty()
-        && internalIdentsRepresented.isEmpty() && externalIdentsRepresented.isEmpty()
-        && argumentRepresented.isEmpty() && paramaterRepresented.isEmpty()
-        && localVariableCount == 0){
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     private static boolean labelIsUniqueAcrossLibraries(String label, Lib library, Lib[] libraries, Lib libToIgnore){
         if(!library.equals(libToIgnore)){
             if(library.containsLabel(label))
@@ -2930,11 +3026,11 @@ public class MyIrLinker {
                 } else if(assignExp instanceof ExternalCall){
                     ExternalCall call = (ExternalCall)assignExp;
                 
-                    if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, startingProgram, libraries)){
+                    if(!placeIsUniqueAcrossProgramAndLibraries(assign.place, startingProgram, libraries, addedInstructions)){
                         String place = null;
                         do{
                             place = gen.genNext();
-                        } while(!placeIsUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
+                        } while(!placeIsUniqueAcrossProgramAndLibraries(place, startingProgram, libraries, addedInstructions));
 
                         replacePlaceAcrossProgramAndLibraries(assign.place, place, startingProgram, libraries, startingProgram, addedInstructions);
                     }
@@ -3068,11 +3164,11 @@ public class MyIrLinker {
                 } else if(assignExp instanceof ExternalCall){
                     ExternalCall call = (ExternalCall)assignExp;
                 
-                    if(!placeIsUniqueAcrossLibraries(assign.place, startingLibrary, libraries)){
+                    if(!placeIsUniqueAcrossLibraries(assign.place, startingLibrary, libraries, addedInstructions)){
                         String place = null;
                         do{
                             place = gen.genNext();
-                        } while(!placeIsUniqueAcrossLibraries(place, startingLibrary, libraries));
+                        } while(!placeIsUniqueAcrossLibraries(place, startingLibrary, libraries, addedInstructions));
 
                         replacePlaceAcrossLibraries(assign.place, place, startingLibrary, libraries, startingLibrary, addedInstructions);
                     }
@@ -3210,11 +3306,11 @@ public class MyIrLinker {
                 } else if(assignExp instanceof ExternalCall){
                     ExternalCall call = (ExternalCall)assignExp;
 
-                    if(!placeIsUniqueAcrossProgramAndLibraries(assignment.place, program, libraries)){
+                    if(!placeIsUniqueAcrossProgramAndLibraries(assignment.place, program, libraries, addedInstructions)){
                         String place = null;
                         do{
                             place = gen.genNext();
-                        } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                        } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries, addedInstructions));
 
                         replacePlaceAcrossProgramAndLibraries(assignment.place, place, program, libraries, program, addedInstructions);
                     }
