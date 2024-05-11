@@ -138,16 +138,16 @@ public class MyCompilerDriver {
                 case "-l":
                     if(conf.containsFlag("library")){
                         StringBuilder sb = new StringBuilder();
-                        String curValue = conf.getValueFromFlag("input");
+                        String curValue = conf.getValueFromFlag("library");
                         conf.removeFlag("library");
                         sb.append(curValue);
                         sb.append("#");
-                        String val4 = args[index];
+                        String val4 = args[index + 1];
                         index += 2;
                         sb.append(val4);
                         conf.addFlag("library", sb.toString());
                     } else {
-                        String val4 = args[index];
+                        String val4 = args[index + 1];
                         index += 2;
                         conf.addFlag("library", val4);
                     }
@@ -155,16 +155,16 @@ public class MyCompilerDriver {
                 case "--library":
                     if(conf.containsFlag("library")){
                         StringBuilder sb = new StringBuilder();
-                        String curValue = conf.getValueFromFlag("input");
+                        String curValue = conf.getValueFromFlag("library");
                         conf.removeFlag("library");
                         sb.append(curValue);
                         sb.append("#");
-                        String val4 = args[index];
+                        String val4 = args[index + 1];
                         index += 2;
                         sb.append(val4);
                         conf.addFlag("library", sb.toString());
                     } else {
-                        String val4 = args[index];
+                        String val4 = args[index + 1];
                         index += 2;
                         conf.addFlag("library", val4);
                     }
@@ -172,16 +172,16 @@ public class MyCompilerDriver {
                 case "--lib":
                     if(conf.containsFlag("library")){
                         StringBuilder sb = new StringBuilder();
-                        String curValue = conf.getValueFromFlag("input");
+                        String curValue = conf.getValueFromFlag("library");
                         conf.removeFlag("library");
                         sb.append(curValue);
                         sb.append("#");
-                        String val4 = args[index];
+                        String val4 = args[index + 1];
                         index += 2;
                         sb.append(val4);
                         conf.addFlag("library", sb.toString());
                     } else {
-                        String val4 = args[index];
+                        String val4 = args[index + 1];
                         index += 2;
                         conf.addFlag("library", val4);
                     }
@@ -189,11 +189,11 @@ public class MyCompilerDriver {
                 case "--Library":
                     if(conf.containsFlag("library")){
                         StringBuilder sb = new StringBuilder();
-                        String curValue = conf.getValueFromFlag("input");
+                        String curValue = conf.getValueFromFlag("library");
                         conf.removeFlag("library");
                         sb.append(curValue);
                         sb.append("#");
-                        String val4 = args[index];
+                        String val4 = args[index + 1];
                         index += 2;
                         sb.append(val4);
                         conf.addFlag("library", sb.toString());
@@ -206,16 +206,16 @@ public class MyCompilerDriver {
                 case "--Lib":
                     if(conf.containsFlag("library")){
                         StringBuilder sb = new StringBuilder();
-                        String curValue = conf.getValueFromFlag("input");
+                        String curValue = conf.getValueFromFlag("library");
                         conf.removeFlag("library");
                         sb.append(curValue);
                         sb.append("#");
-                        String val4 = args[index];
+                        String val4 = args[index + 1];
                         index += 2;
                         sb.append(val4);
                         conf.addFlag("library", sb.toString());
                     } else {
-                        String val4 = args[index];
+                        String val4 = args[index + 1];
                         index += 2;
                         conf.addFlag("library", val4);
                     }
@@ -223,16 +223,16 @@ public class MyCompilerDriver {
                 case "-L":
                     if(conf.containsFlag("library")){
                         StringBuilder sb = new StringBuilder();
-                        String curValue = conf.getValueFromFlag("input");
+                        String curValue = conf.getValueFromFlag("library");
                         conf.removeFlag("library");
                         sb.append(curValue);
                         sb.append("#");
-                        String val4 = args[index];
+                        String val4 = args[index + 1];
                         index += 2;
                         sb.append(val4);
                         conf.addFlag("library", sb.toString());
                     } else {
-                        String val4 = args[index];
+                        String val4 = args[index + 1];
                         index += 2;
                         conf.addFlag("library", val4);
                     }
@@ -288,15 +288,15 @@ public class MyCompilerDriver {
                 default:
                     if(conf.containsFlag("library")){
                         StringBuilder sb = new StringBuilder();
-                        String curValue = conf.getValueFromFlag("input");
+                        String curValue = conf.getValueFromFlag("library");
                         conf.removeFlag("library");
                         sb.append(curValue);
                         sb.append("#");
-                        index++;
+                        index+=2;
                         sb.append(argAtIndex);
                         conf.addFlag("library", sb.toString());
                     } else {
-                        index ++;
+                        index++;
                         conf.addFlag("library", argAtIndex);
                     }
                     break;
@@ -316,10 +316,6 @@ public class MyCompilerDriver {
 
         if(!cfg.containsFlag("nolink")){
             cfg.addFlag("nolink", "FALSE");
-        }
-
-        if(!cfg.containsFlag("output")){
-            cfg.addFlag("output", "a.out");
         }
 
         if(!cfg.containsFlag("std")){
@@ -362,53 +358,66 @@ public class MyCompilerDriver {
                     cfg.addFlag("program", line);
                     break;
                 } else {
-                    System.out.println("Error ");
+                    System.out.println("Error expected literal text [program/library] here!!!");
                 }
             }
         }
 
-        while(true){
-            System.out.print("Would you like to add any additional libraries to the build?[Y/N]: ");
+        if(debugEnabled){
+            while(true){
+                System.out.print("Would you like to add any additional libraries to the build?[Y/N]: ");
+                String line = scanner.nextLine();
+                line = line.replace("\r", "");
+                line = line.replace("\n", "");
+                if(line.equals("Y")){
+                    int libraryCount = 0;
+                    StringBuilder libList = new StringBuilder();
+                    if(cfg.containsFlag("library")){
+                        libList.append(cfg.getValueFromFlag("library"));
+                    }
+                    outer: while(true){
+                        System.out.println("Enter path of library number " + libraryCount + "-");
+                        System.out.print("here: ");
+                        String libLine = scanner.nextLine();
+                        libLine = libLine.replace("\r", "");
+                        libLine = libLine.replace("\n", "");
+                        if(libList.toString().equals("")){
+                            libList.append(libLine);
+                        } else {
+                            libList.append('#');
+                            libList.append(libLine);
+                        }
+
+                        while(true){
+                            System.out.print("Would you like to add another library?[Y/N]: ");
+                            String exitConfirm = scanner.nextLine();
+                            exitConfirm = exitConfirm.replace("\r", "");
+                            exitConfirm = exitConfirm.replace("\n", "");
+
+                            if(exitConfirm.equals("N")){
+                                break outer;
+                            } else if(exitConfirm.equals("Y")){
+                                break;
+                            }
+                        }
+                    }
+                    cfg.addFlag("library", libList.toString());
+                    break;
+                } else if(line.equals("N")){
+                    break;
+                }
+            }
+        }
+
+        if(debugEnabled && !cfg.containsFlag("output")){
+            System.out.println("Error no output file was specified");
+            System.out.print("Please specify output file name here: ");
             String line = scanner.nextLine();
             line = line.replace("\r", "");
             line = line.replace("\n", "");
-            if(line.equals("Y")){
-                int libraryCount = 0;
-                StringBuilder libList = new StringBuilder();
-                if(cfg.containsFlag("library")){
-                    libList.append(cfg.getValueFromFlag("library"));
-                }
-                outer: while(true){
-                    System.out.println("Enter path of library number " + libraryCount + "-");
-                    System.out.print("here: ");
-                    String libLine = scanner.nextLine();
-                    libLine = libLine.replace("\r", "");
-                    libLine = libLine.replace("\n", "");
-                    if(libList.toString().equals("")){
-                        libList.append(libLine);
-                    } else {
-                        libList.append('#');
-                        libList.append(libLine);
-                    }
-
-                    while(true){
-                        System.out.print("Would you like to add another library?[Y/N]: ");
-                        String exitConfirm = scanner.nextLine();
-                        exitConfirm = exitConfirm.replace("\r", "");
-                        exitConfirm = exitConfirm.replace("\n", "");
-
-                        if(exitConfirm.equals("N")){
-                            break outer;
-                        } else if(exitConfirm.equals("Y")){
-                            break;
-                        }
-                    }
-                }
-                cfg.addFlag("library", libList.toString());
-                break;
-            } else if(line.equals("N")){
-                break;
-            }
+            cfg.addFlag("output", line);
+        } else if(!cfg.containsFlag("output")){
+            cfg.addFlag("output", "a.out");
         }
 
         scanner.close();
@@ -417,6 +426,8 @@ public class MyCompilerDriver {
     private static Program parseDeclanProgram(String programString, ErrorLog errLog) throws Exception{
         File file = new File(programString);
         if(file.exists()){
+            System.out.println("Parsing program at path-");
+            System.out.println(file.getAbsolutePath());
             FileReader reader = new FileReader(programString);
             ElaborateReaderSource source = new ElaborateReaderSource(programString, reader);
             MyDeClanLexer lexer = new MyDeClanLexer(source, errLog);
@@ -425,6 +436,7 @@ public class MyCompilerDriver {
             parser.close();
             return prog;
         } else {
+            System.err.println("Error: program file at path-\r\n" + file.getAbsolutePath() + "\r\n not found!!!\r\n");
             throw new Exception("Error: program file at path-\r\n" + file.getAbsolutePath() + "\r\n not found!!!\r\n");
         }
     }
@@ -432,6 +444,8 @@ public class MyCompilerDriver {
     private static Library parseLibrary(String libString, ErrorLog errLog) throws Exception{
         File file = new File(libString);
         if(file.exists()){
+            System.out.println("Parsing library at path-");
+            System.out.println(file.getAbsolutePath());
             FileReader reader = new FileReader(file);
             ElaborateReaderSource source = new ElaborateReaderSource(libString, reader);
             MyDeClanLexer lexer = new MyDeClanLexer(source, errLog);
@@ -440,6 +454,7 @@ public class MyCompilerDriver {
             parser.close();
             return lib;
         } else {
+            System.err.println("Error: library file at path-\r\n" +  file.getAbsolutePath() + "\r\n not found!!!\r\n");
             throw new Exception("Error: library file at path-\r\n" +  file.getAbsolutePath() + "\r\n not found!!!\r\n");   
         }
     }
@@ -637,7 +652,14 @@ public class MyCompilerDriver {
                         Library startingLibrary = libs.remove(0);
                         Lib resultLib = iCodeGenerator.generateLibraryIr(startingLibrary);
 
-                        FileWriter writer = new FileWriter(outputDestination);
+                        File outputFile = new File(outputDestination);
+                        if(outputFile.exists()){
+                            outputFile.delete();
+                        }
+                        System.out.print("The full path is ");
+                        System.out.println(outputFile.getAbsolutePath());
+                        outputFile.createNewFile();
+                        FileWriter writer = new FileWriter(outputFile);
                         writer.write(resultLib.toString());
                         writer.close();
                     } else {

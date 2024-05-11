@@ -1,0 +1,154 @@
+SYMBOL SECTION
+ l INTERNAL result
+ q INTERNAL total
+ r INTERNAL result
+ s INTERNAL tempDividend
+ t INTERNAL dividendLastOne
+ u INTERNAL dividendLastDigit
+ v INTERNAL dividendCount
+ w INTERNAL dividendIndex
+ x INTERNAL bitAtIndex
+ y INTERNAL remainder
+ a8 INTERNAL divResult
+ a9 INTERNAL realDividend
+ b0 INTERNAL realDivisor
+ b6 INTERNAL total
+ b7 INTERNAL result
+DATA SECTION
+PROC SECTION
+ PROC LABEL INeg
+  PARAM m := a [INT]
+  l := 0 [INT]
+  n := INOT m [INT]
+  o := 1 [INT]
+  p := n IADD o [INT]
+  l := p [INT]
+  INTERNAL RETURN b := l [INT]
+ RETURN
+ PROC LABEL Div
+  PARAM z := c [INT]
+  PARAM Y := d [INT]
+  q := 0 [INT]
+  r := 0 [INT]
+  s := 0 [INT]
+  t := 0 [INT]
+  u := 0 [INT]
+  v := 0 [INT]
+  w := 0 [INT]
+  x := 0 [INT]
+  y := 0 [INT]
+  s := z [INT]
+  A := 0 [INT]
+  v := A [INT]
+  B := 0 [INT]
+  t := B [INT]
+  C := EXTERNAL CALL IntIsZero((s, [INT])) [BOOL]
+  D := BNOT C [BOOL]
+  IF D EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0
+  LABEL WHILECOND_0_SEQ_0_LEVEL_0
+  IF D EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0
+  LABEL WHILESTAT_0_SEQ_0_LEVEL_0
+  E := 1 [INT]
+  F := s IAND E [INT]
+  u := F [INT]
+  G := 1 [INT]
+  H := u EQ G [BOOL]
+  IF H EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
+  LABEL IFSTAT_0_SEQ_0_LEVEL_0
+  t := v [INT]
+  GOTO IFEND_0_LEVEL_0
+  LABEL IFNEXT_0_SEQ_0_LEVEL_0
+  LABEL IFEND_0_LEVEL_0
+  I := 1 [INT]
+  J := v IADD I [INT]
+  v := J [INT]
+  K := 1 [INT]
+  L := s IRSHIFT K [INT]
+  s := L [INT]
+  M := EXTERNAL CALL IntIsZero((s, [INT])) [BOOL]
+  N := BNOT M [BOOL]
+  D := N [BOOL]
+  GOTO WHILECOND_0_SEQ_0_LEVEL_0
+  LABEL WHILENEXT_0_SEQ_0_LEVEL_0
+  LABEL WHILEEND_0_LEVEL_0
+  w := t [INT]
+  s := z [INT]
+  O := 0 [INT]
+  y := O [INT]
+  P := 0 [INT]
+  r := P [INT]
+  Q := 0 [INT]
+  R := w GE Q [BOOL]
+  IF R EQ TRUE THEN WHILESTAT_2_SEQ_0_LEVEL_0 ELSE WHILENEXT_2_SEQ_0_LEVEL_0
+  LABEL WHILECOND_2_SEQ_0_LEVEL_0
+  IF R EQ TRUE THEN WHILESTAT_2_SEQ_0_LEVEL_0 ELSE WHILEEND_2_LEVEL_0
+  LABEL WHILESTAT_2_SEQ_0_LEVEL_0
+  S := s IRSHIFT w [INT]
+  T := 1 [INT]
+  U := S IAND T [INT]
+  x := U [INT]
+  V := 1 [INT]
+  W := y ILSHIFT V [INT]
+  X := W IOR x [INT]
+  y := X [INT]
+  Z := y GE Y [BOOL]
+  IF Z EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
+  LABEL IFSTAT_1_SEQ_0_LEVEL_0
+  a0 := 1 [INT]
+  a1 := a0 ILSHIFT w [INT]
+  a2 := r IOR a1 [INT]
+  r := a2 [INT]
+  a3 := y ISUB Y [INT]
+  y := a3 [INT]
+  GOTO IFEND_1_LEVEL_0
+  LABEL IFNEXT_1_SEQ_0_LEVEL_0
+  LABEL IFEND_1_LEVEL_0
+  a4 := 1 [INT]
+  a5 := w ISUB a4 [INT]
+  w := a5 [INT]
+  a6 := 0 [INT]
+  a7 := w GE a6 [BOOL]
+  R := a7 [BOOL]
+  GOTO WHILECOND_2_SEQ_0_LEVEL_0
+  LABEL WHILENEXT_2_SEQ_0_LEVEL_0
+  LABEL WHILEEND_2_LEVEL_0
+  INTERNAL RETURN e := r [INT]
+ RETURN
+ PROC LABEL Divide
+  PARAM b1 := f [INT]
+  PARAM b3 := g [INT]
+  a8 := 0.0 [REAL]
+  a9 := 0.0 [REAL]
+  b0 := 0.0 [REAL]
+  b2 := EXTERNAL CALL IntToReal((b1, [INT])) [REAL]
+  a9 := b2 [REAL]
+  b4 := EXTERNAL CALL IntToReal((b3, [INT])) [REAL]
+  b0 := b4 [REAL]
+  b5 := EXTERNAL CALL RDivide((a9, [REAL]), (b0, [REAL])) [REAL]
+  a8 := b5 [REAL]
+  INTERNAL RETURN h := a8 [REAL]
+ RETURN
+ PROC LABEL Mod
+  PARAM b8 := i [INT]
+  PARAM b9 := j [INT]
+  b6 := 0 [INT]
+  b7 := 0 [INT]
+  b6 := b8 [INT]
+  c0 := b6 ISUB b9 [INT]
+  c1 := 0 [INT]
+  c2 := c0 GE c1 [BOOL]
+  IF c2 EQ TRUE THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILENEXT_4_SEQ_0_LEVEL_0
+  LABEL WHILECOND_4_SEQ_0_LEVEL_0
+  IF c2 EQ TRUE THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILEEND_4_LEVEL_0
+  LABEL WHILESTAT_4_SEQ_0_LEVEL_0
+  c3 := b6 ISUB b9 [INT]
+  b6 := c3 [INT]
+  c4 := b6 ISUB b9 [INT]
+  c5 := 0 [INT]
+  c6 := c4 GE c5 [BOOL]
+  c2 := c6 [BOOL]
+  GOTO WHILECOND_4_SEQ_0_LEVEL_0
+  LABEL WHILENEXT_4_SEQ_0_LEVEL_0
+  LABEL WHILEEND_4_LEVEL_0
+  INTERNAL RETURN k := b6 [INT]
+ RETURN
