@@ -17,18 +17,23 @@ function compile_file_into_ir{
     Write-Host "Compiling Ir with src-"
     Write-Host "$src"
     if ($nolink){
-        $out = "$src".replace(".declib", ".ilib").replace(".dcl", ".ir").replace("standard_library\declan", "standard_library\ir").replace("test\declan", "test\ir\linkable")
+        $out = "$src".replace(".declib", ".ilib").replace(".dcl", ".ir").replace("standard_library\declan", "standard_library\ir\linkable").replace("test\declan", "test\ir\linkable")
     } else {
         $out = "$src".replace(".dcl", ".ir").replace("test\declan", "test\ir\linked")
     }
     Write-Host "to output-"
     Write-Host "$out"
     Write-Host "---------Output-Window-----------"
-    if ($nolink -eq ''){
-        Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/pom.xml' -P ir -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
-    } else {
-        Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/pom.xml' -P ir-nolink -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+    if($out.Contains(".ir")){
+        if ($nolink -eq ''){
+            Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/pom.xml' -P ir -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+        } else {
+            Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/pom.xml' -P ir-nolink -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+        }
+    } elseif ($out.Contains(".ilib")){
+        Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/pom.xml' -P ir-nolink-lib -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
     }
+    
     Write-Host "--------End-Output-Window--------"
     if ([string]::IsNullOrWhiteSpace($errorOutput)) {
         Write-Host "Source-"

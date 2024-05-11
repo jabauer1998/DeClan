@@ -339,25 +339,47 @@ public class MyCompilerDriver {
         }
 
         boolean debugEnabled = cfg.getValueFromFlag("debug").equals("TRUE");
-        if(!cfg.containsFlag("program") && debugEnabled){
-            System.out.println("Error no program specified");
-            System.out.print("Please place path here: ");
-            String line = scanner.nextLine();
-            line = line.replace("\r", "");
-            line = line.replace("\n", "");
-            cfg.addFlag("program", line);
+        if(!cfg.containsFlag("program") &&  !cfg.containsFlag("library") &&debugEnabled){
+            while(true){
+                System.out.println("Error no program or library specified");
+                System.out.println("Would you like to compile a program or a library?");
+                System.out.print("Please specify program or library here[program/library]: ");
+                String line = scanner.nextLine();
+                line = line.replace("\r", "");
+                line = line.replace("\n", "");
+                if(line.equals("library")){
+                    System.out.print("Please specify the library name here: ");
+                    line = scanner.nextLine();
+                    line = line.replace("\r", "");
+                    line = line.replace("\n", "");
+                    cfg.addFlag("library", line);
+                    break;
+                } else if (line.equals("program")) {
+                    System.out.print("Please specify the program name here: ");
+                    line = scanner.nextLine();
+                    line = line.replace("\r", "");
+                    line = line.replace("\n", "");
+                    cfg.addFlag("program", line);
+                    break;
+                } else {
+                    System.out.println("Error ");
+                }
+            }
         }
 
         if(!cfg.containsFlag("library") && debugEnabled){
             System.out.println("No libraries were specified...");
             while(true){
-                System.out.print("Would you like to add any libraries to the build?[Y/N]: ");
+                System.out.print("Would you like to add any additional libraries to the build?[Y/N]: ");
                 String line = scanner.nextLine();
                 line = line.replace("\r", "");
                 line = line.replace("\n", "");
                 if(line.equals("Y")){
                     int libraryCount = 0;
                     StringBuilder libList = new StringBuilder();
+                    if(cfg.containsFlag("library")){
+                        libList.append(cfg.getValueFromFlag("library"));
+                    }
                     outer: while(true){
                         System.out.println("Enter path of library number " + libraryCount + "-");
                         System.out.print("here: ");
