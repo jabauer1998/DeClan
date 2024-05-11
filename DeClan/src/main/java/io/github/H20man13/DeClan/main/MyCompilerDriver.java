@@ -367,50 +367,47 @@ public class MyCompilerDriver {
             }
         }
 
-        if(!cfg.containsFlag("library") && debugEnabled){
-            System.out.println("No libraries were specified...");
-            while(true){
-                System.out.print("Would you like to add any additional libraries to the build?[Y/N]: ");
-                String line = scanner.nextLine();
-                line = line.replace("\r", "");
-                line = line.replace("\n", "");
-                if(line.equals("Y")){
-                    int libraryCount = 0;
-                    StringBuilder libList = new StringBuilder();
-                    if(cfg.containsFlag("library")){
-                        libList.append(cfg.getValueFromFlag("library"));
-                    }
-                    outer: while(true){
-                        System.out.println("Enter path of library number " + libraryCount + "-");
-                        System.out.print("here: ");
-                        String libLine = scanner.nextLine();
-                        libLine = libLine.replace("\r", "");
-                        libLine = libLine.replace("\n", "");
-                        if(libList.toString().equals("")){
-                            libList.append(libLine);
-                        } else {
-                            libList.append('#');
-                            libList.append(libLine);
-                        }
-
-                        while(true){
-                            System.out.print("Would you like to add another library?[Y/N]: ");
-                            String exitConfirm = scanner.nextLine();
-                            exitConfirm = exitConfirm.replace("\r", "");
-                            exitConfirm = exitConfirm.replace("\n", "");
-
-                            if(exitConfirm.equals("N")){
-                                break outer;
-                            } else if(exitConfirm.equals("Y")){
-                                break;
-                            }
-                        }
-                    }
-                    cfg.addFlag("library", libList.toString());
-                    break;
-                } else if(line.equals("N")){
-                    break;
+        while(true){
+            System.out.print("Would you like to add any additional libraries to the build?[Y/N]: ");
+            String line = scanner.nextLine();
+            line = line.replace("\r", "");
+            line = line.replace("\n", "");
+            if(line.equals("Y")){
+                int libraryCount = 0;
+                StringBuilder libList = new StringBuilder();
+                if(cfg.containsFlag("library")){
+                    libList.append(cfg.getValueFromFlag("library"));
                 }
+                outer: while(true){
+                    System.out.println("Enter path of library number " + libraryCount + "-");
+                    System.out.print("here: ");
+                    String libLine = scanner.nextLine();
+                    libLine = libLine.replace("\r", "");
+                    libLine = libLine.replace("\n", "");
+                    if(libList.toString().equals("")){
+                        libList.append(libLine);
+                    } else {
+                        libList.append('#');
+                        libList.append(libLine);
+                    }
+
+                    while(true){
+                        System.out.print("Would you like to add another library?[Y/N]: ");
+                        String exitConfirm = scanner.nextLine();
+                        exitConfirm = exitConfirm.replace("\r", "");
+                        exitConfirm = exitConfirm.replace("\n", "");
+
+                        if(exitConfirm.equals("N")){
+                            break outer;
+                        } else if(exitConfirm.equals("Y")){
+                            break;
+                        }
+                    }
+                }
+                cfg.addFlag("library", libList.toString());
+                break;
+            } else if(line.equals("N")){
+                break;
             }
         }
 
