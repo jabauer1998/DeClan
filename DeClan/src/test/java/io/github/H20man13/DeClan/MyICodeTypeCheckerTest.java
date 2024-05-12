@@ -16,6 +16,7 @@ import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
+import io.github.H20man13.DeClan.main.MyICodeGenerator;
 import io.github.H20man13.DeClan.main.MyICodeTypeChecker;
 import io.github.H20man13.DeClan.main.MyIrLexer;
 import io.github.H20man13.DeClan.main.MyIrLinker;
@@ -47,12 +48,14 @@ public class MyICodeTypeCheckerTest {
         MyDeClanLexer lexer = new MyDeClanLexer(typeCheckerSource, errLog);
         MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
         Program prog = parser.parseProgram();
+        MyICodeGenerator iGen = new MyICodeGenerator(errLog);
+        Prog program = iGen.generateProgramIr(prog);
         parser.close();
 
         MyStandardLibrary lib = new MyStandardLibrary(errLog);
         MyIrLinker linker = new MyIrLinker(errLog);
 
-        Prog icodeProg = linker.performLinkage(prog, lib.ioLibrary(), lib.mathLibrary(), lib.conversionsLibrary(), lib.intLibrary(), lib.realLibrary(), lib.utilsLibrary());
+        Prog icodeProg = linker.performLinkage(program, lib.irIoLibrary(), lib.irMathLibrary(), lib.irConversionsLibrary(), lib.irIntLibrary(), lib.irRealLibrary(), lib.irUtilsLibrary());
 
         MyICodeTypeChecker typeChecker = new MyICodeTypeChecker(icodeProg, errLog);
         typeChecker.runTypeChecker();

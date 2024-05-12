@@ -43,12 +43,12 @@ public class InterpreterICodeTest {
             MyStandardLibrary lib = new MyStandardLibrary(errLog);
         
             MyInterpreter interpreter = new MyInterpreter(errLog, intOut, errOut, standardInInt);
-            lib.ioLibrary().accept(interpreter);
-            lib.mathLibrary().accept(interpreter);
-            lib.realLibrary().accept(interpreter);
-            lib.conversionsLibrary().accept(interpreter);
-            lib.utilsLibrary().accept(interpreter);
-            lib.intLibrary().accept(interpreter);
+            lib.declanIoLibrary().accept(interpreter);
+            lib.declanMathLibrary().accept(interpreter);
+            lib.declanRealLibrary().accept(interpreter);
+            lib.declanConversionsLibrary().accept(interpreter);
+            lib.declanUtilsLibrary().accept(interpreter);
+            lib.declanIntLibrary().accept(interpreter);
             prog.accept(interpreter);
 
             for(LogItem errItem : errLog){
@@ -58,7 +58,7 @@ public class InterpreterICodeTest {
             IrRegisterGenerator gen = new IrRegisterGenerator();
             MyIrLinker linker = new MyIrLinker(errLog);
 
-            Prog program = linker.performLinkage(prog, lib.ioLibrary(), lib.mathLibrary(), lib.conversionsLibrary(), lib.realLibrary(), lib.utilsLibrary(), lib.intLibrary());
+            Prog program = linker.performLinkage(prog, lib.declanIoLibrary(), lib.declanMathLibrary(), lib.declanConversionsLibrary(), lib.declanRealLibrary(), lib.declanUtilsLibrary(), lib.declanIntLibrary());
 
             MyICodeMachine vm = new MyICodeMachine(errLog, icodeOut, errOut, standardInICode);
             vm.interpretICode(program);
