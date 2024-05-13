@@ -386,7 +386,8 @@ public class MyIrParser {
     }
 
     private Exp parseExpression(){
-        if(willMatch(IrTokenType.INEG) || willMatch(IrTokenType.RNEG) || willMatch(IrTokenType.BNOT)) {
+        if(willMatch(IrTokenType.INEG) || willMatch(IrTokenType.RNEG) 
+        || willMatch(IrTokenType.BNOT) || willMatch(IrTokenType.INOT)) {
             return parseUnaryExpression();
         } else if(willMatch(IrTokenType.EXTERNAL)){
             skip();

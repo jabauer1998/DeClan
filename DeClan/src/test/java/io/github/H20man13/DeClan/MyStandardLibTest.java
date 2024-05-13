@@ -29,7 +29,7 @@ public class MyStandardLibTest {
         assertTrue("Environment variable DECLIB is not set!!!", !locLib.equals(null));
 
         String declanDir = locLib + "\\declan";
-        String irDir = "locLib\\ir\\linkable";
+        String irDir = locLib +"\\ir\\linkable";
 
         String declanFile = declanDir + '\\' + libName + ".declib";
         Lib declanLib = parseAndGenerateDeclanSource(declanFile, errLog);
@@ -85,12 +85,12 @@ public class MyStandardLibTest {
 
     @Test
     public void parseRealLibrary(){
-        compareLibs("Real");
+        compareLibs("RealOperations");
     }
 
     @Test
     public void parseIntegerLibrary(){
-        compareLibs("Integer");
+        compareLibs("IntOperations");
     }
 
     @Test
