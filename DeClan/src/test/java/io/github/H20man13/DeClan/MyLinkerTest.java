@@ -276,7 +276,7 @@ public class MyLinkerTest {
 
                      
 
-        linkProgramStrings(exp, prog1, lib1, lib2);
+       linkProgramStrings(exp, prog1, lib1, lib2);
     }
 
     @Test

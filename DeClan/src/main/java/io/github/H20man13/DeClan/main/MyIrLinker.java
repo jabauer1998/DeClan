@@ -2730,8 +2730,8 @@ public class MyIrLinker {
                 localVariableCount++;
             }
         }
-
-        if(localVariableCount == 1 && externalIdentsRepresented.isEmpty() 
+        
+        if(localVariableCount <= 1 && externalIdentsRepresented.isEmpty() 
             && internalIdentsRepresented.isEmpty() && internalReturnsRepresented.isEmpty() 
             && externalReturnsRepresented.isEmpty() && argumentRepresented.isEmpty() 
             && paramaterRepresented.isEmpty()){

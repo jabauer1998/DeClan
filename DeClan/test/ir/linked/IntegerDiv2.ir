@@ -6,7 +6,7 @@ DATA SECTION
  GLOBAL d := c [INT]
  GLOBAL e := 0 [INT]
 CODE SECTION
- CALL Div((b -> i8)[INT], (q5 -> j0)[INT])
+ CALL Div((b -> i8)[INT], (d -> j0)[INT])
  EXTERNAL RETURN i5 := j3 [INT]
  e := i5 [INT]
  CALL WriteInt((e -> q5)[INT])
