@@ -22,7 +22,6 @@ import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
-import io.github.H20man13.DeClan.common.icode.SymEntry;
 import io.github.H20man13.DeClan.common.icode.Assign.Scope;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -37,6 +36,7 @@ import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.icode.section.SymSec;
+import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
 import io.github.H20man13.DeClan.common.util.Utils;
 
@@ -2730,7 +2730,7 @@ public class MyIrLinker {
                 localVariableCount++;
             }
         }
-        
+
         if(localVariableCount <= 1 && externalIdentsRepresented.isEmpty() 
             && internalIdentsRepresented.isEmpty() && internalReturnsRepresented.isEmpty() 
             && externalReturnsRepresented.isEmpty() && argumentRepresented.isEmpty() 

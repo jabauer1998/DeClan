@@ -3,15 +3,22 @@ SYMBOL SECTION
  n INTERNAL offsetHolder
  o INTERNAL valueHolder
  p INTERNAL tempHolder
- z INTERNAL tempReg
- B INTERNAL tempReg
- D INTERNAL tempReg
- F INTERNAL result
- G INTERNAL tempReg
- H INTERNAL result
- I INTERNAL tempReg
- J INTERNAL result
- K INTERNAL tempReg
+ b INTERNAL PARAM WriteString 0
+ F INTERNAL tempReg
+ d INTERNAL PARAM WriteInt 0
+ H INTERNAL tempReg
+ f INTERNAL PARAM WriteReal 0
+ J INTERNAL tempReg
+ h INTERNAL PARAM WriteBool 0
+ L INTERNAL result
+ M INTERNAL tempReg
+ j INTERNAL RETURN ReadInt
+ N INTERNAL result
+ O INTERNAL tempReg
+ k INTERNAL RETURN ReadReal
+ P INTERNAL result
+ Q INTERNAL tempReg
+ l INTERNAL RETURN ReadBool
 DATA SECTION
 PROC SECTION
  PROC LABEL WriteLn
@@ -23,10 +30,11 @@ PROC SECTION
   n := 0 [INT]
   o := 0 [INT]
   p := 0 [INT]
-  r := EXTERNAL CALL StringAsAddress((q, [STRING])) [INT]
-  m := r [INT]
-  s := 0 [INT]
-  n := s [INT]
+  CALL StringAsAddress((q -> r)[STRING])
+  EXTERNAL RETURN t := s [INT]
+  m := t [INT]
+  u := 0 [INT]
+  n := u [INT]
   IPARAM o
   IPARAM m
   IPARAM n
@@ -34,20 +42,21 @@ PROC SECTION
   IPARAM o
   IPARAM o
   IASM "STR %r, %a"
-  t := EXTERNAL CALL IntIsZero((o, [INT])) [BOOL]
-  u := BNOT t [BOOL]
-  IF u EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0
+  CALL IntIsZero((o -> v)[INT])
+  EXTERNAL RETURN x := w [BOOL]
+  y := BNOT x [BOOL]
+  IF y EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILECOND_0_SEQ_0_LEVEL_0
-  IF u EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0
+  IF y EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0
   LABEL WHILESTAT_0_SEQ_0_LEVEL_0
   IPARAM p
   IASM "MOV %r, R0"
   IPARAM o
   IASM "MOV R0, %r"
   IASM "SWI 6"
-  v := 1 [INT]
-  w := n IADD v [INT]
-  n := w [INT]
+  z := 1 [INT]
+  A := n IADD z [INT]
+  n := A [INT]
   IPARAM o
   IPARAM m
   IPARAM n
@@ -57,79 +66,80 @@ PROC SECTION
   IASM "STR %r, %a"
   IPARAM p
   IASM "MOV R0, %r"
-  x := EXTERNAL CALL IntIsZero((o, [INT])) [BOOL]
-  y := BNOT x [BOOL]
-  u := y [BOOL]
+  CALL IntIsZero((o -> B)[INT])
+  EXTERNAL RETURN D := C [BOOL]
+  E := BNOT D [BOOL]
+  y := E [BOOL]
   GOTO WHILECOND_0_SEQ_0_LEVEL_0
   LABEL WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILEEND_0_LEVEL_0
  RETURN
  PROC LABEL WriteInt
-  PARAM A := d [INT]
-  z := 0 [INT]
-  IPARAM z
+  PARAM G := d [INT]
+  F := 0 [INT]
+  IPARAM F
   IASM "MOV %r, R0"
-  IPARAM A
+  IPARAM G
   IASM "LDR R0, %a"
   IASM "SWI 1"
-  IPARAM z
+  IPARAM F
   IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteReal
-  PARAM C := f [REAL]
-  B := 0 [INT]
-  IPARAM B
+  PARAM I := f [REAL]
+  H := 0 [INT]
+  IPARAM H
   IASM "MOV %r, R0"
-  IPARAM C
+  IPARAM I
   IASM "LDR R0, %a"
   IASM "SWI 2"
-  IPARAM B
+  IPARAM H
   IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteBool
-  PARAM E := h [BOOL]
-  D := 0 [INT]
-  IPARAM D
+  PARAM K := h [BOOL]
+  J := 0 [INT]
+  IPARAM J
   IASM "MOV %r, R0"
-  IPARAM E
+  IPARAM K
   IASM "LDRB R0, %a"
   IASM "SWI 6"
-  IPARAM D
+  IPARAM J
   IASM "MOV R0, %r"
  RETURN
  PROC LABEL ReadInt
-  F := 0 [INT]
-  G := 0 [INT]
-  IPARAM G
+  L := 0 [INT]
+  M := 0 [INT]
+  IPARAM M
   IASM "MOV %r, R0"
   IASM "SWI 3"
-  IPARAM F
+  IPARAM L
   IASM "STR R0, %a"
-  IPARAM G
+  IPARAM M
   IASM "MOV R0, %r"
-  INTERNAL RETURN j := F [INT]
+  INTERNAL RETURN j := L [INT]
  RETURN
  PROC LABEL ReadReal
-  H := 0.0 [REAL]
-  I := 0 [INT]
-  IPARAM I
+  N := 0.0 [REAL]
+  O := 0 [INT]
+  IPARAM O
   IASM "MOV %r, R0"
   IASM "SWI 5"
-  IPARAM H
+  IPARAM N
   IASM "STR R0, %a"
-  IPARAM I
+  IPARAM O
   IASM "MOV R0, %r"
-  INTERNAL RETURN k := H [REAL]
+  INTERNAL RETURN k := N [REAL]
  RETURN
  PROC LABEL ReadBool
-  J := FALSE [BOOL]
-  K := 0 [INT]
-  IPARAM K
+  P := FALSE [BOOL]
+  Q := 0 [INT]
+  IPARAM Q
   IASM "MOV %r, R0"
   IASM "SWI 7"
-  IPARAM J
+  IPARAM P
   IASM "STRB R0, %a"
-  IPARAM K
+  IPARAM Q
   IASM "MOV R0, %r"
-  INTERNAL RETURN l := J [BOOL]
+  INTERNAL RETURN l := P [BOOL]
  RETURN

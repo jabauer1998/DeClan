@@ -24,7 +24,6 @@ import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
-import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class MyIrFactory {
@@ -72,14 +71,6 @@ public class MyIrFactory {
 
     public Call produceProcedure(String funcName, List<Assign> argResults){
         return new Call(funcName, argResults);
-    }
-
-    public ExternalCall produceExternalProcedure(String funcName, List<Tuple<String, Assign.Type>> args){
-        return new ExternalCall(funcName, args);
-    }
-
-    public Assign produceExternalProcedureAssignment(Assign.Scope scope, String place, String funcName, List<Tuple<String, Assign.Type>> args, Assign.Type type){
-        return new Assign(scope, place, new ExternalCall(funcName, args), type);
     }
 
     public If produceIfStatement(Exp test, String ifTrue, String ifFalse){

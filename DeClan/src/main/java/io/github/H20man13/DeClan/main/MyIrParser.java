@@ -16,7 +16,6 @@ import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
-import io.github.H20man13.DeClan.common.icode.SymEntry;
 import io.github.H20man13.DeClan.common.icode.Assign.Scope;
 import io.github.H20man13.DeClan.common.icode.Assign.Type;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -31,12 +30,15 @@ import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
-import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.icode.section.SymSec;
+import io.github.H20man13.DeClan.common.icode.symbols.ParamSymEntry;
+import io.github.H20man13.DeClan.common.icode.symbols.RetSymEntry;
+import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
+import io.github.H20man13.DeClan.common.icode.symbols.VarSymEntry;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.token.IrToken;
 import io.github.H20man13.DeClan.common.token.IrTokenType;
@@ -180,9 +182,20 @@ public class MyIrParser {
             resultMask |= SymEntry.EXTERNAL;
         }
 
-        IrToken declanIdent = match(IrTokenType.ID);
-
-        return new SymEntry(resultMask, irPlace.getLexeme(), declanIdent.getLexeme());
+        if(willMatch(IrTokenType.PARAM)){
+            skip();
+            IrToken funcNameTok = match(IrTokenType.ID);
+            IrToken funcParamNumberTok = match(IrTokenType.NUMBER);
+            Integer funcParamNumber = Integer.parseInt(funcParamNumberTok.getLexeme());
+            return new ParamSymEntry(irPlace.getLexeme(), resultMask, funcNameTok.getLexeme(), funcParamNumber);
+        } else if(willMatch(IrTokenType.RETURN)){
+            skip();
+            IrToken funcNameTok = match(IrTokenType.ID);
+            return new RetSymEntry(irPlace.getLexeme(), resultMask, funcNameTok.getLexeme());
+        } else {
+            IrToken declanIdent = match(IrTokenType.ID);
+            return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme());
+        }
     }
 
     private Proc parseProcedure(){
@@ -250,11 +263,7 @@ public class MyIrParser {
             return parseProcedureCall();  
         } else if(willMatch(IrTokenType.EXTERNAL)){
             skip();
-            if(willMatch(IrTokenType.CALL)){
-                return parseExternalCall();
-            } else {
-                return parseExternalReturn();
-            }  
+            return parseExternalReturn();  
         } else {
             return parseAssignment();
         }
@@ -389,9 +398,6 @@ public class MyIrParser {
         if(willMatch(IrTokenType.INEG) || willMatch(IrTokenType.RNEG) 
         || willMatch(IrTokenType.BNOT) || willMatch(IrTokenType.INOT)) {
             return parseUnaryExpression();
-        } else if(willMatch(IrTokenType.EXTERNAL)){
-            skip();
-            return parseExternalCall();  
         } else {
             Exp exp1 = parsePrimaryExpression();
 
@@ -412,47 +418,10 @@ public class MyIrParser {
                 Exp exp2 = parsePrimaryExpression();
 
                 return new BinExp(exp1, ConversionUtils.toBinOp(op.getType()), exp2);
-            }else {
+            } else {
                 return exp1;
             }
         }
-    }
-
-    private ExternalCall parseExternalCall(){
-        match(IrTokenType.CALL);
-        IrToken funcName = match(IrTokenType.ID);
-        LinkedList<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
-        match(IrTokenType.LPAR);
-        if(willMatch(IrTokenType.LPAR)){
-            do{
-                match(IrTokenType.LPAR);
-                IrToken arg = match(IrTokenType.ID);
-                match(IrTokenType.COMMA);
-                match(IrTokenType.LBRACK);
-
-                Assign.Type type;
-                if(willMatch(IrTokenType.STRING)){
-                    skip();
-                    type = Assign.Type.STRING;
-                } else if(willMatch(IrTokenType.BOOL)){
-                    skip();
-                    type = Assign.Type.BOOL;
-                } else if(willMatch(IrTokenType.REAL)){
-                    skip();
-                    type = Assign.Type.REAL;
-                } else {
-                    match(IrTokenType.INT);
-                    type = Assign.Type.INT;
-                }
-
-                match(IrTokenType.RBRACK);
-                match(IrTokenType.RPAR);
-                args.add(new Tuple<String, Assign.Type>(arg.getLexeme(), type));
-            } while(skipIfYummy(IrTokenType.COMMA));
-        }
-        match(IrTokenType.RPAR);
-
-        return new ExternalCall(funcName.getLexeme(), args);
     }
 
     private Assign parseArgument(){

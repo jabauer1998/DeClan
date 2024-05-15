@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
-import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Assign implements ICode{

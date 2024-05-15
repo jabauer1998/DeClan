@@ -19,6 +19,7 @@ import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
+import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.main.MyIrFactory;
 
 public class ProcedureBuilder extends StatementBuilder implements CompletableBuilder<Proc>, ResetableBuilder {
@@ -29,12 +30,16 @@ public class ProcedureBuilder extends StatementBuilder implements CompletableBui
     private List<Assign> paramaters;
     private Assign returnPlace;
     private Return ret;
+    private SymbolSectionBuilder symbols;
+    private int paramNumber;
 
     public ProcedureBuilder(SymbolSectionBuilder symbols, IrBuilderContext ctx, IrRegisterGenerator gen, ErrorLog errLog){
         super(symbols, ctx, gen, errLog);
         this.ctx = ctx;
         this.gen = gen;
         this.factory = new MyIrFactory(errLog);
+        this.symbols = symbols;
+        this.paramNumber = 0;
         resetBuilder();
     }
     @Override
@@ -50,11 +55,13 @@ public class ProcedureBuilder extends StatementBuilder implements CompletableBui
         this.paramaters = new LinkedList<Assign>();
         this.returnPlace = null;
         this.ret = null;
+        this.paramNumber = 0;
     }
 
     public String buildParamaterAssignment(String value, Assign.Type type){
         String newPlace = gen.genNext();
         paramaters.add(factory.produceParamAssignment(newPlace, value, type));
+        symbols.addParamSymEntry(SymEntry.INTERNAL, value, label.label, paramNumber);
         return newPlace;
     }
 
@@ -68,5 +75,6 @@ public class ProcedureBuilder extends StatementBuilder implements CompletableBui
 
     public void buildInternalReturnPlacement(String dest, String source, Assign.Type type){
         this.returnPlace = factory.produceInternalReturnPlacement(dest, source, type);
+        symbols.addReturnSymEntry(SymEntry.INTERNAL, dest, label.label);
     }
 }

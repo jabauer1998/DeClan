@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.builder;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +16,6 @@ import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
-import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
 import io.github.H20man13.DeClan.main.MyIrFactory;
 
 public abstract class AssignmentBuilder implements ResetableBuilder{
@@ -103,12 +103,10 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
     }
 
     public String buildIntegerModuloAssignment(Scope scope, String left, String right){
-        String place = gen.genNext();
         List<Tuple<String, Assign.Type>> args = new LinkedList<Tuple<String, Assign.Type>>();
         args.add(new Tuple<String,Assign.Type>(left, Assign.Type.INT));
         args.add(new Tuple<String, Assign.Type>(right, Assign.Type.INT));
-        intermediateCode.add(factory.produceExternalProcedureAssignment(scope, place, "Mod", args, Assign.Type.INT));
-        return place;
+        return buildExternalFunctionCall(scope, "Mod", args, Assign.Type.INT);
     }
 
     public String buildLessThanOrEqualAssignment(Scope scope, Exp left, Exp right){
@@ -217,12 +215,42 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
     }
 
     public void buildExternalProcedureCall(String funcName, List<Tuple<String, Assign.Type>> args){
-        intermediateCode.add(factory.produceExternalProcedure(funcName, args));
+        ArrayList<Tuple<String, Assign.Type>> newArgs = new ArrayList<Tuple<String, Assign.Type>>();
+        LinkedList<Assign> newAssigns = new LinkedList<Assign>();
+        newArgs.addAll(args);
+        for(int i = 0; i < newArgs.size(); i++){
+            Tuple<String, Assign.Type> arg = newArgs.get(i);
+            String newPlace;
+            if(symbols.containsExternalArgument(funcName, i))
+                newPlace = symbols.getArgumentName(funcName, i);
+            else
+                newPlace = gen.genNext();
+            newAssigns.add(factory.produceVariableAssignment(Scope.ARGUMENT, newPlace, arg.source, arg.dest));
+        }
+        intermediateCode.add(factory.produceProcedure(funcName, newAssigns));
     }
 
     public String buildExternalFunctionCall(Scope scope, String funcName, List<Tuple<String, Assign.Type>> args, Assign.Type type){
+        ArrayList<Tuple<String, Assign.Type>> newArgs = new ArrayList<Tuple<String, Assign.Type>>();
+        newArgs.addAll(args);
+        LinkedList<Assign> newAssigns = new LinkedList<Assign>();
+        for(int i = 0; i < newArgs.size(); i++){
+            Tuple<String, Assign.Type> arg = newArgs.get(i);
+            String next;
+            if(symbols.containsExternalArgument(funcName, i))
+                next = symbols.getArgumentName(funcName, i);
+            else
+                next = gen.genNext();
+            newAssigns.add(factory.produceVariableAssignment(Scope.ARGUMENT, next, arg.source, arg.dest));
+        }
+        intermediateCode.add(factory.produceProcedure(funcName, newAssigns));
+        String oldPlace;
+        if(symbols.containsExternalReturn(funcName))
+            oldPlace = symbols.getReturnName(funcName);
+        else
+            oldPlace = gen.genNext();
         String place = gen.genNext();
-        intermediateCode.add(factory.produceExternalProcedureAssignment(scope, place, funcName, args, type));
+        intermediateCode.add(factory.procuceExternalReturnPlacement(place, oldPlace, type));
         return place;
     }
 

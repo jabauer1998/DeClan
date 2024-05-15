@@ -7,7 +7,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
-import io.github.H20man13.DeClan.common.icode.SymEntry;
+import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
+import io.github.H20man13.DeClan.common.icode.symbols.VarSymEntry;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 
@@ -56,8 +57,11 @@ public class SymSec implements ICode {
     public List<SymEntry> getEntriesByIdentifier(String ident, int mask){
         LinkedList<SymEntry> entries = new LinkedList<SymEntry>();
         for(SymEntry entry: this.entries){
-            if(entry.declanIdent.equals(ident) && entry.containsQualities(mask)){
-                entries.add(entry);
+            if(entry instanceof VarSymEntry){
+                VarSymEntry newEntry = (VarSymEntry)entry;
+                if(newEntry.declanIdent.equals(ident) && newEntry.containsQualities(mask)){
+                    entries.add(entry);
+                }
             }
         }
         return entries;
@@ -84,7 +88,12 @@ public class SymSec implements ICode {
         entries.removeIf(new Predicate<SymEntry>() {
             @Override
             public boolean test(SymEntry entry) {
-                return entry.declanIdent.equals(ident) && entry.containsQualities(mask);
+                if(entry instanceof VarSymEntry){
+                    VarSymEntry myEntry = (VarSymEntry)entry;
+                    return myEntry.declanIdent.equals(ident) && myEntry.containsQualities(mask);
+                } else {
+                    return false;
+                }
             }
         });
     }
@@ -100,8 +109,11 @@ public class SymSec implements ICode {
 
     public boolean containsEntryWithIdentifier(String ident, int mask){
         for(SymEntry entry : entries){
-            if(entry.declanIdent.equals(ident) && entry.containsQualities(mask)){
-                return true;
+            if(entry instanceof VarSymEntry){
+                VarSymEntry myEntry = (VarSymEntry)entry;
+                if(myEntry.declanIdent.equals(ident) && myEntry.containsQualities(mask)){
+                    return true;
+                }
             }
         } 
         return false;

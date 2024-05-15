@@ -1,5 +1,7 @@
 SYMBOL SECTION
  l INTERNAL result
+ a INTERNAL PARAM INeg 0
+ b INTERNAL RETURN INeg
  q INTERNAL total
  r INTERNAL result
  s INTERNAL tempDividend
@@ -9,11 +11,20 @@ SYMBOL SECTION
  w INTERNAL dividendIndex
  x INTERNAL bitAtIndex
  y INTERNAL remainder
- a8 INTERNAL divResult
- a9 INTERNAL realDividend
- b0 INTERNAL realDivisor
- b6 INTERNAL total
- b7 INTERNAL result
+ c INTERNAL PARAM Div 0
+ d INTERNAL PARAM Div 0
+ e INTERNAL RETURN Div
+ b2 INTERNAL divResult
+ b3 INTERNAL realDividend
+ b4 INTERNAL realDivisor
+ f INTERNAL PARAM Divide 0
+ g INTERNAL PARAM Divide 0
+ h INTERNAL RETURN Divide
+ c7 INTERNAL total
+ c8 INTERNAL result
+ i INTERNAL PARAM Mod 0
+ j INTERNAL PARAM Mod 0
+ k INTERNAL RETURN Mod
 DATA SECTION
 PROC SECTION
  PROC LABEL INeg
@@ -27,7 +38,7 @@ PROC SECTION
  RETURN
  PROC LABEL Div
   PARAM z := c [INT]
-  PARAM Y := d [INT]
+  PARAM a2 := d [INT]
   q := 0 [INT]
   r := 0 [INT]
   s := 0 [INT]
@@ -42,113 +53,118 @@ PROC SECTION
   v := A [INT]
   B := 0 [INT]
   t := B [INT]
-  C := EXTERNAL CALL IntIsZero((s, [INT])) [BOOL]
-  D := BNOT C [BOOL]
-  IF D EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0
+  CALL IntIsZero((s -> C)[INT])
+  EXTERNAL RETURN E := D [BOOL]
+  F := BNOT E [BOOL]
+  IF F EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILECOND_0_SEQ_0_LEVEL_0
-  IF D EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0
+  IF F EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0
   LABEL WHILESTAT_0_SEQ_0_LEVEL_0
-  E := 1 [INT]
-  F := s IAND E [INT]
-  u := F [INT]
   G := 1 [INT]
-  H := u EQ G [BOOL]
-  IF H EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
+  H := s IAND G [INT]
+  u := H [INT]
+  I := 1 [INT]
+  J := u EQ I [BOOL]
+  IF J EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
   LABEL IFSTAT_0_SEQ_0_LEVEL_0
   t := v [INT]
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_0_LEVEL_0
   LABEL IFEND_0_LEVEL_0
-  I := 1 [INT]
-  J := v IADD I [INT]
-  v := J [INT]
   K := 1 [INT]
-  L := s IRSHIFT K [INT]
-  s := L [INT]
-  M := EXTERNAL CALL IntIsZero((s, [INT])) [BOOL]
-  N := BNOT M [BOOL]
-  D := N [BOOL]
+  L := v IADD K [INT]
+  v := L [INT]
+  M := 1 [INT]
+  N := s IRSHIFT M [INT]
+  s := N [INT]
+  CALL IntIsZero((s -> O)[INT])
+  EXTERNAL RETURN Q := P [BOOL]
+  R := BNOT Q [BOOL]
+  F := R [BOOL]
   GOTO WHILECOND_0_SEQ_0_LEVEL_0
   LABEL WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILEEND_0_LEVEL_0
   w := t [INT]
   s := z [INT]
-  O := 0 [INT]
-  y := O [INT]
-  P := 0 [INT]
-  r := P [INT]
-  Q := 0 [INT]
-  R := w GE Q [BOOL]
-  IF R EQ TRUE THEN WHILESTAT_2_SEQ_0_LEVEL_0 ELSE WHILENEXT_2_SEQ_0_LEVEL_0
+  S := 0 [INT]
+  y := S [INT]
+  T := 0 [INT]
+  r := T [INT]
+  U := 0 [INT]
+  V := w GE U [BOOL]
+  IF V EQ TRUE THEN WHILESTAT_2_SEQ_0_LEVEL_0 ELSE WHILENEXT_2_SEQ_0_LEVEL_0
   LABEL WHILECOND_2_SEQ_0_LEVEL_0
-  IF R EQ TRUE THEN WHILESTAT_2_SEQ_0_LEVEL_0 ELSE WHILEEND_2_LEVEL_0
+  IF V EQ TRUE THEN WHILESTAT_2_SEQ_0_LEVEL_0 ELSE WHILEEND_2_LEVEL_0
   LABEL WHILESTAT_2_SEQ_0_LEVEL_0
-  S := s IRSHIFT w [INT]
-  T := 1 [INT]
-  U := S IAND T [INT]
-  x := U [INT]
-  V := 1 [INT]
-  W := y ILSHIFT V [INT]
-  X := W IOR x [INT]
-  y := X [INT]
-  Z := y GE Y [BOOL]
-  IF Z EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
+  W := s IRSHIFT w [INT]
+  X := 1 [INT]
+  Y := W IAND X [INT]
+  x := Y [INT]
+  Z := 1 [INT]
+  a0 := y ILSHIFT Z [INT]
+  a1 := a0 IOR x [INT]
+  y := a1 [INT]
+  a3 := y GE a2 [BOOL]
+  IF a3 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
-  a0 := 1 [INT]
-  a1 := a0 ILSHIFT w [INT]
-  a2 := r IOR a1 [INT]
-  r := a2 [INT]
-  a3 := y ISUB Y [INT]
-  y := a3 [INT]
+  a4 := 1 [INT]
+  a5 := a4 ILSHIFT w [INT]
+  a6 := r IOR a5 [INT]
+  r := a6 [INT]
+  a7 := y ISUB a2 [INT]
+  y := a7 [INT]
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFEND_1_LEVEL_0
-  a4 := 1 [INT]
-  a5 := w ISUB a4 [INT]
-  w := a5 [INT]
-  a6 := 0 [INT]
-  a7 := w GE a6 [BOOL]
-  R := a7 [BOOL]
+  a8 := 1 [INT]
+  a9 := w ISUB a8 [INT]
+  w := a9 [INT]
+  b0 := 0 [INT]
+  b1 := w GE b0 [BOOL]
+  V := b1 [BOOL]
   GOTO WHILECOND_2_SEQ_0_LEVEL_0
   LABEL WHILENEXT_2_SEQ_0_LEVEL_0
   LABEL WHILEEND_2_LEVEL_0
   INTERNAL RETURN e := r [INT]
  RETURN
  PROC LABEL Divide
-  PARAM b1 := f [INT]
-  PARAM b3 := g [INT]
-  a8 := 0.0 [REAL]
-  a9 := 0.0 [REAL]
-  b0 := 0.0 [REAL]
-  b2 := EXTERNAL CALL IntToReal((b1, [INT])) [REAL]
-  a9 := b2 [REAL]
-  b4 := EXTERNAL CALL IntToReal((b3, [INT])) [REAL]
-  b0 := b4 [REAL]
-  b5 := EXTERNAL CALL RDivide((a9, [REAL]), (b0, [REAL])) [REAL]
-  a8 := b5 [REAL]
-  INTERNAL RETURN h := a8 [REAL]
+  PARAM b5 := f [INT]
+  PARAM b9 := g [INT]
+  b2 := 0.0 [REAL]
+  b3 := 0.0 [REAL]
+  b4 := 0.0 [REAL]
+  CALL IntToReal((b5 -> b6)[INT])
+  EXTERNAL RETURN b8 := b7 [REAL]
+  b3 := b8 [REAL]
+  CALL IntToReal((b9 -> c0)[INT])
+  EXTERNAL RETURN c2 := c1 [REAL]
+  b4 := c2 [REAL]
+  CALL RDivide((b3 -> c3)[REAL], (b4 -> c4)[REAL])
+  EXTERNAL RETURN c6 := c5 [REAL]
+  b2 := c6 [REAL]
+  INTERNAL RETURN h := b2 [REAL]
  RETURN
  PROC LABEL Mod
-  PARAM b8 := i [INT]
-  PARAM b9 := j [INT]
-  b6 := 0 [INT]
-  b7 := 0 [INT]
-  b6 := b8 [INT]
-  c0 := b6 ISUB b9 [INT]
-  c1 := 0 [INT]
-  c2 := c0 GE c1 [BOOL]
-  IF c2 EQ TRUE THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILENEXT_4_SEQ_0_LEVEL_0
+  PARAM c9 := i [INT]
+  PARAM d0 := j [INT]
+  c7 := 0 [INT]
+  c8 := 0 [INT]
+  c7 := c9 [INT]
+  d1 := c7 ISUB d0 [INT]
+  d2 := 0 [INT]
+  d3 := d1 GE d2 [BOOL]
+  IF d3 EQ TRUE THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILENEXT_4_SEQ_0_LEVEL_0
   LABEL WHILECOND_4_SEQ_0_LEVEL_0
-  IF c2 EQ TRUE THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILEEND_4_LEVEL_0
+  IF d3 EQ TRUE THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILEEND_4_LEVEL_0
   LABEL WHILESTAT_4_SEQ_0_LEVEL_0
-  c3 := b6 ISUB b9 [INT]
-  b6 := c3 [INT]
-  c4 := b6 ISUB b9 [INT]
-  c5 := 0 [INT]
-  c6 := c4 GE c5 [BOOL]
-  c2 := c6 [BOOL]
+  d4 := c7 ISUB d0 [INT]
+  c7 := d4 [INT]
+  d5 := c7 ISUB d0 [INT]
+  d6 := 0 [INT]
+  d7 := d5 GE d6 [BOOL]
+  d3 := d7 [BOOL]
   GOTO WHILECOND_4_SEQ_0_LEVEL_0
   LABEL WHILENEXT_4_SEQ_0_LEVEL_0
   LABEL WHILEEND_4_LEVEL_0
-  INTERNAL RETURN k := b6 [INT]
+  INTERNAL RETURN k := c7 [INT]
  RETURN

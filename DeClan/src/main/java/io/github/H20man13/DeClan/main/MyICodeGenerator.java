@@ -8,13 +8,13 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Return;
-import io.github.H20man13.DeClan.common.icode.SymEntry;
 import io.github.H20man13.DeClan.common.icode.Assign.Scope;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
+import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.builder.AssignmentBuilder;
 import io.github.H20man13.DeClan.common.builder.IrBuilderContext;
@@ -195,7 +195,7 @@ public class MyICodeGenerator{
     String place = builder.buildVariableAssignment(scope, value, type);
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
     SymbolSectionBuilder symbolBuilder = builder.getSymbolSectionBuilder();
-    symbolBuilder.addSymEntry(SymEntry.CONST | SymEntry.INTERNAL, place, id.getLexeme());
+    symbolBuilder.addVarSymEntry(SymEntry.CONST | SymEntry.INTERNAL, place, id.getLexeme());
   }
 
   public void generateVariableIr(Scope scope, VariableDeclaration varDecl, AssignmentBuilder builder) {
@@ -213,7 +213,7 @@ public class MyICodeGenerator{
     }
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
     SymbolSectionBuilder symBuilder = builder.getSymbolSectionBuilder();
-    symBuilder.addSymEntry(SymEntry.INTERNAL, place, id.getLexeme());
+    symBuilder.addVarSymEntry(SymEntry.INTERNAL, place, id.getLexeme());
   }
 
   private void loadFunctions(List<ProcedureDeclaration> decls){
@@ -1295,10 +1295,14 @@ public class MyICodeGenerator{
           return "";
         }
       } else {
-        String place = gen.genNext();
-        symBuilder.addSymEntry(SymEntry.EXTERNAL, place, identifier.getLexeme());
-        varEnvironment.addEntry(identifier.getLexeme(), new StringEntry(place));
-        return place;
+        if(symBuilder.containsExternalVariable(identifier.getLexeme())){
+          return symBuilder.getExternalName(identifier.getLexeme());
+        } else {
+            String place = gen.genNext();
+            symBuilder.addVarSymEntry(SymEntry.EXTERNAL, place, identifier.getLexeme());
+            varEnvironment.addEntry(identifier.getLexeme(), new StringEntry(place));
+            return place;
+        }
       }
     }
   }
