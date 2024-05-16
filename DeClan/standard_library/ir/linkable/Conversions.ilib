@@ -1,65 +1,29 @@
 SYMBOL SECTION
- A INTERNAL result
- B INTERNAL absN
- C INTERNAL isNeg
- D INTERNAL intResult
- E INTERNAL furthestOne
- F INTERNAL count
- G INTERNAL tempN
- H INTERNAL lastBit
- I INTERNAL fullExponent
- J INTERNAL exponent
- K INTERNAL mantissa
- L INTERNAL mantissaMask
- M INTERNAL toShiftOver
  a INTERNAL PARAM IntToReal 0
  c5 EXTERNAL realBias
  b INTERNAL RETURN IntToReal
- d7 INTERNAL result
- d8 INTERNAL exp
- d9 INTERNAL mantissa
- e0 INTERNAL sign
- e1 INTERNAL fullMantissa
  c INTERNAL PARAM RealToInt 0
  d INTERNAL RETURN RealToInt
- g5 INTERNAL result
  e INTERNAL PARAM BoolToInt 0
  f INTERNAL RETURN BoolToInt
- g9 INTERNAL result
  g INTERNAL PARAM BoolToReal 0
  h INTERNAL RETURN BoolToReal
- h3 INTERNAL result
  i INTERNAL PARAM IntToBool 0
  j INTERNAL RETURN IntToBool
- i0 INTERNAL result
  k INTERNAL PARAM RealToBool 0
  l INTERNAL RETURN RealToBool
- i7 INTERNAL result
- i8 INTERNAL temp
  m INTERNAL PARAM RealBinaryAsInt 0
  n INTERNAL RETURN RealBinaryAsInt
- j0 INTERNAL result
- j1 INTERNAL temp
  o INTERNAL PARAM IntBinaryAsReal 0
  p INTERNAL RETURN IntBinaryAsReal
- j3 INTERNAL result
- j4 INTERNAL temp
  q INTERNAL PARAM BoolBinaryAsReal 0
  r INTERNAL RETURN BoolBinaryAsReal
- j6 INTERNAL result
- j7 INTERNAL temp
  s INTERNAL PARAM RealBinaryAsBool 0
  t INTERNAL RETURN RealBinaryAsBool
- j9 INTERNAL result
- k0 INTERNAL temp
  u INTERNAL PARAM BoolBinaryAsInt 0
  v INTERNAL RETURN BoolBinaryAsInt
- k2 INTERNAL result
- k3 INTERNAL temp
  w INTERNAL PARAM IntBinaryAsBool 0
  x INTERNAL RETURN IntBinaryAsBool
- k5 INTERNAL result
- k6 INTERNAL temp
  y INTERNAL PARAM StringAsAddress 0
  z INTERNAL RETURN StringAsAddress
 DATA SECTION

@@ -1,50 +1,25 @@
 SYMBOL SECTION
  b CONST INTERNAL realBias
- y INTERNAL result
- z INTERNAL val
- A INTERNAL exp
  c INTERNAL PARAM RealIsZero 0
  d INTERNAL RETURN RealIsZero
- J INTERNAL result
  e INTERNAL PARAM IntIsZero 0
  f INTERNAL RETURN IntIsZero
- P INTERNAL result
- Q INTERNAL thirtyFirstBit
  g INTERNAL PARAM IntIsNegative 0
  h INTERNAL RETURN IntIsNegative
- a0 INTERNAL result
- a1 INTERNAL thirtyFirstBit
  i INTERNAL PARAM RealIsNegative 0
  j INTERNAL RETURN RealIsNegative
- a8 INTERNAL result
- a9 INTERNAL thirtyFirstBit
  k INTERNAL PARAM IntIsPositive 0
  l INTERNAL RETURN IntIsPositive
- b9 INTERNAL result
- c0 INTERNAL realAsInteger
- c1 INTERNAL thirtyFirstBit
  m INTERNAL PARAM RealIsPositive 0
  n INTERNAL RETURN RealIsPositive
- c8 INTERNAL result
- c9 INTERNAL realAsInt
- d0 INTERNAL significand
- d1 INTERNAL exp
  o INTERNAL PARAM RealMantissa 0
  p INTERNAL RETURN RealMantissa
- e1 INTERNAL result
- e2 INTERNAL realAsInteger
  q INTERNAL PARAM RealSign 0
  r INTERNAL RETURN RealSign
- f1 INTERNAL result
- f2 INTERNAL realAsInteger
- f3 INTERNAL exponent
  s INTERNAL PARAM RealExponent 0
  t INTERNAL RETURN RealExponent
- g3 INTERNAL result
- g4 INTERNAL lastBit
  u INTERNAL PARAM MantissaNeg 0
  v INTERNAL RETURN MantissaNeg
- i0 INTERNAL result
  w INTERNAL PARAM MantissaAbs 0
  x INTERNAL RETURN MantissaAbs
 DATA SECTION

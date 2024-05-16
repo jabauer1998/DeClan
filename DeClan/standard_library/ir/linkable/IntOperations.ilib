@@ -1,27 +1,12 @@
 SYMBOL SECTION
- l INTERNAL result
  a INTERNAL PARAM INeg 0
  b INTERNAL RETURN INeg
- q INTERNAL total
- r INTERNAL result
- s INTERNAL tempDividend
- t INTERNAL dividendLastOne
- u INTERNAL dividendLastDigit
- v INTERNAL dividendCount
- w INTERNAL dividendIndex
- x INTERNAL bitAtIndex
- y INTERNAL remainder
  c INTERNAL PARAM Div 0
  d INTERNAL PARAM Div 0
  e INTERNAL RETURN Div
- b2 INTERNAL divResult
- b3 INTERNAL realDividend
- b4 INTERNAL realDivisor
  f INTERNAL PARAM Divide 0
  g INTERNAL PARAM Divide 0
  h INTERNAL RETURN Divide
- c7 INTERNAL total
- c8 INTERNAL result
  i INTERNAL PARAM Mod 0
  j INTERNAL PARAM Mod 0
  k INTERNAL RETURN Mod

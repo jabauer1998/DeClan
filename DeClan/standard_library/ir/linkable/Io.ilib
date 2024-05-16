@@ -1,23 +1,10 @@
 SYMBOL SECTION
- m INTERNAL addressHolder
- n INTERNAL offsetHolder
- o INTERNAL valueHolder
- p INTERNAL tempHolder
  b INTERNAL PARAM WriteString 0
- F INTERNAL tempReg
  d INTERNAL PARAM WriteInt 0
- H INTERNAL tempReg
  f INTERNAL PARAM WriteReal 0
- J INTERNAL tempReg
  h INTERNAL PARAM WriteBool 0
- L INTERNAL result
- M INTERNAL tempReg
  j INTERNAL RETURN ReadInt
- N INTERNAL result
- O INTERNAL tempReg
  k INTERNAL RETURN ReadReal
- P INTERNAL result
- Q INTERNAL tempReg
  l INTERNAL RETURN ReadBool
 DATA SECTION
 PROC SECTION
