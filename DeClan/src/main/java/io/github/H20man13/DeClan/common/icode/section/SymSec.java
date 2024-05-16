@@ -6,11 +6,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import io.github.H20man13.DeClan.common.exception.NoSymbolFoundException;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.symbols.ParamSymEntry;
+import io.github.H20man13.DeClan.common.icode.symbols.RetSymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.VarSymEntry;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
+import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 
 public class SymSec implements ICode {
     public List<SymEntry> entries;
@@ -37,14 +41,77 @@ public class SymSec implements ICode {
         entries.add(entry);
     }
 
-    public SymEntry getEntryByICodePlace(String place, int mask){
-        for(SymEntry entry : entries){
-            if(entry.icodePlace.equals(place) && entry.containsQualities(mask)){
-                return entry;
+    public VarSymEntry getVariableEntryByIdentifier(String ident, int mask){
+        for(SymEntry entry: this.entries){
+            if(entry instanceof VarSymEntry){
+                VarSymEntry newEntry = (VarSymEntry)entry;
+                if(newEntry.declanIdent.equals(ident) && newEntry.containsQualities(mask))
+                    return  newEntry;
             }
         }
-        return null;
+        throw new NoSymbolFoundException();
     }
+
+    public VarSymEntry getVariableEntryByICodePlace(String place, int mask){
+        for(SymEntry entry : entries){
+            if(entry instanceof VarSymEntry){
+                VarSymEntry varEntry = (VarSymEntry)entry;
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(mask))
+                        return varEntry;
+            }
+        }
+        throw new NoSymbolFoundException();
+    }
+
+    public ParamSymEntry getParamaterByFunctionNameAndNumber(String functionName, int paramNumber, int mask){
+        for(SymEntry entry: entries){
+            if(entry instanceof ParamSymEntry){
+                ParamSymEntry paramEntry = (ParamSymEntry)entry;
+                if(paramEntry.funcName.equals(functionName))
+                    if(paramEntry.paramNumber == paramNumber)
+                        if(entry.containsQualities(mask))
+                            return paramEntry;
+            }
+        }
+        throw new NoSymbolFoundException();
+    }
+
+    public ParamSymEntry getParamaterByICodePlace(String place, int mask){
+        for(SymEntry entry: entries){
+            if(entry instanceof ParamSymEntry){
+                ParamSymEntry symEntry = (ParamSymEntry)entry;
+                if(symEntry.icodePlace.equals(place))
+                    if(entry.containsQualities(mask))
+                        return symEntry;
+            }
+        }
+        throw new NoSymbolFoundException();
+    }
+
+    public RetSymEntry getReturnByICodePlace(String place, int mask){
+        for(SymEntry entry: entries){
+            if(entry instanceof RetSymEntry){
+                RetSymEntry retEntry = (RetSymEntry)entry;
+                if(retEntry.icodePlace.equals(place))
+                    if(retEntry.containsQualities(mask))
+                        return retEntry;
+            }
+        }
+        throw new NoSymbolFoundException();
+    }
+
+    public RetSymEntry getReturnByFunctionName(String funcName, int mask){
+        for(SymEntry entry: entries){
+            RetSymEntry myEntry = (RetSymEntry)entry;
+            if(myEntry.funcName.equals(funcName))
+                if(myEntry.containsQualities(mask))
+                    return myEntry;
+        }
+        throw new NoSymbolFoundException();
+    }
+
+
 
     public SymEntry getEntryByIndex(int index){
         return entries.get(index);
@@ -54,66 +121,71 @@ public class SymSec implements ICode {
         return entries.size();
     }
 
-    public List<SymEntry> getEntriesByIdentifier(String ident, int mask){
-        LinkedList<SymEntry> entries = new LinkedList<SymEntry>();
-        for(SymEntry entry: this.entries){
-            if(entry instanceof VarSymEntry){
-                VarSymEntry newEntry = (VarSymEntry)entry;
-                if(newEntry.declanIdent.equals(ident) && newEntry.containsQualities(mask)){
-                    entries.add(entry);
-                }
-            }
-        }
-        return entries;
-    }
-
-    public SymEntry removeEntryWithICodePlace(String place, int mask){
-        int toRemove = -1;
-        for(int i = 0; i < entries.size(); i++){
-            SymEntry entry = entries.get(i);
-            if(entry.icodePlace.equals(place) && entry.containsQualities(mask)){
-                toRemove = i;
-                break;
-            }
-        }
-
-        if(toRemove != -1){
-            return entries.remove(toRemove);
-        } else {
-            return null;
-        }
-    }
-
-    public void removeEntriesWithIdentifier(final String ident, final int mask){
-        entries.removeIf(new Predicate<SymEntry>() {
-            @Override
-            public boolean test(SymEntry entry) {
-                if(entry instanceof VarSymEntry){
-                    VarSymEntry myEntry = (VarSymEntry)entry;
-                    return myEntry.declanIdent.equals(ident) && myEntry.containsQualities(mask);
-                } else {
-                    return false;
-                }
-            }
-        });
-    }
-
-    public boolean containsEntryWithICodePlace(String place, int mask){
+    public boolean containsParamaterEntryWithICodePlace(String place, int mask){
         for(SymEntry entry : entries){
-            if(entry.icodePlace.equals(place) && entry.containsQualities(mask)){
-                return true;
+            if(entry instanceof ParamSymEntry){
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(mask))
+                        return true;
             }
         }
         return false;
     }
 
-    public boolean containsEntryWithIdentifier(String ident, int mask){
+    public boolean containsParamaterEntryWithFunctionNameAndParamaterNumber(String funcName, int paramNumber, int mask){
+        for(SymEntry entry : entries){
+            if(entry instanceof ParamSymEntry){
+                ParamSymEntry myEntry = (ParamSymEntry)entry;
+                if(myEntry.funcName.equals(funcName))
+                    if(myEntry.paramNumber == paramNumber)
+                        if(myEntry.containsQualities(mask))
+                            return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsReturnEntryWithICodePlace(String place, int mask){
+        for(SymEntry entry : entries){
+            if(entry instanceof RetSymEntry){
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(mask))
+                        return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsReturnEntryWithFunctionName(String functionName, int mask){
+        for(SymEntry entry : entries){
+            if(entry instanceof RetSymEntry){
+                RetSymEntry myEntry = (RetSymEntry)entry;
+                if(myEntry.funcName.equals(functionName))
+                    if(myEntry.containsQualities(mask))
+                        return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsVariableEntryWithICodePlace(String place, int mask){
+        for(SymEntry entry : entries){
+            if(entry instanceof VarSymEntry){
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(mask))
+                        return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsVariableEntryWithIdentifier(String ident, int mask){
         for(SymEntry entry : entries){
             if(entry instanceof VarSymEntry){
                 VarSymEntry myEntry = (VarSymEntry)entry;
-                if(myEntry.declanIdent.equals(ident) && myEntry.containsQualities(mask)){
-                    return true;
-                }
+                if(myEntry.declanIdent.equals(ident))
+                    if(myEntry.containsQualities(mask))
+                        return true;
             }
         } 
         return false;

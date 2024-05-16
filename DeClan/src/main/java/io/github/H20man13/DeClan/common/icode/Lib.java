@@ -8,7 +8,10 @@ import java.util.Set;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.icode.section.SymSec;
+import io.github.H20man13.DeClan.common.icode.symbols.ParamSymEntry;
+import io.github.H20man13.DeClan.common.icode.symbols.RetSymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
+import io.github.H20man13.DeClan.common.icode.symbols.VarSymEntry;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Lib implements ICode {
@@ -121,40 +124,107 @@ public class Lib implements ICode {
         procedures.replaceLabel(from, to);
     }
 
-    public boolean containsExternalSymbolByPlace(String place){
-        return symbols.containsEntryWithICodePlace(place, SymEntry.EXTERNAL);
+    public boolean containsExternalVariableByPlace(String place){
+        return symbols.containsVariableEntryWithICodePlace(place, SymEntry.EXTERNAL);
     }
 
-    public boolean containsInternalSymbolByPlace(String place){
-        return symbols.containsEntryWithICodePlace(place, SymEntry.INTERNAL);
+    public boolean containsInternalVariableByPlace(String place){
+        return symbols.containsVariableEntryWithICodePlace(place, SymEntry.INTERNAL);
     }
 
-    public boolean containsExternalSymbolByIdent(String ident){
-        return symbols.containsEntryWithIdentifier(ident, SymEntry.EXTERNAL);
+    public boolean containsExternaVariableByIdent(String ident){
+        return symbols.containsVariableEntryWithIdentifier(ident, SymEntry.EXTERNAL);
     }
 
-    public boolean containsInternalSymbolByIdent(String ident){
-        return symbols.containsEntryWithIdentifier(ident, SymEntry.INTERNAL);
+    public boolean containsInternalVariableByIdent(String ident){
+        return symbols.containsVariableEntryWithIdentifier(ident, SymEntry.INTERNAL);
+    }
+
+    public boolean containsExternalReturnByPlace(String place){
+        return symbols.containsReturnEntryWithICodePlace(place, SymEntry.EXTERNAL);
+    }
+
+    public boolean containsInternalReturnByPlace(String place){
+        return symbols.containsReturnEntryWithICodePlace(place, SymEntry.INTERNAL);
+    }
+
+    public boolean containsExternalReturnByFunctionName(String ident){
+        return symbols.containsReturnEntryWithFunctionName(ident, SymEntry.EXTERNAL);
+    }
+
+    public boolean containsInternalReturnByFunctionName(String ident){
+        return symbols.containsReturnEntryWithFunctionName(ident, SymEntry.INTERNAL);
+    }
+
+    public boolean containsExternalParamaterByPlace(String place){
+        return symbols.containsParamaterEntryWithICodePlace(place, SymEntry.EXTERNAL);
+    }
+
+    public boolean containsInternalParamaterByPlace(String place){
+        return symbols.containsParamaterEntryWithICodePlace(place, SymEntry.INTERNAL);
+    }
+
+    public boolean containsExternalReturnByFunctionNameAndNumber(String ident, int number){
+        return symbols.containsParamaterEntryWithFunctionNameAndParamaterNumber(ident, number, SymEntry.EXTERNAL);
+    }
+
+    public boolean containsInternalReturnByFunctionName(String ident, int number){
+        return symbols.containsParamaterEntryWithFunctionNameAndParamaterNumber(ident, number, SymEntry.INTERNAL);
     }
 
     public boolean containsParamater(String place){
         return procedures.containsParamater(place);
     }
 
-    public SymEntry getInternalSymbolByPlace(String place){
-        return symbols.getEntryByICodePlace(place, SymEntry.INTERNAL);
+    public VarSymEntry getInternalVariableByPlace(String place){
+        return symbols.getVariableEntryByICodePlace(place, SymEntry.INTERNAL);
     }
 
-    public List<SymEntry> getInternalSymbolsByIdent(String ident){
-        return symbols.getEntriesByIdentifier(ident, SymEntry.INTERNAL);
+
+    public VarSymEntry getInternalVariableByIdent(String ident){
+        return symbols.getVariableEntryByIdentifier(ident, SymEntry.INTERNAL);
     }
 
-    public SymEntry getExternalSymbolByPlace(String place){
-        return symbols.getEntryByICodePlace(place, SymEntry.EXTERNAL);
+    public VarSymEntry getExternalVariableSymbolByPlace(String place){
+        return symbols.getVariableEntryByICodePlace(place, SymEntry.EXTERNAL);
     }
 
-    public List<SymEntry> getExternalSymbolsByIdent(String ident){
-        return symbols.getEntriesByIdentifier(ident, SymEntry.EXTERNAL);
+    public VarSymEntry getExternalVariableByIdent(String ident){
+        return symbols.getVariableEntryByIdentifier(ident, SymEntry.EXTERNAL);
+    }
+
+    public RetSymEntry getInternalReturnByPlace(String place){
+        return symbols.getReturnByICodePlace(place, SymEntry.INTERNAL);
+    }
+
+
+    public RetSymEntry getInternalReturnByFunctionName(String ident){
+        return symbols.getReturnByFunctionName(ident, SymEntry.INTERNAL);
+    }
+
+    public RetSymEntry getExternalReturnByPlace(String place){
+        return symbols.getReturnByICodePlace(place, SymEntry.EXTERNAL);
+    }
+
+    public RetSymEntry getExternalReturnByFunctionName(String ident){
+        return symbols.getReturnByFunctionName(ident, SymEntry.EXTERNAL);
+    }
+
+    public ParamSymEntry getInternalParamaterByPlace(String place){
+        return symbols.getParamaterByICodePlace(place, SymEntry.INTERNAL);
+    }
+
+
+    public ParamSymEntry getInternalParamaterByFunctionNameAndNumber(String ident, int paramNumber){
+        return symbols.getParamaterByFunctionNameAndNumber(ident, paramNumber, SymEntry.INTERNAL);
+    }
+
+    public ParamSymEntry getExternalParamaterByPlace(String place){
+        return symbols.getParamaterByICodePlace(place, SymEntry.EXTERNAL);
+    }
+
+    public ParamSymEntry getParamaterByFunctionNameAndNumber(String funcName, int number){
+        return symbols.getParamaterByFunctionNameAndNumber(funcName, number, SymEntry.EXTERNAL);
     }
 
     @Override
