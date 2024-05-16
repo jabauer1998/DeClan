@@ -30,7 +30,6 @@ import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.procedure.Call;
-import io.github.H20man13.DeClan.common.icode.procedure.ExternalCall;
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
@@ -77,7 +76,7 @@ public class MyIrLinker {
             Lib library = libraries[libIndex];
             if(!Utils.arrayContainsValue(library, libsToIgnore)){
                 SymSec libSymbols = library.symbols;
-                if(libSymbols.containsEntryWithIdentifier(identName, SymEntry.INTERNAL)){
+                if(libSymbols.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL)){
                     List<SymEntry> libEntries = libSymbols.getEntriesByIdentifier(identName, SymEntry.INTERNAL);
                     if(libEntries.size() > 0){
                         SymEntry libEntry = libEntries.get(0);

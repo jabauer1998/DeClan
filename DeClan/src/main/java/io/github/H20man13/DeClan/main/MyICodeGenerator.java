@@ -195,7 +195,8 @@ public class MyICodeGenerator{
     String place = builder.buildVariableAssignment(scope, value, type);
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
     SymbolSectionBuilder symbolBuilder = builder.getSymbolSectionBuilder();
-    symbolBuilder.addVarSymEntry(SymEntry.CONST | SymEntry.INTERNAL, place, id.getLexeme());
+    if(scope == Scope.GLOBAL)
+      symbolBuilder.addVarSymEntry(SymEntry.CONST | SymEntry.INTERNAL, place, id.getLexeme());
   }
 
   public void generateVariableIr(Scope scope, VariableDeclaration varDecl, AssignmentBuilder builder) {
@@ -213,7 +214,8 @@ public class MyICodeGenerator{
     }
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
     SymbolSectionBuilder symBuilder = builder.getSymbolSectionBuilder();
-    symBuilder.addVarSymEntry(SymEntry.INTERNAL, place, id.getLexeme());
+    if(scope == Scope.GLOBAL)
+      symBuilder.addVarSymEntry(SymEntry.INTERNAL, place, id.getLexeme());
   }
 
   private void loadFunctions(List<ProcedureDeclaration> decls){
