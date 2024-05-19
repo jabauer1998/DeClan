@@ -27,6 +27,8 @@ import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.icode.section.SymSec;
+import io.github.H20man13.DeClan.common.icode.symbols.ParamSymEntry;
+import io.github.H20man13.DeClan.common.icode.symbols.RetSymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.VarSymEntry;
 import io.github.H20man13.DeClan.common.util.Utils;
@@ -2398,11 +2400,13 @@ public class MyIrLinker {
                 if(program.containsExternalVariableByIdent(ident)){
                     VarSymEntry entryToReplace = program.getExternalVariableByIdent(ident);
                     String placeFrom = entryToReplace.icodePlace;
-                    program.replacePlace(placeFrom, newPlace);
+                    if(!placeFrom.equals(newPlace))
+                        program.replacePlace(placeFrom, newPlace);
                 } else if(program.containsInternalVariableByIdent(ident)){
                     VarSymEntry entryToReplace = program.getInternalVariableByIdent(ident);
                     String placeFrom = entryToReplace.icodePlace;
-                    program.replacePlace(placeFrom, newPlace);
+                    if(!placeFrom.equals(newPlace))
+                        program.replacePlace(placeFrom, newPlace);
                 }
             }
 
@@ -2411,12 +2415,14 @@ public class MyIrLinker {
                     if(library.containsExternalVariableByIdent(ident)){
                         VarSymEntry entryToReplace = library.getExternalVariableByIdent(ident);
                         String fromPlace = entryToReplace.icodePlace;
-                        library.replacePlace(fromPlace, newPlace);
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
+                    } else if(library.containsInternalVariableByIdent(ident)){
+                        VarSymEntry entryToReplace = library.getInternalVariableByIdent(ident);
+                        String fromPlace = entryToReplace.icodePlace;
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
                     }
-                } else if(library.containsInternalVariableByIdent(ident)){
-                    VarSymEntry entryToReplace = library.getInternalVariableByIdent(ident);
-                    String fromPlace = entryToReplace.icodePlace;
-                    library.replacePlace(fromPlace, newPlace);
                 }
             }
         } else if(libToAlwaysReplace.containsInternalVariableByPlace(newPlace)) {
@@ -2426,7 +2432,8 @@ public class MyIrLinker {
                 if(program.containsExternalVariableByIdent(ident)){
                     VarSymEntry entryToReplace = program.getExternalVariableByIdent(ident);
                     String placeFrom = entryToReplace.icodePlace;
-                    program.replacePlace(placeFrom, newPlace);
+                    if(!placeFrom.equals(newPlace))
+                        program.replacePlace(placeFrom, newPlace);
                 }
             }
 
@@ -2435,7 +2442,122 @@ public class MyIrLinker {
                     if(library.containsExternalVariableByIdent(ident)){
                         VarSymEntry entryToReplace = library.getExternalVariableByIdent(ident);
                         String fromPlace = entryToReplace.icodePlace;
-                        library.replacePlace(fromPlace, newPlace);
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
+                    }
+                }
+            }
+        } else if(libToAlwaysReplace.containsExternalParamaterByPlace(newPlace)){
+            ParamSymEntry entry  = libToAlwaysReplace.getExternalParamaterByPlace(newPlace);
+            int paramNumber = entry.paramNumber;
+            String funcName = entry.funcName;
+
+            if(!libToAlwaysReplace.equals(program)){
+                if(program.containsExternalParamaterByFunctionNameAndNumber(funcName, paramNumber)){
+                    ParamSymEntry localEntry = program.getExternalParamaterByFunctionNameAndNumber(funcName, paramNumber);
+                    String fromPlace = localEntry.icodePlace;
+                    if(!fromPlace.equals(newPlace))
+                        program.replacePlace(fromPlace, newPlace);
+                } else if(program.containsInternalParamaterByFunctionNameAndNumber(funcName, paramNumber)){
+                    ParamSymEntry localEntry = program.getInternalParamaterByFunctionNameAndNumber(funcName, paramNumber);
+                    String fromPlace = localEntry.icodePlace;
+                    if(!fromPlace.equals(newPlace))
+                        program.replacePlace(fromPlace, newPlace);
+                }
+            }
+
+            for(Lib library: libraries){
+                if(!libToAlwaysReplace.equals(library)){
+                    if(library.containsExternalParamaterByFunctionNameAndNumber(funcName, paramNumber)){
+                        ParamSymEntry localEntry = library.getExternalParamaterByFunctionNameAndNumber(funcName, paramNumber);
+                        String fromPlace = localEntry.icodePlace;
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
+                    } else if(library.containsInternalParamaterByFunctionNameAndNumber(funcName, paramNumber)){
+                        ParamSymEntry localEntry = library.getInternalParamaterByFunctionNameAndNumber(funcName, paramNumber);
+                        String fromPlace = localEntry.icodePlace;
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
+                    }
+                }
+            }
+        } else if(libToAlwaysReplace.containsInternalParamaterByPlace(newPlace)){
+            ParamSymEntry entry  = libToAlwaysReplace.getInternalParamaterByPlace(newPlace);
+            int paramNumber = entry.paramNumber;
+            String funcName = entry.funcName;
+
+            if(!libToAlwaysReplace.equals(program)){
+                if(program.containsExternalParamaterByFunctionNameAndNumber(funcName, paramNumber)){
+                    ParamSymEntry localEntry = program.getExternalParamaterByFunctionNameAndNumber(funcName, paramNumber);
+                    String fromPlace = localEntry.icodePlace;
+                    if(!fromPlace.equals(newPlace))
+                        program.replacePlace(fromPlace, newPlace);
+                }
+            }
+
+            for(Lib library: libraries){
+                if(!libToAlwaysReplace.equals(library)){
+                    if(library.containsExternalParamaterByFunctionNameAndNumber(funcName, paramNumber)){
+                        ParamSymEntry localEntry = library.getExternalParamaterByFunctionNameAndNumber(funcName, paramNumber);
+                        String fromPlace = localEntry.icodePlace;
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
+                    }
+                }
+            }
+        } else if(libToAlwaysReplace.containsExternalReturnByPlace(newPlace)){
+            RetSymEntry returnEntry = libToAlwaysReplace.getExternalReturnByPlace(newPlace);
+            String funcName = returnEntry.funcName;
+
+            if(!program.equals(libToAlwaysReplace)){
+                if(program.containsExternalReturnByFunctionName(funcName)){
+                    RetSymEntry myRetEntry = program.getExternalReturnByFunctionName(funcName);
+                    String fromPlace = myRetEntry.icodePlace;
+                    if(!fromPlace.equals(newPlace))
+                        program.replacePlace(fromPlace, newPlace);
+                } else if(program.containsInternalReturnByFunctionName(funcName)){
+                    RetSymEntry myRetEntry = program.getInternalReturnByFunctionName(funcName);
+                    String fromPlace = myRetEntry.icodePlace;
+                    if(!fromPlace.equals(newPlace))
+                        program.replacePlace(fromPlace, newPlace);
+                }
+            }
+
+            for(Lib library: libraries){
+                if(!library.equals(libToAlwaysReplace)){
+                    if(library.containsExternalReturnByFunctionName(funcName)){
+                        RetSymEntry myRetEntry = library.getExternalReturnByFunctionName(funcName);
+                        String fromPlace = myRetEntry.icodePlace;
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
+                    } else if(library.containsInternalReturnByFunctionName(funcName)){
+                        RetSymEntry myRetEntry = library.getInternalReturnByFunctionName(funcName);
+                        String fromPlace = myRetEntry.icodePlace;
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
+                    }
+                }
+            }
+        } else if(libToAlwaysReplace.containsInternalReturnByPlace(newPlace)){
+            RetSymEntry returnEntry = libToAlwaysReplace.getInternalReturnByPlace(newPlace);
+            String funcName = returnEntry.funcName;
+
+            if(!program.equals(libToAlwaysReplace)){
+                if(program.containsExternalReturnByFunctionName(funcName)){
+                    RetSymEntry myRetEntry = program.getExternalReturnByFunctionName(funcName);
+                    String fromPlace = myRetEntry.icodePlace;
+                    if(!fromPlace.equals(newPlace))
+                        program.replacePlace(fromPlace, newPlace);
+                }
+            }
+
+            for(Lib library: libraries){
+                if(!library.equals(libToAlwaysReplace)){
+                    if(library.containsExternalReturnByFunctionName(funcName)){
+                        RetSymEntry myRetEntry = library.getExternalReturnByFunctionName(funcName);
+                        String fromPlace = myRetEntry.icodePlace;
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
                     }
                 }
             }
@@ -2452,11 +2574,13 @@ public class MyIrLinker {
                 if(lib.containsExternalVariableByIdent(ident)){
                     VarSymEntry entryToReplace = lib.getExternalVariableByIdent(ident);
                     String placeFrom = entryToReplace.icodePlace;
-                    lib.replacePlace(placeFrom, newPlace);
+                    if(!placeFrom.equals(newPlace))
+                        lib.replacePlace(placeFrom, newPlace);
                 } else if(lib.containsInternalVariableByIdent(ident)){
                     VarSymEntry entryToReplace = lib.getInternalVariableByIdent(ident);
                     String placeFrom = entryToReplace.icodePlace;
-                    lib.replacePlace(placeFrom, newPlace);
+                    if(!placeFrom.equals(newPlace))
+                        lib.replacePlace(placeFrom, newPlace);
                 }
             }
 
@@ -2465,11 +2589,13 @@ public class MyIrLinker {
                     if(library.containsExternalVariableByIdent(ident)){
                         VarSymEntry entryToReplace = library.getExternalVariableByIdent(ident);
                         String fromPlace = entryToReplace.icodePlace;
-                        library.replacePlace(fromPlace, newPlace);
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
                     } else if(library.containsInternalVariableByIdent(ident)){
                         VarSymEntry entryToReplace = library.getInternalVariableByIdent(ident);
                         String fromPlace = entryToReplace.icodePlace;
-                        library.replacePlace(fromPlace, newPlace);
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
                     }
                 }
             }
@@ -2480,7 +2606,8 @@ public class MyIrLinker {
                 if(lib.containsExternalVariableByIdent(ident)){
                     VarSymEntry entryToReplace = lib.getExternalVariableByIdent(ident);
                     String placeFrom = entryToReplace.icodePlace;
-                    lib.replacePlace(placeFrom, newPlace);
+                    if(!placeFrom.equals(newPlace))
+                        lib.replacePlace(placeFrom, newPlace);
                 }
             }
 
@@ -2489,7 +2616,122 @@ public class MyIrLinker {
                     if(library.containsExternalVariableByIdent(ident)){
                         VarSymEntry entryToReplace = library.getExternalVariableByIdent(ident);
                         String fromPlace = entryToReplace.icodePlace;
-                        library.replacePlace(fromPlace, newPlace);
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
+                    }
+                }
+            }
+        } else if(libToAlwaysReplace.containsExternalParamaterByPlace(newPlace)){
+            ParamSymEntry entry  = libToAlwaysReplace.getExternalParamaterByPlace(newPlace);
+            int paramNumber = entry.paramNumber;
+            String funcName = entry.funcName;
+
+            if(!libToAlwaysReplace.equals(lib)){
+                if(lib.containsExternalParamaterByFunctionNameAndNumber(funcName, paramNumber)){
+                    ParamSymEntry localEntry = lib.getExternalParamaterByFunctionNameAndNumber(funcName, paramNumber);
+                    String fromPlace = localEntry.icodePlace;
+                    if(!fromPlace.equals(newPlace))
+                        lib.replacePlace(fromPlace, newPlace);
+                } else if(lib.containsInternalParamaterByFunctionNameAndNumber(funcName, paramNumber)){
+                    ParamSymEntry localEntry = lib.getInternalParamaterByFunctionNameAndNumber(funcName, paramNumber);
+                    String fromPlace = localEntry.icodePlace;
+                    if(!fromPlace.equals(newPlace))
+                        lib.replacePlace(fromPlace, newPlace);
+                }
+            }
+
+            for(Lib library: libraries){
+                if(!libToAlwaysReplace.equals(library)){
+                    if(library.containsExternalParamaterByFunctionNameAndNumber(funcName, paramNumber)){
+                        ParamSymEntry localEntry = library.getExternalParamaterByFunctionNameAndNumber(funcName, paramNumber);
+                        String fromPlace = localEntry.icodePlace;
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
+                    } else if(library.containsInternalParamaterByFunctionNameAndNumber(funcName, paramNumber)){
+                        ParamSymEntry localEntry = library.getInternalParamaterByFunctionNameAndNumber(funcName, paramNumber);
+                        String fromPlace = localEntry.icodePlace;
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
+                    }
+                }
+            }
+        } else if(libToAlwaysReplace.containsInternalParamaterByPlace(newPlace)){
+            ParamSymEntry entry  = libToAlwaysReplace.getInternalParamaterByPlace(newPlace);
+            int paramNumber = entry.paramNumber;
+            String funcName = entry.funcName;
+
+            if(!libToAlwaysReplace.equals(lib)){
+                if(lib.containsExternalParamaterByFunctionNameAndNumber(funcName, paramNumber)){
+                    ParamSymEntry localEntry = lib.getExternalParamaterByFunctionNameAndNumber(funcName, paramNumber);
+                    String fromPlace = localEntry.icodePlace;
+                    if(!fromPlace.equals(newPlace))
+                        lib.replacePlace(fromPlace, newPlace);
+                }
+            }
+
+            for(Lib library: libraries){
+                if(!libToAlwaysReplace.equals(library)){
+                    if(library.containsExternalParamaterByFunctionNameAndNumber(funcName, paramNumber)){
+                        ParamSymEntry localEntry = library.getExternalParamaterByFunctionNameAndNumber(funcName, paramNumber);
+                        String fromPlace = localEntry.icodePlace;
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
+                    }
+                }
+            }
+        } else if(libToAlwaysReplace.containsExternalReturnByPlace(newPlace)){
+            RetSymEntry returnEntry = libToAlwaysReplace.getExternalReturnByPlace(newPlace);
+            String funcName = returnEntry.funcName;
+
+            if(!lib.equals(libToAlwaysReplace)){
+                if(lib.containsExternalReturnByFunctionName(funcName)){
+                    RetSymEntry myRetEntry = lib.getExternalReturnByFunctionName(funcName);
+                    String fromPlace = myRetEntry.icodePlace;
+                    if(!fromPlace.equals(newPlace))
+                        lib.replacePlace(fromPlace, newPlace);
+                } else if(lib.containsInternalReturnByFunctionName(funcName)){
+                    RetSymEntry myRetEntry = lib.getInternalReturnByFunctionName(funcName);
+                    String fromPlace = myRetEntry.icodePlace;
+                    if(!fromPlace.equals(newPlace))
+                        lib.replacePlace(fromPlace, newPlace);
+                }
+            }
+
+            for(Lib library: libraries){
+                if(!library.equals(libToAlwaysReplace)){
+                    if(library.containsExternalReturnByFunctionName(funcName)){
+                        RetSymEntry myRetEntry = library.getExternalReturnByFunctionName(funcName);
+                        String fromPlace = myRetEntry.icodePlace;
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
+                    } else if(library.containsInternalReturnByFunctionName(funcName)){
+                        RetSymEntry myRetEntry = library.getInternalReturnByFunctionName(funcName);
+                        String fromPlace = myRetEntry.icodePlace;
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
+                    }
+                }
+            }
+        } else if(libToAlwaysReplace.containsInternalReturnByPlace(newPlace)){
+            RetSymEntry returnEntry = libToAlwaysReplace.getInternalReturnByPlace(newPlace);
+            String funcName = returnEntry.funcName;
+
+            if(!lib.equals(libToAlwaysReplace)){
+                if(lib.containsExternalReturnByFunctionName(funcName)){
+                    RetSymEntry myRetEntry = lib.getExternalReturnByFunctionName(funcName);
+                    String fromPlace = myRetEntry.icodePlace;
+                    if(!fromPlace.equals(newPlace))
+                        lib.replacePlace(fromPlace, newPlace);
+                }
+            }
+
+            for(Lib library: libraries){
+                if(!library.equals(libToAlwaysReplace)){
+                    if(library.containsExternalReturnByFunctionName(funcName)){
+                        RetSymEntry myRetEntry = library.getExternalReturnByFunctionName(funcName);
+                        String fromPlace = myRetEntry.icodePlace;
+                        if(!fromPlace.equals(newPlace))
+                            library.replacePlace(fromPlace, newPlace);
                     }
                 }
             }

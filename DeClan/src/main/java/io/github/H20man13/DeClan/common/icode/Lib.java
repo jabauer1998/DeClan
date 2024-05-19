@@ -164,11 +164,11 @@ public class Lib implements ICode {
         return symbols.containsParamaterEntryWithICodePlace(place, SymEntry.INTERNAL);
     }
 
-    public boolean containsExternalReturnByFunctionNameAndNumber(String ident, int number){
+    public boolean containsExternalParamaterByFunctionNameAndNumber(String ident, int number){
         return symbols.containsParamaterEntryWithFunctionNameAndParamaterNumber(ident, number, SymEntry.EXTERNAL);
     }
 
-    public boolean containsInternalReturnByFunctionName(String ident, int number){
+    public boolean containsInternalParamaterByFunctionNameAndNumber(String ident, int number){
         return symbols.containsParamaterEntryWithFunctionNameAndParamaterNumber(ident, number, SymEntry.INTERNAL);
     }
 
@@ -223,7 +223,7 @@ public class Lib implements ICode {
         return symbols.getParamaterByICodePlace(place, SymEntry.EXTERNAL);
     }
 
-    public ParamSymEntry getParamaterByFunctionNameAndNumber(String funcName, int number){
+    public ParamSymEntry getExternalParamaterByFunctionNameAndNumber(String funcName, int number){
         return symbols.getParamaterByFunctionNameAndNumber(funcName, number, SymEntry.EXTERNAL);
     }
 
