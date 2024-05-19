@@ -31,7 +31,7 @@ function compile_file_into_ir{
             Invoke-Expression "mvn exec:java -e -q -f '$PSScriptRoot/pom.xml' -P ir-nolink -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
         }
     } elseif ($out.Contains(".ilib")){
-        Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/pom.xml' -P ir-nolink-lib -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+        Invoke-Expression "mvn exec:java -e -q -f '$PSScriptRoot/pom.xml' -P ir-nolink-lib -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
     }
     
     Write-Host "--------End-Output-Window--------"
@@ -55,7 +55,7 @@ function compile_file_into_assembly{
     Write-Host "to output assembly at-"
     Write-Host "$out"
     Write-Host "---------Output-Window-----------"
-    Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/pom.xml' -P assembly -e -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+    Invoke-Expression "mvn exec:java -e -q -f '$PSScriptRoot/pom.xml' -P assembly -e -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
     Write-Host "--------End-Output-Window--------"
     if ([string]::IsNullOrWhiteSpace($errorOutput)) {
         Write-Host "Source-"
@@ -77,7 +77,7 @@ function compile_file_into_binary{
     Write-Host "to output binary at-"
     Write-Host "$out"
     Write-Host "---------Output-Window-----------"
-    Invoke-Expression "mvn exec:java -f '$PSScriptRoot/pom.xml' -q -e -P binary -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+    Invoke-Expression "mvn exec:java -e -f '$PSScriptRoot/pom.xml' -q -e -P binary -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
     Write-Host "--------End-Output-Window--------"
     if ([string]::IsNullOrWhiteSpace($errorOutput)) {
         Write-Host "Source-"
