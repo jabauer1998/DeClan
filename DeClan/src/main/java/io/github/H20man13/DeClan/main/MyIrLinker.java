@@ -1,25 +1,17 @@
 package io.github.H20man13.DeClan.main;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import edu.depauw.declan.common.ErrorLog;
-import edu.depauw.declan.common.Position;
 import edu.depauw.declan.common.ast.Library;
 import edu.depauw.declan.common.ast.Program;
-import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.gen.LabelGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
-import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Assign.Scope;
@@ -37,7 +29,6 @@ import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.icode.section.SymSec;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.VarSymEntry;
-import io.github.H20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class MyIrLinker {
@@ -2754,7 +2745,6 @@ public class MyIrLinker {
     private void linkDataSections(Prog startingProgram, Lib[] libraries, Prog newProg){
         SymSec symbolTable = newProg.symbols;
         DataSec dataSec = newProg.variables;
-        CodeSec codeSec = newProg.code;
         ProcSec procedures = newProg.procedures;
         ProcSec progProcedures = startingProgram.procedures;
         SymSec programSymbolTable = startingProgram.symbols;
