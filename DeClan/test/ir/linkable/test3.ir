@@ -6,10 +6,8 @@ SYMBOL SECTION
  g INTERNAL e
  h INTERNAL f
  i INTERNAL g
- v CONST INTERNAL h
- z CONST INTERNAL i
- A INTERNAL j
- K INTERNAL k
+ j INTERNAL PARAM Foo 0
+ m INTERNAL RETURN Foo
 DATA SECTION
  a := 42 [INT]
  GLOBAL b := a [INT]
@@ -21,73 +19,82 @@ DATA SECTION
  GLOBAL h := 0.0 [REAL]
  GLOBAL i := FALSE [BOOL]
 CODE SECTION
- o := EXTERNAL CALL IntToReal((b, [INT])) [REAL]
- p := EXTERNAL CALL RMul((o, [REAL]), (h, [REAL])) [REAL]
- CALL Foo((e -> j)[INT], (g -> k)[REAL], (p -> l)[REAL])
- EXTERNAL RETURN q := m [BOOL]
- i := q [BOOL]
+ CALL IntToReal((b -> o)[INT])
+ EXTERNAL RETURN q := p [REAL]
+ CALL RMul((q -> r)[REAL], (h -> s)[REAL])
+ EXTERNAL RETURN u := t [REAL]
+ CALL Foo((e -> j)[INT], (g -> k)[REAL], (u -> l)[REAL])
+ EXTERNAL RETURN v := m [BOOL]
+ i := v [BOOL]
  IF i EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
  LABEL IFSTAT_0_SEQ_0_LEVEL_0
- EXTERNAL CALL WriteInt((e, [INT]))
+ CALL WriteInt((e -> w)[INT])
  GOTO IFEND_0_LEVEL_0
  LABEL IFNEXT_0_SEQ_0_LEVEL_0
- r := EXTERNAL CALL IntToReal((b, [INT])) [REAL]
- s := EXTERNAL CALL RSub((d, [REAL]), (r, [REAL])) [REAL]
- EXTERNAL CALL WriteReal((s, [REAL]))
+ CALL IntToReal((b -> x)[INT])
+ EXTERNAL RETURN z := y [REAL]
+ CALL RSub((d -> A)[REAL], (z -> B)[REAL])
+ EXTERNAL RETURN D := C [REAL]
+ CALL WriteReal((D -> E)[REAL])
  GOTO IFEND_0_LEVEL_0
  LABEL IFNEXT_0_SEQ_1_LEVEL_0
  LABEL IFEND_0_LEVEL_0
 END
 PROC SECTION
  PROC LABEL Foo
-  PARAM B := j [INT]
-  t := EXTERNAL CALL IntToReal((b, [INT])) [REAL]
-  u := EXTERNAL CALL REqualTo((t, [REAL]), (d, [REAL])) [BOOL]
-  v := u [BOOL]
-  w := 355 [INT]
-  x := 113 [INT]
-  y := EXTERNAL CALL Divide((w, [INT]), (x, [INT])) [REAL]
-  z := y [REAL]
-  A := 0 [INT]
-  A := b [INT]
+  PARAM V := j [INT]
+  CALL IntToReal((b -> F)[INT])
+  EXTERNAL RETURN H := G [REAL]
+  CALL REqualTo((H -> I)[REAL], (d -> J)[REAL])
+  EXTERNAL RETURN L := K [BOOL]
+  M := L [BOOL]
+  N := 355 [INT]
+  O := 113 [INT]
+  CALL Divide((N -> P)[INT], (O -> Q)[INT])
+  EXTERNAL RETURN S := R [REAL]
+  T := S [REAL]
+  U := 0 [INT]
+  U := b [INT]
   LABEL FORBEG_0_LEVEL_0
-  IF A GT B THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
+  IF U GT V THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
   LABEL FORLOOP_0_LEVEL_0
   CALL Bar()
-  C := 20 [INT]
-  D := EXTERNAL CALL INeg((C, [INT])) [INT]
-  E := A IADD D [INT]
-  A := E [INT]
+  W := 20 [INT]
+  CALL INeg((W -> X)[INT])
+  EXTERNAL RETURN Z := Y [INT]
+  a0 := U IADD Z [INT]
+  U := a0 [INT]
   GOTO FORBEG_0_LEVEL_0
   LABEL FOREND_0_LEVEL_0
-  F := "H is " [STRING]
-  EXTERNAL CALL WriteString((F, [STRING]))
-  EXTERNAL CALL WriteInt((v, [BOOL]))
-  EXTERNAL CALL WriteLn()
-  G := "I is " [STRING]
-  EXTERNAL CALL WriteString((G, [STRING]))
-  EXTERNAL CALL WriteReal((z, [REAL]))
-  EXTERNAL CALL WriteLn()
-  H := 3.1415927 [REAL]
-  I := EXTERNAL CALL RGreaterThan((z, [REAL]), (H, [REAL])) [BOOL]
-  J := v LAND I [BOOL]
-  INTERNAL RETURN m := J [BOOL]
+  a1 := "H is " [STRING]
+  CALL WriteString((a1 -> a2)[STRING])
+  CALL WriteInt((M -> a3)[BOOL])
+  CALL WriteLn()
+  a4 := "I is " [STRING]
+  CALL WriteString((a4 -> a5)[STRING])
+  CALL WriteReal((T -> a6)[REAL])
+  CALL WriteLn()
+  a7 := 3.1415927 [REAL]
+  CALL RGreaterThan((T -> a8)[REAL], (a7 -> a9)[REAL])
+  EXTERNAL RETURN b1 := b0 [BOOL]
+  b2 := M LAND b1 [BOOL]
+  INTERNAL RETURN m := b2 [BOOL]
  RETURN
  PROC LABEL Bar
-  K := FALSE [BOOL]
-  L := 1 [INT]
-  M := e IADD L [INT]
-  e := M [INT]
-  N := BNOT i [BOOL]
-  IF N EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
+  b3 := FALSE [BOOL]
+  b4 := 1 [INT]
+  b5 := e IADD b4 [INT]
+  e := b5 [INT]
+  b6 := BNOT i [BOOL]
+  IF b6 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
-  O := TRUE [BOOL]
-  i := O [BOOL]
-  P := 0 [INT]
-  Q := 0 [INT]
-  CALL Foo((f -> j)[INT], (P -> k)[INT], (Q -> l)[INT])
-  EXTERNAL RETURN R := m [BOOL]
-  K := R [BOOL]
+  b7 := TRUE [BOOL]
+  i := b7 [BOOL]
+  b8 := 0 [INT]
+  b9 := 0 [INT]
+  CALL Foo((f -> j)[INT], (b8 -> k)[INT], (b9 -> l)[INT])
+  EXTERNAL RETURN c0 := m [BOOL]
+  b3 := c0 [BOOL]
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFEND_1_LEVEL_0

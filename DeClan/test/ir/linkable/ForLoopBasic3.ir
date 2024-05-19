@@ -9,11 +9,12 @@ CODE SECTION
  LABEL FORBEG_0_LEVEL_0
  IF a GT c THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
  LABEL FORLOOP_0_LEVEL_0
- EXTERNAL CALL WriteInt((a, [INT]))
- d := 1 [INT]
- e := EXTERNAL CALL INeg((d, [INT])) [INT]
- f := a IADD e [INT]
- a := f [INT]
+ CALL WriteInt((a -> d)[INT])
+ e := 1 [INT]
+ CALL INeg((e -> f)[INT])
+ EXTERNAL RETURN h := g [INT]
+ i := a IADD h [INT]
+ a := i [INT]
  GOTO FORBEG_0_LEVEL_0
  LABEL FOREND_0_LEVEL_0
 END

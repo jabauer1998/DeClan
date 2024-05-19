@@ -498,19 +498,6 @@ public class MyCompilerDriver {
                 }
             }
 
-            if(cfg.containsFlag("std")){
-                String isStd = cfg.getValueFromFlag("std");
-                if(isStd.equals("TRUE")){
-                    MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
-                    libs.add(stdLib.irIoLibrary());
-                    libs.add(stdLib.irIntLibrary());
-                    libs.add(stdLib.irRealLibrary());
-                    libs.add(stdLib.irConversionsLibrary());
-                    libs.add(stdLib.irMathLibrary());
-                    libs.add(stdLib.irUtilsLibrary());
-                }
-            }
-
             boolean emitIr = cfg.getValueFromFlag("ir").equals("TRUE");
             boolean emitAssembly = cfg.getValueFromFlag("assemble").equals("TRUE");
             if(emitIr){
@@ -527,6 +514,19 @@ public class MyCompilerDriver {
                         writer.write(prog.toString());
                         writer.close();
                     } else {
+                        if(cfg.containsFlag("std")){
+                            String isStd = cfg.getValueFromFlag("std");
+                            if(isStd.equals("TRUE")){
+                                MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
+                                libs.add(stdLib.irIoLibrary());
+                                libs.add(stdLib.irIntLibrary());
+                                libs.add(stdLib.irRealLibrary());
+                                libs.add(stdLib.irConversionsLibrary());
+                                libs.add(stdLib.irMathLibrary());
+                                libs.add(stdLib.irUtilsLibrary());
+                            }
+                        }
+
                         MyIrLinker linker = new MyIrLinker(errLog);
                         Lib[] libsArray = listAsArray(libs);
                         Prog myProg = generateProgram(program, errLog);
@@ -636,19 +636,6 @@ public class MyCompilerDriver {
                 libs.add(lib2);
             }
 
-            if(cfg.containsFlag("std")){
-                String isStd = cfg.getValueFromFlag("std");
-                if(isStd.equals("TRUE")){
-                    MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
-                    libs.add(stdLib.irIoLibrary());
-                    libs.add(stdLib.irIntLibrary());
-                    libs.add(stdLib.irRealLibrary());
-                    libs.add(stdLib.irConversionsLibrary());
-                    libs.add(stdLib.irMathLibrary());
-                    libs.add(stdLib.irUtilsLibrary());
-                }
-            }
-
             boolean emitIr = cfg.getValueFromFlag("ir").equals("TRUE");
             boolean emitAssembly = cfg.getValueFromFlag("assemble").equals("TRUE");
 
@@ -674,6 +661,20 @@ public class MyCompilerDriver {
                         writer.write(resultLib.toString());
                         writer.close();
                     } else {
+
+                        if(cfg.containsFlag("std")){
+                            String isStd = cfg.getValueFromFlag("std");
+                            if(isStd.equals("TRUE")){
+                                MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
+                                libs.add(stdLib.irIoLibrary());
+                                libs.add(stdLib.irIntLibrary());
+                                libs.add(stdLib.irRealLibrary());
+                                libs.add(stdLib.irConversionsLibrary());
+                                libs.add(stdLib.irMathLibrary());
+                                libs.add(stdLib.irUtilsLibrary());
+                            }
+                        }
+                        
                         MyIrLinker linker = new MyIrLinker(errLog);
                         Lib startingLibrary = libs.remove(0);
                         Lib[] libsAsArray = listAsArray(libs);

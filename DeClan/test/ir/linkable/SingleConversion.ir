@@ -8,8 +8,9 @@ DATA SECTION
  GLOBAL c := 0.0 [REAL]
  GLOBAL d := 0.0 [REAL]
 CODE SECTION
- e := EXTERNAL CALL IntToReal((b, [INT])) [REAL]
- c := e [REAL]
- EXTERNAL CALL WriteReal((c, [REAL]))
+ CALL IntToReal((b -> e)[INT])
+ EXTERNAL RETURN g := f [REAL]
+ c := g [REAL]
+ CALL WriteReal((c -> h)[REAL])
 END
 PROC SECTION

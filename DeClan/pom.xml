@@ -137,7 +137,6 @@
                   <argument>-e</argument>
                   <argument>-f</argument>
                   <argument>${project.OUT}</argument>
-                  <argument>-std</argument>
                   <argument>-p</argument>
                   <argument>${project.SRC}</argument>
                   <argument>--nolink</argument>

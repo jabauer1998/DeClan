@@ -1,65 +1,71 @@
 SYMBOL SECTION
- c CONST INTERNAL answer
- d INTERNAL n
- l INTERNAL answer
+ e CONST INTERNAL answer
+ f INTERNAL n
+ g INTERNAL PARAM Display 0
 DATA SECTION
  a := 42 [INT]
- b := EXTERNAL CALL INeg((a, [INT])) [INT]
- GLOBAL c := b [INT]
- GLOBAL d := 0 [INT]
+ CALL INeg((a -> b)[INT])
+ EXTERNAL RETURN d := c [INT]
+ GLOBAL e := d [INT]
+ GLOBAL f := 0 [INT]
 CODE SECTION
- d := c [INT]
- g := 0 [INT]
- h := d LT g [BOOL]
- IF h EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
+ f := e [INT]
+ i := 0 [INT]
+ j := f LT i [BOOL]
+ IF j EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
  LABEL IFSTAT_0_SEQ_0_LEVEL_0
- i := EXTERNAL CALL INeg((d, [INT])) [INT]
- d := i [INT]
+ CALL INeg((f -> k)[INT])
+ EXTERNAL RETURN m := l [INT]
+ f := m [INT]
  GOTO IFEND_0_LEVEL_0
  LABEL IFNEXT_0_SEQ_0_LEVEL_0
- j := 0 [INT]
- k := d GT j [BOOL]
- IF k EQ TRUE THEN IFSTAT_0_SEQ_1_LEVEL_0 ELSE IFNEXT_0_SEQ_1_LEVEL_0
+ n := 0 [INT]
+ o := f GT n [BOOL]
+ IF o EQ TRUE THEN IFSTAT_0_SEQ_1_LEVEL_0 ELSE IFNEXT_0_SEQ_1_LEVEL_0
  LABEL IFSTAT_0_SEQ_1_LEVEL_0
- CALL Display((d -> e)[INT])
+ CALL Display((f -> g)[INT])
  GOTO IFEND_0_LEVEL_0
  LABEL IFNEXT_0_SEQ_1_LEVEL_0
  LABEL IFEND_0_LEVEL_0
 END
 PROC SECTION
  PROC LABEL Display
-  PARAM m := e [INT]
-  l := FALSE [BOOL]
-  n := 2 [INT]
-  o := EXTERNAL CALL Mod((m, [INT]), (n, [INT])) [INT]
-  p := 0 [INT]
-  q := o NE p [BOOL]
-  l := q [BOOL]
-  IF l EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
+  PARAM q := g [INT]
+  p := FALSE [BOOL]
+  r := 2 [INT]
+  CALL Mod((q -> s)[INT], (r -> t)[INT])
+  EXTERNAL RETURN v := u [INT]
+  w := 0 [INT]
+  x := v NE w [BOOL]
+  p := x [BOOL]
+  IF p EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
-  r := 1 [INT]
-  EXTERNAL CALL WriteInt((r, [INT]))
-  s := 1 [INT]
-  t := m ISUB s [INT]
-  u := 2 [INT]
-  v := EXTERNAL CALL Div((t, [INT]), (u, [INT])) [INT]
-  m := v [INT]
+  y := 1 [INT]
+  CALL WriteInt((y -> z)[INT])
+  A := 1 [INT]
+  B := q ISUB A [INT]
+  C := 2 [INT]
+  CALL Div((B -> D)[INT], (C -> E)[INT])
+  EXTERNAL RETURN G := F [INT]
+  q := G [INT]
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
-  w := 0 [INT]
-  x := m EQ w [BOOL]
-  IF x EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0
+  H := 0 [INT]
+  I := q EQ H [BOOL]
+  IF I EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0
   LABEL IFSTAT_1_SEQ_1_LEVEL_0
-  y := 1 [INT]
-  z := EXTERNAL CALL INeg((y, [INT])) [INT]
-  EXTERNAL CALL WriteInt((z, [INT]))
+  J := 1 [INT]
+  CALL INeg((J -> K)[INT])
+  EXTERNAL RETURN M := L [INT]
+  CALL WriteInt((M -> N)[INT])
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_1_LEVEL_0
-  A := 0 [INT]
-  EXTERNAL CALL WriteInt((A, [INT]))
-  B := 2 [INT]
-  C := EXTERNAL CALL Div((m, [INT]), (B, [INT])) [INT]
-  m := C [INT]
+  O := 0 [INT]
+  CALL WriteInt((O -> P)[INT])
+  Q := 2 [INT]
+  CALL Div((q -> R)[INT], (Q -> S)[INT])
+  EXTERNAL RETURN U := T [INT]
+  q := U [INT]
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_2_LEVEL_0
   LABEL IFEND_1_LEVEL_0

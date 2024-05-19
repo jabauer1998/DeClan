@@ -17,30 +17,31 @@ CODE SECTION
  LABEL FORBEG_1_LEVEL_1
  IF b LT f THEN FORLOOP_1_LEVEL_1 ELSE FOREND_1_LEVEL_1
  LABEL FORLOOP_1_LEVEL_1
- EXTERNAL CALL WriteInt((b, [INT]))
- g := 1 [INT]
- h := b IADD g [INT]
- b := h [INT]
+ CALL WriteInt((b -> g)[INT])
+ h := 1 [INT]
+ i := b IADD h [INT]
+ b := i [INT]
  GOTO FORBEG_1_LEVEL_1
  LABEL FOREND_1_LEVEL_1
- EXTERNAL CALL WriteLn()
- i := 10 [INT]
- b := i [INT]
- j := 0 [INT]
+ CALL WriteLn()
+ j := 10 [INT]
+ b := j [INT]
+ k := 0 [INT]
  LABEL FORBEG_2_LEVEL_1
- IF b GT j THEN FORLOOP_2_LEVEL_1 ELSE FOREND_2_LEVEL_1
+ IF b GT k THEN FORLOOP_2_LEVEL_1 ELSE FOREND_2_LEVEL_1
  LABEL FORLOOP_2_LEVEL_1
- EXTERNAL CALL WriteInt((b, [INT]))
- k := 1 [INT]
- l := EXTERNAL CALL INeg((k, [INT])) [INT]
- m := b IADD l [INT]
- b := m [INT]
+ CALL WriteInt((b -> l)[INT])
+ m := 1 [INT]
+ CALL INeg((m -> n)[INT])
+ EXTERNAL RETURN p := o [INT]
+ q := b IADD p [INT]
+ b := q [INT]
  GOTO FORBEG_2_LEVEL_1
  LABEL FOREND_2_LEVEL_1
- EXTERNAL CALL WriteLn()
- n := 1 [INT]
- o := a IADD n [INT]
- a := o [INT]
+ CALL WriteLn()
+ r := 1 [INT]
+ s := a IADD r [INT]
+ a := s [INT]
  GOTO FORBEG_0_LEVEL_0
  LABEL FOREND_0_LEVEL_0
 END

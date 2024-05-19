@@ -26,9 +26,9 @@ function compile_file_into_ir{
     Write-Host "---------Output-Window-----------"
     if($out.Contains(".ir")){
         if ($nolink -eq ''){
-            Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/pom.xml' -P ir -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+            Invoke-Expression "mvn exec:java -e -q -f '$PSScriptRoot/pom.xml' -P ir -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
         } else {
-            Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/pom.xml' -P ir-nolink -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+            Invoke-Expression "mvn exec:java -e -q -f '$PSScriptRoot/pom.xml' -P ir-nolink -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
         }
     } elseif ($out.Contains(".ilib")){
         Invoke-Expression "mvn exec:java -q -f '$PSScriptRoot/pom.xml' -P ir-nolink-lib -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput

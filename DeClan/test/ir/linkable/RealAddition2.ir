@@ -9,8 +9,9 @@ DATA SECTION
  GLOBAL d := c [REAL]
  GLOBAL e := 0.0 [REAL]
 CODE SECTION
- f := EXTERNAL CALL RSub((d, [REAL]), (b, [REAL])) [REAL]
- e := f [REAL]
- EXTERNAL CALL WriteReal((e, [REAL]))
+ CALL RSub((d -> f)[REAL], (b -> g)[REAL])
+ EXTERNAL RETURN i := h [REAL]
+ e := i [REAL]
+ CALL WriteReal((e -> j)[REAL])
 END
 PROC SECTION

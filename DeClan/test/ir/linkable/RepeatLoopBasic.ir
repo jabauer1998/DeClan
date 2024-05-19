@@ -10,15 +10,15 @@ CODE SECTION
  LABEL REPEATBEG_0_LEVEL_0
  IF d EQ TRUE THEN REPEATEND_0_LEVEL_0 ELSE REPEATLOOP_0_LEVEL_0
  LABEL REPEATLOOP_0_LEVEL_0
- EXTERNAL CALL WriteInt((a, [INT]))
- e := 1 [INT]
- f := a IADD e [INT]
- a := f [INT]
- g := 10 [INT]
- h := a GE g [BOOL]
- d := h [BOOL]
+ CALL WriteInt((a -> e)[INT])
+ f := 1 [INT]
+ g := a IADD f [INT]
+ a := g [INT]
+ h := 10 [INT]
+ i := a GE h [BOOL]
+ d := i [BOOL]
  GOTO REPEATBEG_0_LEVEL_0
  LABEL REPEATEND_0_LEVEL_0
- EXTERNAL CALL WriteLn()
+ CALL WriteLn()
 END
 PROC SECTION

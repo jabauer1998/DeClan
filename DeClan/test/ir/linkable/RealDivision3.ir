@@ -17,15 +17,18 @@ DATA SECTION
  GLOBAL h := 0 [INT]
  GLOBAL i := 0 [INT]
 CODE SECTION
- j := EXTERNAL CALL IntToReal((b, [INT])) [REAL]
- f := j [REAL]
- k := EXTERNAL CALL IntToReal((d, [INT])) [REAL]
- g := k [REAL]
- l := EXTERNAL CALL RDivide((f, [REAL]), (g, [REAL])) [REAL]
- e := l [REAL]
- m := "Result as real: " [STRING]
- EXTERNAL CALL WriteString((m, [STRING]))
- EXTERNAL CALL WriteReal((e, [REAL]))
- EXTERNAL CALL WriteLn()
+ CALL IntToReal((b -> j)[INT])
+ EXTERNAL RETURN l := k [REAL]
+ f := l [REAL]
+ CALL IntToReal((d -> m)[INT])
+ EXTERNAL RETURN o := n [REAL]
+ g := o [REAL]
+ CALL RDivide((f -> p)[REAL], (g -> q)[REAL])
+ EXTERNAL RETURN s := r [REAL]
+ e := s [REAL]
+ t := "Result as real: " [STRING]
+ CALL WriteString((t -> u)[STRING])
+ CALL WriteReal((e -> v)[REAL])
+ CALL WriteLn()
 END
 PROC SECTION
