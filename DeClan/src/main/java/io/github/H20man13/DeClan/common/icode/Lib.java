@@ -132,7 +132,7 @@ public class Lib implements ICode {
         return symbols.containsVariableEntryWithICodePlace(place, SymEntry.INTERNAL);
     }
 
-    public boolean containsExternaVariableByIdent(String ident){
+    public boolean containsExternalVariableByIdent(String ident){
         return symbols.containsVariableEntryWithIdentifier(ident, SymEntry.EXTERNAL);
     }
 
@@ -185,7 +185,7 @@ public class Lib implements ICode {
         return symbols.getVariableEntryByIdentifier(ident, SymEntry.INTERNAL);
     }
 
-    public VarSymEntry getExternalVariableSymbolByPlace(String place){
+    public VarSymEntry getExternalVariableByPlace(String place){
         return symbols.getVariableEntryByICodePlace(place, SymEntry.EXTERNAL);
     }
 
