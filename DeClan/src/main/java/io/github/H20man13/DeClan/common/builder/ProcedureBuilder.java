@@ -62,6 +62,7 @@ public class ProcedureBuilder extends StatementBuilder implements CompletableBui
         String newPlace = gen.genNext();
         paramaters.add(factory.produceParamAssignment(newPlace, value, type));
         symbols.addParamSymEntry(SymEntry.INTERNAL, value, label.label, paramNumber);
+        this.paramNumber++;
         return newPlace;
     }
 
