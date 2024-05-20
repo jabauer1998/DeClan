@@ -103,10 +103,12 @@ public class SymSec implements ICode {
 
     public RetSymEntry getReturnByFunctionName(String funcName, int mask){
         for(SymEntry entry: entries){
-            RetSymEntry myEntry = (RetSymEntry)entry;
-            if(myEntry.funcName.equals(funcName))
-                if(myEntry.containsQualities(mask))
-                    return myEntry;
+            if(entry instanceof RetSymEntry){
+                RetSymEntry myEntry = (RetSymEntry)entry;
+                if(myEntry.funcName.equals(funcName))
+                    if(myEntry.containsQualities(mask))
+                        return myEntry;
+            }
         }
         throw new NoSymbolFoundException();
     }
