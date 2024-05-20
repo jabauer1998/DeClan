@@ -72,44 +72,4 @@ public class Goto implements ICode {
 		if(this.label.equals(from))
 			this.label = to;
 	}
-
-	@Override
-	public boolean containsParamater(String place) {
-		return false;
-	}
-
-	@Override
-	public boolean containsArgument(String place) {
-		return false;
-	}
-
-	@Override
-	public Set<String> paramaterForFunctions(String place) {
-		return new HashSet<String>();
-	}
-
-	@Override
-	public Set<String> argumentInFunctions(String place) {
-		return new HashSet<String>();
-	}
-
-	@Override
-	public Set<String> internalReturnForFunctions(String place) {
-		return new HashSet<String>();
-	}
-
-	@Override
-	public Set<String> externalReturnForFunctions(String place) {
-		return new HashSet<String>();
-	}
-
-	@Override
-	public boolean containsInternalReturn(String place) {
-		return false;
-	}
-
-	@Override
-	public boolean containsExternalReturn(String place) {
-		return false;
-	}
 }

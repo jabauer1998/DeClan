@@ -52,4 +52,14 @@ public class RetSymEntry extends SymEntry{
         
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof RetSymEntry){
+            RetSymEntry otherEntry = (RetSymEntry)obj;
+            if(otherEntry.funcName.equals(funcName))
+                return super.equals(obj);
+        }
+        return false;
+    }
 }

@@ -53,4 +53,15 @@ public class ParamSymEntry extends SymEntry {
 
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof ParamSymEntry){
+            ParamSymEntry otherEntry = (ParamSymEntry)obj;
+            if(otherEntry.funcName.equals(funcName))
+                    if(otherEntry.paramNumber == paramNumber)
+                            return super.equals(obj);
+        }
+        return false;
+    }
 }

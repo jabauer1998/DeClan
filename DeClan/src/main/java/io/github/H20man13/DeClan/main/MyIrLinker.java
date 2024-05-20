@@ -2747,44 +2747,36 @@ public class MyIrLinker {
         Set<String> internalIdentsRepresented = new HashSet<String>();
         int localVariableCount = 0;
 
-        boolean programContainsExternalReturn = program.containsExternalReturn(place);
-        if(programContainsExternalReturn){
-            externalReturnsRepresented.addAll(program.externalReturnForFunctions(place));
-        }
-        boolean programContainsInternalReturn = program.containsInternalReturn(place);
-        if(programContainsInternalReturn){
-            internalReturnsRepresented.addAll(program.internalReturnForFunctions(place));
-        }
-        if(program.containsExternalVariableByPlace(place)){
+        if(program.containsExternalReturnByPlace(place)){
+            externalReturnsRepresented.add(program.getExternalReturnByPlace(place).funcName);
+        } else if(program.containsInternalReturnByPlace(place)){
+            internalReturnsRepresented.add(program.getInternalReturnByPlace(place).funcName);
+        } else if(program.containsExternalVariableByPlace(place)){
             externalIdentsRepresented.add(program.getExternalVariableByPlace(place).declanIdent);
-        } else if(program.containsParamater(place)){
-            paramaterRepresented.addAll(program.paramaterForFunctions(place));
-        } else if(program.containsArgument(place)){
-            argumentRepresented.addAll(program.argumentInFunctions(place));  
+        } else if(program.containsInternalParamaterByPlace(place)){
+            paramaterRepresented.add(program.getInternalParamaterByPlace(place).funcName);
+        } else if(program.containsExternalParamaterByPlace(place)){
+            argumentRepresented.add(program.getExternalParamaterByPlace(place).funcName);
         } else if(program.containsInternalVariableByPlace(place)){
             internalIdentsRepresented.add(program.getInternalVariableByPlace(place).declanIdent);
-        } else if(program.containsPlace(place) && !programContainsInternalReturn && !programContainsExternalReturn){
+        } else if(program.containsPlace(place)){
             localVariableCount++;
         }
 
         for(Lib lib: libraries){
-            boolean libContainsExternalReturn = lib.containsExternalReturn(place);
-            if(libContainsExternalReturn){
-                externalReturnsRepresented.addAll(lib.externalReturnForFunctions(place));
-            }
-            boolean libContainsInternalReturn = lib.containsInternalReturn(place);
-            if(libContainsInternalReturn){
-                internalReturnsRepresented.addAll(lib.internalReturnForFunctions(place));
-            }
-            if(lib.containsExternalVariableByPlace(place)){
+            if(lib.containsExternalReturnByPlace(place)){
+                externalReturnsRepresented.add(lib.getExternalReturnByPlace(place).funcName);
+            } else if(lib.containsInternalReturnByPlace(place)){
+                internalReturnsRepresented.add(lib.getInternalReturnByPlace(place).funcName);
+            } else if(lib.containsExternalVariableByPlace(place)){
                 externalIdentsRepresented.add(lib.getExternalVariableByPlace(place).declanIdent);
-            } else if(lib.containsParamater(place)){
-                paramaterRepresented.addAll(lib.paramaterForFunctions(place));
-            } else if(lib.containsArgument(place)){
-                argumentRepresented.addAll(lib.argumentInFunctions(place));  
+            } else if(lib.containsInternalParamaterByPlace(place)){
+                paramaterRepresented.add(lib.getInternalParamaterByPlace(place).funcName);
+            } else if(lib.containsExternalParamaterByPlace(place)){
+                argumentRepresented.add(lib.getExternalParamaterByPlace(place).funcName);
             } else if(lib.containsInternalVariableByPlace(place)){
                 internalIdentsRepresented.add(lib.getInternalVariableByPlace(place).declanIdent);
-            } else if(lib.containsPlace(place) && !libContainsInternalReturn && !libContainsExternalReturn){
+            } else if(lib.containsPlace(place)){
                 localVariableCount++;
             }
         }
@@ -2854,49 +2846,41 @@ public class MyIrLinker {
         Set<String> internalIdentsRepresented = new HashSet<String>();
         int localVariableCount = 0;
 
-        boolean libraryContainsExternalReturn = library.containsExternalReturn(place);
-        if(libraryContainsExternalReturn){
-            externalReturnsRepresented.addAll(library.externalReturnForFunctions(place));
-        }
-        boolean libraryContainsInternalReturn = library.containsInternalReturn(place);
-        if(libraryContainsInternalReturn){
-            internalReturnsRepresented.addAll(library.internalReturnForFunctions(place));
-        }
-        if(library.containsExternalVariableByPlace(place)){
+        if(library.containsExternalReturnByPlace(place)){
+            externalReturnsRepresented.add(library.getExternalReturnByPlace(place).funcName);
+        } else if(library.containsInternalReturnByPlace(place)){
+            internalReturnsRepresented.add(library.getInternalReturnByPlace(place).funcName);
+        } else if(library.containsExternalVariableByPlace(place)){
             externalIdentsRepresented.add(library.getExternalVariableByPlace(place).declanIdent);
-        } else if(library.containsParamater(place)){
-            paramaterRepresented.addAll(library.paramaterForFunctions(place));
-        } else if(library.containsArgument(place)){
-            argumentRepresented.addAll(library.argumentInFunctions(place));  
+        } else if(library.containsInternalParamaterByPlace(place)){
+            paramaterRepresented.add(library.getInternalParamaterByPlace(place).funcName);
+        } else if(library.containsExternalParamaterByPlace(place)){
+            argumentRepresented.add(library.getExternalParamaterByPlace(place).funcName);
         } else if(library.containsInternalVariableByPlace(place)){
             internalIdentsRepresented.add(library.getInternalVariableByPlace(place).declanIdent);
-        } else if(library.containsPlace(place) && !libraryContainsInternalReturn && !libraryContainsExternalReturn){
+        } else if(library.containsPlace(place)){
             localVariableCount++;
         }
 
         for(Lib lib: libraries){
-            boolean libContainsExternalReturn = lib.containsExternalReturn(place);
-            if(libContainsExternalReturn){
-                externalReturnsRepresented.addAll(lib.externalReturnForFunctions(place));
-            }
-            boolean libContainsInternalReturn = lib.containsInternalReturn(place);
-            if(libContainsInternalReturn){
-                internalReturnsRepresented.addAll(lib.internalReturnForFunctions(place));
-            }
-            if(lib.containsExternalVariableByPlace(place)){
+            if(lib.containsExternalReturnByPlace(place)){
+                externalReturnsRepresented.add(lib.getExternalReturnByPlace(place).funcName);
+            } else if(lib.containsInternalReturnByPlace(place)){
+                internalReturnsRepresented.add(lib.getInternalReturnByPlace(place).funcName);
+            } else if(lib.containsExternalVariableByPlace(place)){
                 externalIdentsRepresented.add(lib.getExternalVariableByPlace(place).declanIdent);
-            } else if(lib.containsParamater(place)){
-                paramaterRepresented.addAll(lib.paramaterForFunctions(place));
-            } else if(lib.containsArgument(place)){
-                argumentRepresented.addAll(lib.argumentInFunctions(place));  
+            } else if(lib.containsInternalParamaterByPlace(place)){
+                paramaterRepresented.add(lib.getInternalParamaterByPlace(place).funcName);
+            } else if(lib.containsExternalParamaterByPlace(place)){
+                argumentRepresented.add(lib.getExternalParamaterByPlace(place).funcName);
             } else if(lib.containsInternalVariableByPlace(place)){
                 internalIdentsRepresented.add(lib.getInternalVariableByPlace(place).declanIdent);
-            } else if(lib.containsPlace(place) && !libContainsInternalReturn && !libContainsExternalReturn){
+            } else if(lib.containsPlace(place)){
                 localVariableCount++;
             }
         }
 
-        if(localVariableCount == 1 && externalIdentsRepresented.isEmpty() 
+        if(localVariableCount <= 1 && externalIdentsRepresented.isEmpty() 
             && internalIdentsRepresented.isEmpty() && internalReturnsRepresented.isEmpty() 
             && externalReturnsRepresented.isEmpty() && argumentRepresented.isEmpty() 
             && paramaterRepresented.isEmpty()){

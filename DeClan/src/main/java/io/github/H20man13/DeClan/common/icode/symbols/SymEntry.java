@@ -55,15 +55,11 @@ public abstract class SymEntry implements ICode, Copyable<SymEntry> {
     @Override
     public boolean equals(Object obj){
         if(obj instanceof SymEntry){
-            SymEntry entry = (SymEntry)obj;
-            
-            boolean maskEquals = entry.symType == symType;
-            boolean placeEquals = entry.icodePlace.equals(icodePlace);
-
-            return maskEquals && placeEquals;
-        } else {
-            return false;
+            SymEntry otherEntry = (SymEntry)obj;
+            if(otherEntry.icodePlace.equals(icodePlace))
+                return otherEntry.symType == symType; 
         }
+        return false;
     }
 
     @Override
@@ -84,46 +80,5 @@ public abstract class SymEntry implements ICode, Copyable<SymEntry> {
         //Do nothing this is just a place holder
     }
 
-    @Override
-    public boolean containsParamater(String place) {
-        return false;
-    }
-
-    @Override
-    public boolean containsArgument(String place) {
-        return false;
-    }
-
-    @Override
-    public Set<String> paramaterForFunctions(String place) {
-        return new HashSet<String>();
-    }
-
-    @Override
-    public Set<String> argumentInFunctions(String place) {
-        return new HashSet<String>();
-    }
-
-    @Override
-    public Set<String> internalReturnForFunctions(String place) {
-        return new HashSet<String>();
-    }
-
-    @Override
-    public Set<String> externalReturnForFunctions(String place) {
-        return new HashSet<String>();
-    }
-
-    @Override
-    public boolean containsInternalReturn(String place) {
-        return false;
-    }
-
-    @Override
-    public boolean containsExternalReturn(String place) {
-        return false;
-    }
-
-    @Override
     public abstract String toString();
 }

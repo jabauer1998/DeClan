@@ -46,4 +46,14 @@ public class VarSymEntry extends SymEntry {
 
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof VarSymEntry){
+            VarSymEntry otherEntry = (VarSymEntry)obj;
+            if(otherEntry.declanIdent.equals(declanIdent))
+                return super.equals(obj);
+        }
+        return false;
+    }
 }

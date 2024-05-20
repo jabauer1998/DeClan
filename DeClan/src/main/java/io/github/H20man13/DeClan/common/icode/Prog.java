@@ -99,19 +99,4 @@ public class Prog extends Lib implements ICode {
             return true;
         return code.containsPlace(place);
     }
-
-    @Override
-    public boolean containsExternalReturn(String place){
-        if(super.containsExternalReturn(place))
-            return true;
-        return code.containsExternalReturn(place);
-    }
-
-    @Override
-    public Set<String> externalReturnForFunctions(String place){
-        HashSet<String> toRet = new HashSet<String>();
-        toRet.addAll(super.externalReturnForFunctions(place));
-        toRet.addAll(code.externalReturnForFunctions(place));
-        return toRet;
-    }
 }

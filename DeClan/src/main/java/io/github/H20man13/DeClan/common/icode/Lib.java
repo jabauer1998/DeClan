@@ -172,10 +172,6 @@ public class Lib implements ICode {
         return symbols.containsParamaterEntryWithFunctionNameAndParamaterNumber(ident, number, SymEntry.INTERNAL);
     }
 
-    public boolean containsParamater(String place){
-        return procedures.containsParamater(place);
-    }
-
     public VarSymEntry getInternalVariableByPlace(String place){
         return symbols.getVariableEntryByICodePlace(place, SymEntry.INTERNAL);
     }
@@ -225,60 +221,5 @@ public class Lib implements ICode {
 
     public ParamSymEntry getExternalParamaterByFunctionNameAndNumber(String funcName, int number){
         return symbols.getParamaterByFunctionNameAndNumber(funcName, number, SymEntry.EXTERNAL);
-    }
-
-    @Override
-    public boolean containsArgument(String place) {
-        boolean variablesContainsArgument = variables.containsArgument(place);
-        boolean proceduresContainsArgument = procedures.containsArgument(place);
-        return variablesContainsArgument && proceduresContainsArgument;
-    }
-
-    @Override
-    public Set<String> paramaterForFunctions(String place) {
-        return procedures.paramaterForFunctions(place);
-    }
-
-    @Override
-    public Set<String> argumentInFunctions(String place) {
-        Set<String> newResult = new HashSet<String>();
-        Set<String> varResult = variables.argumentInFunctions(place);
-        Set<String> procResult = procedures.argumentInFunctions(place);
-        newResult.addAll(varResult);
-        newResult.addAll(procResult);
-        return newResult;
-    }
-
-    @Override
-    public Set<String> internalReturnForFunctions(String place) {
-        return procedures.internalReturnForFunctions(place);
-    }
-
-    @Override
-    public Set<String> externalReturnForFunctions(String place) {
-        Set<String> newResult = new HashSet<String>();
-        Set<String> varResult = variables.externalReturnForFunctions(place);
-        Set<String> procResult = procedures.externalReturnForFunctions(place);
-        newResult.addAll(varResult);
-        newResult.addAll(procResult);
-        return newResult;
-    }
-
-    @Override
-    public boolean containsExternalReturn(String place) {
-        if(variables.containsExternalReturn(place))
-            return true;
-
-        if(procedures.containsExternalReturn(place))
-            return true;
-
-        return false;
-    }
-
-    @Override
-    public boolean containsInternalReturn(String place) {
-        if(procedures.containsInternalReturn(place))
-            return true;
-        return false;
     }
 }
