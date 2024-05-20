@@ -299,11 +299,6 @@ PROCEDURE RDivide(n1: REAL; n2: REAL);
 	END;
 
 	resultExp := n1Exp - n2Exp;
-
-	WriteString("Result Exp is: ");
-	WriteInt(resultExp);
-	WriteLn();
-
 	resultBase := n1Base DIV n2Base;
 
 	IF (resultDecimalPlace > 23) THEN
@@ -360,15 +355,7 @@ PROCEDURE RDivide(n1: REAL; n2: REAL);
 		END
 	END;
 
-	WriteString("Result Exp before adding Real Bias: ");
-	WriteInt(resultExp);
-	WriteLn();
-
 	resultExp := resultExp + realBias;
-
-	WriteString("Result Exp after adding Real Bias: ");
-	WriteInt(resultExp);
-	WriteLn();
 	
 	intResult := (resultExp BAND 0ffH) << 23;
  	intResult := intResult BOR (resultSign << 31);
