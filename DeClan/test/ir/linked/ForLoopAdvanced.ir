@@ -1,69 +1,69 @@
 SYMBOL SECTION
 DATA SECTION
- GLOBAL p9 := 0 [INT]
- GLOBAL p6 := 0 [INT]
+ GLOBAL q3 := 0 [INT]
+ GLOBAL p7 := 0 [INT]
 CODE SECTION
- l1 := 1 [INT]
- p9 := l1 [INT]
- l4 := 10 [INT]
+ l2 := 1 [INT]
+ q3 := l2 [INT]
+ l5 := 10 [INT]
  LABEL FORBEG_0_LEVEL_0
- IF p9 NE l4 THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
+ IF q3 NE l5 THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
  LABEL FORLOOP_0_LEVEL_0
- l7 := 1 [INT]
- p6 := l7 [INT]
- m0 := 10 [INT]
+ l8 := 1 [INT]
+ p7 := l8 [INT]
+ m1 := 10 [INT]
  LABEL FORBEG_1_LEVEL_1
- IF p6 LT m0 THEN FORLOOP_1_LEVEL_1 ELSE FOREND_1_LEVEL_1
+ IF p7 LT m1 THEN FORLOOP_1_LEVEL_1 ELSE FOREND_1_LEVEL_1
  LABEL FORLOOP_1_LEVEL_1
- CALL WriteInt((p6 -> m4)[INT])
- m8 := 1 [INT]
- n0 := p6 IADD m8 [INT]
- p6 := n0 [INT]
+ CALL WriteInt((p7 -> m5)[INT])
+ m9 := 1 [INT]
+ n1 := p7 IADD m9 [INT]
+ p7 := n1 [INT]
  GOTO FORBEG_1_LEVEL_1
  LABEL FOREND_1_LEVEL_1
  CALL WriteLn()
- n3 := 10 [INT]
- p6 := n3 [INT]
- n6 := 0 [INT]
+ n4 := 10 [INT]
+ p7 := n4 [INT]
+ n7 := 0 [INT]
  LABEL FORBEG_2_LEVEL_1
- IF p6 GT n6 THEN FORLOOP_2_LEVEL_1 ELSE FOREND_2_LEVEL_1
+ IF p7 GT n7 THEN FORLOOP_2_LEVEL_1 ELSE FOREND_2_LEVEL_1
  LABEL FORLOOP_2_LEVEL_1
- CALL WriteInt((p6 -> n7)[INT])
- n8 := 1 [INT]
- CALL INeg((n8 -> p0)[INT])
- EXTERNAL RETURN p5 := p2 [INT]
- p3 := p6 IADD p5 [INT]
- p6 := p3 [INT]
+ CALL WriteInt((p7 -> n8)[INT])
+ n9 := 1 [INT]
+ CALL INeg((n9 -> p1)[INT])
+ EXTERNAL RETURN p6 := p3 [INT]
+ p8 := p7 IADD p6 [INT]
+ p7 := p8 [INT]
  GOTO FORBEG_2_LEVEL_1
  LABEL FOREND_2_LEVEL_1
  CALL WriteLn()
- q0 := 1 [INT]
- q1 := p9 IADD q0 [INT]
- p9 := q1 [INT]
+ q2 := 1 [INT]
+ q4 := q3 IADD q2 [INT]
+ q3 := q4 [INT]
  GOTO FORBEG_0_LEVEL_0
  LABEL FOREND_0_LEVEL_0
 END
 PROC SECTION
  PROC LABEL WriteInt
-  PARAM m2 := m1 [INT]
-  m3 := 0 [INT]
-  IPARAM m3
+  PARAM m3 := m2 [INT]
+  m4 := 0 [INT]
+  IPARAM m4
   IASM "MOV %r, R0"
-  IPARAM m2
+  IPARAM m3
   IASM "LDR R0, %a"
   IASM "SWI 1"
-  IPARAM m3
+  IPARAM m4
   IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteLn
   IASM "SWI 4"
  RETURN
  PROC LABEL INeg
-  PARAM o0 := n9 [INT]
-  o9 := 0 [INT]
-  o7 := INOT o0 [INT]
-  o8 := 1 [INT]
-  o6 := o7 IADD o8 [INT]
-  o9 := o6 [INT]
-  INTERNAL RETURN o2 := o9 [INT]
+  PARAM o1 := o0 [INT]
+  p0 := 0 [INT]
+  o8 := INOT o1 [INT]
+  o9 := 1 [INT]
+  o7 := o8 IADD o9 [INT]
+  p0 := o7 [INT]
+  INTERNAL RETURN o3 := p0 [INT]
  RETURN
