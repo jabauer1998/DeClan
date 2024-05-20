@@ -3,6 +3,7 @@ SYMBOL SECTION
  d CONST INTERNAL MIN
  e INTERNAL x
  f INTERNAL y
+ h EXTERNAL PARAM WriteInt 0
 DATA SECTION
  a := 10 [INT]
  GLOBAL b := a [INT]
@@ -36,23 +37,23 @@ CODE SECTION
  LABEL WHILECOND_2_SEQ_0_LEVEL_1
  IF m EQ TRUE THEN WHILESTAT_2_SEQ_0_LEVEL_1 ELSE WHILEEND_2_LEVEL_1
  LABEL WHILESTAT_2_SEQ_0_LEVEL_1
- CALL WriteInt((f -> n)[INT])
- o := 1 [INT]
- p := f IADD o [INT]
- f := p [INT]
- q := f LT b [BOOL]
- m := q [BOOL]
+ CALL WriteInt((f -> h)[INT])
+ n := 1 [INT]
+ o := f IADD n [INT]
+ f := o [INT]
+ p := f LT b [BOOL]
+ m := p [BOOL]
  GOTO WHILECOND_2_SEQ_0_LEVEL_1
  LABEL WHILENEXT_2_SEQ_0_LEVEL_1
  LABEL WHILEEND_2_LEVEL_1
  CALL WriteLn()
- CALL WriteInt((e -> r)[INT])
+ CALL WriteInt((e -> h)[INT])
  CALL WriteLn()
- s := 1 [INT]
- t := e IADD s [INT]
- e := t [INT]
- u := e LT b [BOOL]
- l := u [BOOL]
+ q := 1 [INT]
+ r := e IADD q [INT]
+ e := r [INT]
+ s := e LT b [BOOL]
+ l := s [BOOL]
  GOTO WHILECOND_0_SEQ_1_LEVEL_0
  LABEL WHILENEXT_0_SEQ_1_LEVEL_0
  LABEL WHILEEND_0_LEVEL_0

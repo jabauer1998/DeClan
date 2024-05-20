@@ -1,18 +1,56 @@
 SYMBOL SECTION
  b CONST INTERNAL a
  d CONST INTERNAL b
+ f EXTERNAL PARAM RNeg 0
+ g EXTERNAL RETURN RNeg
+ i EXTERNAL PARAM IntToReal 0
+ j EXTERNAL RETURN IntToReal
+ l EXTERNAL PARAM RAdd 0
+ m EXTERNAL PARAM RAdd 1
+ n EXTERNAL RETURN RAdd
  p CONST INTERNAL c
  v CONST INTERNAL d
- O CONST INTERNAL e
- P INTERNAL x
- Q INTERNAL y
- R INTERNAL z
- S INTERNAL l
- T INTERNAL m
- U INTERNAL n
- V INTERNAL p
- W INTERNAL q
- X INTERNAL r
+ x EXTERNAL PARAM RMul 0
+ y EXTERNAL PARAM RMul 1
+ z EXTERNAL RETURN RMul
+ C EXTERNAL PARAM RDivide 0
+ D EXTERNAL PARAM RDivide 1
+ E EXTERNAL RETURN RDivide
+ G EXTERNAL PARAM RNotEqualTo 0
+ H EXTERNAL PARAM RNotEqualTo 1
+ I EXTERNAL RETURN RNotEqualTo
+ K CONST INTERNAL e
+ L INTERNAL x
+ M INTERNAL y
+ N INTERNAL z
+ O INTERNAL l
+ P INTERNAL m
+ Q INTERNAL n
+ R INTERNAL p
+ S INTERNAL q
+ T INTERNAL r
+ W EXTERNAL PARAM Mod 0
+ X EXTERNAL PARAM Mod 1
+ Y EXTERNAL RETURN Mod
+ a3 EXTERNAL PARAM RSub 0
+ a4 EXTERNAL PARAM RSub 1
+ a5 EXTERNAL RETURN RSub
+ a7 EXTERNAL PARAM WriteInt 0
+ a8 EXTERNAL PARAM WriteReal 0
+ a9 EXTERNAL PARAM Div 0
+ b0 EXTERNAL PARAM Div 1
+ b1 EXTERNAL RETURN Div
+ b3 EXTERNAL PARAM Divide 0
+ b4 EXTERNAL PARAM Divide 1
+ b5 EXTERNAL RETURN Divide
+ b7 EXTERNAL PARAM Round 0
+ b8 EXTERNAL RETURN Round
+ c8 EXTERNAL PARAM RGreaterThan 0
+ c9 EXTERNAL PARAM RGreaterThan 1
+ d0 EXTERNAL RETURN RGreaterThan
+ d5 EXTERNAL PARAM RGreaterThanOrEqualTo 0
+ d6 EXTERNAL PARAM RGreaterThanOrEqualTo 1
+ d7 EXTERNAL RETURN RGreaterThanOrEqualTo
 DATA SECTION
  a := 0 [INT]
  GLOBAL b := a [INT]
@@ -32,116 +70,116 @@ DATA SECTION
  t := r IADD s [INT]
  u := q IMUL t [INT]
  GLOBAL v := u [INT]
- CALL IntToReal((b -> w)[INT])
- EXTERNAL RETURN y := x [REAL]
- CALL RMul((y -> z)[REAL], (d -> A)[REAL])
- EXTERNAL RETURN C := B [REAL]
- CALL IntToReal((v -> D)[INT])
+ CALL IntToReal((b -> i)[INT])
+ EXTERNAL RETURN w := j [REAL]
+ CALL RMul((w -> x)[REAL], (d -> y)[REAL])
+ EXTERNAL RETURN A := z [REAL]
+ CALL IntToReal((v -> i)[INT])
+ EXTERNAL RETURN B := j [REAL]
+ CALL RDivide((p -> C)[REAL], (B -> D)[REAL])
  EXTERNAL RETURN F := E [REAL]
- CALL RDivide((p -> G)[REAL], (F -> H)[REAL])
- EXTERNAL RETURN J := I [REAL]
- CALL RNotEqualTo((C -> K)[REAL], (J -> L)[REAL])
- EXTERNAL RETURN N := M [BOOL]
- GLOBAL O := N [BOOL]
- GLOBAL P := 0.0 [REAL]
- GLOBAL Q := 0.0 [REAL]
- GLOBAL R := 0.0 [REAL]
- GLOBAL S := 0 [INT]
- GLOBAL T := 0 [INT]
- GLOBAL U := 0 [INT]
- GLOBAL V := FALSE [BOOL]
- GLOBAL W := FALSE [BOOL]
- GLOBAL X := FALSE [BOOL]
+ CALL RNotEqualTo((A -> G)[REAL], (F -> H)[REAL])
+ EXTERNAL RETURN J := I [BOOL]
+ GLOBAL K := J [BOOL]
+ GLOBAL L := 0.0 [REAL]
+ GLOBAL M := 0.0 [REAL]
+ GLOBAL N := 0.0 [REAL]
+ GLOBAL O := 0 [INT]
+ GLOBAL P := 0 [INT]
+ GLOBAL Q := 0 [INT]
+ GLOBAL R := FALSE [BOOL]
+ GLOBAL S := FALSE [BOOL]
+ GLOBAL T := FALSE [BOOL]
 CODE SECTION
- CALL RDivide((d -> Y)[REAL], (d -> Z)[REAL])
- EXTERNAL RETURN a1 := a0 [REAL]
- P := a1 [REAL]
- a2 := 10 [INT]
- CALL Mod((v -> a3)[INT], (a2 -> a4)[INT])
- EXTERNAL RETURN a6 := a5 [INT]
- S := a6 [INT]
- CALL RNeg((p -> a7)[REAL])
- EXTERNAL RETURN a9 := a8 [REAL]
- CALL IntToReal((b -> b0)[INT])
- EXTERNAL RETURN b2 := b1 [REAL]
- CALL RMul((d -> b3)[REAL], (b2 -> b4)[REAL])
+ CALL RDivide((d -> C)[REAL], (d -> D)[REAL])
+ EXTERNAL RETURN U := E [REAL]
+ L := U [REAL]
+ V := 10 [INT]
+ CALL Mod((v -> W)[INT], (V -> X)[INT])
+ EXTERNAL RETURN Z := Y [INT]
+ O := Z [INT]
+ CALL RNeg((p -> f)[REAL])
+ EXTERNAL RETURN a0 := g [REAL]
+ CALL IntToReal((b -> i)[INT])
+ EXTERNAL RETURN a1 := j [REAL]
+ CALL RMul((d -> x)[REAL], (a1 -> y)[REAL])
+ EXTERNAL RETURN a2 := z [REAL]
+ CALL RSub((a0 -> a3)[REAL], (a2 -> a4)[REAL])
+ EXTERNAL RETURN a6 := a5 [REAL]
+ M := a6 [REAL]
+ CALL WriteInt((b -> a7)[INT])
+ CALL WriteReal((L -> a8)[REAL])
+ CALL WriteReal((L -> a8)[REAL])
+ CALL WriteReal((M -> a8)[REAL])
+ CALL WriteLn()
+ CALL Div((v -> a9)[INT], (O -> b0)[INT])
+ EXTERNAL RETURN b2 := b1 [INT]
+ P := b2 [INT]
+ CALL Divide((v -> b3)[INT], (O -> b4)[INT])
  EXTERNAL RETURN b6 := b5 [REAL]
- CALL RSub((a9 -> b7)[REAL], (b6 -> b8)[REAL])
- EXTERNAL RETURN c0 := b9 [REAL]
- Q := c0 [REAL]
- CALL WriteInt((b -> c1)[INT])
- CALL WriteReal((P -> c2)[REAL])
- CALL WriteReal((P -> c3)[REAL])
- CALL WriteReal((Q -> c4)[REAL])
+ N := b6 [REAL]
+ CALL WriteInt((P -> a7)[INT])
+ CALL WriteReal((N -> a8)[REAL])
  CALL WriteLn()
- CALL Div((v -> c5)[INT], (S -> c6)[INT])
- EXTERNAL RETURN c8 := c7 [INT]
- T := c8 [INT]
- CALL Divide((v -> c9)[INT], (S -> d0)[INT])
- EXTERNAL RETURN d2 := d1 [REAL]
- R := d2 [REAL]
- CALL WriteInt((T -> d3)[INT])
- CALL WriteReal((R -> d4)[REAL])
- CALL WriteLn()
- CALL Round((p -> d5)[REAL])
- EXTERNAL RETURN d7 := d6 [INT]
- CALL IntToReal((d7 -> d8)[INT])
- EXTERNAL RETURN e0 := d9 [REAL]
- R := e0 [REAL]
- CALL WriteReal((R -> e1)[REAL])
- IF O EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
+ CALL Round((p -> b7)[REAL])
+ EXTERNAL RETURN b9 := b8 [INT]
+ CALL IntToReal((b9 -> i)[INT])
+ EXTERNAL RETURN c0 := j [REAL]
+ N := c0 [REAL]
+ CALL WriteReal((N -> a8)[REAL])
+ IF K EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
  LABEL IFSTAT_0_SEQ_0_LEVEL_0
- e2 := 2 [INT]
- e3 := 2 [INT]
- e4 := e2 IMUL e3 [INT]
- CALL WriteInt((e4 -> e5)[INT])
+ c1 := 2 [INT]
+ c2 := 2 [INT]
+ c3 := c1 IMUL c2 [INT]
+ CALL WriteInt((c3 -> a7)[INT])
  GOTO IFEND_0_LEVEL_0
  LABEL IFNEXT_0_SEQ_0_LEVEL_0
- e6 := 10 [INT]
- CALL Divide((v -> e7)[INT], (e6 -> e8)[INT])
- EXTERNAL RETURN f0 := e9 [REAL]
- CALL WriteReal((f0 -> f1)[REAL])
+ c4 := 10 [INT]
+ CALL Divide((v -> b3)[INT], (c4 -> b4)[INT])
+ EXTERNAL RETURN c5 := b5 [REAL]
+ CALL WriteReal((c5 -> a8)[REAL])
  GOTO IFEND_0_LEVEL_0
  LABEL IFNEXT_0_SEQ_1_LEVEL_0
  LABEL IFEND_0_LEVEL_0
  CALL WriteLn()
- f2 := BNOT O [BOOL]
- CALL IntToReal((b -> f3)[INT])
- EXTERNAL RETURN f5 := f4 [REAL]
- CALL RGreaterThan((P -> f6)[REAL], (f5 -> f7)[REAL])
- EXTERNAL RETURN f9 := f8 [BOOL]
- g0 := f2 LAND f9 [BOOL]
- V := g0 [BOOL]
- g1 := BNOT O [BOOL]
- CALL IntToReal((b -> g2)[INT])
- EXTERNAL RETURN g4 := g3 [REAL]
- CALL RGreaterThanOrEqualTo((P -> g5)[REAL], (g4 -> g6)[REAL])
- EXTERNAL RETURN g8 := g7 [BOOL]
- g9 := g1 LOR g8 [BOOL]
- W := g9 [BOOL]
- h0 := V EQ W [BOOL]
- X := h0 [BOOL]
- IF V EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
+ c6 := BNOT K [BOOL]
+ CALL IntToReal((b -> i)[INT])
+ EXTERNAL RETURN c7 := j [REAL]
+ CALL RGreaterThan((L -> c8)[REAL], (c7 -> c9)[REAL])
+ EXTERNAL RETURN d1 := d0 [BOOL]
+ d2 := c6 LAND d1 [BOOL]
+ R := d2 [BOOL]
+ d3 := BNOT K [BOOL]
+ CALL IntToReal((b -> i)[INT])
+ EXTERNAL RETURN d4 := j [REAL]
+ CALL RGreaterThanOrEqualTo((L -> d5)[REAL], (d4 -> d6)[REAL])
+ EXTERNAL RETURN d8 := d7 [BOOL]
+ d9 := d3 LOR d8 [BOOL]
+ S := d9 [BOOL]
+ e0 := R EQ S [BOOL]
+ T := e0 [BOOL]
+ IF R EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
  LABEL IFSTAT_1_SEQ_0_LEVEL_0
- h1 := 4 [INT]
- CALL WriteInt((h1 -> h2)[INT])
+ e1 := 4 [INT]
+ CALL WriteInt((e1 -> a7)[INT])
  GOTO IFEND_1_LEVEL_0
  LABEL IFNEXT_1_SEQ_0_LEVEL_0
- IF W EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0
+ IF S EQ TRUE THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0
  LABEL IFSTAT_1_SEQ_1_LEVEL_0
- h3 := 5 [INT]
- CALL WriteInt((h3 -> h4)[INT])
+ e2 := 5 [INT]
+ CALL WriteInt((e2 -> a7)[INT])
  GOTO IFEND_1_LEVEL_0
  LABEL IFNEXT_1_SEQ_1_LEVEL_0
  LABEL IFEND_1_LEVEL_0
- IF X EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0 ELSE IFNEXT_2_SEQ_0_LEVEL_0
+ IF T EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0 ELSE IFNEXT_2_SEQ_0_LEVEL_0
  LABEL IFSTAT_2_SEQ_0_LEVEL_0
- h5 := 5 [INT]
- CALL WriteInt((h5 -> h6)[INT])
+ e3 := 5 [INT]
+ CALL WriteInt((e3 -> a7)[INT])
  GOTO IFEND_2_LEVEL_0
  LABEL IFNEXT_2_SEQ_0_LEVEL_0
- h7 := 6 [INT]
- CALL WriteInt((h7 -> h8)[INT])
+ e4 := 6 [INT]
+ CALL WriteInt((e4 -> a7)[INT])
  GOTO IFEND_2_LEVEL_0
  LABEL IFNEXT_2_SEQ_1_LEVEL_0
  LABEL IFEND_2_LEVEL_0

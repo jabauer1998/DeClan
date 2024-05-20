@@ -1,15 +1,37 @@
 SYMBOL SECTION
  a INTERNAL PARAM Abs 0
+ u EXTERNAL PARAM INeg 0
+ v EXTERNAL RETURN INeg
  b INTERNAL RETURN Abs
  c INTERNAL PARAM RAbs 0
+ B EXTERNAL PARAM RealIsNegative 0
+ C EXTERNAL RETURN RealIsNegative
+ E EXTERNAL PARAM RNeg 0
+ F EXTERNAL RETURN RNeg
  d INTERNAL RETURN RAbs
+ K EXTERNAL PARAM IntToReal 0
+ L EXTERNAL RETURN IntToReal
  f INTERNAL PARAM RealExp 0
  e INTERNAL PARAM RealExp 1
+ T EXTERNAL PARAM RMul 0
+ U EXTERNAL PARAM RMul 1
+ V EXTERNAL RETURN RMul
+ a3 EXTERNAL PARAM RDivide 0
+ a4 EXTERNAL PARAM RDivide 1
+ a5 EXTERNAL RETURN RDivide
  g INTERNAL RETURN RealExp
  i INTERNAL PARAM IntExp 0
+ b7 EXTERNAL PARAM RLessThan 0
+ b8 EXTERNAL PARAM RLessThan 1
+ b9 EXTERNAL RETURN RLessThan
  h INTERNAL PARAM IntExp 1
+ c5 EXTERNAL PARAM RAdd 0
+ c6 EXTERNAL PARAM RAdd 1
+ c7 EXTERNAL RETURN RAdd
  j INTERNAL RETURN IntExp
  k INTERNAL PARAM Floor 0
+ d3 EXTERNAL PARAM RealToInt 0
+ d4 EXTERNAL RETURN RealToInt
  l INTERNAL RETURN Floor
  m INTERNAL PARAM Round 0
  n INTERNAL RETURN Round
@@ -112,68 +134,68 @@ PROC SECTION
   INTERNAL RETURN g := H [REAL]
  RETURN
  PROC LABEL IntExp
-  PARAM b7 := i [INT]
-  PARAM c5 := h [INT]
+  PARAM b5 := i [INT]
+  PARAM c1 := h [INT]
   b0 := 0 [INT]
   b1 := 0.0 [REAL]
   b2 := 1 [INT]
   b0 := b2 [INT]
   b3 := 0 [INT]
-  CALL IntToReal((b3 -> b4)[INT])
-  EXTERNAL RETURN b6 := b5 [REAL]
-  b1 := b6 [REAL]
-  CALL IntToReal((b7 -> b8)[INT])
-  EXTERNAL RETURN c0 := b9 [REAL]
-  CALL RLessThan((b1 -> c1)[REAL], (c0 -> c2)[REAL])
-  EXTERNAL RETURN c4 := c3 [BOOL]
-  IF c4 EQ TRUE THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILENEXT_4_SEQ_0_LEVEL_0
+  CALL IntToReal((b3 -> K)[INT])
+  EXTERNAL RETURN b4 := L [REAL]
+  b1 := b4 [REAL]
+  CALL IntToReal((b5 -> K)[INT])
+  EXTERNAL RETURN b6 := L [REAL]
+  CALL RLessThan((b1 -> b7)[REAL], (b6 -> b8)[REAL])
+  EXTERNAL RETURN c0 := b9 [BOOL]
+  IF c0 EQ TRUE THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILENEXT_4_SEQ_0_LEVEL_0
   LABEL WHILECOND_4_SEQ_0_LEVEL_0
-  IF c4 EQ TRUE THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILEEND_4_LEVEL_0
+  IF c0 EQ TRUE THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILEEND_4_LEVEL_0
   LABEL WHILESTAT_4_SEQ_0_LEVEL_0
-  c6 := b0 IMUL c5 [INT]
-  b0 := c6 [INT]
-  c7 := 1 [INT]
-  CALL IntToReal((c7 -> c8)[INT])
-  EXTERNAL RETURN d0 := c9 [REAL]
-  CALL RAdd((b1 -> d1)[REAL], (d0 -> d2)[REAL])
-  EXTERNAL RETURN d4 := d3 [REAL]
-  b1 := d4 [REAL]
-  CALL IntToReal((b7 -> d5)[INT])
-  EXTERNAL RETURN d7 := d6 [REAL]
-  CALL RLessThan((b1 -> d8)[REAL], (d7 -> d9)[REAL])
-  EXTERNAL RETURN e1 := e0 [BOOL]
-  c4 := e1 [BOOL]
+  c2 := b0 IMUL c1 [INT]
+  b0 := c2 [INT]
+  c3 := 1 [INT]
+  CALL IntToReal((c3 -> K)[INT])
+  EXTERNAL RETURN c4 := L [REAL]
+  CALL RAdd((b1 -> c5)[REAL], (c4 -> c6)[REAL])
+  EXTERNAL RETURN c8 := c7 [REAL]
+  b1 := c8 [REAL]
+  CALL IntToReal((b5 -> K)[INT])
+  EXTERNAL RETURN c9 := L [REAL]
+  CALL RLessThan((b1 -> b7)[REAL], (c9 -> b8)[REAL])
+  EXTERNAL RETURN d0 := b9 [BOOL]
+  c0 := d0 [BOOL]
   GOTO WHILECOND_4_SEQ_0_LEVEL_0
   LABEL WHILENEXT_4_SEQ_0_LEVEL_0
   LABEL WHILEEND_4_LEVEL_0
   INTERNAL RETURN j := b0 [INT]
  RETURN
  PROC LABEL Floor
-  PARAM e3 := k [REAL]
-  e2 := 0 [INT]
-  CALL RealToInt((e3 -> e4)[REAL])
-  EXTERNAL RETURN e6 := e5 [INT]
-  e2 := e6 [INT]
-  INTERNAL RETURN l := e2 [INT]
+  PARAM d2 := k [REAL]
+  d1 := 0 [INT]
+  CALL RealToInt((d2 -> d3)[REAL])
+  EXTERNAL RETURN d5 := d4 [INT]
+  d1 := d5 [INT]
+  INTERNAL RETURN l := d1 [INT]
  RETURN
  PROC LABEL Round
-  PARAM e8 := m [REAL]
-  e7 := 0 [INT]
-  e9 := 0.5 [REAL]
-  CALL RAdd((e8 -> f0)[REAL], (e9 -> f1)[REAL])
-  EXTERNAL RETURN f3 := f2 [REAL]
-  CALL Floor((f3 -> k)[REAL])
-  EXTERNAL RETURN f4 := l [INT]
-  e7 := f4 [INT]
-  INTERNAL RETURN n := e7 [INT]
+  PARAM d7 := m [REAL]
+  d6 := 0 [INT]
+  d8 := 0.5 [REAL]
+  CALL RAdd((d7 -> c5)[REAL], (d8 -> c6)[REAL])
+  EXTERNAL RETURN d9 := c7 [REAL]
+  CALL Floor((d9 -> k)[REAL])
+  EXTERNAL RETURN e0 := l [INT]
+  d6 := e0 [INT]
+  INTERNAL RETURN n := d6 [INT]
  RETURN
  PROC LABEL Ceil
-  PARAM f6 := o [REAL]
-  f5 := 0 [INT]
-  CALL Floor((f6 -> k)[REAL])
-  EXTERNAL RETURN f7 := l [INT]
-  f8 := 1 [INT]
-  f9 := f7 IADD f8 [INT]
-  f5 := f9 [INT]
-  INTERNAL RETURN p := f5 [INT]
+  PARAM e2 := o [REAL]
+  e1 := 0 [INT]
+  CALL Floor((e2 -> k)[REAL])
+  EXTERNAL RETURN e3 := l [INT]
+  e4 := 1 [INT]
+  e5 := e3 IADD e4 [INT]
+  e1 := e5 [INT]
+  INTERNAL RETURN p := e1 [INT]
  RETURN

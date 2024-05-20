@@ -1,6 +1,9 @@
 SYMBOL SECTION
  a INTERNAL i
  b INTERNAL j
+ g EXTERNAL PARAM WriteInt 0
+ m EXTERNAL PARAM INeg 0
+ n EXTERNAL RETURN INeg
 DATA SECTION
  GLOBAL a := 0 [INT]
  GLOBAL b := 0 [INT]
@@ -30,18 +33,18 @@ CODE SECTION
  LABEL FORBEG_2_LEVEL_1
  IF b GT k THEN FORLOOP_2_LEVEL_1 ELSE FOREND_2_LEVEL_1
  LABEL FORLOOP_2_LEVEL_1
- CALL WriteInt((b -> l)[INT])
- m := 1 [INT]
- CALL INeg((m -> n)[INT])
- EXTERNAL RETURN p := o [INT]
- q := b IADD p [INT]
- b := q [INT]
+ CALL WriteInt((b -> g)[INT])
+ l := 1 [INT]
+ CALL INeg((l -> m)[INT])
+ EXTERNAL RETURN o := n [INT]
+ p := b IADD o [INT]
+ b := p [INT]
  GOTO FORBEG_2_LEVEL_1
  LABEL FOREND_2_LEVEL_1
  CALL WriteLn()
- r := 1 [INT]
- s := a IADD r [INT]
- a := s [INT]
+ q := 1 [INT]
+ r := a IADD q [INT]
+ a := r [INT]
  GOTO FORBEG_0_LEVEL_0
  LABEL FOREND_0_LEVEL_0
 END

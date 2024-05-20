@@ -6,6 +6,13 @@ SYMBOL SECTION
  g INTERNAL bAsReal
  h INTERNAL bRealBinary
  i INTERNAL aRealBinary
+ j EXTERNAL PARAM IntToReal 0
+ k EXTERNAL RETURN IntToReal
+ n EXTERNAL PARAM RDivide 0
+ o EXTERNAL PARAM RDivide 1
+ p EXTERNAL RETURN RDivide
+ s EXTERNAL PARAM WriteString 0
+ t EXTERNAL PARAM WriteReal 0
 DATA SECTION
  a := 355 [INT]
  GLOBAL b := a [INT]
@@ -20,15 +27,15 @@ CODE SECTION
  CALL IntToReal((b -> j)[INT])
  EXTERNAL RETURN l := k [REAL]
  f := l [REAL]
- CALL IntToReal((d -> m)[INT])
- EXTERNAL RETURN o := n [REAL]
- g := o [REAL]
- CALL RDivide((f -> p)[REAL], (g -> q)[REAL])
- EXTERNAL RETURN s := r [REAL]
- e := s [REAL]
- t := "Result as real: " [STRING]
- CALL WriteString((t -> u)[STRING])
- CALL WriteReal((e -> v)[REAL])
+ CALL IntToReal((d -> j)[INT])
+ EXTERNAL RETURN m := k [REAL]
+ g := m [REAL]
+ CALL RDivide((f -> n)[REAL], (g -> o)[REAL])
+ EXTERNAL RETURN q := p [REAL]
+ e := q [REAL]
+ r := "Result as real: " [STRING]
+ CALL WriteString((r -> s)[STRING])
+ CALL WriteReal((e -> t)[REAL])
  CALL WriteLn()
 END
 PROC SECTION

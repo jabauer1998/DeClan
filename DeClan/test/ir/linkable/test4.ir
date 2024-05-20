@@ -2,6 +2,8 @@ SYMBOL SECTION
  a INTERNAL n
  b INTERNAL i
  c INTERNAL result
+ j EXTERNAL RETURN ReadInt
+ n EXTERNAL PARAM WriteInt 0
  d INTERNAL PARAM M 0
  e INTERNAL RETURN M
  f INTERNAL PARAM F 0
@@ -28,90 +30,90 @@ CODE SECTION
  CALL Fact((b -> h)[INT])
  EXTERNAL RETURN o := i [INT]
  c := o [INT]
- CALL WriteInt((c -> p)[INT])
+ CALL WriteInt((c -> n)[INT])
  CALL WriteLn()
- q := 1 [INT]
- r := b IADD q [INT]
- b := r [INT]
+ p := 1 [INT]
+ q := b IADD p [INT]
+ b := q [INT]
  GOTO FORBEG_0_LEVEL_0
  LABEL FOREND_0_LEVEL_0
 END
 PROC SECTION
  PROC LABEL M
-  PARAM u := d [INT]
+  PARAM t := d [INT]
+  r := 0 [INT]
   s := 0 [INT]
-  t := 0 [INT]
-  v := 0 [INT]
-  w := u EQ v [BOOL]
-  IF w EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
+  u := 0 [INT]
+  v := t EQ u [BOOL]
+  IF v EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
   LABEL IFSTAT_0_SEQ_0_LEVEL_0
-  x := 0 [INT]
-  t := x [INT]
+  w := 0 [INT]
+  s := w [INT]
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_0_LEVEL_0
-  y := 1 [INT]
-  z := u ISUB y [INT]
-  CALL M((z -> d)[INT])
-  EXTERNAL RETURN A := e [INT]
+  x := 1 [INT]
+  y := t ISUB x [INT]
+  CALL M((y -> d)[INT])
+  EXTERNAL RETURN z := e [INT]
+  r := z [INT]
+  CALL F((r -> f)[INT])
+  EXTERNAL RETURN A := g [INT]
   s := A [INT]
-  CALL F((s -> f)[INT])
-  EXTERNAL RETURN B := g [INT]
-  t := B [INT]
-  C := u ISUB t [INT]
-  t := C [INT]
+  B := t ISUB s [INT]
+  s := B [INT]
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_1_LEVEL_0
   LABEL IFEND_0_LEVEL_0
-  INTERNAL RETURN e := t [INT]
+  INTERNAL RETURN e := s [INT]
  RETURN
  PROC LABEL F
-  PARAM F := f [INT]
+  PARAM E := f [INT]
+  C := 0 [INT]
   D := 0 [INT]
-  E := 0 [INT]
-  G := 0 [INT]
-  H := F EQ G [BOOL]
-  IF H EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
+  F := 0 [INT]
+  G := E EQ F [BOOL]
+  IF G EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
-  I := 1 [INT]
-  E := I [INT]
+  H := 1 [INT]
+  D := H [INT]
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
-  J := 1 [INT]
-  K := F ISUB J [INT]
-  CALL F((K -> f)[INT])
-  EXTERNAL RETURN L := g [INT]
+  I := 1 [INT]
+  J := E ISUB I [INT]
+  CALL F((J -> f)[INT])
+  EXTERNAL RETURN K := g [INT]
+  C := K [INT]
+  CALL M((C -> d)[INT])
+  EXTERNAL RETURN L := e [INT]
   D := L [INT]
-  CALL M((D -> d)[INT])
-  EXTERNAL RETURN M := e [INT]
-  E := M [INT]
-  N := F ISUB E [INT]
-  E := N [INT]
+  M := E ISUB D [INT]
+  D := M [INT]
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_1_LEVEL_0
   LABEL IFEND_1_LEVEL_0
-  INTERNAL RETURN g := E [INT]
+  INTERNAL RETURN g := D [INT]
  RETURN
  PROC LABEL Fact
-  PARAM Q := h [INT]
+  PARAM P := h [INT]
+  N := 0 [INT]
   O := 0 [INT]
-  P := 0 [INT]
-  R := 0 [INT]
-  S := Q EQ R [BOOL]
-  IF S EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0 ELSE IFNEXT_2_SEQ_0_LEVEL_0
+  Q := 0 [INT]
+  R := P EQ Q [BOOL]
+  IF R EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0 ELSE IFNEXT_2_SEQ_0_LEVEL_0
   LABEL IFSTAT_2_SEQ_0_LEVEL_0
-  T := 1 [INT]
-  P := T [INT]
+  S := 1 [INT]
+  O := S [INT]
   GOTO IFEND_2_LEVEL_0
   LABEL IFNEXT_2_SEQ_0_LEVEL_0
-  U := 1 [INT]
-  V := Q ISUB U [INT]
-  CALL Fact((V -> h)[INT])
-  EXTERNAL RETURN W := i [INT]
+  T := 1 [INT]
+  U := P ISUB T [INT]
+  CALL Fact((U -> h)[INT])
+  EXTERNAL RETURN V := i [INT]
+  N := V [INT]
+  W := P IMUL N [INT]
   O := W [INT]
-  X := Q IMUL O [INT]
-  P := X [INT]
   GOTO IFEND_2_LEVEL_0
   LABEL IFNEXT_2_SEQ_1_LEVEL_0
   LABEL IFEND_2_LEVEL_0
-  INTERNAL RETURN i := P [INT]
+  INTERNAL RETURN i := O [INT]
  RETURN

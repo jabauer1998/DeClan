@@ -1,5 +1,9 @@
 SYMBOL SECTION
  b INTERNAL PARAM WriteString 0
+ r EXTERNAL PARAM StringAsAddress 0
+ s EXTERNAL RETURN StringAsAddress
+ v EXTERNAL PARAM IntIsZero 0
+ w EXTERNAL RETURN IntIsZero
  d INTERNAL PARAM WriteInt 0
  f INTERNAL PARAM WriteReal 0
  h INTERNAL PARAM WriteBool 0
@@ -53,80 +57,80 @@ PROC SECTION
   IASM "STR %r, %a"
   IPARAM p
   IASM "MOV R0, %r"
-  CALL IntIsZero((o -> B)[INT])
-  EXTERNAL RETURN D := C [BOOL]
-  E := BNOT D [BOOL]
-  y := E [BOOL]
+  CALL IntIsZero((o -> v)[INT])
+  EXTERNAL RETURN B := w [BOOL]
+  C := BNOT B [BOOL]
+  y := C [BOOL]
   GOTO WHILECOND_0_SEQ_0_LEVEL_0
   LABEL WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILEEND_0_LEVEL_0
  RETURN
  PROC LABEL WriteInt
-  PARAM G := d [INT]
+  PARAM E := d [INT]
+  D := 0 [INT]
+  IPARAM D
+  IASM "MOV %r, R0"
+  IPARAM E
+  IASM "LDR R0, %a"
+  IASM "SWI 1"
+  IPARAM D
+  IASM "MOV R0, %r"
+ RETURN
+ PROC LABEL WriteReal
+  PARAM G := f [REAL]
   F := 0 [INT]
   IPARAM F
   IASM "MOV %r, R0"
   IPARAM G
   IASM "LDR R0, %a"
-  IASM "SWI 1"
+  IASM "SWI 2"
   IPARAM F
   IASM "MOV R0, %r"
  RETURN
- PROC LABEL WriteReal
-  PARAM I := f [REAL]
+ PROC LABEL WriteBool
+  PARAM I := h [BOOL]
   H := 0 [INT]
   IPARAM H
   IASM "MOV %r, R0"
   IPARAM I
-  IASM "LDR R0, %a"
-  IASM "SWI 2"
+  IASM "LDRB R0, %a"
+  IASM "SWI 6"
   IPARAM H
   IASM "MOV R0, %r"
  RETURN
- PROC LABEL WriteBool
-  PARAM K := h [BOOL]
-  J := 0 [INT]
-  IPARAM J
-  IASM "MOV %r, R0"
-  IPARAM K
-  IASM "LDRB R0, %a"
-  IASM "SWI 6"
-  IPARAM J
-  IASM "MOV R0, %r"
- RETURN
  PROC LABEL ReadInt
-  L := 0 [INT]
+  J := 0 [INT]
+  K := 0 [INT]
+  IPARAM K
+  IASM "MOV %r, R0"
+  IASM "SWI 3"
+  IPARAM J
+  IASM "STR R0, %a"
+  IPARAM K
+  IASM "MOV R0, %r"
+  INTERNAL RETURN j := J [INT]
+ RETURN
+ PROC LABEL ReadReal
+  L := 0.0 [REAL]
   M := 0 [INT]
   IPARAM M
   IASM "MOV %r, R0"
-  IASM "SWI 3"
+  IASM "SWI 5"
   IPARAM L
   IASM "STR R0, %a"
   IPARAM M
   IASM "MOV R0, %r"
-  INTERNAL RETURN j := L [INT]
+  INTERNAL RETURN k := L [REAL]
  RETURN
- PROC LABEL ReadReal
-  N := 0.0 [REAL]
+ PROC LABEL ReadBool
+  N := FALSE [BOOL]
   O := 0 [INT]
   IPARAM O
   IASM "MOV %r, R0"
-  IASM "SWI 5"
+  IASM "SWI 7"
   IPARAM N
-  IASM "STR R0, %a"
+  IASM "STRB R0, %a"
   IPARAM O
   IASM "MOV R0, %r"
-  INTERNAL RETURN k := N [REAL]
- RETURN
- PROC LABEL ReadBool
-  P := FALSE [BOOL]
-  Q := 0 [INT]
-  IPARAM Q
-  IASM "MOV %r, R0"
-  IASM "SWI 7"
-  IPARAM P
-  IASM "STRB R0, %a"
-  IPARAM Q
-  IASM "MOV R0, %r"
-  INTERNAL RETURN l := P [BOOL]
+  INTERNAL RETURN l := N [BOOL]
  RETURN

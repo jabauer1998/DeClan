@@ -16,6 +16,7 @@ import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
+import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.main.MyIrFactory;
 
 public abstract class AssignmentBuilder implements ResetableBuilder{
@@ -223,8 +224,10 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
             String newPlace;
             if(symbols.containsExternalArgument(funcName, i))
                 newPlace = symbols.getArgumentName(funcName, i);
-            else
+            else {
                 newPlace = gen.genNext();
+                symbols.addParamSymEntry(SymEntry.EXTERNAL, newPlace, funcName, i);
+            }
             newAssigns.add(factory.produceVariableAssignment(Scope.ARGUMENT, newPlace, arg.source, arg.dest));
         }
         intermediateCode.add(factory.produceProcedure(funcName, newAssigns));
@@ -239,16 +242,20 @@ public abstract class AssignmentBuilder implements ResetableBuilder{
             String next;
             if(symbols.containsExternalArgument(funcName, i))
                 next = symbols.getArgumentName(funcName, i);
-            else
+            else {
                 next = gen.genNext();
+                symbols.addParamSymEntry(SymEntry.EXTERNAL, next, funcName, i);
+            }
             newAssigns.add(factory.produceVariableAssignment(Scope.ARGUMENT, next, arg.source, arg.dest));
         }
         intermediateCode.add(factory.produceProcedure(funcName, newAssigns));
         String oldPlace;
         if(symbols.containsExternalReturn(funcName))
             oldPlace = symbols.getReturnName(funcName);
-        else
+        else {
             oldPlace = gen.genNext();
+            symbols.addReturnSymEntry(SymEntry.EXTERNAL, oldPlace, funcName);
+        }
         String place = gen.genNext();
         intermediateCode.add(factory.procuceExternalReturnPlacement(place, oldPlace, type));
         return place;
