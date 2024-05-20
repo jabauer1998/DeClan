@@ -1,31 +1,31 @@
 SYMBOL SECTION
 DATA SECTION
- GLOBAL a := 0 [INT]
+ GLOBAL m2 := 0 [INT]
 CODE SECTION
- b := 1 [INT]
- a := b [INT]
- c := 10 [INT]
+ l0 := 1 [INT]
+ m2 := l0 [INT]
+ l3 := 10 [INT]
  LABEL FORBEG_0_LEVEL_0
- IF a LT c THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
+ IF m2 LT l3 THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
  LABEL FORLOOP_0_LEVEL_0
- CALL WriteInt((a -> i5)[INT])
- d := 1 [INT]
- e := a IADD d [INT]
- a := e [INT]
+ CALL WriteInt((m2 -> l7)[INT])
+ m1 := 1 [INT]
+ m3 := m2 IADD m1 [INT]
+ m2 := m3 [INT]
  GOTO FORBEG_0_LEVEL_0
  LABEL FOREND_0_LEVEL_0
  CALL WriteLn()
 END
 PROC SECTION
  PROC LABEL WriteInt
-  PARAM i8 := i5 [INT]
-  i9 := 0 [INT]
-  IPARAM i9
+  PARAM l5 := l4 [INT]
+  l6 := 0 [INT]
+  IPARAM l6
   IASM "MOV %r, R0"
-  IPARAM i8
+  IPARAM l5
   IASM "LDR R0, %a"
   IASM "SWI 1"
-  IPARAM i9
+  IPARAM l6
   IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteLn

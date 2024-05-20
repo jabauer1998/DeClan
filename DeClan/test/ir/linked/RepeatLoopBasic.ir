@@ -1,35 +1,35 @@
 SYMBOL SECTION
 DATA SECTION
- GLOBAL a := 0 [INT]
+ GLOBAL m8 := 0 [INT]
 CODE SECTION
- b := 1 [INT]
- a := b [INT]
- c := 10 [INT]
- d := a GE c [BOOL]
+ l0 := 1 [INT]
+ m8 := l0 [INT]
+ l4 := 10 [INT]
+ n0 := m8 GE l4 [BOOL]
  LABEL REPEATBEG_0_LEVEL_0
- IF d EQ TRUE THEN REPEATEND_0_LEVEL_0 ELSE REPEATLOOP_0_LEVEL_0
+ IF n0 EQ TRUE THEN REPEATEND_0_LEVEL_0 ELSE REPEATLOOP_0_LEVEL_0
  LABEL REPEATLOOP_0_LEVEL_0
- CALL WriteInt((a -> i5)[INT])
- e := 1 [INT]
- f := a IADD e [INT]
- a := f [INT]
- g := 10 [INT]
- h := a GE g [BOOL]
- d := h [BOOL]
+ CALL WriteInt((m8 -> l9)[INT])
+ m3 := 1 [INT]
+ m5 := m8 IADD m3 [INT]
+ m8 := m5 [INT]
+ m9 := 10 [INT]
+ n1 := m8 GE m9 [BOOL]
+ n0 := n1 [BOOL]
  GOTO REPEATBEG_0_LEVEL_0
  LABEL REPEATEND_0_LEVEL_0
  CALL WriteLn()
 END
 PROC SECTION
  PROC LABEL WriteInt
-  PARAM i8 := i5 [INT]
-  i9 := 0 [INT]
-  IPARAM i9
+  PARAM l7 := l6 [INT]
+  l8 := 0 [INT]
+  IPARAM l8
   IASM "MOV %r, R0"
-  IPARAM i8
+  IPARAM l7
   IASM "LDR R0, %a"
   IASM "SWI 1"
-  IPARAM i9
+  IPARAM l8
   IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteLn

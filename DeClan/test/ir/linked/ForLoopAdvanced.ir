@@ -1,69 +1,69 @@
 SYMBOL SECTION
 DATA SECTION
- GLOBAL a := 0 [INT]
- GLOBAL b := 0 [INT]
+ GLOBAL p9 := 0 [INT]
+ GLOBAL p6 := 0 [INT]
 CODE SECTION
- c := 1 [INT]
- a := c [INT]
- d := 10 [INT]
+ l1 := 1 [INT]
+ p9 := l1 [INT]
+ l4 := 10 [INT]
  LABEL FORBEG_0_LEVEL_0
- IF a NE d THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
+ IF p9 NE l4 THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
  LABEL FORLOOP_0_LEVEL_0
- e := 1 [INT]
- b := e [INT]
- f := 10 [INT]
+ l7 := 1 [INT]
+ p6 := l7 [INT]
+ m0 := 10 [INT]
  LABEL FORBEG_1_LEVEL_1
- IF b LT f THEN FORLOOP_1_LEVEL_1 ELSE FOREND_1_LEVEL_1
+ IF p6 LT m0 THEN FORLOOP_1_LEVEL_1 ELSE FOREND_1_LEVEL_1
  LABEL FORLOOP_1_LEVEL_1
- CALL WriteInt((b -> i5)[INT])
- g := 1 [INT]
- h := b IADD g [INT]
- b := h [INT]
+ CALL WriteInt((p6 -> m4)[INT])
+ m8 := 1 [INT]
+ n0 := p6 IADD m8 [INT]
+ p6 := n0 [INT]
  GOTO FORBEG_1_LEVEL_1
  LABEL FOREND_1_LEVEL_1
  CALL WriteLn()
- i := 10 [INT]
- b := i [INT]
- j := 0 [INT]
+ n3 := 10 [INT]
+ p6 := n3 [INT]
+ n6 := 0 [INT]
  LABEL FORBEG_2_LEVEL_1
- IF b GT j THEN FORLOOP_2_LEVEL_1 ELSE FOREND_2_LEVEL_1
+ IF p6 GT n6 THEN FORLOOP_2_LEVEL_1 ELSE FOREND_2_LEVEL_1
  LABEL FORLOOP_2_LEVEL_1
- CALL WriteInt((b -> i5)[INT])
- k := 1 [INT]
- CALL INeg((k -> j1)[INT])
- EXTERNAL RETURN j0 := j4 [INT]
- m := b IADD j0 [INT]
- b := m [INT]
+ CALL WriteInt((p6 -> n7)[INT])
+ n8 := 1 [INT]
+ CALL INeg((n8 -> p0)[INT])
+ EXTERNAL RETURN p5 := p2 [INT]
+ p3 := p6 IADD p5 [INT]
+ p6 := p3 [INT]
  GOTO FORBEG_2_LEVEL_1
  LABEL FOREND_2_LEVEL_1
  CALL WriteLn()
- n := 1 [INT]
- o := a IADD n [INT]
- a := o [INT]
+ q0 := 1 [INT]
+ q1 := p9 IADD q0 [INT]
+ p9 := q1 [INT]
  GOTO FORBEG_0_LEVEL_0
  LABEL FOREND_0_LEVEL_0
 END
 PROC SECTION
  PROC LABEL WriteInt
-  PARAM i8 := i5 [INT]
-  i9 := 0 [INT]
-  IPARAM i9
+  PARAM m2 := m1 [INT]
+  m3 := 0 [INT]
+  IPARAM m3
   IASM "MOV %r, R0"
-  IPARAM i8
+  IPARAM m2
   IASM "LDR R0, %a"
   IASM "SWI 1"
-  IPARAM i9
+  IPARAM m3
   IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteLn
   IASM "SWI 4"
  RETURN
  PROC LABEL INeg
-  PARAM j2 := j1 [INT]
-  j9 := 0 [INT]
-  j6 := INOT j2 [INT]
-  j7 := 1 [INT]
-  j8 := j6 IADD j7 [INT]
-  j9 := j8 [INT]
-  INTERNAL RETURN j4 := j9 [INT]
+  PARAM o0 := n9 [INT]
+  o9 := 0 [INT]
+  o7 := INOT o0 [INT]
+  o8 := 1 [INT]
+  o6 := o7 IADD o8 [INT]
+  o9 := o6 [INT]
+  INTERNAL RETURN o2 := o9 [INT]
  RETURN
