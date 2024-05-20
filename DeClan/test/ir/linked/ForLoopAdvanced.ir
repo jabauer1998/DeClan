@@ -1,51 +1,51 @@
 SYMBOL SECTION
 DATA SECTION
- GLOBAL p5 := 0 [INT]
- GLOBAL o9 := 0 [INT]
+ GLOBAL p7 := 0 [INT]
+ GLOBAL p1 := 0 [INT]
 CODE SECTION
  k6 := 1 [INT]
- p5 := k6 [INT]
+ p7 := k6 [INT]
  k9 := 10 [INT]
  LABEL FORBEG_0_LEVEL_0
- IF p5 NE k9 THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
+ IF p7 NE k9 THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
  LABEL FORLOOP_0_LEVEL_0
  l2 := 1 [INT]
- o9 := l2 [INT]
+ p1 := l2 [INT]
  l5 := 10 [INT]
  LABEL FORBEG_1_LEVEL_1
- IF o9 LT l5 THEN FORLOOP_1_LEVEL_1 ELSE FOREND_1_LEVEL_1
+ IF p1 LT l5 THEN FORLOOP_1_LEVEL_1 ELSE FOREND_1_LEVEL_1
  LABEL FORLOOP_1_LEVEL_1
- CALL WriteInt((o9 -> l6)[INT])
- m2 := 1 [INT]
- m4 := o9 IADD m2 [INT]
- o9 := m4 [INT]
+ CALL WriteInt((p1 -> n2)[INT])
+ m3 := 1 [INT]
+ m5 := p1 IADD m3 [INT]
+ p1 := m5 [INT]
  GOTO FORBEG_1_LEVEL_1
  LABEL FOREND_1_LEVEL_1
  CALL WriteLn()
- m7 := 10 [INT]
- o9 := m7 [INT]
- n0 := 0 [INT]
+ m8 := 10 [INT]
+ p1 := m8 [INT]
+ n1 := 0 [INT]
  LABEL FORBEG_2_LEVEL_1
- IF o9 GT n0 THEN FORLOOP_2_LEVEL_1 ELSE FOREND_2_LEVEL_1
+ IF p1 GT n1 THEN FORLOOP_2_LEVEL_1 ELSE FOREND_2_LEVEL_1
  LABEL FORLOOP_2_LEVEL_1
- CALL WriteInt((o9 -> l6)[INT])
- n1 := 1 [INT]
- CALL INeg((n1 -> o3)[INT])
- EXTERNAL RETURN o8 := o5 [INT]
- p0 := o9 IADD o8 [INT]
- o9 := p0 [INT]
+ CALL WriteInt((p1 -> n2)[INT])
+ n3 := 1 [INT]
+ CALL INeg((n3 -> o5)[INT])
+ EXTERNAL RETURN p0 := o7 [INT]
+ p2 := p1 IADD p0 [INT]
+ p1 := p2 [INT]
  GOTO FORBEG_2_LEVEL_1
  LABEL FOREND_2_LEVEL_1
  CALL WriteLn()
- p4 := 1 [INT]
- p6 := p5 IADD p4 [INT]
- p5 := p6 [INT]
+ p6 := 1 [INT]
+ p8 := p7 IADD p6 [INT]
+ p7 := p8 [INT]
  GOTO FORBEG_0_LEVEL_0
  LABEL FOREND_0_LEVEL_0
 END
 PROC SECTION
  PROC LABEL WriteInt
-  PARAM l7 := l6 [INT]
+  PARAM l7 := n2 [INT]
   l8 := 0 [INT]
   IPARAM l8
   IASM "MOV %r, R0"
@@ -59,11 +59,11 @@ PROC SECTION
   IASM "SWI 4"
  RETURN
  PROC LABEL INeg
-  PARAM n3 := o3 [INT]
-  o2 := 0 [INT]
-  o0 := INOT n3 [INT]
-  o1 := 1 [INT]
-  n9 := o0 IADD o1 [INT]
-  o2 := n9 [INT]
-  INTERNAL RETURN o5 := o2 [INT]
+  PARAM n5 := o5 [INT]
+  o4 := 0 [INT]
+  o2 := INOT n5 [INT]
+  o3 := 1 [INT]
+  o1 := o2 IADD o3 [INT]
+  o4 := o1 [INT]
+  INTERNAL RETURN o7 := o4 [INT]
  RETURN

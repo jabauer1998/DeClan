@@ -1,28 +1,28 @@
 SYMBOL SECTION
 DATA SECTION
- GLOBAL m2 := 0 [INT]
+ GLOBAL m3 := 0 [INT]
 CODE SECTION
  k5 := 1 [INT]
- m2 := k5 [INT]
+ m3 := k5 [INT]
  k9 := 10 [INT]
- m4 := m2 GE k9 [BOOL]
+ m5 := m3 GE k9 [BOOL]
  LABEL REPEATBEG_0_LEVEL_0
- IF m4 EQ TRUE THEN REPEATEND_0_LEVEL_0 ELSE REPEATLOOP_0_LEVEL_0
+ IF m5 EQ TRUE THEN REPEATEND_0_LEVEL_0 ELSE REPEATLOOP_0_LEVEL_0
  LABEL REPEATLOOP_0_LEVEL_0
- CALL WriteInt((m2 -> l1)[INT])
- l7 := 1 [INT]
- l9 := m2 IADD l7 [INT]
- m2 := l9 [INT]
- m3 := 10 [INT]
- m5 := m2 GE m3 [BOOL]
- m4 := m5 [BOOL]
+ CALL WriteInt((m3 -> l4)[INT])
+ l8 := 1 [INT]
+ m0 := m3 IADD l8 [INT]
+ m3 := m0 [INT]
+ m4 := 10 [INT]
+ m6 := m3 GE m4 [BOOL]
+ m5 := m6 [BOOL]
  GOTO REPEATBEG_0_LEVEL_0
  LABEL REPEATEND_0_LEVEL_0
  CALL WriteLn()
 END
 PROC SECTION
  PROC LABEL WriteInt
-  PARAM l2 := l1 [INT]
+  PARAM l2 := l4 [INT]
   l3 := 0 [INT]
   IPARAM l3
   IASM "MOV %r, R0"

@@ -27,24 +27,24 @@ PROC SECTION
   INTERNAL RETURN l4 := l3 [REAL]
  RETURN
  PROC LABEL RNeg
-  PARAM a83 := l5 [REAL]
-  a76 := 0 [INT]
-  a77 := 0 [INT]
-  a78 := 0.0 [REAL]
-  a79 := 0 [INT]
-  a80 := 1 [INT]
-  a81 := 31 [INT]
-  a82 := a80 ILSHIFT a81 [INT]
-  a76 := a82 [INT]
-  CALL RealBinaryAsInt((a83 -> l7)[REAL])
-  EXTERNAL RETURN a86 := m0 [INT]
-  a77 := a86 [INT]
-  a87 := a77 IXOR a76 [INT]
-  a79 := a87 [INT]
-  CALL IntBinaryAsReal((a79 -> m3)[INT])
-  EXTERNAL RETURN a88 := m6 [REAL]
-  a78 := a88 [REAL]
-  INTERNAL RETURN l6 := a78 [REAL]
+  PARAM a78 := l5 [REAL]
+  a71 := 0 [INT]
+  a72 := 0 [INT]
+  a73 := 0.0 [REAL]
+  a74 := 0 [INT]
+  a75 := 1 [INT]
+  a76 := 31 [INT]
+  a77 := a75 ILSHIFT a76 [INT]
+  a71 := a77 [INT]
+  CALL RealBinaryAsInt((a78 -> l7)[REAL])
+  EXTERNAL RETURN a81 := m0 [INT]
+  a72 := a81 [INT]
+  a82 := a72 IXOR a71 [INT]
+  a74 := a82 [INT]
+  CALL IntBinaryAsReal((a74 -> m3)[INT])
+  EXTERNAL RETURN a83 := m6 [REAL]
+  a73 := a83 [REAL]
+  INTERNAL RETURN l6 := a73 [REAL]
  RETURN
  PROC LABEL RealBinaryAsInt
   PARAM l8 := l7 [REAL]

@@ -9,7 +9,7 @@ CODE SECTION
  CALL Div((k3 -> k9)[INT], (k6 -> l1)[INT])
  EXTERNAL RETURN w7 := l4 [INT]
  w6 := w7 [INT]
- CALL WriteInt((w6 -> w8)[INT])
+ CALL WriteInt((w6 -> x1)[INT])
 END
 PROC SECTION
  PROC LABEL Div
@@ -122,7 +122,7 @@ PROC SECTION
   INTERNAL RETURN n2 := o2 [BOOL]
  RETURN
  PROC LABEL WriteInt
-  PARAM w9 := w8 [INT]
+  PARAM w9 := x1 [INT]
   x0 := 0 [INT]
   IPARAM x0
   IASM "MOV %r, R0"

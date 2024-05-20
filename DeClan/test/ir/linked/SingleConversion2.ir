@@ -9,7 +9,7 @@ CODE SECTION
  CALL RealToInt((k3 -> k6)[REAL])
  EXTERNAL RETURN z1 := k9 [INT]
  z0 := z1 [INT]
- CALL WriteInt((z0 -> z2)[INT])
+ CALL WriteInt((z0 -> z5)[INT])
 END
 PROC SECTION
  PROC LABEL RealToInt
@@ -159,7 +159,7 @@ PROC SECTION
   INTERNAL RETURN t7 := v0 [INT]
  RETURN
  PROC LABEL WriteInt
-  PARAM z3 := z2 [INT]
+  PARAM z3 := z5 [INT]
   z4 := 0 [INT]
   IPARAM z4
   IASM "MOV %r, R0"
