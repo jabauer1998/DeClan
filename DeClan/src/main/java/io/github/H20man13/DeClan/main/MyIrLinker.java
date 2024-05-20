@@ -3116,6 +3116,8 @@ public class MyIrLinker {
                         replacePlaceAcrossProgramAndLibraries(paramName, place, startingProgram, libraries, startingProgram);
                     }
                 }
+
+                dataSec.addInstruction(call);
             }
         }
     }
@@ -3252,6 +3254,8 @@ public class MyIrLinker {
                         replacePlaceAcrossLibraries(paramName, place, startingLibrary, libraries, startingLibrary);
                     }
                 }
+
+                dataSec.addInstruction(call);
             }
         }
     }
