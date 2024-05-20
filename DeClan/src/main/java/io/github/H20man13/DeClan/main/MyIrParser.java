@@ -362,10 +362,13 @@ public class MyIrParser {
         match(IrTokenType.LPAR);
         
         List<Assign> args = new LinkedList<>();
-        do{
-            Assign assign = parseArgument();
-            args.add(assign);
-        } while(skipIfYummy(IrTokenType.COMMA));
+        
+        if(willMatch(IrTokenType.LPAR)){
+            do{
+                Assign assign = parseArgument();
+                args.add(assign);
+            } while(skipIfYummy(IrTokenType.COMMA));
+        }   
 
         match(IrTokenType.RPAR);
 
