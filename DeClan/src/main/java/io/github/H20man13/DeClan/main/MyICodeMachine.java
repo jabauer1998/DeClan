@@ -74,7 +74,9 @@ public class MyICodeMachine {
         interpretICode(icode);
     }
 
-    public void interpretICode(List<ICode> instructions){
+    public void interpretICode(List<ICode> instrs){
+        ArrayList<ICode> instructions = new ArrayList<ICode>();
+        instructions.addAll(instrs);
         this.labelAddresses.addScope();
         this.procLabelAddresses.addScope();
         this.variableValues.addScope();

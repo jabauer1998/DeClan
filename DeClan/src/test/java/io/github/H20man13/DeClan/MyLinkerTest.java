@@ -234,11 +234,13 @@ public class MyLinkerTest {
     public void linkExternalCall1(){
         String prog1 = "SYMBOL SECTION\n"
                      + "v EXTERNAL lib1VariableName\n"
+                     + "s EXTERNAL RETURN func\n"
                      + "DATA SECTION\n"
                      + " GLOBAL a := 20 [INT]\n"
                      + " GLOBAL b := 500 [INT]\n"
                      + "CODE SECTION\n"
-                     + " d := EXTERNAL CALL func ( ) [INT]\n"
+                     + " CALL func ( )\n"
+                     + " EXTERNAL RETURN d := s [INT]"
                      + " g := d IADD v [INT]\n"
                      + "END\n"
                      + "PROC SECTION\n";
@@ -283,22 +285,26 @@ public class MyLinkerTest {
     public void linkExternalCall2(){
         String prog1 = "SYMBOL SECTION\n"
                      + "v EXTERNAL lib1VariableName\n"
+                     + "s EXTERNAL RETURN func2\n"
                      + "DATA SECTION\n"
                      + " GLOBAL a := 20 [INT]\n"
                      + " GLOBAL b := 500 [INT]\n"
                      + "CODE SECTION\n"
-                     + " d := EXTERNAL CALL func2 () [INT]\n"
+                     + " CALL func2 ()\n"
+                     + " EXTERNAL RETURN d := s [INT]\n"
                      + " g := d IADD v [INT]\n"
                      + "END\n"
                      + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
                     + "a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
+                    + "g EXTERNAL RETURN func2\n"
                     + "DATA SECTION\n"
                     + " GLOBAL a := 3 [INT]\n"
                     + "PROC SECTION\n"
                     + " PROC LABEL func2\n"
-                    + "  b := EXTERNAL CALL func1() [INT]\n"
+                    + "  CALL func1()\n"
+                    + "  EXTERNAL RETURN b := g [INT]\n"
                     + "  c := b ISUB a [INT]\n"
                     + "  INTERNAL RETURN d := c [INT]\n"
                     + " RETURN\n";
@@ -324,7 +330,7 @@ public class MyLinkerTest {
                     "END\r\n" + //
                     "PROC SECTION\r\n" + //
                     " PROC LABEL func2\r\n" + //
-                    "  CALL func1() [INT]\r\n" + //
+                    "  CALL func1() \r\n" + //
                     "  EXTERNAL RETURN f := i [INT]\r\n" + //
                     "  c := f ISUB j [INT]\r\n" + //
                     "  INTERNAL RETURN d := c [INT]\r\n" + //
@@ -341,11 +347,13 @@ public class MyLinkerTest {
     public void linkDuplicateLabels(){
         String prog1 = "SYMBOL SECTION\n"
                       + "v EXTERNAL lib1VariableName\n"
+                      + "s EXTERNAL RETURN func2\n"
                       + "DATA SECTION\n"
                       + " GLOBAL a := 20 [INT]\n"
                       + " GLOBAL b := 500 [INT]\n"
                       + "CODE SECTION\n"
-                      + " d := EXTERNAL CALL func2 ( ) [INT]\n"
+                      + " CALL func2 ( )\n"
+                      + " EXTERNAL RETURN d := s [INT]\n"
                       + " g := d IADD v [INT]\n"
                       + "LABEL begin2\n"
                       + "IF g EQ v THEN begin ELSE end\n"
@@ -357,12 +365,14 @@ public class MyLinkerTest {
                       + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
-                      + "a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
+                      + "a INTERNAL lib1VariableName\n"
+                      + "h INTERNAL RETURN func2\n"
                       + "DATA SECTION\n"
                       + "GLOBAL a := 3 [INT]\n"
                       + "PROC SECTION\n"
                       + " PROC LABEL func2\n"
-                      + "  b := EXTERNAL CALL func1 () [INT]\n"
+                      + "  CALL func1 ()\n"
+                      + "  EXTERNAL RETURN b := h [INT]\n"
                       + "  c := b ISUB a [INT]\n"
                       + "  LABEL begin2\n"
                       + "  IF c EQ b THEN begin ELSE end\n"

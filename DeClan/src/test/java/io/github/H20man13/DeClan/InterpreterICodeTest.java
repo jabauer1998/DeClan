@@ -54,10 +54,8 @@ public class InterpreterICodeTest {
             for(LogItem errItem : errLog){
                 assertTrue(errItem.toString(), false);
             }
-
-            IrRegisterGenerator gen = new IrRegisterGenerator();
+            
             MyIrLinker linker = new MyIrLinker(errLog);
-
             Prog program = linker.performLinkage(prog, lib.declanIoLibrary(), lib.declanMathLibrary(), lib.declanConversionsLibrary(), lib.declanRealLibrary(), lib.declanUtilsLibrary(), lib.declanIntLibrary());
 
             MyICodeMachine vm = new MyICodeMachine(errLog, icodeOut, errOut, standardInICode);
