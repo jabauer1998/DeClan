@@ -108,7 +108,7 @@ public class MyIrLinker {
                                                 String newPlace = null;    
                                                 do{
                                                     newPlace = gen.genNext();
-                                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
     
                                                 replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
                                             }
@@ -118,7 +118,7 @@ public class MyIrLinker {
                                             String newPlace = null;    
                                             do{
                                                 newPlace = gen.genNext();
-                                            } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
 
                                             replacePlaceAcrossProgramAndLibraries(assignLib.place, newPlace, program, libraries, library);
                                         }
@@ -145,7 +145,7 @@ public class MyIrLinker {
                                             String newPlace = null;    
                                             do{
                                                 newPlace = gen.genNext();
-                                            } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
 
                                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
                                         }
@@ -154,7 +154,7 @@ public class MyIrLinker {
                                             String place = null;    
                                             do{
                                                 place = gen.genNext();
-                                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                                             replacePlaceAcrossProgramAndLibraries(assignLib.place, place, program, libraries, library);
                                         }
@@ -180,7 +180,7 @@ public class MyIrLinker {
                                                 String newPlace = null;    
                                                 do{
                                                     newPlace = gen.genNext();
-                                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
     
                                                 replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
                                             }
@@ -190,7 +190,7 @@ public class MyIrLinker {
                                             String place = null;    
                                             do{
                                                 place = gen.genNext();
-                                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                                             replacePlaceAcrossProgramAndLibraries(assignLib.place, place, program, libraries, library);
                                         }
@@ -217,7 +217,7 @@ public class MyIrLinker {
                                                 String newPlace = null;    
                                                 do{
                                                     newPlace = gen.genNext();
-                                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
     
                                                 replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
                                             }
@@ -238,7 +238,7 @@ public class MyIrLinker {
                                                 String newPlace = null;    
                                                 do{
                                                     newPlace = gen.genNext();
-                                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
     
                                                 replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
                                             }
@@ -248,7 +248,7 @@ public class MyIrLinker {
                                             String place = null;    
                                             do{
                                                 place = gen.genNext();
-                                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                                             replacePlaceAcrossProgramAndLibraries(assignLib.place, place, program, libraries, library);
                                         }
@@ -262,7 +262,7 @@ public class MyIrLinker {
                                             String place = null;    
                                             do{
                                                 place = gen.genNext();
-                                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                                             replacePlaceAcrossProgramAndLibraries(assignLib.place, place, program, libraries, library);
                                         }
@@ -329,7 +329,7 @@ public class MyIrLinker {
                                                 String newPlace = null;    
                                                 do{
                                                     newPlace = gen.genNext();
-                                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                                } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
     
                                                 replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                                             }
@@ -339,7 +339,7 @@ public class MyIrLinker {
                                             String newPlace = null;    
                                             do{
                                                 newPlace = gen.genNext();
-                                            } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                            } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
 
                                             replacePlaceAcrossLibraries(assignLib.place, newPlace, single, libraries, library);
                                         }
@@ -366,7 +366,7 @@ public class MyIrLinker {
                                             String newPlace = null;    
                                             do{
                                                 newPlace = gen.genNext();
-                                            } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                            } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
 
                                             replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                                         }
@@ -375,7 +375,7 @@ public class MyIrLinker {
                                             String place = null;    
                                             do{
                                                 place = gen.genNext();
-                                            } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                            } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
 
                                             replacePlaceAcrossLibraries(assignLib.place, place, single, libraries, library);
                                         }
@@ -401,7 +401,7 @@ public class MyIrLinker {
                                                 String newPlace = null;    
                                                 do{
                                                     newPlace = gen.genNext();
-                                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                                } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
 
                                                 replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                                             }
@@ -411,7 +411,7 @@ public class MyIrLinker {
                                             String place = null;    
                                             do{
                                                 place = gen.genNext();
-                                            } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                            } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
                                             
                                             replacePlaceAcrossLibraries(assignLib.place, place, single, libraries, library);
                                         }
@@ -438,7 +438,7 @@ public class MyIrLinker {
                                                 String newPlace = null;    
                                                 do{
                                                     newPlace = gen.genNext();
-                                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                                } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
 
                                                 replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                                             }
@@ -459,7 +459,7 @@ public class MyIrLinker {
                                                 String newPlace = null;    
                                                 do{
                                                     newPlace = gen.genNext();
-                                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                                } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
 
                                                 replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                                             }
@@ -469,7 +469,7 @@ public class MyIrLinker {
                                             String place = null;    
                                             do{
                                                 place = gen.genNext();
-                                            } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                            } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
                                             
                                             replacePlaceAcrossLibraries(assignLib.place, place, single, libraries, library);
                                         }
@@ -483,7 +483,7 @@ public class MyIrLinker {
                                             String place = null;    
                                             do{
                                                 place = gen.genNext();
-                                            } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                            } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
                                             
                                             replacePlaceAcrossLibraries(assignLib.place, place, single, libraries, library);
                                         }
@@ -543,7 +543,7 @@ public class MyIrLinker {
                                     String newPlace = null;    
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
     
                                     replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, currentLib);
                                 }
@@ -553,7 +553,7 @@ public class MyIrLinker {
                                 String newPlace = null;    
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
 
                                 replacePlaceAcrossLibraries(assign.place, newPlace, single, libraries, currentLib);
                             }
@@ -585,7 +585,7 @@ public class MyIrLinker {
                                 String newPlace = null;    
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
 
                                 replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, currentLib);
                             }
@@ -594,7 +594,7 @@ public class MyIrLinker {
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
                                 
                                 replacePlaceAcrossLibraries(assign.place, place, single, libraries, currentLib);
                             }
@@ -623,7 +623,7 @@ public class MyIrLinker {
                                     String newPlace = null;    
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
     
                                     replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, currentLib);
                                 }
@@ -633,7 +633,7 @@ public class MyIrLinker {
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
                                 
                                 replacePlaceAcrossLibraries(assign.place, place, single, libraries, currentLib);
                             }
@@ -663,7 +663,7 @@ public class MyIrLinker {
                                     String newPlace = null;    
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
     
                                     replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, currentLib);
                                 }
@@ -684,7 +684,7 @@ public class MyIrLinker {
                                     String newPlace = null;    
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
     
                                     replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, currentLib);
                                 }
@@ -694,7 +694,7 @@ public class MyIrLinker {
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
                                 
                                 replacePlaceAcrossLibraries(assign.place, place, single, libraries, currentLib);
                             }
@@ -711,7 +711,7 @@ public class MyIrLinker {
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
                                 
                                 replacePlaceAcrossLibraries(assign.place, place, single, libraries, currentLib);
                             }
@@ -771,7 +771,7 @@ public class MyIrLinker {
                                     String newPlace = null;    
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
     
                                     replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, currentLib);
                                 }
@@ -781,7 +781,7 @@ public class MyIrLinker {
                                 String newPlace = null;    
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
 
                                 replacePlaceAcrossProgramAndLibraries(assign.place, newPlace, program, libraries, currentLib);
                             }
@@ -811,7 +811,7 @@ public class MyIrLinker {
                                 String newPlace = null;    
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
 
                                 replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, currentLib);
                             }
@@ -820,7 +820,7 @@ public class MyIrLinker {
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                                 replacePlaceAcrossProgramAndLibraries(assign.place, place, program, libraries, currentLib);
                             }
@@ -849,7 +849,7 @@ public class MyIrLinker {
                                     String newPlace = null;    
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
     
                                     replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, currentLib);
                                 }
@@ -859,7 +859,7 @@ public class MyIrLinker {
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                                 replacePlaceAcrossProgramAndLibraries(assign.place, place, program, libraries, currentLib);
                             }
@@ -889,7 +889,7 @@ public class MyIrLinker {
                                     String newPlace = null;    
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
     
                                     replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, currentLib);
                                 }
@@ -910,7 +910,7 @@ public class MyIrLinker {
                                     String newPlace = null;    
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
     
                                     replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, currentLib);
                                 }
@@ -920,7 +920,7 @@ public class MyIrLinker {
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                                 replacePlaceAcrossProgramAndLibraries(assign.place, place, program, libraries, currentLib);
                             }
@@ -937,7 +937,7 @@ public class MyIrLinker {
                                 String place = null;    
                                 do{
                                     place = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                                 replacePlaceAcrossProgramAndLibraries(assign.place, place, program, libraries, currentLib);
                             }
@@ -974,7 +974,7 @@ public class MyIrLinker {
                     String place = null;
                     do{
                         place = gen.genNext();
-                    }while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                    }while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                     replacePlaceAcrossProgramAndLibraries(assign.value.toString(), place, program, libraries, program);
                 }
@@ -983,7 +983,7 @@ public class MyIrLinker {
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                     replacePlaceAcrossProgramAndLibraries(assign.place, place, program, libraries, program);
                 }
@@ -997,7 +997,7 @@ public class MyIrLinker {
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                     replacePlaceAcrossProgramAndLibraries(placement.value.toString(), place, program, libraries, program);
                 }
@@ -1006,7 +1006,7 @@ public class MyIrLinker {
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                     replacePlaceAcrossProgramAndLibraries(placement.place, place, program, libraries, program);
                 }
@@ -1032,7 +1032,7 @@ public class MyIrLinker {
                         String newPlace = null;
                         do{
                             newPlace = gen.genNext();
-                        } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
                         
                         replacePlaceAcrossProgramAndLibraries(assignment.place, newPlace, program, libraries, program);
                     }
@@ -1051,7 +1051,7 @@ public class MyIrLinker {
                             String newPlace;
                             do{
                                 newPlace = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
                         }
@@ -1071,7 +1071,7 @@ public class MyIrLinker {
                                 String newPlace;
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
             
                                 replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
                             }
@@ -1092,7 +1092,7 @@ public class MyIrLinker {
                                 String newPlace;
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
             
                                 replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
                             }
@@ -1111,7 +1111,7 @@ public class MyIrLinker {
                                 String newPlace;
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
             
                                 replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
                             }
@@ -1134,7 +1134,7 @@ public class MyIrLinker {
                             String newPlace;
                             do{
                                 newPlace = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
                         }
@@ -1153,7 +1153,7 @@ public class MyIrLinker {
                             String newPlace;
                             do{
                                 newPlace = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
                         }
@@ -1200,7 +1200,7 @@ public class MyIrLinker {
                             String newPlace;
                             do{
                                 newPlace = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
                         }
@@ -1251,7 +1251,7 @@ public class MyIrLinker {
                     String place = null;
                     do{
                         place = gen.genNext();
-                    }while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                    }while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, prog, libraries));
 
                     replacePlaceAcrossProgramAndLibraries(assign.value.toString(), place, prog, libraries, library);
                 }
@@ -1260,7 +1260,7 @@ public class MyIrLinker {
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, prog, libraries));
 
                     replacePlaceAcrossProgramAndLibraries(assign.place, place, prog, libraries, library);
                 }
@@ -1274,7 +1274,7 @@ public class MyIrLinker {
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, prog, libraries));
 
                     replacePlaceAcrossProgramAndLibraries(placement.value.toString(), place, prog, libraries, library);
                 }
@@ -1283,7 +1283,7 @@ public class MyIrLinker {
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, prog, libraries));
 
                     replacePlaceAcrossProgramAndLibraries(placement.place, place, prog, libraries, library);
                 }
@@ -1309,7 +1309,7 @@ public class MyIrLinker {
                         String newPlace = null;
                         do{
                             newPlace = gen.genNext();
-                        } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
                         
                         replacePlaceAcrossProgramAndLibraries(assignment.place, newPlace, prog, libraries, library);
                     }
@@ -1330,7 +1330,7 @@ public class MyIrLinker {
                             String newPlace;
                             do{
                                 newPlace = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                         }
@@ -1352,7 +1352,7 @@ public class MyIrLinker {
                                 String newPlace;
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
             
                                 replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                             }
@@ -1375,7 +1375,7 @@ public class MyIrLinker {
                                 String newPlace;
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
             
                                 replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                             }
@@ -1396,7 +1396,7 @@ public class MyIrLinker {
                                 String newPlace;
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
             
                                 replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                             }
@@ -1421,7 +1421,7 @@ public class MyIrLinker {
                             String newPlace;
                             do{
                                 newPlace = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                         }
@@ -1442,7 +1442,7 @@ public class MyIrLinker {
                             String newPlace;
                             do{
                                 newPlace = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                         }
@@ -1491,7 +1491,7 @@ public class MyIrLinker {
                             String newPlace;
                             do{
                                 newPlace = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                         }
@@ -1542,7 +1542,7 @@ public class MyIrLinker {
                     String place = null;
                     do{
                         place = gen.genNext();
-                    }while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                    }while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
 
                     replacePlaceAcrossLibraries(assign.value.toString(), place, single, libraries, library);
                 }
@@ -1551,7 +1551,7 @@ public class MyIrLinker {
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                    } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
 
                     replacePlaceAcrossLibraries(assign.place, place, single, libraries, library);
                 }
@@ -1565,7 +1565,7 @@ public class MyIrLinker {
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                    } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
 
                     replacePlaceAcrossLibraries(placement.place, place, single, libraries, library);
                 }
@@ -1574,7 +1574,7 @@ public class MyIrLinker {
                     String place = null;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                    } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
 
                     replacePlaceAcrossLibraries(placement.value.toString(), place, single, libraries, library);
                 }
@@ -1600,7 +1600,7 @@ public class MyIrLinker {
                         String newPlace = null;
                         do{
                             newPlace = gen.genNext();
-                        } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                        } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
                         
                         replacePlaceAcrossLibraries(assignment.place, newPlace, single, libraries, library);
                     }
@@ -1621,7 +1621,7 @@ public class MyIrLinker {
                             String newPlace;
                             do{
                                 newPlace = gen.genNext();
-                            } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
         
                             replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                         }
@@ -1643,7 +1643,7 @@ public class MyIrLinker {
                                 String newPlace;
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
             
                                 replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                             }
@@ -1666,7 +1666,7 @@ public class MyIrLinker {
                                 String newPlace;
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
             
                                 replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                             }
@@ -1687,7 +1687,7 @@ public class MyIrLinker {
                                 String newPlace;
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
             
                                 replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                             }
@@ -1712,7 +1712,7 @@ public class MyIrLinker {
                             String newPlace;
                             do{
                                 newPlace = gen.genNext();
-                            } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
         
                             replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                         }
@@ -1733,7 +1733,7 @@ public class MyIrLinker {
                             String newPlace;
                             do{
                                 newPlace = gen.genNext();
-                            } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
         
                             replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                         }
@@ -1782,7 +1782,7 @@ public class MyIrLinker {
                             String newPlace;
                             do{
                                 newPlace = gen.genNext();
-                            } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
         
                             replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                         }
@@ -1836,7 +1836,7 @@ public class MyIrLinker {
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            }while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                            }while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, prog, libraries));
 
                             replacePlaceAcrossProgramAndLibraries(assign.value.toString(), place, prog, libraries, library);
                         }
@@ -1845,7 +1845,7 @@ public class MyIrLinker {
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, prog, libraries));
 
                             replacePlaceAcrossProgramAndLibraries(assign.place, place, prog, libraries, library);
                         }
@@ -1859,7 +1859,7 @@ public class MyIrLinker {
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, prog, libraries));
 
                             replacePlaceAcrossProgramAndLibraries(placement.value.toString(), place, prog, libraries, library);
                         }
@@ -1868,7 +1868,7 @@ public class MyIrLinker {
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, prog, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, prog, libraries));
 
                             replacePlaceAcrossProgramAndLibraries(placement.place, place, prog, libraries, library);
                         }
@@ -1895,7 +1895,7 @@ public class MyIrLinker {
                                 String newPlace = null;
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
                                 
                                 replacePlaceAcrossProgramAndLibraries(assignment.place, newPlace, prog, libraries, library);
                             }
@@ -1941,7 +1941,7 @@ public class MyIrLinker {
                                         String newPlace;
                                         do{
                                             newPlace = gen.genNext();
-                                        } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
                     
                                         replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                                     }
@@ -1962,7 +1962,7 @@ public class MyIrLinker {
                                         String newPlace;
                                         do{
                                             newPlace = gen.genNext();
-                                        } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
                     
                                         replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                                     }
@@ -1987,7 +1987,7 @@ public class MyIrLinker {
                                     String newPlace;
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
                 
                                     replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                                 }
@@ -2008,7 +2008,7 @@ public class MyIrLinker {
                                     String newPlace;
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
                 
                                     replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                                 }
@@ -2057,7 +2057,7 @@ public class MyIrLinker {
                                     String newPlace;
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
                 
                                     replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                                 }
@@ -2113,7 +2113,7 @@ public class MyIrLinker {
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            }while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                            }while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
 
                             replacePlaceAcrossLibraries(assign.value.toString(), place, single, libraries, library);
                         }
@@ -2122,7 +2122,7 @@ public class MyIrLinker {
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
 
                             replacePlaceAcrossLibraries(assign.place, place, single, libraries, library);
                         }
@@ -2136,7 +2136,7 @@ public class MyIrLinker {
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
 
                             replacePlaceAcrossLibraries(placement.value.toString(), place, single, libraries, library);
                         }
@@ -2145,7 +2145,7 @@ public class MyIrLinker {
                             String place = null;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossLibraries(place, single, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
 
                             replacePlaceAcrossLibraries(placement.place, place, single, libraries, library);
                         }
@@ -2171,7 +2171,7 @@ public class MyIrLinker {
                                 String newPlace = null;
                                 do{
                                     newPlace = gen.genNext();
-                                } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
                                 
                                 replacePlaceAcrossLibraries(assignment.place, newPlace, single, libraries, library);
                             }
@@ -2192,7 +2192,7 @@ public class MyIrLinker {
                                     String newPlace;
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
                 
                                     replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                                 }
@@ -2214,7 +2214,7 @@ public class MyIrLinker {
                                         String newPlace;
                                         do{
                                             newPlace = gen.genNext();
-                                        } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                        } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
                     
                                         replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                                     }
@@ -2237,7 +2237,7 @@ public class MyIrLinker {
                                         String newPlace;
                                         do{
                                             newPlace = gen.genNext();
-                                        } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                        } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
                     
                                         replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                                     }
@@ -2258,7 +2258,7 @@ public class MyIrLinker {
                                         String newPlace;
                                         do{
                                             newPlace = gen.genNext();
-                                        } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                        } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
                     
                                         replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                                     }
@@ -2283,7 +2283,7 @@ public class MyIrLinker {
                                     String newPlace;
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
                 
                                     replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                                 }
@@ -2304,7 +2304,7 @@ public class MyIrLinker {
                                     String newPlace;
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
                 
                                     replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                                 }
@@ -2353,7 +2353,7 @@ public class MyIrLinker {
                                     String newPlace;
                                     do{
                                         newPlace = gen.genNext();
-                                    } while(!placeIsUniqueAcrossLibraries(newPlace, single, libraries));
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
                 
                                     replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                                 }
@@ -2738,6 +2738,22 @@ public class MyIrLinker {
         }
     }
 
+    private static boolean newPlaceWillBeUniqueAcrossProgramAndLibraries(String place, Prog program, Lib[] libraries){
+        int placeCount = 0;
+
+        if(program.containsPlace(place)){
+            return false;
+        }
+
+        
+        for(Lib library: libraries){
+            if(library.containsPlace(place))
+                return false;
+        }
+
+        return true;
+    }
+
     private static boolean placeIsUniqueAcrossProgramAndLibraries(String place, Prog program, Lib[] libraries){
         Set<String> internalReturnsRepresented = new HashSet<String>();
         Set<String> argumentRepresented = new HashSet<String>();
@@ -2781,7 +2797,7 @@ public class MyIrLinker {
             }
         }
 
-        if(localVariableCount <= 1 && externalIdentsRepresented.isEmpty() 
+        if(localVariableCount == 1 && externalIdentsRepresented.isEmpty() 
             && internalIdentsRepresented.isEmpty() && internalReturnsRepresented.isEmpty() 
             && externalReturnsRepresented.isEmpty() && argumentRepresented.isEmpty() 
             && paramaterRepresented.isEmpty()){
@@ -2835,6 +2851,20 @@ public class MyIrLinker {
         } else {
             return false;
         }
+    }
+
+    private static boolean newPlaceWillBeUniqueAcrossLibraries(String place, Lib single, Lib[] libraries){
+        if(single.containsPlace(place)){
+            return false;
+        }
+
+        
+        for(Lib library: libraries){
+            if(library.containsPlace(place))
+                return false;
+        }
+
+        return true;
     }
 
     private static boolean placeIsUniqueAcrossLibraries(String place, Lib library, Lib[] libraries){
@@ -2985,7 +3015,7 @@ public class MyIrLinker {
                     String place;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
+                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
 
                     replacePlaceAcrossProgramAndLibraries(originalPlace, place, startingProgram, libraries, startingProgram);
                 }
@@ -3007,7 +3037,7 @@ public class MyIrLinker {
                             String place;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
 
                             replacePlaceAcrossProgramAndLibraries(origPlace, place, startingProgram, libraries, startingProgram);
                         }
@@ -3026,7 +3056,7 @@ public class MyIrLinker {
                             String place;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
 
                             replacePlaceAcrossProgramAndLibraries(origPlace, place, startingProgram, libraries, startingProgram);
                         }
@@ -3046,7 +3076,7 @@ public class MyIrLinker {
                             String place;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
 
                             replacePlaceAcrossProgramAndLibraries(origPlace, place, startingProgram, libraries, startingProgram);
                         }
@@ -3064,7 +3094,7 @@ public class MyIrLinker {
                         String place;
                         do{
                             place = gen.genNext();
-                        } while(!placeIsUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
 
                         replacePlaceAcrossProgramAndLibraries(origPlace, place, startingProgram, libraries, startingProgram);
                     }
@@ -3095,7 +3125,7 @@ public class MyIrLinker {
                         String place;
                         do{
                             place = gen.genNext();
-                        } while(!placeIsUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
 
                         replacePlaceAcrossProgramAndLibraries(paramName, place, startingProgram, libraries, startingProgram);
                     }
@@ -3123,7 +3153,7 @@ public class MyIrLinker {
                     String place;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossLibraries(place, startingLibrary, libraries));
+                    } while(!newPlaceWillBeUniqueAcrossLibraries(place, startingLibrary, libraries));
 
                     replacePlaceAcrossLibraries(originalPlace, place, startingLibrary, libraries, startingLibrary);
                 }
@@ -3145,7 +3175,7 @@ public class MyIrLinker {
                             String place;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossLibraries(place, startingLibrary, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(place, startingLibrary, libraries));
 
                             replacePlaceAcrossLibraries(origPlace, place, startingLibrary, libraries, startingLibrary);
                         }
@@ -3164,7 +3194,7 @@ public class MyIrLinker {
                             String place;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossLibraries(place, startingLibrary, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(place, startingLibrary, libraries));
 
                             replacePlaceAcrossLibraries(origPlace, place, startingLibrary, libraries, startingLibrary);
                         }
@@ -3184,7 +3214,7 @@ public class MyIrLinker {
                             String place;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossLibraries(place, startingLibrary, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(place, startingLibrary, libraries));
 
                             replacePlaceAcrossLibraries(origPlace, place, startingLibrary, libraries, startingLibrary);
                         }
@@ -3202,7 +3232,7 @@ public class MyIrLinker {
                         String place;
                         do{
                             place = gen.genNext();
-                        } while(!placeIsUniqueAcrossLibraries(place, startingLibrary, libraries));
+                        } while(!newPlaceWillBeUniqueAcrossLibraries(place, startingLibrary, libraries));
 
                         replacePlaceAcrossLibraries(origPlace, place, startingLibrary, libraries, startingLibrary);
                     }
@@ -3233,7 +3263,7 @@ public class MyIrLinker {
                         String place;
                         do{
                             place = gen.genNext();
-                        } while(!placeIsUniqueAcrossLibraries(place, startingLibrary, libraries));
+                        } while(!newPlaceWillBeUniqueAcrossLibraries(place, startingLibrary, libraries));
 
                         replacePlaceAcrossLibraries(paramName, place, startingLibrary, libraries, startingLibrary);
                     }
@@ -3262,7 +3292,7 @@ public class MyIrLinker {
                     String place;
                     do{
                         place = gen.genNext();
-                    } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                     replacePlaceAcrossProgramAndLibraries(origPlace, place, program, libraries, program);
                 }
@@ -3282,7 +3312,7 @@ public class MyIrLinker {
                         String place;
                         do{
                             place = gen.genNext();
-                        } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                         replacePlaceAcrossProgramAndLibraries(value, place, program, libraries, program);
                     }
@@ -3302,7 +3332,7 @@ public class MyIrLinker {
                             String place;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                             replacePlaceAcrossProgramAndLibraries(value, place, program, libraries, program);
                         }
@@ -3323,7 +3353,7 @@ public class MyIrLinker {
                             String place;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                             replacePlaceAcrossProgramAndLibraries(value, place, program, libraries, program);
                         }
@@ -3342,7 +3372,7 @@ public class MyIrLinker {
                             String place;
                             do{
                                 place = gen.genNext();
-                            } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                             replacePlaceAcrossProgramAndLibraries(value, place, program, libraries, program);
                         }
@@ -3365,7 +3395,7 @@ public class MyIrLinker {
                         String place;
                         do{
                             place = gen.genNext();
-                        } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                         replacePlaceAcrossProgramAndLibraries(origPlace, place, program, libraries, program);
                     }
@@ -3384,7 +3414,7 @@ public class MyIrLinker {
                         String place;
                         do{
                             place = gen.genNext();
-                        } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                         replacePlaceAcrossProgramAndLibraries(origPlace, place, program, libraries, program);
                     }
@@ -3434,7 +3464,7 @@ public class MyIrLinker {
                         String place;
                         do{
                             place = gen.genNext();
-                        } while(!placeIsUniqueAcrossProgramAndLibraries(place, program, libraries));
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
 
                         replacePlaceAcrossProgramAndLibraries(paramName, place, program, libraries, program);
                     }
