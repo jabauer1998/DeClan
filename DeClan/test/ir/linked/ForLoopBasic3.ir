@@ -1,40 +1,40 @@
 SYMBOL SECTION
 DATA SECTION
- GLOBAL n1 := 0 [INT]
+ GLOBAL d62 := 0 [INT]
 CODE SECTION
- k5 := 10 [INT]
- n1 := k5 [INT]
- k8 := 1 [INT]
+ d63 := 10 [INT]
+ d62 := d63 [INT]
+ d64 := 1 [INT]
  LABEL FORBEG_0_LEVEL_0
- IF n1 GT k8 THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
+ IF d62 GT d64 THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
  LABEL FORLOOP_0_LEVEL_0
- CALL WriteInt((n1 -> l2)[INT])
- l3 := 1 [INT]
- CALL INeg((l3 -> m5)[INT])
- EXTERNAL RETURN n0 := m7 [INT]
- n2 := n1 IADD n0 [INT]
- n1 := n2 [INT]
+ CALL WriteInt((d62 -> d65)[INT])
+ d68 := 1 [INT]
+ CALL INeg((d68 -> d69)[INT])
+ EXTERNAL RETURN d76 := d72 [INT]
+ d77 := d62 IADD d76 [INT]
+ d62 := d77 [INT]
  GOTO FORBEG_0_LEVEL_0
  LABEL FOREND_0_LEVEL_0
 END
 PROC SECTION
  PROC LABEL WriteInt
-  PARAM l0 := l2 [INT]
-  l1 := 0 [INT]
-  IPARAM l1
+  PARAM d66 := d65 [INT]
+  d67 := 0 [INT]
+  IPARAM d67
   IASM "MOV %r, R0"
-  IPARAM l0
+  IPARAM d66
   IASM "LDR R0, %a"
   IASM "SWI 1"
-  IPARAM l1
+  IPARAM d67
   IASM "MOV R0, %r"
  RETURN
  PROC LABEL INeg
-  PARAM l5 := m5 [INT]
-  m4 := 0 [INT]
-  m2 := INOT l5 [INT]
-  m3 := 1 [INT]
-  m1 := m2 IADD m3 [INT]
-  m4 := m1 [INT]
-  INTERNAL RETURN m7 := m4 [INT]
+  PARAM d70 := d69 [INT]
+  d71 := 0 [INT]
+  d73 := INOT d70 [INT]
+  d74 := 1 [INT]
+  d75 := d73 IADD d74 [INT]
+  d71 := d75 [INT]
+  INTERNAL RETURN d72 := d71 [INT]
  RETURN

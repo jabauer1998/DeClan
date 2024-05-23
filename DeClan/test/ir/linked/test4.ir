@@ -1,133 +1,133 @@
 SYMBOL SECTION
 DATA SECTION
- GLOBAL l7 := 0 [INT]
- GLOBAL x1 := 0 [INT]
- GLOBAL w4 := 0 [INT]
+ GLOBAL d62 := 0 [INT]
+ GLOBAL d63 := 0 [INT]
+ GLOBAL d64 := 0 [INT]
 CODE SECTION
  CALL ReadInt()
- EXTERNAL RETURN l2 := l0 [INT]
- l7 := l2 [INT]
- l5 := 0 [INT]
- x1 := l5 [INT]
+ EXTERNAL RETURN d68 := d66 [INT]
+ d62 := d68 [INT]
+ d69 := 0 [INT]
+ d63 := d69 [INT]
  LABEL FORBEG_0_LEVEL_0
- IF x1 LT l7 THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
+ IF d63 LT d62 THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
  LABEL FORLOOP_0_LEVEL_0
- CALL F((x1 -> s4)[INT])
- EXTERNAL RETURN s8 := s6 [INT]
- w4 := s8 [INT]
- CALL WriteInt((w4 -> w6)[INT])
- CALL Fact((x1 -> w1)[INT])
- EXTERNAL RETURN w5 := w3 [INT]
- w4 := w5 [INT]
- CALL WriteInt((w4 -> w6)[INT])
+ CALL F((d63 -> d70)[INT])
+ EXTERNAL RETURN d96 := d73 [INT]
+ d64 := d96 [INT]
+ CALL WriteInt((d64 -> d97)[INT])
+ CALL Fact((d63 -> e10)[INT])
+ EXTERNAL RETURN e22 := e13 [INT]
+ d64 := e22 [INT]
+ CALL WriteInt((d64 -> d97)[INT])
  CALL WriteLn()
- x0 := 1 [INT]
- x2 := x1 IADD x0 [INT]
- x1 := x2 [INT]
+ e23 := 1 [INT]
+ e24 := d63 IADD e23 [INT]
+ d63 := e24 [INT]
  GOTO FORBEG_0_LEVEL_0
  LABEL FOREND_0_LEVEL_0
 END
 PROC SECTION
  PROC LABEL ReadInt
-  k7 := 0 [INT]
-  k8 := 0 [INT]
-  IPARAM k8
+  d65 := 0 [INT]
+  d67 := 0 [INT]
+  IPARAM d67
   IASM "MOV %r, R0"
   IASM "SWI 3"
-  IPARAM k7
+  IPARAM d65
   IASM "STR R0, %a"
-  IPARAM k8
+  IPARAM d67
   IASM "MOV R0, %r"
-  INTERNAL RETURN l0 := k7 [INT]
+  INTERNAL RETURN d66 := d65 [INT]
  RETURN
  PROC LABEL F
-  PARAM s0 := s4 [INT]
-  n9 := 0 [INT]
-  s2 := 0 [INT]
-  m7 := 0 [INT]
-  m8 := s0 EQ m7 [BOOL]
-  IF m8 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0_0
+  PARAM d71 := d70 [INT]
+  d74 := 0 [INT]
+  d72 := 0 [INT]
+  d75 := 0 [INT]
+  d76 := d71 EQ d75 [BOOL]
+  IF d76 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0_0
-  n1 := 1 [INT]
-  s2 := n1 [INT]
+  d77 := 1 [INT]
+  d72 := d77 [INT]
   GOTO IFEND_1_LEVEL_0_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0_0
-  n5 := 1 [INT]
-  n3 := s0 ISUB n5 [INT]
-  CALL F((n3 -> s4)[INT])
-  EXTERNAL RETURN o0 := s6 [INT]
-  n9 := o0 [INT]
-  CALL M((n9 -> r4)[INT])
-  EXTERNAL RETURN r8 := r6 [INT]
-  s2 := r8 [INT]
-  s3 := s0 ISUB s2 [INT]
-  s2 := s3 [INT]
+  d78 := 1 [INT]
+  d79 := d71 ISUB d78 [INT]
+  CALL F((d79 -> d70)[INT])
+  EXTERNAL RETURN d80 := d73 [INT]
+  d74 := d80 [INT]
+  CALL M((d74 -> d81)[INT])
+  EXTERNAL RETURN d94 := d84 [INT]
+  d72 := d94 [INT]
+  d95 := d71 ISUB d72 [INT]
+  d72 := d95 [INT]
   GOTO IFEND_1_LEVEL_0_0
   LABEL IFNEXT_1_SEQ_1_LEVEL_0_0
   LABEL IFEND_1_LEVEL_0_0
-  INTERNAL RETURN s6 := s2 [INT]
+  INTERNAL RETURN d73 := d72 [INT]
  RETURN
  PROC LABEL M
-  PARAM r0 := r4 [INT]
-  q2 := 0 [INT]
-  r2 := 0 [INT]
-  p0 := 0 [INT]
-  p1 := r0 EQ p0 [BOOL]
-  IF p1 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0_0
+  PARAM d82 := d81 [INT]
+  d85 := 0 [INT]
+  d83 := 0 [INT]
+  d86 := 0 [INT]
+  d87 := d82 EQ d86 [BOOL]
+  IF d87 EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_0_SEQ_0_LEVEL_0_0
-  p4 := 0 [INT]
-  r2 := p4 [INT]
+  d88 := 0 [INT]
+  d83 := d88 [INT]
   GOTO IFEND_0_LEVEL_0_0
   LABEL IFNEXT_0_SEQ_0_LEVEL_0_0
-  p8 := 1 [INT]
-  p6 := r0 ISUB p8 [INT]
-  CALL M((p6 -> r4)[INT])
-  EXTERNAL RETURN q3 := r6 [INT]
-  q2 := q3 [INT]
-  CALL F((q2 -> s4)[INT])
-  EXTERNAL RETURN q8 := s6 [INT]
-  r2 := q8 [INT]
-  r3 := r0 ISUB r2 [INT]
-  r2 := r3 [INT]
+  d89 := 1 [INT]
+  d90 := d82 ISUB d89 [INT]
+  CALL M((d90 -> d81)[INT])
+  EXTERNAL RETURN d91 := d84 [INT]
+  d85 := d91 [INT]
+  CALL F((d85 -> d70)[INT])
+  EXTERNAL RETURN d92 := d73 [INT]
+  d83 := d92 [INT]
+  d93 := d82 ISUB d83 [INT]
+  d83 := d93 [INT]
   GOTO IFEND_0_LEVEL_0_0
   LABEL IFNEXT_0_SEQ_1_LEVEL_0_0
   LABEL IFEND_0_LEVEL_0_0
-  INTERNAL RETURN r6 := r2 [INT]
+  INTERNAL RETURN d84 := d83 [INT]
  RETURN
  PROC LABEL WriteInt
-  PARAM t0 := w6 [INT]
-  t1 := 0 [INT]
-  IPARAM t1
+  PARAM d98 := d97 [INT]
+  d99 := 0 [INT]
+  IPARAM d99
   IASM "MOV %r, R0"
-  IPARAM t0
+  IPARAM d98
   IASM "LDR R0, %a"
   IASM "SWI 1"
-  IPARAM t1
+  IPARAM d99
   IASM "MOV R0, %r"
  RETURN
  PROC LABEL Fact
-  PARAM v7 := w1 [INT]
-  v8 := 0 [INT]
-  v9 := 0 [INT]
-  u2 := 0 [INT]
-  u3 := v7 EQ u2 [BOOL]
-  IF u3 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0_0 ELSE IFNEXT_2_SEQ_0_LEVEL_0_0
+  PARAM e11 := e10 [INT]
+  e14 := 0 [INT]
+  e12 := 0 [INT]
+  e15 := 0 [INT]
+  e16 := e11 EQ e15 [BOOL]
+  IF e16 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0_0 ELSE IFNEXT_2_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_2_SEQ_0_LEVEL_0_0
-  u6 := 1 [INT]
-  v9 := u6 [INT]
+  e17 := 1 [INT]
+  e12 := e17 [INT]
   GOTO IFEND_2_LEVEL_0_0
   LABEL IFNEXT_2_SEQ_0_LEVEL_0_0
-  v0 := 1 [INT]
-  u8 := v7 ISUB v0 [INT]
-  CALL Fact((u8 -> w1)[INT])
-  EXTERNAL RETURN v5 := w3 [INT]
-  v8 := v5 [INT]
-  w0 := v7 IMUL v8 [INT]
-  v9 := w0 [INT]
+  e18 := 1 [INT]
+  e19 := e11 ISUB e18 [INT]
+  CALL Fact((e19 -> e10)[INT])
+  EXTERNAL RETURN e20 := e13 [INT]
+  e14 := e20 [INT]
+  e21 := e11 IMUL e14 [INT]
+  e12 := e21 [INT]
   GOTO IFEND_2_LEVEL_0_0
   LABEL IFNEXT_2_SEQ_1_LEVEL_0_0
   LABEL IFEND_2_LEVEL_0_0
-  INTERNAL RETURN w3 := v9 [INT]
+  INTERNAL RETURN e13 := e12 [INT]
  RETURN
  PROC LABEL WriteLn
   IASM "SWI 4"
