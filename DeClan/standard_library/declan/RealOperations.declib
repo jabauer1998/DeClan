@@ -91,8 +91,10 @@ PROCEDURE RMul(n1: REAL; n2: REAL);
 	n1Base := RealMantissa(n1);
 	n2Base := RealMantissa(n2);
 
-	WHILE((n1Base BAND 1) # 1) DO
-	    n1Base := n1Base >> 1
+	IF ~IntIsZero(n1Base) THEN
+		WHILE((n1Base BAND 1) # 1) DO
+	    	n1Base := n1Base >> 1
+		END
 	END;
 
 	n1Count := 0;
@@ -106,8 +108,10 @@ PROCEDURE RMul(n1: REAL; n2: REAL);
 	    n1BaseTemp := n1BaseTemp >> 1
 	END;
 
-	WHILE((n2Base BAND 1) # 1) DO
-	    n2Base := n2Base >> 1
+	IF ~IntIsZero(n2Base) THEN
+		WHILE((n2Base BAND 1) # 1) DO
+	    	n2Base := n2Base >> 1
+		END
 	END;
 
 	n2Count := 0;
@@ -265,11 +269,13 @@ PROCEDURE RDivide(n1: REAL; n2: REAL);
 
 	n2Count := 0;
 	n2TempBase := n2Base;
-	WHILE((n2TempBase BAND 1) = 0) DO
-	    n2TempBase := n2TempBase >> 1;
-	    n2Count := n2Count + 1;
+	IF ~IntIsZero(n2TempBase) THEN
+		WHILE((n2TempBase BAND 1) = 0) DO
+	    	n2TempBase := n2TempBase >> 1;
+	    	n2Count := n2Count + 1;
+		END;
+		n2FirstOne := n2Count
 	END;
-	n2FirstOne := n2Count;
 
 	toShiftBase := n2FirstOne;
 	n2Base := n2Base >> toShiftBase;
