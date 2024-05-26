@@ -1,0 +1,63 @@
+SYMBOL SECTION
+ b CONST INTERNAL a
+ d CONST INTERNAL b
+ f EXTERNAL PARAM RNeg 0
+ g EXTERNAL RETURN RNeg
+ i EXTERNAL PARAM IntToReal 0
+ j EXTERNAL RETURN IntToReal
+ l EXTERNAL PARAM RAdd 0
+ m EXTERNAL PARAM RAdd 1
+ n EXTERNAL RETURN RAdd
+ p CONST INTERNAL c
+ q INTERNAL result
+ s EXTERNAL PARAM WriteString 0
+ t EXTERNAL PARAM WriteInt 0
+ v EXTERNAL PARAM WriteReal 0
+ z EXTERNAL PARAM RMul 0
+ A EXTERNAL PARAM RMul 1
+ B EXTERNAL RETURN RMul
+ D EXTERNAL PARAM RSub 0
+ E EXTERNAL PARAM RSub 1
+ F EXTERNAL RETURN RSub
+DATA SECTION
+ a := 0 [INT]
+ GLOBAL b := a [INT]
+ c := 1.2 [REAL]
+ GLOBAL d := c [REAL]
+ e := 3.14 [REAL]
+ CALL RNeg((e -> f)[REAL])
+ EXTERNAL RETURN h := g [REAL]
+ CALL IntToReal((b -> i)[INT])
+ EXTERNAL RETURN k := j [REAL]
+ CALL RAdd((h -> l)[REAL], (k -> m)[REAL])
+ EXTERNAL RETURN o := n [REAL]
+ GLOBAL p := o [REAL]
+ GLOBAL q := 0.0 [REAL]
+CODE SECTION
+ r := "A is " [STRING]
+ CALL WriteString((r -> s)[STRING])
+ CALL WriteInt((b -> t)[INT])
+ CALL WriteLn()
+ u := "B is " [STRING]
+ CALL WriteString((u -> s)[STRING])
+ CALL WriteReal((d -> v)[REAL])
+ CALL WriteLn()
+ w := "C is " [STRING]
+ CALL WriteString((w -> s)[STRING])
+ CALL WriteReal((p -> v)[REAL])
+ CALL WriteLn()
+ CALL RNeg((p -> f)[REAL])
+ EXTERNAL RETURN x := g [REAL]
+ CALL IntToReal((b -> i)[INT])
+ EXTERNAL RETURN y := j [REAL]
+ CALL RMul((d -> z)[REAL], (y -> A)[REAL])
+ EXTERNAL RETURN C := B [REAL]
+ CALL RSub((x -> D)[REAL], (C -> E)[REAL])
+ EXTERNAL RETURN G := F [REAL]
+ q := G [REAL]
+ H := "Result is " [STRING]
+ CALL WriteString((H -> s)[STRING])
+ CALL WriteReal((q -> v)[REAL])
+ CALL WriteLn()
+END
+PROC SECTION
