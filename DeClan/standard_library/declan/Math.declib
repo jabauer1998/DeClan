@@ -53,9 +53,14 @@ PROCEDURE Floor(n: REAL);
 	RETURN result
     END Floor;
 PROCEDURE Round(n: REAL);
-    VAR result: INTEGER;
+    VAR result: INTEGER; additionResult: REAL;
     BEGIN
-	result := Floor(n + 0.5);
+        IF RealIsNegative(n) THEN
+            additionResult := n - 0.5;
+        ELSE
+            additionResult := n + 0.5;
+        END;
+        result := Floor(additionResult);
     	RETURN result
     END Round;
 PROCEDURE Ceil(n: REAL);

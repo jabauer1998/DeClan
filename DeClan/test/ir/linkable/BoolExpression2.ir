@@ -1,0 +1,35 @@
+SYMBOL SECTION
+ b CONST INTERNAL a
+ d CONST INTERNAL e
+ f CONST INTERNAL x
+ g INTERNAL result
+ i EXTERNAL PARAM WriteString 0
+ j EXTERNAL PARAM WriteBool 0
+ l EXTERNAL PARAM IntToReal 0
+ m EXTERNAL RETURN IntToReal
+ o EXTERNAL PARAM RGreaterThanOrEqualTo 0
+ p EXTERNAL PARAM RGreaterThanOrEqualTo 1
+ q EXTERNAL RETURN RGreaterThanOrEqualTo
+DATA SECTION
+ a := 0 [INT]
+ GLOBAL b := a [INT]
+ c := TRUE [BOOL]
+ GLOBAL d := c [BOOL]
+ e := 1.0 [REAL]
+ GLOBAL f := e [REAL]
+ GLOBAL g := FALSE [BOOL]
+CODE SECTION
+ h := "e is " [STRING]
+ CALL WriteString((h -> i)[STRING])
+ CALL WriteBool((d -> j)[BOOL])
+ CALL WriteLn()
+ k := BNOT d [BOOL]
+ CALL IntToReal((b -> l)[INT])
+ EXTERNAL RETURN n := m [REAL]
+ CALL RGreaterThanOrEqualTo((f -> o)[REAL], (n -> p)[REAL])
+ EXTERNAL RETURN r := q [BOOL]
+ s := k LOR r [BOOL]
+ g := s [BOOL]
+ CALL WriteBool((g -> j)[BOOL])
+END
+PROC SECTION

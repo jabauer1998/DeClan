@@ -408,6 +408,12 @@ PROCEDURE RLessThan(n1: REAL; n2: REAL);
 			result := TRUE
 		ELSIF n1IsZero & n2IsPositive THEN
 			result := TRUE
+		ELSIF n1IsPositive & n2IsNegative THEN
+			result := FALSE
+		ELSIF n1IsPositive & n2IsZero THEN
+			result := FALSE
+		ELSIF n1IsZero & n2IsNegative THEN
+			result := FALSE
 		ELSIF n1IsNegative & n2IsNegative THEN
 			n1Exp := RealExponent(n1);
 			n2Exp := RealExponent(n2);
@@ -453,13 +459,19 @@ PROCEDURE RLessThanOrEqualTo(n1: REAL; n2: REAL);
 		n1IsPositive := RealIsPositive(n1);
 		n2IsPositive := RealIsPositive(n2);
 		IF n1IsZero & n2IsZero THEN
-			result := FALSE
+			result := TRUE
 		ELSIF n1IsNegative & n2IsZero THEN
 			result := TRUE
 		ELSIF n1IsNegative & n2IsPositive THEN
 			result := TRUE
 		ELSIF n1IsZero & n2IsPositive THEN
 			result := TRUE
+		ELSIF n1IsPositive & n2IsNegative THEN
+			result := FALSE
+		ELSIF n1IsPositive & n2IsZero THEN
+			result := FALSE
+		ELSIF n1IsZero & n2IsNegative THEN
+			result := FALSE
 		ELSIF n1IsNegative & n2IsNegative THEN
 			n1Exp := RealExponent(n1);
 			n2Exp := RealExponent(n2);
@@ -507,10 +519,16 @@ PROCEDURE RGreaterThan(n1: REAL; n2: REAL);
 		IF n1IsZero & n2IsZero THEN
 			result := FALSE
 		ELSIF n1IsNegative & n2IsZero THEN
-			result := TRUE
+			result := FALSE
 		ELSIF n1IsNegative & n2IsPositive THEN
-			result := TRUE
+			result := FALSE
 		ELSIF n1IsZero & n2IsPositive THEN
+			result := FALSE
+		ELSIF n1IsPositive & n2IsNegative THEN
+			result := TRUE
+		ELSIF n1IsPositive & n2IsZero THEN
+			result := TRUE
+		ELSIF n1IsZero & n2IsNegative THEN
 			result := TRUE
 		ELSIF n1IsNegative & n2IsNegative THEN
 			n1Exp := RealExponent(n1);
@@ -557,12 +575,18 @@ PROCEDURE RGreaterThanOrEqualTo(n1: REAL; n2: REAL);
 		n1IsPositive := RealIsPositive(n1);
 		n2IsPositive := RealIsPositive(n2);
 		IF n1IsZero & n2IsZero THEN
-			result := FALSE
-		ELSIF n1IsNegative & n2IsZero THEN
 			result := TRUE
+		ELSIF n1IsNegative & n2IsZero THEN
+			result := FALSE
 		ELSIF n1IsNegative & n2IsPositive THEN
+			result := FALSE
+		ELSIF n1IsPositive & n2IsZero THEN
+			result := TRUE
+		ELSIF n1IsPositive & n2IsNegative THEN
 			result := TRUE
 		ELSIF n1IsZero & n2IsPositive THEN
+			result := FALSE
+		ELSIF n1IsZero & n2IsNegative THEN
 			result := TRUE
 		ELSIF n1IsNegative & n2IsNegative THEN
 			n1Exp := RealExponent(n1);

@@ -23,6 +23,9 @@ BEGIN
   p := ~e & (x > a);
   q := ~e OR (x >= a);
   r := p = q;
+  WriteString("Q is ");
+  WriteBool(q);
+  WriteLn();
   IF p THEN WriteInt(4) ELSIF q THEN WriteInt(5) END;
   IF r THEN WriteInt(5) ELSE WriteInt(6) END;
   WriteLn()

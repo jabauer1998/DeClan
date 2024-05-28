@@ -1,0 +1,47 @@
+SYMBOL SECTION
+ b CONST INTERNAL a
+ d CONST INTERNAL b
+ f EXTERNAL PARAM RNeg 0
+ g EXTERNAL RETURN RNeg
+ i CONST INTERNAL c
+ k CONST INTERNAL d
+ l INTERNAL result
+ m EXTERNAL PARAM IntToReal 0
+ n EXTERNAL RETURN IntToReal
+ p EXTERNAL PARAM RMul 0
+ q EXTERNAL PARAM RMul 1
+ r EXTERNAL RETURN RMul
+ u EXTERNAL PARAM RDivide 0
+ v EXTERNAL PARAM RDivide 1
+ w EXTERNAL RETURN RDivide
+ y EXTERNAL PARAM RNotEqualTo 0
+ z EXTERNAL PARAM RNotEqualTo 1
+ A EXTERNAL RETURN RNotEqualTo
+ C EXTERNAL PARAM WriteBool 0
+DATA SECTION
+ a := 0 [INT]
+ GLOBAL b := a [INT]
+ c := 1.2 [REAL]
+ GLOBAL d := c [REAL]
+ e := 3.14 [REAL]
+ CALL RNeg((e -> f)[REAL])
+ EXTERNAL RETURN h := g [REAL]
+ GLOBAL i := h [REAL]
+ j := 42 [INT]
+ GLOBAL k := j [INT]
+ GLOBAL l := FALSE [BOOL]
+CODE SECTION
+ CALL IntToReal((b -> m)[INT])
+ EXTERNAL RETURN o := n [REAL]
+ CALL RMul((o -> p)[REAL], (d -> q)[REAL])
+ EXTERNAL RETURN s := r [REAL]
+ CALL IntToReal((k -> m)[INT])
+ EXTERNAL RETURN t := n [REAL]
+ CALL RDivide((i -> u)[REAL], (t -> v)[REAL])
+ EXTERNAL RETURN x := w [REAL]
+ CALL RNotEqualTo((s -> y)[REAL], (x -> z)[REAL])
+ EXTERNAL RETURN B := A [BOOL]
+ l := B [BOOL]
+ CALL WriteBool((l -> C)[BOOL])
+END
+PROC SECTION

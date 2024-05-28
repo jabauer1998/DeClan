@@ -34,6 +34,9 @@ SYMBOL SECTION
  d4 EXTERNAL RETURN RealToInt
  l INTERNAL RETURN Floor
  m INTERNAL PARAM Round 0
+ e1 EXTERNAL PARAM RSub 0
+ e2 EXTERNAL PARAM RSub 1
+ e3 EXTERNAL RETURN RSub
  n INTERNAL RETURN Round
  o INTERNAL PARAM Ceil 0
  p INTERNAL RETURN Ceil
@@ -179,23 +182,38 @@ PROC SECTION
   INTERNAL RETURN l := d1 [INT]
  RETURN
  PROC LABEL Round
-  PARAM d7 := m [REAL]
+  PARAM d8 := m [REAL]
   d6 := 0 [INT]
-  d8 := 0.5 [REAL]
-  CALL RAdd((d7 -> c5)[REAL], (d8 -> c6)[REAL])
-  EXTERNAL RETURN d9 := c7 [REAL]
-  CALL Floor((d9 -> k)[REAL])
-  EXTERNAL RETURN e0 := l [INT]
-  d6 := e0 [INT]
+  d7 := 0.0 [REAL]
+  CALL RealIsNegative((d8 -> B)[REAL])
+  EXTERNAL RETURN d9 := C [BOOL]
+  IF d9 EQ TRUE THEN IFSTAT_3_SEQ_0_LEVEL_0 ELSE IFNEXT_3_SEQ_0_LEVEL_0
+  LABEL IFSTAT_3_SEQ_0_LEVEL_0
+  e0 := 0.5 [REAL]
+  CALL RSub((d8 -> e1)[REAL], (e0 -> e2)[REAL])
+  EXTERNAL RETURN e4 := e3 [REAL]
+  d7 := e4 [REAL]
+  GOTO IFEND_3_LEVEL_0
+  LABEL IFNEXT_3_SEQ_0_LEVEL_0
+  e5 := 0.5 [REAL]
+  CALL RAdd((d8 -> c5)[REAL], (e5 -> c6)[REAL])
+  EXTERNAL RETURN e6 := c7 [REAL]
+  d7 := e6 [REAL]
+  GOTO IFEND_3_LEVEL_0
+  LABEL IFNEXT_3_SEQ_1_LEVEL_0
+  LABEL IFEND_3_LEVEL_0
+  CALL Floor((d7 -> k)[REAL])
+  EXTERNAL RETURN e7 := l [INT]
+  d6 := e7 [INT]
   INTERNAL RETURN n := d6 [INT]
  RETURN
  PROC LABEL Ceil
-  PARAM e2 := o [REAL]
-  e1 := 0 [INT]
-  CALL Floor((e2 -> k)[REAL])
-  EXTERNAL RETURN e3 := l [INT]
-  e4 := 1 [INT]
-  e5 := e3 IADD e4 [INT]
-  e1 := e5 [INT]
-  INTERNAL RETURN p := e1 [INT]
+  PARAM e9 := o [REAL]
+  e8 := 0 [INT]
+  CALL Floor((e9 -> k)[REAL])
+  EXTERNAL RETURN f0 := l [INT]
+  f1 := 1 [INT]
+  f2 := f0 IADD f1 [INT]
+  e8 := f2 [INT]
+  INTERNAL RETURN p := e8 [INT]
  RETURN

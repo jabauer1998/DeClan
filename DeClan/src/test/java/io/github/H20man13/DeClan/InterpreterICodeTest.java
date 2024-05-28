@@ -168,6 +168,16 @@ public class InterpreterICodeTest {
     }
 
     @Test
+    public void testBooleanExpression1(){
+        testInterpreterWithICode("test/declan/BoolExpression1.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testBooleanExpression2(){
+        testInterpreterWithICode("test/declan/BoolExpression2.dcl", nullReader, nullReader);
+    }
+
+    @Test
     public void testRealAddition(){
         testInterpreterWithICode("test/declan/RealAddition.dcl", nullReader, nullReader);
     }
@@ -180,6 +190,11 @@ public class InterpreterICodeTest {
     @Test
     public void testRealAddition3(){
         testInterpreterWithICode("test/declan/RealAddition3.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testRealAddition4(){
+        testInterpreterWithICode("test/declan/RealAddition4.dcl", nullReader, nullReader);
     }
 
     @Test

@@ -43,12 +43,12 @@ public class IfElifBranch extends Branch implements Statement {
       mystring.append(getExpression().toString() + ":\n");
       List<Statement> stat = getExecStatements();
       for(int i = 0; i < stat.size(); i++){
-	mystring.append("\tStatement " + i + " = ");
-	mystring.append(stat.get(i).toString());
-	mystring.append('\n');
+        mystring.append("\tStatement " + i + " = ");
+        mystring.append(stat.get(i).toString());
+        mystring.append('\n');
       }
       if(getNextBranch() != null){
-	mystring.append(getNextBranch().toString());
+	      mystring.append(getNextBranch().toString());
       }
       return mystring.toString();
     }

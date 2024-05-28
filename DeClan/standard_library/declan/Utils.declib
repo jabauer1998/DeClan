@@ -3,7 +3,7 @@ PROCEDURE RealIsZero(r: REAL);
     VAR result: BOOLEAN; val: INTEGER; exp: INTEGER;
     BEGIN
         exp := RealBinaryAsInt(r);
-		val := exp BAND 07FFFFFFH;
+		val := exp BAND 07FFFFFFFH;
 		IF val = 0 THEN
 			result := TRUE
 		ELSE
@@ -38,9 +38,9 @@ PROCEDURE RealIsNegative(r: REAL);
         thirtyFirstBit := RealSign(r);
 		rest := RealBinaryAsInt(r) BAND 07FFFFFFFH;
 		IF (thirtyFirstBit = 1) & (~IntIsZero(rest)) THEN
-	    	result := FALSE
-		ELSE
 	    	result := TRUE
+		ELSE
+	    	result := FALSE
 		END
 	RETURN result
     END RealIsNegative;
