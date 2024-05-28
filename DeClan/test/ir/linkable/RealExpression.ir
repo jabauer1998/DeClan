@@ -10,15 +10,15 @@ SYMBOL SECTION
  n EXTERNAL RETURN RAdd
  p CONST INTERNAL c
  q INTERNAL result
- s EXTERNAL PARAM WriteString 0
- t EXTERNAL PARAM WriteInt 0
- v EXTERNAL PARAM WriteReal 0
- z EXTERNAL PARAM RMul 0
- A EXTERNAL PARAM RMul 1
- B EXTERNAL RETURN RMul
- D EXTERNAL PARAM RSub 0
- E EXTERNAL PARAM RSub 1
- F EXTERNAL RETURN RSub
+ r INTERNAL bAndAResult
+ t EXTERNAL PARAM RMul 0
+ u EXTERNAL PARAM RMul 1
+ v EXTERNAL RETURN RMul
+ x EXTERNAL PARAM RSub 0
+ y EXTERNAL PARAM RSub 1
+ z EXTERNAL RETURN RSub
+ C EXTERNAL PARAM WriteString 0
+ D EXTERNAL PARAM WriteReal 0
 DATA SECTION
  a := 0 [INT]
  GLOBAL b := a [INT]
@@ -33,31 +33,19 @@ DATA SECTION
  EXTERNAL RETURN o := n [REAL]
  GLOBAL p := o [REAL]
  GLOBAL q := 0.0 [REAL]
+ GLOBAL r := 0.0 [REAL]
 CODE SECTION
- r := "A is " [STRING]
- CALL WriteString((r -> s)[STRING])
- CALL WriteInt((b -> t)[INT])
- CALL WriteLn()
- u := "B is " [STRING]
- CALL WriteString((u -> s)[STRING])
- CALL WriteReal((d -> v)[REAL])
- CALL WriteLn()
- w := "C is " [STRING]
- CALL WriteString((w -> s)[STRING])
- CALL WriteReal((p -> v)[REAL])
- CALL WriteLn()
- CALL RNeg((p -> f)[REAL])
- EXTERNAL RETURN x := g [REAL]
  CALL IntToReal((b -> i)[INT])
- EXTERNAL RETURN y := j [REAL]
- CALL RMul((d -> z)[REAL], (y -> A)[REAL])
- EXTERNAL RETURN C := B [REAL]
- CALL RSub((x -> D)[REAL], (C -> E)[REAL])
- EXTERNAL RETURN G := F [REAL]
- q := G [REAL]
- H := "Result is " [STRING]
- CALL WriteString((H -> s)[STRING])
- CALL WriteReal((q -> v)[REAL])
+ EXTERNAL RETURN s := j [REAL]
+ CALL RMul((d -> t)[REAL], (s -> u)[REAL])
+ EXTERNAL RETURN w := v [REAL]
+ r := w [REAL]
+ CALL RSub((p -> x)[REAL], (r -> y)[REAL])
+ EXTERNAL RETURN A := z [REAL]
+ q := A [REAL]
+ B := "Result is " [STRING]
+ CALL WriteString((B -> C)[STRING])
+ CALL WriteReal((q -> D)[REAL])
  CALL WriteLn()
 END
 PROC SECTION

@@ -183,6 +183,11 @@ public class InterpreterICodeTest {
     }
 
     @Test
+    public void testRealExpression(){
+        testInterpreterWithICode("test/declan/RealExpression.dcl", nullReader, nullReader);
+    }
+
+    @Test
     public void testRealMultiplication(){
         testInterpreterWithICode("test/declan/RealMultiplication.dcl", nullReader, nullReader);
     }
@@ -225,5 +230,10 @@ public class InterpreterICodeTest {
     @Test
     public void testRealDivision4(){
         testInterpreterWithICode("test/declan/RealDivision4.dcl", nullReader, nullReader);
+    }
+
+    @Test
+    public void testRealDivision5(){
+        testInterpreterWithICode("test/declan/RealDivision5.dcl", nullReader, nullReader);
     }
 }

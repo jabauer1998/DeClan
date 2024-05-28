@@ -7,6 +7,7 @@ PROCEDURE RAdd(n1: REAL; n2: REAL);
 	n2Exp := RealExponent(n2);
 	n1Base := RealMantissa(n1);
 	n2Base := RealMantissa(n2);
+	
 	IF(n1Exp < n2Exp) THEN
 	  resultExp := n2Exp + realBias;
 	  baseDif := n2Exp - n1Exp;
@@ -15,36 +16,37 @@ PROCEDURE RAdd(n1: REAL; n2: REAL);
 	  resultExp := n1Exp + realBias;
 	  baseDif := n1Exp - n2Exp;
 	  n2Base := n2Base >> baseDif
-        ELSE
+    ELSE
 	  resultExp := n1Exp + realBias;
 	END;
 
 	IF ((n1Sign = 0) & (n2Sign = 1)) THEN
 	    IF (n1Base > n2Base) THEN
 	        resultSign := 0;
-		resultBase := n1Base - n2Base
+			resultBase := n1Base - n2Base
 	    ELSIF (n1Base < n2Base) THEN
-	 	resultSign := 1;
-		resultBase := n2Base - n1Base
+	 		resultSign := 1;
+			resultBase := n2Base - n1Base
 	    ELSE
-		resultSign := 0;
-		resultBase := 0
+			resultSign := 0;
+			resultBase := 0
 	    END
 	ELSIF ((n1Sign = 1) & (n2Sign = 0)) THEN
 	    IF (n1Base > n2Base) THEN
-		resultSign := 1;
+			resultSign := 1;
 	        resultBase := n1Base - n2Base
 	    ELSIF (n1Base < n2Base) THEN
-		resultSign := 0;
-		resultBase := n2Base - n1Base
+			resultSign := 0;
+			resultBase := n2Base - n1Base
 	    ELSE
-		resultSign := 0;
-		resultBase := 0
+			resultSign := 0;
+			resultBase := 0
 	    END
 	ELSE
 	    resultSign := n1Sign;
 	    resultBase := n1Base + n2Base
 	END;
+
 
 	resultCarry := (resultBase >> 24) BAND 1;
 	IF (resultCarry = 1) THEN
@@ -57,7 +59,7 @@ PROCEDURE RAdd(n1: REAL; n2: REAL);
 	WHILE (~IntIsZero(tempBase)) DO
 	     lastBit := tempBase BAND 1;
 	     IF (lastBit = 1) THEN
-		 lastOne := count
+		 	lastOne := count
 	     END;
 	     count := count + 1;
 	     tempBase := tempBase >> 1
@@ -91,166 +93,164 @@ PROCEDURE RMul(n1: REAL; n2: REAL);
 	n1Base := RealMantissa(n1);
 	n2Base := RealMantissa(n2);
 
-	IF ~IntIsZero(n1Base) THEN
+	IF (~IntIsZero(n1Base) & ~IntIsZero(n2Base)) THEN
 		WHILE((n1Base BAND 1) # 1) DO
 	    	n1Base := n1Base >> 1
-		END
-	END;
+		END;
 
-	n1Count := 0;
-	n1BaseTemp := n1Base;
-	WHILE(~IntIsZero(n1BaseTemp)) DO
-	    n1LastDigit := n1BaseTemp BAND 1;
-	    IF (n1LastDigit = 1) THEN
-		n1LastOne := n1Count;
-	    END;
-	    n1Count := n1Count + 1;
-	    n1BaseTemp := n1BaseTemp >> 1
-	END;
+		n1Count := 0;
+		n1BaseTemp := n1Base;
+		WHILE(~IntIsZero(n1BaseTemp)) DO
+			n1LastDigit := n1BaseTemp BAND 1;
+			IF (n1LastDigit = 1) THEN
+			n1LastOne := n1Count;
+			END;
+			n1Count := n1Count + 1;
+			n1BaseTemp := n1BaseTemp >> 1
+		END;
 
-	IF ~IntIsZero(n2Base) THEN
 		WHILE((n2Base BAND 1) # 1) DO
-	    	n2Base := n2Base >> 1
-		END
-	END;
-
-	n2Count := 0;
-	n2BaseTemp := n2Base;
-	WHILE(~IntIsZero(n2BaseTemp)) DO
-	    n2LastDigit := n2BaseTemp BAND 1;
-	    IF (n2LastDigit = 1) THEN
-		n2LastOne := n2Count;
-	    END;
-	    n2Count := n2Count + 1;
-	    n2BaseTemp := n2BaseTemp >> 1
-	END;
-
-	lastOneTotal := n1LastOne + n2LastOne;
-
-	IF (n1Sign # n2Sign) THEN
-	     resultSign := 1
-	ELSE
-	     resultSign := 0
-	END;
-
-	resultExp := n1Exp + n2Exp;
-	asm("MULL %r, %r, %r, %r": lowBase, hiBase, n1Base, n2Base);
-	asm("STR %r, %a": hiBase, hiBase);
-	asm("STR %r, %a": lowBase, lowBase);
-
-	count := 0;
-	tempHi := hiBase;
-	tempLow := lowBase;
-	WHILE(~IntIsZero(tempHi)) DO
-		lastDigit := tempLow BAND 1;
-		IF (lastDigit = 1) THEN
-			lastOne := count
+			n2Base := n2Base >> 1
 		END;
-		count := count + 1;
-		lastHi := tempHi BAND 1;
-		tempHi := tempHi >> 1;
-		tempLow := tempLow >> 1;
-		tempLow := tempLow BOR (lastHi << 30);
-	END;
-	WHILE(~IntIsZero(tempLow)) DO
-		lastDigit := tempLow BAND 1;
-		IF (lastDigit = 1) THEN
-			lastOne := count
+
+		n2Count := 0;
+		n2BaseTemp := n2Base;
+		WHILE(~IntIsZero(n2BaseTemp)) DO
+			n2LastDigit := n2BaseTemp BAND 1;
+			IF (n2LastDigit = 1) THEN
+			n2LastOne := n2Count;
+			END;
+			n2Count := n2Count + 1;
+			n2BaseTemp := n2BaseTemp >> 1
 		END;
-		count := count + 1;
-		tempLow := tempLow >> 1;
-	END;
 
-	roundIndex := lastOne - 23;
+		lastOneTotal := n1LastOne + n2LastOne;
 
-	IF ((roundIndex < 31) & (roundIndex > 0)) THEN 
-		bitAtRoundIndex := (lowBase >> (roundIndex - 1)) BAND 1;
-		lowAfterRound := BNOT ((1 << roundIndex) - 1);
-		lowBase := lowBase BAND lowAfterRound;
-		IF (bitAtRoundIndex = 1) THEN
-		   lowBase := lowBase + (1 << roundIndex);
-		   bitAt31st := (lowBase >> 31) BAND 1;
-		   IF bitAt31st = 1 THEN
-		       lowBase := lowBase BAND (BNOT (1 << 31));
-			   hiBase := hiBase + 1
-		   END
-		END
-	ELSIF (roundIndex = 31) THEN
-	   bitAtRoundIndex := (lowBase >> 30) BAND 1;
-	   lowBase := 0;
-	   IF (bitAtRoundIndex = 1) THEN
-		   hiBase := hiBase + 1
-	   END;
-	ELSIF (roundIndex > 31) THEN
-	   bitAtRoundIndex := (hiBase >> (roundIndex - 32)) BAND 1;
-	   hiAfterRound := BNOT ((1 << (roundIndex - 31)) - 1);
-	   hiBase := hiBase BAND hiAfterRound;
-	   lowBase := 0;
-	   IF (bitAtRoundIndex = 1) THEN
-	       hiBase := hiBase + (1 << (roundIndex - 31));
-	   END;
-	END;
-
-	IF (lastOneTotal < 23) THEN
-	    baseDif := 23 - lastOneTotal;
-		lowBase := lowBase << baseDif;
-	ELSIF (lastOneTotal > 30) THEN
-	    baseDif := lastOneTotal - 23;
-		saveHiMask := (1 << baseDif) - 1;
-		saveHi := hiBase BAND saveHiMask;
-		hiBase := hiBase >> baseDif;
-		lowBase := lowBase >> baseDif;
-		lowBase := lowBase BOR (saveHi << (30 - baseDif + 1));
-	ELSIF (lastOneTotal > 23) THEN
-		baseDif := lastOneTotal - 23;
-		lowBase := lowBase >> baseDif;
-	END;
-	
-	count := 0;
-	tempHi := hiBase;
-	tempLow := lowBase;
-	WHILE(~IntIsZero(tempHi)) DO
-		lastDigit := tempLow BAND 1;
-		IF (lastDigit = 1) THEN
-			lastOne := count
+		IF (n1Sign # n2Sign) THEN
+			resultSign := 1
+		ELSE
+			resultSign := 0
 		END;
-		count := count + 1;
-		lastHi := tempHi BAND 1;
-		tempHi := tempHi >> 1;
-		tempLow := tempLow >> 1;
-		tempLow := tempLow BOR (lastHi << 30);
-	END;
-	WHILE(~IntIsZero(tempLow)) DO
-		lastDigit := tempLow BAND 1;
-		IF (lastDigit = 1) THEN
-			lastOne := count
-		END;
-		count := count + 1;
-		tempLow := tempLow >> 1;
-	END;
 
-	IF (lastOne > 30) THEN
-	    saveHiMask := (1 << (lastOne - 30)) - 1;
-		saveHi := hiBase BAND saveHiMask;
-		lowBase := lowBase >> (30 - (23 - (lastOne - 30)));
-		resultBase := lowBase BOR (saveHi << (23 - (lastOne - 30) + 1));
-		resultExp := resultExp + baseDif
-	ELSIF (lastOne > 23) THEN
-		baseDif := lastOne - 23;
-		resultBase := lowBase >> baseDif;
-		resultExp := resultExp + baseDif
-	ELSIF (lastOne < 23) THEN
-	    baseDif := 23 - lastOne;
-	    resultBase := lowBase << baseDif;
-	    resultExp := resultExp - baseDif
-	ELSIF (lastOne = 23) THEN
-		resultBase := lowBase
+		resultExp := n1Exp + n2Exp;
+		asm("MULL %r, %r, %r, %r": lowBase, hiBase, n1Base, n2Base);
+		asm("STR %r, %a": hiBase, hiBase);
+		asm("STR %r, %a": lowBase, lowBase);
+
+		count := 0;
+		tempHi := hiBase;
+		tempLow := lowBase;
+		WHILE(~IntIsZero(tempHi)) DO
+			lastDigit := tempLow BAND 1;
+			IF (lastDigit = 1) THEN
+				lastOne := count
+			END;
+			count := count + 1;
+			lastHi := tempHi BAND 1;
+			tempHi := tempHi >> 1;
+			tempLow := tempLow >> 1;
+			tempLow := tempLow BOR (lastHi << 30);
+		END;
+		WHILE(~IntIsZero(tempLow)) DO
+			lastDigit := tempLow BAND 1;
+			IF (lastDigit = 1) THEN
+				lastOne := count
+			END;
+			count := count + 1;
+			tempLow := tempLow >> 1;
+		END;
+
+		roundIndex := lastOne - 23;
+
+		IF ((roundIndex < 31) & (roundIndex > 0)) THEN 
+			bitAtRoundIndex := (lowBase >> (roundIndex - 1)) BAND 1;
+			lowAfterRound := BNOT ((1 << roundIndex) - 1);
+			lowBase := lowBase BAND lowAfterRound;
+			IF (bitAtRoundIndex = 1) THEN
+			lowBase := lowBase + (1 << roundIndex);
+			bitAt31st := (lowBase >> 31) BAND 1;
+			IF bitAt31st = 1 THEN
+				lowBase := lowBase BAND (BNOT (1 << 31));
+				hiBase := hiBase + 1
+			END
+			END
+		ELSIF (roundIndex = 31) THEN
+			bitAtRoundIndex := (lowBase >> 30) BAND 1;
+			lowBase := 0;
+			IF (bitAtRoundIndex = 1) THEN
+				hiBase := hiBase + 1
+			END;
+		ELSIF (roundIndex > 31) THEN
+			bitAtRoundIndex := (hiBase >> (roundIndex - 32)) BAND 1;
+			hiAfterRound := BNOT ((1 << (roundIndex - 31)) - 1);
+			hiBase := hiBase BAND hiAfterRound;
+			lowBase := 0;
+			IF (bitAtRoundIndex = 1) THEN
+				hiBase := hiBase + (1 << (roundIndex - 31));
+			END;
+		END;
+
+		IF (lastOneTotal < 23) THEN
+			baseDif := 23 - lastOneTotal;
+			lowBase := lowBase << baseDif;
+		ELSIF (lastOneTotal > 30) THEN
+			baseDif := lastOneTotal - 23;
+			saveHiMask := (1 << baseDif) - 1;
+			saveHi := hiBase BAND saveHiMask;
+			hiBase := hiBase >> baseDif;
+			lowBase := lowBase >> baseDif;
+			lowBase := lowBase BOR (saveHi << (30 - baseDif + 1));
+		ELSIF (lastOneTotal > 23) THEN
+			baseDif := lastOneTotal - 23;
+			lowBase := lowBase >> baseDif;
+		END;
+		
+		count := 0;
+		tempHi := hiBase;
+		tempLow := lowBase;
+		WHILE(~IntIsZero(tempHi)) DO
+			lastDigit := tempLow BAND 1;
+			IF (lastDigit = 1) THEN
+				lastOne := count
+			END;
+			count := count + 1;
+			lastHi := tempHi BAND 1;
+			tempHi := tempHi >> 1;
+			tempLow := tempLow >> 1;
+			tempLow := tempLow BOR (lastHi << 30);
+		END;
+		WHILE(~IntIsZero(tempLow)) DO
+			lastDigit := tempLow BAND 1;
+			IF (lastDigit = 1) THEN
+				lastOne := count
+			END;
+			count := count + 1;
+			tempLow := tempLow >> 1;
+		END;
+
+		IF (lastOne > 30) THEN
+			saveHiMask := (1 << (lastOne - 30)) - 1;
+			saveHi := hiBase BAND saveHiMask;
+			lowBase := lowBase >> (30 - (23 - (lastOne - 30)));
+			resultBase := lowBase BOR (saveHi << (23 - (lastOne - 30) + 1));
+			resultExp := resultExp + baseDif
+		ELSIF (lastOne > 23) THEN
+			baseDif := lastOne - 23;
+			resultBase := lowBase >> baseDif;
+			resultExp := resultExp + baseDif
+		ELSIF (lastOne < 23) THEN
+			baseDif := 23 - lastOne;
+			resultBase := lowBase << baseDif;
+			resultExp := resultExp - baseDif
+		ELSIF (lastOne = 23) THEN
+			resultBase := lowBase
+		END;
+		
+		resultExp := resultExp + realBias;
+		intResult := (resultExp BAND 0FFH) << 23;
+		intResult := intResult BOR ((resultSign BAND 1) << 31);
+		intResult := intResult BOR (resultBase BAND 07FFFFFH)
 	END;
-	
-	resultExp := resultExp + realBias;
-	intResult := (resultExp BAND 0FFH) << 23;
- 	intResult := intResult BOR ((resultSign BAND 1) << 31);
-	intResult := intResult BOR (resultBase BAND 07FFFFFH);
 	result := IntBinaryAsReal(intResult)
 	RETURN result
     END RMul;
@@ -264,108 +264,114 @@ PROCEDURE RDivide(n1: REAL; n2: REAL);
 	n1Base := RealMantissa(n1);
 	n2Base := RealMantissa(n2);
 
-	toShiftBase := 30 - 23;
-	n1Base := n1Base << toShiftBase;
+	IF IntIsZero(n1Base) & IntIsZero(n2Base) THEN
+		intResult := 1065353216
+	ELSIF ~IntIsZero(n1Base) & IntIsZero(n2Base) THEN
+		intResult := 2139095040
+	ELSIF IntIsZero(n1Base) & ~IntIsZero(n2Base) THEN
+		intResult := 0
+	ELSE
+		toShiftBase := 30 - 23;
+		n1Base := n1Base << toShiftBase;
 
-	n2Count := 0;
-	n2TempBase := n2Base;
-	IF ~IntIsZero(n2TempBase) THEN
+		n2Count := 0;
+		n2TempBase := n2Base;
 		WHILE((n2TempBase BAND 1) = 0) DO
-	    	n2TempBase := n2TempBase >> 1;
-	    	n2Count := n2Count + 1;
+			n2TempBase := n2TempBase >> 1;
+			n2Count := n2Count + 1;
 		END;
-		n2FirstOne := n2Count
-	END;
+		n2FirstOne := n2Count;
 
-	toShiftBase := n2FirstOne;
-	n2Base := n2Base >> toShiftBase;
+		toShiftBase := n2FirstOne;
+		n2Base := n2Base >> toShiftBase;
 
-	n2Count := 0;
-	n2TempBase := n2Base;
-	WHILE(~IntIsZero(n2TempBase)) DO
-	    n2LastDigit := n2TempBase BAND 1;
-	    IF(n2LastDigit = 1) THEN
-			n2LastOne := n2Count
-	    END;
-	    n2Count := n2Count + 1;
-	    n2TempBase := n2TempBase >> 1;
-	END;
+		n2Count := 0;
+		n2TempBase := n2Base;
+		WHILE(~IntIsZero(n2TempBase)) DO
+			n2LastDigit := n2TempBase BAND 1;
+			IF(n2LastDigit = 1) THEN
+				n2LastOne := n2Count
+			END;
+			n2Count := n2Count + 1;
+			n2TempBase := n2TempBase >> 1;
+		END;
 
-	toShiftExp := n2LastOne;
-	n1Exp := n1Exp - toShiftExp;
-	n2Exp := n2Exp - toShiftExp;
+		toShiftExp := n2LastOne;
+		n1Exp := n1Exp - toShiftExp;
+		n2Exp := n2Exp - toShiftExp;
 
-	n1DecimalPlace := 30 - toShiftExp;
-	resultDecimalPlace := n1DecimalPlace;
+		n1DecimalPlace := 30 - toShiftExp;
+		resultDecimalPlace := n1DecimalPlace;
 
-	IF (n1Sign # n2Sign) THEN
-	     resultSign := 1
-	ELSE
-	     resultSign := 0
-	END;
+		IF (n1Sign # n2Sign) THEN
+			resultSign := 1
+		ELSE
+			resultSign := 0
+		END;
 
-	resultExp := n1Exp - n2Exp;
-	resultBase := n1Base DIV n2Base;
+		resultExp := n1Exp - n2Exp;
+		resultBase := n1Base DIV n2Base;
 
-	IF (resultDecimalPlace > 23) THEN
-		toShiftBack := resultDecimalPlace - 23;
-		resultBitStorage := resultBase BAND ((1 << toShiftBack) - 1);
-		resultBase := resultBase >> toShiftBack
-	ELSIF (resultDecimalPlace < 23) THEN
-		toShiftBack := 23 - resultDecimalPlace;
-		resultBase := resultBase << toShiftBack;
-		resultBitStorage := 0
-	END;
+		IF (resultDecimalPlace > 23) THEN
+			toShiftBack := resultDecimalPlace - 23;
+			resultBitStorage := resultBase BAND ((1 << toShiftBack) - 1);
+			resultBase := resultBase >> toShiftBack
+		ELSIF (resultDecimalPlace < 23) THEN
+			toShiftBack := 23 - resultDecimalPlace;
+			resultBase := resultBase << toShiftBack;
+			resultBitStorage := 0
+		END;
 
-	count := 0;
-	resultTempBase := resultBase;
-	resultLastOne := 0;
-	WHILE(~IntIsZero(resultTempBase)) DO
-	    resultLastDigit := resultTempBase BAND 1;
-	    IF(resultLastDigit = 1) THEN
-			resultLastOne := count
-	    END;
-	    count := count + 1;
-	    resultTempBase := resultTempBase >> 1;
-	END;
+		count := 0;
+		resultTempBase := resultBase;
+		resultLastOne := 0;
+		WHILE(~IntIsZero(resultTempBase)) DO
+			resultLastDigit := resultTempBase BAND 1;
+			IF(resultLastDigit = 1) THEN
+				resultLastOne := count
+			END;
+			count := count + 1;
+			resultTempBase := resultTempBase >> 1;
+		END;
 
-	IF (resultLastOne < 23) THEN
-	    toShiftBase := 23 - resultLastOne;
-		resultBase := resultBase << toShiftBase;
-		resultBase := resultBase BOR (resultBitStorage >> (toShiftBack - toShiftBase));
-		resultExp := resultExp - toShiftBase
-	END;
+		IF (resultLastOne < 23) THEN
+			toShiftBase := 23 - resultLastOne;
+			resultBase := resultBase << toShiftBase;
+			resultBase := resultBase BOR (resultBitStorage >> (toShiftBack - toShiftBase));
+			resultExp := resultExp - toShiftBase
+		END;
 
-	hiBase := resultBase + 1;
-	hiBitStorage := 0;
+		hiBase := resultBase + 1;
+		hiBitStorage := 0;
 
-	lowBase := resultBase;
-	lowBitStorage := 0;
+		lowBase := resultBase;
+		lowBitStorage := 0;
 
-	resultLastOne := (resultBitStorage >> (toShiftBack - 1));
-	IF resultLastOne = 1 THEN
-		resultBase := hiBase;
-		resultBitStorage := hiBitStorage
-	ELSIF lowDiff > hiDiff THEN
-		resultBase := lowBase;
-		resultBitStorage := lowBitStorage
-	ELSE
-		lowBit := lowBase BAND 1;
-		hiBit := hiBase BAND 1;
-		IF (hiBit = 0) THEN
+		resultLastOne := (resultBitStorage >> (toShiftBack - 1));
+		IF resultLastOne = 1 THEN
 			resultBase := hiBase;
 			resultBitStorage := hiBitStorage
-		ELSE
+		ELSIF lowDiff > hiDiff THEN
 			resultBase := lowBase;
 			resultBitStorage := lowBitStorage
-		END
-	END;
+		ELSE
+			lowBit := lowBase BAND 1;
+			hiBit := hiBase BAND 1;
+			IF (hiBit = 0) THEN
+				resultBase := hiBase;
+				resultBitStorage := hiBitStorage
+			ELSE
+				resultBase := lowBase;
+				resultBitStorage := lowBitStorage
+			END
+		END;
 
-	resultExp := resultExp + realBias;
-	
-	intResult := (resultExp BAND 0ffH) << 23;
- 	intResult := intResult BOR (resultSign << 31);
-	intResult := intResult BOR (resultBase BAND 07FFFFFH);
+		resultExp := resultExp + realBias;
+		
+		intResult := (resultExp BAND 0ffH) << 23;
+		intResult := intResult BOR (resultSign << 31);
+		intResult := intResult BOR (resultBase BAND 07FFFFFH)
+	END;
 
 	result := IntBinaryAsReal(intResult)
 	RETURN result
