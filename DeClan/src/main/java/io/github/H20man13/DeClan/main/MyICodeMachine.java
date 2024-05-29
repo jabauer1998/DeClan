@@ -203,7 +203,12 @@ public class MyICodeMachine {
         String place = assign.place;
         Object result = interpretExpression(assign.value, programLength);
         if(result != null){
-            this.variableValues.addEntry(place, new VariableEntry(false, result));
+            if(this.variableValues.entryExists(place)){
+                VariableEntry entry = this.variableValues.getEntry(place);
+                entry.setValue(result);
+            } else {
+                this.variableValues.addEntry(place, new VariableEntry(false, result));
+            }
         } else {
             errorAndExit("Error expression in assignment evaluated to null", programCounter, programLength);
         }

@@ -8,21 +8,29 @@ PROCEDURE Foo(VAR arg1: INTEGER; arg2, arg3: REAL);
   VAR j: INTEGER;
   BEGIN
     FOR j := a TO arg1 BY -20 DO
+      WriteString("Doing Bar because j=");
+      WriteInt(j);
+      WriteString(" and arg1 is ");
+      WriteInt(arg1);
+      WriteLn();
       Bar();
     END;
-    WriteString("H is ");
-    WriteInt(h);
-    WriteLn();
-    WriteString("I is ");
-    WriteReal(i);
-    WriteLn()
     RETURN h & (i > 3.14159265)
   END Foo;
 PROCEDURE Bar();
   VAR k: BOOLEAN;
   BEGIN
     c := c + 1;
-    IF ~g THEN g := TRUE; k := Foo(d, 0, 0) END
+    WriteString("g is ");
+    WriteBool(g);
+    WriteLn();
+    IF ~g THEN 
+      g := TRUE; 
+      WriteString("Doing foo with arg1=");
+      WriteInt(d);
+      WriteLn();
+      k := Foo(d, 0, 0) 
+    END
   END Bar;
 BEGIN
   g := Foo(c, e, a * f);
