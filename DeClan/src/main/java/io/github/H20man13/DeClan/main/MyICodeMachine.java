@@ -20,7 +20,6 @@ import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
-import io.github.H20man13.DeClan.common.icode.Assign.Scope;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
@@ -99,10 +98,10 @@ public class MyICodeMachine {
                 case INIT:
                     if(instruction instanceof Assign){
                       Assign assign = (Assign)instruction;
-                      Scope assignScope = assign.getScope();
-                      if(assignScope == Scope.ARGUMENT || assignScope == Scope.GLOBAL
-                      || assignScope == Scope.LOCAL || assignScope == Scope.INTERNAL_RETURN
-                      || assignScope == Scope.PARAM){
+                      ICode.Scope assignScope = assign.getScope();
+                      if(assignScope == ICode.Scope.ARGUMENT || assignScope == ICode.Scope.GLOBAL
+                      || assignScope == ICode.Scope.LOCAL || assignScope == ICode.Scope.INTERNAL_RETURN
+                      || assignScope == ICode.Scope.PARAM){
                         interpretAssignment(assign, programLength);
                       } else {
                         errorAndExit("Error found an External Return Statement without a corresponding function call", this.programCounter, programLength);
@@ -203,7 +202,7 @@ public class MyICodeMachine {
         String place = assign.place;
         Object result = interpretExpression(assign.value, programLength);
         if(result != null){
-            if(this.variableValues.entryExists(place)){
+            if(this.variableValues.inScope(place)){
                 VariableEntry entry = this.variableValues.getEntry(place);
                 entry.setValue(result);
             } else {

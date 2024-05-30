@@ -6,6 +6,22 @@ import java.util.Set;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public interface ICode {
+    public enum Scope{
+        GLOBAL,
+        LOCAL,
+        PARAM,
+        EXTERNAL_RETURN,
+        INTERNAL_RETURN,
+        ARGUMENT
+     }
+ 
+     public enum Type{
+         BOOL,
+         REAL,
+         INT,
+         STRING
+     }
+     
     public String toString();
     public boolean isConstant();
     public boolean isBranch();

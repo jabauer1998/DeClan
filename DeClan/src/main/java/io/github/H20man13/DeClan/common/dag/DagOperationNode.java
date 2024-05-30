@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import io.github.H20man13.DeClan.common.icode.Assign.Scope;
-
 public class DagOperationNode implements DagNode {
     public enum Op{
         IADD, ISUB, IDIV, IMOD, LAND, 

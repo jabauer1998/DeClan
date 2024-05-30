@@ -14,23 +14,7 @@ public class Assign implements ICode{
     private Scope scope;
     private Type type;
 
-    public enum Scope{
-        GLOBAL,
-        LOCAL,
-        PARAM,
-        EXTERNAL_RETURN,
-        INTERNAL_RETURN,
-        ARGUMENT,
-     }
- 
-     public enum Type{
-         BOOL,
-         REAL,
-         INT,
-         STRING
-     }
-
-    public Assign(Scope scope, String place, Exp value, Type type){
+    public Assign(ICode.Scope scope, String place, Exp value, ICode.Type type){
         this.scope = scope;
         this.place = place;
         this.value = value;

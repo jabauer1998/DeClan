@@ -5,12 +5,14 @@ import java.util.List;
 import edu.depauw.declan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
+import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Return;
-import io.github.H20man13.DeClan.common.icode.Assign.Scope;
+import io.github.H20man13.DeClan.common.icode.ICode.Scope;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -37,28 +39,44 @@ public class MyIrFactory {
         return new End();
     }
 
-    public Assign produceVariableAssignment(Assign.Scope scope, String place, String variableName, Assign.Type type){
+    public Assign produceVariableAssignment(ICode.Scope scope, String place, String variableName, Assign.Type type){
         return new Assign(scope, place, new IdentExp(variableName), type);
     }
 
     public Assign produceParamAssignment(String place, String value, Assign.Type type){
-        return new Assign(Assign.Scope.PARAM, place, new IdentExp(value), type);
+        return new Assign(ICode.Scope.PARAM, place, new IdentExp(value), type);
     }
 
-    public Assign produceBooleanAssignment(Assign.Scope scope, String place, boolean trueOrFalse){
+    public Assign produceBooleanAssignment(ICode.Scope scope, String place, boolean trueOrFalse){
         return new Assign(scope, place, new BoolExp(trueOrFalse), Assign.Type.BOOL);
     }
 
-    public Assign produceRealAssignment(Assign.Scope scope, String place, float value){
+    public Def produceBooleanDefinition(ICode.Scope scope, String place){
+        return new Def(scope, place, ICode.Type.BOOL);
+    }
+
+    public Assign produceRealAssignment(ICode.Scope scope, String place, float value){
         return new Assign(scope, place, new RealExp(value), Assign.Type.REAL);
     }
 
-    public Assign produceIntAssignment(Assign.Scope scope, String place, int value){
+    public Def produceRealDefinition(ICode.Scope scope, String place){
+        return new Def(scope, place, ICode.Type.REAL);
+    }
+
+    public Assign produceIntAssignment(ICode.Scope scope, String place, int value){
         return new Assign(scope, place, new IntExp(value), Assign.Type.INT);
     }
 
-    public Assign produceStringAssignment(Assign.Scope scope, String place, String value){
+    public Def produceIntDefinition(ICode.Scope scope, String place){
+        return new Def(scope, place, ICode.Type.INT);
+    }
+
+    public Assign produceStringAssignment(ICode.Scope scope, String place, String value){
         return new Assign(scope, place, new StrExp(value), Assign.Type.STRING);
+    }
+
+    public Def produceStringDefinition(ICode.Scope scope, String place){
+        return new Def(scope, place, ICode.Type.STRING);
     }
 
     public Return produceReturnStatement(){
@@ -91,11 +109,11 @@ public class MyIrFactory {
         return new ProcLabel(name);
     }
 
-    public Assign produceUnaryOperation(Assign.Scope scope, String place, UnExp value, Assign.Type type){
+    public Assign produceUnaryOperation(ICode.Scope scope, String place, UnExp value, Assign.Type type){
         return new Assign(scope, place, value, type);
     }
 
-    public Assign produceBinaryOperation(Assign.Scope scope, String place, BinExp value, Assign.Type type){
+    public Assign produceBinaryOperation(ICode.Scope scope, String place, BinExp value, Assign.Type type){
         return new Assign(scope, place, value, type);
     }
 

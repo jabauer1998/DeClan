@@ -8,7 +8,7 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Return;
-import io.github.H20man13.DeClan.common.icode.Assign.Scope;
+import io.github.H20man13.DeClan.common.icode.ICode.Scope;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
@@ -191,11 +191,11 @@ public class MyICodeGenerator{
     Expression valueExpr = constDecl.getValue();
     String value = generateExpressionIr(Scope.LOCAL, valueExpr, builder);
     TypeCheckerQualities qual = valueExpr.acceptResult(typeChecker);
-    Assign.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+    ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
     String place = builder.buildVariableAssignment(scope, value, type);
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
     SymbolSectionBuilder symbolBuilder = builder.getSymbolSectionBuilder();
-    if(scope == Scope.GLOBAL)
+    if(scope == ICode.Scope.GLOBAL)
       symbolBuilder.addVarSymEntry(SymEntry.CONST | SymEntry.INTERNAL, place, id.getLexeme());
   }
 
@@ -214,7 +214,7 @@ public class MyICodeGenerator{
     }
     varEnvironment.addEntry(id.getLexeme(), new StringEntry(place));
     SymbolSectionBuilder symBuilder = builder.getSymbolSectionBuilder();
-    if(scope == Scope.GLOBAL)
+    if(scope == ICode.Scope.GLOBAL)
       symBuilder.addVarSymEntry(SymEntry.INTERNAL, place, id.getLexeme());
   }
 

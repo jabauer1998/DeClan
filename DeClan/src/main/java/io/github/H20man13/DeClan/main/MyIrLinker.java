@@ -14,7 +14,6 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
-import io.github.H20man13.DeClan.common.icode.Assign.Scope;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
@@ -515,7 +514,7 @@ public class MyIrLinker {
             if(icodeLib instanceof Assign){
                 Assign assign = (Assign)icodeLib;
                 if(assign.place.equals(labelName)){
-                    if(assign.getScope() == Scope.EXTERNAL_RETURN){
+                    if(assign.getScope() == ICode.Scope.EXTERNAL_RETURN){
                         ICode funcCallICode = data.getInstruction(i - 1);
                         if(funcCallICode instanceof Call){
                             Call funcCall = (Call)funcCallICode;
@@ -743,7 +742,7 @@ public class MyIrLinker {
             if(icodeLib instanceof Assign){
                 Assign assign = (Assign)icodeLib;
                 if(assign.place.equals(labelName)){
-                    if(assign.getScope() == Scope.EXTERNAL_RETURN){
+                    if(assign.getScope() == ICode.Scope.EXTERNAL_RETURN){
                         ICode funcCallICode = data.getInstruction(i - 1);
                         if(funcCallICode instanceof Call){
                             Call funcCall = (Call)funcCallICode;
@@ -991,7 +990,7 @@ public class MyIrLinker {
                 newProcedure.addParamater(assign);
             }
 
-            if(procedure.placement != null && procedure.placement.getScope() == Scope.INTERNAL_RETURN){
+            if(procedure.placement != null && procedure.placement.getScope() == ICode.Scope.INTERNAL_RETURN){
                 Assign placement = procedure.placement;
                 if(!placeIsUniqueAcrossProgramAndLibraries(placement.value.toString(), program, libraries)){
                     String place = null;
@@ -1268,7 +1267,7 @@ public class MyIrLinker {
                 newProcedure.addParamater(assign);
             }
 
-            if(procedure.placement != null && procedure.placement.getScope() == Scope.INTERNAL_RETURN){
+            if(procedure.placement != null && procedure.placement.getScope() == ICode.Scope.INTERNAL_RETURN){
                 Assign placement = procedure.placement;
                 if(!placeIsUniqueAcrossProgramAndLibraries(placement.value.toString(), prog, libraries)){
                     String place = null;
@@ -1559,7 +1558,7 @@ public class MyIrLinker {
                 newProcedure.addParamater(assign);
             }
 
-            if(procedure.placement != null && procedure.placement.getScope() == Scope.INTERNAL_RETURN){
+            if(procedure.placement != null && procedure.placement.getScope() == ICode.Scope.INTERNAL_RETURN){
                 Assign placement = procedure.placement;
                 if(!placeIsUniqueAcrossLibraries(placement.place, single, libraries)){
                     String place = null;
@@ -1853,7 +1852,7 @@ public class MyIrLinker {
                         newProcedure.addParamater(assign);
                     }
 
-                    if(procedure.placement != null && procedure.placement.getScope() == Scope.INTERNAL_RETURN){
+                    if(procedure.placement != null && procedure.placement.getScope() == ICode.Scope.INTERNAL_RETURN){
                         Assign placement = procedure.placement;
                         if(!placeIsUniqueAcrossProgramAndLibraries(placement.value.toString(), prog, libraries)){
                             String place = null;
@@ -2130,7 +2129,7 @@ public class MyIrLinker {
                         newProcedure.addParamater(assign);
                     }
 
-                    if(procedure.placement != null && procedure.placement.getScope() == Scope.INTERNAL_RETURN){
+                    if(procedure.placement != null && procedure.placement.getScope() == ICode.Scope.INTERNAL_RETURN){
                         Assign placement = procedure.placement;
                         if(!placeIsUniqueAcrossLibraries(placement.value.toString(), single, libraries)){
                             String place = null;

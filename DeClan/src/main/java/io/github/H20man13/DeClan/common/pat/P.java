@@ -778,6 +778,39 @@ public abstract class P {
         }
     }
 
+    public static class DEF extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof DEF){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "DEF";
+        }
+    }
+
+    public static class GLOB extends P{
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof GLOB)
+                return true;
+            else
+                return false;
+        }
+
+        @Override
+        public String toString() {
+            return "GLOB";
+        }
+        
+    }
+
     public static class PAT extends P{
         private P[] pattern;
 
@@ -993,6 +1026,12 @@ public abstract class P {
     }
     public static PRIVATE PRIVATE(){
         return new PRIVATE();
+    }
+    public static DEF DEF(){
+        return new DEF();
+    }
+    public static GLOB GLOB(){
+        return new GLOB();
     }
 
     @Override

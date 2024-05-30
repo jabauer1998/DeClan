@@ -16,8 +16,6 @@ import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
-import io.github.H20man13.DeClan.common.icode.Assign.Scope;
-import io.github.H20man13.DeClan.common.icode.Assign.Type;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -210,9 +208,9 @@ public class MyIrParser {
             ICode instruction = parseInstruction();
             if(instruction instanceof Assign){
                 Assign assign = (Assign)instruction;
-                if(assign.getScope() == Scope.PARAM){
+                if(assign.getScope() == ICode.Scope.PARAM){
                     paramAssignments.add(assign);
-                } else if(assign.getScope() == Scope.INTERNAL_RETURN){
+                } else if(assign.getScope() == ICode.Scope.INTERNAL_RETURN){
                     place = assign;  
                 } else {
                     instructions.add(instruction);
@@ -451,7 +449,7 @@ public class MyIrParser {
         }
         match(IrTokenType.RBRACK);
 
-        return new Assign(Scope.ARGUMENT, place.getLexeme(), new IdentExp(value.getLexeme()), type);
+        return new Assign(ICode.Scope.ARGUMENT, place.getLexeme(), new IdentExp(value.getLexeme()), type);
     }
 
     private ICode parseExternalReturn(){
@@ -476,7 +474,7 @@ public class MyIrParser {
         }
         match(IrTokenType.RBRACK);
 
-        return new Assign(Scope.EXTERNAL_RETURN, place.getLexeme(), exp, type);
+        return new Assign(ICode.Scope.EXTERNAL_RETURN, place.getLexeme(), exp, type);
     }
 
     private ICode parseAssignment(){
@@ -484,19 +482,19 @@ public class MyIrParser {
         if(willMatch(IrTokenType.EXTERNAL)){
             skip();
             match(IrTokenType.RETURN);
-            scope = Scope.EXTERNAL_RETURN;
+            scope = ICode.Scope.EXTERNAL_RETURN;
         } else if(willMatch(IrTokenType.INTERNAL)){
             skip();
             match(IrTokenType.RETURN);
-            scope = Scope.INTERNAL_RETURN;
+            scope = ICode.Scope.INTERNAL_RETURN;
         } else if(willMatch(IrTokenType.PARAM)){
             skip();
-            scope = Scope.PARAM;
+            scope = ICode.Scope.PARAM;
         } else if(willMatch(IrTokenType.GLOBAL)) {
             skip();
-            scope = Scope.GLOBAL;
+            scope = ICode.Scope.GLOBAL;
         } else {
-            scope = Scope.LOCAL;
+            scope = ICode.Scope.LOCAL;
         }
 
         IrToken id = match(IrTokenType.ID);
@@ -504,19 +502,19 @@ public class MyIrParser {
         Exp expression = parseExpression();
 
         match(IrTokenType.LBRACK);
-        Type assignType;
+        ICode.Type assignType;
         if(willMatch(IrTokenType.REAL)){
             skip();
-            assignType = Type.REAL; 
+            assignType = ICode.Type.REAL; 
         } else if(willMatch(IrTokenType.BOOL)){
             skip();
-            assignType = Type.BOOL;
+            assignType = ICode.Type.BOOL;
         } else if(willMatch(IrTokenType.STRING)){
             skip();
-            assignType = Type.STRING;  
+            assignType = ICode.Type.STRING;  
         } else {
             match(IrTokenType.INT);
-            assignType = Type.INT;
+            assignType = ICode.Type.INT;
         }
         match(IrTokenType.RBRACK);
         return new Assign(scope, id.getLexeme(), expression, assignType);
