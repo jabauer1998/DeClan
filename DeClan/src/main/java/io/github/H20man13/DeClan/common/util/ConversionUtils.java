@@ -1,9 +1,16 @@
 package io.github.H20man13.DeClan.common.util;
 
+import io.github.H20man13.DeClan.common.dag.DagNode;
 import io.github.H20man13.DeClan.common.dag.DagNode.ScopeType;
 import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
+
+import java.math.BigInteger;
+import java.rmi.UnexpectedException;
+
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
+import io.github.H20man13.DeClan.common.exception.ConversionException;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -40,7 +47,7 @@ public class ConversionUtils {
             case GT: return BinExp.Operator.GT;
             case LE: return BinExp.Operator.LE;
             case LT: return BinExp.Operator.LT;
-            default: return null;
+            default: throw new ConversionException("getBinOp", DagOperationNode.Op.class.getName(), BinExp.Operator.class.getName());
         }
     }
 
@@ -50,7 +57,7 @@ public class ConversionUtils {
             case RNEG: return UnExp.Operator.RNEG;
             case BNOT: return UnExp.Operator.BNOT;
             case INOT: return UnExp.Operator.INOT;
-            default: return null;
+            default: throw new ConversionException("getUnOp", DagOperationNode.Op.class.getName(), UnExp.Operator.class.getName());
         }
     }
 
@@ -64,7 +71,7 @@ public class ConversionUtils {
         } else if(result instanceof Float){
             return new RealExp((float)result);
         } else {
-            return null;
+            throw new ConversionException("valueToExp", Exp.class.getName(), Object.class.getName());
         }
     }
 
@@ -78,7 +85,7 @@ public class ConversionUtils {
         } else if(value instanceof StrExp){
             return ((StrExp)value).value;
         } else {
-            return null;
+            throw new ConversionException("getValue", Exp.class.getName(), Object.class.getName());
         }
     }
 
@@ -106,7 +113,7 @@ public class ConversionUtils {
             case LE: return P.LE();
             case EQ: return P.EQ();
             case NE: return P.NE();
-            default: return null;
+            default: throw new ConversionException("binOpToPattern", BinExp.Operator.class.getName(), P.class.getName());
         }
     }
 
@@ -116,53 +123,56 @@ public class ConversionUtils {
             case BNOT: return P.BNOT();
             case RNEG: return P.RNEG();
             case INOT: return P.INOT();
-            default: return null;
+            default: throw new ConversionException("unOpToPattern", UnExp.Operator.class.getName(), P.class.getName());
         }
     }
 
-    public static Assign.Type typeCheckerQualitiesToAssignType(TypeCheckerQualities type){
-        if(type.containsQualities(TypeCheckerQualities.BOOLEAN)) return Assign.Type.BOOL;
-        else if(type.containsQualities(TypeCheckerQualities.STRING)) return Assign.Type.STRING;
-        else if(type.containsQualities(TypeCheckerQualities.REAL)) return Assign.Type.REAL;
-        else return Assign.Type.INT;
+    public static ICode.Type typeCheckerQualitiesToAssignType(TypeCheckerQualities type){
+        if(type.containsQualities(TypeCheckerQualities.BOOLEAN)) return ICode.Type.BOOL;
+        else if(type.containsQualities(TypeCheckerQualities.STRING)) return ICode.Type.STRING;
+        else if(type.containsQualities(TypeCheckerQualities.REAL)) return ICode.Type.REAL;
+        else if(type.containsQualities(TypeCheckerQualities.INTEGER)) return ICode.Type.INT;
+        else throw new ConversionException("typeCheckerQualitiesToAssignType", "TypeCheckerQualities", ICode.Type.class.getName());
     }
 
-    public static TypeCheckerQualities assignTypeToTypeCheckerQualities(Assign.Type type){
-        if(type == Assign.Type.INT) return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
-        else if(type == Assign.Type.BOOL) return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
-        else if(type == Assign.Type.REAL) return new TypeCheckerQualities(TypeCheckerQualities.REAL);
-        else if(type == Assign.Type.STRING) return new TypeCheckerQualities(TypeCheckerQualities.STRING);
-        else return new TypeCheckerQualities(TypeCheckerQualities.NA);
+    public static TypeCheckerQualities assignTypeToTypeCheckerQualities(ICode.Type type){
+        if(type == ICode.Type.INT) return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+        else if(type == ICode.Type.BOOL) return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+        else if(type == ICode.Type.REAL) return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+        else if(type == ICode.Type.STRING) return new TypeCheckerQualities(TypeCheckerQualities.STRING);
+        throw new ConversionException("assignTypeToTypeCheckerQualities", ICode.Type.class.getName(), "TypeCheckerQualities");
     }
 
-    public static ValueType assignTypeToDagValueType(Assign.Type type){
-        if(type == Assign.Type.BOOL) return ValueType.BOOL;
-        else if(type == Assign.Type.STRING) return ValueType.STRING;
-        else if(type == Assign.Type.REAL) return ValueType.REAL;
-        else return ValueType.INT;
+    public static ValueType assignTypeToDagValueType(ICode.Type type){
+        if(type == ICode.Type.BOOL) return ValueType.BOOL;
+        else if(type == ICode.Type.STRING) return ValueType.STRING;
+        else if(type == ICode.Type.REAL) return ValueType.REAL;
+        else if(type == ICode.Type.INT) return ValueType.INT;
+        else throw new ConversionException("assignTypeToDagValueType", ICode.Type.class.getName(), ValueType.class.getName());
     }
 
-    public static ScopeType assignScopeToDagScopeType(Assign.Scope scope){
-        if(scope == Assign.Scope.GLOBAL) return ScopeType.GLOBAL;
-        else if(scope == Assign.Scope.PARAM) return ScopeType.PARAM;
-        else if(scope == Assign.Scope.EXTERNAL_RETURN) return ScopeType.EXTERNAL_RETURN;
-        else if(scope == Assign.Scope.INTERNAL_RETURN) return ScopeType.INTERNAL_RETURN;
-        else return ScopeType.LOCAL;
+    public static ScopeType assignScopeToDagScopeType(ICode.Scope scope){
+        if(scope == ICode.Scope.GLOBAL) return ScopeType.GLOBAL;
+        else if(scope == ICode.Scope.PARAM) return ScopeType.PARAM;
+        else if(scope == ICode.Scope.RETURN) return ScopeType.RETURN;
+        else if(scope == ICode.Scope.LOCAL) return ScopeType.LOCAL;
+        else throw new ConversionException("assignScopeToDagScopeType", ICode.Scope.class.getName(), ScopeType.class.getName());
     }
 
-    public static Assign.Scope dagScopeTypeToAssignScope(ScopeType scope){
-        if(scope == ScopeType.GLOBAL) return Assign.Scope.GLOBAL;
-        else if(scope == ScopeType.PARAM) return Assign.Scope.PARAM;
-        else if(scope == ScopeType.EXTERNAL_RETURN) return Assign.Scope.EXTERNAL_RETURN;
-        else if(scope == ScopeType.INTERNAL_RETURN) return Assign.Scope.INTERNAL_RETURN;
-        else return Assign.Scope.LOCAL;
+    public static ICode.Scope dagScopeTypeToAssignScope(ScopeType scope){
+        if(scope == ScopeType.GLOBAL) return ICode.Scope.GLOBAL;
+        else if(scope == ScopeType.PARAM) return ICode.Scope.PARAM;
+        else if(scope == ScopeType.RETURN) return ICode.Scope.RETURN;
+        else if(scope == ScopeType.LOCAL) return ICode.Scope.LOCAL;
+        else throw new ConversionException("dagScopeToAssignScope", ScopeType.class.getName(), ICode.Scope.class.getName());
     }
 
-    public static Assign.Type dagValueTypeToAssignType(ValueType type){
-        if(type == ValueType.BOOL) return Assign.Type.BOOL;
-        else if(type == ValueType.STRING) return Assign.Type.STRING;
-        else if(type == ValueType.REAL) return Assign.Type.REAL;
-        else return Assign.Type.INT;
+    public static ICode.Type dagValueTypeToAssignType(ValueType type){
+        if(type == ValueType.BOOL) return ICode.Type.BOOL;
+        else if(type == ValueType.STRING) return ICode.Type.STRING;
+        else if(type == ValueType.REAL) return ICode.Type.REAL;
+        else if(type == ValueType.INT) return ICode.Type.INT;
+        else throw new ConversionException("dagValueTypeToAssignType", ValueType.class.getName(), ICode.Type.class.getName());
     }
 
     public static BinExp.Operator toBinOp(IrTokenType type){
@@ -189,7 +199,77 @@ public class ConversionUtils {
             case IOR: return BinExp.Operator.IOR;
             case IRSHIFT: return BinExp.Operator.IRSHIFT;
             case ILSHIFT: return BinExp.Operator.ILSHIFT;
-            default: return null;
+            default: throw new ConversionException("toBinOp", IrTokenType.class.getName(), BinExp.Operator.class.getName());
+        }
+    }
+
+    public static Float toReal(Object input){
+        if(input instanceof Integer){
+            Integer inti = (Integer)input;
+            return inti.floatValue();
+        } else if(input instanceof Float){
+            Float fValue = (Float)input;
+            return fValue.floatValue();
+        } else if(input instanceof Boolean){
+            Boolean bi = (Boolean)input;
+            if(bi){
+                return 1.0f;
+            } else {
+                return 0.0f;
+            }
+        } else {
+            throw new ConversionException("toReal", input.getClass().getName(), Float.class.getName());
+        }
+    }
+
+    public static Integer toInt(Object input){
+        if(input instanceof Integer){
+            return (Integer)input;
+        } else if(input instanceof BigInteger){
+            BigInteger lInput = (BigInteger)input;
+            return lInput.intValue();
+        } else if(input instanceof Float){
+            Float di = (Float)input;
+            return di.intValue();
+        } else if(input instanceof Boolean){
+            Boolean bi = (Boolean)input;
+            if(bi){
+                return 1;
+            } else {
+                return 0;
+            }
+        } else {
+            throw new ConversionException("toInt", input.getClass().getName(), Integer.class.getName());
+        }
+    }
+
+    public static Integer toRawInt(Object input){
+        if(input instanceof Integer){
+            return (Integer)input;
+        } else if(input instanceof Float){
+            Float dV = (Float)input;
+            Integer result = Float.floatToIntBits(dV);
+            return result;
+        } else if(input instanceof Boolean){
+            Boolean bi = (Boolean)input;
+            if(bi) return 1;
+            else return 0;
+        } else {
+            throw new ConversionException("toRawInt", input.getClass().getName(), Integer.class.getName());
+        }
+    }
+
+    public static Boolean toBool(Object input){
+        if(input instanceof Integer){
+            Integer inti = (Integer)input;
+            return inti != 0;
+        } else if(input instanceof Boolean){
+            return (Boolean)input;
+        } else if(input instanceof Float){
+            Float di = (Float)input;
+            return di != 0;
+        } else {
+            throw new ConversionException("toBool", input.getClass().getName(), Boolean.class.getName());
         }
     }
 }

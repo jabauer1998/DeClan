@@ -53,13 +53,6 @@ public class If implements ICode {
 	}
 
 	@Override
-	public List<ICode> genFlatCode() {
-		List<ICode> icode = new LinkedList<ICode>();
-		icode.add(this);
-		return icode;
-	}
-
-	@Override
 	public boolean containsPlace(String place) {
 		return exp.containsPlace(place);
 	}

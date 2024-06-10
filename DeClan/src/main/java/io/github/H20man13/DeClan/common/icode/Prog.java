@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import io.github.H20man13.DeClan.common.icode.procedure.Proc;
+import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
+import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
+import io.github.H20man13.DeClan.common.icode.section.BssSec;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
@@ -13,90 +15,120 @@ import io.github.H20man13.DeClan.common.icode.section.SymSec;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Prog extends Lib implements ICode {
-    public CodeSec code;
-
-    public Prog(SymSec symbols, DataSec variables, CodeSec code, ProcSec procedures){
-        super(symbols, variables, procedures);
-        this.code = code;
-    }
-
     public Prog(){
         super();
-        this.code = new CodeSec();
+    }
+
+    public Prog(List<ICode> instructions){
+        super(instructions);
     }
 
     @Override
     public boolean isConstant() {
-        return false;
+        throw new ICodeFormatException(this, "Cant determine if Prog is a constant");
     }
 
     @Override
     public boolean isBranch() {
-        return false;
+        throw new ICodeFormatException(this, "Cant determine if Prog is a branch");
     }
 
     @Override
     public P asPattern() {
-        return P.PAT(variables.asPattern(), procedures.asPattern(), code.asPattern());
+        throw new ICodeFormatException(this, "Cant generate a pattern of a Prog");
     }
 
-    @Override
-    public boolean equals(Object obj){
-        if(obj instanceof Prog){
-            Prog program = (Prog)obj;
 
-            boolean symEquals = program.symbols.equals(symbols);
-            boolean dataEquals = program.variables.equals(variables);
-            boolean codeEquals = program.code.equals(code);
-            boolean procEquals = program.procedures.equals(procedures);
-
-            return symEquals && dataEquals && codeEquals && procEquals;
-        } else {
-            return false;
-        }
-    }
-
-    public List<ICode> genFlatCode(){
-        LinkedList<ICode> resultList = new LinkedList<ICode>();
-        resultList.addAll(variables.genFlatCode());
-        resultList.addAll(code.genFlatCode());
-        resultList.addAll(procedures.genFlatCode());
-        return resultList;
+    private enum State{
+        PROCEDURE_SECTION,
+        PROCEDURE,
+        DATA_SECTION,
+        CODE_SECTION,
+        BSS_SECTION,
+        SYMBOL_SECTION,
+        INIT
     }
 
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
-        sb.append(symbols.toString());
-        sb.append(variables.toString());
-        sb.append(code.toString());
-        sb.append(procedures.toString());
+
+        State state = State.INIT;
+        for(ICode instruction : instructions){
+            switch(state){
+                case INIT:
+                    if(instruction instanceof SymSec){
+                        state = State.SYMBOL_SECTION;
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    }
+                case SYMBOL_SECTION:
+                    if(instruction instanceof DataSec){
+                        state = State.DATA_SECTION;
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    } else {
+                        sb.append(' ');
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    }
+                    break;
+                case DATA_SECTION: 
+                    if(instruction instanceof BssSec){
+                        state = State.BSS_SECTION;
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    } else {
+                        sb.append(' ');
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    }
+                    break;
+                case BSS_SECTION:
+                    if(instruction instanceof CodeSec){
+                        state = State.CODE_SECTION;
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    } else {
+                        sb.append(' ');
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    }
+                    break;
+                case CODE_SECTION:
+                    if(instruction instanceof ProcSec){
+                        state = State.PROCEDURE_SECTION;
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    } else if(instruction instanceof End){
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    } else {
+                        sb.append(' ');
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    }
+                case PROCEDURE_SECTION:
+                    if(instruction instanceof ProcLabel){
+                        state = State.PROCEDURE;
+                        sb.append(' ');
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    }
+                    break;
+                case PROCEDURE:
+                    if(instruction instanceof Return){
+                        state = State.PROCEDURE_SECTION;
+                        sb.append(' ');
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    } else {
+                        sb.append("  ");
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    }
+            }
+        }
         return sb.toString();
-    }
-
-    @Override
-    public void replaceLabel(String from, String to){
-        super.replaceLabel(from, to);
-        code.replaceLabel(from, to);
-    }
-
-    @Override
-    public void replacePlace(String from, String to){
-        super.replacePlace(from, to);
-        code.replacePlace(from, to);
-    }
-
-    @Override
-    public boolean containsLabel(String label){
-        if(super.containsLabel(label))
-            return true;
-        return code.containsLabel(label);
-    }
-
-    @Override
-    public boolean containsPlace(String place){
-        if(super.containsPlace(place))
-            return true;
-        return code.containsPlace(place);
     }
 }

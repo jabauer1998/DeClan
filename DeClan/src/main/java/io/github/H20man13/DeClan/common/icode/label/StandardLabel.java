@@ -38,11 +38,4 @@ public class StandardLabel extends Label {
             return false;
         }
     }
-
-    @Override
-    public List<ICode> genFlatCode() {
-        LinkedList<ICode> resultList = new LinkedList<ICode>();
-        resultList.add(this);
-        return resultList;
-    }
 }

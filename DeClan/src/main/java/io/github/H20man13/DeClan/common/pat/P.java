@@ -794,11 +794,11 @@ public abstract class P {
         }
     }
 
-    public static class GLOB extends P{
+    public static class GLOBAL extends P{
 
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof GLOB)
+            if(obj instanceof GLOBAL)
                 return true;
             else
                 return false;
@@ -806,9 +806,100 @@ public abstract class P {
 
         @Override
         public String toString() {
-            return "GLOB";
+            return "GLOBAL";
         }
         
+    }
+
+    public static class ARGUMENT extends P{
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof ARGUMENT)
+                return true;
+            else
+                return false;
+        }
+
+        @Override
+        public String toString() {
+            return "ARGUMENT";
+        }
+    }
+
+    public static class SECTION extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof SECTION)
+                return true;
+            else
+                return false;
+        }
+
+        @Override
+        public String toString() {
+            return "SECTION";
+        }
+    }
+
+    public static class BSS extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof BSS)
+                return true;
+            else
+                return false;
+        }
+
+        @Override
+        public String toString() {
+            return "BSS";
+        }
+    }
+
+    public static class DATA extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof DATA)
+                return true;
+            else
+                return false;
+        }
+
+        @Override
+        public String toString() {
+            return "DATA";
+        }
+    }
+
+    public static class CODE extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof CODE)
+                return true;
+            else
+                return false;
+        }
+
+        @Override
+        public String toString() {
+            return "CODE";
+        }
+    }
+
+    public static class SYMBOL extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof SYMBOL)
+                return true;
+            else
+                return false;
+        }
+
+        @Override
+        public String toString() {
+            return "SYMBOL";
+        }
     }
 
     public static class PAT extends P{
@@ -1030,8 +1121,26 @@ public abstract class P {
     public static DEF DEF(){
         return new DEF();
     }
-    public static GLOB GLOB(){
-        return new GLOB();
+    public static GLOBAL GLOBAL(){
+        return new GLOBAL();
+    }
+    public static ARGUMENT ARGUMENT(){
+        return new ARGUMENT();
+    }
+    public static BSS BSS(){
+        return new BSS();
+    }
+    public static DATA DATA(){
+        return new DATA();
+    }
+    public static SYMBOL SYMBOL(){
+        return new SYMBOL();
+    }
+    public static CODE CODE(){
+        return new CODE();
+    }
+    public static SECTION SECTION(){
+        return new SECTION();
     }
 
     @Override

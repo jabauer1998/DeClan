@@ -24,6 +24,7 @@ import io.github.H20man13.DeClan.common.arm.ArmRegisterGenerator;
 import io.github.H20man13.DeClan.common.arm.ArmCodeGenerator.VariableLength;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -38,7 +39,6 @@ import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
-import io.github.H20man13.DeClan.common.icode.procedure.Call;
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
@@ -56,7 +56,7 @@ public class MyCodeGenerator {
 
     public MyCodeGenerator(String outputFile, LiveVariableAnalysis analysis, Prog program, ErrorLog errorLog){
         try{
-            this.intermediateCode = program.genFlatCode();
+            this.intermediateCode = program.getICode();
             this.cGen = new ArmCodeGenerator(outputFile);
             this.rGen = new ArmRegisterGenerator(cGen, analysis);
             this.iGen = new IrRegisterGenerator();

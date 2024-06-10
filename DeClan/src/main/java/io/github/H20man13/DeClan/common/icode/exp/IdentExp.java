@@ -1,19 +1,25 @@
 package io.github.H20man13.DeClan.common.icode.exp;
 
+import io.github.H20man13.DeClan.common.Copyable;
+import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
+import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.ICode.Scope;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class IdentExp implements Exp{
+public class IdentExp implements Exp, Copyable<IdentExp>{
     public String ident;
+    public ICode.Scope scope;
 
-    public IdentExp(String ident){
+    public IdentExp(Scope scope, String ident){
         this.ident = ident;
+        this.scope = scope;
     }
 
     @Override
     public boolean equals(Object exp) {
         if(exp instanceof IdentExp){
             IdentExp identExp = (IdentExp)exp;
-            return this.ident.equals(identExp.ident);
+            return this.ident.equals(identExp.ident) && identExp.scope == scope;
         } else {
             return false;
         }
@@ -21,7 +27,17 @@ public class IdentExp implements Exp{
 
     @Override
     public String toString(){
-        return ident;
+        if(this.scope != ICode.Scope.LOCAL){
+            StringBuilder sb = new StringBuilder();
+            sb.append('(');
+            sb.append(this.scope.toString());
+            sb.append(' ');
+            sb.append(this.ident);
+            sb.append(')');
+            return sb.toString();
+        } else {
+            return this.ident;
+        }
     }
 
     @Override
@@ -36,11 +52,12 @@ public class IdentExp implements Exp{
 
     @Override
     public P asPattern(boolean hasContainer) {
-        if(hasContainer){
-            return P.PAT(P.ID());
-        } else {
-            return P.ID();
-        }
+        if(this.scope == ICode.Scope.GLOBAL) return P.PAT(P.GLOBAL(), P.ID());
+        else if(this.scope == ICode.Scope.RETURN) return P.PAT(P.RETURN(), P.ID());
+        else if(this.scope == ICode.Scope.PARAM) return P.PAT(P.PARAM(), P.ID());
+        else if(this.scope == ICode.Scope.LOCAL && hasContainer) return P.PAT(P.ID());
+        else if(this.scope == ICode.Scope.LOCAL) return P.ID();
+        else throw new ICodeFormatException(this, "Error cant produce pattern for IdentExp because the scope is " + scope);
     }
 
     @Override
@@ -55,5 +72,10 @@ public class IdentExp implements Exp{
     public void replacePlace(String from, String to) {
         if(this.ident.equals(from))
             this.ident = to;
+    }
+
+    @Override
+    public IdentExp copy() {
+        return new IdentExp(scope, ident);
     }
 }

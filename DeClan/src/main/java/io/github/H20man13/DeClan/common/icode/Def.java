@@ -3,18 +3,22 @@ package io.github.H20man13.DeClan.common.icode;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
+import io.github.H20man13.DeClan.common.icode.exp.Exp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Def implements ICode {
-
     public String label;
     public Type type;
     public Scope scope;
+    public Exp val;
 
-    public Def(ICode.Scope scope, String label, ICode.Type type){
+    public Def(ICode.Scope scope, String label, Exp val, ICode.Type type){
         this.scope = scope;
         this.label = label;
         this.type = type;
+        this.val = val;
     }
 
     @Override
@@ -29,31 +33,20 @@ public class Def implements ICode {
 
     @Override
     public P asPattern() {
-        if(this.scope == Scope.GLOBAL){
-            if(this.type == Type.INT) return P.PAT(P.GLOB(), P.DEF(), P.ID(), P.INT());
-            else if(this.type == Type.BOOL) return P.PAT(P.GLOB(), P.DEF(), P.ID(), P.BOOL());
-            else if(this.type == Type.STRING) return P.PAT(P.GLOB(), P.DEF(), P.ID(), P.STR());
-            else if(this.type == Type.REAL) return P.PAT(P.GLOB(), P.DEF(), P.ID(), P.REAL());
-        } else {
-            if(this.type == Type.INT) return P.PAT(P.DEF(), P.ID(), P.INT());
-            else if(this.type == Type.BOOL) return P.PAT(P.DEF(), P.ID(), P.BOOL());
-            else if(this.type == Type.STRING) return P.PAT(P.DEF(), P.ID(), P.STR());
-            else if(this.type == Type.REAL) return P.PAT(P.DEF(), P.ID(), P.REAL());
-        }
-        return P.PAT();
-    }
-
-    @Override
-    public List<ICode> genFlatCode() {
-        LinkedList<ICode> list = new LinkedList<ICode>();
-        list.add(this);
-        return list;
-        
+        P expPattern = val.asPattern(true);
+        if(this.scope == Scope.GLOBAL) return  P.PAT(P.GLOBAL(), P.DEF(), P.ID(), P.ASSIGN(), expPattern);
+        else if(this.scope == Scope.PARAM) return P.PAT(P.PARAM(), P.DEF(), P.ID(), P.ASSIGN(), expPattern);
+        else if(this.scope == Scope.GLOBAL) return P.PAT(P.GLOBAL(), P.DEF(), P.ID(), P.ASSIGN(), expPattern);
+        else if(this.scope == Scope.LOCAL) return P.PAT(P.DEF(), P.ID(), P.ASSIGN(), expPattern);
+        else if(this.scope == Scope.RETURN) return P.PAT(P.RETURN(), P.DEF(), P.ID(), P.ASSIGN(), expPattern);
+        else throw new ICodeFormatException(this, "Invalid scope type found when generating pattern: " + this.scope);
     }
 
     @Override
     public boolean containsPlace(String place) {
-        return label.equals(place);
+        if(label.equals(place))
+            return true;
+        return this.val.containsPlace(place);
     }
 
     @Override
@@ -65,11 +58,11 @@ public class Def implements ICode {
     public void replacePlace(String from, String to) {
         if(this.label.equals(from))
             this.label = to;
+        this.val.replacePlace(from, to);
     }
 
     @Override
     public void replaceLabel(String from, String to) {
         //Do nothing
     }
-    
 }

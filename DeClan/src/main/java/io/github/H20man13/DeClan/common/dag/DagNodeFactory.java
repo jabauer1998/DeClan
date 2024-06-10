@@ -224,12 +224,12 @@ public class DagNodeFactory {
 
     public DagNode createInternalReturnVariableNode(String nodeName, DagNode child, Assign.Type origType){
         ValueType type = ConversionUtils.assignTypeToDagValueType(origType);
-        return new DagVariableNode(ScopeType.INTERNAL_RETURN, nodeName, child, type);
+        return new DagVariableNode(ScopeType.RETURN, nodeName, child, type);
     }
 
     public DagNode createExternalReturnVariableNode(String nodeName, DagNode child, Assign.Type origType){
         ValueType type = ConversionUtils.assignTypeToDagValueType(origType);
-        return new DagVariableNode(ScopeType.EXTERNAL_RETURN, nodeName, child, type);
+        return new DagVariableNode(ScopeType.RETURN, nodeName, child, type);
     }
 
     public DagNode createInlineAssemblyNode(String nodeName, DagNode... children){

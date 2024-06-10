@@ -5,8 +5,7 @@ import java.util.List;
 public interface DagNode {
     public enum ScopeType{
         GLOBAL,
-        EXTERNAL_RETURN,
-        INTERNAL_RETURN,
+        RETURN,
         LOCAL,
         PARAM
     }

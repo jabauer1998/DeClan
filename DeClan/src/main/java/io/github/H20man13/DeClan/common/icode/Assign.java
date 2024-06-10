@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.pat.P;
 
@@ -33,35 +34,19 @@ public class Assign implements ICode{
 	public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        if(this.scope == Scope.ARGUMENT){
-            sb.append('(');
-            sb.append(this.value.toString());
-            sb.append(" -> ");
-            sb.append(this.place);
-            sb.append(')');
-            sb.append('[');
-            sb.append(this.type);
-            sb.append(']');
-            return sb.toString();
-        } else {
-            if(this.scope == Scope.EXTERNAL_RETURN){
-                sb.append("EXTERNAL RETURN ");
-            } else if(this.scope == Scope.INTERNAL_RETURN){
-                sb.append("INTERNAL RETURN ");
-            } else if(this.scope == Scope.PARAM){
-                sb.append("PARAM ");
-            } else if(this.scope == Scope.GLOBAL){
-                sb.append("GLOBAL ");
-            }
-
-            sb.append(place);
-            sb.append(" := ");
-            sb.append(value.toString());
-            sb.append(" [");
-            sb.append(this.type);
-            sb.append(']');
-            return sb.toString();
+        if(this.scope == Scope.GLOBAL){
+            sb.append("GLOBAL ");
+        } else if(this.scope != Scope.LOCAL){
+            throw new ICodeFormatException(this, "Invalid scope type for assignment " + scope);
         }
+
+        sb.append(place);
+        sb.append(" := ");
+        sb.append(value.toString());
+        sb.append(" [");
+        sb.append(this.type);
+        sb.append(']');
+        return sb.toString();
 	}
 
     @Override
@@ -71,7 +56,7 @@ public class Assign implements ICode{
 
     @Override
     public boolean isBranch() {
-        return value.isBranch();
+        return false;
     }
 
     @Override
@@ -91,13 +76,6 @@ public class Assign implements ICode{
     @Override
     public P asPattern() {
         return P.PAT(P.ID(), P.ASSIGN(), value.asPattern(true));
-    }
-
-    @Override
-    public List<ICode> genFlatCode() {
-        LinkedList<ICode> linkedList = new LinkedList<ICode>();
-        linkedList.add(this);
-        return linkedList;
     }
 
     @Override

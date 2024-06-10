@@ -5,13 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Inline implements ICode{
     public String inlineAssembly;
-    public List<String> params;
+    public List<IdentExp> params;
 
-    public Inline(String inlineAssembly, List<String> param){
+    public Inline(String inlineAssembly, List<IdentExp> param){
         this.inlineAssembly = inlineAssembly;
         this.params = param;
     }
@@ -57,7 +58,7 @@ public class Inline implements ICode{
     @Override
     public String toString(){
         StringBuilder inlineAssemblyBuilder = new StringBuilder();
-        for(String str : params){
+        for(IdentExp str : params){
             inlineAssemblyBuilder.append("IPARAM ");
             inlineAssemblyBuilder.append(str);
             inlineAssemblyBuilder.append('\n');
@@ -70,16 +71,9 @@ public class Inline implements ICode{
     }
 
     @Override
-    public List<ICode> genFlatCode() {
-        LinkedList<ICode> list = new LinkedList<ICode>();
-        list.add(this);
-        return list;
-    }
-
-    @Override
     public boolean containsPlace(String place) {
-        for(String param: params){
-            if(param.equals(place))
+        for(IdentExp param: params){
+            if(param.containsPlace(place))
                 return true;
         }
         return false;
@@ -92,15 +86,9 @@ public class Inline implements ICode{
 
     @Override
     public void replacePlace(String from, String to) {
-        LinkedList<String> newList = new LinkedList<>();
-        for(String param: params){
-            if(param.equals(from)){
-                newList.add(to);
-            } else {
-                newList.add(param);
-            }
+        for(IdentExp param: params){
+            param.replacePlace(from, to);
         }
-        this.params = newList;
     }
 
     @Override

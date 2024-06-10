@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common.icode.procedure;
+package io.github.H20man13.DeClan.common.icode;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -6,15 +6,13 @@ import java.util.List;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.Tuple;
-import io.github.H20man13.DeClan.common.icode.Assign;
-import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Call implements ICode {
 	public String pname;
-	public List<Assign> params;
+	public List<Def> params;
 
-	public Call(String pname, List<Assign> params) {
+	public Call(String pname, List<Def> params) {
 		this.pname = pname;
 		this.params = params;
 	}
@@ -25,7 +23,7 @@ public class Call implements ICode {
 		sb.append("CALL " + pname + "(");
 
 		boolean first = true;
-		for (Assign param : params) {
+		for (Def param : params) {
 			if (first) {
 				first = false;
 			} else {
@@ -64,8 +62,8 @@ public class Call implements ICode {
 				return false;
 
 			for(int i = 0; i < params.size(); i++){
-				Assign arg1 = objCall.params.get(i);
-				Assign arg2 = params.get(i);
+				Def arg1 = objCall.params.get(i);
+				Def arg2 = params.get(i);
 
 				if(!arg1.equals(arg2))
 					return false;
@@ -78,15 +76,8 @@ public class Call implements ICode {
 	}
 
 	@Override
-	public List<ICode> genFlatCode() {
-		LinkedList<ICode> resultList = new LinkedList<ICode>();
-		resultList.add(this);
-		return resultList;
-	}
-
-	@Override
 	public boolean containsPlace(String place){
-		for(Assign assign: params)
+		for(Def assign: params)
 			if(assign.containsPlace(place))
 				return true;
 
@@ -102,7 +93,7 @@ public class Call implements ICode {
 
 	@Override
 	public void replacePlace(String from, String to) {
-		for(Assign assign: params)
+		for(Def assign: params)
 			assign.replacePlace(from, to);
 	}
 

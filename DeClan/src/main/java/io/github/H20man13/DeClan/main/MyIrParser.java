@@ -8,6 +8,7 @@ import edu.depauw.declan.common.ParseException;
 import edu.depauw.declan.common.Position;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -27,7 +28,6 @@ import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
-import io.github.H20man13.DeClan.common.icode.procedure.Call;
 import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
@@ -261,7 +261,7 @@ public class MyIrParser {
             return parseProcedureCall();  
         } else if(willMatch(IrTokenType.EXTERNAL)){
             skip();
-            return parseExternalReturn();  
+            return parseExternalReturn(); 
         } else {
             return parseAssignment();
         }
@@ -297,9 +297,30 @@ public class MyIrParser {
         } else if(willMatch(IrTokenType.STRING)){
             IrToken tok = skip();
             return new StrExp(tok.getLexeme());
+        } else if (willMatch(IrTokenType.LPAR)){
+            skip();
+            if(willMatch(IrTokenType.GLOBAL)){
+                skip();
+                IrToken id = match(IrTokenType.ID);
+                match(IrTokenType.RPAR);
+                return new IdentExp(ICode.Scope.GLOBAL, id.getLexeme());
+            } else if(willMatch(IrTokenType.PARAM)) {
+                skip();
+                IrToken id = match(IrTokenType.ID);
+                match(IrTokenType.RPAR);
+                return new IdentExp(ICode.Scope.PARAM, id.getLexeme());
+            } else if(willMatch(IrTokenType.RETURN)){
+                skip();
+                IrToken id = match(IrTokenType.ID);
+                match(IrTokenType.RPAR);
+                return new IdentExp(ICode.Scope.RETURN, id.getLexeme());
+            } else {
+                IrToken tok = skip();
+                throw new ParseException("Error expected GLOBAL, RETURN, or PARAM to be specified when parsing an identifier byt found " + tok.toString());
+            }
         } else if(willMatch(IrTokenType.ID)){
             IrToken tok = skip();
-            return new IdentExp(tok.getLexeme());
+            return new IdentExp(ICode.Scope.LOCAL, tok.getLexeme());
         } else {
             return null;
         }

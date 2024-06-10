@@ -63,13 +63,6 @@ public abstract class SymEntry implements ICode, Copyable<SymEntry> {
     }
 
     @Override
-    public List<ICode> genFlatCode() {
-        LinkedList<ICode> list = new LinkedList<ICode>();
-        list.add(this);
-        return list;
-    }
-
-    @Override
     public void replacePlace(String from, String to) {
         if(icodePlace.equals(from))
             this.icodePlace = to;    

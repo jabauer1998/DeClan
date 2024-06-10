@@ -16,7 +16,6 @@ import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
-import io.github.H20man13.DeClan.main.MyIrFactory;
 
 public class IrBuilderContext {
     private int nextForLoopNumber;

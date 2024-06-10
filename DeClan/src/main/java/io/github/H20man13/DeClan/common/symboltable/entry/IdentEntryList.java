@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.ListIterator;
 
 import io.github.H20man13.DeClan.common.Copyable;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 
-public class StringEntryList extends LinkedList<String> implements Copyable<StringEntryList> {
+public class IdentEntryList extends LinkedList<IdentExp> implements Copyable<IdentEntryList> {
     @Override
-    public StringEntryList copy() {
-        StringEntryList toRet = new StringEntryList();
+    public IdentEntryList copy() {
+        IdentEntryList toRet = new IdentEntryList();
         toRet.addAll(this);
         return toRet;
     }

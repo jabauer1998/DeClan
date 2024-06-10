@@ -11,13 +11,14 @@ import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.flow.ProcedureEntryNode;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.Call;
+import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
-import io.github.H20man13.DeClan.common.icode.procedure.Call;
 
 public class LiveVariableAnalysis extends Analysis<String> {
 
@@ -71,9 +72,9 @@ public class LiveVariableAnalysis extends Analysis<String> {
                     }
                 } else if(code instanceof Call){
                     Call placement = (Call)code;
-                    for(Assign arg : placement.params){
-                        instructionDef.add(arg.place);
-                        instructionUse.add(arg.value.toString());
+                    for(Def arg : placement.params){
+                        instructionDef.add(arg.label);
+                        instructionUse.add(arg.val.toString());
                     }
                 }
                 defSets.put(code, instructionDef);

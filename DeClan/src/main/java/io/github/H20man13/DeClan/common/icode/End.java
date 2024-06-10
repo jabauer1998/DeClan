@@ -37,13 +37,6 @@ public class End implements ICode {
 	}
 
 	@Override
-	public List<ICode> genFlatCode() {
-		LinkedList<ICode> linkedList = new LinkedList<ICode>();
-		linkedList.add(this);
-		return linkedList;
-	}
-
-	@Override
 	public boolean containsPlace(String place) {
 		return false;
 	}

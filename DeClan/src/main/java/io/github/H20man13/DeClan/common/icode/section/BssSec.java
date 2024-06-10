@@ -1,17 +1,11 @@
 package io.github.H20man13.DeClan.common.icode.section;
 
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
-import io.github.H20man13.DeClan.common.util.Utils;
 
-public class DataSec implements ICode {
-    public DataSec(){}
+public class BssSec implements ICode {
 
     @Override
     public boolean isConstant() {
@@ -22,33 +16,34 @@ public class DataSec implements ICode {
     public boolean isBranch() {
         return false;
     }
-    @Override
-    public P asPattern() {
-        return P.PAT(P.DATA(), P.SECTION());
-    }
 
     @Override
-    public String toString(){
-        return "DATA SECTION\r\n";
+    public P asPattern() {
+        return P.PAT(P.BSS(), P.SECTION());
     }
 
     @Override
     public boolean containsPlace(String place) {
-        return false;
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'containsPlace'");
     }
 
     @Override
     public boolean containsLabel(String label) {
-        return false;
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'containsLabel'");
     }
 
     @Override
     public void replacePlace(String from, String to) {
-        //Do nothing
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'replacePlace'");
     }
 
     @Override
     public void replaceLabel(String from, String to) {
-        //Do nothing
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'replaceLabel'");
     }
+    
 }

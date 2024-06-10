@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.naming.NameNotFoundException;
+
 import edu.depauw.declan.common.ast.Identifier;
 import edu.depauw.declan.model.SymbolTable;
 import io.github.H20man13.DeClan.common.Tuple;
@@ -17,10 +19,12 @@ import io.github.H20man13.DeClan.common.dag.DagNullNode;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.dag.DagValueNode;
 import io.github.H20man13.DeClan.common.dag.DagVariableNode;
+import io.github.H20man13.DeClan.common.exception.UtilityException;
 import io.github.H20man13.DeClan.common.dag.DagNode.ScopeType;
 import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
 import io.github.H20man13.DeClan.common.flow.block.BasicBlock;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -39,8 +43,6 @@ import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
-import io.github.H20man13.DeClan.common.icode.procedure.Call;
-import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
@@ -82,7 +84,7 @@ public class Utils {
                 return tuple.dest;
             }
         }
-        return null;
+        throw new UtilityException("getExpFromSet", "Tuple with name " + name + " was not found");
     }
 
     public static boolean containsExpInSet(Set<Tuple<String, Exp>> tuples, String name){
@@ -94,7 +96,7 @@ public class Utils {
         return false;
     }
 
-    public static DagNode createBinaryNode(Assign.Scope origScope, BinExp.Operator op, String place, DagNode left, DagNode right) {
+    public static DagNode createBinaryNode(ICode.Scope origScope, BinExp.Operator op, String place, DagNode left, DagNode right) {
         ScopeType scope = ConversionUtils.assignScopeToDagScopeType(origScope);
         switch(op){
             case IADD: return factory.createIntegerAdditionNode(scope, place, left, right);
@@ -119,18 +121,18 @@ public class Utils {
             case LE: return factory.createLessThanOrEqualNode(scope, place, left, right);
             case EQ: return factory.createEqualsNode(scope, place, left, right);
             case NE: return factory.createNotEqualsNode(scope, place, left, right);
-            default: return null;
+            default: throw new UtilityException("createBinaryNode", "Error cant create binary node with operator " + op);
         }
     }
 
-    public static DagNode createUnaryNode(Assign.Scope origScope, UnExp.Operator op, String place, DagNode right){
+    public static DagNode createUnaryNode(ICode.Scope origScope, UnExp.Operator op, String place, DagNode right){
         ScopeType scope = ConversionUtils.assignScopeToDagScopeType(origScope);
         switch(op){
             case INEG: return factory.createIntegerNegationNode(scope, place, right);
             case RNEG: return factory.createRealNegationNode(scope, place, right);
             case BNOT: return factory.createNotNode(scope, place, right);
             case INOT: return factory.createBitwiseNotNode(scope, place, right);
-            default: return null;
+            default: throw new UtilityException("createUnaryNode", "Cant create Unary Node with operator " + op);
         }
     }
 
@@ -163,76 +165,6 @@ public class Utils {
             }
         } else {
             return false;
-        }
-    }
-
-    public static Float toReal(Object input){
-        if(input instanceof Integer){
-            Integer inti = (Integer)input;
-            return inti.floatValue();
-        } else if(input instanceof Float){
-            Float fValue = (Float)input;
-            return fValue.floatValue();
-        } else if(input instanceof Boolean){
-            Boolean bi = (Boolean)input;
-            if(bi){
-                return 1.0f;
-            } else {
-                return 0.0f;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    public static Integer toInt(Object input){
-        if(input instanceof Integer){
-            return (Integer)input;
-        } else if(input instanceof BigInteger){
-            BigInteger lInput = (BigInteger)input;
-            return lInput.intValue();
-        } else if(input instanceof Float){
-            Float di = (Float)input;
-            return di.intValue();
-        } else if(input instanceof Boolean){
-            Boolean bi = (Boolean)input;
-            if(bi){
-                return 1;
-            } else {
-                return 0;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    public static Integer toRawInt(Object input){
-        if(input instanceof Integer){
-            return (Integer)input;
-        } else if(input instanceof Float){
-            Float dV = (Float)input;
-            Integer result = Float.floatToIntBits(dV);
-            return result;
-        } else if(input instanceof Boolean){
-            Boolean bi = (Boolean)input;
-            if(bi) return 1;
-            else return 0;
-        } else {
-            return null;
-        }
-    }
-
-    public static Boolean toBool(Object input){
-        if(input instanceof Integer){
-            Integer inti = (Integer)input;
-            return inti != 0;
-        } else if(input instanceof Boolean){
-            return (Boolean)input;
-        } else if(input instanceof Float){
-            Float di = (Float)input;
-            return di != 0;
-        } else {
-            return null;
         }
     }
 

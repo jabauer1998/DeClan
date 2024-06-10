@@ -38,13 +38,6 @@ public class Return implements ICode {
 	}
 
 	@Override
-	public List<ICode> genFlatCode() {
-		LinkedList<ICode> list = new LinkedList<ICode>();
-		list.add(this);
-		return list;
-	}
-
-	@Override
 	public boolean containsPlace(String place) {
 		return false;
 	}

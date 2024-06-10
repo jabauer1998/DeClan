@@ -1,10 +1,16 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
+import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
+import io.github.H20man13.DeClan.common.icode.section.BssSec;
+import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.icode.section.SymSec;
@@ -14,212 +20,178 @@ import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.VarSymEntry;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class Lib implements ICode {
-    public DataSec variables;
-    public ProcSec procedures;
-    public SymSec symbols;
-    public End end;
-
-    public Lib(SymSec symbols, DataSec variables, ProcSec procedures){
-        this.variables = variables;
-        this.procedures = procedures;
-        this.symbols = symbols;
-    }
+public class Lib implements ICode, Iterable<ICode> {
+    protected List<ICode> instructions;
 
     public Lib(){
-        this.variables = new DataSec();
-        this.procedures = new ProcSec();
-        this.symbols = new SymSec();
+        this.instructions = new LinkedList<ICode>();
+    }
+
+    public Lib(List<ICode> instructions){
+        this.instructions = instructions;
+    }
+
+    public List<ICode> getICode(){
+        return instructions;
     }
 
     @Override
     public boolean isConstant() {
-        return false;
+        throw new ICodeFormatException(this, "Cant determine if lib is a constant");
     }
 
     @Override
     public boolean isBranch() {
-        return false;
+        throw new ICodeFormatException(this, "Cant check if Lib is a branch");
     }
 
     @Override
     public P asPattern() {
-        return P.PAT(variables.asPattern(), procedures.asPattern());
+        throw new ICodeFormatException(this, "Error cant convert Lib to Patterns");
     }
 
     @Override
     public boolean equals(Object obj){
         if(obj instanceof Lib){
             Lib lib = (Lib)obj;
-            
-            boolean symbolsEquals = lib.symbols.equals(symbols);
-            boolean dataEquals = lib.variables.equals(variables);
-            boolean procEquals = lib.procedures.equals(procedures);
-            
-            return symbolsEquals && dataEquals && procEquals;
+            List<ICode> instructions = this.instructions;
+            if(!(instructions instanceof ArrayList)){
+                instructions = new ArrayList<ICode>();
+                instructions.addAll(this.instructions);
+            }
+            List<ICode> otherInstructions = lib.instructions;
+            if(!(otherInstructions instanceof ArrayList)){
+                otherInstructions = new ArrayList<ICode>();
+                otherInstructions.addAll(lib.instructions);    
+            }
+
+            for(int i = 0; i < instructions.size(); i++){
+                ICode instruction = instructions.get(i);
+                ICode otherInstruction = otherInstructions.get(i);
+
+                if(!instruction.equals(otherInstruction))
+                    return false;
+            }
+
+            return true;
         } else {
             return false;
         }
     }
 
+    private enum State{
+        PROCEDURE_SECTION,
+        PROCEDURE,
+        DATA_SECTION,
+        BSS_SECTION,
+        SYMBOL_SECTION,
+        INIT
+    }
+
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
-        sb.append(symbols.toString());
-        sb.append(variables.toString());
-        sb.append(procedures.toString());
+
+        State state = State.INIT;
+        for(ICode instruction : instructions){
+            switch(state){
+                case INIT:
+                    if(instruction instanceof SymSec){
+                        state = State.SYMBOL_SECTION;
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    }
+                case SYMBOL_SECTION:
+                    if(instruction instanceof DataSec){
+                        state = State.DATA_SECTION;
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    } else {
+                        sb.append(' ');
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    }
+                    break;
+                case DATA_SECTION: 
+                    if(instruction instanceof BssSec){
+                        state = State.BSS_SECTION;
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    } else {
+                        sb.append(' ');
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    }
+                    break;
+                case BSS_SECTION:
+                    if(instruction instanceof ProcSec){
+                        state = State.PROCEDURE_SECTION;
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    } else {
+                        sb.append(' ');
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    }
+                    break;
+                case PROCEDURE_SECTION:
+                    if(instruction instanceof ProcLabel){
+                        state = State.PROCEDURE;
+                        sb.append(' ');
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    }
+                    break;
+                case PROCEDURE:
+                    if(instruction instanceof Return){
+                        state = State.PROCEDURE_SECTION;
+                        sb.append(' ');
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    } else {
+                        sb.append("  ");
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    }
+            }
+        }
         return sb.toString();
     }
 
-    public boolean dataSectionContainsInstruction(ICode icode){
-        int variablesLength = variables.getLength();
-        for(int i = 0; i < variablesLength; i++){
-            ICode instructionAtIndex = variables.getInstruction(i);
-            if(instructionAtIndex.equals(icode))
+    public boolean containsPlace(String place){
+        for(ICode instruction: instructions){
+            if(instruction.containsPlace(place))
                 return true;
         }
 
         return false;
     }
 
-    public boolean containsPlace(String place){
-        if(symbols.containsPlace(place))
-            return true;
-        if(variables.containsPlace(place))
-            return true;
-        if(procedures.containsPlace(place))
-            return true;
-
-        return false;
-    }
-
     public boolean containsLabel(String label){
-        if(variables.containsLabel(label))
-            return true;
-
-        if(procedures.containsLabel(label))
-            return true;
+        for(ICode instruction: instructions){
+            if(instruction.containsLabel(label))
+                return true;
+        }
 
         return false;
-    }
-
-    @Override
-    public List<ICode> genFlatCode() {
-        LinkedList<ICode> resultList = new LinkedList<ICode>();
-        resultList.addAll(variables.genFlatCode());
-        resultList.addAll(procedures.genFlatCode());
-        return resultList;
     }
 
     @Override
     public void replacePlace(String from, String to) {
-        symbols.replacePlace(from, to);
-        variables.replacePlace(from, to);
-        procedures.replacePlace(from, to);
+        for(ICode instruction: instructions){
+            instruction.replacePlace(from, to);
+        }
     }
 
     @Override
     public void replaceLabel(String from, String to) {
-        variables.replaceLabel(from, to);
-        procedures.replaceLabel(from, to);
+        for(ICode instruction: instructions){
+            instruction.replaceLabel(from, to);
+        }
     }
 
-    public boolean containsExternalVariableByPlace(String place){
-        return symbols.containsVariableEntryWithICodePlace(place, SymEntry.EXTERNAL);
-    }
-
-    public boolean containsInternalVariableByPlace(String place){
-        return symbols.containsVariableEntryWithICodePlace(place, SymEntry.INTERNAL);
-    }
-
-    public boolean containsExternalVariableByIdent(String ident){
-        return symbols.containsVariableEntryWithIdentifier(ident, SymEntry.EXTERNAL);
-    }
-
-    public boolean containsInternalVariableByIdent(String ident){
-        return symbols.containsVariableEntryWithIdentifier(ident, SymEntry.INTERNAL);
-    }
-
-    public boolean containsExternalReturnByPlace(String place){
-        return symbols.containsReturnEntryWithICodePlace(place, SymEntry.EXTERNAL);
-    }
-
-    public boolean containsInternalReturnByPlace(String place){
-        return symbols.containsReturnEntryWithICodePlace(place, SymEntry.INTERNAL);
-    }
-
-    public boolean containsExternalReturnByFunctionName(String ident){
-        return symbols.containsReturnEntryWithFunctionName(ident, SymEntry.EXTERNAL);
-    }
-
-    public boolean containsInternalReturnByFunctionName(String ident){
-        return symbols.containsReturnEntryWithFunctionName(ident, SymEntry.INTERNAL);
-    }
-
-    public boolean containsExternalParamaterByPlace(String place){
-        return symbols.containsParamaterEntryWithICodePlace(place, SymEntry.EXTERNAL);
-    }
-
-    public boolean containsInternalParamaterByPlace(String place){
-        return symbols.containsParamaterEntryWithICodePlace(place, SymEntry.INTERNAL);
-    }
-
-    public boolean containsExternalParamaterByFunctionNameAndNumber(String ident, int number){
-        return symbols.containsParamaterEntryWithFunctionNameAndParamaterNumber(ident, number, SymEntry.EXTERNAL);
-    }
-
-    public boolean containsInternalParamaterByFunctionNameAndNumber(String ident, int number){
-        return symbols.containsParamaterEntryWithFunctionNameAndParamaterNumber(ident, number, SymEntry.INTERNAL);
-    }
-
-    public VarSymEntry getInternalVariableByPlace(String place){
-        return symbols.getVariableEntryByICodePlace(place, SymEntry.INTERNAL);
-    }
-
-
-    public VarSymEntry getInternalVariableByIdent(String ident){
-        return symbols.getVariableEntryByIdentifier(ident, SymEntry.INTERNAL);
-    }
-
-    public VarSymEntry getExternalVariableByPlace(String place){
-        return symbols.getVariableEntryByICodePlace(place, SymEntry.EXTERNAL);
-    }
-
-    public VarSymEntry getExternalVariableByIdent(String ident){
-        return symbols.getVariableEntryByIdentifier(ident, SymEntry.EXTERNAL);
-    }
-
-    public RetSymEntry getInternalReturnByPlace(String place){
-        return symbols.getReturnByICodePlace(place, SymEntry.INTERNAL);
-    }
-
-
-    public RetSymEntry getInternalReturnByFunctionName(String ident){
-        return symbols.getReturnByFunctionName(ident, SymEntry.INTERNAL);
-    }
-
-    public RetSymEntry getExternalReturnByPlace(String place){
-        return symbols.getReturnByICodePlace(place, SymEntry.EXTERNAL);
-    }
-
-    public RetSymEntry getExternalReturnByFunctionName(String ident){
-        return symbols.getReturnByFunctionName(ident, SymEntry.EXTERNAL);
-    }
-
-    public ParamSymEntry getInternalParamaterByPlace(String place){
-        return symbols.getParamaterByICodePlace(place, SymEntry.INTERNAL);
-    }
-
-
-    public ParamSymEntry getInternalParamaterByFunctionNameAndNumber(String ident, int paramNumber){
-        return symbols.getParamaterByFunctionNameAndNumber(ident, paramNumber, SymEntry.INTERNAL);
-    }
-
-    public ParamSymEntry getExternalParamaterByPlace(String place){
-        return symbols.getParamaterByICodePlace(place, SymEntry.EXTERNAL);
-    }
-
-    public ParamSymEntry getExternalParamaterByFunctionNameAndNumber(String funcName, int number){
-        return symbols.getParamaterByFunctionNameAndNumber(funcName, number, SymEntry.EXTERNAL);
+    @Override
+    public Iterator<ICode> iterator() {
+        return this.instructions.iterator();
     }
 }

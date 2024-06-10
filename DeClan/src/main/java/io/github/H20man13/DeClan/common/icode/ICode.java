@@ -10,9 +10,7 @@ public interface ICode {
         GLOBAL,
         LOCAL,
         PARAM,
-        EXTERNAL_RETURN,
-        INTERNAL_RETURN,
-        ARGUMENT
+        RETURN
      }
  
      public enum Type{
@@ -21,13 +19,12 @@ public interface ICode {
          INT,
          STRING
      }
-     
+
     public String toString();
     public boolean isConstant();
     public boolean isBranch();
     public P asPattern();
     public boolean equals(Object object);
-    public List<ICode> genFlatCode();
     public boolean containsPlace(String place);
     public boolean containsLabel(String label);
     public void replacePlace(String from, String to);
