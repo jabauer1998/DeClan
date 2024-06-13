@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.main;
 
+import java.lang.StackWalker.StackFrame;
 import java.security.cert.CertPathValidatorException.BasicReason;
 import java.util.List;
 
@@ -7,8 +8,11 @@ import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Position;
 import edu.depauw.declan.common.ast.BinaryOperation;
 import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.exception.ICodeGeneratorException;
+import io.github.H20man13.DeClan.common.exception.ICodeTypeCheckerException;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Call;
+import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
@@ -32,14 +36,13 @@ import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
 public class MyICodeTypeChecker {
     private List<ICode> inputICode;
-    private ErrorLog errLog;
     private Environment<String, TypeCheckerQualities> variableQualities;
     private Environment<String, IntEntry> labels;
     private int instructionNumber;
+    private ErrorLog errLog;
     
     public MyICodeTypeChecker(List<ICode> inputICode, ErrorLog errLog){
         this.inputICode = inputICode;
-        this.errLog = errLog;
         this.instructionNumber = 0;
         this.variableQualities = new Environment<String, TypeCheckerQualities>();
         this.labels = new Environment<String, IntEntry>();
@@ -47,14 +50,18 @@ public class MyICodeTypeChecker {
         this.labels.addScope();
     }
 
-    public MyICodeTypeChecker(Prog program, ErrorLog errorLog){
-        this(program.genFlatCode(), errorLog);
+    public MyICodeTypeChecker(Prog program, ErrorLog errLog){
+        this(program.getICode(), errLog);
     }
 
     public void runTypeChecker(){
         instructionNumber = 0;
         for(ICode icode : inputICode){
-            findLabel(icode);
+            try{
+                findLabel(icode);
+            } catch(ICodeTypeCheckerException exp){
+                errLog.add(exp.toString(), new Position(this.instructionNumber, 0));
+            }
             instructionNumber++;
         }
         boolean notAllVariablesFound = true;
@@ -96,7 +103,7 @@ public class MyICodeTypeChecker {
             if(labels.entryExists(label.label)){
                 Position newPos = new Position(instructionNumber, 0);
                 IntEntry labelEntry = labels.getEntry(label.label);
-                errLog.add("Error redefinition of label at postition " + newPos + " originally declared ", new Position(labelEntry.getValue(), 0));
+                throw new ICodeTypeCheckerException(labelEntry.getClass().getEnclosingMethod().getName(), icode, instructionNumber, "Error redefinition of label at postition " + newPos + " originally declared ");
             } else {
                 labels.addEntry(label.label, new IntEntry(instructionNumber));
             }
@@ -130,29 +137,32 @@ public class MyICodeTypeChecker {
 
     private boolean typeCheckPossibleParamaters(Call proc){
         boolean allFound = true;
-        for(Assign param : proc.params){
-            if(variableQualities.entryExists(param.value.toString())){
-                TypeCheckerQualities sourceQual = variableQualities.getEntry(param.value.toString());
-                Assign.Type displayedParamType = param.getType();
-                if((sourceQual.containsQualities(TypeCheckerQualities.INTEGER) && displayedParamType != Assign.Type.INT)
-                || (sourceQual.containsQualities(TypeCheckerQualities.REAL) && displayedParamType != Assign.Type.REAL)
-                || (sourceQual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedParamType != Assign.Type.BOOL)
-                || (sourceQual.containsQualities(TypeCheckerQualities.STRING) && displayedParamType != Assign.Type.STRING)){
-                    errLog.add("Error in function call " + proc.pname + ": param " + param.value.toString() + " is of type " + sourceQual.toString() + " but it is used in paramater assignment of type " + displayedParamType.toString(), new Position(instructionNumber, 0));
-                }
-                if(!variableQualities.entryExists(param.place)){
-                    variableQualities.addEntry(param.place, ConversionUtils.assignTypeToTypeCheckerQualities(displayedParamType));
-                } else {
-                    TypeCheckerQualities qual = variableQualities.getEntry(param.place);
-                    if((qual.containsQualities(TypeCheckerQualities.INTEGER) && displayedParamType != Assign.Type.INT)
-                    || (qual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedParamType != Assign.Type.BOOL)
-                    || (qual.containsQualities(TypeCheckerQualities.STRING) && displayedParamType != Assign.Type.STRING)
-                    || (qual.containsQualities(TypeCheckerQualities.REAL) && displayedParamType != Assign.Type.REAL)){
-                        errLog.add("Error in function call " + proc.pname + ": param " + param.place + " is of type " + sourceQual.toString() + " but it is given a value in paramater assignment of type " + displayedParamType.toString(), new Position(instructionNumber, 0));
+        for(Def param : proc.params){
+            if(param.val instanceof IdentExp){
+                IdentExp exp = (IdentExp)param.val;
+                if(variableQualities.entryExists(exp.ident)){
+                    TypeCheckerQualities sourceQual = variableQualities.getEntry(exp.ident);
+                    ICode.Type displayedParamType = param.type;
+                    if((sourceQual.containsQualities(TypeCheckerQualities.INTEGER) && displayedParamType != Assign.Type.INT)
+                    || (sourceQual.containsQualities(TypeCheckerQualities.REAL) && displayedParamType != Assign.Type.REAL)
+                    || (sourceQual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedParamType != Assign.Type.BOOL)
+                    || (sourceQual.containsQualities(TypeCheckerQualities.STRING) && displayedParamType != Assign.Type.STRING)){
+                        errLog.add("Error in function call " + proc.pname + ": param " + exp.ident + " is of type " + sourceQual.toString() + " but it is used in paramater assignment of type " + displayedParamType.toString(), new Position(instructionNumber, 0));
                     }
+                    if(!variableQualities.entryExists(param.label)){
+                        variableQualities.addEntry(param.label, ConversionUtils.assignTypeToTypeCheckerQualities(displayedParamType));
+                    } else {
+                        TypeCheckerQualities qual = variableQualities.getEntry(param.label);
+                        if((qual.containsQualities(TypeCheckerQualities.INTEGER) && displayedParamType != Assign.Type.INT)
+                        || (qual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedParamType != Assign.Type.BOOL)
+                        || (qual.containsQualities(TypeCheckerQualities.STRING) && displayedParamType != Assign.Type.STRING)
+                        || (qual.containsQualities(TypeCheckerQualities.REAL) && displayedParamType != Assign.Type.REAL)){
+                            errLog.add("Error in function call " + proc.pname + ": param " + param.label + " is of type " + sourceQual.toString() + " but it is given a value in paramater assignment of type " + displayedParamType.toString(), new Position(instructionNumber, 0));
+                        }
+                    }
+                } else {
+                    allFound = false;
                 }
-            } else {
-                allFound = false;
             }
         }
         return allFound;

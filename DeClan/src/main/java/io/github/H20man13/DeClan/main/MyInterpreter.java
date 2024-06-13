@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.main;
 
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.OpUtil;
 import io.github.H20man13.DeClan.common.util.Utils;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
@@ -142,13 +143,13 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     String procName = procedureCall.getProcedureName().getLexeme();
     if (procName.equals("WriteInt") || procName.equals("PrintInt")) {
       Object value = procedureCall.getArguments().get(0).acceptResult(this);
-      Integer intVal = Utils.toInt(value);
+      Integer intVal = ConversionUtils.toInt(value);
       try{
         standardOutput.append("" + intVal);
       } catch(IOException exp){}
     } else if (procName.equals("WriteReal") || procName.equals("PrintReal")) {
       Object value = procedureCall.getArguments().get(0).acceptResult(this);
-      Float floatVal = Utils.toReal(value);
+      Float floatVal = ConversionUtils.toReal(value);
       try{
         standardOutput.append(floatVal.toString());
       } catch(IOException exp){}
@@ -158,7 +159,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
        } catch(IOException exp){}
     } else if(procName.equals("WriteBool") || procName.equals("PrintBool")){
         Object value = procedureCall.getArguments().get(0).acceptResult(this);
-        Boolean val = Utils.toBool(value);
+        Boolean val = ConversionUtils.toBool(value);
         try{
          standardOutput.append(val.toString());
         }catch(IOException exp){}
@@ -168,7 +169,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         standardOutput.append(value.toString());
       }catch(IOException exp){}
     } else if(procName.equals("ASSERT")){
-      boolean value = Utils.toBool(procedureCall.getArguments().get(0).acceptResult(this));
+      boolean value = ConversionUtils.toBool(procedureCall.getArguments().get(0).acceptResult(this));
       Object toPrint = (Object)procedureCall.getArguments().get(1).acceptResult(this);
         if(!value){
         try{
@@ -209,13 +210,13 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   @Override
   public void visit(WhileElifBranch whilebranch){
     Expression toCheck = whilebranch.getExpression();
-    if(Utils.toBool(toCheck.acceptResult(this))){
+    if(ConversionUtils.toBool(toCheck.acceptResult(this))){
       List<Statement> toExec = whilebranch.getExecStatements();
       do {
         for(Integer i = 0; i < toExec.size(); i++){
           toExec.get(i).accept(this);
         }
-      } while(Utils.toBool(toCheck.acceptResult(this)));
+      } while(ConversionUtils.toBool(toCheck.acceptResult(this)));
     } else if (whilebranch.getNextBranch() != null){
       whilebranch.getNextBranch().accept(this);
     }
@@ -225,7 +226,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   public void visit(IfElifBranch ifbranch){
     Expression toCheck = ifbranch.getExpression();
     Object res = toCheck.acceptResult(this);
-    Boolean boolRes = Utils.toBool(res);
+    Boolean boolRes = ConversionUtils.toBool(res);
     if(boolRes){
       List<Statement> toExec = ifbranch.getExecStatements();
       for(Integer i = 0; i < toExec.size(); i++){
@@ -248,12 +249,12 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   public void visit(RepeatBranch repeatbranch){
     Expression toCheck = repeatbranch.getExpression();
     List<Statement> toExec = repeatbranch.getExecStatements();
-    boolean result = Utils.toBool(toCheck.acceptResult(this));
+    boolean result = ConversionUtils.toBool(toCheck.acceptResult(this));
     while(!result){
       for(Integer i = 0; i < toExec.size(); i++){
 	      toExec.get(i).accept(this);
       }
-      result = Utils.toBool(toCheck.acceptResult(this));
+      result = ConversionUtils.toBool(toCheck.acceptResult(this));
     }
   }
 
@@ -267,9 +268,9 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       Object target = forbranch.getTargetExpression().acceptResult(this);
       Object curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme()).getValue();
       if(curvalue instanceof Float){
-        Float floatCurValue = Utils.toReal(curvalue);
-        Float floatTarget = Utils.toReal(target);
-        Float floatIncriment = Utils.toReal(incriment);
+        Float floatCurValue = ConversionUtils.toReal(curvalue);
+        Float floatTarget = ConversionUtils.toReal(target);
+        Float floatIncriment = ConversionUtils.toReal(incriment);
         if(floatIncriment < 0 && floatCurValue > floatTarget){
             do{
               for(Integer i = 0; i < toExec.size(); i++){
@@ -278,7 +279,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
               VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
               entry.setValue(floatCurValue + floatIncriment);
               curvalue = entry.getValue();
-              floatCurValue = Utils.toReal(curvalue);
+              floatCurValue = ConversionUtils.toReal(curvalue);
 	          } while(floatCurValue > floatTarget);
         } else if(floatIncriment > 0 && floatCurValue < floatTarget){
            do{
@@ -288,13 +289,13 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
               VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
               entry.setValue(floatCurValue + floatIncriment);
               curvalue = entry.getValue();
-              floatCurValue = Utils.toReal(curvalue);
+              floatCurValue = ConversionUtils.toReal(curvalue);
 	          }while(floatCurValue < floatTarget);
         }
       } else if(curvalue instanceof Integer) {
-        Integer intTarget = Utils.toInt(target);
-        Integer intCurVal = Utils.toInt(curvalue);
-        Integer intIncriment = Utils.toInt(incriment);
+        Integer intTarget = ConversionUtils.toInt(target);
+        Integer intCurVal = ConversionUtils.toInt(curvalue);
+        Integer intIncriment = ConversionUtils.toInt(incriment);
         if(intCurVal > intTarget && intIncriment < 0){
             do{
               for(Integer i = 0; i < toExec.size(); i++){
@@ -303,7 +304,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
               VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
               entry.setValue(intCurVal + intIncriment);
               curvalue = entry.getValue();
-              intCurVal = Utils.toInt(curvalue);
+              intCurVal = ConversionUtils.toInt(curvalue);
             } while(intCurVal > intTarget);
         } else if (intCurVal < intTarget && intIncriment > 0){
           do{
@@ -313,7 +314,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
             VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
             entry.setValue(intCurVal + intIncriment);
             curvalue = entry.getValue();
-            intCurVal = Utils.toInt(curvalue);
+            intCurVal = ConversionUtils.toInt(curvalue);
           } while(intCurVal < intTarget);
         } else if(intCurVal != intTarget) {
           errorLog.add("Possible infinite forloop in for loop ", forbranch.getStart());
@@ -324,8 +325,8 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         Object target = forbranch.getTargetExpression().acceptResult(this);
         Object curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme()).getValue();
         if(curvalue instanceof Float){
-          Float floatTarget = Utils.toReal(target);
-          Float floatCurVal = Utils.toReal(curvalue);
+          Float floatTarget = ConversionUtils.toReal(target);
+          Float floatCurVal = ConversionUtils.toReal(curvalue);
           if(floatTarget < floatCurVal){
             do{
               for(int i = 0; i < toExec.size(); i++){
@@ -333,7 +334,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
               }
               VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
               curvalue = entry.getValue();
-              floatCurVal = Utils.toReal(curvalue);
+              floatCurVal = ConversionUtils.toReal(curvalue);
             }while(floatTarget < floatCurVal);
           } else if(floatTarget > floatCurVal){
             do{
@@ -342,12 +343,12 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
               }
               VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
               curvalue = entry.getValue();
-              floatCurVal = Utils.toReal(curvalue);
+              floatCurVal = ConversionUtils.toReal(curvalue);
             } while(floatTarget > floatCurVal);
           }
         } else if(curvalue instanceof Integer){
-          Integer intTarget = Utils.toInt(target);
-          Integer intCurVal = Utils.toInt(curvalue);
+          Integer intTarget = ConversionUtils.toInt(target);
+          Integer intCurVal = ConversionUtils.toInt(curvalue);
           if(intTarget < intCurVal){
             do{
               for(int i = 0; i < toExec.size(); i++){
@@ -355,7 +356,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
               }
               VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
               curvalue = entry.getValue();
-              intCurVal = Utils.toInt(curvalue);
+              intCurVal = ConversionUtils.toInt(curvalue);
             }while(intTarget < intCurVal);
           } else if(intTarget > intCurVal){
             do{
@@ -364,7 +365,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
               }
               VariableEntry entry = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
               curvalue = entry.getValue();
-              intCurVal = Utils.toInt(curvalue);
+              intCurVal = ConversionUtils.toInt(curvalue);
             } while(intTarget > intCurVal);
           }
         }
@@ -380,15 +381,15 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	      errorLog.add("Variable " + assignment.getVariableName().getLexeme() + " declared as const ", assignment.getVariableName().getStart());
       } else if(entry.getValue() instanceof Float){
         Object value = assignment.getVariableValue().acceptResult(this);
-        Float ivalue = Utils.toReal(value);
+        Float ivalue = ConversionUtils.toReal(value);
         entry.setValue(ivalue);
       } else if(entry.getValue() instanceof Integer){
         Object value = assignment.getVariableValue().acceptResult(this);
-        Integer ivalue = Utils.toInt(value);
+        Integer ivalue = ConversionUtils.toInt(value);
         entry.setValue(ivalue);
       } else if(entry.getValue() instanceof Boolean){
         Object value = assignment.getVariableValue().acceptResult(this);
-        Boolean ivalue = Utils.toBool(value);
+        Boolean ivalue = ConversionUtils.toBool(value);
         entry.setValue(ivalue);
       } else {
         Object value = assignment.getVariableValue().acceptResult(this);
@@ -467,13 +468,13 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   public Object visitResult(FunctionCall funcCall) {
     String funcName = funcCall.getFunctionName().getLexeme();
     if(funcName.equals("round") || funcName.equals("Round")){
-      float argument = Utils.toReal(funcCall.getArguments().get(0).acceptResult(this));
+      float argument = ConversionUtils.toReal(funcCall.getArguments().get(0).acceptResult(this));
       return (int)Math.round(argument);
     } else if(funcName.equals("floor") || funcName.equals("Floor")) {
-      float argument = Utils.toReal(funcCall.getArguments().get(0).acceptResult(this));
+      float argument = ConversionUtils.toReal(funcCall.getArguments().get(0).acceptResult(this));
       return (int)Math.floor(argument);
     } else if(funcName.equals("ceil") || funcName.equals("Ceil")) {
-      float argument = Utils.toReal(funcCall.getArguments().get(0).acceptResult(this));
+      float argument = ConversionUtils.toReal(funcCall.getArguments().get(0).acceptResult(this));
       return (int)Math.ceil(argument);
     } else if (funcName.equals("readInt") || funcName.equals("ReadInt")) {
       Scanner scanner = new Scanner(standardIn);
@@ -491,10 +492,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       scanner.close();
       return Boolean.parseBoolean(line);
     } else if(funcName.equals("realBinaryAsInt") || funcName.equals("RealBinaryAsInt")){
-      float argument = Utils.toReal(funcCall.getArguments().get(0).acceptResult(this));
+      float argument = ConversionUtils.toReal(funcCall.getArguments().get(0).acceptResult(this));
       return Float.floatToRawIntBits(argument);
     } else if(funcName.equals("intBinaryAsReal") || funcName.equals("IntBinaryAsReal")){
-      int argument = Utils.toInt(funcCall.getArguments().get(0).acceptResult(this));
+      int argument = ConversionUtils.toInt(funcCall.getArguments().get(0).acceptResult(this));
       return Float.intBitsToFloat(argument);
     } else {
       ProcedureEntry fentry = procEnvironment.getEntry(funcName);
@@ -511,13 +512,13 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         VariableEntry toChange = varEnvironment.getEntry(args.get(i).getIdentifier().getLexeme());
         Object variableValue = valArgResults.get(i);
         if(toChange.getValue() instanceof Integer){
-          Integer varVal = Utils.toInt(variableValue);
+          Integer varVal = ConversionUtils.toInt(variableValue);
           toChange.setValue(varVal);
         } else if(toChange.getValue() instanceof Float){
-          Float varVal = Utils.toReal(variableValue);
+          Float varVal = ConversionUtils.toReal(variableValue);
           toChange.setValue(varVal);
         } else if(toChange.getValue() instanceof Boolean){
-          Boolean varVal = Utils.toBool(variableValue);
+          Boolean varVal = ConversionUtils.toBool(variableValue);
           toChange.setValue(varVal);
         } else {
           toChange.setValue(variableValue);

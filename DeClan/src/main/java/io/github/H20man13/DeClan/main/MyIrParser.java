@@ -9,6 +9,7 @@ import edu.depauw.declan.common.Position;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Call;
+import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -28,7 +29,7 @@ import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
-import io.github.H20man13.DeClan.common.icode.procedure.Proc;
+import io.github.H20man13.DeClan.common.icode.section.BssSec;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
@@ -113,58 +114,128 @@ public class MyIrParser {
     }
 
     public Prog parseProgram(){
-        SymSec sym = parseSymbolSection();
-        DataSec data = parseDataSection();
-        CodeSec code = parseCodeSection();
-        ProcSec proc = parseProcedureSection();
+        List<ICode> toRet = new LinkedList<ICode>();
+        ICode icode = parseSymbolSection();
+        toRet.add(icode);
+        while(willMatch(IrTokenType.ENTRY)){
+            icode = parseSymbolEntry();
+            toRet.add(icode);
+        }
+        icode = parseDataSection();
+        toRet.add(icode);
+        while(willMatch(IrTokenType.CALL) || willMatch(IrTokenType.DEF)){
+            icode = parseInstruction();
+            toRet.add(icode);
+        }
+        icode = parseBssSection();
+        toRet.add(icode);
+        while(willMatch(IrTokenType.DEF)){
+            icode = parseDefinition();
+            toRet.add(icode);
+        }
+        icode = parseCodeSection();
+        toRet.add(icode);
+        while(willMatch(IrTokenType.LABEL) || willMatch(IrTokenType.IF) 
+        || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) 
+        || willMatch(IrTokenType.RETURN) || willMatch(IrTokenType.IASM) 
+        || willMatch(IrTokenType.IPARAM) || willMatch(IrTokenType.CALL)
+        || willMatch(IrTokenType.GLOBAL) || willMatch(IrTokenType.DEF)){
+            icode = parseInstruction();
+            toRet.add(icode);
+        }
+        icode = parseEnd();
+        toRet.add(icode);
+        icode = parseProcedureSection();
+        toRet.add(icode);
+        while(willMatch(IrTokenType.PROC)){
+            icode = parseProcedureLabel();
+            toRet.add(icode);
+            while(willMatch(IrTokenType.LABEL) || willMatch(IrTokenType.IF) 
+            || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) 
+            || willMatch(IrTokenType.RETURN) || willMatch(IrTokenType.IASM) 
+            || willMatch(IrTokenType.IPARAM) || willMatch(IrTokenType.CALL)
+            || willMatch(IrTokenType.GLOBAL) || willMatch(IrTokenType.DEF)){
+                icode = parseInstruction();
+                toRet.add(icode);
+            }
+            icode = parseReturn();
+            toRet.add(icode);
+        }
         matchEOF();
-        return new Prog(sym, data, code, proc);
+        return new Prog(toRet);
     }
 
     public Lib parseLibrary(){
-        SymSec sym = parseSymbolSection();
-        DataSec data = parseDataSection();
-        ProcSec proc = parseProcedureSection();
+        List<ICode> toRet = new LinkedList<ICode>();
+        ICode icode = parseSymbolSection();
+        toRet.add(icode);
+        while(willMatch(IrTokenType.ENTRY)){
+            icode = parseSymbolEntry();
+            toRet.add(icode);
+        }
+        icode = parseDataSection();
+        toRet.add(icode);
+        while(willMatch(IrTokenType.CALL) || willMatch(IrTokenType.DEF)){
+            icode = parseInstruction();
+            toRet.add(icode);
+        }
+        icode = parseBssSection();
+        toRet.add(icode);
+        while(willMatch(IrTokenType.DEF)){
+            icode = parseDefinition();
+            toRet.add(icode);
+        }
+        icode = parseProcedureSection();
+        toRet.add(icode);
+        while(willMatch(IrTokenType.PROC)){
+            icode = parseProcedureLabel();
+            toRet.add(icode);
+            while(willMatch(IrTokenType.LABEL) || willMatch(IrTokenType.IF) 
+            || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) 
+            || willMatch(IrTokenType.RETURN) || willMatch(IrTokenType.IASM) 
+            || willMatch(IrTokenType.IPARAM) || willMatch(IrTokenType.CALL)
+            || willMatch(IrTokenType.GLOBAL) || willMatch(IrTokenType.DEF)){
+                icode = parseInstruction();
+                toRet.add(icode);
+            }
+            icode = parseReturn();
+            toRet.add(icode);
+        }
         matchEOF();
-        return new Lib(sym, data, proc);
+        return new Lib(toRet);
     }
 
     private SymSec parseSymbolSection(){
         match(IrTokenType.SYMBOL);
         match(IrTokenType.SECTION);
-
-        List<SymEntry> symEntries = new LinkedList<SymEntry>();
-        while(willMatch(IrTokenType.ID)){
-            SymEntry entry = parseSymbolEntry();
-            symEntries.add(entry);
-        }
-        return new SymSec(symEntries);
+        return new SymSec();
     }
 
     private DataSec parseDataSection(){
         match(IrTokenType.DATA);
         match(IrTokenType.SECTION);
-        List<ICode> assignments = new LinkedList<ICode>();
-        while(willMatch(IrTokenType.ID) || willMatch(IrTokenType.GLOBAL) 
-        || willMatch(IrTokenType.CALL) || willMatch(IrTokenType.EXTERNAL)){
-            ICode icode = parseInstruction();
-            assignments.add(icode);
-        }
-        return new DataSec(assignments);
+        return new DataSec();
+    }
+
+    private BssSec parseBssSection(){
+        match(IrTokenType.BSS);
+        match(IrTokenType.SECTION);
+        return new BssSec();
     }
 
     private ProcSec parseProcedureSection(){
         match(IrTokenType.PROC);
         match(IrTokenType.SECTION);
-        List<Proc> procedures = new LinkedList<Proc>();
-        while(willMatch(IrTokenType.PROC)){
-            Proc procedure = parseProcedure();
-            procedures.add(procedure);
-        }
-        return new ProcSec(procedures);
+        return new ProcSec();
+    }
+
+    private End parseEnd(){
+        match(IrTokenType.END);
+        return new End();
     }
 
     private SymEntry parseSymbolEntry(){
+        match(IrTokenType.ENTRY);
         int resultMask = 0;
         IrToken irPlace = match(IrTokenType.ID);
         if(willMatch(IrTokenType.CONST)){
@@ -196,55 +267,17 @@ public class MyIrParser {
         }
     }
 
-    private Proc parseProcedure(){
+    private ProcLabel parseProcedureLabel(){
         match(IrTokenType.PROC);
         match(IrTokenType.LABEL);
         IrToken id = match(IrTokenType.ID);
-        ProcLabel label = new ProcLabel(id.getLexeme());
-        List<Assign> paramAssignments = new LinkedList<Assign>();
-        List<ICode> instructions = new LinkedList<ICode>();
-        Assign place = null;
-        while(!willMatch(IrTokenType.RETURN)){
-            ICode instruction = parseInstruction();
-            if(instruction instanceof Assign){
-                Assign assign = (Assign)instruction;
-                if(assign.getScope() == ICode.Scope.PARAM){
-                    paramAssignments.add(assign);
-                } else if(assign.getScope() == ICode.Scope.INTERNAL_RETURN){
-                    place = assign;  
-                } else {
-                    instructions.add(instruction);
-                }
-            } else {
-                instructions.add(instruction);
-            }
-        }
-
-        Return ret = parseReturn();
-
-        return new Proc(label, paramAssignments, instructions, place, ret);
+        return new ProcLabel(id.getLexeme());
     }
 
     private CodeSec parseCodeSection(){
         match(IrTokenType.CODE);
         match(IrTokenType.SECTION);
-        List<ICode> instructions = parseInstructions();
-        match(IrTokenType.END);
-        return new CodeSec(instructions);
-    }
-
-    public List<ICode> parseInstructions(){
-        List<ICode> toRet = new LinkedList<ICode>();
-        while(willMatch(IrTokenType.LABEL) || willMatch(IrTokenType.IF) 
-        || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) 
-        || willMatch(IrTokenType.RETURN) || willMatch(IrTokenType.IASM) 
-        || willMatch(IrTokenType.IPARAM) || willMatch(IrTokenType.CALL) 
-        || willMatch(IrTokenType.EXTERNAL) || willMatch(IrTokenType.INTERNAL)
-        || willMatch(IrTokenType.PARAM) || willMatch(IrTokenType.GLOBAL)){
-            ICode instr = parseInstruction();
-            toRet.add(instr);
-        }
-        return toRet;
+        return new CodeSec();
     }
 
     private ICode parseInstruction(){
@@ -259,25 +292,35 @@ public class MyIrParser {
             return parseGoto();
         } else if(willMatch(IrTokenType.CALL)){
             return parseProcedureCall();  
-        } else if(willMatch(IrTokenType.EXTERNAL)){
-            skip();
-            return parseExternalReturn(); 
         } else {
             return parseAssignment();
         }
     }
 
     private Inline parseInlineAssembly(){
-        List<String> params = new LinkedList<String>();
+        List<IdentExp> params = new LinkedList<IdentExp>();
         while(willMatch(IrTokenType.IPARAM)){
             skip();
-            IrToken param = match(IrTokenType.ID);
-            params.add(param.getLexeme());
+            IdentExp param = parseIdentifier();
+            params.add(param);
         }
         match(IrTokenType.IASM);
         IrToken inlineAssembly = match(IrTokenType.STRING);
         String lexeme = inlineAssembly.getLexeme();
         return new Inline(lexeme, params);
+    }
+
+    private IdentExp parseIdentifier(){
+        if(willMatch(IrTokenType.LPAR)){
+            skip();
+            ICode.Scope scope = parseScope();
+            IrToken id = match(IrTokenType.ID);
+            match(IrTokenType.RPAR);
+            return new IdentExp(scope, id.getLexeme());
+        } else {
+            IrToken id = match(IrTokenType.ID);
+            return new IdentExp(ICode.Scope.LOCAL, id.getLexeme());
+        }
     }
 
     private Exp parsePrimaryExpression(){
@@ -297,32 +340,10 @@ public class MyIrParser {
         } else if(willMatch(IrTokenType.STRING)){
             IrToken tok = skip();
             return new StrExp(tok.getLexeme());
-        } else if (willMatch(IrTokenType.LPAR)){
-            skip();
-            if(willMatch(IrTokenType.GLOBAL)){
-                skip();
-                IrToken id = match(IrTokenType.ID);
-                match(IrTokenType.RPAR);
-                return new IdentExp(ICode.Scope.GLOBAL, id.getLexeme());
-            } else if(willMatch(IrTokenType.PARAM)) {
-                skip();
-                IrToken id = match(IrTokenType.ID);
-                match(IrTokenType.RPAR);
-                return new IdentExp(ICode.Scope.PARAM, id.getLexeme());
-            } else if(willMatch(IrTokenType.RETURN)){
-                skip();
-                IrToken id = match(IrTokenType.ID);
-                match(IrTokenType.RPAR);
-                return new IdentExp(ICode.Scope.RETURN, id.getLexeme());
-            } else {
-                IrToken tok = skip();
-                throw new ParseException("Error expected GLOBAL, RETURN, or PARAM to be specified when parsing an identifier byt found " + tok.toString());
-            }
-        } else if(willMatch(IrTokenType.ID)){
-            IrToken tok = skip();
-            return new IdentExp(ICode.Scope.LOCAL, tok.getLexeme());
+        } else if (willMatch(IrTokenType.LPAR) || willMatch(IrTokenType.ID)){
+            return parseIdentifier();
         } else {
-            return null;
+            throw new ParseException("Error when parsing primary expression expected token of type BOOL/REAL/INT/STRING/IDENT but found token of type " + skip());
         }
     }
 
@@ -380,11 +401,11 @@ public class MyIrParser {
         IrToken procName = match(IrTokenType.ID);
         match(IrTokenType.LPAR);
         
-        List<Assign> args = new LinkedList<>();
+        List<Def> args = new LinkedList<>();
         
         if(willMatch(IrTokenType.LPAR)){
             do{
-                Assign assign = parseArgument();
+                Def assign = parseArgument();
                 args.add(assign);
             } while(skipIfYummy(IrTokenType.COMMA));
         }   
@@ -446,98 +467,71 @@ public class MyIrParser {
         }
     }
 
-    private Assign parseArgument(){
+    private Def parseArgument(){
         match(IrTokenType.LPAR);
-        IrToken value = match(IrTokenType.ID);
+        Exp value = parseExpression();
         match(IrTokenType.MAP);
         IrToken place = match(IrTokenType.ID);
         match(IrTokenType.RPAR);
-
-        match(IrTokenType.LBRACK);
-        Assign.Type type;
-        if(willMatch(IrTokenType.BOOL)){
-            skip();
-            type = Assign.Type.BOOL;
-        } else if(willMatch(IrTokenType.STRING)){
-            skip();
-            type = Assign.Type.STRING;
-        } else if(willMatch(IrTokenType.REAL)){
-            skip();
-            type = Assign.Type.REAL;
-        } else {
-            match(IrTokenType.INT);
-            type = Assign.Type.INT;
-        }
-        match(IrTokenType.RBRACK);
-
-        return new Assign(ICode.Scope.ARGUMENT, place.getLexeme(), new IdentExp(value.getLexeme()), type);
+        ICode.Type type = parseType();
+        return new Def(ICode.Scope.PARAM, place.getLexeme(), value, type);
     }
 
-    private ICode parseExternalReturn(){
-        match(IrTokenType.RETURN);
-        IrToken place = match(IrTokenType.ID);
-        match(IrTokenType.ASSIGN);
-        Exp exp = parseExpression();
-        Assign.Type type;
-        match(IrTokenType.LBRACK);
-        if(willMatch(IrTokenType.STRING)){
+    private ICode.Scope parseScope(){
+        if(willMatch(IrTokenType.GLOBAL)){
             skip();
-            type = Assign.Type.STRING;
-        } else if(willMatch(IrTokenType.BOOL)){
-            skip();
-            type = Assign.Type.BOOL;
-        } else if(willMatch(IrTokenType.REAL)){
-            skip();
-            type = Assign.Type.REAL;
-        } else {
-            match(IrTokenType.INT);
-            type = Assign.Type.INT;
-        }
-        match(IrTokenType.RBRACK);
-
-        return new Assign(ICode.Scope.EXTERNAL_RETURN, place.getLexeme(), exp, type);
-    }
-
-    private ICode parseAssignment(){
-        Assign.Scope scope;
-        if(willMatch(IrTokenType.EXTERNAL)){
-            skip();
-            match(IrTokenType.RETURN);
-            scope = ICode.Scope.EXTERNAL_RETURN;
-        } else if(willMatch(IrTokenType.INTERNAL)){
-            skip();
-            match(IrTokenType.RETURN);
-            scope = ICode.Scope.INTERNAL_RETURN;
+            return ICode.Scope.GLOBAL;
         } else if(willMatch(IrTokenType.PARAM)){
             skip();
-            scope = ICode.Scope.PARAM;
-        } else if(willMatch(IrTokenType.GLOBAL)) {
+            return ICode.Scope.PARAM;
+        } else if(willMatch(IrTokenType.RETURN)){
             skip();
-            scope = ICode.Scope.GLOBAL;
+            return ICode.Scope.RETURN;
         } else {
-            scope = ICode.Scope.LOCAL;
+            return ICode.Scope.LOCAL;
+        }
+    }
+
+    private ICode.Type parseType(){
+        match(IrTokenType.LBRACK);
+
+        ICode.Type type;
+        if(willMatch(IrTokenType.STRING)){
+            skip();
+            type = ICode.Type.STRING;
+        } else if(willMatch(IrTokenType.INT)){
+            skip();
+            type = ICode.Type.INT;
+        } else if(willMatch(IrTokenType.REAL)){
+            skip();
+            type = ICode.Type.REAL;
+        } else if(willMatch(IrTokenType.BOOL)){
+            skip();
+            type = ICode.Type.BOOL;
+        } else {
+            throw new ParseException("In function parseType expected token of type INT/STRING/BOOL/REAL but found token of type " + skip());
         }
 
+        match(IrTokenType.RBRACK);
+        return type;
+    }
+
+    private ICode parseDefinition(){
+        match(IrTokenType.DEF);
+        ICode.Scope scope = parseScope();
         IrToken id = match(IrTokenType.ID);
         match(IrTokenType.ASSIGN);
         Exp expression = parseExpression();
+        ICode.Type type = parseType();
+        return new Def(scope, id.getLexeme(), expression, type);
+    }
 
-        match(IrTokenType.LBRACK);
-        ICode.Type assignType;
-        if(willMatch(IrTokenType.REAL)){
-            skip();
-            assignType = ICode.Type.REAL; 
-        } else if(willMatch(IrTokenType.BOOL)){
-            skip();
-            assignType = ICode.Type.BOOL;
-        } else if(willMatch(IrTokenType.STRING)){
-            skip();
-            assignType = ICode.Type.STRING;  
-        } else {
-            match(IrTokenType.INT);
-            assignType = ICode.Type.INT;
-        }
-        match(IrTokenType.RBRACK);
+    private ICode parseAssignment(){
+        ICode.Scope scope = parseScope();
+        IrToken id = match(IrTokenType.ID);
+        match(IrTokenType.ASSIGN);
+        Exp expression = parseExpression();
+        ICode.Type assignType = parseType();
         return new Assign(scope, id.getLexeme(), expression, assignType);
     }
 }
