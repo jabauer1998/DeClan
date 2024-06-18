@@ -131,4 +131,50 @@ public class Prog extends Lib implements ICode {
         }
         return sb.toString();
     }
+
+    @Override
+    public int endOfBssSection(){
+        int begin = beginningOfBssSection();
+        for(int i = begin; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof CodeSec){
+                return i - 1;
+            }
+        }
+        return -1;
+    }
+
+    public int beginningOfCodeSection(){
+        int begin = endOfBssSection();
+        for(int i = begin; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof CodeSec){
+                return i + 1;
+            }
+        }
+        return -1;
+    }
+
+    public int endOfCodeSection(){
+        int begin = beginningOfCodeSection();
+        for(int i = begin; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof End){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public int beginningOfProcedureSection(){
+        int begin = endOfCodeSection();
+        for(int i = begin; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof ProcSec){
+                return i + 1;
+            }
+        }
+        return -1;
+    }
 }

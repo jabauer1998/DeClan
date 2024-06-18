@@ -190,6 +190,113 @@ public class Lib implements ICode, Iterable<ICode> {
         }
     }
 
+    public int beginningOfSymbolSection(){
+        for(int i = 0; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof SymSec){
+                return i + 1;
+            }
+        }
+        return -1;
+    }
+
+    public int endOfSymbolSection(){
+        int begin = beginningOfSymbolSection();
+        for(int i = begin; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof DataSec){
+                return i - 1;
+            }
+        }
+
+        return -1;
+    }
+
+    public int beginningOfDataSection(){
+        int begin = endOfSymbolSection();
+        for(int i = begin; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof DataSec){
+                return i + 1;
+            }
+        }
+        return -1;
+    }
+
+    public int endOfDataSection(){
+        int begin = beginningOfDataSection();
+        for(int i = begin; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof BssSec){
+                return i - 1;
+            }
+        }
+
+        return -1;
+    }
+
+    public int beginningOfBssSection(){
+        int begin = endOfDataSection();
+        for(int i = begin; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof BssSec){
+                return i + 1;
+            }
+        }
+        return -1;
+    }
+
+    public int endOfBssSection(){
+        int begin = beginningOfBssSection();
+        for(int i = begin; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof ProcSec){
+                return i - 1;
+            }
+        }
+        return -1;
+    }
+
+    public int beginningOfProcedureSection(){
+        int begin = endOfBssSection();
+        for(int i = begin; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof ProcSec){
+                return i + 1;
+            }
+        }
+        return -1;
+    }
+
+
+    public int beginningOfProcedure(String procedureName){
+        int begin = beginningOfProcedureSection();
+        for(int i = begin; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof ProcLabel){
+                ProcLabel label = (ProcLabel)instruction;
+                if(label.label.equals(procedureName))
+                    return i;
+            }
+        }
+        return -1;
+    }
+
+    public int endOfProcedure(String procedureName){
+        int begin = beginningOfProcedure(procedureName);
+        for(int i = begin; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof Return){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int endOfProcedureSection(){
+        return instructions.size() - 1;
+    }
+
     @Override
     public Iterator<ICode> iterator() {
         return this.instructions.iterator();
