@@ -35,6 +35,18 @@ public class Lib implements ICode, Iterable<ICode> {
         return instructions;
     }
 
+    public ICode getInstruction(int index){
+        return instructions.get(index);
+    }
+
+    public void addInstruction(int index, ICode instruction){
+        this.instructions.add(index, instruction);
+    }
+
+    public void addInstruction(ICode instruction){
+        this.instructions.add(instruction);
+    }
+
     @Override
     public boolean isConstant() {
         throw new ICodeFormatException(this, "Cant determine if lib is a constant");
@@ -266,6 +278,21 @@ public class Lib implements ICode, Iterable<ICode> {
             }
         }
         return -1;
+    }
+
+    public boolean containsProcedure(String procName){
+        int begin = beginningOfProcedureSection();
+        int end = endOfProcedureSection();
+        for(int i = begin; i <= end; i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof ProcLabel){
+                ProcLabel label = (ProcLabel)instruction;
+                if(label.label.equals(procName)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 

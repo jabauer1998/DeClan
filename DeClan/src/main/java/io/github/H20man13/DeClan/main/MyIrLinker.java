@@ -6,6 +6,7 @@ import java.util.Set;
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.ast.Library;
 import edu.depauw.declan.common.ast.Program;
+import io.github.H20man13.DeClan.common.exception.ICodeLinkerException;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.gen.LabelGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;
@@ -15,6 +16,7 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
+import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
@@ -3495,21 +3497,91 @@ public class MyIrLinker {
         }
     }
 
+    private enum ProcedureState{
+        PROCEDURE_INIT,
+        PROCEDURE_BODY,
+        PROCEDURE_SKIP
+    }
+
     private void linkProcedureSections(Lib library, Lib[] libraries, Lib newLib){
-        ProcSec procedures = newLib.procedures;
-        ProcSec libraryProcSec = library.procedures;
-        for(int i = 0; i < libraryProcSec.getLength(); i++){
-            Proc procedure = libraryProcSec.getProcedureByIndex(i);
-            if(!procedures.containsProcedure(procedure.label.label))
-                fetchInternalProcedure(library, procedure.label.label, library, libraries, newLib);
+        int beginningNewLibProcedures = newLib.beginningOfProcedureSection();
+        int endNewLibProcedures = newLib.endOfProcedureSection();
+
+        int beginningOfLibProcedures = library.beginningOfProcedureSection();
+        int endOfLibProcedures = library.endOfProcedureSection();
+
+        ProcedureState state = ProcedureState.PROCEDURE_INIT;
+        for(int i = beginningOfLibProcedures; i <= endOfLibProcedures; i++){
+            ICode instruction = library.getInstruction(i);
+            switch(state){
+                case PROCEDURE_INIT:
+                    if(instruction instanceof ProcLabel){
+                        ProcLabel label = (ProcLabel)instruction;
+                        if(newLib.containsProcedure(label.label)){
+                           state = ProcedureState.PROCEDURE_SKIP; 
+                        } else {
+                           state = ProcedureState.PROCEDURE_BODY;
+                           newLib.addInstruction(endNewLibProcedures + 1, instruction);
+                           endNewLibProcedures++;
+                        }
+                    }
+                    break;
+                case PROCEDURE_SKIP:
+                    if(instruction instanceof Return){
+                        state = ProcedureState.PROCEDURE_INIT;
+                    }
+                    break;
+                case PROCEDURE_BODY:
+                    if(instruction instanceof Return){
+                        state = ProcedureState.PROCEDURE_INIT;
+                        newLib.addInstruction(endNewLibProcedures, instruction);
+                        endNewLibProcedures++;
+                    } else {
+                        newLib.addInstruction(endNewLibProcedures, instruction);
+                        endNewLibProcedures++;
+                    }
+                    break;
+                default:
+                    throw new ICodeLinkerException(instruction, "Invalid state found when linking procedure -> " + state);
+            }
         }
 
         for(Lib lib : libraries){
-            ProcSec libProcSec = lib.procedures;
-            for(int i = 0; i < libProcSec.getLength(); i++){
-                Proc procedure = libProcSec.getProcedureByIndex(i);
-                if(!procedures.containsProcedure(procedure.label.label))
-                    fetchInternalProcedure(lib, procedure.label.label, library, libraries, newLib);
+            int beginningOtherLibFromList = lib.beginningOfProcedureSection();
+            int endOtherLibFromList = lib.endOfProcedureSection();
+            for(int i = beginningOtherLibFromList; i <= endOtherLibFromList; i++){
+                ICode instruction = lib.getInstruction(i);
+                switch(state){
+                    case PROCEDURE_INIT:
+                        if(instruction instanceof ProcLabel){
+                            ProcLabel label = (ProcLabel)instruction;
+                            if(newLib.containsProcedure(label.label)){
+                               state = ProcedureState.PROCEDURE_SKIP; 
+                            } else {
+                               state = ProcedureState.PROCEDURE_BODY;
+                               newLib.addInstruction(endNewLibProcedures + 1, instruction);
+                               endNewLibProcedures++;
+                            }
+                        }
+                        break;
+                    case PROCEDURE_SKIP:
+                        if(instruction instanceof Return){
+                            state = ProcedureState.PROCEDURE_INIT;
+                        }
+                        break;
+                    case PROCEDURE_BODY:
+                        if(instruction instanceof Return){
+                            state = ProcedureState.PROCEDURE_INIT;
+                            newLib.addInstruction(endNewLibProcedures, instruction);
+                            endNewLibProcedures++;
+                        } else {
+                            newLib.addInstruction(endNewLibProcedures, instruction);
+                            endNewLibProcedures++;
+                        }
+                        break;
+                    default:
+                        throw new ICodeLinkerException(instruction, "Invalid state found when linking procedure -> " + state);
+                }
             }
         }
     }
