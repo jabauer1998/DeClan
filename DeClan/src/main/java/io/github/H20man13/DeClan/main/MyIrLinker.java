@@ -11,6 +11,7 @@ import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.gen.LabelGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Call;
+import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
@@ -1013,7 +1014,7 @@ public class MyIrLinker {
 
                 if(libSymbols.containsVariableEntryWithICodePlace(placement.value.toString(), SymEntry.EXTERNAL)){
                     VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(placement.value.toString(), SymEntry.EXTERNAL);
-                    if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                    if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                         fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
                 }
 
@@ -1042,7 +1043,7 @@ public class MyIrLinker {
                         IdentExp ident = (IdentExp)assignExp;
                         if(libSymbols.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
                             VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
                         }
 
@@ -1062,7 +1063,7 @@ public class MyIrLinker {
                             IdentExp ident = (IdentExp)unExp.right;
                             if(libSymbols.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
                                 VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
-                                if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
                             }
 
@@ -1083,7 +1084,7 @@ public class MyIrLinker {
                             IdentExp leftExp = (IdentExp)binExp.left;
                             if(libSymbols.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
                                 VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
-                                if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
                             }
 
@@ -1102,7 +1103,7 @@ public class MyIrLinker {
                             IdentExp rightExp = (IdentExp)binExp.right;
                             if(libSymbols.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
                                 VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
-                                if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
                             }
 
@@ -1125,7 +1126,7 @@ public class MyIrLinker {
                         IdentExp leftExp = (IdentExp)exp.left;
                         if(libSymbols.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
                             VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
                         }
 
@@ -1144,7 +1145,7 @@ public class MyIrLinker {
                         IdentExp rightExp = (IdentExp)exp.right;
                         if(libSymbols.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
                             VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
                         }
 
@@ -1191,7 +1192,7 @@ public class MyIrLinker {
 
                         if(libSymbols.containsVariableEntryWithICodePlace(place, SymEntry.EXTERNAL)){
                             VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(place, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
                         }
 
@@ -1290,7 +1291,7 @@ public class MyIrLinker {
 
                 if(libSymbols.containsVariableEntryWithICodePlace(placement.value.toString(), SymEntry.EXTERNAL)){
                     VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(placement.value.toString(), SymEntry.EXTERNAL);
-                    if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                    if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                         fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                 }
 
@@ -1319,7 +1320,7 @@ public class MyIrLinker {
                         IdentExp ident = (IdentExp)assignExp;
                         if(libSymbols.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
                             VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                         } else if(!newProcedure.containsPlace(ident.ident)) {
                             fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
@@ -1341,7 +1342,7 @@ public class MyIrLinker {
                             IdentExp ident = (IdentExp)unExp.right;
                             if(libSymbols.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
                                 VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
-                                if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                             } else if(!newProcedure.containsPlace(ident.ident)) {
                                 fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
@@ -1364,7 +1365,7 @@ public class MyIrLinker {
                             IdentExp leftExp = (IdentExp)binExp.left;
                             if(libSymbols.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
                                 VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
-                                if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                             } else if(!newProcedure.containsPlace(leftExp.ident)) {
                                     fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
@@ -1385,7 +1386,7 @@ public class MyIrLinker {
                             IdentExp rightExp = (IdentExp)binExp.right;
                             if(libSymbols.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
                                 VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
-                                if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                             } else if(!newProcedure.containsPlace(rightExp.ident)) {
                                 fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
@@ -1410,7 +1411,7 @@ public class MyIrLinker {
                         IdentExp leftExp = (IdentExp)exp.left;
                         if(libSymbols.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
                             VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                         } else if(!newProcedure.containsPlace(leftExp.ident)) {
                             fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
@@ -1431,7 +1432,7 @@ public class MyIrLinker {
                         IdentExp rightExp = (IdentExp)exp.right;
                         if(libSymbols.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
                             VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                         } else if(!newProcedure.containsPlace(rightExp.ident)) {
                             fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
@@ -1480,7 +1481,7 @@ public class MyIrLinker {
 
                         if(libSymbols.containsVariableEntryWithICodePlace(place, SymEntry.EXTERNAL)){
                             VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(place, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                         } else if(!newProcedure.containsPlace(place)) {
                             fetchInternalDependentInstructions(library, prog, libraries, place, newProg);
@@ -1581,7 +1582,7 @@ public class MyIrLinker {
 
                 if(libSymbols.containsVariableEntryWithICodePlace(placement.value.toString(), SymEntry.EXTERNAL)){
                     VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(placement.value.toString(), SymEntry.EXTERNAL);
-                    if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                    if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                         fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                 }
 
@@ -1610,7 +1611,7 @@ public class MyIrLinker {
                         IdentExp ident = (IdentExp)assignExp;
                         if(libSymbols.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
                             VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                         } else if(!newProcedure.containsPlace(ident.ident)){
                             fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
@@ -1632,7 +1633,7 @@ public class MyIrLinker {
                             IdentExp ident = (IdentExp)unExp.right;
                             if(libSymbols.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
                                 VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
-                                if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                             } else if(!newProcedure.containsPlace(ident.ident)) {
                                 fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
@@ -1655,7 +1656,7 @@ public class MyIrLinker {
                             IdentExp leftExp = (IdentExp)binExp.left;
                             if(libSymbols.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
                                 VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
-                                if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                             } else if(!newProcedure.containsPlace(leftExp.ident)) {
                                 fetchInternalDependentInstructions(library, single, libraries, leftExp.ident, newLib);
@@ -1676,7 +1677,7 @@ public class MyIrLinker {
                             IdentExp rightExp = (IdentExp)binExp.right;
                             if(libSymbols.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
                                 VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
-                                if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                             } else if(!newProcedure.containsPlace(rightExp.ident)) {
                                 fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
@@ -1701,7 +1702,7 @@ public class MyIrLinker {
                         IdentExp leftExp = (IdentExp)exp.left;
                         if(libSymbols.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
                             VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                         } else if(!newProcedure.containsPlace(leftExp.ident)) {
                             fetchInternalDependentInstructions(library, single, libraries, leftExp.ident, newLib);
@@ -1722,7 +1723,7 @@ public class MyIrLinker {
                         IdentExp rightExp = (IdentExp)exp.right;
                         if(libSymbols.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
                             VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                         } else if(!newProcedure.containsPlace(rightExp.ident)) {
                             fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
@@ -1771,7 +1772,7 @@ public class MyIrLinker {
 
                         if(libSymbols.containsVariableEntryWithICodePlace(place, SymEntry.EXTERNAL)){
                             VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(place, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                         } else if(!newProcedure.containsPlace(place)) {
                             fetchInternalDependentInstructions(library, single, libraries, place, newLib);
@@ -1875,7 +1876,7 @@ public class MyIrLinker {
 
                         if(libSymbols.containsVariableEntryWithICodePlace(placement.value.toString(), SymEntry.EXTERNAL)){
                             VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(placement.value.toString(), SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                         }
 
@@ -1905,7 +1906,7 @@ public class MyIrLinker {
                                 IdentExp ident = (IdentExp)assignExp;
                                 if(libSymbols.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
                                     VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
-                                    if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                    if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                                 } else if(!newProcedure.containsPlace(ident.ident)) {
                                     fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
@@ -1917,7 +1918,7 @@ public class MyIrLinker {
                                     IdentExp ident = (IdentExp)unExp.right;
                                     if(libSymbols.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
                                         VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
-                                        if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                        if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                             fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                                     } else if(!newProcedure.containsPlace(ident.ident)) {
                                         fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
@@ -1930,7 +1931,7 @@ public class MyIrLinker {
                                     IdentExp leftExp = (IdentExp)binExp.left;
                                     if(libSymbols.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
                                         VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
-                                        if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                        if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                             fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                                     } else if(!newProcedure.containsPlace(leftExp.ident)) {
                                         fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
@@ -1951,7 +1952,7 @@ public class MyIrLinker {
                                     IdentExp rightExp = (IdentExp)binExp.right;
                                     if(libSymbols.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
                                         VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
-                                        if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                        if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                             fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                                     } else if(!newProcedure.containsPlace(rightExp.ident)){
                                         fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
@@ -1976,7 +1977,7 @@ public class MyIrLinker {
                                 IdentExp leftExp = (IdentExp)exp.left;
                                 if(libSymbols.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
                                     VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
-                                    if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                    if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                                 } else if(!newProcedure.containsPlace(leftExp.ident)) {
                                     fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
@@ -1997,7 +1998,7 @@ public class MyIrLinker {
                                 IdentExp rightExp = (IdentExp)exp.right;
                                 if(libSymbols.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
                                     VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
-                                    if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                    if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                                 } else if(!newProcedure.containsPlace(rightExp.ident)){
                                     fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
@@ -2046,7 +2047,7 @@ public class MyIrLinker {
 
                                 if(libSymbols.containsVariableEntryWithICodePlace(place, SymEntry.EXTERNAL)){
                                     VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(place, SymEntry.EXTERNAL);
-                                    if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                    if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
                                 } else if(!newProcedure.containsPlace(place)) {
                                     fetchInternalDependentInstructions(library, prog, libraries, place, newProg);
@@ -2152,7 +2153,7 @@ public class MyIrLinker {
 
                         if(libSymbols.containsVariableEntryWithICodePlace(placement.value.toString(), SymEntry.EXTERNAL)){
                             VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(placement.value.toString(), SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                         }
 
@@ -2181,7 +2182,7 @@ public class MyIrLinker {
                                 IdentExp ident = (IdentExp)assignExp;
                                 if(libSymbols.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
                                     VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
-                                    if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                    if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                                 } else if(!newProcedure.containsPlace(ident.ident)) {
                                     fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
@@ -2203,7 +2204,7 @@ public class MyIrLinker {
                                     IdentExp ident = (IdentExp)unExp.right;
                                     if(libSymbols.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
                                         VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
-                                        if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                        if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                             fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                                     } else if(!newProcedure.containsPlace(ident.ident)) {
                                         fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
@@ -2226,7 +2227,7 @@ public class MyIrLinker {
                                     IdentExp leftExp = (IdentExp)binExp.left;
                                     if(libSymbols.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
                                         VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
-                                        if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                        if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                             fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                                     } else if(!newProcedure.containsPlace(leftExp.ident)) {
                                         fetchInternalDependentInstructions(library, single, libraries, leftExp.ident, newLib);
@@ -2247,7 +2248,7 @@ public class MyIrLinker {
                                     IdentExp rightExp = (IdentExp)binExp.right;
                                     if(libSymbols.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
                                         VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
-                                        if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                        if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                             fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                                     } else if(!newProcedure.containsPlace(rightExp.ident)) {
                                         fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
@@ -2272,7 +2273,7 @@ public class MyIrLinker {
                                 IdentExp leftExp = (IdentExp)exp.left;
                                 if(libSymbols.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
                                     VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
-                                    if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                    if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                                 } else if(!newProcedure.containsPlace(leftExp.ident)) {
                                     fetchInternalDependentInstructions(library, single, libraries, leftExp.ident, newLib);
@@ -2293,7 +2294,7 @@ public class MyIrLinker {
                                 IdentExp rightExp = (IdentExp)exp.right;
                                 if(libSymbols.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
                                     VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
-                                    if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                    if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                                 } else if(!newProcedure.containsPlace(rightExp.ident)) {
                                     fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
@@ -2342,7 +2343,7 @@ public class MyIrLinker {
 
                                 if(libSymbols.containsVariableEntryWithICodePlace(place, SymEntry.EXTERNAL)){
                                     VarSymEntry entry = libSymbols.getVariableEntryByICodePlace(place, SymEntry.EXTERNAL);
-                                    if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                    if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                                 } else if(!newProcedure.containsPlace(place)) {
                                     fetchInternalDependentInstructions(library, single, libraries, place, newLib);
@@ -2999,14 +3000,12 @@ public class MyIrLinker {
     }
 
     private void linkDataSections(Prog startingProgram, Lib[] libraries, Prog newProg){
-        SymSec symbolTable = newProg.symbols;
-        DataSec dataSec = newProg.variables;
-        ProcSec procedures = newProg.procedures;
-        ProcSec progProcedures = startingProgram.procedures;
-        SymSec programSymbolTable = startingProgram.symbols;
-        DataSec programDataSec = startingProgram.variables;
-        for(int i = 0; i < programDataSec.getLength(); i++){
-            ICode instruction = programDataSec.getInstruction(i);
+        int beginningOfDataSection = startingProgram.beginningOfDataSection();
+        int endOfDataSection = startingProgram.endOfDataSection();
+
+        int endOfNewDataSection = newProg.endOfDataSection();
+        for(int i = beginningOfDataSection; i <= endOfDataSection; i++){
+            ICode instruction = startingProgram.getInstruction(i);
             if(instruction instanceof Assign){
                 Assign assign = (Assign)instruction;
 
@@ -3026,9 +3025,9 @@ public class MyIrLinker {
 
                     if(assignBinExp.left instanceof IdentExp){
                         IdentExp leftIdent = (IdentExp)assignBinExp.left;
-                        if(programSymbolTable.containsVariableEntryWithICodePlace(leftIdent.ident, SymEntry.EXTERNAL)){
-                            VarSymEntry entry = programSymbolTable.getVariableEntryByICodePlace(leftIdent.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                        if(startingProgram.containsVariableEntryWithICodePlace(leftIdent.ident, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = startingProgram.getVariableEntryByICodePlace(leftIdent.ident, SymEntry.EXTERNAL);
+                            if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, startingProgram, libraries, newProg);
                         }
 
@@ -3045,9 +3044,9 @@ public class MyIrLinker {
 
                     if(assignBinExp.right instanceof IdentExp){
                         IdentExp rightIdent = (IdentExp)assignBinExp.right;
-                        if(programSymbolTable.containsVariableEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL)){
-                            VarSymEntry entry = programSymbolTable.getVariableEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                        if(startingProgram.containsVariableEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = startingProgram.getVariableEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL);
+                            if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, startingProgram, libraries, newProg);
                         }
 
@@ -3065,9 +3064,9 @@ public class MyIrLinker {
                     UnExp assignUnExp = (UnExp)assignExp;
                     if(assignUnExp.right instanceof IdentExp){
                         IdentExp rightIdent = (IdentExp)assignUnExp.right;
-                        if(programSymbolTable.containsVariableEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL)){
-                            VarSymEntry entry = programSymbolTable.getVariableEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                        if(startingProgram.containsVariableEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = startingProgram.getVariableEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL);
+                            if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, startingProgram, libraries, newProg);
                         }
 
@@ -3083,9 +3082,9 @@ public class MyIrLinker {
                     }
                 } else if(assignExp instanceof IdentExp){
                     IdentExp assignIdentExp = (IdentExp)assignExp;
-                    if(programSymbolTable.containsVariableEntryWithICodePlace(assignIdentExp.ident, SymEntry.EXTERNAL)){
-                        VarSymEntry entry = programSymbolTable.getVariableEntryByICodePlace(assignIdentExp.ident, SymEntry.EXTERNAL);
-                        if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                    if(startingProgram.containsVariableEntryWithICodePlace(assignIdentExp.ident, SymEntry.EXTERNAL)){
+                        VarSymEntry entry = startingProgram.getVariableEntryByICodePlace(assignIdentExp.ident, SymEntry.EXTERNAL);
+                        if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                             fetchExternalDependentInstructions(entry.declanIdent, startingProgram, libraries, newProg);
                     }
 
@@ -3099,28 +3098,32 @@ public class MyIrLinker {
                         replacePlaceAcrossProgramAndLibraries(origPlace, place, startingProgram, libraries, startingProgram);
                     }
                 }
-                dataSec.addInstruction(assign);
+                newProg.addInstruction(endOfNewDataSection + 1, assign);
+                endOfNewDataSection++;
             } else if(instruction instanceof Call){
                 Call call = (Call)instruction;
                 
-                if(!procedures.containsProcedure(call.pname)){
-                    if(progProcedures.containsProcedure(call.pname))
+                if(!newProg.containsProcedure(call.pname)){
+                    if(startingProgram.containsProcedure(call.pname))
                         fetchInternalProcedure(startingProgram, call.pname, startingProgram, libraries, newProg);
                     else
                         fetchExternalProcedure(call.pname, startingProgram, libraries, newProg, startingProgram);
                 }
                    
 
-                for(Assign arg : call.params){
-                    String value = arg.value.toString();
+                for(Def arg : call.params){
+                    if(arg.val instanceof IdentExp){
+                        IdentExp exp = (IdentExp)arg.val;
+                        String value = exp.ident;
 
-                    if(programSymbolTable.containsVariableEntryWithICodePlace(value, SymEntry.EXTERNAL)){
-                        VarSymEntry entry = programSymbolTable.getVariableEntryByICodePlace(value, SymEntry.EXTERNAL);
-                        if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
-                            fetchExternalDependentInstructions(entry.declanIdent, startingProgram, libraries, newProg, startingProgram);
+                        if(startingProgram.containsVariableEntryWithICodePlace(value, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = startingProgram.getVariableEntryByICodePlace(value, SymEntry.EXTERNAL);
+                            if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                fetchExternalDependentInstructions(entry.declanIdent, startingProgram, libraries, newProg, startingProgram);
+                        }
                     }
 
-                    String paramName = arg.place;
+                    String paramName = arg.label;
                     if(!placeIsUniqueAcrossProgramAndLibraries(paramName, startingProgram, libraries)){
                         String place;
                         do{
@@ -3131,20 +3134,19 @@ public class MyIrLinker {
                     }
                 }
 
-                dataSec.addInstruction(call);
+                newProg.addInstruction(endOfNewDataSection + 1, call);
+                endOfNewDataSection++;
             }
         }
     }
 
     private void linkDataSections(Lib startingLibrary, Lib[] libraries, Lib newLib){
-        SymSec symbolTable = newLib.symbols;
-        DataSec dataSec = newLib.variables;
-        ProcSec procedures = newLib.procedures;
-        ProcSec libProcedures = startingLibrary.procedures;
-        SymSec programSymbolTable = startingLibrary.symbols;
-        DataSec programDataSec = startingLibrary.variables;
-        for(int i = 0; i < programDataSec.getLength(); i++){
-            ICode instruction = programDataSec.getInstruction(i);
+        int beginningOfDataSection = startingLibrary.beginningOfDataSection();
+        int endOfDataSection = startingLibrary.endOfDataSection();
+
+        int endOfNewDataSection = newLib.endOfDataSection();
+        for(int i = beginningOfDataSection; i <= endOfDataSection; i++){
+            ICode instruction = startingLibrary.getInstruction(i);
             if(instruction instanceof Assign){
                 Assign assign = (Assign)instruction;
 
@@ -3164,9 +3166,9 @@ public class MyIrLinker {
 
                     if(assignBinExp.left instanceof IdentExp){
                         IdentExp leftIdent = (IdentExp)assignBinExp.left;
-                        if(programSymbolTable.containsVariableEntryWithICodePlace(leftIdent.ident, SymEntry.EXTERNAL)){
-                            VarSymEntry entry = programSymbolTable.getVariableEntryByICodePlace(leftIdent.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                        if(startingLibrary.containsVariableEntryWithICodePlace(leftIdent.ident, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = startingLibrary.getVariableEntryByICodePlace(leftIdent.ident, SymEntry.EXTERNAL);
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, startingLibrary, libraries, newLib);
                         }
 
@@ -3183,9 +3185,9 @@ public class MyIrLinker {
 
                     if(assignBinExp.right instanceof IdentExp){
                         IdentExp rightIdent = (IdentExp)assignBinExp.right;
-                        if(programSymbolTable.containsVariableEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL)){
-                            VarSymEntry entry = programSymbolTable.getVariableEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                        if(startingLibrary.containsVariableEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = startingLibrary.getVariableEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL);
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, startingLibrary, libraries, newLib);
                         }
 
@@ -3203,9 +3205,9 @@ public class MyIrLinker {
                     UnExp assignUnExp = (UnExp)assignExp;
                     if(assignUnExp.right instanceof IdentExp){
                         IdentExp rightIdent = (IdentExp)assignUnExp.right;
-                        if(programSymbolTable.containsVariableEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL)){
-                            VarSymEntry entry = programSymbolTable.getVariableEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                        if(startingLibrary.containsVariableEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = startingLibrary.getVariableEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL);
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, startingLibrary, libraries, newLib);
                         }
 
@@ -3221,9 +3223,9 @@ public class MyIrLinker {
                     }
                 } else if(assignExp instanceof IdentExp){
                     IdentExp assignIdentExp = (IdentExp)assignExp;
-                    if(programSymbolTable.containsVariableEntryWithICodePlace(assignIdentExp.ident, SymEntry.EXTERNAL)){
-                        VarSymEntry entry = programSymbolTable.getVariableEntryByICodePlace(assignIdentExp.ident, SymEntry.EXTERNAL);
-                        if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                    if(startingLibrary.containsVariableEntryWithICodePlace(assignIdentExp.ident, SymEntry.EXTERNAL)){
+                        VarSymEntry entry = startingLibrary.getVariableEntryByICodePlace(assignIdentExp.ident, SymEntry.EXTERNAL);
+                        if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                             fetchExternalDependentInstructions(entry.declanIdent, startingLibrary, libraries, newLib);
                     }
 
@@ -3237,28 +3239,32 @@ public class MyIrLinker {
                         replacePlaceAcrossLibraries(origPlace, place, startingLibrary, libraries, startingLibrary);
                     }
                 }
-                dataSec.addInstruction(assign);
+                newLib.addInstruction(endOfNewDataSection + 1, assign);
+                endOfNewDataSection++;
             } else if(instruction instanceof Call){
                 Call call = (Call)instruction;
                 
-                if(!procedures.containsProcedure(call.pname)){
-                    if(libProcedures.containsProcedure(call.pname))
+                if(!newLib.containsProcedure(call.pname)){
+                    if(startingLibrary.containsProcedure(call.pname))
                         fetchInternalProcedure(startingLibrary, call.pname, startingLibrary, libraries, newLib);
                     else
                         fetchExternalProcedure(call.pname, startingLibrary, libraries, newLib, startingLibrary);
                 }
                    
 
-                for(Assign arg : call.params){
-                    String value = arg.value.toString();
+                for(Def arg : call.params){
+                    if(arg.val instanceof IdentExp){
+                        IdentExp identExp = (IdentExp)arg.val;
+                        String value = identExp.ident;
 
-                    if(programSymbolTable.containsVariableEntryWithICodePlace(value, SymEntry.EXTERNAL)){
-                        VarSymEntry entry = programSymbolTable.getVariableEntryByICodePlace(value, SymEntry.EXTERNAL);
-                        if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
-                            fetchExternalDependentInstructions(entry.declanIdent, startingLibrary, libraries, newLib, startingLibrary);
+                        if(startingLibrary.containsVariableEntryWithICodePlace(value, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = startingLibrary.getVariableEntryByICodePlace(value, SymEntry.EXTERNAL);
+                            if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                fetchExternalDependentInstructions(entry.declanIdent, startingLibrary, libraries, newLib, startingLibrary);
+                        }
                     }
 
-                    String paramName = arg.place;
+                    String paramName = arg.label;
                     if(!placeIsUniqueAcrossLibraries(paramName, startingLibrary, libraries)){
                         String place;
                         do{
@@ -3269,21 +3275,22 @@ public class MyIrLinker {
                     }
                 }
 
-                dataSec.addInstruction(call);
+                newLib.addInstruction(endOfNewDataSection + 1, call);
+                endOfNewDataSection++;
             }
         }
     }
 
     private void linkCodeSection(Prog program, Lib[] libraries, Prog newProg){
-        SymSec symbolTable = newProg.symbols;
-        SymSec programTable = program.symbols;
-        ProcSec procedureSec = newProg.procedures;
-        ProcSec progProcedures = program.procedures;
-        CodeSec codeSection = newProg.code;
-        CodeSec codeSec = program.code;
+        int newSymbolsBeginning = newProg.beginningOfSymbolSection();
+        int newSymbolsEnd = newProg.endOfSymbolSection(); 
 
-        for(int i = 0; i < codeSec.getLength(); i++){
-            ICode icode = codeSec.getInstruction(i);
+        int codeSectionBegin = program.beginningOfCodeSection();
+        int codeSectionEnd = program.endOfCodeSection();
+
+        int endOfNewProgCode = newProg.endOfCodeSection();
+        for(int i = codeSectionBegin; i <= codeSectionEnd; i++){
+            ICode icode = program.getInstruction(i);
             if(icode instanceof Assign){
                 Assign assignment = (Assign)icode;
 
@@ -3301,9 +3308,9 @@ public class MyIrLinker {
                 if(assignExp instanceof IdentExp){
                     IdentExp ident = (IdentExp)assignExp;
                     
-                    if(programTable.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
-                        VarSymEntry entry = programTable.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
-                        if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                    if(program.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
+                        VarSymEntry entry = program.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
+                        if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                             fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
                     }
 
@@ -3321,9 +3328,9 @@ public class MyIrLinker {
                     
                     if(unExp.right instanceof IdentExp){
                         IdentExp ident = (IdentExp)unExp.right;
-                        if(programTable.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
-                            VarSymEntry entry = programTable.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                        if(program.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = program.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
+                            if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
                         }
 
@@ -3342,9 +3349,9 @@ public class MyIrLinker {
 
                     if(binExp.left instanceof IdentExp){
                         IdentExp leftExp = (IdentExp)binExp.left;
-                        if(programTable.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
-                            VarSymEntry entry = programTable.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                        if(program.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = program.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
+                            if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
                         }
 
@@ -3361,9 +3368,9 @@ public class MyIrLinker {
 
                     if(binExp.right instanceof IdentExp){
                         IdentExp rightExp = (IdentExp)binExp.right;
-                        if(programTable.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
-                            VarSymEntry entry = programTable.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
-                            if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                        if(program.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = program.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
+                            if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
                         }
 
@@ -3384,9 +3391,9 @@ public class MyIrLinker {
                 BinExp exp = ifStat.exp;
                 if(exp.left instanceof IdentExp){
                     IdentExp leftExp = (IdentExp)exp.left;
-                    if(programTable.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
-                        VarSymEntry entry = programTable.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
-                        if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                    if(program.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
+                        VarSymEntry entry = program.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
+                        if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                             fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
                     }
 
@@ -3403,9 +3410,9 @@ public class MyIrLinker {
 
                 if(exp.right instanceof IdentExp){
                     IdentExp rightExp = (IdentExp)exp.right;
-                    if(programTable.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
-                        VarSymEntry entry = programTable.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
-                        if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                    if(program.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
+                        VarSymEntry entry = program.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
+                        if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                             fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
                     }
 
@@ -3442,24 +3449,28 @@ public class MyIrLinker {
             } else if(icode instanceof Call){
                 Call call = (Call)icode;
                 
-                if(!procedureSec.containsProcedure(call.pname)){
-                    if(progProcedures.containsProcedure(call.pname))
+                if(!newProg.containsProcedure(call.pname)){
+                    if(program.containsProcedure(call.pname))
                         fetchInternalProcedure(program, call.pname, libraries, newProg);
                     else
                         fetchExternalProcedure(call.pname, program, libraries, newProg, program);
                 }
                    
 
-                for(Assign arg : call.params){
-                    String value = arg.value.toString();
+                for(Def arg : call.params){
+                    if(arg.val instanceof IdentExp){
+                        IdentExp argVal = (IdentExp)arg.val;
+                        String value = argVal.ident;
 
-                    if(programTable.containsVariableEntryWithICodePlace(value, SymEntry.EXTERNAL)){
-                        VarSymEntry entry = programTable.getVariableEntryByICodePlace(value, SymEntry.EXTERNAL);
-                        if(!symbolTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
-                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                        if(program.containsVariableEntryWithICodePlace(value, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = program.getVariableEntryByICodePlace(value, SymEntry.EXTERNAL);
+                            if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                        }
                     }
+                    
 
-                    String paramName = arg.place;
+                    String paramName = arg.label;
                     if(!placeIsUniqueAcrossProgramAndLibraries(paramName, program, libraries)){
                         String place;
                         do{
@@ -3493,7 +3504,8 @@ public class MyIrLinker {
                 }
             }
 
-            codeSection.addInstruction(icode);
+            newProg.addInstruction(endOfNewProgCode + 1, icode);
+            endOfNewProgCode++;
         }
     }
 

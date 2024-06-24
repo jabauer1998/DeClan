@@ -19,6 +19,7 @@ import io.github.H20man13.DeClan.common.icode.symbols.RetSymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.VarSymEntry;
 import io.github.H20man13.DeClan.common.pat.P;
+import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 
 public class Lib implements ICode, Iterable<ICode> {
     protected List<ICode> instructions;
@@ -45,6 +46,451 @@ public class Lib implements ICode, Iterable<ICode> {
 
     public void addInstruction(ICode instruction){
         this.instructions.add(instruction);
+    }
+
+    public boolean containsVariableEntryWithICodePlace(String ident, int mask){
+        int symbolsBegin = this.beginningOfSymbolSection();
+        int symbolsEnd = this.endOfSymbolSection();
+        for(int i = symbolsBegin; i <= symbolsEnd; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(entry.icodePlace.equals(ident))
+                    if(entry.containsQualities(mask))
+                        return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsVariableEntryWithIdentifier(String ident, int mask){
+        int symbolsBegin = this.beginningOfSymbolSection();
+        int symbolsEnd = this.endOfSymbolSection();
+        for(int i = symbolsBegin; i <= symbolsEnd; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(entry.declanIdent.equals(ident))
+                    if(entry.containsQualities(mask))
+                        return true;
+            }
+        }
+        return false;
+    }
+
+    public VarSymEntry getVariableEntryByICodePlace(String ident, int mask){
+        int symbolsBegin = this.beginningOfSymbolSection();
+        int symbolsEnd = this.endOfSymbolSection();
+        for(int i = symbolsBegin; i <= symbolsEnd; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(entry.icodePlace.equals(ident))
+                    if(entry.containsQualities(mask))
+                        return entry;
+            }
+        }
+        throw new ICodeFormatException(this, "Cant find a Variable entry in the symbol table");
+    }
+
+    public boolean containsExternalReturnByPlace(String place){
+        int beginningOfSymbolSection = beginningOfSymbolSection();
+        int endingOfSymbolSection = endOfSymbolSection();
+
+        for(int i = beginningOfSymbolSection; i <= endingOfSymbolSection; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof RetSymEntry){
+                RetSymEntry entry = (RetSymEntry)instruction;
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                        return true;
+            }
+        }
+
+        return false;
+    }
+
+    public RetSymEntry getExternalReturnByPlace(String place){
+        int beginningOfSymbolSection = beginningOfSymbolSection();
+        int endingOfSymbolSection = endOfSymbolSection();
+
+        for(int i = beginningOfSymbolSection; i <= endingOfSymbolSection; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof RetSymEntry){
+                RetSymEntry entry = (RetSymEntry)instruction;
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                        return entry;
+            }
+        }
+
+        throw new ICodeFormatException(this, "No External Return Entry found in symbol table");
+    }
+
+    public boolean containsInternalReturnByPlace(String place){
+        int beginningOfSymbolSection = beginningOfSymbolSection();
+        int endingOfSymbolSection = endOfSymbolSection();
+
+        for(int i = beginningOfSymbolSection; i <= endingOfSymbolSection; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof RetSymEntry){
+                RetSymEntry entry = (RetSymEntry)instruction;
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(SymEntry.INTERNAL))
+                        return true;
+            }
+        }
+
+        return false;
+    }
+
+    public RetSymEntry getInternalReturnByPlace(String place){
+        int beginningOfSymbolSection = beginningOfSymbolSection();
+        int endingOfSymbolSection = endOfSymbolSection();
+
+        for(int i = beginningOfSymbolSection; i <= endingOfSymbolSection; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof RetSymEntry){
+                RetSymEntry entry = (RetSymEntry)instruction;
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(SymEntry.INTERNAL))
+                        return entry;
+            }
+        }
+
+        throw new ICodeFormatException(this, "No External Return Entry found in symbol table");
+    }
+
+    public boolean containsExternalVariableByPlace(String place){
+        int beginningOfSymbolSection = beginningOfSymbolSection();
+        int endingOfSymbolSection = endOfSymbolSection();
+
+        for(int i = beginningOfSymbolSection; i <= endingOfSymbolSection; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                        return true;
+            }
+        }
+
+        return false;
+    }
+
+    public VarSymEntry getExternalVariableByPlace(String place){
+        int beginningOfSymbolSection = beginningOfSymbolSection();
+        int endingOfSymbolSection = endOfSymbolSection();
+
+        for(int i = beginningOfSymbolSection; i <= endingOfSymbolSection; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                        return entry;
+            }
+        }
+
+        throw new ICodeFormatException(this, "No External Variable Entry found in symbol table");
+    }
+
+    public boolean containsInternalVariableByPlace(String place){
+        int beginningOfSymbolSection = beginningOfSymbolSection();
+        int endingOfSymbolSection = endOfSymbolSection();
+
+        for(int i = beginningOfSymbolSection; i <= endingOfSymbolSection; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(SymEntry.INTERNAL))
+                        return true;
+            }
+        }
+
+        return false;
+    }
+
+    public VarSymEntry getInternalVariableByPlace(String place){
+        int beginningOfSymbolSection = beginningOfSymbolSection();
+        int endingOfSymbolSection = endOfSymbolSection();
+
+        for(int i = beginningOfSymbolSection; i <= endingOfSymbolSection; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(SymEntry.INTERNAL))
+                        return entry;
+            }
+        }
+
+        throw new ICodeFormatException(this, "No External Variable Entry found in symbol table");
+    }
+
+    public boolean containsExternalParamaterByPlace(String place){
+        int beginningOfSymbolSection = beginningOfSymbolSection();
+        int endingOfSymbolSection = endOfSymbolSection();
+
+        for(int i = beginningOfSymbolSection; i <= endingOfSymbolSection; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof ParamSymEntry){
+                ParamSymEntry entry = (ParamSymEntry)instruction;
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                        return true;
+            }
+        }
+
+        return false;
+    }
+
+    public ParamSymEntry getExternalParamaterByPlace(String place){
+        int beginningOfSymbolSection = beginningOfSymbolSection();
+        int endingOfSymbolSection = endOfSymbolSection();
+
+        for(int i = beginningOfSymbolSection; i <= endingOfSymbolSection; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof ParamSymEntry){
+                ParamSymEntry entry = (ParamSymEntry)instruction;
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                        return entry;
+            }
+        }
+
+        throw new ICodeFormatException(this, "No External Paramater Entry found in symbol table");
+    }
+
+    public boolean containsInternalParamaterByPlace(String place){
+        int beginningOfSymbolSection = beginningOfSymbolSection();
+        int endingOfSymbolSection = endOfSymbolSection();
+
+        for(int i = beginningOfSymbolSection; i <= endingOfSymbolSection; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof ParamSymEntry){
+                ParamSymEntry entry = (ParamSymEntry)instruction;
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(SymEntry.INTERNAL))
+                        return true;
+            }
+        }
+
+        return false;
+    }
+
+    public ParamSymEntry getInternalParamaterByPlace(String place){
+        int beginningOfSymbolSection = beginningOfSymbolSection();
+        int endingOfSymbolSection = endOfSymbolSection();
+
+        for(int i = beginningOfSymbolSection; i <= endingOfSymbolSection; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof ParamSymEntry){
+                ParamSymEntry entry = (ParamSymEntry)instruction;
+                if(entry.icodePlace.equals(place))
+                    if(entry.containsQualities(SymEntry.INTERNAL))
+                        return entry;
+            }
+        }
+
+        throw new ICodeFormatException(this, "No External Paramater Entry found in symbol table");
+    }
+
+    public boolean containsExternalReturnByFunctionName(String funcName){
+        int begin = beginningOfSymbolSection();
+        int end = endOfSymbolSection();
+        for(int i = begin; i <= end; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof RetSymEntry){
+                RetSymEntry entry = (RetSymEntry)instruction;
+                if(entry.funcName.equals(funcName))
+                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                        return true;
+            }
+        }
+        return false;
+    }
+
+    public RetSymEntry getExternalReturnByFunctionName(String funcName){
+        int begin = beginningOfSymbolSection();
+        int end = endOfSymbolSection();
+        for(int i = begin; i <= end; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof RetSymEntry){
+                RetSymEntry entry = (RetSymEntry)instruction;
+                if(entry.funcName.equals(funcName))
+                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                        return entry;
+            }
+        }
+
+        throw new ICodeFormatException(this, "No return entry with funcName " + funcName + " found");
+    }
+
+    public boolean containsInternalReturnByFunctionName(String funcName){
+        int begin = beginningOfSymbolSection();
+        int end = endOfSymbolSection();
+        for(int i = begin; i <= end; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof RetSymEntry){
+                RetSymEntry entry = (RetSymEntry)instruction;
+                if(entry.funcName.equals(funcName))
+                    if(entry.containsQualities(SymEntry.INTERNAL))
+                        return true;
+            }
+        }
+        return false;
+    }
+
+    public RetSymEntry getInternalReturnByFunctionName(String funcName){
+        int begin = beginningOfSymbolSection();
+        int end = endOfSymbolSection();
+        for(int i = begin; i <= end; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof RetSymEntry){
+                RetSymEntry entry = (RetSymEntry)instruction;
+                if(entry.funcName.equals(funcName))
+                    if(entry.containsQualities(SymEntry.INTERNAL))
+                        return entry;
+            }
+        }
+
+        throw new ICodeFormatException(this, "No return entry with funcName " + funcName + " found");
+    }
+
+    public boolean containsExternalParamaterByFunctionNameAndNumber(String funcName, int number){
+        int begin = beginningOfSymbolSection();
+        int end = endOfSymbolSection();
+        for(int i = begin; i <= end; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof ParamSymEntry){
+                ParamSymEntry entry = (ParamSymEntry)instruction;
+                if(entry.paramNumber == number)
+                    if(entry.funcName.equals(funcName))
+                        if(entry.containsQualities(SymEntry.EXTERNAL))
+                            return true;
+            }
+        }
+        return false;
+    }
+
+    public ParamSymEntry getExternalParamaterByFunctionNameAndNumber(String funcName, int number){
+        int begin = beginningOfSymbolSection();
+        int end = endOfSymbolSection();
+        for(int i = begin; i <= end; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof ParamSymEntry){
+                ParamSymEntry entry = (ParamSymEntry)instruction;
+                if(entry.paramNumber == number)
+                    if(entry.funcName.equals(funcName))
+                        if(entry.containsQualities(SymEntry.EXTERNAL))
+                            return entry;
+            }
+        }
+
+        throw new ICodeFormatException(this, "No param entry with func" + funcName + "(#" + number + ')');
+    }
+
+    public boolean containsInternalParamaterByFunctionNameAndNumber(String funcName, int number){
+        int begin = beginningOfSymbolSection();
+        int end = endOfSymbolSection();
+        for(int i = begin; i <= end; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof ParamSymEntry){
+                ParamSymEntry entry = (ParamSymEntry)instruction;
+                if(entry.paramNumber == number)
+                    if(entry.funcName.equals(funcName))
+                        if(entry.containsQualities(SymEntry.INTERNAL))
+                            return true;
+            }
+        }
+        return false;
+    }
+
+    public ParamSymEntry getInternalParamaterByFunctionNameAndNumber(String funcName, int number){
+        int begin = beginningOfSymbolSection();
+        int end = endOfSymbolSection();
+        for(int i = begin; i <= end; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof ParamSymEntry){
+                ParamSymEntry entry = (ParamSymEntry)instruction;
+                if(entry.paramNumber == number)
+                    if(entry.funcName.equals(funcName))
+                        if(entry.containsQualities(SymEntry.INTERNAL))
+                            return entry;
+            }
+        }
+
+        throw new ICodeFormatException(this, "No param entry with funcName " + funcName + "(#" + number + ')');
+    }
+
+    public boolean containsExternalVariableByIdent(String ident){
+        int begin = beginningOfSymbolSection();
+        int end = endOfSymbolSection();
+
+        for(int i = begin; i <= end; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(entry.declanIdent.equals(ident))
+                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                        return true;
+            }
+        }
+
+        return false;
+    }
+
+    public VarSymEntry getExternalVariableByIdent(String ident){
+        int begin = beginningOfSymbolSection();
+        int end = endOfSymbolSection();
+
+        for(int i = begin; i <= end; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(entry.declanIdent.equals(ident))
+                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                        return entry;
+            }
+        }
+
+        throw new ICodeFormatException(this, "External Variable entry does not exist with name " + ident);
+    }
+
+    public boolean containsInternalVariableByIdent(String ident){
+        int begin = beginningOfSymbolSection();
+        int end = endOfSymbolSection();
+
+        for(int i = begin; i <= end; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(entry.declanIdent.equals(ident))
+                    if(entry.containsQualities(SymEntry.INTERNAL))
+                        return true;
+            }
+        }
+
+        return false;
+    }
+
+    public VarSymEntry getInternalVariableByIdent(String ident){
+        int begin = beginningOfSymbolSection();
+        int end = endOfSymbolSection();
+
+        for(int i = begin; i <= end; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(entry.declanIdent.equals(ident))
+                    if(entry.containsQualities(SymEntry.INTERNAL))
+                        return entry;
+            }
+        }
+
+        throw new ICodeFormatException(this, "External Variable entry does not exist with name " + ident);
     }
 
     @Override
