@@ -493,6 +493,25 @@ public class Lib implements ICode, Iterable<ICode> {
         throw new ICodeFormatException(this, "External Variable entry does not exist with name " + ident);
     }
 
+    public boolean placeDefinedInProcedure(String procedure, String place){
+        if(containsProcedure(procedure)){
+            int begin = beginningOfProcedure(procedure);
+            int end = endOfProcedure(procedure);
+            for(int i = begin; i <= end; i++){
+                ICode instruction = getInstruction(i);
+                if(instruction instanceof Def){
+                    Def def = (Def)instruction;
+                    if(def.label.equals(place)){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public boolean isConstant() {
         throw new ICodeFormatException(this, "Cant determine if lib is a constant");
