@@ -311,7 +311,7 @@ public class MyIrLinker {
                                                 if(library.containsProcedure(funcCall.pname))
                                                     fetchInternalProcedure(library, funcCall.pname, single, libraries, newLib);
                                                 else
-                                                    fetchExternalProcedure(funcCall.pname, single, libraries, newLib, currentLib);
+                                                    fetchExternalProcedure(funcCall.pname, single, libraries, newLib, library);
                                             }
             
                                             int numArgs = funcCall.params.size();
@@ -322,9 +322,9 @@ public class MyIrLinker {
                                                     if(library.containsVariableEntryWithICodePlace(val.ident, SymEntry.EXTERNAL)){
                                                         VarSymEntry entry = library.getVariableEntryByICodePlace(val.ident, SymEntry.EXTERNAL);
                                                         if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
-                                                            fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, currentLib);
+                                                            fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
                                                         else
-                                                            fetchInternalDependentInstructions(currentLib, single, libraries, val.ident, newLib);
+                                                            fetchInternalDependentInstructions(library, single, libraries, val.ident, newLib);
                                                     }
             
                                                     String oldPlace = val.ident;
@@ -334,7 +334,7 @@ public class MyIrLinker {
                                                             newPlace = gen.genNext();
                                                         } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
                         
-                                                        replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, currentLib);
+                                                        replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                                                     }
                                                 }
                                             }
