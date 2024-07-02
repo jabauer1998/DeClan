@@ -48,6 +48,11 @@ public class Lib implements ICode, Iterable<ICode> {
         this.instructions.add(instruction);
     }
 
+    public void addSymEntry(SymEntry entry){
+        int entryEnd = this.endOfSymbolSection();
+        addInstruction(entryEnd + 1, entry);
+    }
+
     public boolean containsVariableEntryWithICodePlace(String ident, int mask){
         int symbolsBegin = this.beginningOfSymbolSection();
         int symbolsEnd = this.endOfSymbolSection();
@@ -510,6 +515,17 @@ public class Lib implements ICode, Iterable<ICode> {
         } else {
             return false;
         }
+    }
+
+    public boolean dataSectionContainsInstruction(ICode paramInstr){
+        int begin = beginningOfDataSection();
+        int end = endOfDataSection();
+        for(int i = begin; i <= end; i++){
+            ICode localInstr = getInstruction(i);
+            if(paramInstr.equals(localInstr))
+                return true;
+        }
+        return false;
     }
 
     @Override
