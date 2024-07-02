@@ -719,6 +719,33 @@ public class MyIrLinker {
                 }
             }
         }
+
+        int beginBss = currentLib.beginningOfBssSection();
+        int endBss = currentLib.endOfBssSection();
+        for(int i = beginBss; i <= endBss; i++){
+            ICode instruction = currentLib.getInstruction(i);
+            if(instruction instanceof Def){
+                Def definition = (Def)instruction;
+                if(!placeIsUniqueAcrossLibraries(definition.label, single, libraries)){
+                    String place = null;    
+                    do{
+                        place = gen.genNext();
+                    } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
+                    
+                    replacePlaceAcrossLibraries(definition.label, place, single, libraries, currentLib);
+                }
+
+                int endNewBss = newLib.endOfBssSection();
+
+                if(!newLib.dataSectionContainsInstruction(definition))
+                    newLib.addInstruction(endNewBss + 1, definition);
+                if(currentLib.containsVariableEntryWithICodePlace(labelName, SymEntry.INTERNAL)){
+                    VarSymEntry entry = currentLib.getVariableEntryByICodePlace(labelName, SymEntry.INTERNAL);
+                    if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                        newLib.addSymEntry(entry);
+                }
+            }
+        }
     }
 
      private void fetchInternalDependentInstructions(Lib currentLib, Prog program, Lib[] libraries, String labelName, Prog newProgram){
