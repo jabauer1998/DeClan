@@ -63,79 +63,103 @@ public class MyIrLinker {
     }
 
     private void fetchExternalDependentInstructions(String identName, Prog program, Lib[] libraries, Prog newProgram, Lib... libsToIgnore){
-        ProcSec procSec = newProgram.procedures;
-        SymSec newTable = newProgram.symbols;
-        DataSec dataInstructions = newProgram.variables;
-
-        loop: for(int libIndex = 0; libIndex < libraries.length; libIndex++){
+        for(int libIndex = 0; libIndex < libraries.length; libIndex++){
             Lib library = libraries[libIndex];
             if(!Utils.arrayContainsValue(library, libsToIgnore)){
-                SymSec libSymbols = library.symbols;
-                if(libSymbols.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL)){
-                    VarSymEntry libEntry = libSymbols.getVariableEntryByIdentifier(identName, SymEntry.INTERNAL);
-                    DataSec libData = library.variables;
-                    ProcSec libProc = library.procedures;
-                    for(int z = 0; z < libData.getLength(); z++){
-                        ICode icodeLib = libData.getInstruction(z);
-                        if(icodeLib instanceof Assign){
-                            Assign assignLib = (Assign)icodeLib;
+                if(library.containsInternalVariableByIdent(identName)){
+                    VarSymEntry libEntry = library.getInternalVariableByIdent(identName);
+                    int libDataBegin = library.beginningOfDataSection();
+                    int libDataEnd = library.endOfDataSection();
+                    for(int z = libDataBegin; z <= libDataEnd; z++){
+                        ICode icodeLib = library.getInstruction(z);
+                        if(icodeLib instanceof Def){
+                            Def assignLib = (Def)icodeLib;
+                            if(assignLib.label.equals(libEntry.icodePlace)){
+                                Exp exp = assignLib.val;
+                                if(exp instanceof IdentExp){
+                                    IdentExp identExp = (IdentExp)exp;
 
-                            if(assignLib.place.equals(libEntry.icodePlace)){
-                                if(assignLib.getScope() == Assign.Scope.EXTERNAL_RETURN){
-                                    ICode funcCallICode = libData.getInstruction(z - 1);
-                                    if(funcCallICode instanceof Call){
-                                        Call funcCall = (Call)funcCallICode;
-
-                                        if(!procSec.containsProcedure(funcCall.pname)){
-                                            if(libProc.containsProcedure(funcCall.pname))
-                                                fetchInternalProcedure(library, funcCall.pname, program, libraries, newProgram);
-                                            else
-                                                fetchExternalProcedure(funcCall.pname, program, libraries, newProgram, library);
-                                        }
-
-                                        int numArgs = funcCall.params.size();
-                                        for(int argIndex = 0; argIndex < numArgs; argIndex++){
-                                            Assign arg = funcCall.params.get(argIndex);
-                                            if(library.containsVariableEntryWithICodePlace(arg.value.toString(), SymEntry.EXTERNAL)){
-                                                VarSymEntry entry = library.getVariableEntryByICodePlace(arg.value.toString(), SymEntry.EXTERNAL);
-                                                if(!newTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
-                                                    fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProgram, library);
-                                            } else {
-                                                fetchInternalDependentInstructions(library, program, libraries, arg.value.toString(), newProgram);
-                                            }
-
-                                            String oldPlace = arg.place;
-                                            if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
-                                                String newPlace = null;    
-                                                do{
-                                                    newPlace = gen.genNext();
-                                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                                    if(identExp.scope == ICode.Scope.RETURN){
+                                        ICode funcCallICode = library.getInstruction(z - 1);
+                                        if(funcCallICode instanceof Call){
+                                            Call funcCall = (Call)funcCallICode;
     
-                                                replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
+                                            if(!newProgram.containsProcedure(funcCall.pname)){
+                                                if(library.containsProcedure(funcCall.pname))
+                                                    fetchInternalProcedure(library, funcCall.pname, program, libraries, newProgram);
+                                                else
+                                                    fetchExternalProcedure(funcCall.pname, program, libraries, newProgram, library);
                                             }
-                                        }
-
-                                        if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries)){
-                                            String newPlace = null;    
-                                            do{
-                                                newPlace = gen.genNext();
-                                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
-
-                                            replacePlaceAcrossProgramAndLibraries(assignLib.place, newPlace, program, libraries, library);
-                                        }
-
-                                        if(!newProgram.dataSectionContainsInstruction(funcCall) && !newProgram.dataSectionContainsInstruction(assignLib)){
-                                            dataInstructions.addInstruction(funcCall);
-                                            dataInstructions.addInstruction(assignLib);
+    
+                                            int numArgs = funcCall.params.size();
+                                            for(int argIndex = 0; argIndex < numArgs; argIndex++){
+                                                Def arg = funcCall.params.get(argIndex);
+                                                if(arg.val instanceof IdentExp){
+                                                    IdentExp expVal = (IdentExp)arg.val;
+                                                    if(library.containsVariableEntryWithICodePlace(expVal.ident, SymEntry.EXTERNAL)){
+                                                        VarSymEntry entry = library.getVariableEntryByICodePlace(expVal.ident, SymEntry.EXTERNAL);
+                                                        if(!newProgram.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProgram, library);
+                                                    } else {
+                                                        fetchInternalDependentInstructions(library, program, libraries, expVal.ident, newProgram);
+                                                    }
+    
+                                                    String oldPlace = arg.label;
+                                                    if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
+                                                        String newPlace = null;    
+                                                        do{
+                                                            newPlace = gen.genNext();
+                                                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+            
+                                                        replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
+                                                    }
+                                                }
+                                            }
+    
+                                            int endNewData = newProgram.endOfDataSection();
+                                            newProgram.addInstruction(endNewData + 1, funcCall);
                                         }
                                     }
-                                } else {
-                                    Exp exp = assignLib.value;
-                                    if(exp instanceof IdentExp){
-                                        IdentExp identExp = (IdentExp)exp;
+
+                                    if(library.containsVariableEntryWithICodePlace(identExp.ident, SymEntry.EXTERNAL)){
+                                        VarSymEntry entry = library.getVariableEntryByICodePlace(identExp.ident, SymEntry.EXTERNAL);
+                                        if(!newProgram.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProgram, library);
+                                    } else {
+                                        fetchInternalDependentInstructions(library, program, libraries, identExp.ident, newProgram);
+                                    }
+
+                                    String oldPlace = identExp.ident;
+                                    if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
+                                        String newPlace = null;    
+                                        do{
+                                            newPlace = gen.genNext();
+                                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+
+                                        replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
+                                    }
+
+                                    if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.label, program, libraries)){
+                                        String place = null;    
+                                        do{
+                                            place = gen.genNext();
+                                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                                        replacePlaceAcrossProgramAndLibraries(assignLib.label, place, program, libraries, library);
+                                    }
+
+                                    int endNewData = newProgram.endOfDataSection();
+                                    if(!newProgram.dataSectionContainsInstruction(assignLib))
+                                        newProgram.addInstruction(endNewData + 1, assignLib);
+                                    if(!newProgram.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
+                                        newProgram.addSymEntry(libEntry);
+                                } else if(exp instanceof UnExp){
+                                    UnExp unary = (UnExp)exp;
+                                    if(unary.right instanceof IdentExp){
+                                        IdentExp identExp = (IdentExp)unary.right;
                                         if(library.containsVariableEntryWithICodePlace(identExp.ident, SymEntry.EXTERNAL)){
                                             VarSymEntry entry = library.getVariableEntryByICodePlace(identExp.ident, SymEntry.EXTERNAL);
-                                            if(!newTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                            if(!newProgram.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                                 fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProgram, library);
                                         } else {
                                             fetchInternalDependentInstructions(library, program, libraries, identExp.ident, newProgram);
@@ -150,133 +174,98 @@ public class MyIrLinker {
 
                                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
                                         }
-
-                                        if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries)){
-                                            String place = null;    
-                                            do{
-                                                place = gen.genNext();
-                                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
-
-                                            replacePlaceAcrossProgramAndLibraries(assignLib.place, place, program, libraries, library);
-                                        }
-
-                                        if(!newProgram.dataSectionContainsInstruction(assignLib))
-                                            dataInstructions.addInstruction(assignLib);
-                                        if(!newTable.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
-                                            newTable.addEntry(libEntry);
-                                    } else if(exp instanceof UnExp){
-                                        UnExp unary = (UnExp)exp;
-                                        if(unary.right instanceof IdentExp){
-                                            IdentExp identExp = (IdentExp)unary.right;
-                                            if(library.containsVariableEntryWithICodePlace(identExp.ident, SymEntry.EXTERNAL)){
-                                                VarSymEntry entry = library.getVariableEntryByICodePlace(identExp.ident, SymEntry.EXTERNAL);
-                                                if(!newTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
-                                                    fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProgram, library);
-                                            } else {
-                                                fetchInternalDependentInstructions(library, program, libraries, identExp.ident, newProgram);
-                                            }
-
-                                            String oldPlace = identExp.ident;
-                                            if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
-                                                String newPlace = null;    
-                                                do{
-                                                    newPlace = gen.genNext();
-                                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
-    
-                                                replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
-                                            }
-                                        }
-
-                                        if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries)){
-                                            String place = null;    
-                                            do{
-                                                place = gen.genNext();
-                                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
-
-                                            replacePlaceAcrossProgramAndLibraries(assignLib.place, place, program, libraries, library);
-                                        }
-
-                                        if(!newProgram.dataSectionContainsInstruction(assignLib))
-                                            dataInstructions.addInstruction(assignLib);
-                                        if(!newTable.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
-                                            newTable.addEntry(libEntry);
-                                    } else if(exp instanceof BinExp){
-                                        BinExp binary = (BinExp)exp;
-
-                                        if(binary.left instanceof IdentExp){
-                                            IdentExp leftIdent = (IdentExp)binary.left;
-                                            if(library.containsVariableEntryWithICodePlace(leftIdent.ident, SymEntry.EXTERNAL)){
-                                                VarSymEntry entry = library.getVariableEntryByICodePlace(leftIdent.ident, SymEntry.EXTERNAL);
-                                                if(!newTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
-                                                    fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProgram, library);
-                                            } else {
-                                                fetchInternalDependentInstructions(library, program, libraries, leftIdent.ident, newProgram);
-                                            }
-
-                                            String oldPlace = leftIdent.ident;
-                                            if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
-                                                String newPlace = null;    
-                                                do{
-                                                    newPlace = gen.genNext();
-                                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
-    
-                                                replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
-                                            }
-                                        }
-
-                                        if(binary.right instanceof IdentExp){
-                                            IdentExp rightIdent = (IdentExp)binary.right;
-                                            if(library.containsVariableEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL)){
-                                                VarSymEntry entry = library.getVariableEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL);
-                                                if(!newTable.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
-                                                    fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProgram, library);
-                                            } else {
-                                                fetchInternalDependentInstructions(library, program, libraries, rightIdent.ident, newProgram);
-                                            }
-
-                                            String oldPlace = rightIdent.ident;
-                                            if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
-                                                String newPlace = null;    
-                                                do{
-                                                    newPlace = gen.genNext();
-                                                } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
-    
-                                                replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
-                                            }
-                                        }
-
-                                        if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries)){
-                                            String place = null;    
-                                            do{
-                                                place = gen.genNext();
-                                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
-
-                                            replacePlaceAcrossProgramAndLibraries(assignLib.place, place, program, libraries, library);
-                                        }
-
-                                        if(!newProgram.dataSectionContainsInstruction(assignLib))
-                                            dataInstructions.addInstruction(assignLib);
-                                        if(!newTable.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
-                                            newTable.addEntry(libEntry);
-                                    } else {
-                                        if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.place, program, libraries)){
-                                            String place = null;    
-                                            do{
-                                                place = gen.genNext();
-                                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
-
-                                            replacePlaceAcrossProgramAndLibraries(assignLib.place, place, program, libraries, library);
-                                        }
-
-                                        if(!newProgram.dataSectionContainsInstruction(assignLib))
-                                            dataInstructions.addInstruction(assignLib);
-                                        if(!newTable.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
-                                            newTable.addEntry(libEntry);
                                     }
+
+                                    if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.label, program, libraries)){
+                                        String place = null;    
+                                        do{
+                                            place = gen.genNext();
+                                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                                        replacePlaceAcrossProgramAndLibraries(assignLib.label, place, program, libraries, library);
+                                    }
+
+                                    int endNewData = newProgram.endOfDataSection();
+                                    if(!newProgram.dataSectionContainsInstruction(assignLib))
+                                        newProgram.addInstruction(endNewData + 1, assignLib);
+                                    if(!newProgram.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
+                                        newProgram.addSymEntry(libEntry);
+                                } else if(exp instanceof BinExp){
+                                    BinExp binary = (BinExp)exp;
+
+                                    if(binary.left instanceof IdentExp){
+                                        IdentExp leftIdent = (IdentExp)binary.left;
+                                        if(library.containsVariableEntryWithICodePlace(leftIdent.ident, SymEntry.EXTERNAL)){
+                                            VarSymEntry entry = library.getVariableEntryByICodePlace(leftIdent.ident, SymEntry.EXTERNAL);
+                                            if(!newProgram.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProgram, library);
+                                        } else {
+                                            fetchInternalDependentInstructions(library, program, libraries, leftIdent.ident, newProgram);
+                                        }
+
+                                        String oldPlace = leftIdent.ident;
+                                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
+                                            String newPlace = null;    
+                                            do{
+                                                newPlace = gen.genNext();
+                                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+
+                                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
+                                        }
+                                    }
+
+                                    if(binary.right instanceof IdentExp){
+                                        IdentExp rightIdent = (IdentExp)binary.right;
+                                        if(library.containsVariableEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL)){
+                                            VarSymEntry entry = library.getVariableEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL);
+                                            if(!newProgram.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProgram, library);
+                                        } else {
+                                            fetchInternalDependentInstructions(library, program, libraries, rightIdent.ident, newProgram);
+                                        }
+
+                                        String oldPlace = rightIdent.ident;
+                                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
+                                            String newPlace = null;    
+                                            do{
+                                                newPlace = gen.genNext();
+                                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+
+                                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
+                                        }
+                                    }
+
+                                    if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.label, program, libraries)){
+                                        String place = null;    
+                                        do{
+                                            place = gen.genNext();
+                                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                                        replacePlaceAcrossProgramAndLibraries(assignLib.label, place, program, libraries, library);
+                                    }
+
+                                    int endNewData = newProgram.endOfDataSection();
+                                    if(!newProgram.dataSectionContainsInstruction(assignLib))
+                                        newProgram.addInstruction(endNewData + 1, assignLib);
+                                    if(!newProgram.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
+                                        newProgram.addSymEntry(libEntry);
+                                } else {
+                                    if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.label, program, libraries)){
+                                        String place = null;    
+                                        do{
+                                            place = gen.genNext();
+                                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                                        replacePlaceAcrossProgramAndLibraries(assignLib.label, place, program, libraries, library);
+                                    }
+
+                                    int endNewData = newProgram.endOfDataSection();
+                                    if(!newProgram.dataSectionContainsInstruction(assignLib))
+                                        newProgram.addInstruction(endNewData + 1, assignLib);
+                                    if(!newProgram.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
+                                        newProgram.addSymEntry(libEntry);
                                 }
-
-
-                                break loop;
+                                return;
                             }
                         }
                     }
