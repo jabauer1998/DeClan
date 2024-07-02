@@ -20,9 +20,9 @@ import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.dag.DagValueNode;
 import io.github.H20man13.DeClan.common.dag.DagVariableNode;
 import io.github.H20man13.DeClan.common.exception.UtilityException;
+import io.github.H20man13.DeClan.common.flow.BasicBlock;
 import io.github.H20man13.DeClan.common.dag.DagNode.ScopeType;
 import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
-import io.github.H20man13.DeClan.common.flow.block.BasicBlock;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.End;
@@ -32,6 +32,7 @@ import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
+import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -140,7 +141,35 @@ public class Utils {
         List<ICode> codeInBlock = block.getIcode();
         if(codeInBlock.size() > 0){
             ICode firstICode = codeInBlock.get(0);
-            if(firstICode instanceof Label){
+            if(firstICode instanceof StandardLabel){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean endOfBlockIsReturn(BasicBlock block){
+        List<ICode> codeInBlock = block.getIcode();
+        if(codeInBlock.size() > 0){
+            ICode lastICode = codeInBlock.get(codeInBlock.size() - 1);
+            if(lastICode instanceof Return){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean beginningOfBlockIsProcedureHeader(BasicBlock block){
+        List<ICode> codeInBlock = block.getIcode();
+        if(codeInBlock.size() > 0){
+            ICode firstICode = codeInBlock.get(0);
+            if(firstICode instanceof ProcLabel){
                 return true;
             } else {
                 return false;

@@ -32,6 +32,10 @@ public class Lib implements ICode, Iterable<ICode> {
         this.instructions = instructions;
     }
 
+    public int getSize(){
+        return instructions.size();
+    }
+
     public List<ICode> getICode(){
         return instructions;
     }

@@ -26,16 +26,13 @@ import io.github.H20man13.DeClan.common.dag.DagValueNode;
 import io.github.H20man13.DeClan.common.dag.DagVariableNode;
 import io.github.H20man13.DeClan.common.dag.DagNode.ScopeType;
 import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
+import io.github.H20man13.DeClan.common.exception.OptimizerException;
+import io.github.H20man13.DeClan.common.flow.BasicBlock;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.EntryNode;
 import io.github.H20man13.DeClan.common.flow.ExitNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
-import io.github.H20man13.DeClan.common.flow.ProcedureEntryNode;
-import io.github.H20man13.DeClan.common.flow.ProcedureExitNode;
-import io.github.H20man13.DeClan.common.flow.block.BasicBlock;
-import io.github.H20man13.DeClan.common.flow.block.ProcedureBeginningBlock;
-import io.github.H20man13.DeClan.common.flow.block.ProcedureEndingBlock;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Call;
@@ -55,7 +52,6 @@ import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
-import io.github.H20man13.DeClan.common.icode.procedure.Proc;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
@@ -106,150 +102,11 @@ public class MyOptimizer {
         return this.liveAnal;
     }
 
-    public List<BasicBlock> buildDataBlocks(){
-        DataSec dataSec = intermediateCode.variables;
-        List<Integer> codeFirsts = findFirstsInICode(dataSec.intermediateCode, false);
-        List<BasicBlock> dataBlocks = new LinkedList<BasicBlock>();
-
-        for(int leaderIndex = 0; leaderIndex < codeFirsts.size(); leaderIndex++){
-            int beginIndex = codeFirsts.get(leaderIndex);
-            int endIndex;
-            if(leaderIndex + 1 < codeFirsts.size()){
-                endIndex = codeFirsts.get(leaderIndex + 1) - 1;
-            } else {
-                endIndex = dataSec.intermediateCode.size() - 1;
-            }
-            List<ICode> basicBlockList = new LinkedList<ICode>();
-            for(int i = beginIndex; i <= endIndex; i++){
-                basicBlockList.add(dataSec.intermediateCode.get(i));
-            }
-            dataBlocks.add(new BasicBlock(basicBlockList));
-        }
-        return dataBlocks;
-    }
-
-    public List<BasicBlock> buildCodeBlocks(){
-         CodeSec code = intermediateCode.code;
-         List<Integer> codeFirsts = findFirstsInICode(code.intermediateCode, false);
-         List<BasicBlock> codeBlocks = new LinkedList<BasicBlock>();
-
-        for(int leaderIndex = 0; leaderIndex < codeFirsts.size(); leaderIndex++){
-            int beginIndex = codeFirsts.get(leaderIndex);
-            int endIndex;
-            if(leaderIndex + 1 < codeFirsts.size()){
-                endIndex = codeFirsts.get(leaderIndex + 1) - 1;
-            } else {
-                endIndex = code.intermediateCode.size() - 1;
-            }
-            List<ICode> basicBlockList = new LinkedList<ICode>();
-            for(int i = beginIndex; i <= endIndex; i++){
-                basicBlockList.add(code.intermediateCode.get(i));
-            }
-            codeBlocks.add(new BasicBlock(basicBlockList));
-        }
-
-        return codeBlocks;
-    }
-
-    private List<BasicBlock> buildProcedureBlocks(){
-        ProcSec proc = intermediateCode.procedures;
-        List<BasicBlock> procedureBlocks = new LinkedList<BasicBlock>();
-        for(Proc procedure : proc.procedures){
-            List<Integer> procFirsts = findFirstsInICode(procedure.instructions, true);
-            List<Assign> assignments = procedure.paramAssign;
-            List<ICode> instructionsInBlock = new LinkedList<ICode>();
-            if(procFirsts.size() > 0){
-                Integer firstIndex = 0;
-                Integer endIndex;
-                if(procFirsts.size() > 0){
-                    endIndex = procFirsts.get(0);
-                } else {
-                    endIndex = procedure.instructions.size() - 1;
-                }
-                for(int i = firstIndex; i <= endIndex; i++){
-                    instructionsInBlock.add(procedure.instructions.get(i));
-                }
-            } else {
-                instructionsInBlock = procedure.instructions;
-            }
-
-            procedureBlocks.add(new ProcedureBeginningBlock(procedure.label, assignments, instructionsInBlock));
-                
-            for(int leaderIndex = 0; leaderIndex < procFirsts.size() - 1; leaderIndex++){
-                int beginIndex = procFirsts.get(leaderIndex);
-                int endIndex;
-                if(leaderIndex + 1 < procFirsts.size()){
-                    endIndex = procFirsts.get(leaderIndex + 1) - 1;
-                } else {
-                    endIndex = procedure.instructions.size() - 1;
-                }
-                
-                List<ICode> basicBlockList = new LinkedList<ICode>();
-                for(int i = beginIndex; i <= endIndex; i++){
-                    basicBlockList.add(procedure.instructions.get(i));
-                }
-
-                procedureBlocks.add(new BasicBlock(basicBlockList));
-            }
-
-            if(procFirsts.size() > 0){
-                int beginIndex = procFirsts.get(procFirsts.size() - 1);
-                int endIndex = procedure.instructions.size() - 1;
-
-                List<ICode> basicBlockList = new LinkedList<ICode>();
-                for(int i = beginIndex; i <= endIndex; i++){
-                    basicBlockList.add(procedure.instructions.get(i));
-                }
-                procedureBlocks.add(new ProcedureEndingBlock(basicBlockList, procedure.placement, procedure.returnStatement));
-            } else {
-                procedureBlocks.add(new ProcedureEndingBlock(new LinkedList<ICode>(), procedure.placement, procedure.returnStatement));
-            }
-        }
-
-        return procedureBlocks;
-    }
-
-    private List<BlockNode> buildDataBlockNodes(){
-        List<BasicBlock> blocks = buildDataBlocks();
-        List<BlockNode> dataNodes = new LinkedList<BlockNode>();
-        for(BasicBlock block: blocks){
-            dataNodes.add(new BlockNode(block));
-        }
-        return dataNodes;
-    }
-
-    private List<BlockNode> buildCodeBlockNodes(){
-        List<BasicBlock> blocks = buildCodeBlocks();
-        List<BlockNode> codeNodes = new LinkedList<BlockNode>();
-        for(BasicBlock block: blocks){
-            codeNodes.add(new BlockNode(block));
-        }
-        return codeNodes;
-    }
-
-    private List<BlockNode> buildProcedureBlockNodes(){
-        List<BasicBlock> blocks = buildProcedureBlocks();
-        List<BlockNode> blockNodes = new LinkedList<BlockNode>();
-        for(BasicBlock block : blocks){
-            if(block instanceof ProcedureEndingBlock){
-                ProcedureEndingBlock endBlock = (ProcedureEndingBlock)block;
-                blockNodes.add(new ProcedureExitNode(endBlock));
-            } else if(block instanceof ProcedureBeginningBlock){
-                ProcedureBeginningBlock beginBlock = (ProcedureBeginningBlock)block;
-                blockNodes.add(new ProcedureEntryNode(beginBlock));
-            } else {
-                blockNodes.add(new BlockNode(block));
-            }
-        }
-        return blockNodes;
-    }
-
     private static Map<String, BlockNode> findProcedureEntryPoints(List<BlockNode> nodes){
         Map<String, BlockNode> toRet = new HashMap<String, BlockNode>();
         for(BlockNode node : nodes){
-            if(node instanceof ProcedureEntryNode){
-                ProcedureBeginningBlock entryBlock = (ProcedureBeginningBlock)node.getBlock();
-                ProcLabel label = entryBlock.getLabel();
+            if(Utils.beginningOfBlockIsProcedureHeader(node.getBlock())){
+                ProcLabel label = (ProcLabel)node.getICode().get(0);
                 toRet.put(label.label, node);
             }
         }
@@ -272,18 +129,13 @@ public class MyOptimizer {
         Map<String, BlockNode> toRet = new HashMap<String, BlockNode>();
         for(int i = 0; i < nodes.size(); i++){
             BlockNode node = nodes.get(i);
-            if(node instanceof ProcedureEntryNode){
-                ProcedureBeginningBlock block = (ProcedureBeginningBlock)node.getBlock();
-                ProcLabel label = block.getLabel();
-                boolean endingNotFound = true;
-                i++;
-                while(endingNotFound){
-                    BlockNode nodeEnd = nodes.get(i);
-                    if(nodeEnd instanceof ProcedureExitNode){
-                        toRet.put(label.label, nodeEnd);
-                        endingNotFound = false;
-                    } else {
-                        i++;
+            if(Utils.beginningOfBlockIsProcedureHeader(node.getBlock())){
+                ProcLabel label = (ProcLabel)node.getICode().get(0);
+                for(; i < nodes.size(); i++){
+                    BlockNode otherNode = nodes.get(i);
+                    if(Utils.endOfBlockIsReturn(otherNode.getBlock())){
+                        toRet.put(label.label, otherNode);
+                        break;
                     }
                 }
             }
@@ -356,83 +208,64 @@ public class MyOptimizer {
         }
     }
 
-    private void linkUpFollowThrough(List<BlockNode> dataBlockNodes, List<BlockNode> codeSectionNodes){
-        for(int i = 0; i < dataBlockNodes.size(); i++){
-            BlockNode node = dataBlockNodes.get(i);
-            BasicBlock block = node.getBlock();
-            if(!Utils.endOfBlockIsJump(block)){
-                if(i + 1 < dataBlockNodes.size()){
-                    BlockNode nextNode = dataBlockNodes.get(i + 1);
-                    nextNode.addPredecessor(node);
-                    node.addSuccessor(nextNode);
-                }
+    private List<BasicBlock> buildBlocks(){
+        List<BasicBlock> blocks = new LinkedList<BasicBlock>();
+        List<Integer> firsts = findFirstsInICode(this.intermediateCode.getICode());
+        int firstSize = firsts.size();
+        for(int leaderIndex = 0; leaderIndex < firstSize; leaderIndex++){
+            int beginIndex = firsts.get(leaderIndex);
+            int endIndex;
+            if(leaderIndex + 1 < firstSize){
+                endIndex = firsts.get(leaderIndex + 1);
+            } else {
+                endIndex = intermediateCode.getSize();
             }
+            List<ICode> basicBlockList = new LinkedList<ICode>();
+            for(int i = beginIndex; i <= endIndex; i++){
+                basicBlockList.add(intermediateCode.getInstruction(i));
+            }
+            blocks.add(new BasicBlock(basicBlockList));
         }
 
-        if(dataBlockNodes.size() > 0){
-            BlockNode lastDataNode = dataBlockNodes.get(dataBlockNodes.size() - 1);
-            BasicBlock lastDataNodeBlock = lastDataNode.getBlock();
-            if(!Utils.endOfBlockIsJump(lastDataNodeBlock)){
-                if(codeSectionNodes.size() > 0){
-                    BlockNode firstCodeNode = codeSectionNodes.get(0);
-                    lastDataNode.addSuccessor(firstCodeNode);
-                    firstCodeNode.addPredecessor(lastDataNode);
-                }
-            }
-        }
+        return blocks;
+    }
 
-        for(int i = 0; i < codeSectionNodes.size() - 1; i++){
-            BlockNode node = codeSectionNodes.get(i);
-            BasicBlock block = node.getBlock();
-            if(!Utils.endOfBlockIsJump(block)){
-                if(i + 1 < codeSectionNodes.size()){
-                    BlockNode nextNode = codeSectionNodes.get(i + 1);
-                    nextNode.addPredecessor(node);
-                    node.addSuccessor(nextNode);
-                }
-            }
+    private List<BlockNode> buildBlockNodes(){
+        if(this.intermediateCode == null){
+            String message = "Intermediate Code variable not initialized to value";
+            throw new OptimizerException(message.getClass().getEnclosingMethod().getName(), message);
         }
+        List<BasicBlock> blocks = buildBlocks();
+        List<BlockNode> nodes = new LinkedList<BlockNode>(); 
+        for(BasicBlock block: blocks){
+            nodes.add(new BlockNode(block));
+        }
+        return nodes;
     }
 
     private void buildFlowGraph() {
-        List<BlockNode> dataBlockNodes = buildDataBlockNodes();
-        List<BlockNode> codeBlockNodes = buildCodeBlockNodes();
-        List<BlockNode> procedureBlockNodes = buildProcedureBlockNodes();
+        List<BlockNode> nodeList = buildBlockNodes();
         
-        Map<String, BlockNode> procedureEntryNodes = findProcedureEntryPoints(procedureBlockNodes);
-        linkUpFunctionCalls(dataBlockNodes, procedureEntryNodes);
-        linkUpFunctionCalls(codeBlockNodes, procedureEntryNodes);
-        linkUpFunctionCalls(procedureBlockNodes, procedureEntryNodes);
+        Map<String, BlockNode> procedureEntryNodes = findProcedureEntryPoints(nodeList);
+        linkUpFunctionCalls(nodeList, procedureEntryNodes);
 
-        Map<String, BlockNode> codeLabeledNodes = findBranchEntryPoints(codeBlockNodes);
-        linkUpJumps(codeBlockNodes, codeLabeledNodes);
-        linkUpJumps(procedureBlockNodes, codeLabeledNodes);
+        Map<String, BlockNode> codeLabeledNodes = findBranchEntryPoints(nodeList);
+        linkUpJumps(nodeList, codeLabeledNodes);
 
-        Map<String, BlockNode> procedureExitNodes = findProcedureExitPoints(procedureBlockNodes);
-        linkUpReturns(procedureBlockNodes, procedureExitNodes);
+        Map<String, BlockNode> procedureExitNodes = findProcedureExitPoints(nodeList);
+        linkUpReturns(nodeList, procedureExitNodes);
 
-        linkUpFollowThrough(dataBlockNodes, codeBlockNodes);
 
-        if(dataBlockNodes.size() == 0 && codeBlockNodes.size() == 0){
-            throw new RuntimeException("Data section and the Code Section are empty!!!");
+        if(nodeList.size() == 0){
+            throw new OptimizerException(nodeList.getClass().getEnclosingMethod().getName(), "Data section and the Code Section are empty!!!");
         }
 
         EntryNode entry;
         ExitNode exit;
 
-        int dataSize = dataBlockNodes.size();
-        int codeSize = codeBlockNodes.size();
-        if(dataSize > 0 && codeSize == 0){
-            entry = new EntryNode(dataBlockNodes.get(0));
-            exit = new ExitNode(dataBlockNodes.get(dataSize - 1));
-        } else if(dataSize == 0 && codeSize > 0){
-            entry = new EntryNode(codeBlockNodes.get(0));
-            exit = new ExitNode(codeBlockNodes.get(codeSize - 1));
-        } else {
-            entry = new EntryNode(dataBlockNodes.get(0));
-            exit = new ExitNode(codeBlockNodes.get(codeSize - 1));
-        }
-        FlowGraph flowGraph = new FlowGraph(entry, dataBlockNodes, codeBlockNodes, procedureBlockNodes, exit);
+        entry = new EntryNode(nodeList.get(0));
+        exit = new ExitNode(nodeList.get(nodeList.size() - 1));
+        FlowGraph flowGraph = new FlowGraph(entry, nodeList, exit);
         this.globalFlowGraph = flowGraph;
     }
 
@@ -908,11 +741,11 @@ public class MyOptimizer {
         return this.intermediateCode;
     }
 
-    private List<Integer> findFirstsInICode(List<ICode> intermediateCode, boolean procedureFirst){
+    private List<Integer> findFirstsInICode(List<ICode> intermediateCode){
         List<Integer> firsts = new LinkedList<Integer>();
         for(int i = 0; i < intermediateCode.size(); i++){
             ICode intermediateInstruction = intermediateCode.get(i);
-            if(i == 0 && !procedureFirst){
+            if(i == 0){
                 //First Statement is allways a leader
                 firsts.add(i);
             } else if(intermediateInstruction instanceof Label || intermediateInstruction instanceof ProcLabel){

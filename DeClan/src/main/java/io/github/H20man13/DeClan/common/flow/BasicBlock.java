@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common.flow.block;
+package io.github.H20man13.DeClan.common.flow;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +10,10 @@ public class BasicBlock {
     
     public BasicBlock(List<ICode> codeInBlock){
         this.codeInBlock = codeInBlock;
+    }
+
+    public BasicBlock(){
+        this.codeInBlock = new LinkedList<ICode>();
     }
 
     public List<ICode> getIcode(){
