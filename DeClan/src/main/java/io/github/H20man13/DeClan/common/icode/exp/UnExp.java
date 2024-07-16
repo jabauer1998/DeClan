@@ -5,7 +5,7 @@ import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class UnExp implements Exp {
-    public Exp right;
+    public IdentExp right;
     public Operator op;
 
     public enum Operator{
@@ -15,7 +15,7 @@ public class UnExp implements Exp {
         RNEG
     }
 
-    public UnExp(Operator op, Exp right){
+    public UnExp(Operator op, IdentExp right){
         this.right = right;
         this.op = op;
     }

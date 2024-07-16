@@ -3,6 +3,9 @@ package io.github.H20man13.DeClan.common.dag;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.exception.DagFormatException;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+
 public class DagInlineAssemblyNode implements DagNode{
     private String operation;
     private List<DagNode> children;
@@ -13,8 +16,8 @@ public class DagInlineAssemblyNode implements DagNode{
     }
 
     @Override
-    public boolean containsId(String ident) {
-        return ident == operation;
+    public boolean containsId(IdentExp ident) {
+        throw new DagFormatException(this, "Cant check for Id " + ident + "in node type " + this.getClass().getName());
     }
 
     @Override

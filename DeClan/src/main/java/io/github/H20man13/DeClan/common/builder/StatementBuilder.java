@@ -46,7 +46,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         ctx.deIncrimentForLoopLevel();
     }
 
-    public void buildForLoopBeginning(Exp currentValue, BinExp.Operator op, Exp target){
+    public void buildForLoopBeginning(IdentExp currentValue, BinExp.Operator op, IdentExp target){
         int forLoopNumber = ctx.getForLoopNumber();
         int forLoopLevel = ctx.getForLoopLevel();
         addInstruction(new StandardLabel("FORBEG_" + forLoopNumber + "_LEVEL_" + forLoopLevel));
@@ -71,11 +71,13 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         ctx.deIncrimentRepeatLoopLevel();
     }
 
-    public void buildRepeatLoopBeginning(Exp exprResult){
+    public void buildRepeatLoopBeginning(IdentExp exprResult){
         int repeatLoopLevel = ctx.getRepeatLoopLevel();
         int repeatLoopNumber = ctx.getRepeatLoopNumber();
-        BoolExp boolExp = new BoolExp(true);
-        BinExp exp = new BinExp(exprResult, BinExp.Operator.EQ, boolExp);
+        BoolExp trueExp = new BoolExp(true);
+        String place = gen.genNext();
+        addInstruction(new Def(ICode.Scope.LOCAL, place, trueExp, ICode.Type.BOOL));
+        BinExp exp = new BinExp(exprResult, BinExp.Operator.EQ, new IdentExp(ICode.Scope.LOCAL, place));
         addInstruction(new StandardLabel("REPEATBEG_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
         addInstruction(new If(exp, "REPEATEND_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel, "REPEATLOOP_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
         addInstruction(new StandardLabel("REPEATLOOP_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
@@ -97,12 +99,14 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         ctx.deIncrimentIfStatementLevel();
     }
 
-    public void buildIfStatementBeginning(Exp test){
+    public void buildIfStatementBeginning(IdentExp test){
         int ifStatementLevel = ctx.getIfStatementLevel();
         int ifStatementNumber = ctx.getIfStatementNumber();
         int ifStatementSeqNumber = ctx.getIfStatementSeqNumber();
         BoolExp boolExp = new BoolExp(true);
-        BinExp exp = new BinExp(test, BinExp.Operator.EQ, boolExp);
+        String place = gen.genNext();
+        addInstruction(new Def(ICode.Scope.LOCAL, place, boolExp, ICode.Type.BOOL));
+        BinExp exp = new BinExp(test, BinExp.Operator.EQ, new IdentExp(ICode.Scope.LOCAL, place));
         addInstruction(new If(exp, "IFSTAT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber + "_LEVEL_" + ifStatementLevel, "IFNEXT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber + "_LEVEL_" + ifStatementLevel));
         addInstruction(new StandardLabel("IFSTAT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber + "_LEVEL_" + ifStatementLevel));
     }
@@ -134,12 +138,14 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         ctx.deIncrimentWhileLoopLevel();
     }
 
-    public void buildWhileLoopBeginning(Exp test){
+    public void buildWhileLoopBeginning(IdentExp test){
         int whileLoopLevel = ctx.getWhileLoopLevel();
         int whileLoopNumber = ctx.getWhileLoopNumber();
         int whileLoopSeqNumber = ctx.getWhileLoopSeqNumber();
         BoolExp trueExp = new BoolExp(true);
-        BinExp exp = new BinExp(test, BinExp.Operator.EQ, trueExp);
+        String place = gen.genNext();
+        addInstruction(new Def(ICode.Scope.LOCAL, place, trueExp, ICode.Type.BOOL));
+        BinExp exp = new BinExp(test, BinExp.Operator.EQ, new IdentExp(ICode.Scope.LOCAL, place));
         addInstruction(new If(exp, "WHILESTAT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel, "WHILENEXT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
         addInstruction(new StandardLabel("WHILECOND_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
         addInstruction(new If(exp, "WHILESTAT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel, "WHILEEND_" + whileLoopNumber + "_LEVEL_" + whileLoopLevel));

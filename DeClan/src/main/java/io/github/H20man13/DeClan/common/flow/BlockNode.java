@@ -2,6 +2,7 @@ package io.github.H20man13.DeClan.common.flow;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.LiveInfo;
 import io.github.H20man13.DeClan.common.util.Utils;
 
-public class BlockNode implements FlowGraphNode {
+public class BlockNode implements FlowGraphNode, Iterable<ICode> {
     protected BasicBlock block;
     protected List<FlowGraphNode> successors;
     protected List<FlowGraphNode> predecessors;
@@ -97,5 +98,10 @@ public class BlockNode implements FlowGraphNode {
     @Override
     public List<ICode> getAllICode(){
         return block.getIcode();
+    }
+
+    @Override
+    public Iterator<ICode> iterator() {
+        return this.block.iterator();
     }
 }

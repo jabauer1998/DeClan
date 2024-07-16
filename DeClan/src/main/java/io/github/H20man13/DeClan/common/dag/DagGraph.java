@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+
 public class DagGraph {
     private List<DagNode> dagNodes;
 
@@ -11,7 +13,7 @@ public class DagGraph {
         this.dagNodes = new ArrayList<DagNode>();
     }
 
-    public DagNode searchForLatestChild(String identifier){
+    public DagNode searchForLatestChild(IdentExp identifier){
         for(int i = dagNodes.size() - 1; i >= 0; i--){
             DagNode child = dagNodes.get(i);
             if(child.containsId(identifier)){

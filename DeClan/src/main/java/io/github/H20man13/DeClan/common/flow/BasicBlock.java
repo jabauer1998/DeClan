@@ -1,11 +1,12 @@
 package io.github.H20man13.DeClan.common.flow;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
 
-public class BasicBlock {
+public class BasicBlock implements Iterable<ICode>{
     private List<ICode> codeInBlock;
     
     public BasicBlock(List<ICode> codeInBlock){
@@ -36,6 +37,11 @@ public class BasicBlock {
             sb.append('\n');
         }
         return sb.toString();
+    }
+
+    @Override
+    public Iterator<ICode> iterator() {
+        return codeInBlock.iterator();
     }
 }
 

@@ -5,11 +5,11 @@ import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class BinExp implements Exp {
-    public Exp right;
-    public Exp left;
+    public IdentExp right;
+    public IdentExp left;
     public Operator op;
 
-    public BinExp(Exp left, Operator op, Exp right){
+    public BinExp(IdentExp left, Operator op, IdentExp right){
         this.right = right;
         this.left = left;
         this.op = op;

@@ -35,13 +35,13 @@ public class DefinitionBuilder extends SymbolBuilder{
         return new IdentExp(scope, place);
     }
 
-    public IdentExp buildBinaryDefinition(ICode.Scope scope, Exp left, BinExp.Operator op,  Exp right, ICode.Type type){
+    public IdentExp buildBinaryDefinition(ICode.Scope scope, IdentExp left, BinExp.Operator op,  IdentExp right, ICode.Type type){
         String place = gen.genNext();
         addInstruction(new Def(scope, place, new BinExp(left, op, right), type));
         return new IdentExp(scope, place);
     }
 
-    public IdentExp buildUnaryDefinition(ICode.Scope scope, UnExp.Operator op, Exp right, ICode.Type type){
+    public IdentExp buildUnaryDefinition(ICode.Scope scope, UnExp.Operator op, IdentExp right, ICode.Type type){
         String place = gen.genNext();
         addInstruction(new Def(scope, place, new UnExp(op, right), type));
         return new IdentExp(scope, place);

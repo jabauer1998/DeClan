@@ -2,6 +2,8 @@ package io.github.H20man13.DeClan.common.dag;
 
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+
 public interface DagNode {
     public enum ScopeType{
         GLOBAL,
@@ -14,7 +16,7 @@ public interface DagNode {
         STRING, INT, REAL, BOOL 
     }
 
-    public boolean containsId(String ident);
+    public boolean containsId(IdentExp ident);
     @Override
     public boolean equals(Object dagNode);
     public void addIdentifier(String ident);

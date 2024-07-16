@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
+
 public class DagValueNode implements DagNode{
 
     private List<String> identifiers;
@@ -24,8 +27,8 @@ public class DagValueNode implements DagNode{
     }
 
     @Override
-    public boolean containsId(String ident) {
-        return this.identifiers.contains(ident);
+    public boolean containsId(IdentExp ident) {
+        return this.identifiers.contains(ident.ident) && scope == ConversionUtils.assignScopeToDagScopeType(ident.scope);
     }
 
     @Override

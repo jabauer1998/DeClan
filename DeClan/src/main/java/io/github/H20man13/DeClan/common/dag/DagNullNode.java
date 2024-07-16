@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+
 public class DagNullNode implements DagNode {
     private List<String> identifiers;
     private List<DagNode> ancestors;
@@ -16,8 +18,8 @@ public class DagNullNode implements DagNode {
     }
 
     @Override
-    public boolean containsId(String ident) {
-        return this.identifiers.contains(ident);
+    public boolean containsId(IdentExp ident) {
+        return this.identifiers.contains(ident.ident);
     }
 
     @Override

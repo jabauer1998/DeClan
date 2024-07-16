@@ -2,13 +2,14 @@ package io.github.H20man13.DeClan.common.flow;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.util.Utils;
 
-public class FlowGraph {
+public class FlowGraph implements Iterable<BlockNode>{
     private EntryNode entryNode;
     private ExitNode exitNode;
     private List<BlockNode> blockNodes;
@@ -45,5 +46,10 @@ public class FlowGraph {
 
     public List<BlockNode> getBlocks(){
         return blockNodes;
+    }
+
+    @Override
+    public Iterator<BlockNode> iterator() {
+        return blockNodes.iterator();
     }
 }

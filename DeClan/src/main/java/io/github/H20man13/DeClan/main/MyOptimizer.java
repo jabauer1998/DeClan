@@ -36,6 +36,7 @@ import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Call;
+import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -269,38 +270,6 @@ public class MyOptimizer {
         this.globalFlowGraph = flowGraph;
     }
 
-    private void updateProcedureLivelinessInformation(Environment<String, LiveInfo> symbolTable){
-        ProcSec data = intermediateCode.procedures;
-        List<Proc> procedures = data.procedures;
-        int size = procedures.size();
-        for(int i = size - 1; i >= 0; i--){
-            Proc procedure = procedures.get(i);
-            if(procedure.placement != null){
-                Assign returnPlacement = procedure.placement;
-                symbolTable.addEntry(returnPlacement.place, new LiveInfo(false, i));
-                symbolTable.addEntry(returnPlacement.value.toString(), new LiveInfo(true, i));
-                livelinessInformation.put(returnPlacement, symbolTable.copy());
-            }
-
-            List<ICode> procedureCode = procedure.instructions;
-            int codeSize = procedureCode.size();
-            for(int x = codeSize - 1; x >= 0; x--){
-                ICode icode = procedureCode.get(x);
-                updateICodeLivelinessInformation(symbolTable, icode, x);
-            }
-                
-
-            List<Assign> paramaterAssignmants = procedure.paramAssign;
-            int paramAssignSize = paramaterAssignmants.size();
-            for(int z = paramAssignSize - 1; z >= 0; z--){
-                Assign assign = paramaterAssignmants.get(z);
-                symbolTable.addEntry(assign.place, new LiveInfo(false, z));
-                symbolTable.addEntry(assign.value.toString(), new LiveInfo(true, z));
-                livelinessInformation.put(assign, symbolTable.copy());
-            }
-        }
-    }
-
     private void updateICodeLivelinessInformation(Environment<String, LiveInfo> symbolTable, ICode icode, int x){
         if(icode instanceof Assign){
             Assign icodeAssign = (Assign)icode;
@@ -344,29 +313,27 @@ public class MyOptimizer {
             }
         } else if(icode instanceof Call){
             Call icodeCall = (Call)icode;
-            for(Assign param : icodeCall.params){
-                symbolTable.addEntry(param.value.toString(), new LiveInfo(true, x));
+            for(Def param : icodeCall.params){
+                if(param.val instanceof IdentExp){
+                    IdentExp paramVal = (IdentExp)param.val;
+                    symbolTable.addEntry(paramVal.ident, new LiveInfo(true, x));
+                } else if(param.val instanceof UnExp){
+                    UnExp exp = (UnExp)param.val;
+                    symbolTable.addEntry(exp.right.ident, new LiveInfo(true, x));
+                } else if(param.val instanceof BinExp){
+                    BinExp exp = (BinExp)param.val;
+                    symbolTable.addEntry(exp.left.ident, new LiveInfo(true, x));
+                    symbolTable.addEntry(exp.right.ident, new LiveInfo(true, x));
+                }
             }
         }
         livelinessInformation.put(icode, symbolTable.copy());
     }
 
     private void updateCodeLivelinessInformation(Environment<String, LiveInfo> symbolTable){
-        CodeSec code = intermediateCode.code;
-        List<ICode> icodeList = code.intermediateCode;
-        int size = icodeList.size();
+        int size = intermediateCode.getSize();
         for(int i = size - 1; i >= 0; i--){
-            ICode icode = icodeList.get(i);
-            updateICodeLivelinessInformation(symbolTable, icode, i);
-        }
-    }
-
-    private void updateVariableLivelinessInformation(Environment<String, LiveInfo> symbolTable){
-        DataSec data = intermediateCode.variables;
-        List<ICode> assignmants = data.intermediateCode;
-        int size = assignmants.size();
-        for(int i = size - 1; i >= 0; i--){
-            ICode icode = assignmants.get(i);
+            ICode icode = intermediateCode.getInstruction(i);
             updateICodeLivelinessInformation(symbolTable, icode, i);
         }
     }
@@ -374,84 +341,17 @@ public class MyOptimizer {
     private void updateLiveLinessInformation() {
         Environment<String, LiveInfo> symbolTable = new Environment<String, LiveInfo>();
         symbolTable.addScope();
-        updateProcedureLivelinessInformation(symbolTable);
         updateCodeLivelinessInformation(symbolTable);
-        updateVariableLivelinessInformation(symbolTable);
     }
 
     public void rebuildFromFlowGraph(){
         if(this.globalFlowGraph != null){
-            SymSec symbols = intermediateCode.symbols;
-            this.intermediateCode = null;
-            DataSec dataSec = new DataSec();
-            List<BlockNode> dataBlocks = this.globalFlowGraph.getDataBlocks();
-            for(BlockNode dataBlock: dataBlocks){
-                List<ICode> icodes = dataBlock.getICode();
-                for(ICode icode: icodes){
-                    dataSec.addInstruction(icode);
+            this.intermediateCode = new Prog();
+            for(BlockNode dataBlock: this.globalFlowGraph){
+                for(ICode icode: dataBlock){
+                    this.intermediateCode.addInstruction(icode);
                 }
             }
-
-            CodeSec codeSec = new CodeSec();
-            List<BlockNode> codeBlocks = this.globalFlowGraph.getCodeBlocks();
-            for(BlockNode codeBlock: codeBlocks){
-                List<ICode> icodes = codeBlock.getICode();
-                for(ICode icode: icodes){
-                    codeSec.addInstruction(icode);
-                }
-            }
-
-            ProcSec procSec = new ProcSec();
-            List<BlockNode> procBlocks = this.globalFlowGraph.getProcedureBlocks();
-            int i = 0;
-            int procBlockSize = procBlocks.size();
-            while(i < procBlockSize){
-                BlockNode blockAtStart = procBlocks.get(i);
-                if(blockAtStart instanceof ProcedureEntryNode){
-                    ProcedureEntryNode procedureEntry = (ProcedureEntryNode)blockAtStart;
-                    ProcedureBeginningBlock procedureEntryBlock = procedureEntry.getBlock();
-                    Proc newProcedure = new Proc(procedureEntryBlock.getLabel());
-                    List<Assign> assigns = procedureEntryBlock.getParamaterAssignmants();
-                    for(Assign assign: assigns){
-                        newProcedure.addParamater(assign);
-                    }
-
-                    List<ICode> instructions = procedureEntryBlock.getIcode();
-                    for(ICode icode: instructions){
-                        newProcedure.addInstruction(icode);
-                    }
-
-                    i++;
-                    while(i < procBlockSize){
-                        BlockNode nextBlock = procBlocks.get(i);
-                        if(nextBlock instanceof ProcedureExitNode){
-                            ProcedureExitNode procedureExitNode = (ProcedureExitNode)nextBlock;
-                            ProcedureEndingBlock endBlock = procedureExitNode.getBlock();
-                            List<ICode>icode = endBlock.getIcode();
-                            for(ICode code: icode){
-                                newProcedure.addInstruction(code);
-                            }
-                            Assign place = endBlock.getPlacement();
-                            if(place != null){
-                                newProcedure.placement = place;
-                            }
-                            newProcedure.returnStatement = endBlock.getReturn();
-                            i++;
-                            break;
-                        } else {
-                            List<ICode> instrs = nextBlock.getICode();
-                            for(ICode instr: instrs){
-                                newProcedure.addInstruction(instr);
-                            }
-                            i++;
-                        }
-                    }
-
-                    procSec.addProcedure(newProcedure);
-                } 
-            }
-
-            this.intermediateCode = new Prog(symbols, dataSec, codeSec, procSec);
         }
     }
 
@@ -514,7 +414,7 @@ public class MyOptimizer {
         Environment<String, LiveInfo> liveAtEndOfBlock = this.livelinessInformation.get(initialList.get(initialListSize - 1));
 
         for(DagNode node : dag.getDagNodes()){
-
+            
             List<String> isAlive = new LinkedList<String>();
             for(String identifier: node.getIdentifiers()){
                 if(liveAtEndOfBlock.entryExists(identifier)){
@@ -546,13 +446,10 @@ public class MyOptimizer {
                     DagNode child1 = node2.getChildren().get(0);
                     DagNode child2 = node2.getChildren().get(1);
 
-                    String identifier1 = getIdentifier(child1, liveAtEndOfBlock);
-                    String identifier2 = getIdentifier(child2, liveAtEndOfBlock);
+                    IdentExp identifier1 = getIdentifier(child1, liveAtEndOfBlock);
+                    IdentExp identifier2 = getIdentifier(child2, liveAtEndOfBlock);
 
-                    IdentExp exp1 = new IdentExp(identifier1);
-                    IdentExp exp2 = new IdentExp(identifier2);
-
-                    BinExp binExp = new BinExp(exp1, op2, exp2);
+                    BinExp binExp = new BinExp(identifier1, op2, identifier2);
 
                     result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, binExp, ConversionUtils.dagValueTypeToAssignType(type)));
                 } else if(node2.getChildren().size() == 1) {
@@ -562,11 +459,9 @@ public class MyOptimizer {
 
                     DagNode child1 = node2.getChildren().get(0);
 
-                    String identifier1 = getIdentifier(child1, liveAtEndOfBlock);
+                    IdentExp identifier1 = getIdentifier(child1, liveAtEndOfBlock);
 
-                    IdentExp exp1 = new IdentExp(identifier1);
-
-                    UnExp unExp = new UnExp(op2, exp1);
+                    UnExp unExp = new UnExp(op2, identifier1);
 
                     result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, unExp, ConversionUtils.dagValueTypeToAssignType(type)));
                 }
@@ -578,14 +473,13 @@ public class MyOptimizer {
             } else if(node instanceof DagVariableNode){
                 DagVariableNode varNode = (DagVariableNode)node;
                 DagNode child = varNode.getChild();
-                String identifier1 = MyOptimizer.getIdentifier(child, liveAtEndOfBlock);
-                IdentExp ident1 = new IdentExp(identifier1);
-                result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, ident1, ConversionUtils.dagValueTypeToAssignType(type)));
+                IdentExp identifier1 = getIdentifier(child, liveAtEndOfBlock);
+                result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, identifier1, ConversionUtils.dagValueTypeToAssignType(type)));
             } else if(node instanceof DagInlineAssemblyNode){
                 DagInlineAssemblyNode dagNode = (DagInlineAssemblyNode)node;
-                List<String> children = new LinkedList<String>();
+                List<IdentExp> children = new LinkedList<IdentExp>();
                 for(DagNode child : dagNode.getChildren()){
-                    String ident = MyOptimizer.getIdentifier(child, liveAtEndOfBlock);
+                    IdentExp ident = getIdentifier(child, liveAtEndOfBlock);
                     children.add(ident);
                 }
                 List<String> operationList = dagNode.getIdentifiers();
@@ -593,7 +487,7 @@ public class MyOptimizer {
             }
 
             for(String ident : isAlive){
-                IdentExp ident1 = new IdentExp(identifier);
+                IdentExp ident1 = new IdentExp(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier);
                 result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), ident, ident1, ConversionUtils.dagValueTypeToAssignType(type)));
             }
         }
@@ -609,19 +503,20 @@ public class MyOptimizer {
         block.getBlock().setICode(result);
     }
 
-    private static String getIdentifier(DagNode node, Environment<String, LiveInfo> table){
+    private static IdentExp getIdentifier(DagNode node, Environment<String, LiveInfo> table){
         List<String> identifiers = node.getIdentifiers();
+        ScopeType scope = node.getScopeType();
         for(String identifier : identifiers){
             if(table.entryExists(identifier)){
                 LiveInfo life = table.getEntry(identifier);
                 if(life.isAlive){
-                    return identifier;
+                    return new IdentExp(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier);
                 }
             }
         }
 
         if(identifiers.size() > 0){
-            return identifiers.get(0);
+            return new IdentExp(ConversionUtils.dagScopeTypeToAssignScope(scope), identifiers.get(0));
         } else {
             return null;
         }
@@ -638,8 +533,8 @@ public class MyOptimizer {
                 if(assignICode.value instanceof BinExp){
                     BinExp exp = (BinExp)assignICode.value;
                     
-                    DagNode left = dag.searchForLatestChild(exp.left.toString());
-                    DagNode right = dag.searchForLatestChild(exp.right.toString());
+                    DagNode left = dag.searchForLatestChild(exp.left);
+                    DagNode right = dag.searchForLatestChild(exp.right);
 
                     if(left == null){
                         left = factory.createNullNode(exp.left.toString());
@@ -662,7 +557,7 @@ public class MyOptimizer {
                 } else if(assignICode.value instanceof UnExp){
                     UnExp exp = (UnExp)assignICode.value;
 
-                    DagNode right = dag.searchForLatestChild(exp.right.toString());
+                    DagNode right = dag.searchForLatestChild(exp.right);
 
                     if(right == null){
                         right = factory.createNullNode(exp.right.toString());
@@ -680,7 +575,7 @@ public class MyOptimizer {
                 } else if(assignICode.value instanceof IdentExp){
                     IdentExp exp = (IdentExp)assignICode.value;
 
-                    DagNode right = dag.searchForLatestChild(exp.ident.toString());
+                    DagNode right = dag.searchForLatestChild(exp);
 
                     if(right == null){
                         right = factory.createNullNode(exp.ident.toString());
@@ -715,10 +610,10 @@ public class MyOptimizer {
             } else if(icode instanceof Inline){
                 Inline inline = (Inline)icode;
                 LinkedList<DagNode> children = new LinkedList<DagNode>();
-                for(String param : inline.params){
+                for(IdentExp param : inline.params){
                     DagNode child = dag.searchForLatestChild(param);
                     if(child == null){
-                        child = factory.createNullNode(param);
+                        child = factory.createNullNode(param.ident);
                         dag.addDagNode(child);
                     }
 

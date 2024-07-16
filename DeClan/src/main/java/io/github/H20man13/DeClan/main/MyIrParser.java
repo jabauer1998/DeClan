@@ -348,7 +348,7 @@ public class MyIrParser {
     }
 
     private BinExp parseRelationalExpression(){
-        Exp left = parsePrimaryExpression();
+        IdentExp left = parseIdentifier();
 
         IrToken op = null;
         if(willMatch(IrTokenType.EQ) 
@@ -362,7 +362,7 @@ public class MyIrParser {
             op = match(IrTokenType.EQ);
         }
 
-        Exp right = parsePrimaryExpression();
+        IdentExp right = parseIdentifier();
 
         BinExp expr = new BinExp(left, ConversionUtils.toBinOp(op.getType()), right);
         return expr;
@@ -418,19 +418,19 @@ public class MyIrParser {
     private UnExp parseUnaryExpression(){
         if(willMatch(IrTokenType.INEG)){
             skip();
-            Exp right = parsePrimaryExpression();
+            IdentExp right = parseIdentifier();
             return new UnExp(UnExp.Operator.INEG, right);
         } else if(willMatch(IrTokenType.RNEG)){
             skip();
-            Exp right = parsePrimaryExpression();
+            IdentExp right = parseIdentifier();
             return new UnExp(UnExp.Operator.RNEG, right);
         } else if(willMatch(IrTokenType.BNOT)){
             skip();
-            Exp right = parsePrimaryExpression();
+            IdentExp right = parseIdentifier();
             return new UnExp(UnExp.Operator.BNOT, right);
         } else if(willMatch(IrTokenType.INOT)){
             skip();
-            Exp right = parsePrimaryExpression();
+            IdentExp right = parseIdentifier();
             return new UnExp(UnExp.Operator.INOT, right);  
         } else {
             return null;
@@ -442,7 +442,7 @@ public class MyIrParser {
         || willMatch(IrTokenType.BNOT) || willMatch(IrTokenType.INOT)) {
             return parseUnaryExpression();
         } else {
-            Exp exp1 = parsePrimaryExpression();
+            IdentExp exp1 = parseIdentifier();
 
             if(willMatch(IrTokenType.LT) || willMatch(IrTokenType.IADD) 
             || willMatch(IrTokenType.LE) || willMatch(IrTokenType.GT)
@@ -458,7 +458,7 @@ public class MyIrParser {
             || willMatch(IrTokenType.IDIVIDE) || willMatch(IrTokenType.IXOR)) {
                 IrToken op = skip();
 
-                Exp exp2 = parsePrimaryExpression();
+                IdentExp exp2 = parseIdentifier();
 
                 return new BinExp(exp1, ConversionUtils.toBinOp(op.getType()), exp2);
             } else {

@@ -335,7 +335,7 @@ public class MyICodeGenerator{
   public void generateWhileBranchIr(Scope scope, WhileElifBranch whilebranch, StatementBuilder builder){
     Expression toCheck = whilebranch.getExpression();
     List<Statement> toExec = whilebranch.getExecStatements();
-    Exp test = generateExpressionIr(scope, toCheck, builder);
+    IdentExp test = generateExpressionIr(scope, toCheck, builder);
     
     builder.buildWhileLoopBeginning(test);
 
@@ -372,7 +372,7 @@ public class MyICodeGenerator{
   }
   public void generateIfBranchIr(Scope scope, IfElifBranch ifbranch, StatementBuilder builder){
     Expression toCheck = ifbranch.getExpression();
-    Exp test = generateExpressionIr(scope, toCheck, builder);
+    IdentExp test = generateExpressionIr(scope, toCheck, builder);
     builder.buildIfStatementBeginning(test);
 
     builder.incrimentIfStatementLevel();
@@ -403,7 +403,7 @@ public class MyICodeGenerator{
   public void generateRepeatLoopIr(Scope scope, RepeatBranch repeatbranch, StatementBuilder builder){
     Expression toCheck = repeatbranch.getExpression();
     List<Statement> toExec = repeatbranch.getExecStatements();
-    Exp test = generateExpressionIr(scope, toCheck, builder);
+    IdentExp test = generateExpressionIr(scope, toCheck, builder);
 
     builder.buildRepeatLoopBeginning(test);
 
@@ -426,7 +426,7 @@ public class MyICodeGenerator{
     List<Statement> toExec = forbranch.getExecStatements();
     if(toMod != null){
         generateAssignmentIr(scope, forbranch.getInitAssignment(), builder);
-        Exp target = generateExpressionIr(scope, forbranch.getTargetExpression(), builder);
+        IdentExp target = generateExpressionIr(scope, forbranch.getTargetExpression(), builder);
         
         IdentExp curValue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
 
@@ -462,7 +462,7 @@ public class MyICodeGenerator{
         }
         builder.deIncrimentForLoopLevel();
 
-        Exp incriment = generateExpressionIr(scope, toMod, builder);
+        IdentExp incriment = generateExpressionIr(scope, toMod, builder);
         TypeCheckerQualities qual = toMod.acceptResult(typeChecker);
         if(qual.containsQualities(TypeCheckerQualities.REAL)){
           IdentExp result = null;
@@ -497,8 +497,8 @@ public class MyICodeGenerator{
         builder.buildForLoopEnd();
     } else {
       generateAssignmentIr(scope, forbranch.getInitAssignment(), builder);
-      Exp target = generateExpressionIr(scope, forbranch.getTargetExpression(), builder);
-      Exp curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+      IdentExp target = generateExpressionIr(scope, forbranch.getTargetExpression(), builder);
+      IdentExp curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
       builder.buildForLoopBeginning(curvalue, BinExp.Operator.NE, target);
       builder.incrimentForLoopLevel();
       for(int i = 0; i < toExec.size(); i++){
@@ -608,7 +608,7 @@ public class MyICodeGenerator{
   }
 
   
-  public Exp generateExpressionIr(Scope scope, Expression exp, DefinitionBuilder builder){
+  public IdentExp generateExpressionIr(Scope scope, Expression exp, DefinitionBuilder builder){
     if(exp instanceof BinaryOperation) return generateBinaryOperationIr(scope, (BinaryOperation)exp, builder);
     else if(exp instanceof FunctionCall) return generateFunctionCallIr(scope, (FunctionCall)exp, builder);
     else if(exp instanceof UnaryOperation) return generateUnaryOperationIr(scope, (UnaryOperation)exp, builder);
@@ -622,11 +622,11 @@ public class MyICodeGenerator{
   }
   
   
-  public Exp generateBinaryOperationIr(Scope scope, BinaryOperation binaryOperation, DefinitionBuilder builder) {
-      Exp leftValue = generateExpressionIr(scope, binaryOperation.getLeft(), builder);
+  public IdentExp generateBinaryOperationIr(Scope scope, BinaryOperation binaryOperation, DefinitionBuilder builder) {
+      IdentExp leftValue = generateExpressionIr(scope, binaryOperation.getLeft(), builder);
       TypeCheckerQualities leftType = binaryOperation.getLeft().acceptResult(typeChecker);
       
-      Exp rightValue = generateExpressionIr(scope, binaryOperation.getRight(), builder);
+      IdentExp rightValue = generateExpressionIr(scope, binaryOperation.getRight(), builder);
       TypeCheckerQualities rightType = binaryOperation.getRight().acceptResult(typeChecker);
 
       if(binaryOperation.getOperator() == BinaryOperation.OpType.AND || binaryOperation.getOperator() == BinaryOperation.OpType.OR){
@@ -1076,7 +1076,7 @@ public class MyICodeGenerator{
     }
   }
 
-  public Exp generateFunctionCallIr(Scope scope, FunctionCall funcCall, DefinitionBuilder builder) {
+  public IdentExp generateFunctionCallIr(Scope scope, FunctionCall funcCall, DefinitionBuilder builder) {
     String funcName = funcCall.getFunctionName().getLexeme();
     List<Expression> valArgs = funcCall.getArguments();
     TypeCheckerQualities returnType = funcCall.acceptResult(typeChecker);
@@ -1110,8 +1110,8 @@ public class MyICodeGenerator{
     }
   }
 
-  public Exp generateUnaryOperationIr(Scope scope, UnaryOperation unaryOperation, DefinitionBuilder builder) {
-    Exp value = generateExpressionIr(scope, unaryOperation.getExpression(), builder);
+  public IdentExp generateUnaryOperationIr(Scope scope, UnaryOperation unaryOperation, DefinitionBuilder builder) {
+    IdentExp value = generateExpressionIr(scope, unaryOperation.getExpression(), builder);
     TypeCheckerQualities rightType = unaryOperation.getExpression().acceptResult(typeChecker);
 
     if(unaryOperation.getOperator() == UnaryOperation.OpType.NOT){
@@ -1152,7 +1152,7 @@ public class MyICodeGenerator{
             value = builder.buildExternalFunctionCall(scope, "IntToBool", args, ICode.Type.BOOL);
           }
         }
-        Exp expVal = value;
+        IdentExp expVal = value;
         return builder.buildUnaryDefinition(scope, UnExp.Operator.BNOT, expVal, ICode.Type.BOOL);
     } else if(rightType.containsQualities(TypeCheckerQualities.REAL)){
       switch(unaryOperation.getOperator()){
@@ -1208,7 +1208,7 @@ public class MyICodeGenerator{
     }
   }
 
-  public Exp generateIdentifierIr(Identifier identifier, DefinitionBuilder builder){
+  public IdentExp generateIdentifierIr(Identifier identifier, DefinitionBuilder builder){
     if(varEnvironment.entryExists(identifier.getLexeme())){
       IdentExp place = varEnvironment.getEntry(identifier.getLexeme());
       return place;
