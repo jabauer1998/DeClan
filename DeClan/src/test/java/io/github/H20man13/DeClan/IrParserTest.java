@@ -17,7 +17,11 @@ public class IrParserTest {
 
     @Test
     public void testBinaryOp(){
-        String program = "x := 456 [INT]\n"
+        String program = "SYMBOL SECTION\n"
+                       + "DATA SECTION\n"
+                       + "BSS SECTION\n"
+                       + "CODE SECTION\n"
+                       + "x := 456 [INT]\n"
                        + "z := 48393 [INT]\n"
                        + "v := x IADD z [INT]\n"
                        + "y := v ISUB v [INT]\n"
@@ -39,14 +43,16 @@ public class IrParserTest {
                        + "f := u LE j [BOOL]\n"
                        + "h := y GE o [BOOL]\n"
                        + "j := h NE u [BOOL]\n"
-                       + "y := y EQ u [BOOL]\n";
+                       + "y := y EQ u [BOOL]\n"
+                       + "END\n"
+                       + "PROC SECTION\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        parser.parseInstructions();
+        parser.parseProgram();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -58,16 +64,22 @@ public class IrParserTest {
 
     @Test
     public void testUnaryOp(){
-        String program = "x := 38393 [INT]\n"
+        String program = "SYMBOL SECTION\n"
+                       + "DATA SECTION\n"
+                       + "BSS SECTION\n"
+                       + "CODE SECTION\n"
+                       + "x := 38393 [INT]\n"
                        + "y := INEG x [INT]\n"
                        + "y := RNEG x [REAL]\n"
-                       + "z := BNOT y [BOOL]\n";
+                       + "z := BNOT y [BOOL]\n"
+                       + "END\n"
+                       + "PROC SECTION\n";
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        parser.parseInstructions();
+        parser.parseProgram();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -78,15 +90,21 @@ public class IrParserTest {
 
     @Test
     public void testBooleanAssignment(){
-        String program = "v := FALSE [BOOL]\n"
-                       + "z := TRUE [BOOL]\n";
+        String program = "SYMBOL SECTION\n"
+                       + "DATA SECTION\n"
+                       + "BSS SECTION\n"
+                       + "CODE SECTION\n"
+                       + "v := FALSE [BOOL]\n"
+                       + "z := TRUE [BOOL]\n"
+                       + "END\n"
+                       + "PROC SECTION\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        parser.parseInstructions();
+        parser.parseProgram();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
@@ -97,15 +115,21 @@ public class IrParserTest {
 
     @Test
     public void testNumAssignment(){
-        String program = "x := 89309 [INT]\n"
-                       + "z := 438.343 [INT]\n";
+        String program = "SYMBOL SECTION\n"
+                       + "DATA SECTION\n"
+                       + "BSS SECTION\n"
+                       + "CODE SECTION\n"
+                       + "x := 89309 [INT]\n"
+                       + "z := 438.343 [INT]\n"
+                       + "END\n"
+                       + "PROC SECTION\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
         MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
         MyIrParser parser = new MyIrParser(lexer, errorLog);
 
-        parser.parseInstructions();
+        parser.parseProgram();
 
         for(LogItem item : errorLog){
             assertTrue(item.toString(), false);
