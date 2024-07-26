@@ -77,20 +77,15 @@ public class MyIrParser {
         if(willMatch(type)){
             return skip();
         } else if(current == null){
-            errorLog.add("Expected " + type + ", found EOF", current.getPosition());
-            errorCount++;
+            throw new ParseException("Expected " + type + ", found EOF");
         } else {
-            errorLog.add("Expected " + type + ", found " + current.getType(), currentPosition);
-            errorCount++;
+            throw new ParseException("Expected " + type + ", found " + current.getType() + " at " + current.getPosition());
         }
-        throw new ParseException("Parsing aborted");
     }
 
     void matchEOF(){
         if(current != null){
-            errorLog.add("Expected end of file, found " + current.getType(), current.getPosition());
-            errorCount++;
-            throw new ParseException("Parsing aborted");
+            throw new ParseException("Expected end of file, found " + current.getType() + " at " + current.getPosition());
         }
     }
 
