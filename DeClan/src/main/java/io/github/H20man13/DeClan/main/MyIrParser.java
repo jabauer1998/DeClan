@@ -174,12 +174,6 @@ public class MyIrParser {
             icode = parseInstruction();
             toRet.add(icode);
         }
-        icode = parseBssSection();
-        toRet.add(icode);
-        while(willMatch(IrTokenType.DEF)){
-            icode = parseDefinition();
-            toRet.add(icode);
-        }
         icode = parseProcedureSection();
         toRet.add(icode);
         while(willMatch(IrTokenType.PROC)){

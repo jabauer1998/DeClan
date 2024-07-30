@@ -1,362 +1,341 @@
 SYMBOL SECTION
- a INTERNAL PARAM IntToReal 0
- O EXTERNAL PARAM Abs 0
- P EXTERNAL RETURN Abs
- S EXTERNAL PARAM IntIsNegative 0
- T EXTERNAL RETURN IntIsNegative
- V EXTERNAL PARAM IntIsZero 0
- W EXTERNAL RETURN IntIsZero
- c1 EXTERNAL realBias
- b INTERNAL RETURN IntToReal
- c INTERNAL PARAM RealToInt 0
- d9 EXTERNAL PARAM RealExponent 0
- e0 EXTERNAL RETURN RealExponent
- e2 EXTERNAL PARAM RealMantissa 0
- e3 EXTERNAL RETURN RealMantissa
- e5 EXTERNAL PARAM RealSign 0
- e6 EXTERNAL RETURN RealSign
- d INTERNAL RETURN RealToInt
- e INTERNAL PARAM BoolToInt 0
- f INTERNAL RETURN BoolToInt
- g INTERNAL PARAM BoolToReal 0
- h INTERNAL RETURN BoolToReal
- i INTERNAL PARAM IntToBool 0
- j INTERNAL RETURN IntToBool
- k INTERNAL PARAM RealToBool 0
- h6 EXTERNAL PARAM RealIsZero 0
- h7 EXTERNAL RETURN RealIsZero
- l INTERNAL RETURN RealToBool
- m INTERNAL PARAM RealBinaryAsInt 0
- n INTERNAL RETURN RealBinaryAsInt
- o INTERNAL PARAM IntBinaryAsReal 0
- p INTERNAL RETURN IntBinaryAsReal
- q INTERNAL PARAM BoolBinaryAsReal 0
- r INTERNAL RETURN BoolBinaryAsReal
- s INTERNAL PARAM RealBinaryAsBool 0
- t INTERNAL RETURN RealBinaryAsBool
- u INTERNAL PARAM BoolBinaryAsInt 0
- v INTERNAL RETURN BoolBinaryAsInt
- w INTERNAL PARAM IntBinaryAsBool 0
- x INTERNAL RETURN IntBinaryAsBool
- y INTERNAL PARAM StringAsAddress 0
- z INTERNAL RETURN StringAsAddress
+
+ SYMBOL SECTION
+
+ N EXTERNAL PARAM Abs 0
+ O EXTERNAL RETURN Abs
+ R EXTERNAL PARAM IntIsNegative 0
+ S EXTERNAL RETURN IntIsNegative
+ U EXTERNAL PARAM IntIsZero 0
+ V EXTERNAL RETURN IntIsZero
+ c5 EXTERNAL realBias
+ e3 EXTERNAL PARAM RealExponent 0
+ e4 EXTERNAL RETURN RealExponent
+ e6 EXTERNAL PARAM RealMantissa 0
+ e7 EXTERNAL RETURN RealMantissa
+ e9 EXTERNAL PARAM RealSign 0
+ f0 EXTERNAL RETURN RealSign
+ i2 EXTERNAL PARAM RealIsZero 0
+ i3 EXTERNAL RETURN RealIsZero
 DATA SECTION
-PROC SECTION
+
+ PROC SECTION
+
  PROC LABEL IntToReal
-  PARAM N := a [INT]
-  A := 0.0 [REAL]
-  B := 0 [INT]
-  C := FALSE [BOOL]
-  D := 0 [INT]
-  E := 0 [INT]
-  F := 0 [INT]
-  G := 0 [INT]
-  H := 0 [INT]
-  I := 0 [INT]
-  J := 0 [INT]
-  K := 0 [INT]
-  L := 0 [INT]
-  M := 0 [INT]
-  CALL Abs((N -> O)[INT])
-  EXTERNAL RETURN Q := P [INT]
-  B := Q [INT]
-  G := B [INT]
-  R := 0 [INT]
-  F := R [INT]
-  CALL IntIsNegative((N -> S)[INT])
-  EXTERNAL RETURN U := T [BOOL]
-  C := U [BOOL]
-  CALL IntIsZero((G -> V)[INT])
-  EXTERNAL RETURN X := W [BOOL]
-  IF X EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
-  LABEL IFSTAT_0_SEQ_0_LEVEL_0
-  Y := 0 [INT]
-  D := Y [INT]
-  GOTO IFEND_0_LEVEL_0
-  LABEL IFNEXT_0_SEQ_0_LEVEL_0
-  CALL IntIsZero((G -> V)[INT])
-  EXTERNAL RETURN Z := W [BOOL]
-  a0 := BNOT Z [BOOL]
-  IF a0 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0
-  LABEL WHILECOND_0_SEQ_0_LEVEL_0
-  IF a0 EQ TRUE THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0
-  LABEL WHILESTAT_0_SEQ_0_LEVEL_0
-  a1 := 1 [INT]
-  a2 := G IAND a1 [INT]
-  H := a2 [INT]
-  a3 := 1 [INT]
-  a4 := H EQ a3 [BOOL]
-  IF a4 EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_1 ELSE IFNEXT_1_SEQ_0_LEVEL_1
-  LABEL IFSTAT_1_SEQ_0_LEVEL_1
-  E := F [INT]
-  GOTO IFEND_1_LEVEL_1
-  LABEL IFNEXT_1_SEQ_0_LEVEL_1
-  LABEL IFEND_1_LEVEL_1
-  a5 := 1 [INT]
-  a6 := F IADD a5 [INT]
-  F := a6 [INT]
-  a7 := 1 [INT]
-  a8 := G IRSHIFT a7 [INT]
-  G := a8 [INT]
-  CALL IntIsZero((G -> V)[INT])
-  EXTERNAL RETURN a9 := W [BOOL]
-  b0 := BNOT a9 [BOOL]
-  a0 := b0 [BOOL]
-  GOTO WHILECOND_0_SEQ_0_LEVEL_0
-  LABEL WHILENEXT_0_SEQ_0_LEVEL_0
-  LABEL WHILEEND_0_LEVEL_0
-  b1 := 23 [INT]
-  b2 := E GT b1 [BOOL]
-  IF b2 EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_1 ELSE IFNEXT_2_SEQ_0_LEVEL_1
-  LABEL IFSTAT_2_SEQ_0_LEVEL_1
-  b3 := 23 [INT]
-  b4 := E ISUB b3 [INT]
-  b5 := B IRSHIFT b4 [INT]
-  B := b5 [INT]
-  GOTO IFEND_2_LEVEL_1
-  LABEL IFNEXT_2_SEQ_0_LEVEL_1
-  b6 := 23 [INT]
-  b7 := E LT b6 [BOOL]
-  IF b7 EQ TRUE THEN IFSTAT_2_SEQ_1_LEVEL_1 ELSE IFNEXT_2_SEQ_1_LEVEL_1
-  LABEL IFSTAT_2_SEQ_1_LEVEL_1
-  b8 := 23 [INT]
-  b9 := b8 ISUB E [INT]
-  c0 := B ILSHIFT b9 [INT]
-  B := c0 [INT]
-  GOTO IFEND_2_LEVEL_1
-  LABEL IFNEXT_2_SEQ_1_LEVEL_1
-  LABEL IFEND_2_LEVEL_1
-  c2 := E IADD c1 [INT]
-  J := c2 [INT]
-  c3 := 8388607 [INT]
-  L := c3 [INT]
-  c4 := B IAND L [INT]
-  K := c4 [INT]
-  D := K [INT]
-  c5 := 23 [INT]
-  c6 := J ILSHIFT c5 [INT]
-  c7 := D IOR c6 [INT]
-  D := c7 [INT]
-  IF C EQ TRUE THEN IFSTAT_3_SEQ_0_LEVEL_1 ELSE IFNEXT_3_SEQ_0_LEVEL_1
-  LABEL IFSTAT_3_SEQ_0_LEVEL_1
-  c8 := 1 [INT]
-  c9 := 31 [INT]
-  d0 := c8 ILSHIFT c9 [INT]
-  d1 := D IOR d0 [INT]
-  D := d1 [INT]
-  GOTO IFEND_3_LEVEL_1
-  LABEL IFNEXT_3_SEQ_0_LEVEL_1
-  LABEL IFEND_3_LEVEL_1
-  GOTO IFEND_0_LEVEL_0
-  LABEL IFNEXT_0_SEQ_1_LEVEL_0
-  LABEL IFEND_0_LEVEL_0
-  CALL IntBinaryAsReal((D -> o)[INT])
-  EXTERNAL RETURN d2 := p [REAL]
-  A := d2 [REAL]
-  INTERNAL RETURN b := A [REAL]
+ io.github.H20man13.DeClan.common.icode.Def@3661f2da
+ io.github.H20man13.DeClan.common.icode.Def@4f100d63
+ io.github.H20man13.DeClan.common.icode.Def@668b833b
+ io.github.H20man13.DeClan.common.icode.Def@650d7140
+ io.github.H20man13.DeClan.common.icode.Def@5cc3b819
+ io.github.H20man13.DeClan.common.icode.Def@13f7cdf7
+ io.github.H20man13.DeClan.common.icode.Def@29df16e9
+ io.github.H20man13.DeClan.common.icode.Def@27d6e5e3
+ io.github.H20man13.DeClan.common.icode.Def@66148270
+ io.github.H20man13.DeClan.common.icode.Def@4ba16330
+ io.github.H20man13.DeClan.common.icode.Def@1a185cf3
+ io.github.H20man13.DeClan.common.icode.Def@af14bae
+ io.github.H20man13.DeClan.common.icode.Def@48345f82
+ CALL Abs(io.github.H20man13.DeClan.common.icode.Def@8cc0d57)
+ io.github.H20man13.DeClan.common.icode.Def@506b3779
+ B := P [INT]
+ G := B [INT]
+ io.github.H20man13.DeClan.common.icode.Def@50c7aae1
+ F := Q [INT]
+ CALL IntIsNegative(io.github.H20man13.DeClan.common.icode.Def@3ae52734)
+ io.github.H20man13.DeClan.common.icode.Def@522b238a
+ C := T [BOOL]
+ CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@5bf21649)
+ io.github.H20man13.DeClan.common.icode.Def@360f3f74
+ io.github.H20man13.DeClan.common.icode.Def@25407206
+ IF W EQ X THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
+ LABEL IFSTAT_0_SEQ_0_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@2efc3257
+ D := Y [INT]
+ GOTO IFEND_0_LEVEL_0
+ LABEL IFNEXT_0_SEQ_0_LEVEL_0
+ CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@65f7399f)
+ io.github.H20man13.DeClan.common.icode.Def@2acc4eca
+ io.github.H20man13.DeClan.common.icode.Def@c3ad9d7
+ io.github.H20man13.DeClan.common.icode.Def@431b3c8d
+ IF a0 EQ a1 THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0
+ LABEL WHILECOND_0_SEQ_0_LEVEL_0
+ IF a0 EQ a1 THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0
+ LABEL WHILESTAT_0_SEQ_0_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@1f7cceb0
+ io.github.H20man13.DeClan.common.icode.Def@578e698b
+ H := a3 [INT]
+ io.github.H20man13.DeClan.common.icode.Def@da0f6cc
+ io.github.H20man13.DeClan.common.icode.Def@17c54ca1
+ io.github.H20man13.DeClan.common.icode.Def@6e3509a7
+ IF a5 EQ a6 THEN IFSTAT_1_SEQ_0_LEVEL_1 ELSE IFNEXT_1_SEQ_0_LEVEL_1
+ LABEL IFSTAT_1_SEQ_0_LEVEL_1
+ E := F [INT]
+ GOTO IFEND_1_LEVEL_1
+ LABEL IFNEXT_1_SEQ_0_LEVEL_1
+ LABEL IFEND_1_LEVEL_1
+ io.github.H20man13.DeClan.common.icode.Def@4ad3e7db
+ io.github.H20man13.DeClan.common.icode.Def@404f7edb
+ F := a8 [INT]
+ io.github.H20man13.DeClan.common.icode.Def@7dd29237
+ io.github.H20man13.DeClan.common.icode.Def@3becd41b
+ G := b0 [INT]
+ CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@6e540182)
+ io.github.H20man13.DeClan.common.icode.Def@55d61335
+ io.github.H20man13.DeClan.common.icode.Def@3c7c7092
+ a0 := b2 [BOOL]
+ GOTO WHILECOND_0_SEQ_0_LEVEL_0
+ LABEL WHILENEXT_0_SEQ_0_LEVEL_0
+ LABEL WHILEEND_0_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@616d270a
+ io.github.H20man13.DeClan.common.icode.Def@2ffb72b4
+ io.github.H20man13.DeClan.common.icode.Def@4a5183c5
+ IF b4 EQ b5 THEN IFSTAT_2_SEQ_0_LEVEL_1 ELSE IFNEXT_2_SEQ_0_LEVEL_1
+ LABEL IFSTAT_2_SEQ_0_LEVEL_1
+ io.github.H20man13.DeClan.common.icode.Def@15f682fd
+ io.github.H20man13.DeClan.common.icode.Def@1d2bb23e
+ io.github.H20man13.DeClan.common.icode.Def@69b10dfd
+ B := b8 [INT]
+ GOTO IFEND_2_LEVEL_1
+ LABEL IFNEXT_2_SEQ_0_LEVEL_1
+ io.github.H20man13.DeClan.common.icode.Def@2fb8f4a5
+ io.github.H20man13.DeClan.common.icode.Def@e786ac5
+ io.github.H20man13.DeClan.common.icode.Def@4e828376
+ IF c0 EQ c1 THEN IFSTAT_2_SEQ_1_LEVEL_1 ELSE IFNEXT_2_SEQ_1_LEVEL_1
+ LABEL IFSTAT_2_SEQ_1_LEVEL_1
+ io.github.H20man13.DeClan.common.icode.Def@2f3da1be
+ io.github.H20man13.DeClan.common.icode.Def@47487520
+ io.github.H20man13.DeClan.common.icode.Def@a2b014e
+ B := c4 [INT]
+ GOTO IFEND_2_LEVEL_1
+ LABEL IFNEXT_2_SEQ_1_LEVEL_1
+ LABEL IFEND_2_LEVEL_1
+ io.github.H20man13.DeClan.common.icode.Def@5068ba4e
+ J := c6 [INT]
+ io.github.H20man13.DeClan.common.icode.Def@121ad1ac
+ L := c7 [INT]
+ io.github.H20man13.DeClan.common.icode.Def@167f47ba
+ K := c8 [INT]
+ D := K [INT]
+ io.github.H20man13.DeClan.common.icode.Def@448c054a
+ io.github.H20man13.DeClan.common.icode.Def@51237d5f
+ io.github.H20man13.DeClan.common.icode.Def@15705166
+ D := d1 [INT]
+ io.github.H20man13.DeClan.common.icode.Def@795e96e5
+ IF C EQ d2 THEN IFSTAT_3_SEQ_0_LEVEL_1 ELSE IFNEXT_3_SEQ_0_LEVEL_1
+ LABEL IFSTAT_3_SEQ_0_LEVEL_1
+ io.github.H20man13.DeClan.common.icode.Def@5ddc7ad1
+ io.github.H20man13.DeClan.common.icode.Def@175f2db0
+ io.github.H20man13.DeClan.common.icode.Def@b3a55c
+ io.github.H20man13.DeClan.common.icode.Def@d57e211
+ D := d6 [INT]
+ GOTO IFEND_3_LEVEL_1
+ LABEL IFNEXT_3_SEQ_0_LEVEL_1
+ LABEL IFEND_3_LEVEL_1
+ GOTO IFEND_0_LEVEL_0
+ LABEL IFNEXT_0_SEQ_1_LEVEL_0
+ LABEL IFEND_0_LEVEL_0
+ CALL IntBinaryAsReal(io.github.H20man13.DeClan.common.icode.Def@33630b98)
+ io.github.H20man13.DeClan.common.icode.Def@5d3f82e9
+ A := d7 [REAL]
+ io.github.H20man13.DeClan.common.icode.Def@40bb4557
  RETURN
  PROC LABEL RealToInt
-  PARAM d8 := c [REAL]
-  d3 := 0 [INT]
-  d4 := 0 [INT]
-  d5 := 0 [INT]
-  d6 := 0 [INT]
-  d7 := 0 [INT]
-  CALL RealExponent((d8 -> d9)[REAL])
-  EXTERNAL RETURN e1 := e0 [INT]
-  d4 := e1 [INT]
-  CALL RealMantissa((d8 -> e2)[REAL])
-  EXTERNAL RETURN e4 := e3 [INT]
-  d5 := e4 [INT]
-  CALL RealSign((d8 -> e5)[REAL])
-  EXTERNAL RETURN e7 := e6 [INT]
-  d6 := e7 [INT]
-  e8 := 0 [INT]
-  e9 := d4 GT e8 [BOOL]
-  IF e9 EQ TRUE THEN IFSTAT_5_SEQ_0_LEVEL_0 ELSE IFNEXT_5_SEQ_0_LEVEL_0
-  LABEL IFSTAT_5_SEQ_0_LEVEL_0
-  f0 := d5 ILSHIFT d4 [INT]
-  d7 := f0 [INT]
-  GOTO IFEND_5_LEVEL_0
-  LABEL IFNEXT_5_SEQ_0_LEVEL_0
-  f1 := 0 [INT]
-  f2 := d4 LT f1 [BOOL]
-  IF f2 EQ TRUE THEN IFSTAT_5_SEQ_1_LEVEL_0 ELSE IFNEXT_5_SEQ_1_LEVEL_0
-  LABEL IFSTAT_5_SEQ_1_LEVEL_0
-  f3 := d5 IRSHIFT d4 [INT]
-  d7 := f3 [INT]
-  GOTO IFEND_5_LEVEL_0
-  LABEL IFNEXT_5_SEQ_1_LEVEL_0
-  d7 := d5 [INT]
-  GOTO IFEND_5_LEVEL_0
-  LABEL IFNEXT_5_SEQ_2_LEVEL_0
-  LABEL IFEND_5_LEVEL_0
-  f4 := 23 [INT]
-  f5 := d7 IRSHIFT f4 [INT]
-  d3 := f5 [INT]
-  f6 := 1 [INT]
-  f7 := d6 EQ f6 [BOOL]
-  IF f7 EQ TRUE THEN IFSTAT_6_SEQ_0_LEVEL_0 ELSE IFNEXT_6_SEQ_0_LEVEL_0
-  LABEL IFSTAT_6_SEQ_0_LEVEL_0
-  f8 := INOT d3 [INT]
-  d3 := f8 [INT]
-  f9 := 1 [INT]
-  g0 := d3 IADD f9 [INT]
-  d3 := g0 [INT]
-  GOTO IFEND_6_LEVEL_0
-  LABEL IFNEXT_6_SEQ_0_LEVEL_0
-  LABEL IFEND_6_LEVEL_0
-  INTERNAL RETURN d := d3 [INT]
+ io.github.H20man13.DeClan.common.icode.Def@72ce703b
+ io.github.H20man13.DeClan.common.icode.Def@595a9a31
+ io.github.H20man13.DeClan.common.icode.Def@78537339
+ io.github.H20man13.DeClan.common.icode.Def@62d81099
+ io.github.H20man13.DeClan.common.icode.Def@6316fb51
+ CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@6e107e10)
+ io.github.H20man13.DeClan.common.icode.Def@d390250
+ d9 := e5 [INT]
+ CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@2fc797b6)
+ io.github.H20man13.DeClan.common.icode.Def@7b5f2d6c
+ e0 := e8 [INT]
+ CALL RealSign(io.github.H20man13.DeClan.common.icode.Def@16523ce9)
+ io.github.H20man13.DeClan.common.icode.Def@533c87f1
+ e1 := f1 [INT]
+ io.github.H20man13.DeClan.common.icode.Def@4055c007
+ io.github.H20man13.DeClan.common.icode.Def@42e3a12c
+ io.github.H20man13.DeClan.common.icode.Def@455168ed
+ IF f3 EQ f4 THEN IFSTAT_5_SEQ_0_LEVEL_0 ELSE IFNEXT_5_SEQ_0_LEVEL_0
+ LABEL IFSTAT_5_SEQ_0_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@72656cb9
+ e2 := f5 [INT]
+ GOTO IFEND_5_LEVEL_0
+ LABEL IFNEXT_5_SEQ_0_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@1c5ecf0a
+ io.github.H20man13.DeClan.common.icode.Def@43ebe76c
+ io.github.H20man13.DeClan.common.icode.Def@d33f9fc
+ IF f7 EQ f8 THEN IFSTAT_5_SEQ_1_LEVEL_0 ELSE IFNEXT_5_SEQ_1_LEVEL_0
+ LABEL IFSTAT_5_SEQ_1_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@546a4c47
+ e2 := f9 [INT]
+ GOTO IFEND_5_LEVEL_0
+ LABEL IFNEXT_5_SEQ_1_LEVEL_0
+ e2 := e0 [INT]
+ GOTO IFEND_5_LEVEL_0
+ LABEL IFNEXT_5_SEQ_2_LEVEL_0
+ LABEL IFEND_5_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@3ea6ef5f
+ io.github.H20man13.DeClan.common.icode.Def@226abf60
+ d8 := g1 [INT]
+ io.github.H20man13.DeClan.common.icode.Def@30845ec8
+ io.github.H20man13.DeClan.common.icode.Def@360a24eb
+ io.github.H20man13.DeClan.common.icode.Def@3fdff962
+ IF g3 EQ g4 THEN IFSTAT_6_SEQ_0_LEVEL_0 ELSE IFNEXT_6_SEQ_0_LEVEL_0
+ LABEL IFSTAT_6_SEQ_0_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@4839c046
+ d8 := g5 [INT]
+ io.github.H20man13.DeClan.common.icode.Def@5a59b597
+ io.github.H20man13.DeClan.common.icode.Def@3d93ff4b
+ d8 := g7 [INT]
+ GOTO IFEND_6_LEVEL_0
+ LABEL IFNEXT_6_SEQ_0_LEVEL_0
+ LABEL IFEND_6_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@7dc70572
  RETURN
  PROC LABEL BoolToInt
-  PARAM g2 := e [BOOL]
-  g1 := 0 [INT]
-  IF g2 EQ TRUE THEN IFSTAT_7_SEQ_0_LEVEL_0 ELSE IFNEXT_7_SEQ_0_LEVEL_0
-  LABEL IFSTAT_7_SEQ_0_LEVEL_0
-  g3 := 1 [INT]
-  g1 := g3 [INT]
-  GOTO IFEND_7_LEVEL_0
-  LABEL IFNEXT_7_SEQ_0_LEVEL_0
-  g4 := 0 [INT]
-  g1 := g4 [INT]
-  GOTO IFEND_7_LEVEL_0
-  LABEL IFNEXT_7_SEQ_1_LEVEL_0
-  LABEL IFEND_7_LEVEL_0
-  INTERNAL RETURN f := g1 [INT]
+ io.github.H20man13.DeClan.common.icode.Def@7bfac17c
+ io.github.H20man13.DeClan.common.icode.Def@6c183699
+ IF (PARAM e) EQ g9 THEN IFSTAT_7_SEQ_0_LEVEL_0 ELSE IFNEXT_7_SEQ_0_LEVEL_0
+ LABEL IFSTAT_7_SEQ_0_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@4ed3f5f6
+ g8 := h0 [INT]
+ GOTO IFEND_7_LEVEL_0
+ LABEL IFNEXT_7_SEQ_0_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@b7a95cb
+ g8 := h1 [INT]
+ GOTO IFEND_7_LEVEL_0
+ LABEL IFNEXT_7_SEQ_1_LEVEL_0
+ LABEL IFEND_7_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@262654f9
  RETURN
  PROC LABEL BoolToReal
-  PARAM g6 := g [BOOL]
-  g5 := 0.0 [REAL]
-  IF g6 EQ TRUE THEN IFSTAT_8_SEQ_0_LEVEL_0 ELSE IFNEXT_8_SEQ_0_LEVEL_0
-  LABEL IFSTAT_8_SEQ_0_LEVEL_0
-  g7 := 1.0 [REAL]
-  g5 := g7 [REAL]
-  GOTO IFEND_8_LEVEL_0
-  LABEL IFNEXT_8_SEQ_0_LEVEL_0
-  g8 := 2.0 [REAL]
-  g5 := g8 [REAL]
-  GOTO IFEND_8_LEVEL_0
-  LABEL IFNEXT_8_SEQ_1_LEVEL_0
-  LABEL IFEND_8_LEVEL_0
-  INTERNAL RETURN h := g5 [REAL]
+ io.github.H20man13.DeClan.common.icode.Def@b27025a
+ io.github.H20man13.DeClan.common.icode.Def@5a0a2a8d
+ IF (PARAM g) EQ h3 THEN IFSTAT_8_SEQ_0_LEVEL_0 ELSE IFNEXT_8_SEQ_0_LEVEL_0
+ LABEL IFSTAT_8_SEQ_0_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@58128ca
+ h2 := h4 [REAL]
+ GOTO IFEND_8_LEVEL_0
+ LABEL IFNEXT_8_SEQ_0_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@1114251f
+ h2 := h5 [REAL]
+ GOTO IFEND_8_LEVEL_0
+ LABEL IFNEXT_8_SEQ_1_LEVEL_0
+ LABEL IFEND_8_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@2292d0b5
  RETURN
  PROC LABEL IntToBool
-  PARAM h0 := i [INT]
-  g9 := FALSE [BOOL]
-  CALL IntIsZero((h0 -> V)[INT])
-  EXTERNAL RETURN h1 := W [BOOL]
-  IF h1 EQ TRUE THEN IFSTAT_9_SEQ_0_LEVEL_0 ELSE IFNEXT_9_SEQ_0_LEVEL_0
-  LABEL IFSTAT_9_SEQ_0_LEVEL_0
-  h2 := FALSE [BOOL]
-  g9 := h2 [BOOL]
-  GOTO IFEND_9_LEVEL_0
-  LABEL IFNEXT_9_SEQ_0_LEVEL_0
-  h3 := TRUE [BOOL]
-  g9 := h3 [BOOL]
-  GOTO IFEND_9_LEVEL_0
-  LABEL IFNEXT_9_SEQ_1_LEVEL_0
-  LABEL IFEND_9_LEVEL_0
-  INTERNAL RETURN j := g9 [BOOL]
+ io.github.H20man13.DeClan.common.icode.Def@2947c828
+ CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@250c62b2)
+ io.github.H20man13.DeClan.common.icode.Def@150087d1
+ io.github.H20man13.DeClan.common.icode.Def@21a3eabc
+ IF h7 EQ h8 THEN IFSTAT_9_SEQ_0_LEVEL_0 ELSE IFNEXT_9_SEQ_0_LEVEL_0
+ LABEL IFSTAT_9_SEQ_0_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@36327028
+ h6 := h9 [BOOL]
+ GOTO IFEND_9_LEVEL_0
+ LABEL IFNEXT_9_SEQ_0_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@706d9dae
+ h6 := i0 [BOOL]
+ GOTO IFEND_9_LEVEL_0
+ LABEL IFNEXT_9_SEQ_1_LEVEL_0
+ LABEL IFEND_9_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@6142a27d
  RETURN
  PROC LABEL RealToBool
-  PARAM h5 := k [REAL]
-  h4 := FALSE [BOOL]
-  CALL RealIsZero((h5 -> h6)[REAL])
-  EXTERNAL RETURN h8 := h7 [BOOL]
-  IF h8 EQ TRUE THEN IFSTAT_10_SEQ_0_LEVEL_0 ELSE IFNEXT_10_SEQ_0_LEVEL_0
-  LABEL IFSTAT_10_SEQ_0_LEVEL_0
-  h9 := FALSE [BOOL]
-  h4 := h9 [BOOL]
-  GOTO IFEND_10_LEVEL_0
-  LABEL IFNEXT_10_SEQ_0_LEVEL_0
-  i0 := TRUE [BOOL]
-  h4 := i0 [BOOL]
-  GOTO IFEND_10_LEVEL_0
-  LABEL IFNEXT_10_SEQ_1_LEVEL_0
-  LABEL IFEND_10_LEVEL_0
-  INTERNAL RETURN l := h4 [BOOL]
+ io.github.H20man13.DeClan.common.icode.Def@5f0a52e3
+ CALL RealIsZero(io.github.H20man13.DeClan.common.icode.Def@7a1cca1a)
+ io.github.H20man13.DeClan.common.icode.Def@6680a81a
+ io.github.H20man13.DeClan.common.icode.Def@12a5bffd
+ IF i4 EQ i5 THEN IFSTAT_10_SEQ_0_LEVEL_0 ELSE IFNEXT_10_SEQ_0_LEVEL_0
+ LABEL IFSTAT_10_SEQ_0_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@1fb56a00
+ i1 := i6 [BOOL]
+ GOTO IFEND_10_LEVEL_0
+ LABEL IFNEXT_10_SEQ_0_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@3652ff6
+ i1 := i7 [BOOL]
+ GOTO IFEND_10_LEVEL_0
+ LABEL IFNEXT_10_SEQ_1_LEVEL_0
+ LABEL IFEND_10_LEVEL_0
+ io.github.H20man13.DeClan.common.icode.Def@60c697f8
  RETURN
  PROC LABEL RealBinaryAsInt
-  PARAM i3 := m [REAL]
-  i1 := 0 [INT]
-  i2 := 0.0 [REAL]
-  IPARAM i2
-  IPARAM i3
-  IASM "LDR %r, %a"
-  IPARAM i2
-  IPARAM i1
-  IASM "STR %r, %a"
-  INTERNAL RETURN n := i1 [INT]
+ io.github.H20man13.DeClan.common.icode.Def@5fa3964a
+ io.github.H20man13.DeClan.common.icode.Def@6b7212d4
+ IPARAM i9
+IPARAM (PARAM m)
+IASM "LDR %r, %a"
+ IPARAM i9
+IPARAM i8
+IASM "STR %r, %a"
+ io.github.H20man13.DeClan.common.icode.Def@41429ad3
  RETURN
  PROC LABEL IntBinaryAsReal
-  PARAM i6 := o [INT]
-  i4 := 0.0 [REAL]
-  i5 := 0 [INT]
-  IPARAM i5
-  IPARAM i6
-  IASM "LDR %r, %a"
-  IPARAM i5
-  IPARAM i4
-  IASM "STR %r, %a"
-  INTERNAL RETURN p := i4 [REAL]
+ io.github.H20man13.DeClan.common.icode.Def@156fbc54
+ io.github.H20man13.DeClan.common.icode.Def@563d6975
+ IPARAM j1
+IPARAM (PARAM o)
+IASM "LDR %r, %a"
+ IPARAM j1
+IPARAM j0
+IASM "STR %r, %a"
+ io.github.H20man13.DeClan.common.icode.Def@2d2235d4
  RETURN
  PROC LABEL BoolBinaryAsReal
-  PARAM i9 := q [BOOL]
-  i7 := 0.0 [REAL]
-  i8 := 0 [INT]
-  IPARAM i8
-  IPARAM i9
-  IASM "LDRB %r, %a"
-  IPARAM i8
-  IPARAM i7
-  IASM "STR %r, %a"
-  INTERNAL RETURN r := i7 [REAL]
+ io.github.H20man13.DeClan.common.icode.Def@78e3b6a1
+ io.github.H20man13.DeClan.common.icode.Def@100638f5
+ IPARAM j3
+IPARAM (PARAM q)
+IASM "LDRB %r, %a"
+ IPARAM j3
+IPARAM j2
+IASM "STR %r, %a"
+ io.github.H20man13.DeClan.common.icode.Def@2dcd9d41
  RETURN
  PROC LABEL RealBinaryAsBool
-  PARAM j2 := s [REAL]
-  j0 := FALSE [BOOL]
-  j1 := 0 [INT]
-  IPARAM j1
-  IPARAM j2
-  IASM "LDR %r, %a"
-  IPARAM j1
-  IPARAM j0
-  IASM "STRB %r, %a"
-  INTERNAL RETURN t := j0 [BOOL]
+ io.github.H20man13.DeClan.common.icode.Def@11fd81b9
+ io.github.H20man13.DeClan.common.icode.Def@744e7b99
+ IPARAM j5
+IPARAM (PARAM s)
+IASM "LDR %r, %a"
+ IPARAM j5
+IPARAM j4
+IASM "STRB %r, %a"
+ io.github.H20man13.DeClan.common.icode.Def@552e2475
  RETURN
  PROC LABEL BoolBinaryAsInt
-  PARAM j5 := u [BOOL]
-  j3 := 0 [INT]
-  j4 := 0 [INT]
-  IPARAM j4
-  IPARAM j5
-  IASM "LDRB %r, %a"
-  IPARAM j4
-  IPARAM j3
-  IASM "STR %r, %a"
-  INTERNAL RETURN v := j3 [INT]
+ io.github.H20man13.DeClan.common.icode.Def@14488c04
+ io.github.H20man13.DeClan.common.icode.Def@69c5277d
+ IPARAM j7
+IPARAM (PARAM u)
+IASM "LDRB %r, %a"
+ IPARAM j7
+IPARAM j6
+IASM "STR %r, %a"
+ io.github.H20man13.DeClan.common.icode.Def@6e501b6f
  RETURN
  PROC LABEL IntBinaryAsBool
-  PARAM j8 := w [INT]
-  j6 := FALSE [BOOL]
-  j7 := 0 [INT]
-  IPARAM j7
-  IPARAM j8
-  IASM "LDR %r, %a"
-  IPARAM j7
-  IPARAM j6
-  IASM "STRB %r, %a"
-  INTERNAL RETURN x := j6 [BOOL]
+ io.github.H20man13.DeClan.common.icode.Def@4af9875c
+ io.github.H20man13.DeClan.common.icode.Def@1a010aab
+ IPARAM j9
+IPARAM (PARAM w)
+IASM "LDR %r, %a"
+ IPARAM j9
+IPARAM j8
+IASM "STRB %r, %a"
+ io.github.H20man13.DeClan.common.icode.Def@5a3f2859
  RETURN
  PROC LABEL StringAsAddress
-  PARAM k1 := y [STRING]
-  j9 := 0 [INT]
-  k0 := 0 [INT]
-  IPARAM k0
-  IPARAM k1
-  IASM "LDR %r, %a"
-  IPARAM k0
-  IPARAM j9
-  IASM "STR %r, %a"
-  INTERNAL RETURN z := j9 [INT]
+ io.github.H20man13.DeClan.common.icode.Def@34dacb12
+ io.github.H20man13.DeClan.common.icode.Def@329f69b2
+ IPARAM k1
+IPARAM (PARAM y)
+IASM "LDR %r, %a"
+ IPARAM k1
+IPARAM k0
+IASM "STR %r, %a"
+ io.github.H20man13.DeClan.common.icode.Def@20597918
  RETURN

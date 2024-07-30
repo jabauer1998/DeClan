@@ -610,17 +610,6 @@ public class Lib implements ICode, Iterable<ICode> {
                     }
                     break;
                 case DATA_SECTION: 
-                    if(instruction instanceof BssSec){
-                        state = State.BSS_SECTION;
-                        sb.append(instruction.toString());
-                        sb.append("\r\n");
-                    } else {
-                        sb.append(' ');
-                        sb.append(instruction.toString());
-                        sb.append("\r\n");
-                    }
-                    break;
-                case BSS_SECTION:
                     if(instruction instanceof ProcSec){
                         state = State.PROCEDURE_SECTION;
                         sb.append(instruction.toString());

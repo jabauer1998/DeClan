@@ -7,13 +7,11 @@ import edu.depauw.declan.common.Position;
 
 public class Library extends AbstractASTNode{
     private final List<ConstDeclaration> constDecls;
-    private final List<VariableDeclaration> varDecls;
     private final List<ProcedureDeclaration> procDecls;
 
     public Library(Position start, List<ConstDeclaration> constDecls, List<VariableDeclaration> varDecls, List<ProcedureDeclaration> procDecls){
         super(start);
         this.constDecls = constDecls;
-        this.varDecls = varDecls;
         this.procDecls = procDecls;
     }
 
@@ -21,7 +19,6 @@ public class Library extends AbstractASTNode{
         super(start);
 
         this.constDecls = new LinkedList<ConstDeclaration>();
-        this.varDecls = new LinkedList<VariableDeclaration>();
         this.procDecls = new LinkedList<ProcedureDeclaration>();
 
         for(Declaration decl : declarations){
@@ -29,18 +26,12 @@ public class Library extends AbstractASTNode{
                 this.constDecls.add((ConstDeclaration)decl);
             } else if(decl instanceof ProcedureDeclaration){
                 this.procDecls.add((ProcedureDeclaration)decl);
-            } else if(decl instanceof VariableDeclaration){
-                this.varDecls.add((VariableDeclaration)decl);
             }
         }
     }
 
     public List<ConstDeclaration> getConstDecls(){
         return this.constDecls;
-    }
-
-    public List<VariableDeclaration> getVarDecls(){
-        return this.varDecls;
     }
 
     public List<ProcedureDeclaration> getProcDecls(){
@@ -50,7 +41,6 @@ public class Library extends AbstractASTNode{
     public List<Declaration> getDecls(){
         List<Declaration> result = new LinkedList<Declaration>();
         result.addAll(this.constDecls);
-        result.addAll(this.varDecls);
         result.addAll(this.procDecls);
         return result;
     }
@@ -70,16 +60,6 @@ public class Library extends AbstractASTNode{
             Declaration constDecl = constDecls.get(i);
             sb.append(constDecl.toString());
             if(i < constSize - 1){
-                sb.append("; ");
-            }
-        }
-        sb.append(";\nVAR ");
-
-        int varSize = varDecls.size();
-        for(int i = 0; i < varSize; i++){
-            Declaration varDecl = varDecls.get(i);
-            sb.append(varDecl.toString());
-            if(i < varSize - 1){
                 sb.append("; ");
             }
         }

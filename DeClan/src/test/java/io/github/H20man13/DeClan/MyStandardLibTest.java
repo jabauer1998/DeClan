@@ -1,32 +1,27 @@
 package io.github.H20man13.DeClan;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.FileReader;
 
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Source;
-import edu.depauw.declan.common.ErrorLog.LogItem;
 import edu.depauw.declan.common.ast.Library;
 import io.github.H20man13.DeClan.common.ElaborateReaderSource;
 import io.github.H20man13.DeClan.common.icode.Lib;
-import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.MyICodeGenerator;
 import io.github.H20man13.DeClan.main.MyIrLexer;
 import io.github.H20man13.DeClan.main.MyIrParser;
-import io.github.H20man13.DeClan.main.MyStandardLibrary;
-import io.github.H20man13.DeClan.main.MyTypeChecker;
 
 public class MyStandardLibTest {
     private static void compareLibs(String libName){
         ErrorLog errLog = new ErrorLog();
         String locLib = System.getenv("DECLIB");
-        assertTrue("Environment variable DECLIB is not set!!!", !locLib.equals(null));
+        assertTrue("Environment variable DECLIB is not set!!!", !(locLib == null));
 
         String declanDir = locLib + "\\declan";
         String irDir = locLib +"\\ir\\linkable";

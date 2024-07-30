@@ -1,7 +1,5 @@
 package io.github.H20man13.DeClan.common.icode.section;
 
-import java.util.List;
-
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
@@ -20,6 +18,11 @@ public class BssSec implements ICode {
     @Override
     public P asPattern() {
         return P.PAT(P.BSS(), P.SECTION());
+    }
+
+    @Override
+    public String toString(){
+        return "BSS SECTION";
     }
 
     @Override

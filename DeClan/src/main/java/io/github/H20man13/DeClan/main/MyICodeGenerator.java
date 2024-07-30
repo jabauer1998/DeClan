@@ -94,7 +94,6 @@ import java.util.LinkedList;
 public class MyICodeGenerator{
   private ErrorLog errorLog;
   private Environment<String, IdentExp> varEnvironment;
-  private Environment<String, IdentExp> paramEnvironment;
   private Environment<String, IdentExp> procEnvironment;
   private Environment<String, IdentEntryList> procArgs;
   private MyTypeChecker typeChecker;
@@ -108,7 +107,6 @@ public class MyICodeGenerator{
     this.gen = new IrRegisterGenerator();
     this.varEnvironment = new Environment<>();
     this.procEnvironment = new Environment<>();
-    this.paramEnvironment = new Environment<>();
     this.procArgs = new Environment<>();
     this.typeChecker = new MyTypeChecker(errorLog);
     this.interpreter = new MyInterpreter(errorLog, null, null, null);
@@ -127,12 +125,6 @@ public class MyICodeGenerator{
     for(ConstDeclaration decl : lib.getConstDecls()){
       decl.accept(typeChecker);
       generateConstantIr(Scope.GLOBAL, decl, builder);
-    }
-
-    builder.buildBssSectionHeader();
-    for(VariableDeclaration decl : lib.getVarDecls()){
-      decl.accept(typeChecker);
-      generateVariableIr(Scope.GLOBAL, decl, builder);
     }
 
     loadFunctions(lib.getProcDecls());
@@ -251,7 +243,6 @@ public class MyICodeGenerator{
   public void generateProcedureIr(ProcedureDeclaration procDecl, StatementBuilder builder){
     String procedureName = procDecl.getProcedureName().getLexeme();
     builder.buildProcedureLabel(procedureName);
-    paramEnvironment.addScope();
     varEnvironment.addScope();
 
     IdentEntryList list = procArgs.getEntry(procedureName);
@@ -259,7 +250,7 @@ public class MyICodeGenerator{
       ParamaterDeclaration decl = procDecl.getArguments().get(i);
       String actual = decl.getIdentifier().getLexeme();
       IdentExp alias = list.get(i);
-      paramEnvironment.addEntry(actual, alias);
+      varEnvironment.addEntry(actual, alias);
     }
 
     List <Declaration> localVars = procDecl.getLocalVariables();
@@ -287,7 +278,6 @@ public class MyICodeGenerator{
     }
     builder.buildReturnStatement();
     varEnvironment.removeScope();
-    paramEnvironment.removeScope();
   }
 
   public void generateStatementIr(Scope scope, Statement stat, StatementBuilder builder){
@@ -1230,7 +1220,11 @@ public class MyICodeGenerator{
       if(rawnum.contains(".")){
          return builder.buildDefinition(scope, new RealExp(Float.parseFloat(rawnum)), ICode.Type.REAL);
       } else {
-        return builder.buildDefinition(scope, new IntExp(Integer.parseInt(rawnum)), ICode.Type.INT);
+        try{
+          return builder.buildDefinition(scope, new IntExp(Integer.parseInt(rawnum)), ICode.Type.INT);
+        } catch(NumberFormatException e){
+          return builder.buildDefinition(scope, new IntExp(Integer.parseUnsignedInt(rawnum)), ICode.Type.INT);
+        }
       }
   }
 
