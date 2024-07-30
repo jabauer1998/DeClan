@@ -1,10 +1,5 @@
 package io.github.H20man13.DeClan.common.icode;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.pat.P;
 
@@ -20,7 +15,14 @@ public class If implements ICode {
 	
 	@Override
 	public String toString() {
-		return "IF " + exp.toString() + " THEN " + ifTrue + " ELSE " + ifFalse;
+		StringBuilder sb = new StringBuilder();
+		sb.append("IF ");
+		sb.append(exp.toString());
+		sb.append("\r\nTHEN ");
+		sb.append(ifTrue);
+		sb.append("\r\nELSE ");
+		sb.append(ifFalse);
+		return sb.toString();
 	}
 
 	@Override

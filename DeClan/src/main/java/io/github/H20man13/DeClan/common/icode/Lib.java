@@ -581,7 +581,6 @@ public class Lib implements ICode, Iterable<ICode> {
         PROCEDURE_SECTION,
         PROCEDURE,
         DATA_SECTION,
-        BSS_SECTION,
         SYMBOL_SECTION,
         INIT
     }
