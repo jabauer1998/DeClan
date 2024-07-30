@@ -1,11 +1,7 @@
 package io.github.H20man13.DeClan.common.icode;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
-import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Def implements ICode {
@@ -29,6 +25,23 @@ public class Def implements ICode {
     @Override
     public boolean isBranch() {
         return false;
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append("DEF ");
+        sb.append(scope.toString());
+        sb.append(' ');
+        sb.append(label);
+        sb.append(" := ");
+        sb.append(val.toString());
+        sb.append(" [");
+        sb.append(type.toString());
+        sb.append("]");
+
+        return sb.toString();
     }
 
     @Override
