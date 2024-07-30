@@ -35,6 +35,7 @@ public class ParamSymEntry extends SymEntry {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
+        sb.append("ENTRY ");
         sb.append(icodePlace);
         sb.append(' ');
         if(this.containsQualities(CONST)){

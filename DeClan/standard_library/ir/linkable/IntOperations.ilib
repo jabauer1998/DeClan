@@ -2,153 +2,153 @@ SYMBOL SECTION
 
  SYMBOL SECTION
 
- A EXTERNAL PARAM IntIsZero 0
+ ENTRY A EXTERNAL PARAM IntIsZero 0
  B EXTERNAL RETURN IntIsZero
- b4 EXTERNAL PARAM IntToReal 0
+ ENTRY b4 EXTERNAL PARAM IntToReal 0
  b5 EXTERNAL RETURN IntToReal
- b8 EXTERNAL PARAM RDivide 0
- b9 EXTERNAL PARAM RDivide 1
+ ENTRY b8 EXTERNAL PARAM RDivide 0
+ ENTRY b9 EXTERNAL PARAM RDivide 1
  c0 EXTERNAL RETURN RDivide
 DATA SECTION
 
- PROC SECTION
+PROC SECTION
 
  PROC LABEL INeg
- io.github.H20man13.DeClan.common.icode.Def@37b27912
- io.github.H20man13.DeClan.common.icode.Def@607cf7d2
- io.github.H20man13.DeClan.common.icode.Def@6f602e96
- io.github.H20man13.DeClan.common.icode.Def@7b005104
- l := o [INT]
- io.github.H20man13.DeClan.common.icode.Def@5f5edd9f
+  io.github.H20man13.DeClan.common.icode.Def@37b27912
+  io.github.H20man13.DeClan.common.icode.Def@607cf7d2
+  io.github.H20man13.DeClan.common.icode.Def@6f602e96
+  io.github.H20man13.DeClan.common.icode.Def@7b005104
+  l := o [INT]
+  io.github.H20man13.DeClan.common.icode.Def@5f5edd9f
  RETURN
  PROC LABEL Div
- io.github.H20man13.DeClan.common.icode.Def@589b63c1
- io.github.H20man13.DeClan.common.icode.Def@3661f2da
- io.github.H20man13.DeClan.common.icode.Def@4f100d63
- io.github.H20man13.DeClan.common.icode.Def@668b833b
- io.github.H20man13.DeClan.common.icode.Def@650d7140
- io.github.H20man13.DeClan.common.icode.Def@5cc3b819
- io.github.H20man13.DeClan.common.icode.Def@13f7cdf7
- io.github.H20man13.DeClan.common.icode.Def@29df16e9
- io.github.H20man13.DeClan.common.icode.Def@27d6e5e3
- r := (PARAM c) [INT]
- io.github.H20man13.DeClan.common.icode.Def@66148270
- u := y [INT]
- io.github.H20man13.DeClan.common.icode.Def@4ba16330
- s := z [INT]
- CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@1a185cf3)
- io.github.H20man13.DeClan.common.icode.Def@af14bae
- io.github.H20man13.DeClan.common.icode.Def@48345f82
- io.github.H20man13.DeClan.common.icode.Def@8cc0d57
- IF D EQ E THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0
- LABEL WHILECOND_0_SEQ_0_LEVEL_0
- IF D EQ E THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0
- LABEL WHILESTAT_0_SEQ_0_LEVEL_0
- io.github.H20man13.DeClan.common.icode.Def@506b3779
- io.github.H20man13.DeClan.common.icode.Def@50c7aae1
- t := G [INT]
- io.github.H20man13.DeClan.common.icode.Def@3ae52734
- io.github.H20man13.DeClan.common.icode.Def@522b238a
- io.github.H20man13.DeClan.common.icode.Def@5bf21649
- IF I EQ J THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
- LABEL IFSTAT_0_SEQ_0_LEVEL_0
- s := u [INT]
- GOTO IFEND_0_LEVEL_0
- LABEL IFNEXT_0_SEQ_0_LEVEL_0
- LABEL IFEND_0_LEVEL_0
- io.github.H20man13.DeClan.common.icode.Def@360f3f74
- io.github.H20man13.DeClan.common.icode.Def@25407206
- u := L [INT]
- io.github.H20man13.DeClan.common.icode.Def@2efc3257
- io.github.H20man13.DeClan.common.icode.Def@65f7399f
- r := N [INT]
- CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@2acc4eca)
- io.github.H20man13.DeClan.common.icode.Def@c3ad9d7
- io.github.H20man13.DeClan.common.icode.Def@431b3c8d
- D := P [BOOL]
- GOTO WHILECOND_0_SEQ_0_LEVEL_0
- LABEL WHILENEXT_0_SEQ_0_LEVEL_0
- LABEL WHILEEND_0_LEVEL_0
- v := s [INT]
- r := (PARAM c) [INT]
- io.github.H20man13.DeClan.common.icode.Def@1f7cceb0
- x := Q [INT]
- io.github.H20man13.DeClan.common.icode.Def@578e698b
- q := R [INT]
- io.github.H20man13.DeClan.common.icode.Def@da0f6cc
- io.github.H20man13.DeClan.common.icode.Def@17c54ca1
- io.github.H20man13.DeClan.common.icode.Def@6e3509a7
- IF T EQ U THEN WHILESTAT_2_SEQ_0_LEVEL_0 ELSE WHILENEXT_2_SEQ_0_LEVEL_0
- LABEL WHILECOND_2_SEQ_0_LEVEL_0
- IF T EQ U THEN WHILESTAT_2_SEQ_0_LEVEL_0 ELSE WHILEEND_2_LEVEL_0
- LABEL WHILESTAT_2_SEQ_0_LEVEL_0
- io.github.H20man13.DeClan.common.icode.Def@4ad3e7db
- io.github.H20man13.DeClan.common.icode.Def@404f7edb
- io.github.H20man13.DeClan.common.icode.Def@7dd29237
- w := X [INT]
- io.github.H20man13.DeClan.common.icode.Def@3becd41b
- io.github.H20man13.DeClan.common.icode.Def@6e540182
- io.github.H20man13.DeClan.common.icode.Def@55d61335
- x := a0 [INT]
- io.github.H20man13.DeClan.common.icode.Def@3c7c7092
- io.github.H20man13.DeClan.common.icode.Def@616d270a
- IF a1 EQ a2 THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
- LABEL IFSTAT_1_SEQ_0_LEVEL_0
- io.github.H20man13.DeClan.common.icode.Def@2ffb72b4
- io.github.H20man13.DeClan.common.icode.Def@4a5183c5
- io.github.H20man13.DeClan.common.icode.Def@15f682fd
- q := a5 [INT]
- io.github.H20man13.DeClan.common.icode.Def@1d2bb23e
- x := a6 [INT]
- GOTO IFEND_1_LEVEL_0
- LABEL IFNEXT_1_SEQ_0_LEVEL_0
- LABEL IFEND_1_LEVEL_0
- io.github.H20man13.DeClan.common.icode.Def@69b10dfd
- io.github.H20man13.DeClan.common.icode.Def@2fb8f4a5
- v := a8 [INT]
- io.github.H20man13.DeClan.common.icode.Def@e786ac5
- io.github.H20man13.DeClan.common.icode.Def@4e828376
- T := b0 [BOOL]
- GOTO WHILECOND_2_SEQ_0_LEVEL_0
- LABEL WHILENEXT_2_SEQ_0_LEVEL_0
- LABEL WHILEEND_2_LEVEL_0
- io.github.H20man13.DeClan.common.icode.Def@2f3da1be
+  io.github.H20man13.DeClan.common.icode.Def@589b63c1
+  io.github.H20man13.DeClan.common.icode.Def@3661f2da
+  io.github.H20man13.DeClan.common.icode.Def@4f100d63
+  io.github.H20man13.DeClan.common.icode.Def@668b833b
+  io.github.H20man13.DeClan.common.icode.Def@650d7140
+  io.github.H20man13.DeClan.common.icode.Def@5cc3b819
+  io.github.H20man13.DeClan.common.icode.Def@13f7cdf7
+  io.github.H20man13.DeClan.common.icode.Def@29df16e9
+  io.github.H20man13.DeClan.common.icode.Def@27d6e5e3
+  r := (PARAM c) [INT]
+  io.github.H20man13.DeClan.common.icode.Def@66148270
+  u := y [INT]
+  io.github.H20man13.DeClan.common.icode.Def@4ba16330
+  s := z [INT]
+  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@1a185cf3)
+  io.github.H20man13.DeClan.common.icode.Def@af14bae
+  io.github.H20man13.DeClan.common.icode.Def@48345f82
+  io.github.H20man13.DeClan.common.icode.Def@8cc0d57
+  IF D EQ E THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0
+  LABEL WHILECOND_0_SEQ_0_LEVEL_0
+  IF D EQ E THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0
+  LABEL WHILESTAT_0_SEQ_0_LEVEL_0
+  io.github.H20man13.DeClan.common.icode.Def@506b3779
+  io.github.H20man13.DeClan.common.icode.Def@50c7aae1
+  t := G [INT]
+  io.github.H20man13.DeClan.common.icode.Def@3ae52734
+  io.github.H20man13.DeClan.common.icode.Def@522b238a
+  io.github.H20man13.DeClan.common.icode.Def@5bf21649
+  IF I EQ J THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
+  LABEL IFSTAT_0_SEQ_0_LEVEL_0
+  s := u [INT]
+  GOTO IFEND_0_LEVEL_0
+  LABEL IFNEXT_0_SEQ_0_LEVEL_0
+  LABEL IFEND_0_LEVEL_0
+  io.github.H20man13.DeClan.common.icode.Def@360f3f74
+  io.github.H20man13.DeClan.common.icode.Def@25407206
+  u := L [INT]
+  io.github.H20man13.DeClan.common.icode.Def@2efc3257
+  io.github.H20man13.DeClan.common.icode.Def@65f7399f
+  r := N [INT]
+  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@2acc4eca)
+  io.github.H20man13.DeClan.common.icode.Def@c3ad9d7
+  io.github.H20man13.DeClan.common.icode.Def@431b3c8d
+  D := P [BOOL]
+  GOTO WHILECOND_0_SEQ_0_LEVEL_0
+  LABEL WHILENEXT_0_SEQ_0_LEVEL_0
+  LABEL WHILEEND_0_LEVEL_0
+  v := s [INT]
+  r := (PARAM c) [INT]
+  io.github.H20man13.DeClan.common.icode.Def@1f7cceb0
+  x := Q [INT]
+  io.github.H20man13.DeClan.common.icode.Def@578e698b
+  q := R [INT]
+  io.github.H20man13.DeClan.common.icode.Def@da0f6cc
+  io.github.H20man13.DeClan.common.icode.Def@17c54ca1
+  io.github.H20man13.DeClan.common.icode.Def@6e3509a7
+  IF T EQ U THEN WHILESTAT_2_SEQ_0_LEVEL_0 ELSE WHILENEXT_2_SEQ_0_LEVEL_0
+  LABEL WHILECOND_2_SEQ_0_LEVEL_0
+  IF T EQ U THEN WHILESTAT_2_SEQ_0_LEVEL_0 ELSE WHILEEND_2_LEVEL_0
+  LABEL WHILESTAT_2_SEQ_0_LEVEL_0
+  io.github.H20man13.DeClan.common.icode.Def@4ad3e7db
+  io.github.H20man13.DeClan.common.icode.Def@404f7edb
+  io.github.H20man13.DeClan.common.icode.Def@7dd29237
+  w := X [INT]
+  io.github.H20man13.DeClan.common.icode.Def@3becd41b
+  io.github.H20man13.DeClan.common.icode.Def@6e540182
+  io.github.H20man13.DeClan.common.icode.Def@55d61335
+  x := a0 [INT]
+  io.github.H20man13.DeClan.common.icode.Def@3c7c7092
+  io.github.H20man13.DeClan.common.icode.Def@616d270a
+  IF a1 EQ a2 THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
+  LABEL IFSTAT_1_SEQ_0_LEVEL_0
+  io.github.H20man13.DeClan.common.icode.Def@2ffb72b4
+  io.github.H20man13.DeClan.common.icode.Def@4a5183c5
+  io.github.H20man13.DeClan.common.icode.Def@15f682fd
+  q := a5 [INT]
+  io.github.H20man13.DeClan.common.icode.Def@1d2bb23e
+  x := a6 [INT]
+  GOTO IFEND_1_LEVEL_0
+  LABEL IFNEXT_1_SEQ_0_LEVEL_0
+  LABEL IFEND_1_LEVEL_0
+  io.github.H20man13.DeClan.common.icode.Def@69b10dfd
+  io.github.H20man13.DeClan.common.icode.Def@2fb8f4a5
+  v := a8 [INT]
+  io.github.H20man13.DeClan.common.icode.Def@e786ac5
+  io.github.H20man13.DeClan.common.icode.Def@4e828376
+  T := b0 [BOOL]
+  GOTO WHILECOND_2_SEQ_0_LEVEL_0
+  LABEL WHILENEXT_2_SEQ_0_LEVEL_0
+  LABEL WHILEEND_2_LEVEL_0
+  io.github.H20man13.DeClan.common.icode.Def@2f3da1be
  RETURN
  PROC LABEL Divide
- io.github.H20man13.DeClan.common.icode.Def@47487520
- io.github.H20man13.DeClan.common.icode.Def@a2b014e
- io.github.H20man13.DeClan.common.icode.Def@5068ba4e
- CALL IntToReal(io.github.H20man13.DeClan.common.icode.Def@121ad1ac)
- io.github.H20man13.DeClan.common.icode.Def@167f47ba
- b2 := b6 [REAL]
- CALL IntToReal(io.github.H20man13.DeClan.common.icode.Def@448c054a)
- io.github.H20man13.DeClan.common.icode.Def@51237d5f
- b3 := b7 [REAL]
- CALL RDivide(io.github.H20man13.DeClan.common.icode.Def@15705166, io.github.H20man13.DeClan.common.icode.Def@795e96e5)
- io.github.H20man13.DeClan.common.icode.Def@5ddc7ad1
- b1 := c1 [REAL]
- io.github.H20man13.DeClan.common.icode.Def@175f2db0
+  io.github.H20man13.DeClan.common.icode.Def@47487520
+  io.github.H20man13.DeClan.common.icode.Def@a2b014e
+  io.github.H20man13.DeClan.common.icode.Def@5068ba4e
+  CALL IntToReal(io.github.H20man13.DeClan.common.icode.Def@121ad1ac)
+  io.github.H20man13.DeClan.common.icode.Def@167f47ba
+  b2 := b6 [REAL]
+  CALL IntToReal(io.github.H20man13.DeClan.common.icode.Def@448c054a)
+  io.github.H20man13.DeClan.common.icode.Def@51237d5f
+  b3 := b7 [REAL]
+  CALL RDivide(io.github.H20man13.DeClan.common.icode.Def@15705166, io.github.H20man13.DeClan.common.icode.Def@795e96e5)
+  io.github.H20man13.DeClan.common.icode.Def@5ddc7ad1
+  b1 := c1 [REAL]
+  io.github.H20man13.DeClan.common.icode.Def@175f2db0
  RETURN
  PROC LABEL Mod
- io.github.H20man13.DeClan.common.icode.Def@b3a55c
- io.github.H20man13.DeClan.common.icode.Def@d57e211
- c2 := (PARAM i) [INT]
- io.github.H20man13.DeClan.common.icode.Def@33630b98
- io.github.H20man13.DeClan.common.icode.Def@5d3f82e9
- io.github.H20man13.DeClan.common.icode.Def@40bb4557
- io.github.H20man13.DeClan.common.icode.Def@72ce703b
- IF c6 EQ c7 THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILENEXT_4_SEQ_0_LEVEL_0
- LABEL WHILECOND_4_SEQ_0_LEVEL_0
- IF c6 EQ c7 THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILEEND_4_LEVEL_0
- LABEL WHILESTAT_4_SEQ_0_LEVEL_0
- io.github.H20man13.DeClan.common.icode.Def@595a9a31
- c2 := c8 [INT]
- io.github.H20man13.DeClan.common.icode.Def@78537339
- io.github.H20man13.DeClan.common.icode.Def@62d81099
- io.github.H20man13.DeClan.common.icode.Def@6316fb51
- c6 := d1 [BOOL]
- GOTO WHILECOND_4_SEQ_0_LEVEL_0
- LABEL WHILENEXT_4_SEQ_0_LEVEL_0
- LABEL WHILEEND_4_LEVEL_0
- io.github.H20man13.DeClan.common.icode.Def@6e107e10
+  io.github.H20man13.DeClan.common.icode.Def@b3a55c
+  io.github.H20man13.DeClan.common.icode.Def@d57e211
+  c2 := (PARAM i) [INT]
+  io.github.H20man13.DeClan.common.icode.Def@33630b98
+  io.github.H20man13.DeClan.common.icode.Def@5d3f82e9
+  io.github.H20man13.DeClan.common.icode.Def@40bb4557
+  io.github.H20man13.DeClan.common.icode.Def@72ce703b
+  IF c6 EQ c7 THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILENEXT_4_SEQ_0_LEVEL_0
+  LABEL WHILECOND_4_SEQ_0_LEVEL_0
+  IF c6 EQ c7 THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILEEND_4_LEVEL_0
+  LABEL WHILESTAT_4_SEQ_0_LEVEL_0
+  io.github.H20man13.DeClan.common.icode.Def@595a9a31
+  c2 := c8 [INT]
+  io.github.H20man13.DeClan.common.icode.Def@78537339
+  io.github.H20man13.DeClan.common.icode.Def@62d81099
+  io.github.H20man13.DeClan.common.icode.Def@6316fb51
+  c6 := d1 [BOOL]
+  GOTO WHILECOND_4_SEQ_0_LEVEL_0
+  LABEL WHILENEXT_4_SEQ_0_LEVEL_0
+  LABEL WHILEEND_4_LEVEL_0
+  io.github.H20man13.DeClan.common.icode.Def@6e107e10
  RETURN

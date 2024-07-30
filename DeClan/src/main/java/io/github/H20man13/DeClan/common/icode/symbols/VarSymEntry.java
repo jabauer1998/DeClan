@@ -1,7 +1,6 @@
 package io.github.H20man13.DeClan.common.icode.symbols;
 
 import io.github.H20man13.DeClan.common.pat.P;
-import io.github.H20man13.DeClan.common.pat.P.ID;
 
 public class VarSymEntry extends SymEntry {
     public String declanIdent;
@@ -29,6 +28,7 @@ public class VarSymEntry extends SymEntry {
     public String toString(){
         StringBuilder sb = new StringBuilder();
 
+        sb.append("ENTRY ");
         sb.append(icodePlace);
         sb.append(' ');
         

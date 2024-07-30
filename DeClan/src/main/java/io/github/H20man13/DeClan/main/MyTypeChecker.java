@@ -1226,10 +1226,6 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 			Decl.accept(this);
 		}
 
-		for(Declaration Decl : library.getVarDecls()){
-			Decl.accept(this);
-		}
-
 		loadFunctions(library.getProcDecls());
 
 		for(Declaration Decl : library.getProcDecls()){

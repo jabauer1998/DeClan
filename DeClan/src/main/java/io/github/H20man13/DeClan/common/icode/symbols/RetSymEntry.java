@@ -1,15 +1,14 @@
 package io.github.H20man13.DeClan.common.icode.symbols;
 
 import io.github.H20man13.DeClan.common.pat.P;
-import io.github.H20man13.DeClan.common.pat.P.ID;
 
 public class RetSymEntry extends SymEntry{
     public String funcName;
 
-    private static int constInternalRet = SymEntry.CONST | SymEntry.INTERNAL;
-    private static int constExternalRet = SymEntry.CONST | SymEntry.EXTERNAL;
-    private static int internalRet = SymEntry.INTERNAL;
-    private static int externalRet = SymEntry.EXTERNAL;
+    private static final int constInternalRet = SymEntry.CONST | SymEntry.INTERNAL;
+    private static final int constExternalRet = SymEntry.CONST | SymEntry.EXTERNAL;
+    private static final int internalRet = SymEntry.INTERNAL;
+    private static final int externalRet = SymEntry.EXTERNAL;
 
     public RetSymEntry(String icodePlace, int symType, String funcName){
         super(symType, icodePlace);
@@ -34,6 +33,7 @@ public class RetSymEntry extends SymEntry{
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
+        sb.append("ENTRY ");
         sb.append(icodePlace);
         sb.append(' ');
         
