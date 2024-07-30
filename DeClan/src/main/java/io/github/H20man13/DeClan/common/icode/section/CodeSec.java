@@ -1,14 +1,7 @@
 package io.github.H20man13.DeClan.common.icode.section;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
-import io.github.H20man13.DeClan.common.util.Utils;
 
 public class CodeSec implements ICode {
     public CodeSec(){
@@ -32,9 +25,7 @@ public class CodeSec implements ICode {
 
     @Override
     public String toString(){
-        StringBuilder sb = new StringBuilder();
-        sb.append("CODE SECTION\r\n");
-        return sb.toString();
+        return "CODE SECTION";
     }
 
     @Override

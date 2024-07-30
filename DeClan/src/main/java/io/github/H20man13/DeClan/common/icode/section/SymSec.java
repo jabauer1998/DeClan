@@ -1,19 +1,7 @@
 package io.github.H20man13.DeClan.common.icode.section;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
-
 import io.github.H20man13.DeClan.common.icode.ICode;
-import io.github.H20man13.DeClan.common.icode.symbols.ParamSymEntry;
-import io.github.H20man13.DeClan.common.icode.symbols.RetSymEntry;
-import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
-import io.github.H20man13.DeClan.common.icode.symbols.VarSymEntry;
 import io.github.H20man13.DeClan.common.pat.P;
-import io.github.H20man13.DeClan.common.symboltable.Environment;
-import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 
 public class SymSec implements ICode {
     public SymSec(){
@@ -31,7 +19,7 @@ public class SymSec implements ICode {
 
     @Override
     public String toString(){
-        return "SYMBOL SECTION\r\n";
+        return "SYMBOL SECTION";
     }
 
     @Override

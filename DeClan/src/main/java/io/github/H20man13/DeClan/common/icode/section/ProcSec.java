@@ -1,13 +1,7 @@
 package io.github.H20man13.DeClan.common.icode.section;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
-import io.github.H20man13.DeClan.common.pat.Pattern;
 
 public class ProcSec implements ICode {
     public ProcSec(){
@@ -40,7 +34,7 @@ public class ProcSec implements ICode {
 
     @Override
     public String toString(){
-        return "PROC SECTION\r\n";
+        return "PROC SECTION";
     }
 
     @Override
