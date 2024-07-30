@@ -10,6 +10,7 @@ import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.icode.section.SymSec;
 import io.github.H20man13.DeClan.common.pat.P;
+import io.github.H20man13.DeClan.common.util.Utils;
 
 public class Prog extends Lib implements ICode {
     public Prog(){
@@ -102,8 +103,7 @@ public class Prog extends Lib implements ICode {
                         sb.append(instruction.toString());
                         sb.append("\r\n");
                     } else {
-                        sb.append(' ');
-                        sb.append(instruction.toString());
+                        sb.append(Utils.formatStringToLeadingWhiteSpace(" " + instruction.toString()));
                         sb.append("\r\n");
                     }
                 case PROCEDURE_SECTION:
@@ -121,8 +121,7 @@ public class Prog extends Lib implements ICode {
                         sb.append(instruction.toString());
                         sb.append("\r\n");
                     } else {
-                        sb.append("  ");
-                        sb.append(instruction.toString());
+                        sb.append(Utils.formatStringToLeadingWhiteSpace(" " + instruction.toString()));
                         sb.append("\r\n");
                     }
             }

@@ -20,6 +20,7 @@ import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.VarSymEntry;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
+import io.github.H20man13.DeClan.common.util.Utils;
 
 public class Lib implements ICode, Iterable<ICode> {
     protected List<ICode> instructions;
@@ -636,8 +637,7 @@ public class Lib implements ICode, Iterable<ICode> {
                         sb.append(instruction.toString());
                         sb.append("\r\n");
                     } else {
-                        sb.append("  ");
-                        sb.append(instruction.toString());
+                        sb.append(Utils.formatStringToLeadingWhiteSpace(" " + instruction.toString()));
                         sb.append("\r\n");
                     }
             }
