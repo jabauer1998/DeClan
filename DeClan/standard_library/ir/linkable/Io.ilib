@@ -9,197 +9,125 @@ DATA SECTION
 PROC SECTION
 
  PROC LABEL WriteLn
- IASM "SWI 4"
-
+  IASM "SWI 4"
  RETURN
  PROC LABEL WriteString
- DEF m := 0 [INT]
-
- DEF n := 0 [INT]
-
- DEF o := 0 [INT]
-
- DEF p := 0 [INT]
-
- CALL StringAsAddress(((PARAM b) -> q)[STRING])
-
- DEF s := (RETURN r) [INT]
-
- m := s [INT]
-
- DEF t := 0 [INT]
-
- n := t [INT]
-
- IPARAM o
- IPARAM m
- IPARAM n
- IASM "LDRB %r, [%r, +%r]"
-
- IPARAM o
- IPARAM o
- IASM "STR %r, %a"
-
- CALL IntIsZero((o -> u)[INT])
-
- DEF w := (RETURN v) [BOOL]
-
- DEF x := BNOT w [BOOL]
-
- DEF y := TRUE [BOOL]
-
- IF x EQ y
- THEN WHILESTAT_0_SEQ_0_LEVEL_0
- ELSE WHILENEXT_0_SEQ_0_LEVEL_0
-
- LABEL WHILECOND_0_SEQ_0_LEVEL_0
-
- IF x EQ y
- THEN WHILESTAT_0_SEQ_0_LEVEL_0
- ELSE WHILEEND_0_LEVEL_0
-
- LABEL WHILESTAT_0_SEQ_0_LEVEL_0
-
- IPARAM p
- IASM "MOV %r, R0"
-
- IPARAM o
- IASM "MOV R0, %r"
-
- IASM "SWI 6"
-
- DEF z := 1 [INT]
-
- DEF A := n IADD z [INT]
-
- n := A [INT]
-
- IPARAM o
- IPARAM m
- IPARAM n
- IASM "LDRB %r, [%r, +%r]"
-
- IPARAM o
- IPARAM o
- IASM "STR %r, %a"
-
- IPARAM p
- IASM "MOV R0, %r"
-
- CALL IntIsZero((o -> u)[INT])
-
- DEF B := (RETURN v) [BOOL]
-
- DEF C := BNOT B [BOOL]
-
- x := C [BOOL]
-
- GOTO WHILECOND_0_SEQ_0_LEVEL_0
-
- LABEL WHILENEXT_0_SEQ_0_LEVEL_0
-
- LABEL WHILEEND_0_LEVEL_0
-
+  DEF m := 0 [INT]
+  DEF n := 0 [INT]
+  DEF o := 0 [INT]
+  DEF p := 0 [INT]
+  CALL StringAsAddress(((PARAM b) -> q)[STRING])
+  DEF s := (RETURN r) [INT]
+  m := s [INT]
+  DEF t := 0 [INT]
+  n := t [INT]
+  IPARAM o
+  IPARAM m
+  IPARAM n
+  IASM "LDRB %r, [%r, +%r]"
+  IPARAM o
+  IPARAM o
+  IASM "STR %r, %a"
+  CALL IntIsZero((o -> u)[INT])
+  DEF w := (RETURN v) [BOOL]
+  DEF x := BNOT w [BOOL]
+  DEF y := TRUE [BOOL]
+  IF x EQ y
+  THEN WHILESTAT_0_SEQ_0_LEVEL_0
+  ELSE WHILENEXT_0_SEQ_0_LEVEL_0
+  LABEL WHILECOND_0_SEQ_0_LEVEL_0
+  IF x EQ y
+  THEN WHILESTAT_0_SEQ_0_LEVEL_0
+  ELSE WHILEEND_0_LEVEL_0
+  LABEL WHILESTAT_0_SEQ_0_LEVEL_0
+  IPARAM p
+  IASM "MOV %r, R0"
+  IPARAM o
+  IASM "MOV R0, %r"
+  IASM "SWI 6"
+  DEF z := 1 [INT]
+  DEF A := n IADD z [INT]
+  n := A [INT]
+  IPARAM o
+  IPARAM m
+  IPARAM n
+  IASM "LDRB %r, [%r, +%r]"
+  IPARAM o
+  IPARAM o
+  IASM "STR %r, %a"
+  IPARAM p
+  IASM "MOV R0, %r"
+  CALL IntIsZero((o -> u)[INT])
+  DEF B := (RETURN v) [BOOL]
+  DEF C := BNOT B [BOOL]
+  x := C [BOOL]
+  GOTO WHILECOND_0_SEQ_0_LEVEL_0
+  LABEL WHILENEXT_0_SEQ_0_LEVEL_0
+  LABEL WHILEEND_0_LEVEL_0
  RETURN
  PROC LABEL WriteInt
- DEF D := 0 [INT]
-
- IPARAM D
- IASM "MOV %r, R0"
-
- IPARAM (PARAM d)
- IASM "LDR R0, %a"
-
- IASM "SWI 1"
-
- IPARAM D
- IASM "MOV R0, %r"
-
+  DEF D := 0 [INT]
+  IPARAM D
+  IASM "MOV %r, R0"
+  IPARAM (PARAM d)
+  IASM "LDR R0, %a"
+  IASM "SWI 1"
+  IPARAM D
+  IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteReal
- DEF E := 0 [INT]
-
- IPARAM E
- IASM "MOV %r, R0"
-
- IPARAM (PARAM f)
- IASM "LDR R0, %a"
-
- IASM "SWI 2"
-
- IPARAM E
- IASM "MOV R0, %r"
-
+  DEF E := 0 [INT]
+  IPARAM E
+  IASM "MOV %r, R0"
+  IPARAM (PARAM f)
+  IASM "LDR R0, %a"
+  IASM "SWI 2"
+  IPARAM E
+  IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteBool
- DEF F := 0 [INT]
-
- IPARAM F
- IASM "MOV %r, R0"
-
- IPARAM (PARAM h)
- IASM "LDRB R0, %a"
-
- IASM "SWI 6"
-
- IPARAM F
- IASM "MOV R0, %r"
-
+  DEF F := 0 [INT]
+  IPARAM F
+  IASM "MOV %r, R0"
+  IPARAM (PARAM h)
+  IASM "LDRB R0, %a"
+  IASM "SWI 6"
+  IPARAM F
+  IASM "MOV R0, %r"
  RETURN
  PROC LABEL ReadInt
- DEF G := 0 [INT]
-
- DEF H := 0 [INT]
-
- IPARAM H
- IASM "MOV %r, R0"
-
- IASM "SWI 3"
-
- IPARAM G
- IASM "STR R0, %a"
-
- IPARAM H
- IASM "MOV R0, %r"
-
- DEF RETURN j := G [INT]
-
+  DEF G := 0 [INT]
+  DEF H := 0 [INT]
+  IPARAM H
+  IASM "MOV %r, R0"
+  IASM "SWI 3"
+  IPARAM G
+  IASM "STR R0, %a"
+  IPARAM H
+  IASM "MOV R0, %r"
+  DEF RETURN j := G [INT]
  RETURN
  PROC LABEL ReadReal
- DEF I := 0.0 [REAL]
-
- DEF J := 0 [INT]
-
- IPARAM J
- IASM "MOV %r, R0"
-
- IASM "SWI 5"
-
- IPARAM I
- IASM "STR R0, %a"
-
- IPARAM J
- IASM "MOV R0, %r"
-
- DEF RETURN k := I [REAL]
-
+  DEF I := 0.0 [REAL]
+  DEF J := 0 [INT]
+  IPARAM J
+  IASM "MOV %r, R0"
+  IASM "SWI 5"
+  IPARAM I
+  IASM "STR R0, %a"
+  IPARAM J
+  IASM "MOV R0, %r"
+  DEF RETURN k := I [REAL]
  RETURN
  PROC LABEL ReadBool
- DEF K := FALSE [BOOL]
-
- DEF L := 0 [INT]
-
- IPARAM L
- IASM "MOV %r, R0"
-
- IASM "SWI 7"
-
- IPARAM K
- IASM "STRB R0, %a"
-
- IPARAM L
- IASM "MOV R0, %r"
-
- DEF RETURN l := K [BOOL]
-
+  DEF K := FALSE [BOOL]
+  DEF L := 0 [INT]
+  IPARAM L
+  IASM "MOV %r, R0"
+  IASM "SWI 7"
+  IPARAM K
+  IASM "STRB R0, %a"
+  IPARAM L
+  IASM "MOV R0, %r"
+  DEF RETURN l := K [BOOL]
  RETURN

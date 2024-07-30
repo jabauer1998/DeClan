@@ -260,8 +260,6 @@ public class Utils {
         }
      }
 
-     result.append("\r\n");
-
      return result.toString();
   }
 
