@@ -42,8 +42,10 @@ public class Def implements ICode {
             sb.append(']');
         } else {
             sb.append("DEF ");
-            sb.append(scope.toString());
-            sb.append(' ');
+            if(scope != ICode.Scope.LOCAL){
+                sb.append(scope.toString());
+                sb.append(' ');
+            }
             sb.append(label);
             sb.append(" := ");
             sb.append(val.toString());
