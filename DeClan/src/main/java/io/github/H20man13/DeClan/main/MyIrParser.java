@@ -331,8 +331,6 @@ public class MyIrParser {
         } else if(willMatch(IrTokenType.STRING)){
             IrToken tok = skip();
             return new StrExp(tok.getLexeme());
-        } else if (willMatch(IrTokenType.LPAR) || willMatch(IrTokenType.ID)){
-            return parseIdentifier();
         } else {
             throw new ParseException("Error when parsing primary expression expected token of type BOOL/REAL/INT/STRING/IDENT but found token of type " + skip());
         }
@@ -432,7 +430,7 @@ public class MyIrParser {
         if(willMatch(IrTokenType.INEG) || willMatch(IrTokenType.RNEG) 
         || willMatch(IrTokenType.BNOT) || willMatch(IrTokenType.INOT)) {
             return parseUnaryExpression();
-        } else {
+        } else if(willMatch(IrTokenType.ID)) {
             IdentExp exp1 = parseIdentifier();
 
             if(willMatch(IrTokenType.LT) || willMatch(IrTokenType.IADD) 
@@ -455,6 +453,8 @@ public class MyIrParser {
             } else {
                 return exp1;
             }
+        } else {
+            return parsePrimaryExpression();
         }
     }
 
