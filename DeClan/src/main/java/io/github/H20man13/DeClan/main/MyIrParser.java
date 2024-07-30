@@ -430,7 +430,7 @@ public class MyIrParser {
         if(willMatch(IrTokenType.INEG) || willMatch(IrTokenType.RNEG) 
         || willMatch(IrTokenType.BNOT) || willMatch(IrTokenType.INOT)) {
             return parseUnaryExpression();
-        } else if(willMatch(IrTokenType.ID)) {
+        } else if(willMatch(IrTokenType.ID) || willMatch(IrTokenType.LPAR)) {
             IdentExp exp1 = parseIdentifier();
 
             if(willMatch(IrTokenType.LT) || willMatch(IrTokenType.IADD) 
