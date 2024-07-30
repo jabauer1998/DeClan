@@ -31,16 +31,26 @@ public class Def implements ICode {
     public String toString(){
         StringBuilder sb = new StringBuilder();
         
-        sb.append("DEF ");
-        sb.append(scope.toString());
-        sb.append(' ');
-        sb.append(label);
-        sb.append(" := ");
-        sb.append(val.toString());
-        sb.append(" [");
-        sb.append(type.toString());
-        sb.append("]");
-
+        
+        if(scope == ICode.Scope.PARAM){
+            sb.append('(');
+            sb.append(val.toString());
+            sb.append(" -> ");
+            sb.append(label);
+            sb.append(")[");
+            sb.append(type);
+            sb.append(']');
+        } else {
+            sb.append("DEF ");
+            sb.append(scope.toString());
+            sb.append(' ');
+            sb.append(label);
+            sb.append(" := ");
+            sb.append(val.toString());
+            sb.append(" [");
+            sb.append(type.toString());
+            sb.append("]");
+        }
         return sb.toString();
     }
 

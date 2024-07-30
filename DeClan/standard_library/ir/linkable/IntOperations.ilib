@@ -14,141 +14,141 @@ DATA SECTION
 PROC SECTION
 
  PROC LABEL INeg
-  io.github.H20man13.DeClan.common.icode.Def@37b27912
-  io.github.H20man13.DeClan.common.icode.Def@607cf7d2
-  io.github.H20man13.DeClan.common.icode.Def@6f602e96
-  io.github.H20man13.DeClan.common.icode.Def@7b005104
+  DEF LOCAL l := 0 [INT]
+  DEF LOCAL m := INOT (PARAM a) [INT]
+  DEF LOCAL n := 1 [INT]
+  DEF LOCAL o := m IADD n [INT]
   l := o [INT]
-  io.github.H20man13.DeClan.common.icode.Def@5f5edd9f
+  DEF RETURN b := l [INT]
  RETURN
  PROC LABEL Div
-  io.github.H20man13.DeClan.common.icode.Def@589b63c1
-  io.github.H20man13.DeClan.common.icode.Def@3661f2da
-  io.github.H20man13.DeClan.common.icode.Def@4f100d63
-  io.github.H20man13.DeClan.common.icode.Def@668b833b
-  io.github.H20man13.DeClan.common.icode.Def@650d7140
-  io.github.H20man13.DeClan.common.icode.Def@5cc3b819
-  io.github.H20man13.DeClan.common.icode.Def@13f7cdf7
-  io.github.H20man13.DeClan.common.icode.Def@29df16e9
-  io.github.H20man13.DeClan.common.icode.Def@27d6e5e3
+  DEF LOCAL p := 0 [INT]
+  DEF LOCAL q := 0 [INT]
+  DEF LOCAL r := 0 [INT]
+  DEF LOCAL s := 0 [INT]
+  DEF LOCAL t := 0 [INT]
+  DEF LOCAL u := 0 [INT]
+  DEF LOCAL v := 0 [INT]
+  DEF LOCAL w := 0 [INT]
+  DEF LOCAL x := 0 [INT]
   r := (PARAM c) [INT]
-  io.github.H20man13.DeClan.common.icode.Def@66148270
+  DEF LOCAL y := 0 [INT]
   u := y [INT]
-  io.github.H20man13.DeClan.common.icode.Def@4ba16330
+  DEF LOCAL z := 0 [INT]
   s := z [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@1a185cf3)
-  io.github.H20man13.DeClan.common.icode.Def@af14bae
-  io.github.H20man13.DeClan.common.icode.Def@48345f82
-  io.github.H20man13.DeClan.common.icode.Def@8cc0d57
+  CALL IntIsZero((r -> A)[INT])
+  DEF LOCAL C := (RETURN B) [BOOL]
+  DEF LOCAL D := BNOT C [BOOL]
+  DEF LOCAL E := TRUE [BOOL]
   IF D EQ E THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILECOND_0_SEQ_0_LEVEL_0
   IF D EQ E THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0
   LABEL WHILESTAT_0_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@506b3779
-  io.github.H20man13.DeClan.common.icode.Def@50c7aae1
+  DEF LOCAL F := 1 [INT]
+  DEF LOCAL G := r IAND F [INT]
   t := G [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3ae52734
-  io.github.H20man13.DeClan.common.icode.Def@522b238a
-  io.github.H20man13.DeClan.common.icode.Def@5bf21649
+  DEF LOCAL H := 1 [INT]
+  DEF LOCAL I := t EQ H [BOOL]
+  DEF LOCAL J := TRUE [BOOL]
   IF I EQ J THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
   LABEL IFSTAT_0_SEQ_0_LEVEL_0
   s := u [INT]
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_0_LEVEL_0
   LABEL IFEND_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@360f3f74
-  io.github.H20man13.DeClan.common.icode.Def@25407206
+  DEF LOCAL K := 1 [INT]
+  DEF LOCAL L := u IADD K [INT]
   u := L [INT]
-  io.github.H20man13.DeClan.common.icode.Def@2efc3257
-  io.github.H20man13.DeClan.common.icode.Def@65f7399f
+  DEF LOCAL M := 1 [INT]
+  DEF LOCAL N := r IRSHIFT M [INT]
   r := N [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@2acc4eca)
-  io.github.H20man13.DeClan.common.icode.Def@c3ad9d7
-  io.github.H20man13.DeClan.common.icode.Def@431b3c8d
+  CALL IntIsZero((r -> A)[INT])
+  DEF LOCAL O := (RETURN B) [BOOL]
+  DEF LOCAL P := BNOT O [BOOL]
   D := P [BOOL]
   GOTO WHILECOND_0_SEQ_0_LEVEL_0
   LABEL WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILEEND_0_LEVEL_0
   v := s [INT]
   r := (PARAM c) [INT]
-  io.github.H20man13.DeClan.common.icode.Def@1f7cceb0
+  DEF LOCAL Q := 0 [INT]
   x := Q [INT]
-  io.github.H20man13.DeClan.common.icode.Def@578e698b
+  DEF LOCAL R := 0 [INT]
   q := R [INT]
-  io.github.H20man13.DeClan.common.icode.Def@da0f6cc
-  io.github.H20man13.DeClan.common.icode.Def@17c54ca1
-  io.github.H20man13.DeClan.common.icode.Def@6e3509a7
+  DEF LOCAL S := 0 [INT]
+  DEF LOCAL T := v GE S [BOOL]
+  DEF LOCAL U := TRUE [BOOL]
   IF T EQ U THEN WHILESTAT_2_SEQ_0_LEVEL_0 ELSE WHILENEXT_2_SEQ_0_LEVEL_0
   LABEL WHILECOND_2_SEQ_0_LEVEL_0
   IF T EQ U THEN WHILESTAT_2_SEQ_0_LEVEL_0 ELSE WHILEEND_2_LEVEL_0
   LABEL WHILESTAT_2_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@4ad3e7db
-  io.github.H20man13.DeClan.common.icode.Def@404f7edb
-  io.github.H20man13.DeClan.common.icode.Def@7dd29237
+  DEF LOCAL V := r IRSHIFT v [INT]
+  DEF LOCAL W := 1 [INT]
+  DEF LOCAL X := V IAND W [INT]
   w := X [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3becd41b
-  io.github.H20man13.DeClan.common.icode.Def@6e540182
-  io.github.H20man13.DeClan.common.icode.Def@55d61335
+  DEF LOCAL Y := 1 [INT]
+  DEF LOCAL Z := x ILSHIFT Y [INT]
+  DEF LOCAL a0 := Z IOR w [INT]
   x := a0 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3c7c7092
-  io.github.H20man13.DeClan.common.icode.Def@616d270a
+  DEF LOCAL a1 := x GE (PARAM d) [BOOL]
+  DEF LOCAL a2 := TRUE [BOOL]
   IF a1 EQ a2 THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@2ffb72b4
-  io.github.H20man13.DeClan.common.icode.Def@4a5183c5
-  io.github.H20man13.DeClan.common.icode.Def@15f682fd
+  DEF LOCAL a3 := 1 [INT]
+  DEF LOCAL a4 := a3 ILSHIFT v [INT]
+  DEF LOCAL a5 := q IOR a4 [INT]
   q := a5 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@1d2bb23e
+  DEF LOCAL a6 := x ISUB (PARAM d) [INT]
   x := a6 [INT]
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFEND_1_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@69b10dfd
-  io.github.H20man13.DeClan.common.icode.Def@2fb8f4a5
+  DEF LOCAL a7 := 1 [INT]
+  DEF LOCAL a8 := v ISUB a7 [INT]
   v := a8 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@e786ac5
-  io.github.H20man13.DeClan.common.icode.Def@4e828376
+  DEF LOCAL a9 := 0 [INT]
+  DEF LOCAL b0 := v GE a9 [BOOL]
   T := b0 [BOOL]
   GOTO WHILECOND_2_SEQ_0_LEVEL_0
   LABEL WHILENEXT_2_SEQ_0_LEVEL_0
   LABEL WHILEEND_2_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@2f3da1be
+  DEF RETURN e := q [INT]
  RETURN
  PROC LABEL Divide
-  io.github.H20man13.DeClan.common.icode.Def@47487520
-  io.github.H20man13.DeClan.common.icode.Def@a2b014e
-  io.github.H20man13.DeClan.common.icode.Def@5068ba4e
-  CALL IntToReal(io.github.H20man13.DeClan.common.icode.Def@121ad1ac)
-  io.github.H20man13.DeClan.common.icode.Def@167f47ba
+  DEF LOCAL b1 := 0.0 [REAL]
+  DEF LOCAL b2 := 0.0 [REAL]
+  DEF LOCAL b3 := 0.0 [REAL]
+  CALL IntToReal(((PARAM f) -> b4)[INT])
+  DEF LOCAL b6 := (RETURN b5) [REAL]
   b2 := b6 [REAL]
-  CALL IntToReal(io.github.H20man13.DeClan.common.icode.Def@448c054a)
-  io.github.H20man13.DeClan.common.icode.Def@51237d5f
+  CALL IntToReal(((PARAM g) -> b4)[INT])
+  DEF LOCAL b7 := (RETURN b5) [REAL]
   b3 := b7 [REAL]
-  CALL RDivide(io.github.H20man13.DeClan.common.icode.Def@15705166, io.github.H20man13.DeClan.common.icode.Def@795e96e5)
-  io.github.H20man13.DeClan.common.icode.Def@5ddc7ad1
+  CALL RDivide((b2 -> b8)[REAL], (b3 -> b9)[REAL])
+  DEF LOCAL c1 := (RETURN c0) [REAL]
   b1 := c1 [REAL]
-  io.github.H20man13.DeClan.common.icode.Def@175f2db0
+  DEF RETURN h := b1 [REAL]
  RETURN
  PROC LABEL Mod
-  io.github.H20man13.DeClan.common.icode.Def@b3a55c
-  io.github.H20man13.DeClan.common.icode.Def@d57e211
+  DEF LOCAL c2 := 0 [INT]
+  DEF LOCAL c3 := 0 [INT]
   c2 := (PARAM i) [INT]
-  io.github.H20man13.DeClan.common.icode.Def@33630b98
-  io.github.H20man13.DeClan.common.icode.Def@5d3f82e9
-  io.github.H20man13.DeClan.common.icode.Def@40bb4557
-  io.github.H20man13.DeClan.common.icode.Def@72ce703b
+  DEF LOCAL c4 := c2 ISUB (PARAM j) [INT]
+  DEF LOCAL c5 := 0 [INT]
+  DEF LOCAL c6 := c4 GE c5 [BOOL]
+  DEF LOCAL c7 := TRUE [BOOL]
   IF c6 EQ c7 THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILENEXT_4_SEQ_0_LEVEL_0
   LABEL WHILECOND_4_SEQ_0_LEVEL_0
   IF c6 EQ c7 THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILEEND_4_LEVEL_0
   LABEL WHILESTAT_4_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@595a9a31
+  DEF LOCAL c8 := c2 ISUB (PARAM j) [INT]
   c2 := c8 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@78537339
-  io.github.H20man13.DeClan.common.icode.Def@62d81099
-  io.github.H20man13.DeClan.common.icode.Def@6316fb51
+  DEF LOCAL c9 := c2 ISUB (PARAM j) [INT]
+  DEF LOCAL d0 := 0 [INT]
+  DEF LOCAL d1 := c9 GE d0 [BOOL]
   c6 := d1 [BOOL]
   GOTO WHILECOND_4_SEQ_0_LEVEL_0
   LABEL WHILENEXT_4_SEQ_0_LEVEL_0
   LABEL WHILEEND_4_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@6e107e10
+  DEF RETURN k := c2 [INT]
  RETURN

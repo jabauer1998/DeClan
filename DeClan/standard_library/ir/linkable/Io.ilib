@@ -14,14 +14,14 @@ PROC SECTION
   IASM "SWI 4"
  RETURN
  PROC LABEL WriteString
-  io.github.H20man13.DeClan.common.icode.Def@6f602e96
-  io.github.H20man13.DeClan.common.icode.Def@7b005104
-  io.github.H20man13.DeClan.common.icode.Def@5f5edd9f
-  io.github.H20man13.DeClan.common.icode.Def@589b63c1
-  CALL StringAsAddress(io.github.H20man13.DeClan.common.icode.Def@3661f2da)
-  io.github.H20man13.DeClan.common.icode.Def@4f100d63
+  DEF LOCAL m := 0 [INT]
+  DEF LOCAL n := 0 [INT]
+  DEF LOCAL o := 0 [INT]
+  DEF LOCAL p := 0 [INT]
+  CALL StringAsAddress(((PARAM b) -> q)[STRING])
+  DEF LOCAL s := (RETURN r) [INT]
   m := s [INT]
-  io.github.H20man13.DeClan.common.icode.Def@668b833b
+  DEF LOCAL t := 0 [INT]
   n := t [INT]
   IPARAM o
 IPARAM m
@@ -30,10 +30,10 @@ IASM "LDRB %r, [%r, +%r]"
   IPARAM o
 IPARAM o
 IASM "STR %r, %a"
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@650d7140)
-  io.github.H20man13.DeClan.common.icode.Def@5cc3b819
-  io.github.H20man13.DeClan.common.icode.Def@13f7cdf7
-  io.github.H20man13.DeClan.common.icode.Def@29df16e9
+  CALL IntIsZero((o -> u)[INT])
+  DEF LOCAL w := (RETURN v) [BOOL]
+  DEF LOCAL x := BNOT w [BOOL]
+  DEF LOCAL y := TRUE [BOOL]
   IF x EQ y THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILECOND_0_SEQ_0_LEVEL_0
   IF x EQ y THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0
@@ -43,8 +43,8 @@ IASM "MOV %r, R0"
   IPARAM o
 IASM "MOV R0, %r"
   IASM "SWI 6"
-  io.github.H20man13.DeClan.common.icode.Def@27d6e5e3
-  io.github.H20man13.DeClan.common.icode.Def@66148270
+  DEF LOCAL z := 1 [INT]
+  DEF LOCAL A := n IADD z [INT]
   n := A [INT]
   IPARAM o
 IPARAM m
@@ -55,16 +55,16 @@ IPARAM o
 IASM "STR %r, %a"
   IPARAM p
 IASM "MOV R0, %r"
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@4ba16330)
-  io.github.H20man13.DeClan.common.icode.Def@1a185cf3
-  io.github.H20man13.DeClan.common.icode.Def@af14bae
+  CALL IntIsZero((o -> u)[INT])
+  DEF LOCAL B := (RETURN v) [BOOL]
+  DEF LOCAL C := BNOT B [BOOL]
   x := C [BOOL]
   GOTO WHILECOND_0_SEQ_0_LEVEL_0
   LABEL WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILEEND_0_LEVEL_0
  RETURN
  PROC LABEL WriteInt
-  io.github.H20man13.DeClan.common.icode.Def@48345f82
+  DEF LOCAL D := 0 [INT]
   IPARAM D
 IASM "MOV %r, R0"
   IPARAM (PARAM d)
@@ -74,7 +74,7 @@ IASM "LDR R0, %a"
 IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteReal
-  io.github.H20man13.DeClan.common.icode.Def@8cc0d57
+  DEF LOCAL E := 0 [INT]
   IPARAM E
 IASM "MOV %r, R0"
   IPARAM (PARAM f)
@@ -84,7 +84,7 @@ IASM "LDR R0, %a"
 IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteBool
-  io.github.H20man13.DeClan.common.icode.Def@506b3779
+  DEF LOCAL F := 0 [INT]
   IPARAM F
 IASM "MOV %r, R0"
   IPARAM (PARAM h)
@@ -94,8 +94,8 @@ IASM "LDRB R0, %a"
 IASM "MOV R0, %r"
  RETURN
  PROC LABEL ReadInt
-  io.github.H20man13.DeClan.common.icode.Def@50c7aae1
-  io.github.H20man13.DeClan.common.icode.Def@3ae52734
+  DEF LOCAL G := 0 [INT]
+  DEF LOCAL H := 0 [INT]
   IPARAM H
 IASM "MOV %r, R0"
   IASM "SWI 3"
@@ -103,11 +103,11 @@ IASM "MOV %r, R0"
 IASM "STR R0, %a"
   IPARAM H
 IASM "MOV R0, %r"
-  io.github.H20man13.DeClan.common.icode.Def@522b238a
+  DEF RETURN j := G [INT]
  RETURN
  PROC LABEL ReadReal
-  io.github.H20man13.DeClan.common.icode.Def@5bf21649
-  io.github.H20man13.DeClan.common.icode.Def@360f3f74
+  DEF LOCAL I := 0.0 [REAL]
+  DEF LOCAL J := 0 [INT]
   IPARAM J
 IASM "MOV %r, R0"
   IASM "SWI 5"
@@ -115,11 +115,11 @@ IASM "MOV %r, R0"
 IASM "STR R0, %a"
   IPARAM J
 IASM "MOV R0, %r"
-  io.github.H20man13.DeClan.common.icode.Def@25407206
+  DEF RETURN k := I [REAL]
  RETURN
  PROC LABEL ReadBool
-  io.github.H20man13.DeClan.common.icode.Def@2efc3257
-  io.github.H20man13.DeClan.common.icode.Def@65f7399f
+  DEF LOCAL K := FALSE [BOOL]
+  DEF LOCAL L := 0 [INT]
   IPARAM L
 IASM "MOV %r, R0"
   IASM "SWI 7"
@@ -127,5 +127,5 @@ IASM "MOV %r, R0"
 IASM "STRB R0, %a"
   IPARAM L
 IASM "MOV R0, %r"
-  io.github.H20man13.DeClan.common.icode.Def@2acc4eca
+  DEF RETURN l := K [BOOL]
  RETURN

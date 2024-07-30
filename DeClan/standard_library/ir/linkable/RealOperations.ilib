@@ -31,138 +31,138 @@ DATA SECTION
 PROC SECTION
 
  PROC LABEL RAdd
-  io.github.H20man13.DeClan.common.icode.Def@3661f2da
-  io.github.H20man13.DeClan.common.icode.Def@4f100d63
-  io.github.H20man13.DeClan.common.icode.Def@668b833b
-  io.github.H20man13.DeClan.common.icode.Def@650d7140
-  io.github.H20man13.DeClan.common.icode.Def@5cc3b819
-  io.github.H20man13.DeClan.common.icode.Def@13f7cdf7
-  io.github.H20man13.DeClan.common.icode.Def@29df16e9
-  io.github.H20man13.DeClan.common.icode.Def@27d6e5e3
-  io.github.H20man13.DeClan.common.icode.Def@66148270
-  io.github.H20man13.DeClan.common.icode.Def@4ba16330
-  io.github.H20man13.DeClan.common.icode.Def@1a185cf3
-  io.github.H20man13.DeClan.common.icode.Def@af14bae
-  io.github.H20man13.DeClan.common.icode.Def@48345f82
-  io.github.H20man13.DeClan.common.icode.Def@8cc0d57
-  io.github.H20man13.DeClan.common.icode.Def@506b3779
-  io.github.H20man13.DeClan.common.icode.Def@50c7aae1
-  io.github.H20man13.DeClan.common.icode.Def@3ae52734
-  CALL RealSign(io.github.H20man13.DeClan.common.icode.Def@522b238a)
-  io.github.H20man13.DeClan.common.icode.Def@5bf21649
+  DEF LOCAL J := 0.0 [REAL]
+  DEF LOCAL K := 0 [INT]
+  DEF LOCAL L := 0 [INT]
+  DEF LOCAL M := 0 [INT]
+  DEF LOCAL N := 0 [INT]
+  DEF LOCAL O := 0 [INT]
+  DEF LOCAL P := 0 [INT]
+  DEF LOCAL Q := 0 [INT]
+  DEF LOCAL R := 0 [INT]
+  DEF LOCAL S := 0 [INT]
+  DEF LOCAL T := 0 [INT]
+  DEF LOCAL U := 0 [INT]
+  DEF LOCAL V := 0 [INT]
+  DEF LOCAL W := 0 [INT]
+  DEF LOCAL X := 0 [INT]
+  DEF LOCAL Y := 0 [INT]
+  DEF LOCAL Z := 0 [INT]
+  CALL RealSign(((PARAM a) -> a0)[REAL])
+  DEF LOCAL a2 := (RETURN a1) [INT]
   L := a2 [INT]
-  CALL RealSign(io.github.H20man13.DeClan.common.icode.Def@360f3f74)
-  io.github.H20man13.DeClan.common.icode.Def@25407206
+  CALL RealSign(((PARAM b) -> a0)[REAL])
+  DEF LOCAL a3 := (RETURN a1) [INT]
   M := a3 [INT]
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@2efc3257)
-  io.github.H20man13.DeClan.common.icode.Def@65f7399f
+  CALL RealExponent(((PARAM a) -> a4)[REAL])
+  DEF LOCAL a6 := (RETURN a5) [INT]
   O := a6 [INT]
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@2acc4eca)
-  io.github.H20man13.DeClan.common.icode.Def@c3ad9d7
+  CALL RealExponent(((PARAM b) -> a4)[REAL])
+  DEF LOCAL a7 := (RETURN a5) [INT]
   P := a7 [INT]
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@431b3c8d)
-  io.github.H20man13.DeClan.common.icode.Def@1f7cceb0
+  CALL RealMantissa(((PARAM a) -> a8)[REAL])
+  DEF LOCAL b0 := (RETURN a9) [INT]
   Q := b0 [INT]
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@578e698b)
-  io.github.H20man13.DeClan.common.icode.Def@da0f6cc
+  CALL RealMantissa(((PARAM b) -> a8)[REAL])
+  DEF LOCAL b1 := (RETURN a9) [INT]
   R := b1 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@17c54ca1
-  io.github.H20man13.DeClan.common.icode.Def@6e3509a7
+  DEF LOCAL b2 := O LT P [BOOL]
+  DEF LOCAL b3 := TRUE [BOOL]
   IF b2 EQ b3 THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
   LABEL IFSTAT_0_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@4ad3e7db
+  DEF LOCAL b5 := P IADD b4 [INT]
   S := b5 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@404f7edb
+  DEF LOCAL b6 := P ISUB O [INT]
   N := b6 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@7dd29237
+  DEF LOCAL b7 := Q IRSHIFT N [INT]
   Q := b7 [INT]
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@3becd41b
-  io.github.H20man13.DeClan.common.icode.Def@6e540182
+  DEF LOCAL b8 := O GT P [BOOL]
+  DEF LOCAL b9 := TRUE [BOOL]
   IF b8 EQ b9 THEN IFSTAT_0_SEQ_1_LEVEL_0 ELSE IFNEXT_0_SEQ_1_LEVEL_0
   LABEL IFSTAT_0_SEQ_1_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@55d61335
+  DEF LOCAL c0 := O IADD b4 [INT]
   S := c0 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3c7c7092
+  DEF LOCAL c1 := O ISUB P [INT]
   N := c1 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@616d270a
+  DEF LOCAL c2 := R IRSHIFT N [INT]
   R := c2 [INT]
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_1_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@2ffb72b4
+  DEF LOCAL c3 := O IADD b4 [INT]
   S := c3 [INT]
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_2_LEVEL_0
   LABEL IFEND_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@4a5183c5
-  io.github.H20man13.DeClan.common.icode.Def@15f682fd
-  io.github.H20man13.DeClan.common.icode.Def@1d2bb23e
-  io.github.H20man13.DeClan.common.icode.Def@69b10dfd
-  io.github.H20man13.DeClan.common.icode.Def@2fb8f4a5
-  io.github.H20man13.DeClan.common.icode.Def@e786ac5
+  DEF LOCAL c4 := 0 [INT]
+  DEF LOCAL c5 := L EQ c4 [BOOL]
+  DEF LOCAL c6 := 1 [INT]
+  DEF LOCAL c7 := M EQ c6 [BOOL]
+  DEF LOCAL c8 := c5 LAND c7 [BOOL]
+  DEF LOCAL c9 := TRUE [BOOL]
   IF c8 EQ c9 THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@4e828376
-  io.github.H20man13.DeClan.common.icode.Def@2f3da1be
+  DEF LOCAL d0 := Q GT R [BOOL]
+  DEF LOCAL d1 := TRUE [BOOL]
   IF d0 EQ d1 THEN IFSTAT_2_SEQ_0_LEVEL_1 ELSE IFNEXT_2_SEQ_0_LEVEL_1
   LABEL IFSTAT_2_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@47487520
+  DEF LOCAL d2 := 0 [INT]
   V := d2 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@a2b014e
+  DEF LOCAL d3 := Q ISUB R [INT]
   U := d3 [INT]
   GOTO IFEND_2_LEVEL_1
   LABEL IFNEXT_2_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@5068ba4e
-  io.github.H20man13.DeClan.common.icode.Def@121ad1ac
+  DEF LOCAL d4 := Q LT R [BOOL]
+  DEF LOCAL d5 := TRUE [BOOL]
   IF d4 EQ d5 THEN IFSTAT_2_SEQ_1_LEVEL_1 ELSE IFNEXT_2_SEQ_1_LEVEL_1
   LABEL IFSTAT_2_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@167f47ba
+  DEF LOCAL d6 := 1 [INT]
   V := d6 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@448c054a
+  DEF LOCAL d7 := R ISUB Q [INT]
   U := d7 [INT]
   GOTO IFEND_2_LEVEL_1
   LABEL IFNEXT_2_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@51237d5f
+  DEF LOCAL d8 := 0 [INT]
   V := d8 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@15705166
+  DEF LOCAL d9 := 0 [INT]
   U := d9 [INT]
   GOTO IFEND_2_LEVEL_1
   LABEL IFNEXT_2_SEQ_2_LEVEL_1
   LABEL IFEND_2_LEVEL_1
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@795e96e5
-  io.github.H20man13.DeClan.common.icode.Def@5ddc7ad1
-  io.github.H20man13.DeClan.common.icode.Def@175f2db0
-  io.github.H20man13.DeClan.common.icode.Def@b3a55c
-  io.github.H20man13.DeClan.common.icode.Def@d57e211
-  io.github.H20man13.DeClan.common.icode.Def@33630b98
+  DEF LOCAL e0 := 1 [INT]
+  DEF LOCAL e1 := L EQ e0 [BOOL]
+  DEF LOCAL e2 := 0 [INT]
+  DEF LOCAL e3 := M EQ e2 [BOOL]
+  DEF LOCAL e4 := e1 LAND e3 [BOOL]
+  DEF LOCAL e5 := TRUE [BOOL]
   IF e4 EQ e5 THEN IFSTAT_1_SEQ_1_LEVEL_0 ELSE IFNEXT_1_SEQ_1_LEVEL_0
   LABEL IFSTAT_1_SEQ_1_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@5d3f82e9
-  io.github.H20man13.DeClan.common.icode.Def@40bb4557
+  DEF LOCAL e6 := Q GT R [BOOL]
+  DEF LOCAL e7 := TRUE [BOOL]
   IF e6 EQ e7 THEN IFSTAT_4_SEQ_0_LEVEL_1 ELSE IFNEXT_4_SEQ_0_LEVEL_1
   LABEL IFSTAT_4_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@72ce703b
+  DEF LOCAL e8 := 1 [INT]
   V := e8 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@595a9a31
+  DEF LOCAL e9 := Q ISUB R [INT]
   U := e9 [INT]
   GOTO IFEND_4_LEVEL_1
   LABEL IFNEXT_4_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@78537339
-  io.github.H20man13.DeClan.common.icode.Def@62d81099
+  DEF LOCAL f0 := Q LT R [BOOL]
+  DEF LOCAL f1 := TRUE [BOOL]
   IF f0 EQ f1 THEN IFSTAT_4_SEQ_1_LEVEL_1 ELSE IFNEXT_4_SEQ_1_LEVEL_1
   LABEL IFSTAT_4_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@6316fb51
+  DEF LOCAL f2 := 0 [INT]
   V := f2 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@6e107e10
+  DEF LOCAL f3 := R ISUB Q [INT]
   U := f3 [INT]
   GOTO IFEND_4_LEVEL_1
   LABEL IFNEXT_4_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@d390250
+  DEF LOCAL f4 := 0 [INT]
   V := f4 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@2fc797b6
+  DEF LOCAL f5 := 0 [INT]
   U := f5 [INT]
   GOTO IFEND_4_LEVEL_1
   LABEL IFNEXT_4_SEQ_2_LEVEL_1
@@ -170,304 +170,304 @@ PROC SECTION
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_1_LEVEL_0
   V := L [INT]
-  io.github.H20man13.DeClan.common.icode.Def@7b5f2d6c
+  DEF LOCAL f6 := Q IADD R [INT]
   U := f6 [INT]
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_2_LEVEL_0
   LABEL IFEND_1_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@16523ce9
-  io.github.H20man13.DeClan.common.icode.Def@533c87f1
-  io.github.H20man13.DeClan.common.icode.Def@4055c007
-  io.github.H20man13.DeClan.common.icode.Def@42e3a12c
+  DEF LOCAL f7 := 24 [INT]
+  DEF LOCAL f8 := U IRSHIFT f7 [INT]
+  DEF LOCAL f9 := 1 [INT]
+  DEF LOCAL g0 := f8 IAND f9 [INT]
   T := g0 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@455168ed
-  io.github.H20man13.DeClan.common.icode.Def@72656cb9
-  io.github.H20man13.DeClan.common.icode.Def@1c5ecf0a
+  DEF LOCAL g1 := 1 [INT]
+  DEF LOCAL g2 := T EQ g1 [BOOL]
+  DEF LOCAL g3 := TRUE [BOOL]
   IF g2 EQ g3 THEN IFSTAT_7_SEQ_0_LEVEL_0 ELSE IFNEXT_7_SEQ_0_LEVEL_0
   LABEL IFSTAT_7_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@43ebe76c
-  io.github.H20man13.DeClan.common.icode.Def@d33f9fc
+  DEF LOCAL g4 := 1 [INT]
+  DEF LOCAL g5 := U IRSHIFT g4 [INT]
   U := g5 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@546a4c47
-  io.github.H20man13.DeClan.common.icode.Def@3ea6ef5f
+  DEF LOCAL g6 := 1 [INT]
+  DEF LOCAL g7 := S IADD g6 [INT]
   S := g7 [INT]
   GOTO IFEND_7_LEVEL_0
   LABEL IFNEXT_7_SEQ_0_LEVEL_0
   LABEL IFEND_7_LEVEL_0
   W := U [INT]
-  io.github.H20man13.DeClan.common.icode.Def@226abf60
+  DEF LOCAL g8 := 0 [INT]
   Z := g8 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@30845ec8)
-  io.github.H20man13.DeClan.common.icode.Def@360a24eb
-  io.github.H20man13.DeClan.common.icode.Def@3fdff962
-  io.github.H20man13.DeClan.common.icode.Def@4839c046
+  CALL IntIsZero((W -> g9)[INT])
+  DEF LOCAL h1 := (RETURN h0) [BOOL]
+  DEF LOCAL h2 := BNOT h1 [BOOL]
+  DEF LOCAL h3 := TRUE [BOOL]
   IF h2 EQ h3 THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILECOND_0_SEQ_0_LEVEL_0
   IF h2 EQ h3 THEN WHILESTAT_0_SEQ_0_LEVEL_0 ELSE WHILEEND_0_LEVEL_0
   LABEL WHILESTAT_0_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@5a59b597
-  io.github.H20man13.DeClan.common.icode.Def@3d93ff4b
+  DEF LOCAL h4 := 1 [INT]
+  DEF LOCAL h5 := W IAND h4 [INT]
   Y := h5 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@7dc70572
-  io.github.H20man13.DeClan.common.icode.Def@7bfac17c
-  io.github.H20man13.DeClan.common.icode.Def@6c183699
+  DEF LOCAL h6 := 1 [INT]
+  DEF LOCAL h7 := Y EQ h6 [BOOL]
+  DEF LOCAL h8 := TRUE [BOOL]
   IF h7 EQ h8 THEN IFSTAT_8_SEQ_0_LEVEL_0 ELSE IFNEXT_8_SEQ_0_LEVEL_0
   LABEL IFSTAT_8_SEQ_0_LEVEL_0
   X := Z [INT]
   GOTO IFEND_8_LEVEL_0
   LABEL IFNEXT_8_SEQ_0_LEVEL_0
   LABEL IFEND_8_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@4ed3f5f6
-  io.github.H20man13.DeClan.common.icode.Def@b7a95cb
+  DEF LOCAL h9 := 1 [INT]
+  DEF LOCAL i0 := Z IADD h9 [INT]
   Z := i0 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@262654f9
-  io.github.H20man13.DeClan.common.icode.Def@b27025a
+  DEF LOCAL i1 := 1 [INT]
+  DEF LOCAL i2 := W IRSHIFT i1 [INT]
   W := i2 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@5a0a2a8d)
-  io.github.H20man13.DeClan.common.icode.Def@58128ca
-  io.github.H20man13.DeClan.common.icode.Def@1114251f
+  CALL IntIsZero((W -> g9)[INT])
+  DEF LOCAL i3 := (RETURN h0) [BOOL]
+  DEF LOCAL i4 := BNOT i3 [BOOL]
   h2 := i4 [BOOL]
   GOTO WHILECOND_0_SEQ_0_LEVEL_0
   LABEL WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILEEND_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@2292d0b5
-  io.github.H20man13.DeClan.common.icode.Def@2947c828
-  io.github.H20man13.DeClan.common.icode.Def@250c62b2
+  DEF LOCAL i5 := 23 [INT]
+  DEF LOCAL i6 := X LT i5 [BOOL]
+  DEF LOCAL i7 := TRUE [BOOL]
   IF i6 EQ i7 THEN IFSTAT_9_SEQ_0_LEVEL_0 ELSE IFNEXT_9_SEQ_0_LEVEL_0
   LABEL IFSTAT_9_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@150087d1
-  io.github.H20man13.DeClan.common.icode.Def@21a3eabc
+  DEF LOCAL i8 := 23 [INT]
+  DEF LOCAL i9 := i8 ISUB X [INT]
   N := i9 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@36327028
+  DEF LOCAL j0 := U ILSHIFT N [INT]
   U := j0 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@706d9dae
+  DEF LOCAL j1 := S ISUB N [INT]
   S := j1 [INT]
   GOTO IFEND_9_LEVEL_0
   LABEL IFNEXT_9_SEQ_0_LEVEL_0
   LABEL IFEND_9_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@6142a27d
-  io.github.H20man13.DeClan.common.icode.Def@5f0a52e3
-  io.github.H20man13.DeClan.common.icode.Def@7a1cca1a
-  io.github.H20man13.DeClan.common.icode.Def@6680a81a
+  DEF LOCAL j2 := 255 [INT]
+  DEF LOCAL j3 := S IAND j2 [INT]
+  DEF LOCAL j4 := 23 [INT]
+  DEF LOCAL j5 := j3 ILSHIFT j4 [INT]
   K := j5 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@12a5bffd
-  io.github.H20man13.DeClan.common.icode.Def@1fb56a00
-  io.github.H20man13.DeClan.common.icode.Def@3652ff6
+  DEF LOCAL j6 := 8388607 [INT]
+  DEF LOCAL j7 := U IAND j6 [INT]
+  DEF LOCAL j8 := K IOR j7 [INT]
   K := j8 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@60c697f8
-  io.github.H20man13.DeClan.common.icode.Def@5fa3964a
-  io.github.H20man13.DeClan.common.icode.Def@6b7212d4
+  DEF LOCAL j9 := 31 [INT]
+  DEF LOCAL k0 := V ILSHIFT j9 [INT]
+  DEF LOCAL k1 := K IOR k0 [INT]
   K := k1 [INT]
-  CALL IntBinaryAsReal(io.github.H20man13.DeClan.common.icode.Def@41429ad3)
-  io.github.H20man13.DeClan.common.icode.Def@156fbc54
+  CALL IntBinaryAsReal((K -> k2)[INT])
+  DEF LOCAL k4 := (RETURN k3) [REAL]
   J := k4 [REAL]
-  io.github.H20man13.DeClan.common.icode.Def@563d6975
+  DEF RETURN c := J [REAL]
  RETURN
  PROC LABEL RSub
-  io.github.H20man13.DeClan.common.icode.Def@2d2235d4
-  CALL RNeg(io.github.H20man13.DeClan.common.icode.Def@78e3b6a1)
-  io.github.H20man13.DeClan.common.icode.Def@100638f5
-  CALL RAdd(io.github.H20man13.DeClan.common.icode.Def@2dcd9d41, io.github.H20man13.DeClan.common.icode.Def@11fd81b9)
-  io.github.H20man13.DeClan.common.icode.Def@744e7b99
+  DEF LOCAL k5 := 0.0 [REAL]
+  CALL RNeg(((PARAM e) -> p)[REAL])
+  DEF LOCAL k6 := (RETURN q) [REAL]
+  CALL RAdd(((PARAM d) -> a)[REAL], (k6 -> b)[REAL])
+  DEF LOCAL k7 := (RETURN c) [REAL]
   k5 := k7 [REAL]
-  io.github.H20man13.DeClan.common.icode.Def@552e2475
+  DEF RETURN f := k5 [REAL]
  RETURN
  PROC LABEL RMul
-  io.github.H20man13.DeClan.common.icode.Def@14488c04
-  io.github.H20man13.DeClan.common.icode.Def@69c5277d
-  io.github.H20man13.DeClan.common.icode.Def@6e501b6f
-  io.github.H20man13.DeClan.common.icode.Def@4af9875c
-  io.github.H20man13.DeClan.common.icode.Def@1a010aab
-  io.github.H20man13.DeClan.common.icode.Def@5a3f2859
-  io.github.H20man13.DeClan.common.icode.Def@34dacb12
-  io.github.H20man13.DeClan.common.icode.Def@329f69b2
-  io.github.H20man13.DeClan.common.icode.Def@20597918
-  io.github.H20man13.DeClan.common.icode.Def@387e0aa
-  io.github.H20man13.DeClan.common.icode.Def@61e72993
-  io.github.H20man13.DeClan.common.icode.Def@287c0ee4
-  io.github.H20man13.DeClan.common.icode.Def@4306234a
-  io.github.H20man13.DeClan.common.icode.Def@7f380930
-  io.github.H20man13.DeClan.common.icode.Def@27cb1cf5
-  io.github.H20man13.DeClan.common.icode.Def@6f083dc6
-  io.github.H20man13.DeClan.common.icode.Def@1de64f1e
-  io.github.H20man13.DeClan.common.icode.Def@2228b41b
-  io.github.H20man13.DeClan.common.icode.Def@5d7b381f
-  io.github.H20man13.DeClan.common.icode.Def@7333c87b
-  io.github.H20man13.DeClan.common.icode.Def@5c82e7bc
-  io.github.H20man13.DeClan.common.icode.Def@3bed085b
-  io.github.H20man13.DeClan.common.icode.Def@3f5264f9
-  io.github.H20man13.DeClan.common.icode.Def@52cf1378
-  io.github.H20man13.DeClan.common.icode.Def@193ba19a
-  io.github.H20man13.DeClan.common.icode.Def@4a47dd36
-  io.github.H20man13.DeClan.common.icode.Def@661e1d2b
-  io.github.H20man13.DeClan.common.icode.Def@4c608643
-  io.github.H20man13.DeClan.common.icode.Def@893d924
-  io.github.H20man13.DeClan.common.icode.Def@7cc91b6d
-  io.github.H20man13.DeClan.common.icode.Def@6a28b69a
-  io.github.H20man13.DeClan.common.icode.Def@22b26702
-  io.github.H20man13.DeClan.common.icode.Def@347ec089
-  io.github.H20man13.DeClan.common.icode.Def@d8b718
-  io.github.H20man13.DeClan.common.icode.Def@2feb4dff
-  io.github.H20man13.DeClan.common.icode.Def@1ed0a577
-  io.github.H20man13.DeClan.common.icode.Def@5ce854ac
-  io.github.H20man13.DeClan.common.icode.Def@194d485e
-  io.github.H20man13.DeClan.common.icode.Def@6c3c6a3d
-  CALL RealSign(io.github.H20man13.DeClan.common.icode.Def@775c81d0)
-  io.github.H20man13.DeClan.common.icode.Def@690fe6a3
+  DEF LOCAL k8 := 0.0 [REAL]
+  DEF LOCAL k9 := 0 [INT]
+  DEF LOCAL l0 := 0 [INT]
+  DEF LOCAL l1 := 0 [INT]
+  DEF LOCAL l2 := 0 [INT]
+  DEF LOCAL l3 := 0 [INT]
+  DEF LOCAL l4 := 0 [INT]
+  DEF LOCAL l5 := 0 [INT]
+  DEF LOCAL l6 := 0 [INT]
+  DEF LOCAL l7 := 0 [INT]
+  DEF LOCAL l8 := 0 [INT]
+  DEF LOCAL l9 := 0 [INT]
+  DEF LOCAL m0 := 0 [INT]
+  DEF LOCAL m1 := 0 [INT]
+  DEF LOCAL m2 := 0 [INT]
+  DEF LOCAL m3 := 0 [INT]
+  DEF LOCAL m4 := 0 [INT]
+  DEF LOCAL m5 := 0 [INT]
+  DEF LOCAL m6 := 0 [INT]
+  DEF LOCAL m7 := 0 [INT]
+  DEF LOCAL m8 := 0 [INT]
+  DEF LOCAL m9 := 0 [INT]
+  DEF LOCAL n0 := 0 [INT]
+  DEF LOCAL n1 := 0 [INT]
+  DEF LOCAL n2 := 0 [INT]
+  DEF LOCAL n3 := 0 [INT]
+  DEF LOCAL n4 := 0 [INT]
+  DEF LOCAL n5 := 0 [INT]
+  DEF LOCAL n6 := 0 [INT]
+  DEF LOCAL n7 := 0 [INT]
+  DEF LOCAL n8 := 0 [INT]
+  DEF LOCAL n9 := 0 [INT]
+  DEF LOCAL o0 := 0 [INT]
+  DEF LOCAL o1 := 0 [INT]
+  DEF LOCAL o2 := 0 [INT]
+  DEF LOCAL o3 := 0 [INT]
+  DEF LOCAL o4 := 0 [INT]
+  DEF LOCAL o5 := 0 [INT]
+  DEF LOCAL o6 := 0 [INT]
+  CALL RealSign(((PARAM g) -> a0)[REAL])
+  DEF LOCAL o7 := (RETURN a1) [INT]
   l0 := o7 [INT]
-  CALL RealSign(io.github.H20man13.DeClan.common.icode.Def@1af34c64)
-  io.github.H20man13.DeClan.common.icode.Def@1511a085
+  CALL RealSign(((PARAM h) -> a0)[REAL])
+  DEF LOCAL o8 := (RETURN a1) [INT]
   l1 := o8 [INT]
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@650e1f6)
-  io.github.H20man13.DeClan.common.icode.Def@10fc3561
+  CALL RealExponent(((PARAM g) -> a4)[REAL])
+  DEF LOCAL o9 := (RETURN a5) [INT]
   l2 := o9 [INT]
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@10eccb76)
-  io.github.H20man13.DeClan.common.icode.Def@8e14466
+  CALL RealExponent(((PARAM h) -> a4)[REAL])
+  DEF LOCAL p0 := (RETURN a5) [INT]
   l3 := p0 [INT]
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@9bf5bdd)
-  io.github.H20man13.DeClan.common.icode.Def@781920b6
+  CALL RealMantissa(((PARAM g) -> a8)[REAL])
+  DEF LOCAL p1 := (RETURN a9) [INT]
   l4 := p1 [INT]
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@e58e3b8)
-  io.github.H20man13.DeClan.common.icode.Def@c184461
+  CALL RealMantissa(((PARAM h) -> a8)[REAL])
+  DEF LOCAL p2 := (RETURN a9) [INT]
   l5 := p2 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@7f0a978c)
-  io.github.H20man13.DeClan.common.icode.Def@4ea7144b
-  io.github.H20man13.DeClan.common.icode.Def@7ab6b04
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@495e0cdc)
-  io.github.H20man13.DeClan.common.icode.Def@62c3448c
-  io.github.H20man13.DeClan.common.icode.Def@143001d3
-  io.github.H20man13.DeClan.common.icode.Def@481fab1a
-  io.github.H20man13.DeClan.common.icode.Def@719e7629
+  CALL IntIsZero((l4 -> g9)[INT])
+  DEF LOCAL p3 := (RETURN h0) [BOOL]
+  DEF LOCAL p4 := BNOT p3 [BOOL]
+  CALL IntIsZero((l5 -> g9)[INT])
+  DEF LOCAL p5 := (RETURN h0) [BOOL]
+  DEF LOCAL p6 := BNOT p5 [BOOL]
+  DEF LOCAL p7 := p4 LAND p6 [BOOL]
+  DEF LOCAL p8 := TRUE [BOOL]
   IF p7 EQ p8 THEN IFSTAT_10_SEQ_0_LEVEL_0 ELSE IFNEXT_10_SEQ_0_LEVEL_0
   LABEL IFSTAT_10_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@901abb2
-  io.github.H20man13.DeClan.common.icode.Def@1d2b1dd8
-  io.github.H20man13.DeClan.common.icode.Def@28d9321c
-  io.github.H20man13.DeClan.common.icode.Def@2af42610
-  io.github.H20man13.DeClan.common.icode.Def@2e2c44c7
+  DEF LOCAL p9 := 1 [INT]
+  DEF LOCAL q0 := l4 IAND p9 [INT]
+  DEF LOCAL q1 := 1 [INT]
+  DEF LOCAL q2 := q0 NE q1 [BOOL]
+  DEF LOCAL q3 := TRUE [BOOL]
   IF q2 EQ q3 THEN WHILESTAT_2_SEQ_0_LEVEL_0 ELSE WHILENEXT_2_SEQ_0_LEVEL_0
   LABEL WHILECOND_2_SEQ_0_LEVEL_0
   IF q2 EQ q3 THEN WHILESTAT_2_SEQ_0_LEVEL_0 ELSE WHILEEND_2_LEVEL_0
   LABEL WHILESTAT_2_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@6b2c4907
-  io.github.H20man13.DeClan.common.icode.Def@a84dfac
+  DEF LOCAL q4 := 1 [INT]
+  DEF LOCAL q5 := l4 IRSHIFT q4 [INT]
   l4 := q5 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@1cbac4a
-  io.github.H20man13.DeClan.common.icode.Def@4d0ddac8
-  io.github.H20man13.DeClan.common.icode.Def@4460d61f
-  io.github.H20man13.DeClan.common.icode.Def@68b50880
+  DEF LOCAL q6 := 1 [INT]
+  DEF LOCAL q7 := l4 IAND q6 [INT]
+  DEF LOCAL q8 := 1 [INT]
+  DEF LOCAL q9 := q7 NE q8 [BOOL]
   q2 := q9 [BOOL]
   GOTO WHILECOND_2_SEQ_0_LEVEL_0
   LABEL WHILENEXT_2_SEQ_0_LEVEL_0
   LABEL WHILEEND_2_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@34405020
+  DEF LOCAL r0 := 0 [INT]
   m5 := r0 [INT]
   m9 := l4 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@173817fa)
-  io.github.H20man13.DeClan.common.icode.Def@552afb2c
-  io.github.H20man13.DeClan.common.icode.Def@151b0801
-  io.github.H20man13.DeClan.common.icode.Def@23ec8bd2
+  CALL IntIsZero((m9 -> g9)[INT])
+  DEF LOCAL r1 := (RETURN h0) [BOOL]
+  DEF LOCAL r2 := BNOT r1 [BOOL]
+  DEF LOCAL r3 := TRUE [BOOL]
   IF r2 EQ r3 THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILENEXT_4_SEQ_0_LEVEL_0
   LABEL WHILECOND_4_SEQ_0_LEVEL_0
   IF r2 EQ r3 THEN WHILESTAT_4_SEQ_0_LEVEL_0 ELSE WHILEEND_4_LEVEL_0
   LABEL WHILESTAT_4_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@743cdf92
-  io.github.H20man13.DeClan.common.icode.Def@76cda9a2
+  DEF LOCAL r4 := 1 [INT]
+  DEF LOCAL r5 := m9 IAND r4 [INT]
   n0 := r5 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3bdbec7a
-  io.github.H20man13.DeClan.common.icode.Def@7cae52c8
-  io.github.H20man13.DeClan.common.icode.Def@6e7cd280
+  DEF LOCAL r6 := 1 [INT]
+  DEF LOCAL r7 := n0 EQ r6 [BOOL]
+  DEF LOCAL r8 := TRUE [BOOL]
   IF r7 EQ r8 THEN IFSTAT_11_SEQ_0_LEVEL_1 ELSE IFNEXT_11_SEQ_0_LEVEL_1
   LABEL IFSTAT_11_SEQ_0_LEVEL_1
   m4 := m5 [INT]
   GOTO IFEND_11_LEVEL_1
   LABEL IFNEXT_11_SEQ_0_LEVEL_1
   LABEL IFEND_11_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@7567e654
-  io.github.H20man13.DeClan.common.icode.Def@11bb7cbe
+  DEF LOCAL r9 := 1 [INT]
+  DEF LOCAL s0 := m5 IADD r9 [INT]
   m5 := s0 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@1f8d4453
-  io.github.H20man13.DeClan.common.icode.Def@17ed6df0
+  DEF LOCAL s1 := 1 [INT]
+  DEF LOCAL s2 := m9 IRSHIFT s1 [INT]
   m9 := s2 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@5d727c1f)
-  io.github.H20man13.DeClan.common.icode.Def@1766b583
-  io.github.H20man13.DeClan.common.icode.Def@623cd4e0
+  CALL IntIsZero((m9 -> g9)[INT])
+  DEF LOCAL s3 := (RETURN h0) [BOOL]
+  DEF LOCAL s4 := BNOT s3 [BOOL]
   r2 := s4 [BOOL]
   GOTO WHILECOND_4_SEQ_0_LEVEL_0
   LABEL WHILENEXT_4_SEQ_0_LEVEL_0
   LABEL WHILEEND_4_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@1ec2b7ba
-  io.github.H20man13.DeClan.common.icode.Def@501ea2f9
-  io.github.H20man13.DeClan.common.icode.Def@7276cfd4
-  io.github.H20man13.DeClan.common.icode.Def@76699eae
-  io.github.H20man13.DeClan.common.icode.Def@7d1d88be
+  DEF LOCAL s5 := 1 [INT]
+  DEF LOCAL s6 := l5 IAND s5 [INT]
+  DEF LOCAL s7 := 1 [INT]
+  DEF LOCAL s8 := s6 NE s7 [BOOL]
+  DEF LOCAL s9 := TRUE [BOOL]
   IF s8 EQ s9 THEN WHILESTAT_6_SEQ_0_LEVEL_0 ELSE WHILENEXT_6_SEQ_0_LEVEL_0
   LABEL WHILECOND_6_SEQ_0_LEVEL_0
   IF s8 EQ s9 THEN WHILESTAT_6_SEQ_0_LEVEL_0 ELSE WHILEEND_6_LEVEL_0
   LABEL WHILESTAT_6_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@58b1e48e
-  io.github.H20man13.DeClan.common.icode.Def@1cfd9823
+  DEF LOCAL t0 := 1 [INT]
+  DEF LOCAL t1 := l5 IRSHIFT t0 [INT]
   l5 := t1 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@265bf9fc
-  io.github.H20man13.DeClan.common.icode.Def@3792cdf1
-  io.github.H20man13.DeClan.common.icode.Def@6050ca19
-  io.github.H20man13.DeClan.common.icode.Def@101c7ab0
+  DEF LOCAL t2 := 1 [INT]
+  DEF LOCAL t3 := l5 IAND t2 [INT]
+  DEF LOCAL t4 := 1 [INT]
+  DEF LOCAL t5 := t3 NE t4 [BOOL]
   s8 := t5 [BOOL]
   GOTO WHILECOND_6_SEQ_0_LEVEL_0
   LABEL WHILENEXT_6_SEQ_0_LEVEL_0
   LABEL WHILEEND_6_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@69f1f556
+  DEF LOCAL t6 := 0 [INT]
   m7 := t6 [INT]
   m8 := l5 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@48ad40dc)
-  io.github.H20man13.DeClan.common.icode.Def@2e4b5bd2
-  io.github.H20man13.DeClan.common.icode.Def@5d716d51
-  io.github.H20man13.DeClan.common.icode.Def@3bcc68ec
+  CALL IntIsZero((m8 -> g9)[INT])
+  DEF LOCAL t7 := (RETURN h0) [BOOL]
+  DEF LOCAL t8 := BNOT t7 [BOOL]
+  DEF LOCAL t9 := TRUE [BOOL]
   IF t8 EQ t9 THEN WHILESTAT_8_SEQ_0_LEVEL_0 ELSE WHILENEXT_8_SEQ_0_LEVEL_0
   LABEL WHILECOND_8_SEQ_0_LEVEL_0
   IF t8 EQ t9 THEN WHILESTAT_8_SEQ_0_LEVEL_0 ELSE WHILEEND_8_LEVEL_0
   LABEL WHILESTAT_8_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@19c564e9
-  io.github.H20man13.DeClan.common.icode.Def@6d2429c8
+  DEF LOCAL u0 := 1 [INT]
+  DEF LOCAL u1 := m8 IAND u0 [INT]
   n1 := u1 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3b69cad8
-  io.github.H20man13.DeClan.common.icode.Def@63ba5e51
-  io.github.H20man13.DeClan.common.icode.Def@51ea8ce3
+  DEF LOCAL u2 := 1 [INT]
+  DEF LOCAL u3 := n1 EQ u2 [BOOL]
+  DEF LOCAL u4 := TRUE [BOOL]
   IF u3 EQ u4 THEN IFSTAT_12_SEQ_0_LEVEL_1 ELSE IFNEXT_12_SEQ_0_LEVEL_1
   LABEL IFSTAT_12_SEQ_0_LEVEL_1
   m6 := m7 [INT]
   GOTO IFEND_12_LEVEL_1
   LABEL IFNEXT_12_SEQ_0_LEVEL_1
   LABEL IFEND_12_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@1d4c857f
-  io.github.H20man13.DeClan.common.icode.Def@6886a304
+  DEF LOCAL u5 := 1 [INT]
+  DEF LOCAL u6 := m7 IADD u5 [INT]
   m7 := u6 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@59ff3093
-  io.github.H20man13.DeClan.common.icode.Def@5c7722db
+  DEF LOCAL u7 := 1 [INT]
+  DEF LOCAL u8 := m8 IRSHIFT u7 [INT]
   m8 := u8 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@25e93357)
-  io.github.H20man13.DeClan.common.icode.Def@782a3a6d
-  io.github.H20man13.DeClan.common.icode.Def@58f1f653
+  CALL IntIsZero((m8 -> g9)[INT])
+  DEF LOCAL u9 := (RETURN h0) [BOOL]
+  DEF LOCAL v0 := BNOT u9 [BOOL]
   t8 := v0 [BOOL]
   GOTO WHILECOND_8_SEQ_0_LEVEL_0
   LABEL WHILENEXT_8_SEQ_0_LEVEL_0
   LABEL WHILEEND_8_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@3d75666c
+  DEF LOCAL v1 := m4 IADD m6 [INT]
   n2 := v1 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@51ea891e
-  io.github.H20man13.DeClan.common.icode.Def@78ba281c
+  DEF LOCAL v2 := l0 NE l1 [BOOL]
+  DEF LOCAL v3 := TRUE [BOOL]
   IF v2 EQ v3 THEN IFSTAT_13_SEQ_0_LEVEL_1 ELSE IFNEXT_13_SEQ_0_LEVEL_1
   LABEL IFSTAT_13_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@2f2e1a36
+  DEF LOCAL v4 := 1 [INT]
   l6 := v4 [INT]
   GOTO IFEND_13_LEVEL_1
   LABEL IFNEXT_13_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@397e5fb9
+  DEF LOCAL v5 := 0 [INT]
   l6 := v5 [INT]
   GOTO IFEND_13_LEVEL_1
   LABEL IFNEXT_13_SEQ_1_LEVEL_1
   LABEL IFEND_13_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@3cd983f1
+  DEF LOCAL v6 := l2 IADD l3 [INT]
   l8 := v6 [INT]
   IPARAM n4
 IPARAM n3
@@ -480,138 +480,138 @@ IASM "STR %r, %a"
   IPARAM n4
 IPARAM n4
 IASM "STR %r, %a"
-  io.github.H20man13.DeClan.common.icode.Def@150ab6be
+  DEF LOCAL v7 := 0 [INT]
   l9 := v7 [INT]
   n5 := n3 [INT]
   n6 := n4 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@4aaae183)
-  io.github.H20man13.DeClan.common.icode.Def@1e2fcf8
-  io.github.H20man13.DeClan.common.icode.Def@71d4213e
-  io.github.H20man13.DeClan.common.icode.Def@312bd6fc
+  CALL IntIsZero((n5 -> g9)[INT])
+  DEF LOCAL v8 := (RETURN h0) [BOOL]
+  DEF LOCAL v9 := BNOT v8 [BOOL]
+  DEF LOCAL w0 := TRUE [BOOL]
   IF v9 EQ w0 THEN WHILESTAT_10_SEQ_0_LEVEL_0 ELSE WHILENEXT_10_SEQ_0_LEVEL_0
   LABEL WHILECOND_10_SEQ_0_LEVEL_0
   IF v9 EQ w0 THEN WHILESTAT_10_SEQ_0_LEVEL_0 ELSE WHILEEND_10_LEVEL_0
   LABEL WHILESTAT_10_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@2c908fa3
-  io.github.H20man13.DeClan.common.icode.Def@3a03b3f5
+  DEF LOCAL w1 := 1 [INT]
+  DEF LOCAL w2 := n6 IAND w1 [INT]
   m2 := w2 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@6a0ea85a
-  io.github.H20man13.DeClan.common.icode.Def@5fd0fd1
-  io.github.H20man13.DeClan.common.icode.Def@2db8755a
+  DEF LOCAL w3 := 1 [INT]
+  DEF LOCAL w4 := m2 EQ w3 [BOOL]
+  DEF LOCAL w5 := TRUE [BOOL]
   IF w4 EQ w5 THEN IFSTAT_14_SEQ_0_LEVEL_1 ELSE IFNEXT_14_SEQ_0_LEVEL_1
   LABEL IFSTAT_14_SEQ_0_LEVEL_1
   m0 := l9 [INT]
   GOTO IFEND_14_LEVEL_1
   LABEL IFNEXT_14_SEQ_0_LEVEL_1
   LABEL IFEND_14_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@a83e703
-  io.github.H20man13.DeClan.common.icode.Def@15d0d271
+  DEF LOCAL w6 := 1 [INT]
+  DEF LOCAL w7 := l9 IADD w6 [INT]
   l9 := w7 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@78bed49d
-  io.github.H20man13.DeClan.common.icode.Def@16c27c75
+  DEF LOCAL w8 := 1 [INT]
+  DEF LOCAL w9 := n5 IAND w8 [INT]
   n7 := w9 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@36c2a51
-  io.github.H20man13.DeClan.common.icode.Def@10bc2317
+  DEF LOCAL x0 := 1 [INT]
+  DEF LOCAL x1 := n5 IRSHIFT x0 [INT]
   n5 := x1 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@1ea807a1
-  io.github.H20man13.DeClan.common.icode.Def@1b0cf1d5
+  DEF LOCAL x2 := 1 [INT]
+  DEF LOCAL x3 := n6 IRSHIFT x2 [INT]
   n6 := x3 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@79d07e47
-  io.github.H20man13.DeClan.common.icode.Def@8854ef1
-  io.github.H20man13.DeClan.common.icode.Def@564ec54f
+  DEF LOCAL x4 := 30 [INT]
+  DEF LOCAL x5 := n7 ILSHIFT x4 [INT]
+  DEF LOCAL x6 := n6 IOR x5 [INT]
   n6 := x6 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@2a30040a)
-  io.github.H20man13.DeClan.common.icode.Def@50e8654d
-  io.github.H20man13.DeClan.common.icode.Def@72b84b67
+  CALL IntIsZero((n5 -> g9)[INT])
+  DEF LOCAL x7 := (RETURN h0) [BOOL]
+  DEF LOCAL x8 := BNOT x7 [BOOL]
   v9 := x8 [BOOL]
   GOTO WHILECOND_10_SEQ_0_LEVEL_0
   LABEL WHILENEXT_10_SEQ_0_LEVEL_0
   LABEL WHILEEND_10_LEVEL_0
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@527c9cc2)
-  io.github.H20man13.DeClan.common.icode.Def@78c6c2d3
-  io.github.H20man13.DeClan.common.icode.Def@6b97028b
-  io.github.H20man13.DeClan.common.icode.Def@5bc48fed
+  CALL IntIsZero((n6 -> g9)[INT])
+  DEF LOCAL x9 := (RETURN h0) [BOOL]
+  DEF LOCAL y0 := BNOT x9 [BOOL]
+  DEF LOCAL y1 := TRUE [BOOL]
   IF y0 EQ y1 THEN WHILESTAT_12_SEQ_0_LEVEL_0 ELSE WHILENEXT_12_SEQ_0_LEVEL_0
   LABEL WHILECOND_12_SEQ_0_LEVEL_0
   IF y0 EQ y1 THEN WHILESTAT_12_SEQ_0_LEVEL_0 ELSE WHILEEND_12_LEVEL_0
   LABEL WHILESTAT_12_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@6d6892db
-  io.github.H20man13.DeClan.common.icode.Def@23f615ff
+  DEF LOCAL y2 := 1 [INT]
+  DEF LOCAL y3 := n6 IAND y2 [INT]
   m2 := y3 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@7026c850
-  io.github.H20man13.DeClan.common.icode.Def@fe29a5e
-  io.github.H20man13.DeClan.common.icode.Def@26352f33
+  DEF LOCAL y4 := 1 [INT]
+  DEF LOCAL y5 := m2 EQ y4 [BOOL]
+  DEF LOCAL y6 := TRUE [BOOL]
   IF y5 EQ y6 THEN IFSTAT_15_SEQ_0_LEVEL_1 ELSE IFNEXT_15_SEQ_0_LEVEL_1
   LABEL IFSTAT_15_SEQ_0_LEVEL_1
   m0 := l9 [INT]
   GOTO IFEND_15_LEVEL_1
   LABEL IFNEXT_15_SEQ_0_LEVEL_1
   LABEL IFEND_15_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@35ff9fe7
-  io.github.H20man13.DeClan.common.icode.Def@73dda540
+  DEF LOCAL y7 := 1 [INT]
+  DEF LOCAL y8 := l9 IADD y7 [INT]
   l9 := y8 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@68f6e10f
-  io.github.H20man13.DeClan.common.icode.Def@67350795
+  DEF LOCAL y9 := 1 [INT]
+  DEF LOCAL z0 := n6 IRSHIFT y9 [INT]
   n6 := z0 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@2e7cac33)
-  io.github.H20man13.DeClan.common.icode.Def@3095fb19
-  io.github.H20man13.DeClan.common.icode.Def@6f349a9d
+  CALL IntIsZero((n6 -> g9)[INT])
+  DEF LOCAL z1 := (RETURN h0) [BOOL]
+  DEF LOCAL z2 := BNOT z1 [BOOL]
   y0 := z2 [BOOL]
   GOTO WHILECOND_12_SEQ_0_LEVEL_0
   LABEL WHILENEXT_12_SEQ_0_LEVEL_0
   LABEL WHILEEND_12_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@20f23141
-  io.github.H20man13.DeClan.common.icode.Def@6b240c58
+  DEF LOCAL z3 := 23 [INT]
+  DEF LOCAL z4 := m0 ISUB z3 [INT]
   n8 := z4 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@74f67f16
-  io.github.H20man13.DeClan.common.icode.Def@3fddf367
-  io.github.H20man13.DeClan.common.icode.Def@e94b5e4
-  io.github.H20man13.DeClan.common.icode.Def@45993ea2
-  io.github.H20man13.DeClan.common.icode.Def@2d0f7c8
-  io.github.H20man13.DeClan.common.icode.Def@52467a3e
+  DEF LOCAL z5 := 31 [INT]
+  DEF LOCAL z6 := n8 LT z5 [BOOL]
+  DEF LOCAL z7 := 0 [INT]
+  DEF LOCAL z8 := n8 GT z7 [BOOL]
+  DEF LOCAL z9 := z6 LAND z8 [BOOL]
+  DEF LOCAL A0 := TRUE [BOOL]
   IF z9 EQ A0 THEN IFSTAT_16_SEQ_0_LEVEL_1 ELSE IFNEXT_16_SEQ_0_LEVEL_1
   LABEL IFSTAT_16_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@79d6ce07
-  io.github.H20man13.DeClan.common.icode.Def@753683b1
-  io.github.H20man13.DeClan.common.icode.Def@70dd4468
-  io.github.H20man13.DeClan.common.icode.Def@11ab57c7
-  io.github.H20man13.DeClan.common.icode.Def@5ec21503
+  DEF LOCAL A1 := 1 [INT]
+  DEF LOCAL A2 := n8 ISUB A1 [INT]
+  DEF LOCAL A3 := n4 IRSHIFT A2 [INT]
+  DEF LOCAL A4 := 1 [INT]
+  DEF LOCAL A5 := A3 IAND A4 [INT]
   n9 := A5 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@1fa83e61
-  io.github.H20man13.DeClan.common.icode.Def@5ccc7f8
-  io.github.H20man13.DeClan.common.icode.Def@4e12ade9
-  io.github.H20man13.DeClan.common.icode.Def@36c325
-  io.github.H20man13.DeClan.common.icode.Def@5e33ae74
+  DEF LOCAL A6 := 1 [INT]
+  DEF LOCAL A7 := A6 ILSHIFT n8 [INT]
+  DEF LOCAL A8 := 1 [INT]
+  DEF LOCAL A9 := A7 ISUB A8 [INT]
+  DEF LOCAL B0 := INOT A9 [INT]
   o0 := B0 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3d23514d
+  DEF LOCAL B1 := n4 IAND o0 [INT]
   n4 := B1 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@6685dee5
-  io.github.H20man13.DeClan.common.icode.Def@501c16fb
-  io.github.H20man13.DeClan.common.icode.Def@139f4282
+  DEF LOCAL B2 := 1 [INT]
+  DEF LOCAL B3 := n9 EQ B2 [BOOL]
+  DEF LOCAL B4 := TRUE [BOOL]
   IF B3 EQ B4 THEN IFSTAT_17_SEQ_0_LEVEL_2 ELSE IFNEXT_17_SEQ_0_LEVEL_2
   LABEL IFSTAT_17_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@3491d085
-  io.github.H20man13.DeClan.common.icode.Def@7cab4204
-  io.github.H20man13.DeClan.common.icode.Def@4c3038a4
+  DEF LOCAL B5 := 1 [INT]
+  DEF LOCAL B6 := B5 ILSHIFT n8 [INT]
+  DEF LOCAL B7 := n4 IADD B6 [INT]
   n4 := B7 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@2552f8f2
-  io.github.H20man13.DeClan.common.icode.Def@1f7d1125
-  io.github.H20man13.DeClan.common.icode.Def@3960cbac
-  io.github.H20man13.DeClan.common.icode.Def@74d8313c
+  DEF LOCAL B8 := 31 [INT]
+  DEF LOCAL B9 := n4 IRSHIFT B8 [INT]
+  DEF LOCAL C0 := 1 [INT]
+  DEF LOCAL C1 := B9 IAND C0 [INT]
   o2 := C1 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@46ffd23d
-  io.github.H20man13.DeClan.common.icode.Def@31fc17fe
-  io.github.H20man13.DeClan.common.icode.Def@e7e97c6
+  DEF LOCAL C2 := 1 [INT]
+  DEF LOCAL C3 := o2 EQ C2 [BOOL]
+  DEF LOCAL C4 := TRUE [BOOL]
   IF C3 EQ C4 THEN IFSTAT_18_SEQ_0_LEVEL_3 ELSE IFNEXT_18_SEQ_0_LEVEL_3
   LABEL IFSTAT_18_SEQ_0_LEVEL_3
-  io.github.H20man13.DeClan.common.icode.Def@3b1a16e4
-  io.github.H20man13.DeClan.common.icode.Def@3cc4580
-  io.github.H20man13.DeClan.common.icode.Def@52def1e0
-  io.github.H20man13.DeClan.common.icode.Def@28e48cda
-  io.github.H20man13.DeClan.common.icode.Def@43a21214
+  DEF LOCAL C5 := 1 [INT]
+  DEF LOCAL C6 := 31 [INT]
+  DEF LOCAL C7 := C5 ILSHIFT C6 [INT]
+  DEF LOCAL C8 := INOT C7 [INT]
+  DEF LOCAL C9 := n4 IAND C8 [INT]
   n4 := C9 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@22a3afa5
-  io.github.H20man13.DeClan.common.icode.Def@7d70be0
+  DEF LOCAL D0 := 1 [INT]
+  DEF LOCAL D1 := n3 IADD D0 [INT]
   n3 := D1 [INT]
   GOTO IFEND_18_LEVEL_3
   LABEL IFNEXT_18_SEQ_0_LEVEL_3
@@ -621,64 +621,64 @@ IASM "STR %r, %a"
   LABEL IFEND_17_LEVEL_2
   GOTO IFEND_16_LEVEL_1
   LABEL IFNEXT_16_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@b59d59c
-  io.github.H20man13.DeClan.common.icode.Def@58b85451
-  io.github.H20man13.DeClan.common.icode.Def@67591664
+  DEF LOCAL D2 := 31 [INT]
+  DEF LOCAL D3 := n8 EQ D2 [BOOL]
+  DEF LOCAL D4 := TRUE [BOOL]
   IF D3 EQ D4 THEN IFSTAT_16_SEQ_1_LEVEL_1 ELSE IFNEXT_16_SEQ_1_LEVEL_1
   LABEL IFSTAT_16_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@586e8964
-  io.github.H20man13.DeClan.common.icode.Def@1d5e42c0
-  io.github.H20man13.DeClan.common.icode.Def@75e97e6
-  io.github.H20man13.DeClan.common.icode.Def@289b5b5f
+  DEF LOCAL D5 := 30 [INT]
+  DEF LOCAL D6 := n4 IRSHIFT D5 [INT]
+  DEF LOCAL D7 := 1 [INT]
+  DEF LOCAL D8 := D6 IAND D7 [INT]
   n9 := D8 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@492c281
+  DEF LOCAL D9 := 0 [INT]
   n4 := D9 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@6bb5d891
-  io.github.H20man13.DeClan.common.icode.Def@182783a6
-  io.github.H20man13.DeClan.common.icode.Def@6a14725e
+  DEF LOCAL E0 := 1 [INT]
+  DEF LOCAL E1 := n9 EQ E0 [BOOL]
+  DEF LOCAL E2 := TRUE [BOOL]
   IF E1 EQ E2 THEN IFSTAT_21_SEQ_0_LEVEL_2 ELSE IFNEXT_21_SEQ_0_LEVEL_2
   LABEL IFSTAT_21_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@78802357
-  io.github.H20man13.DeClan.common.icode.Def@3db41d86
+  DEF LOCAL E3 := 1 [INT]
+  DEF LOCAL E4 := n3 IADD E3 [INT]
   n3 := E4 [INT]
   GOTO IFEND_21_LEVEL_2
   LABEL IFNEXT_21_SEQ_0_LEVEL_2
   LABEL IFEND_21_LEVEL_2
   GOTO IFEND_16_LEVEL_1
   LABEL IFNEXT_16_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@192a8325
-  io.github.H20man13.DeClan.common.icode.Def@50e584dc
-  io.github.H20man13.DeClan.common.icode.Def@29868f0c
+  DEF LOCAL E5 := 31 [INT]
+  DEF LOCAL E6 := n8 GT E5 [BOOL]
+  DEF LOCAL E7 := TRUE [BOOL]
   IF E6 EQ E7 THEN IFSTAT_16_SEQ_2_LEVEL_1 ELSE IFNEXT_16_SEQ_2_LEVEL_1
   LABEL IFSTAT_16_SEQ_2_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@34c3ef97
-  io.github.H20man13.DeClan.common.icode.Def@79bd6181
-  io.github.H20man13.DeClan.common.icode.Def@502d90e
-  io.github.H20man13.DeClan.common.icode.Def@1861d84d
-  io.github.H20man13.DeClan.common.icode.Def@33753381
+  DEF LOCAL E8 := 32 [INT]
+  DEF LOCAL E9 := n8 ISUB E8 [INT]
+  DEF LOCAL F0 := n3 IRSHIFT E9 [INT]
+  DEF LOCAL F1 := 1 [INT]
+  DEF LOCAL F2 := F0 IAND F1 [INT]
   n9 := F2 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@21d6fd07
-  io.github.H20man13.DeClan.common.icode.Def@328f8a9a
-  io.github.H20man13.DeClan.common.icode.Def@243a9f36
-  io.github.H20man13.DeClan.common.icode.Def@3ec9490b
-  io.github.H20man13.DeClan.common.icode.Def@28e1b510
-  io.github.H20man13.DeClan.common.icode.Def@667431cc
-  io.github.H20man13.DeClan.common.icode.Def@1647d11b
+  DEF LOCAL F3 := 1 [INT]
+  DEF LOCAL F4 := 31 [INT]
+  DEF LOCAL F5 := n8 ISUB F4 [INT]
+  DEF LOCAL F6 := F3 ILSHIFT F5 [INT]
+  DEF LOCAL F7 := 1 [INT]
+  DEF LOCAL F8 := F6 ISUB F7 [INT]
+  DEF LOCAL F9 := INOT F8 [INT]
   o1 := F9 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@62b253c9
+  DEF LOCAL G0 := n3 IAND o1 [INT]
   n3 := G0 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@47de33ba
+  DEF LOCAL G1 := 0 [INT]
   n4 := G1 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@e380dc
-  io.github.H20man13.DeClan.common.icode.Def@288446d2
-  io.github.H20man13.DeClan.common.icode.Def@58d86410
+  DEF LOCAL G2 := 1 [INT]
+  DEF LOCAL G3 := n9 EQ G2 [BOOL]
+  DEF LOCAL G4 := TRUE [BOOL]
   IF G3 EQ G4 THEN IFSTAT_23_SEQ_0_LEVEL_2 ELSE IFNEXT_23_SEQ_0_LEVEL_2
   LABEL IFSTAT_23_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@6eaddf52
-  io.github.H20man13.DeClan.common.icode.Def@7254473b
-  io.github.H20man13.DeClan.common.icode.Def@786c3d75
-  io.github.H20man13.DeClan.common.icode.Def@638f2e8c
-  io.github.H20man13.DeClan.common.icode.Def@63583ae0
+  DEF LOCAL G5 := 1 [INT]
+  DEF LOCAL G6 := 31 [INT]
+  DEF LOCAL G7 := n8 ISUB G6 [INT]
+  DEF LOCAL G8 := G5 ILSHIFT G7 [INT]
+  DEF LOCAL G9 := n3 IADD G8 [INT]
   n3 := G9 [INT]
   GOTO IFEND_23_LEVEL_2
   LABEL IFNEXT_23_SEQ_0_LEVEL_2
@@ -686,556 +686,556 @@ IASM "STR %r, %a"
   GOTO IFEND_16_LEVEL_1
   LABEL IFNEXT_16_SEQ_2_LEVEL_1
   LABEL IFEND_16_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@3365d42f
-  io.github.H20man13.DeClan.common.icode.Def@2afbd0a3
-  io.github.H20man13.DeClan.common.icode.Def@301a703e
+  DEF LOCAL H0 := 23 [INT]
+  DEF LOCAL H1 := n2 LT H0 [BOOL]
+  DEF LOCAL H2 := TRUE [BOOL]
   IF H1 EQ H2 THEN IFSTAT_25_SEQ_0_LEVEL_1 ELSE IFNEXT_25_SEQ_0_LEVEL_1
   LABEL IFSTAT_25_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@12b7d3e7
-  io.github.H20man13.DeClan.common.icode.Def@feea932
+  DEF LOCAL H3 := 23 [INT]
+  DEF LOCAL H4 := H3 ISUB n2 [INT]
   m3 := H4 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@7be41ea4
+  DEF LOCAL H5 := n4 ILSHIFT m3 [INT]
   n4 := H5 [INT]
   GOTO IFEND_25_LEVEL_1
   LABEL IFNEXT_25_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@181c0a66
-  io.github.H20man13.DeClan.common.icode.Def@3418ca69
-  io.github.H20man13.DeClan.common.icode.Def@4ec552e1
+  DEF LOCAL H6 := 30 [INT]
+  DEF LOCAL H7 := n2 GT H6 [BOOL]
+  DEF LOCAL H8 := TRUE [BOOL]
   IF H7 EQ H8 THEN IFSTAT_25_SEQ_1_LEVEL_1 ELSE IFNEXT_25_SEQ_1_LEVEL_1
   LABEL IFSTAT_25_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@158f74a3
-  io.github.H20man13.DeClan.common.icode.Def@6d38034e
+  DEF LOCAL H9 := 23 [INT]
+  DEF LOCAL I0 := n2 ISUB H9 [INT]
   m3 := I0 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@1f81d702
-  io.github.H20man13.DeClan.common.icode.Def@7bb7dc49
-  io.github.H20man13.DeClan.common.icode.Def@15f395f0
-  io.github.H20man13.DeClan.common.icode.Def@38fcc673
+  DEF LOCAL I1 := 1 [INT]
+  DEF LOCAL I2 := I1 ILSHIFT m3 [INT]
+  DEF LOCAL I3 := 1 [INT]
+  DEF LOCAL I4 := I2 ISUB I3 [INT]
   o6 := I4 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@29d43fa9
+  DEF LOCAL I5 := n3 IAND o6 [INT]
   o3 := I5 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@6c44fb4e
+  DEF LOCAL I6 := n3 IRSHIFT m3 [INT]
   n3 := I6 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@6591af23
+  DEF LOCAL I7 := n4 IRSHIFT m3 [INT]
   n4 := I7 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3b8032bc
-  io.github.H20man13.DeClan.common.icode.Def@33217b12
-  io.github.H20man13.DeClan.common.icode.Def@787468b3
-  io.github.H20man13.DeClan.common.icode.Def@10742829
-  io.github.H20man13.DeClan.common.icode.Def@2adbed49
-  io.github.H20man13.DeClan.common.icode.Def@121aeaeb
+  DEF LOCAL I8 := 30 [INT]
+  DEF LOCAL I9 := I8 ISUB m3 [INT]
+  DEF LOCAL J0 := 1 [INT]
+  DEF LOCAL J1 := I9 IADD J0 [INT]
+  DEF LOCAL J2 := o3 ILSHIFT J1 [INT]
+  DEF LOCAL J3 := n4 IOR J2 [INT]
   n4 := J3 [INT]
   GOTO IFEND_25_LEVEL_1
   LABEL IFNEXT_25_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@497039eb
-  io.github.H20man13.DeClan.common.icode.Def@78f4758c
-  io.github.H20man13.DeClan.common.icode.Def@d306e7e
+  DEF LOCAL J4 := 23 [INT]
+  DEF LOCAL J5 := n2 GT J4 [BOOL]
+  DEF LOCAL J6 := TRUE [BOOL]
   IF J5 EQ J6 THEN IFSTAT_25_SEQ_2_LEVEL_1 ELSE IFNEXT_25_SEQ_2_LEVEL_1
   LABEL IFSTAT_25_SEQ_2_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@48389081
-  io.github.H20man13.DeClan.common.icode.Def@cf470c
+  DEF LOCAL J7 := 23 [INT]
+  DEF LOCAL J8 := n2 ISUB J7 [INT]
   m3 := J8 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@5b4c0a8c
+  DEF LOCAL J9 := n4 IRSHIFT m3 [INT]
   n4 := J9 [INT]
   GOTO IFEND_25_LEVEL_1
   LABEL IFNEXT_25_SEQ_2_LEVEL_1
   LABEL IFEND_25_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@5581cc05
+  DEF LOCAL K0 := 0 [INT]
   l9 := K0 [INT]
   n5 := n3 [INT]
   n6 := n4 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@59b1e2ac)
-  io.github.H20man13.DeClan.common.icode.Def@233c29b1
-  io.github.H20man13.DeClan.common.icode.Def@189f4f30
-  io.github.H20man13.DeClan.common.icode.Def@432549c2
+  CALL IntIsZero((n5 -> g9)[INT])
+  DEF LOCAL K1 := (RETURN h0) [BOOL]
+  DEF LOCAL K2 := BNOT K1 [BOOL]
+  DEF LOCAL K3 := TRUE [BOOL]
   IF K2 EQ K3 THEN WHILESTAT_14_SEQ_0_LEVEL_0 ELSE WHILENEXT_14_SEQ_0_LEVEL_0
   LABEL WHILECOND_14_SEQ_0_LEVEL_0
   IF K2 EQ K3 THEN WHILESTAT_14_SEQ_0_LEVEL_0 ELSE WHILEEND_14_LEVEL_0
   LABEL WHILESTAT_14_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@15d76788
-  io.github.H20man13.DeClan.common.icode.Def@57e4b522
+  DEF LOCAL K4 := 1 [INT]
+  DEF LOCAL K5 := n6 IAND K4 [INT]
   m2 := K5 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@35e09621
-  io.github.H20man13.DeClan.common.icode.Def@5ce2b206
-  io.github.H20man13.DeClan.common.icode.Def@72a76535
+  DEF LOCAL K6 := 1 [INT]
+  DEF LOCAL K7 := m2 EQ K6 [BOOL]
+  DEF LOCAL K8 := TRUE [BOOL]
   IF K7 EQ K8 THEN IFSTAT_26_SEQ_0_LEVEL_1 ELSE IFNEXT_26_SEQ_0_LEVEL_1
   LABEL IFSTAT_26_SEQ_0_LEVEL_1
   m0 := l9 [INT]
   GOTO IFEND_26_LEVEL_1
   LABEL IFNEXT_26_SEQ_0_LEVEL_1
   LABEL IFEND_26_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@9883e6
-  io.github.H20man13.DeClan.common.icode.Def@31784c4a
+  DEF LOCAL K9 := 1 [INT]
+  DEF LOCAL L0 := l9 IADD K9 [INT]
   l9 := L0 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@78c3aae1
-  io.github.H20man13.DeClan.common.icode.Def@3104e601
+  DEF LOCAL L1 := 1 [INT]
+  DEF LOCAL L2 := n5 IAND L1 [INT]
   n7 := L2 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@7547d474
-  io.github.H20man13.DeClan.common.icode.Def@62ecc8a
+  DEF LOCAL L3 := 1 [INT]
+  DEF LOCAL L4 := n5 IRSHIFT L3 [INT]
   n5 := L4 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@63dfea0c
-  io.github.H20man13.DeClan.common.icode.Def@75fd2c98
+  DEF LOCAL L5 := 1 [INT]
+  DEF LOCAL L6 := n6 IRSHIFT L5 [INT]
   n6 := L6 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3ed2a227
-  io.github.H20man13.DeClan.common.icode.Def@4e6873eb
-  io.github.H20man13.DeClan.common.icode.Def@52fb6fa0
+  DEF LOCAL L7 := 30 [INT]
+  DEF LOCAL L8 := n7 ILSHIFT L7 [INT]
+  DEF LOCAL L9 := n6 IOR L8 [INT]
   n6 := L9 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@4e7e008b)
-  io.github.H20man13.DeClan.common.icode.Def@651640f9
-  io.github.H20man13.DeClan.common.icode.Def@686c909b
+  CALL IntIsZero((n5 -> g9)[INT])
+  DEF LOCAL M0 := (RETURN h0) [BOOL]
+  DEF LOCAL M1 := BNOT M0 [BOOL]
   K2 := M1 [BOOL]
   GOTO WHILECOND_14_SEQ_0_LEVEL_0
   LABEL WHILENEXT_14_SEQ_0_LEVEL_0
   LABEL WHILEEND_14_LEVEL_0
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@61e36459)
-  io.github.H20man13.DeClan.common.icode.Def@5fa75ab6
-  io.github.H20man13.DeClan.common.icode.Def@861d833
-  io.github.H20man13.DeClan.common.icode.Def@40579ec
+  CALL IntIsZero((n6 -> g9)[INT])
+  DEF LOCAL M2 := (RETURN h0) [BOOL]
+  DEF LOCAL M3 := BNOT M2 [BOOL]
+  DEF LOCAL M4 := TRUE [BOOL]
   IF M3 EQ M4 THEN WHILESTAT_16_SEQ_0_LEVEL_0 ELSE WHILENEXT_16_SEQ_0_LEVEL_0
   LABEL WHILECOND_16_SEQ_0_LEVEL_0
   IF M3 EQ M4 THEN WHILESTAT_16_SEQ_0_LEVEL_0 ELSE WHILEEND_16_LEVEL_0
   LABEL WHILESTAT_16_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@7e3e0499
-  io.github.H20man13.DeClan.common.icode.Def@1ba99302
+  DEF LOCAL M5 := 1 [INT]
+  DEF LOCAL M6 := n6 IAND M5 [INT]
   m2 := M6 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@1d0f6004
-  io.github.H20man13.DeClan.common.icode.Def@326aa050
-  io.github.H20man13.DeClan.common.icode.Def@3cfe7048
+  DEF LOCAL M7 := 1 [INT]
+  DEF LOCAL M8 := m2 EQ M7 [BOOL]
+  DEF LOCAL M9 := TRUE [BOOL]
   IF M8 EQ M9 THEN IFSTAT_27_SEQ_0_LEVEL_1 ELSE IFNEXT_27_SEQ_0_LEVEL_1
   LABEL IFSTAT_27_SEQ_0_LEVEL_1
   m0 := l9 [INT]
   GOTO IFEND_27_LEVEL_1
   LABEL IFNEXT_27_SEQ_0_LEVEL_1
   LABEL IFEND_27_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@6b18d556
-  io.github.H20man13.DeClan.common.icode.Def@df19771
+  DEF LOCAL N0 := 1 [INT]
+  DEF LOCAL N1 := l9 IADD N0 [INT]
   l9 := N1 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@6afecebf
-  io.github.H20man13.DeClan.common.icode.Def@25cd9f98
+  DEF LOCAL N2 := 1 [INT]
+  DEF LOCAL N3 := n6 IRSHIFT N2 [INT]
   n6 := N3 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@8d25c12)
-  io.github.H20man13.DeClan.common.icode.Def@9990866
-  io.github.H20man13.DeClan.common.icode.Def@150eb4dc
+  CALL IntIsZero((n6 -> g9)[INT])
+  DEF LOCAL N4 := (RETURN h0) [BOOL]
+  DEF LOCAL N5 := BNOT N4 [BOOL]
   M3 := N5 [BOOL]
   GOTO WHILECOND_16_SEQ_0_LEVEL_0
   LABEL WHILENEXT_16_SEQ_0_LEVEL_0
   LABEL WHILEEND_16_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@5cf6d8ba
-  io.github.H20man13.DeClan.common.icode.Def@465e3dfa
-  io.github.H20man13.DeClan.common.icode.Def@745d76f
+  DEF LOCAL N6 := 30 [INT]
+  DEF LOCAL N7 := m0 GT N6 [BOOL]
+  DEF LOCAL N8 := TRUE [BOOL]
   IF N7 EQ N8 THEN IFSTAT_28_SEQ_0_LEVEL_1 ELSE IFNEXT_28_SEQ_0_LEVEL_1
   LABEL IFSTAT_28_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@678d3b0f
-  io.github.H20man13.DeClan.common.icode.Def@dd41c4c
-  io.github.H20man13.DeClan.common.icode.Def@3ad251e1
-  io.github.H20man13.DeClan.common.icode.Def@1385077b
-  io.github.H20man13.DeClan.common.icode.Def@1d5e0347
-  io.github.H20man13.DeClan.common.icode.Def@30454adc
+  DEF LOCAL N9 := 1 [INT]
+  DEF LOCAL O0 := 30 [INT]
+  DEF LOCAL O1 := m0 ISUB O0 [INT]
+  DEF LOCAL O2 := N9 ILSHIFT O1 [INT]
+  DEF LOCAL O3 := 1 [INT]
+  DEF LOCAL O4 := O2 ISUB O3 [INT]
   o6 := O4 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@18b0486c
+  DEF LOCAL O5 := n3 IAND o6 [INT]
   o3 := O5 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@23b53ade
-  io.github.H20man13.DeClan.common.icode.Def@4e1c41d4
-  io.github.H20man13.DeClan.common.icode.Def@5415e161
-  io.github.H20man13.DeClan.common.icode.Def@4efc20a7
-  io.github.H20man13.DeClan.common.icode.Def@4415906c
-  io.github.H20man13.DeClan.common.icode.Def@682b6bdb
-  io.github.H20man13.DeClan.common.icode.Def@134e9156
+  DEF LOCAL O6 := 30 [INT]
+  DEF LOCAL O7 := 23 [INT]
+  DEF LOCAL O8 := 30 [INT]
+  DEF LOCAL O9 := m0 ISUB O8 [INT]
+  DEF LOCAL P0 := O7 ISUB O9 [INT]
+  DEF LOCAL P1 := O6 ISUB P0 [INT]
+  DEF LOCAL P2 := n4 IRSHIFT P1 [INT]
   n4 := P2 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3c987280
-  io.github.H20man13.DeClan.common.icode.Def@54e6138f
-  io.github.H20man13.DeClan.common.icode.Def@67a0cf7b
-  io.github.H20man13.DeClan.common.icode.Def@336f8
-  io.github.H20man13.DeClan.common.icode.Def@7ff0580a
-  io.github.H20man13.DeClan.common.icode.Def@1b6e4610
-  io.github.H20man13.DeClan.common.icode.Def@7a549911
-  io.github.H20man13.DeClan.common.icode.Def@6379d455
+  DEF LOCAL P3 := 23 [INT]
+  DEF LOCAL P4 := 30 [INT]
+  DEF LOCAL P5 := m0 ISUB P4 [INT]
+  DEF LOCAL P6 := P3 ISUB P5 [INT]
+  DEF LOCAL P7 := 1 [INT]
+  DEF LOCAL P8 := P6 IADD P7 [INT]
+  DEF LOCAL P9 := o3 ILSHIFT P8 [INT]
+  DEF LOCAL Q0 := n4 IOR P9 [INT]
   l7 := Q0 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@1eb4f038
+  DEF LOCAL Q1 := l8 IADD m3 [INT]
   l8 := Q1 [INT]
   GOTO IFEND_28_LEVEL_1
   LABEL IFNEXT_28_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@77036b38
-  io.github.H20man13.DeClan.common.icode.Def@2941f8d8
-  io.github.H20man13.DeClan.common.icode.Def@4b75ad9
+  DEF LOCAL Q2 := 23 [INT]
+  DEF LOCAL Q3 := m0 GT Q2 [BOOL]
+  DEF LOCAL Q4 := TRUE [BOOL]
   IF Q3 EQ Q4 THEN IFSTAT_28_SEQ_1_LEVEL_1 ELSE IFNEXT_28_SEQ_1_LEVEL_1
   LABEL IFSTAT_28_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@3d3b5f47
-  io.github.H20man13.DeClan.common.icode.Def@518db973
+  DEF LOCAL Q5 := 23 [INT]
+  DEF LOCAL Q6 := m0 ISUB Q5 [INT]
   m3 := Q6 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@772c0ca2
+  DEF LOCAL Q7 := n4 IRSHIFT m3 [INT]
   l7 := Q7 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@49f3f10c
+  DEF LOCAL Q8 := l8 IADD m3 [INT]
   l8 := Q8 [INT]
   GOTO IFEND_28_LEVEL_1
   LABEL IFNEXT_28_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@2e554e12
-  io.github.H20man13.DeClan.common.icode.Def@122f3c8a
-  io.github.H20man13.DeClan.common.icode.Def@5717b71
+  DEF LOCAL Q9 := 23 [INT]
+  DEF LOCAL R0 := m0 LT Q9 [BOOL]
+  DEF LOCAL R1 := TRUE [BOOL]
   IF R0 EQ R1 THEN IFSTAT_28_SEQ_2_LEVEL_1 ELSE IFNEXT_28_SEQ_2_LEVEL_1
   LABEL IFSTAT_28_SEQ_2_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@535c8142
-  io.github.H20man13.DeClan.common.icode.Def@577d60e5
+  DEF LOCAL R2 := 23 [INT]
+  DEF LOCAL R3 := R2 ISUB m0 [INT]
   m3 := R3 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3c5dddec
+  DEF LOCAL R4 := n4 ILSHIFT m3 [INT]
   l7 := R4 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@32f983e5
+  DEF LOCAL R5 := l8 ISUB m3 [INT]
   l8 := R5 [INT]
   GOTO IFEND_28_LEVEL_1
   LABEL IFNEXT_28_SEQ_2_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@5984269
-  io.github.H20man13.DeClan.common.icode.Def@39de7077
-  io.github.H20man13.DeClan.common.icode.Def@6bbe781d
+  DEF LOCAL R6 := 23 [INT]
+  DEF LOCAL R7 := m0 EQ R6 [BOOL]
+  DEF LOCAL R8 := TRUE [BOOL]
   IF R7 EQ R8 THEN IFSTAT_28_SEQ_3_LEVEL_1 ELSE IFNEXT_28_SEQ_3_LEVEL_1
   LABEL IFSTAT_28_SEQ_3_LEVEL_1
   l7 := n4 [INT]
   GOTO IFEND_28_LEVEL_1
   LABEL IFNEXT_28_SEQ_3_LEVEL_1
   LABEL IFEND_28_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@15a62824
+  DEF LOCAL R9 := l8 IADD (GLOBAL b4) [INT]
   l8 := R9 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@52eaabf3
-  io.github.H20man13.DeClan.common.icode.Def@187d2411
-  io.github.H20man13.DeClan.common.icode.Def@1bc993
-  io.github.H20man13.DeClan.common.icode.Def@24d826bc
+  DEF LOCAL S0 := 255 [INT]
+  DEF LOCAL S1 := l8 IAND S0 [INT]
+  DEF LOCAL S2 := 23 [INT]
+  DEF LOCAL S3 := S1 ILSHIFT S2 [INT]
   k9 := S3 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@23eaa4e7
-  io.github.H20man13.DeClan.common.icode.Def@52464127
-  io.github.H20man13.DeClan.common.icode.Def@ccf4dad
-  io.github.H20man13.DeClan.common.icode.Def@69c7774e
-  io.github.H20man13.DeClan.common.icode.Def@1ffc2b0d
+  DEF LOCAL S4 := 1 [INT]
+  DEF LOCAL S5 := l6 IAND S4 [INT]
+  DEF LOCAL S6 := 31 [INT]
+  DEF LOCAL S7 := S5 ILSHIFT S6 [INT]
+  DEF LOCAL S8 := k9 IOR S7 [INT]
   k9 := S8 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@7fd30eac
-  io.github.H20man13.DeClan.common.icode.Def@98796de
-  io.github.H20man13.DeClan.common.icode.Def@5ba8eda7
+  DEF LOCAL S9 := 8388607 [INT]
+  DEF LOCAL T0 := l7 IAND S9 [INT]
+  DEF LOCAL T1 := k9 IOR T0 [INT]
   k9 := T1 [INT]
   GOTO IFEND_10_LEVEL_0
   LABEL IFNEXT_10_SEQ_0_LEVEL_0
   LABEL IFEND_10_LEVEL_0
-  CALL IntBinaryAsReal(io.github.H20man13.DeClan.common.icode.Def@2572019c)
-  io.github.H20man13.DeClan.common.icode.Def@42b3cdf0
+  CALL IntBinaryAsReal((k9 -> k2)[INT])
+  DEF LOCAL T2 := (RETURN k3) [REAL]
   k8 := T2 [REAL]
-  io.github.H20man13.DeClan.common.icode.Def@77b7921e
+  DEF RETURN i := k8 [REAL]
  RETURN
  PROC LABEL RDivide
-  io.github.H20man13.DeClan.common.icode.Def@6b6e8c9a
-  io.github.H20man13.DeClan.common.icode.Def@5ea51e8a
-  io.github.H20man13.DeClan.common.icode.Def@2a594e3
-  io.github.H20man13.DeClan.common.icode.Def@4949d1cb
-  io.github.H20man13.DeClan.common.icode.Def@565c9e24
-  io.github.H20man13.DeClan.common.icode.Def@20fb9b2b
-  io.github.H20man13.DeClan.common.icode.Def@ed7115b
-  io.github.H20man13.DeClan.common.icode.Def@9975ec3
-  io.github.H20man13.DeClan.common.icode.Def@3b085c6b
-  io.github.H20man13.DeClan.common.icode.Def@47d6aae2
-  io.github.H20man13.DeClan.common.icode.Def@713d368a
-  io.github.H20man13.DeClan.common.icode.Def@426f0f28
-  io.github.H20man13.DeClan.common.icode.Def@3b7df80a
-  io.github.H20man13.DeClan.common.icode.Def@490ec43d
-  io.github.H20man13.DeClan.common.icode.Def@519f32f0
-  io.github.H20man13.DeClan.common.icode.Def@6b3371a4
-  io.github.H20man13.DeClan.common.icode.Def@3f5a6960
-  io.github.H20man13.DeClan.common.icode.Def@ca7d9a
-  io.github.H20man13.DeClan.common.icode.Def@28eac7c1
-  io.github.H20man13.DeClan.common.icode.Def@58a42d29
-  io.github.H20man13.DeClan.common.icode.Def@34d94e34
-  io.github.H20man13.DeClan.common.icode.Def@67acd398
-  io.github.H20man13.DeClan.common.icode.Def@1906d463
-  io.github.H20man13.DeClan.common.icode.Def@60326f0f
-  io.github.H20man13.DeClan.common.icode.Def@1ee425d3
-  io.github.H20man13.DeClan.common.icode.Def@1f550584
-  io.github.H20man13.DeClan.common.icode.Def@305f7fc1
-  io.github.H20man13.DeClan.common.icode.Def@43e624d2
-  io.github.H20man13.DeClan.common.icode.Def@7c134bc0
-  io.github.H20man13.DeClan.common.icode.Def@4b5d08e3
-  io.github.H20man13.DeClan.common.icode.Def@37c73e
-  io.github.H20man13.DeClan.common.icode.Def@7205b35e
-  io.github.H20man13.DeClan.common.icode.Def@142eab95
-  io.github.H20man13.DeClan.common.icode.Def@3717b3e3
-  io.github.H20man13.DeClan.common.icode.Def@9a79c08
-  io.github.H20man13.DeClan.common.icode.Def@56e74121
-  CALL RealSign(io.github.H20man13.DeClan.common.icode.Def@37742a6b)
-  io.github.H20man13.DeClan.common.icode.Def@3df60fcd
+  DEF LOCAL T3 := 0.0 [REAL]
+  DEF LOCAL T4 := 0 [INT]
+  DEF LOCAL T5 := 0 [INT]
+  DEF LOCAL T6 := 0 [INT]
+  DEF LOCAL T7 := 0 [INT]
+  DEF LOCAL T8 := 0 [INT]
+  DEF LOCAL T9 := 0 [INT]
+  DEF LOCAL U0 := 0 [INT]
+  DEF LOCAL U1 := 0 [INT]
+  DEF LOCAL U2 := 0 [INT]
+  DEF LOCAL U3 := 0 [INT]
+  DEF LOCAL U4 := 0 [INT]
+  DEF LOCAL U5 := 0 [INT]
+  DEF LOCAL U6 := 0 [INT]
+  DEF LOCAL U7 := 0 [INT]
+  DEF LOCAL U8 := 0 [INT]
+  DEF LOCAL U9 := 0 [INT]
+  DEF LOCAL V0 := 0 [INT]
+  DEF LOCAL V1 := 0 [INT]
+  DEF LOCAL V2 := 0 [INT]
+  DEF LOCAL V3 := 0 [INT]
+  DEF LOCAL V4 := 0 [INT]
+  DEF LOCAL V5 := 0 [INT]
+  DEF LOCAL V6 := 0 [INT]
+  DEF LOCAL V7 := 0 [INT]
+  DEF LOCAL V8 := 0 [INT]
+  DEF LOCAL V9 := 0 [INT]
+  DEF LOCAL W0 := 0 [INT]
+  DEF LOCAL W1 := 0 [INT]
+  DEF LOCAL W2 := 0 [INT]
+  DEF LOCAL W3 := 0 [INT]
+  DEF LOCAL W4 := 0 [INT]
+  DEF LOCAL W5 := 0 [INT]
+  DEF LOCAL W6 := 0 [INT]
+  DEF LOCAL W7 := 0 [INT]
+  DEF LOCAL W8 := 0 [INT]
+  CALL RealSign(((PARAM j) -> a0)[REAL])
+  DEF LOCAL W9 := (RETURN a1) [INT]
   T5 := W9 [INT]
-  CALL RealSign(io.github.H20man13.DeClan.common.icode.Def@88493a7)
-  io.github.H20man13.DeClan.common.icode.Def@648635df
+  CALL RealSign(((PARAM k) -> a0)[REAL])
+  DEF LOCAL X0 := (RETURN a1) [INT]
   T6 := X0 [INT]
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@72377c56)
-  io.github.H20man13.DeClan.common.icode.Def@7f329dba
+  CALL RealExponent(((PARAM j) -> a4)[REAL])
+  DEF LOCAL X1 := (RETURN a5) [INT]
   T7 := X1 [INT]
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@53073050)
-  io.github.H20man13.DeClan.common.icode.Def@6facf22
+  CALL RealExponent(((PARAM k) -> a4)[REAL])
+  DEF LOCAL X2 := (RETURN a5) [INT]
   T8 := X2 [INT]
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@4fe6d667)
-  io.github.H20man13.DeClan.common.icode.Def@24525d6c
+  CALL RealMantissa(((PARAM j) -> a8)[REAL])
+  DEF LOCAL X3 := (RETURN a9) [INT]
   T9 := X3 [INT]
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@4e3d7c06)
-  io.github.H20man13.DeClan.common.icode.Def@1e6e293c
+  CALL RealMantissa(((PARAM k) -> a8)[REAL])
+  DEF LOCAL X4 := (RETURN a9) [INT]
   U0 := X4 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@67c28178)
-  io.github.H20man13.DeClan.common.icode.Def@514d09d1
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@743592b2)
-  io.github.H20man13.DeClan.common.icode.Def@1bfd62c1
-  io.github.H20man13.DeClan.common.icode.Def@6847e987
-  io.github.H20man13.DeClan.common.icode.Def@517d66df
+  CALL IntIsZero((T9 -> g9)[INT])
+  DEF LOCAL X5 := (RETURN h0) [BOOL]
+  CALL IntIsZero((U0 -> g9)[INT])
+  DEF LOCAL X6 := (RETURN h0) [BOOL]
+  DEF LOCAL X7 := X5 LAND X6 [BOOL]
+  DEF LOCAL X8 := TRUE [BOOL]
   IF X7 EQ X8 THEN IFSTAT_30_SEQ_0_LEVEL_0 ELSE IFNEXT_30_SEQ_0_LEVEL_0
   LABEL IFSTAT_30_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@985ce40
+  DEF LOCAL X9 := 1065353216 [INT]
   T4 := X9 [INT]
   GOTO IFEND_30_LEVEL_0
   LABEL IFNEXT_30_SEQ_0_LEVEL_0
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@799e4edb)
-  io.github.H20man13.DeClan.common.icode.Def@2ec28bbe
-  io.github.H20man13.DeClan.common.icode.Def@14334b27
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@33e3702f)
-  io.github.H20man13.DeClan.common.icode.Def@3800081e
-  io.github.H20man13.DeClan.common.icode.Def@225ebdb
-  io.github.H20man13.DeClan.common.icode.Def@cc1e2cb
+  CALL IntIsZero((T9 -> g9)[INT])
+  DEF LOCAL Y0 := (RETURN h0) [BOOL]
+  DEF LOCAL Y1 := BNOT Y0 [BOOL]
+  CALL IntIsZero((U0 -> g9)[INT])
+  DEF LOCAL Y2 := (RETURN h0) [BOOL]
+  DEF LOCAL Y3 := Y1 LAND Y2 [BOOL]
+  DEF LOCAL Y4 := TRUE [BOOL]
   IF Y3 EQ Y4 THEN IFSTAT_30_SEQ_1_LEVEL_0 ELSE IFNEXT_30_SEQ_1_LEVEL_0
   LABEL IFSTAT_30_SEQ_1_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@248b8974
+  DEF LOCAL Y5 := 2139095040 [INT]
   T4 := Y5 [INT]
   GOTO IFEND_30_LEVEL_0
   LABEL IFNEXT_30_SEQ_1_LEVEL_0
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@1cf33503)
-  io.github.H20man13.DeClan.common.icode.Def@31257e75
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@32f10520)
-  io.github.H20man13.DeClan.common.icode.Def@4a49fa23
-  io.github.H20man13.DeClan.common.icode.Def@4f979544
-  io.github.H20man13.DeClan.common.icode.Def@55db9c15
-  io.github.H20man13.DeClan.common.icode.Def@6f395b8b
+  CALL IntIsZero((T9 -> g9)[INT])
+  DEF LOCAL Y6 := (RETURN h0) [BOOL]
+  CALL IntIsZero((U0 -> g9)[INT])
+  DEF LOCAL Y7 := (RETURN h0) [BOOL]
+  DEF LOCAL Y8 := BNOT Y7 [BOOL]
+  DEF LOCAL Y9 := Y6 LAND Y8 [BOOL]
+  DEF LOCAL Z0 := TRUE [BOOL]
   IF Y9 EQ Z0 THEN IFSTAT_30_SEQ_2_LEVEL_0 ELSE IFNEXT_30_SEQ_2_LEVEL_0
   LABEL IFSTAT_30_SEQ_2_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@6a243cad
+  DEF LOCAL Z1 := 0 [INT]
   T4 := Z1 [INT]
   GOTO IFEND_30_LEVEL_0
   LABEL IFNEXT_30_SEQ_2_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@19eab918
-  io.github.H20man13.DeClan.common.icode.Def@10d8a504
-  io.github.H20man13.DeClan.common.icode.Def@35185197
+  DEF LOCAL Z2 := 30 [INT]
+  DEF LOCAL Z3 := 23 [INT]
+  DEF LOCAL Z4 := Z2 ISUB Z3 [INT]
   V0 := Z4 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@7e92d2cd
+  DEF LOCAL Z5 := T9 ILSHIFT V0 [INT]
   T9 := Z5 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@327c967e
+  DEF LOCAL Z6 := 0 [INT]
   U4 := Z6 [INT]
   U6 := U0 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@67d9e5b0
-  io.github.H20man13.DeClan.common.icode.Def@103a9435
-  io.github.H20man13.DeClan.common.icode.Def@78562845
-  io.github.H20man13.DeClan.common.icode.Def@2e4f8e57
-  io.github.H20man13.DeClan.common.icode.Def@6130a4b
+  DEF LOCAL Z7 := 1 [INT]
+  DEF LOCAL Z8 := U6 IAND Z7 [INT]
+  DEF LOCAL Z9 := 0 [INT]
+  DEF LOCAL a9 := Z8 EQ Z9 [BOOL]
+  DEF LOCAL a10 := TRUE [BOOL]
   IF a9 EQ a10 THEN WHILESTAT_18_SEQ_0_LEVEL_0 ELSE WHILENEXT_18_SEQ_0_LEVEL_0
   LABEL WHILECOND_18_SEQ_0_LEVEL_0
   IF a9 EQ a10 THEN WHILESTAT_18_SEQ_0_LEVEL_0 ELSE WHILEEND_18_LEVEL_0
   LABEL WHILESTAT_18_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@424cad80
-  io.github.H20man13.DeClan.common.icode.Def@b91a18c
+  DEF LOCAL a11 := 1 [INT]
+  DEF LOCAL a12 := U6 IRSHIFT a11 [INT]
   U6 := a12 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@597eab9f
-  io.github.H20man13.DeClan.common.icode.Def@47a1a3a9
+  DEF LOCAL a13 := 1 [INT]
+  DEF LOCAL a14 := U4 IADD a13 [INT]
   U4 := a14 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@60262670
-  io.github.H20man13.DeClan.common.icode.Def@663d6639
-  io.github.H20man13.DeClan.common.icode.Def@4a331b32
-  io.github.H20man13.DeClan.common.icode.Def@c54536
+  DEF LOCAL a15 := 1 [INT]
+  DEF LOCAL a16 := U6 IAND a15 [INT]
+  DEF LOCAL a17 := 0 [INT]
+  DEF LOCAL a18 := a16 EQ a17 [BOOL]
   a9 := a18 [BOOL]
   GOTO WHILECOND_18_SEQ_0_LEVEL_0
   LABEL WHILENEXT_18_SEQ_0_LEVEL_0
   LABEL WHILEEND_18_LEVEL_0
   U7 := U4 [INT]
   V0 := U7 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@5101f6f8
+  DEF LOCAL a19 := U0 IRSHIFT V0 [INT]
   U0 := a19 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@5c804e4f
+  DEF LOCAL a20 := 0 [INT]
   U4 := a20 [INT]
   U6 := U0 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@eb82466)
-  io.github.H20man13.DeClan.common.icode.Def@247e2c72
-  io.github.H20man13.DeClan.common.icode.Def@7a16b833
-  io.github.H20man13.DeClan.common.icode.Def@24ba7308
+  CALL IntIsZero((U6 -> g9)[INT])
+  DEF LOCAL a21 := (RETURN h0) [BOOL]
+  DEF LOCAL a22 := BNOT a21 [BOOL]
+  DEF LOCAL a23 := TRUE [BOOL]
   IF a22 EQ a23 THEN WHILESTAT_20_SEQ_0_LEVEL_0 ELSE WHILENEXT_20_SEQ_0_LEVEL_0
   LABEL WHILECOND_20_SEQ_0_LEVEL_0
   IF a22 EQ a23 THEN WHILESTAT_20_SEQ_0_LEVEL_0 ELSE WHILEEND_20_LEVEL_0
   LABEL WHILESTAT_20_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@6b6ef8ed
-  io.github.H20man13.DeClan.common.icode.Def@3e26544e
+  DEF LOCAL a24 := 1 [INT]
+  DEF LOCAL a25 := U6 IAND a24 [INT]
   U5 := a25 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@713ea499
-  io.github.H20man13.DeClan.common.icode.Def@6ebab85
-  io.github.H20man13.DeClan.common.icode.Def@1a5e9225
+  DEF LOCAL a26 := 1 [INT]
+  DEF LOCAL a27 := U5 EQ a26 [BOOL]
+  DEF LOCAL a28 := TRUE [BOOL]
   IF a27 EQ a28 THEN IFSTAT_31_SEQ_0_LEVEL_1 ELSE IFNEXT_31_SEQ_0_LEVEL_1
   LABEL IFSTAT_31_SEQ_0_LEVEL_1
   U8 := U4 [INT]
   GOTO IFEND_31_LEVEL_1
   LABEL IFNEXT_31_SEQ_0_LEVEL_1
   LABEL IFEND_31_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@16d63104
-  io.github.H20man13.DeClan.common.icode.Def@12c8452b
+  DEF LOCAL a29 := 1 [INT]
+  DEF LOCAL a30 := U4 IADD a29 [INT]
   U4 := a30 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@49247374
-  io.github.H20man13.DeClan.common.icode.Def@27050fcf
+  DEF LOCAL a31 := 1 [INT]
+  DEF LOCAL a32 := U6 IRSHIFT a31 [INT]
   U6 := a32 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@fc543a)
-  io.github.H20man13.DeClan.common.icode.Def@504da813
-  io.github.H20man13.DeClan.common.icode.Def@3a98cebd
+  CALL IntIsZero((U6 -> g9)[INT])
+  DEF LOCAL a33 := (RETURN h0) [BOOL]
+  DEF LOCAL a34 := BNOT a33 [BOOL]
   a22 := a34 [BOOL]
   GOTO WHILECOND_20_SEQ_0_LEVEL_0
   LABEL WHILENEXT_20_SEQ_0_LEVEL_0
   LABEL WHILEEND_20_LEVEL_0
   U9 := U8 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@356cc556
+  DEF LOCAL a35 := T7 ISUB U9 [INT]
   T7 := a35 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@57d30a45
+  DEF LOCAL a36 := T8 ISUB U9 [INT]
   T8 := a36 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@6ae33d9c
-  io.github.H20man13.DeClan.common.icode.Def@16f2fb5b
+  DEF LOCAL a37 := 30 [INT]
+  DEF LOCAL a38 := a37 ISUB U9 [INT]
   V6 := a38 [INT]
   V7 := V6 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@4567daa6
-  io.github.H20man13.DeClan.common.icode.Def@a29716d
+  DEF LOCAL a39 := T5 NE T6 [BOOL]
+  DEF LOCAL a40 := TRUE [BOOL]
   IF a39 EQ a40 THEN IFSTAT_32_SEQ_0_LEVEL_1 ELSE IFNEXT_32_SEQ_0_LEVEL_1
   LABEL IFSTAT_32_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@7955b269
+  DEF LOCAL a41 := 1 [INT]
   U1 := a41 [INT]
   GOTO IFEND_32_LEVEL_1
   LABEL IFNEXT_32_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@787ca63b
+  DEF LOCAL a42 := 0 [INT]
   U1 := a42 [INT]
   GOTO IFEND_32_LEVEL_1
   LABEL IFNEXT_32_SEQ_1_LEVEL_1
   LABEL IFEND_32_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@3b5e178
+  DEF LOCAL a43 := T7 ISUB T8 [INT]
   U3 := a43 [INT]
-  CALL Div(io.github.H20man13.DeClan.common.icode.Def@42d64a7a, io.github.H20man13.DeClan.common.icode.Def@16447eb3)
-  io.github.H20man13.DeClan.common.icode.Def@b144f3e
+  CALL Div((T9 -> a44)[INT], (U0 -> a45)[INT])
+  DEF LOCAL a47 := (RETURN a46) [INT]
   U2 := a47 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@2786d105
-  io.github.H20man13.DeClan.common.icode.Def@57f3ca15
-  io.github.H20man13.DeClan.common.icode.Def@627787be
+  DEF LOCAL a48 := 23 [INT]
+  DEF LOCAL a49 := V7 GT a48 [BOOL]
+  DEF LOCAL a50 := TRUE [BOOL]
   IF a49 EQ a50 THEN IFSTAT_33_SEQ_0_LEVEL_1 ELSE IFNEXT_33_SEQ_0_LEVEL_1
   LABEL IFSTAT_33_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@4bb34971
-  io.github.H20man13.DeClan.common.icode.Def@5aacb7fb
+  DEF LOCAL a51 := 23 [INT]
+  DEF LOCAL a52 := V7 ISUB a51 [INT]
   V1 := a52 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@13467dd9
-  io.github.H20man13.DeClan.common.icode.Def@4d524278
-  io.github.H20man13.DeClan.common.icode.Def@1c7b7262
-  io.github.H20man13.DeClan.common.icode.Def@23571d79
-  io.github.H20man13.DeClan.common.icode.Def@3df147f
+  DEF LOCAL a53 := 1 [INT]
+  DEF LOCAL a54 := a53 ILSHIFT V1 [INT]
+  DEF LOCAL a55 := 1 [INT]
+  DEF LOCAL a56 := a54 ISUB a55 [INT]
+  DEF LOCAL a57 := U2 IAND a56 [INT]
   W6 := a57 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@5c41c7fe
+  DEF LOCAL a58 := U2 IRSHIFT V1 [INT]
   U2 := a58 [INT]
   GOTO IFEND_33_LEVEL_1
   LABEL IFNEXT_33_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@1bee4676
-  io.github.H20man13.DeClan.common.icode.Def@492ca7
-  io.github.H20man13.DeClan.common.icode.Def@7b4ebc3d
+  DEF LOCAL a59 := 23 [INT]
+  DEF LOCAL a60 := V7 LT a59 [BOOL]
+  DEF LOCAL a61 := TRUE [BOOL]
   IF a60 EQ a61 THEN IFSTAT_33_SEQ_1_LEVEL_1 ELSE IFNEXT_33_SEQ_1_LEVEL_1
   LABEL IFSTAT_33_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@2962fa9d
-  io.github.H20man13.DeClan.common.icode.Def@40d6d431
+  DEF LOCAL a62 := 23 [INT]
+  DEF LOCAL a63 := a62 ISUB V7 [INT]
   V1 := a63 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@9b3e498
+  DEF LOCAL a64 := U2 ILSHIFT V1 [INT]
   U2 := a64 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@7121ec7
+  DEF LOCAL a65 := 0 [INT]
   W6 := a65 [INT]
   GOTO IFEND_33_LEVEL_1
   LABEL IFNEXT_33_SEQ_1_LEVEL_1
   LABEL IFEND_33_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@399abaaa
+  DEF LOCAL a66 := 0 [INT]
   V4 := a66 [INT]
   V5 := U2 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@4f1b96f4
+  DEF LOCAL a67 := 0 [INT]
   V2 := a67 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@591a3cab)
-  io.github.H20man13.DeClan.common.icode.Def@4e69f569
-  io.github.H20man13.DeClan.common.icode.Def@22ca49e4
-  io.github.H20man13.DeClan.common.icode.Def@3175d77f
+  CALL IntIsZero((V5 -> g9)[INT])
+  DEF LOCAL a68 := (RETURN h0) [BOOL]
+  DEF LOCAL a69 := BNOT a68 [BOOL]
+  DEF LOCAL a70 := TRUE [BOOL]
   IF a69 EQ a70 THEN WHILESTAT_22_SEQ_0_LEVEL_0 ELSE WHILENEXT_22_SEQ_0_LEVEL_0
   LABEL WHILECOND_22_SEQ_0_LEVEL_0
   IF a69 EQ a70 THEN WHILESTAT_22_SEQ_0_LEVEL_0 ELSE WHILEEND_22_LEVEL_0
   LABEL WHILESTAT_22_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@39024a9e
-  io.github.H20man13.DeClan.common.icode.Def@3841226a
+  DEF LOCAL a71 := 1 [INT]
+  DEF LOCAL a72 := V5 IAND a71 [INT]
   V3 := a72 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@48b4c9ef
-  io.github.H20man13.DeClan.common.icode.Def@57e521a9
-  io.github.H20man13.DeClan.common.icode.Def@7c18d771
+  DEF LOCAL a73 := 1 [INT]
+  DEF LOCAL a74 := V3 EQ a73 [BOOL]
+  DEF LOCAL a75 := TRUE [BOOL]
   IF a74 EQ a75 THEN IFSTAT_34_SEQ_0_LEVEL_1 ELSE IFNEXT_34_SEQ_0_LEVEL_1
   LABEL IFSTAT_34_SEQ_0_LEVEL_1
   V2 := V4 [INT]
   GOTO IFEND_34_LEVEL_1
   LABEL IFNEXT_34_SEQ_0_LEVEL_1
   LABEL IFEND_34_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@4d7bf8ea
-  io.github.H20man13.DeClan.common.icode.Def@236ebb1b
+  DEF LOCAL a76 := 1 [INT]
+  DEF LOCAL a77 := V4 IADD a76 [INT]
   V4 := a77 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@5d782eb6
-  io.github.H20man13.DeClan.common.icode.Def@6761d937
+  DEF LOCAL a78 := 1 [INT]
+  DEF LOCAL a79 := V5 IRSHIFT a78 [INT]
   V5 := a79 [INT]
-  CALL IntIsZero(io.github.H20man13.DeClan.common.icode.Def@754fd199)
-  io.github.H20man13.DeClan.common.icode.Def@232f0a48
-  io.github.H20man13.DeClan.common.icode.Def@3fbe8d05
+  CALL IntIsZero((V5 -> g9)[INT])
+  DEF LOCAL a80 := (RETURN h0) [BOOL]
+  DEF LOCAL a81 := BNOT a80 [BOOL]
   a69 := a81 [BOOL]
   GOTO WHILECOND_22_SEQ_0_LEVEL_0
   LABEL WHILENEXT_22_SEQ_0_LEVEL_0
   LABEL WHILEEND_22_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@56ff43a4
-  io.github.H20man13.DeClan.common.icode.Def@5d3783fb
-  io.github.H20man13.DeClan.common.icode.Def@691af5f
+  DEF LOCAL a82 := 23 [INT]
+  DEF LOCAL a83 := V2 LT a82 [BOOL]
+  DEF LOCAL a84 := TRUE [BOOL]
   IF a83 EQ a84 THEN IFSTAT_35_SEQ_0_LEVEL_1 ELSE IFNEXT_35_SEQ_0_LEVEL_1
   LABEL IFSTAT_35_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@4d8cdc2d
-  io.github.H20man13.DeClan.common.icode.Def@6142445b
+  DEF LOCAL a85 := 23 [INT]
+  DEF LOCAL a86 := a85 ISUB V2 [INT]
   V0 := a86 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@b2bd3
+  DEF LOCAL a87 := U2 ILSHIFT V0 [INT]
   U2 := a87 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@b6b87da
-  io.github.H20man13.DeClan.common.icode.Def@20ad5f2e
-  io.github.H20man13.DeClan.common.icode.Def@533eb7fc
+  DEF LOCAL a88 := V1 ISUB V0 [INT]
+  DEF LOCAL a89 := W6 IRSHIFT a88 [INT]
+  DEF LOCAL a90 := U2 IOR a89 [INT]
   U2 := a90 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@ab25bfb
+  DEF LOCAL a91 := U3 ISUB V0 [INT]
   U3 := a91 [INT]
   GOTO IFEND_35_LEVEL_1
   LABEL IFNEXT_35_SEQ_0_LEVEL_1
   LABEL IFEND_35_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@5db04820
-  io.github.H20man13.DeClan.common.icode.Def@172e2897
+  DEF LOCAL a92 := 1 [INT]
+  DEF LOCAL a93 := U2 IADD a92 [INT]
   W1 := a93 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3109fcd9
+  DEF LOCAL a94 := 0 [INT]
   W8 := a94 [INT]
   W0 := U2 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@297c0480
+  DEF LOCAL a95 := 0 [INT]
   W7 := a95 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@76d2a8c7
-  io.github.H20man13.DeClan.common.icode.Def@10de4c1a
-  io.github.H20man13.DeClan.common.icode.Def@6ecf85ec
+  DEF LOCAL a96 := 1 [INT]
+  DEF LOCAL a97 := V1 ISUB a96 [INT]
+  DEF LOCAL a98 := W6 IRSHIFT a97 [INT]
   V2 := a98 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@27ded4b1
-  io.github.H20man13.DeClan.common.icode.Def@4429d41d
-  io.github.H20man13.DeClan.common.icode.Def@26f5fe1e
+  DEF LOCAL a99 := 1 [INT]
+  DEF LOCAL b10 := V2 EQ a99 [BOOL]
+  DEF LOCAL b11 := TRUE [BOOL]
   IF b10 EQ b11 THEN IFSTAT_36_SEQ_0_LEVEL_1 ELSE IFNEXT_36_SEQ_0_LEVEL_1
   LABEL IFSTAT_36_SEQ_0_LEVEL_1
   U2 := W1 [INT]
   W6 := W8 [INT]
   GOTO IFEND_36_LEVEL_1
   LABEL IFNEXT_36_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@3407ffc9
-  io.github.H20man13.DeClan.common.icode.Def@65addea4
+  DEF LOCAL b12 := W2 GT W3 [BOOL]
+  DEF LOCAL b13 := TRUE [BOOL]
   IF b12 EQ b13 THEN IFSTAT_36_SEQ_1_LEVEL_1 ELSE IFNEXT_36_SEQ_1_LEVEL_1
   LABEL IFSTAT_36_SEQ_1_LEVEL_1
   U2 := W0 [INT]
   W6 := W7 [INT]
   GOTO IFEND_36_LEVEL_1
   LABEL IFNEXT_36_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@6f2e7730
-  io.github.H20man13.DeClan.common.icode.Def@66a261c5
+  DEF LOCAL b14 := 1 [INT]
+  DEF LOCAL b15 := W0 IAND b14 [INT]
   W4 := b15 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@6d50236f
-  io.github.H20man13.DeClan.common.icode.Def@6683889f
+  DEF LOCAL b16 := 1 [INT]
+  DEF LOCAL b17 := W1 IAND b16 [INT]
   W5 := b17 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@7a88f488
-  io.github.H20man13.DeClan.common.icode.Def@f511e55
-  io.github.H20man13.DeClan.common.icode.Def@63f60f8b
+  DEF LOCAL b18 := 0 [INT]
+  DEF LOCAL b19 := W5 EQ b18 [BOOL]
+  DEF LOCAL b20 := TRUE [BOOL]
   IF b19 EQ b20 THEN IFSTAT_37_SEQ_0_LEVEL_2 ELSE IFNEXT_37_SEQ_0_LEVEL_2
   LABEL IFSTAT_37_SEQ_0_LEVEL_2
   U2 := W1 [INT]
@@ -1250,246 +1250,246 @@ IASM "STR %r, %a"
   GOTO IFEND_36_LEVEL_1
   LABEL IFNEXT_36_SEQ_2_LEVEL_1
   LABEL IFEND_36_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@19cba41a
+  DEF LOCAL b21 := U3 IADD (GLOBAL b4) [INT]
   U3 := b21 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@24da3f1f
-  io.github.H20man13.DeClan.common.icode.Def@23fe2e67
-  io.github.H20man13.DeClan.common.icode.Def@7027e7c4
-  io.github.H20man13.DeClan.common.icode.Def@348866ae
+  DEF LOCAL b22 := 255 [INT]
+  DEF LOCAL b23 := U3 IAND b22 [INT]
+  DEF LOCAL b24 := 23 [INT]
+  DEF LOCAL b25 := b23 ILSHIFT b24 [INT]
   T4 := b25 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@415f95e7
-  io.github.H20man13.DeClan.common.icode.Def@138006bd
-  io.github.H20man13.DeClan.common.icode.Def@5c56dace
+  DEF LOCAL b26 := 31 [INT]
+  DEF LOCAL b27 := U1 ILSHIFT b26 [INT]
+  DEF LOCAL b28 := T4 IOR b27 [INT]
   T4 := b28 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@2b1c6afc
-  io.github.H20man13.DeClan.common.icode.Def@165132d5
-  io.github.H20man13.DeClan.common.icode.Def@5f77b4c
+  DEF LOCAL b29 := 8388607 [INT]
+  DEF LOCAL b30 := U2 IAND b29 [INT]
+  DEF LOCAL b31 := T4 IOR b30 [INT]
   T4 := b31 [INT]
   GOTO IFEND_30_LEVEL_0
   LABEL IFNEXT_30_SEQ_3_LEVEL_0
   LABEL IFEND_30_LEVEL_0
-  CALL IntBinaryAsReal(io.github.H20man13.DeClan.common.icode.Def@6f1d4196)
-  io.github.H20man13.DeClan.common.icode.Def@279e9d03
+  CALL IntBinaryAsReal((T4 -> k2)[INT])
+  DEF LOCAL b32 := (RETURN k3) [REAL]
   T3 := b32 [REAL]
-  io.github.H20man13.DeClan.common.icode.Def@3846c4bf
+  DEF RETURN l := T3 [REAL]
  RETURN
  PROC LABEL RDiv
-  io.github.H20man13.DeClan.common.icode.Def@655f5e0
-  io.github.H20man13.DeClan.common.icode.Def@341154d
-  io.github.H20man13.DeClan.common.icode.Def@50e4e6a3
-  io.github.H20man13.DeClan.common.icode.Def@5e89a33c
-  io.github.H20man13.DeClan.common.icode.Def@77dab7f8
-  io.github.H20man13.DeClan.common.icode.Def@7c3a2f33
-  io.github.H20man13.DeClan.common.icode.Def@b1c0fe9
-  io.github.H20man13.DeClan.common.icode.Def@181fcdf5
-  io.github.H20man13.DeClan.common.icode.Def@3ad8dc79
-  io.github.H20man13.DeClan.common.icode.Def@17363fa6
-  CALL RDivide(io.github.H20man13.DeClan.common.icode.Def@7c3e19ee, io.github.H20man13.DeClan.common.icode.Def@1aa803f9)
-  io.github.H20man13.DeClan.common.icode.Def@66ef3fc1
-  CALL RealToInt(io.github.H20man13.DeClan.common.icode.Def@4082e7b5)
-  io.github.H20man13.DeClan.common.icode.Def@4cff7722
+  DEF LOCAL b33 := 0 [INT]
+  DEF LOCAL b34 := 0 [INT]
+  DEF LOCAL b35 := 0 [INT]
+  DEF LOCAL b36 := 0 [INT]
+  DEF LOCAL b37 := 0 [INT]
+  DEF LOCAL b38 := 0 [INT]
+  DEF LOCAL b39 := 0 [INT]
+  DEF LOCAL b40 := 0 [INT]
+  DEF LOCAL b41 := 0 [INT]
+  DEF LOCAL b42 := 0 [INT]
+  CALL RDivide(((PARAM m) -> j)[REAL], ((PARAM n) -> k)[REAL])
+  DEF LOCAL b43 := (RETURN l) [REAL]
+  CALL RealToInt((b43 -> b44)[REAL])
+  DEF LOCAL b46 := (RETURN b45) [INT]
   b33 := b46 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@1692128f
+  DEF RETURN o := b33 [INT]
  RETURN
  PROC LABEL RNeg
-  io.github.H20man13.DeClan.common.icode.Def@91c36ab
-  io.github.H20man13.DeClan.common.icode.Def@5ef4d772
-  io.github.H20man13.DeClan.common.icode.Def@6985ede9
-  io.github.H20man13.DeClan.common.icode.Def@6f059c3c
-  io.github.H20man13.DeClan.common.icode.Def@7c45619
-  io.github.H20man13.DeClan.common.icode.Def@7ff35ed4
-  io.github.H20man13.DeClan.common.icode.Def@39df1e66
+  DEF LOCAL b47 := 0 [INT]
+  DEF LOCAL b48 := 0 [INT]
+  DEF LOCAL b49 := 0.0 [REAL]
+  DEF LOCAL b50 := 0 [INT]
+  DEF LOCAL b51 := 1 [INT]
+  DEF LOCAL b52 := 31 [INT]
+  DEF LOCAL b53 := b51 ILSHIFT b52 [INT]
   b47 := b53 [INT]
-  CALL RealBinaryAsInt(io.github.H20man13.DeClan.common.icode.Def@7a78911d)
-  io.github.H20man13.DeClan.common.icode.Def@5f2964d5
+  CALL RealBinaryAsInt(((PARAM p) -> b54)[REAL])
+  DEF LOCAL b56 := (RETURN b55) [INT]
   b48 := b56 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3ac9841a
+  DEF LOCAL b57 := b48 IXOR b47 [INT]
   b50 := b57 [INT]
-  CALL IntBinaryAsReal(io.github.H20man13.DeClan.common.icode.Def@7ba4810b)
-  io.github.H20man13.DeClan.common.icode.Def@456a071b
+  CALL IntBinaryAsReal((b50 -> k2)[INT])
+  DEF LOCAL b58 := (RETURN k3) [REAL]
   b49 := b58 [REAL]
-  io.github.H20man13.DeClan.common.icode.Def@51f1ccaf
+  DEF RETURN q := b49 [REAL]
  RETURN
  PROC LABEL RLessThan
-  io.github.H20man13.DeClan.common.icode.Def@276e6bdf
-  io.github.H20man13.DeClan.common.icode.Def@789d0ae0
-  io.github.H20man13.DeClan.common.icode.Def@6dda9837
-  io.github.H20man13.DeClan.common.icode.Def@3211a597
-  io.github.H20man13.DeClan.common.icode.Def@66f51099
-  io.github.H20man13.DeClan.common.icode.Def@762fdcad
-  io.github.H20man13.DeClan.common.icode.Def@4f0de97f
-  io.github.H20man13.DeClan.common.icode.Def@700fc014
-  io.github.H20man13.DeClan.common.icode.Def@3eb06754
-  io.github.H20man13.DeClan.common.icode.Def@36720e9b
-  io.github.H20man13.DeClan.common.icode.Def@16144f3b
-  CALL RealIsZero(io.github.H20man13.DeClan.common.icode.Def@1815328d)
-  io.github.H20man13.DeClan.common.icode.Def@25a26c1c
+  DEF LOCAL b59 := FALSE [BOOL]
+  DEF LOCAL b60 := FALSE [BOOL]
+  DEF LOCAL b61 := FALSE [BOOL]
+  DEF LOCAL b62 := FALSE [BOOL]
+  DEF LOCAL b63 := FALSE [BOOL]
+  DEF LOCAL b64 := FALSE [BOOL]
+  DEF LOCAL b65 := FALSE [BOOL]
+  DEF LOCAL b66 := 0 [INT]
+  DEF LOCAL b67 := 0 [INT]
+  DEF LOCAL b68 := 0 [INT]
+  DEF LOCAL b69 := 0 [INT]
+  CALL RealIsZero(((PARAM r) -> b70)[REAL])
+  DEF LOCAL b72 := (RETURN b71) [BOOL]
   b60 := b72 [BOOL]
-  CALL RealIsZero(io.github.H20man13.DeClan.common.icode.Def@382a8e5)
-  io.github.H20man13.DeClan.common.icode.Def@37db4239
+  CALL RealIsZero(((PARAM s) -> b70)[REAL])
+  DEF LOCAL b73 := (RETURN b71) [BOOL]
   b61 := b73 [BOOL]
-  CALL RealIsNegative(io.github.H20man13.DeClan.common.icode.Def@66b8f15)
-  io.github.H20man13.DeClan.common.icode.Def@301fd148
+  CALL RealIsNegative(((PARAM r) -> b74)[REAL])
+  DEF LOCAL b76 := (RETURN b75) [BOOL]
   b62 := b76 [BOOL]
-  CALL RealIsNegative(io.github.H20man13.DeClan.common.icode.Def@264c922e)
-  io.github.H20man13.DeClan.common.icode.Def@4bebc654
+  CALL RealIsNegative(((PARAM s) -> b74)[REAL])
+  DEF LOCAL b77 := (RETURN b75) [BOOL]
   b63 := b77 [BOOL]
-  CALL RealIsPositive(io.github.H20man13.DeClan.common.icode.Def@1122eb1b)
-  io.github.H20man13.DeClan.common.icode.Def@5f79ede6
+  CALL RealIsPositive(((PARAM r) -> b78)[REAL])
+  DEF LOCAL b80 := (RETURN b79) [BOOL]
   b64 := b80 [BOOL]
-  CALL RealIsPositive(io.github.H20man13.DeClan.common.icode.Def@1d66c9c5)
-  io.github.H20man13.DeClan.common.icode.Def@82a755b
+  CALL RealIsPositive(((PARAM s) -> b78)[REAL])
+  DEF LOCAL b81 := (RETURN b79) [BOOL]
   b65 := b81 [BOOL]
-  io.github.H20man13.DeClan.common.icode.Def@e562d76
-  io.github.H20man13.DeClan.common.icode.Def@1e50f787
+  DEF LOCAL b82 := b60 LAND b61 [BOOL]
+  DEF LOCAL b83 := TRUE [BOOL]
   IF b82 EQ b83 THEN IFSTAT_40_SEQ_0_LEVEL_0 ELSE IFNEXT_40_SEQ_0_LEVEL_0
   LABEL IFSTAT_40_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@35532d69
+  DEF LOCAL b84 := FALSE [BOOL]
   b59 := b84 [BOOL]
   GOTO IFEND_40_LEVEL_0
   LABEL IFNEXT_40_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@6e081635
-  io.github.H20man13.DeClan.common.icode.Def@510abb1f
+  DEF LOCAL b85 := b62 LAND b61 [BOOL]
+  DEF LOCAL b86 := TRUE [BOOL]
   IF b85 EQ b86 THEN IFSTAT_40_SEQ_1_LEVEL_0 ELSE IFNEXT_40_SEQ_1_LEVEL_0
   LABEL IFSTAT_40_SEQ_1_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@48ff9276
+  DEF LOCAL b87 := TRUE [BOOL]
   b59 := b87 [BOOL]
   GOTO IFEND_40_LEVEL_0
   LABEL IFNEXT_40_SEQ_1_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@64ebc665
-  io.github.H20man13.DeClan.common.icode.Def@4a7ccd73
+  DEF LOCAL b88 := b62 LAND b65 [BOOL]
+  DEF LOCAL b89 := TRUE [BOOL]
   IF b88 EQ b89 THEN IFSTAT_40_SEQ_2_LEVEL_0 ELSE IFNEXT_40_SEQ_2_LEVEL_0
   LABEL IFSTAT_40_SEQ_2_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@4eaa5560
+  DEF LOCAL b90 := TRUE [BOOL]
   b59 := b90 [BOOL]
   GOTO IFEND_40_LEVEL_0
   LABEL IFNEXT_40_SEQ_2_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@7a7212e1
-  io.github.H20man13.DeClan.common.icode.Def@40903b24
+  DEF LOCAL b91 := b60 LAND b65 [BOOL]
+  DEF LOCAL b92 := TRUE [BOOL]
   IF b91 EQ b92 THEN IFSTAT_40_SEQ_3_LEVEL_0 ELSE IFNEXT_40_SEQ_3_LEVEL_0
   LABEL IFSTAT_40_SEQ_3_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@6c2b6110
+  DEF LOCAL b93 := TRUE [BOOL]
   b59 := b93 [BOOL]
   GOTO IFEND_40_LEVEL_0
   LABEL IFNEXT_40_SEQ_3_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@703638a0
-  io.github.H20man13.DeClan.common.icode.Def@1ab9c95d
+  DEF LOCAL b94 := b64 LAND b63 [BOOL]
+  DEF LOCAL b95 := TRUE [BOOL]
   IF b94 EQ b95 THEN IFSTAT_40_SEQ_4_LEVEL_0 ELSE IFNEXT_40_SEQ_4_LEVEL_0
   LABEL IFSTAT_40_SEQ_4_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@5bb19835
+  DEF LOCAL b96 := FALSE [BOOL]
   b59 := b96 [BOOL]
   GOTO IFEND_40_LEVEL_0
   LABEL IFNEXT_40_SEQ_4_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@6ca551b2
-  io.github.H20man13.DeClan.common.icode.Def@2d9797be
+  DEF LOCAL b97 := b64 LAND b61 [BOOL]
+  DEF LOCAL b98 := TRUE [BOOL]
   IF b97 EQ b98 THEN IFSTAT_40_SEQ_5_LEVEL_0 ELSE IFNEXT_40_SEQ_5_LEVEL_0
   LABEL IFSTAT_40_SEQ_5_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@79b05070
+  DEF LOCAL b99 := FALSE [BOOL]
   b59 := b99 [BOOL]
   GOTO IFEND_40_LEVEL_0
   LABEL IFNEXT_40_SEQ_5_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@2e171f43
-  io.github.H20man13.DeClan.common.icode.Def@6879e3f2
+  DEF LOCAL c10 := b60 LAND b63 [BOOL]
+  DEF LOCAL c11 := TRUE [BOOL]
   IF c10 EQ c11 THEN IFSTAT_40_SEQ_6_LEVEL_0 ELSE IFNEXT_40_SEQ_6_LEVEL_0
   LABEL IFSTAT_40_SEQ_6_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@7942b324
+  DEF LOCAL c12 := FALSE [BOOL]
   b59 := c12 [BOOL]
   GOTO IFEND_40_LEVEL_0
   LABEL IFNEXT_40_SEQ_6_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@28a4fac
-  io.github.H20man13.DeClan.common.icode.Def@1471a5b9
+  DEF LOCAL c13 := b62 LAND b63 [BOOL]
+  DEF LOCAL c14 := TRUE [BOOL]
   IF c13 EQ c14 THEN IFSTAT_40_SEQ_7_LEVEL_0 ELSE IFNEXT_40_SEQ_7_LEVEL_0
   LABEL IFSTAT_40_SEQ_7_LEVEL_0
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@3330b2b6)
-  io.github.H20man13.DeClan.common.icode.Def@5f07fc67
+  CALL RealExponent(((PARAM r) -> a4)[REAL])
+  DEF LOCAL c15 := (RETURN a5) [INT]
   b66 := c15 [INT]
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@fa03f04)
-  io.github.H20man13.DeClan.common.icode.Def@16651f24
+  CALL RealExponent(((PARAM s) -> a4)[REAL])
+  DEF LOCAL c16 := (RETURN a5) [INT]
   b67 := c16 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@2076ba5c
-  io.github.H20man13.DeClan.common.icode.Def@40728ef1
+  DEF LOCAL c17 := b66 GT b67 [BOOL]
+  DEF LOCAL c18 := TRUE [BOOL]
   IF c17 EQ c18 THEN IFSTAT_41_SEQ_0_LEVEL_1 ELSE IFNEXT_41_SEQ_0_LEVEL_1
   LABEL IFSTAT_41_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@4ea4c1e4
+  DEF LOCAL c19 := TRUE [BOOL]
   b59 := c19 [BOOL]
   GOTO IFEND_41_LEVEL_1
   LABEL IFNEXT_41_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@70067b2b
-  io.github.H20man13.DeClan.common.icode.Def@65b79b2d
+  DEF LOCAL c20 := b66 EQ b67 [BOOL]
+  DEF LOCAL c21 := TRUE [BOOL]
   IF c20 EQ c21 THEN IFSTAT_41_SEQ_1_LEVEL_1 ELSE IFNEXT_41_SEQ_1_LEVEL_1
   LABEL IFSTAT_41_SEQ_1_LEVEL_1
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@3166846c)
-  io.github.H20man13.DeClan.common.icode.Def@5925c845
+  CALL RealMantissa(((PARAM r) -> a8)[REAL])
+  DEF LOCAL c22 := (RETURN a9) [INT]
   b68 := c22 [INT]
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@1a392f69)
-  io.github.H20man13.DeClan.common.icode.Def@430eb1f0
+  CALL RealMantissa(((PARAM s) -> a8)[REAL])
+  DEF LOCAL c23 := (RETURN a9) [INT]
   b69 := c23 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@464e1819
-  io.github.H20man13.DeClan.common.icode.Def@31de9775
+  DEF LOCAL c24 := b68 GT b69 [BOOL]
+  DEF LOCAL c25 := TRUE [BOOL]
   IF c24 EQ c25 THEN IFSTAT_42_SEQ_0_LEVEL_2 ELSE IFNEXT_42_SEQ_0_LEVEL_2
   LABEL IFSTAT_42_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@624fa440
+  DEF LOCAL c26 := TRUE [BOOL]
   b59 := c26 [BOOL]
   GOTO IFEND_42_LEVEL_2
   LABEL IFNEXT_42_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@54f818c8
+  DEF LOCAL c27 := FALSE [BOOL]
   b59 := c27 [BOOL]
   GOTO IFEND_42_LEVEL_2
   LABEL IFNEXT_42_SEQ_1_LEVEL_2
   LABEL IFEND_42_LEVEL_2
   GOTO IFEND_41_LEVEL_1
   LABEL IFNEXT_41_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@62404c9e
+  DEF LOCAL c28 := FALSE [BOOL]
   b59 := c28 [BOOL]
   GOTO IFEND_41_LEVEL_1
   LABEL IFNEXT_41_SEQ_2_LEVEL_1
   LABEL IFEND_41_LEVEL_1
   GOTO IFEND_40_LEVEL_0
   LABEL IFNEXT_40_SEQ_7_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@27601a9c
-  io.github.H20man13.DeClan.common.icode.Def@3812d794
+  DEF LOCAL c29 := b64 LAND b65 [BOOL]
+  DEF LOCAL c30 := TRUE [BOOL]
   IF c29 EQ c30 THEN IFSTAT_40_SEQ_8_LEVEL_0 ELSE IFNEXT_40_SEQ_8_LEVEL_0
   LABEL IFSTAT_40_SEQ_8_LEVEL_0
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@2cb8b606)
-  io.github.H20man13.DeClan.common.icode.Def@4cfc3bb3
+  CALL RealExponent(((PARAM r) -> a4)[REAL])
+  DEF LOCAL c31 := (RETURN a5) [INT]
   b66 := c31 [INT]
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@6b6f6c4a)
-  io.github.H20man13.DeClan.common.icode.Def@456fa8c4
+  CALL RealExponent(((PARAM s) -> a4)[REAL])
+  DEF LOCAL c32 := (RETURN a5) [INT]
   b67 := c32 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@2c0e2ee9
-  io.github.H20man13.DeClan.common.icode.Def@102a978
+  DEF LOCAL c33 := b66 LT b67 [BOOL]
+  DEF LOCAL c34 := TRUE [BOOL]
   IF c33 EQ c34 THEN IFSTAT_46_SEQ_0_LEVEL_1 ELSE IFNEXT_46_SEQ_0_LEVEL_1
   LABEL IFSTAT_46_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@119f982e
+  DEF LOCAL c35 := TRUE [BOOL]
   b59 := c35 [BOOL]
   GOTO IFEND_46_LEVEL_1
   LABEL IFNEXT_46_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@298e2b51
-  io.github.H20man13.DeClan.common.icode.Def@74aa21ef
+  DEF LOCAL c36 := b66 EQ b67 [BOOL]
+  DEF LOCAL c37 := TRUE [BOOL]
   IF c36 EQ c37 THEN IFSTAT_46_SEQ_1_LEVEL_1 ELSE IFNEXT_46_SEQ_1_LEVEL_1
   LABEL IFSTAT_46_SEQ_1_LEVEL_1
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@60f71f6b)
-  io.github.H20man13.DeClan.common.icode.Def@dc4b5b3
+  CALL RealMantissa(((PARAM r) -> a8)[REAL])
+  DEF LOCAL c38 := (RETURN a9) [INT]
   b68 := c38 [INT]
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@55c8d3f9)
-  io.github.H20man13.DeClan.common.icode.Def@70c825f6
+  CALL RealMantissa(((PARAM s) -> a8)[REAL])
+  DEF LOCAL c39 := (RETURN a9) [INT]
   b69 := c39 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@289c70c3
-  io.github.H20man13.DeClan.common.icode.Def@5d214e
+  DEF LOCAL c40 := b68 LT b69 [BOOL]
+  DEF LOCAL c41 := TRUE [BOOL]
   IF c40 EQ c41 THEN IFSTAT_47_SEQ_0_LEVEL_2 ELSE IFNEXT_47_SEQ_0_LEVEL_2
   LABEL IFSTAT_47_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@13196da7
+  DEF LOCAL c42 := TRUE [BOOL]
   b59 := c42 [BOOL]
   GOTO IFEND_47_LEVEL_2
   LABEL IFNEXT_47_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@224f1da7
+  DEF LOCAL c43 := FALSE [BOOL]
   b59 := c43 [BOOL]
   GOTO IFEND_47_LEVEL_2
   LABEL IFNEXT_47_SEQ_1_LEVEL_2
   LABEL IFEND_47_LEVEL_2
   GOTO IFEND_46_LEVEL_1
   LABEL IFNEXT_46_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@691e7b45
+  DEF LOCAL c44 := FALSE [BOOL]
   b59 := c44 [BOOL]
   GOTO IFEND_46_LEVEL_1
   LABEL IFNEXT_46_SEQ_2_LEVEL_1
@@ -1497,188 +1497,188 @@ IASM "STR %r, %a"
   GOTO IFEND_40_LEVEL_0
   LABEL IFNEXT_40_SEQ_8_LEVEL_0
   LABEL IFEND_40_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@a06079
+  DEF RETURN t := b59 [BOOL]
  RETURN
  PROC LABEL RLessThanOrEqualTo
-  io.github.H20man13.DeClan.common.icode.Def@580c419f
-  io.github.H20man13.DeClan.common.icode.Def@274dd1c
-  io.github.H20man13.DeClan.common.icode.Def@18aa4a44
-  io.github.H20man13.DeClan.common.icode.Def@1b0a4280
-  io.github.H20man13.DeClan.common.icode.Def@21b0f8c7
-  io.github.H20man13.DeClan.common.icode.Def@5884dd0
-  io.github.H20man13.DeClan.common.icode.Def@4f3adf4f
-  io.github.H20man13.DeClan.common.icode.Def@66d8a6a
-  io.github.H20man13.DeClan.common.icode.Def@203d3ca0
-  io.github.H20man13.DeClan.common.icode.Def@679c13ba
-  io.github.H20man13.DeClan.common.icode.Def@7ec578a1
-  CALL RealIsZero(io.github.H20man13.DeClan.common.icode.Def@149183c9)
-  io.github.H20man13.DeClan.common.icode.Def@5d8075c7
+  DEF LOCAL c45 := FALSE [BOOL]
+  DEF LOCAL c46 := FALSE [BOOL]
+  DEF LOCAL c47 := FALSE [BOOL]
+  DEF LOCAL c48 := FALSE [BOOL]
+  DEF LOCAL c49 := FALSE [BOOL]
+  DEF LOCAL c50 := FALSE [BOOL]
+  DEF LOCAL c51 := FALSE [BOOL]
+  DEF LOCAL c52 := 0 [INT]
+  DEF LOCAL c53 := 0 [INT]
+  DEF LOCAL c54 := 0 [INT]
+  DEF LOCAL c55 := 0 [INT]
+  CALL RealIsZero(((PARAM u) -> b70)[REAL])
+  DEF LOCAL c56 := (RETURN b71) [BOOL]
   c46 := c56 [BOOL]
-  CALL RealIsZero(io.github.H20man13.DeClan.common.icode.Def@5a06bc0e)
-  io.github.H20man13.DeClan.common.icode.Def@fd3d79f
+  CALL RealIsZero(((PARAM v) -> b70)[REAL])
+  DEF LOCAL c57 := (RETURN b71) [BOOL]
   c47 := c57 [BOOL]
-  CALL RealIsNegative(io.github.H20man13.DeClan.common.icode.Def@17449267)
-  io.github.H20man13.DeClan.common.icode.Def@4934f305
+  CALL RealIsNegative(((PARAM u) -> b74)[REAL])
+  DEF LOCAL c58 := (RETURN b75) [BOOL]
   c48 := c58 [BOOL]
-  CALL RealIsNegative(io.github.H20man13.DeClan.common.icode.Def@263dd0e1)
-  io.github.H20man13.DeClan.common.icode.Def@37c38496
+  CALL RealIsNegative(((PARAM v) -> b74)[REAL])
+  DEF LOCAL c59 := (RETURN b75) [BOOL]
   c49 := c59 [BOOL]
-  CALL RealIsPositive(io.github.H20man13.DeClan.common.icode.Def@427ffa3)
-  io.github.H20man13.DeClan.common.icode.Def@6a6588f9
+  CALL RealIsPositive(((PARAM u) -> b78)[REAL])
+  DEF LOCAL c60 := (RETURN b79) [BOOL]
   c50 := c60 [BOOL]
-  CALL RealIsPositive(io.github.H20man13.DeClan.common.icode.Def@2297f78c)
-  io.github.H20man13.DeClan.common.icode.Def@95b307c
+  CALL RealIsPositive(((PARAM v) -> b78)[REAL])
+  DEF LOCAL c61 := (RETURN b79) [BOOL]
   c51 := c61 [BOOL]
-  io.github.H20man13.DeClan.common.icode.Def@32ba1c13
-  io.github.H20man13.DeClan.common.icode.Def@745e68fd
+  DEF LOCAL c62 := c46 LAND c47 [BOOL]
+  DEF LOCAL c63 := TRUE [BOOL]
   IF c62 EQ c63 THEN IFSTAT_51_SEQ_0_LEVEL_0 ELSE IFNEXT_51_SEQ_0_LEVEL_0
   LABEL IFSTAT_51_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@6968da6d
+  DEF LOCAL c64 := TRUE [BOOL]
   c45 := c64 [BOOL]
   GOTO IFEND_51_LEVEL_0
   LABEL IFNEXT_51_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@39e0dfec
-  io.github.H20man13.DeClan.common.icode.Def@5bd80647
+  DEF LOCAL c65 := c48 LAND c47 [BOOL]
+  DEF LOCAL c66 := TRUE [BOOL]
   IF c65 EQ c66 THEN IFSTAT_51_SEQ_1_LEVEL_0 ELSE IFNEXT_51_SEQ_1_LEVEL_0
   LABEL IFSTAT_51_SEQ_1_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@5c469441
+  DEF LOCAL c67 := TRUE [BOOL]
   c45 := c67 [BOOL]
   GOTO IFEND_51_LEVEL_0
   LABEL IFNEXT_51_SEQ_1_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@73d28616
-  io.github.H20man13.DeClan.common.icode.Def@4cf2383f
+  DEF LOCAL c68 := c48 LAND c51 [BOOL]
+  DEF LOCAL c69 := TRUE [BOOL]
   IF c68 EQ c69 THEN IFSTAT_51_SEQ_2_LEVEL_0 ELSE IFNEXT_51_SEQ_2_LEVEL_0
   LABEL IFSTAT_51_SEQ_2_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@5783f5d8
+  DEF LOCAL c70 := TRUE [BOOL]
   c45 := c70 [BOOL]
   GOTO IFEND_51_LEVEL_0
   LABEL IFNEXT_51_SEQ_2_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@3f8f87f5
-  io.github.H20man13.DeClan.common.icode.Def@580a4424
+  DEF LOCAL c71 := c46 LAND c51 [BOOL]
+  DEF LOCAL c72 := TRUE [BOOL]
   IF c71 EQ c72 THEN IFSTAT_51_SEQ_3_LEVEL_0 ELSE IFNEXT_51_SEQ_3_LEVEL_0
   LABEL IFSTAT_51_SEQ_3_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@564acda
+  DEF LOCAL c73 := TRUE [BOOL]
   c45 := c73 [BOOL]
   GOTO IFEND_51_LEVEL_0
   LABEL IFNEXT_51_SEQ_3_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@4d01a49b
-  io.github.H20man13.DeClan.common.icode.Def@e7222e1
+  DEF LOCAL c74 := c50 LAND c49 [BOOL]
+  DEF LOCAL c75 := TRUE [BOOL]
   IF c74 EQ c75 THEN IFSTAT_51_SEQ_4_LEVEL_0 ELSE IFNEXT_51_SEQ_4_LEVEL_0
   LABEL IFSTAT_51_SEQ_4_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@4d36c6f
+  DEF LOCAL c76 := FALSE [BOOL]
   c45 := c76 [BOOL]
   GOTO IFEND_51_LEVEL_0
   LABEL IFNEXT_51_SEQ_4_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@24710253
-  io.github.H20man13.DeClan.common.icode.Def@64945f3a
+  DEF LOCAL c77 := c50 LAND c47 [BOOL]
+  DEF LOCAL c78 := TRUE [BOOL]
   IF c77 EQ c78 THEN IFSTAT_51_SEQ_5_LEVEL_0 ELSE IFNEXT_51_SEQ_5_LEVEL_0
   LABEL IFSTAT_51_SEQ_5_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@7b6e0c63
+  DEF LOCAL c79 := FALSE [BOOL]
   c45 := c79 [BOOL]
   GOTO IFEND_51_LEVEL_0
   LABEL IFNEXT_51_SEQ_5_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@64c1a775
-  io.github.H20man13.DeClan.common.icode.Def@480e5224
+  DEF LOCAL c80 := c46 LAND c49 [BOOL]
+  DEF LOCAL c81 := TRUE [BOOL]
   IF c80 EQ c81 THEN IFSTAT_51_SEQ_6_LEVEL_0 ELSE IFNEXT_51_SEQ_6_LEVEL_0
   LABEL IFSTAT_51_SEQ_6_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@e25a990
+  DEF LOCAL c82 := FALSE [BOOL]
   c45 := c82 [BOOL]
   GOTO IFEND_51_LEVEL_0
   LABEL IFNEXT_51_SEQ_6_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@523a123
-  io.github.H20man13.DeClan.common.icode.Def@6cb044fd
+  DEF LOCAL c83 := c48 LAND c49 [BOOL]
+  DEF LOCAL c84 := TRUE [BOOL]
   IF c83 EQ c84 THEN IFSTAT_51_SEQ_7_LEVEL_0 ELSE IFNEXT_51_SEQ_7_LEVEL_0
   LABEL IFSTAT_51_SEQ_7_LEVEL_0
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@5695b43d)
-  io.github.H20man13.DeClan.common.icode.Def@755ffe56
+  CALL RealExponent(((PARAM u) -> a4)[REAL])
+  DEF LOCAL c85 := (RETURN a5) [INT]
   c52 := c85 [INT]
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@6ded7367)
-  io.github.H20man13.DeClan.common.icode.Def@314458b
+  CALL RealExponent(((PARAM v) -> a4)[REAL])
+  DEF LOCAL c86 := (RETURN a5) [INT]
   c53 := c86 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@78db2d88
-  io.github.H20man13.DeClan.common.icode.Def@727cd18b
+  DEF LOCAL c87 := c52 GT c53 [BOOL]
+  DEF LOCAL c88 := TRUE [BOOL]
   IF c87 EQ c88 THEN IFSTAT_52_SEQ_0_LEVEL_1 ELSE IFNEXT_52_SEQ_0_LEVEL_1
   LABEL IFSTAT_52_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@740cf2e8
+  DEF LOCAL c89 := TRUE [BOOL]
   c45 := c89 [BOOL]
   GOTO IFEND_52_LEVEL_1
   LABEL IFNEXT_52_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@5595c9ff
-  io.github.H20man13.DeClan.common.icode.Def@740319a8
+  DEF LOCAL c90 := c52 EQ c53 [BOOL]
+  DEF LOCAL c91 := TRUE [BOOL]
   IF c90 EQ c91 THEN IFSTAT_52_SEQ_1_LEVEL_1 ELSE IFNEXT_52_SEQ_1_LEVEL_1
   LABEL IFSTAT_52_SEQ_1_LEVEL_1
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@60e76e2a)
-  io.github.H20man13.DeClan.common.icode.Def@73ef4b6c
+  CALL RealMantissa(((PARAM u) -> a8)[REAL])
+  DEF LOCAL c92 := (RETURN a9) [INT]
   c54 := c92 [INT]
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@8cebedf)
-  io.github.H20man13.DeClan.common.icode.Def@646c2837
+  CALL RealMantissa(((PARAM v) -> a8)[REAL])
+  DEF LOCAL c93 := (RETURN a9) [INT]
   c55 := c93 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3fa18cae
-  io.github.H20man13.DeClan.common.icode.Def@369c141d
+  DEF LOCAL c94 := c54 GE c55 [BOOL]
+  DEF LOCAL c95 := TRUE [BOOL]
   IF c94 EQ c95 THEN IFSTAT_53_SEQ_0_LEVEL_2 ELSE IFNEXT_53_SEQ_0_LEVEL_2
   LABEL IFSTAT_53_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@4bd97c57
+  DEF LOCAL c96 := TRUE [BOOL]
   c45 := c96 [BOOL]
   GOTO IFEND_53_LEVEL_2
   LABEL IFNEXT_53_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@4ef1d88b
+  DEF LOCAL c97 := FALSE [BOOL]
   c45 := c97 [BOOL]
   GOTO IFEND_53_LEVEL_2
   LABEL IFNEXT_53_SEQ_1_LEVEL_2
   LABEL IFEND_53_LEVEL_2
   GOTO IFEND_52_LEVEL_1
   LABEL IFNEXT_52_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@7d06f907
+  DEF LOCAL c98 := FALSE [BOOL]
   c45 := c98 [BOOL]
   GOTO IFEND_52_LEVEL_1
   LABEL IFNEXT_52_SEQ_2_LEVEL_1
   LABEL IFEND_52_LEVEL_1
   GOTO IFEND_51_LEVEL_0
   LABEL IFNEXT_51_SEQ_7_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@2b6c2646
-  io.github.H20man13.DeClan.common.icode.Def@2b57ccb8
+  DEF LOCAL c99 := c50 LAND c51 [BOOL]
+  DEF LOCAL d10 := TRUE [BOOL]
   IF c99 EQ d10 THEN IFSTAT_51_SEQ_8_LEVEL_0 ELSE IFNEXT_51_SEQ_8_LEVEL_0
   LABEL IFSTAT_51_SEQ_8_LEVEL_0
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@6b226cd9)
-  io.github.H20man13.DeClan.common.icode.Def@21267e7b
+  CALL RealExponent(((PARAM u) -> a4)[REAL])
+  DEF LOCAL d11 := (RETURN a5) [INT]
   c52 := d11 [INT]
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@6bb2320f)
-  io.github.H20man13.DeClan.common.icode.Def@7e9511cd
+  CALL RealExponent(((PARAM v) -> a4)[REAL])
+  DEF LOCAL d12 := (RETURN a5) [INT]
   c53 := d12 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@629ee62
-  io.github.H20man13.DeClan.common.icode.Def@14ee9d7a
+  DEF LOCAL d13 := c52 LT c53 [BOOL]
+  DEF LOCAL d14 := TRUE [BOOL]
   IF d13 EQ d14 THEN IFSTAT_57_SEQ_0_LEVEL_1 ELSE IFNEXT_57_SEQ_0_LEVEL_1
   LABEL IFSTAT_57_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@6eb6f7a2
+  DEF LOCAL d15 := TRUE [BOOL]
   c45 := d15 [BOOL]
   GOTO IFEND_57_LEVEL_1
   LABEL IFNEXT_57_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@38fb98c0
-  io.github.H20man13.DeClan.common.icode.Def@71e83b43
+  DEF LOCAL d16 := c52 EQ c53 [BOOL]
+  DEF LOCAL d17 := TRUE [BOOL]
   IF d16 EQ d17 THEN IFSTAT_57_SEQ_1_LEVEL_1 ELSE IFNEXT_57_SEQ_1_LEVEL_1
   LABEL IFSTAT_57_SEQ_1_LEVEL_1
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@118d7d49)
-  io.github.H20man13.DeClan.common.icode.Def@485f933d
+  CALL RealMantissa(((PARAM u) -> a8)[REAL])
+  DEF LOCAL d18 := (RETURN a9) [INT]
   c54 := d18 [INT]
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@2c862f6e)
-  io.github.H20man13.DeClan.common.icode.Def@1c843b9e
+  CALL RealMantissa(((PARAM v) -> a8)[REAL])
+  DEF LOCAL d19 := (RETURN a9) [INT]
   c55 := d19 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@66996a72
-  io.github.H20man13.DeClan.common.icode.Def@526bdbe7
+  DEF LOCAL d20 := c54 LE c55 [BOOL]
+  DEF LOCAL d21 := TRUE [BOOL]
   IF d20 EQ d21 THEN IFSTAT_58_SEQ_0_LEVEL_2 ELSE IFNEXT_58_SEQ_0_LEVEL_2
   LABEL IFSTAT_58_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@4f8b739b
+  DEF LOCAL d22 := TRUE [BOOL]
   c45 := d22 [BOOL]
   GOTO IFEND_58_LEVEL_2
   LABEL IFNEXT_58_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@72eee93f
+  DEF LOCAL d23 := FALSE [BOOL]
   c45 := d23 [BOOL]
   GOTO IFEND_58_LEVEL_2
   LABEL IFNEXT_58_SEQ_1_LEVEL_2
   LABEL IFEND_58_LEVEL_2
   GOTO IFEND_57_LEVEL_1
   LABEL IFNEXT_57_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@5f89d7ea
+  DEF LOCAL d24 := FALSE [BOOL]
   c45 := d24 [BOOL]
   GOTO IFEND_57_LEVEL_1
   LABEL IFNEXT_57_SEQ_2_LEVEL_1
@@ -1686,188 +1686,188 @@ IASM "STR %r, %a"
   GOTO IFEND_51_LEVEL_0
   LABEL IFNEXT_51_SEQ_8_LEVEL_0
   LABEL IFEND_51_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@53319b1f
+  DEF RETURN w := c45 [BOOL]
  RETURN
  PROC LABEL RGreaterThan
-  io.github.H20man13.DeClan.common.icode.Def@47323d49
-  io.github.H20man13.DeClan.common.icode.Def@42909381
-  io.github.H20man13.DeClan.common.icode.Def@53373abe
-  io.github.H20man13.DeClan.common.icode.Def@c81baa4
-  io.github.H20man13.DeClan.common.icode.Def@5a0f1608
-  io.github.H20man13.DeClan.common.icode.Def@1c458a53
-  io.github.H20man13.DeClan.common.icode.Def@764da1af
-  io.github.H20man13.DeClan.common.icode.Def@77187158
-  io.github.H20man13.DeClan.common.icode.Def@558586e5
-  io.github.H20man13.DeClan.common.icode.Def@65a29914
-  io.github.H20man13.DeClan.common.icode.Def@7e791cd6
-  CALL RealIsZero(io.github.H20man13.DeClan.common.icode.Def@4adf30f0)
-  io.github.H20man13.DeClan.common.icode.Def@339425e0
+  DEF LOCAL d25 := FALSE [BOOL]
+  DEF LOCAL d26 := FALSE [BOOL]
+  DEF LOCAL d27 := FALSE [BOOL]
+  DEF LOCAL d28 := FALSE [BOOL]
+  DEF LOCAL d29 := FALSE [BOOL]
+  DEF LOCAL d30 := FALSE [BOOL]
+  DEF LOCAL d31 := FALSE [BOOL]
+  DEF LOCAL d32 := 0 [INT]
+  DEF LOCAL d33 := 0 [INT]
+  DEF LOCAL d34 := 0 [INT]
+  DEF LOCAL d35 := 0 [INT]
+  CALL RealIsZero(((PARAM x) -> b70)[REAL])
+  DEF LOCAL d36 := (RETURN b71) [BOOL]
   d26 := d36 [BOOL]
-  CALL RealIsZero(io.github.H20man13.DeClan.common.icode.Def@420f60bf)
-  io.github.H20man13.DeClan.common.icode.Def@74265b84
+  CALL RealIsZero(((PARAM y) -> b70)[REAL])
+  DEF LOCAL d37 := (RETURN b71) [BOOL]
   d27 := d37 [BOOL]
-  CALL RealIsNegative(io.github.H20man13.DeClan.common.icode.Def@47cdad40)
-  io.github.H20man13.DeClan.common.icode.Def@55643b7c
+  CALL RealIsNegative(((PARAM x) -> b74)[REAL])
+  DEF LOCAL d38 := (RETURN b75) [BOOL]
   d28 := d38 [BOOL]
-  CALL RealIsNegative(io.github.H20man13.DeClan.common.icode.Def@6c57a3f7)
-  io.github.H20man13.DeClan.common.icode.Def@2a6b2f82
+  CALL RealIsNegative(((PARAM y) -> b74)[REAL])
+  DEF LOCAL d39 := (RETURN b75) [BOOL]
   d29 := d39 [BOOL]
-  CALL RealIsPositive(io.github.H20man13.DeClan.common.icode.Def@e63022)
-  io.github.H20man13.DeClan.common.icode.Def@742d4499
+  CALL RealIsPositive(((PARAM x) -> b78)[REAL])
+  DEF LOCAL d40 := (RETURN b79) [BOOL]
   d30 := d40 [BOOL]
-  CALL RealIsPositive(io.github.H20man13.DeClan.common.icode.Def@25b409f0)
-  io.github.H20man13.DeClan.common.icode.Def@565025fb
+  CALL RealIsPositive(((PARAM y) -> b78)[REAL])
+  DEF LOCAL d41 := (RETURN b79) [BOOL]
   d31 := d41 [BOOL]
-  io.github.H20man13.DeClan.common.icode.Def@67867833
-  io.github.H20man13.DeClan.common.icode.Def@7911f1d6
+  DEF LOCAL d42 := d26 LAND d27 [BOOL]
+  DEF LOCAL d43 := TRUE [BOOL]
   IF d42 EQ d43 THEN IFSTAT_62_SEQ_0_LEVEL_0 ELSE IFNEXT_62_SEQ_0_LEVEL_0
   LABEL IFSTAT_62_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@7c6f9c8d
+  DEF LOCAL d44 := FALSE [BOOL]
   d25 := d44 [BOOL]
   GOTO IFEND_62_LEVEL_0
   LABEL IFNEXT_62_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@2b471106
-  io.github.H20man13.DeClan.common.icode.Def@7f54b3bd
+  DEF LOCAL d45 := d28 LAND d27 [BOOL]
+  DEF LOCAL d46 := TRUE [BOOL]
   IF d45 EQ d46 THEN IFSTAT_62_SEQ_1_LEVEL_0 ELSE IFNEXT_62_SEQ_1_LEVEL_0
   LABEL IFSTAT_62_SEQ_1_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@9bd62c0
+  DEF LOCAL d47 := FALSE [BOOL]
   d25 := d47 [BOOL]
   GOTO IFEND_62_LEVEL_0
   LABEL IFNEXT_62_SEQ_1_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@9361c8e
-  io.github.H20man13.DeClan.common.icode.Def@1aeaf38f
+  DEF LOCAL d48 := d28 LAND d31 [BOOL]
+  DEF LOCAL d49 := TRUE [BOOL]
   IF d48 EQ d49 THEN IFSTAT_62_SEQ_2_LEVEL_0 ELSE IFNEXT_62_SEQ_2_LEVEL_0
   LABEL IFSTAT_62_SEQ_2_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@40f96234
+  DEF LOCAL d50 := FALSE [BOOL]
   d25 := d50 [BOOL]
   GOTO IFEND_62_LEVEL_0
   LABEL IFNEXT_62_SEQ_2_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@22b0b389
-  io.github.H20man13.DeClan.common.icode.Def@1bdb093d
+  DEF LOCAL d51 := d26 LAND d31 [BOOL]
+  DEF LOCAL d52 := TRUE [BOOL]
   IF d51 EQ d52 THEN IFSTAT_62_SEQ_3_LEVEL_0 ELSE IFNEXT_62_SEQ_3_LEVEL_0
   LABEL IFSTAT_62_SEQ_3_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@56e0e742
+  DEF LOCAL d53 := FALSE [BOOL]
   d25 := d53 [BOOL]
   GOTO IFEND_62_LEVEL_0
   LABEL IFNEXT_62_SEQ_3_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@5d03d768
-  io.github.H20man13.DeClan.common.icode.Def@7a881bba
+  DEF LOCAL d54 := d30 LAND d29 [BOOL]
+  DEF LOCAL d55 := TRUE [BOOL]
   IF d54 EQ d55 THEN IFSTAT_62_SEQ_4_LEVEL_0 ELSE IFNEXT_62_SEQ_4_LEVEL_0
   LABEL IFSTAT_62_SEQ_4_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@39596737
+  DEF LOCAL d56 := TRUE [BOOL]
   d25 := d56 [BOOL]
   GOTO IFEND_62_LEVEL_0
   LABEL IFNEXT_62_SEQ_4_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@68524da9
-  io.github.H20man13.DeClan.common.icode.Def@2b297f5c
+  DEF LOCAL d57 := d30 LAND d27 [BOOL]
+  DEF LOCAL d58 := TRUE [BOOL]
   IF d57 EQ d58 THEN IFSTAT_62_SEQ_5_LEVEL_0 ELSE IFNEXT_62_SEQ_5_LEVEL_0
   LABEL IFSTAT_62_SEQ_5_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@1146e448
+  DEF LOCAL d59 := TRUE [BOOL]
   d25 := d59 [BOOL]
   GOTO IFEND_62_LEVEL_0
   LABEL IFNEXT_62_SEQ_5_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@63d45988
-  io.github.H20man13.DeClan.common.icode.Def@19917f5e
+  DEF LOCAL d60 := d26 LAND d29 [BOOL]
+  DEF LOCAL d61 := TRUE [BOOL]
   IF d60 EQ d61 THEN IFSTAT_62_SEQ_6_LEVEL_0 ELSE IFNEXT_62_SEQ_6_LEVEL_0
   LABEL IFSTAT_62_SEQ_6_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@792220af
+  DEF LOCAL d62 := TRUE [BOOL]
   d25 := d62 [BOOL]
   GOTO IFEND_62_LEVEL_0
   LABEL IFNEXT_62_SEQ_6_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@5f60ff67
-  io.github.H20man13.DeClan.common.icode.Def@1e39e51a
+  DEF LOCAL d63 := d28 LAND d29 [BOOL]
+  DEF LOCAL d64 := TRUE [BOOL]
   IF d63 EQ d64 THEN IFSTAT_62_SEQ_7_LEVEL_0 ELSE IFNEXT_62_SEQ_7_LEVEL_0
   LABEL IFSTAT_62_SEQ_7_LEVEL_0
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@c40120c)
-  io.github.H20man13.DeClan.common.icode.Def@648f7c73
+  CALL RealExponent(((PARAM x) -> a4)[REAL])
+  DEF LOCAL d65 := (RETURN a5) [INT]
   d32 := d65 [INT]
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@3ccc2c42)
-  io.github.H20man13.DeClan.common.icode.Def@6d8c1ff4
+  CALL RealExponent(((PARAM y) -> a4)[REAL])
+  DEF LOCAL d66 := (RETURN a5) [INT]
   d33 := d66 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@61d0a03b
-  io.github.H20man13.DeClan.common.icode.Def@7ea32496
+  DEF LOCAL d67 := d32 LT d33 [BOOL]
+  DEF LOCAL d68 := TRUE [BOOL]
   IF d67 EQ d68 THEN IFSTAT_63_SEQ_0_LEVEL_1 ELSE IFNEXT_63_SEQ_0_LEVEL_1
   LABEL IFSTAT_63_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@23d0b93c
+  DEF LOCAL d69 := TRUE [BOOL]
   d25 := d69 [BOOL]
   GOTO IFEND_63_LEVEL_1
   LABEL IFNEXT_63_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@2e2e610d
-  io.github.H20man13.DeClan.common.icode.Def@4a1bcd8b
+  DEF LOCAL d70 := d32 EQ d33 [BOOL]
+  DEF LOCAL d71 := TRUE [BOOL]
   IF d70 EQ d71 THEN IFSTAT_63_SEQ_1_LEVEL_1 ELSE IFNEXT_63_SEQ_1_LEVEL_1
   LABEL IFSTAT_63_SEQ_1_LEVEL_1
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@2dfbc7ca)
-  io.github.H20man13.DeClan.common.icode.Def@bc49210
+  CALL RealMantissa(((PARAM x) -> a8)[REAL])
+  DEF LOCAL d72 := (RETURN a9) [INT]
   d34 := d72 [INT]
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@56bfac6c)
-  io.github.H20man13.DeClan.common.icode.Def@42dc54a5
+  CALL RealMantissa(((PARAM y) -> a8)[REAL])
+  DEF LOCAL d73 := (RETURN a9) [INT]
   d35 := d73 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@316a1ea3
-  io.github.H20man13.DeClan.common.icode.Def@1e914e8c
+  DEF LOCAL d74 := d34 LT d35 [BOOL]
+  DEF LOCAL d75 := TRUE [BOOL]
   IF d74 EQ d75 THEN IFSTAT_64_SEQ_0_LEVEL_2 ELSE IFNEXT_64_SEQ_0_LEVEL_2
   LABEL IFSTAT_64_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@35665dfe
+  DEF LOCAL d76 := TRUE [BOOL]
   d25 := d76 [BOOL]
   GOTO IFEND_64_LEVEL_2
   LABEL IFNEXT_64_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@153f5e8b
+  DEF LOCAL d77 := FALSE [BOOL]
   d25 := d77 [BOOL]
   GOTO IFEND_64_LEVEL_2
   LABEL IFNEXT_64_SEQ_1_LEVEL_2
   LABEL IFEND_64_LEVEL_2
   GOTO IFEND_63_LEVEL_1
   LABEL IFNEXT_63_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@7441c589
+  DEF LOCAL d78 := FALSE [BOOL]
   d25 := d78 [BOOL]
   GOTO IFEND_63_LEVEL_1
   LABEL IFNEXT_63_SEQ_2_LEVEL_1
   LABEL IFEND_63_LEVEL_1
   GOTO IFEND_62_LEVEL_0
   LABEL IFNEXT_62_SEQ_7_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@603010a3
-  io.github.H20man13.DeClan.common.icode.Def@67be38f6
+  DEF LOCAL d79 := d30 LAND d31 [BOOL]
+  DEF LOCAL d80 := TRUE [BOOL]
   IF d79 EQ d80 THEN IFSTAT_62_SEQ_8_LEVEL_0 ELSE IFNEXT_62_SEQ_8_LEVEL_0
   LABEL IFSTAT_62_SEQ_8_LEVEL_0
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@89af98c)
-  io.github.H20man13.DeClan.common.icode.Def@720d089b
+  CALL RealExponent(((PARAM x) -> a4)[REAL])
+  DEF LOCAL d81 := (RETURN a5) [INT]
   d32 := d81 [INT]
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@1258bb71)
-  io.github.H20man13.DeClan.common.icode.Def@4b75844
+  CALL RealExponent(((PARAM y) -> a4)[REAL])
+  DEF LOCAL d82 := (RETURN a5) [INT]
   d33 := d82 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@5bbe97c7
-  io.github.H20man13.DeClan.common.icode.Def@41ed05fb
+  DEF LOCAL d83 := d32 GT d33 [BOOL]
+  DEF LOCAL d84 := TRUE [BOOL]
   IF d83 EQ d84 THEN IFSTAT_68_SEQ_0_LEVEL_1 ELSE IFNEXT_68_SEQ_0_LEVEL_1
   LABEL IFSTAT_68_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@1639bd84
+  DEF LOCAL d85 := TRUE [BOOL]
   d25 := d85 [BOOL]
   GOTO IFEND_68_LEVEL_1
   LABEL IFNEXT_68_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@28f2b27f
-  io.github.H20man13.DeClan.common.icode.Def@75d0809
+  DEF LOCAL d86 := d32 EQ d33 [BOOL]
+  DEF LOCAL d87 := TRUE [BOOL]
   IF d86 EQ d87 THEN IFSTAT_68_SEQ_1_LEVEL_1 ELSE IFNEXT_68_SEQ_1_LEVEL_1
   LABEL IFSTAT_68_SEQ_1_LEVEL_1
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@2eb617c4)
-  io.github.H20man13.DeClan.common.icode.Def@75b85a0b
+  CALL RealMantissa(((PARAM x) -> a8)[REAL])
+  DEF LOCAL d88 := (RETURN a9) [INT]
   d34 := d88 [INT]
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@48e46f89)
-  io.github.H20man13.DeClan.common.icode.Def@27162bdc
+  CALL RealMantissa(((PARAM y) -> a8)[REAL])
+  DEF LOCAL d89 := (RETURN a9) [INT]
   d35 := d89 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@398010cd
-  io.github.H20man13.DeClan.common.icode.Def@edf6df4
+  DEF LOCAL d90 := d34 GT d35 [BOOL]
+  DEF LOCAL d91 := TRUE [BOOL]
   IF d90 EQ d91 THEN IFSTAT_69_SEQ_0_LEVEL_2 ELSE IFNEXT_69_SEQ_0_LEVEL_2
   LABEL IFSTAT_69_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@65acc381
+  DEF LOCAL d92 := TRUE [BOOL]
   d25 := d92 [BOOL]
   GOTO IFEND_69_LEVEL_2
   LABEL IFNEXT_69_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@73724c23
+  DEF LOCAL d93 := FALSE [BOOL]
   d25 := d93 [BOOL]
   GOTO IFEND_69_LEVEL_2
   LABEL IFNEXT_69_SEQ_1_LEVEL_2
   LABEL IFEND_69_LEVEL_2
   GOTO IFEND_68_LEVEL_1
   LABEL IFNEXT_68_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@4acd2cf8
+  DEF LOCAL d94 := FALSE [BOOL]
   d25 := d94 [BOOL]
   GOTO IFEND_68_LEVEL_1
   LABEL IFNEXT_68_SEQ_2_LEVEL_1
@@ -1875,188 +1875,188 @@ IASM "STR %r, %a"
   GOTO IFEND_62_LEVEL_0
   LABEL IFNEXT_62_SEQ_8_LEVEL_0
   LABEL IFEND_62_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@3f085898
+  DEF RETURN z := d25 [BOOL]
  RETURN
  PROC LABEL RGreaterThanOrEqualTo
-  io.github.H20man13.DeClan.common.icode.Def@3cbb2433
-  io.github.H20man13.DeClan.common.icode.Def@5dc964d3
-  io.github.H20man13.DeClan.common.icode.Def@7e40297e
-  io.github.H20man13.DeClan.common.icode.Def@3f172b6
-  io.github.H20man13.DeClan.common.icode.Def@668e5447
-  io.github.H20man13.DeClan.common.icode.Def@70775bb9
-  io.github.H20man13.DeClan.common.icode.Def@f039710
-  io.github.H20man13.DeClan.common.icode.Def@7ef2084
-  io.github.H20man13.DeClan.common.icode.Def@13576052
-  io.github.H20man13.DeClan.common.icode.Def@59b74b12
-  io.github.H20man13.DeClan.common.icode.Def@4a9ffc23
-  CALL RealIsZero(io.github.H20man13.DeClan.common.icode.Def@340a1ef4)
-  io.github.H20man13.DeClan.common.icode.Def@1c77bdd7
+  DEF LOCAL d95 := FALSE [BOOL]
+  DEF LOCAL d96 := FALSE [BOOL]
+  DEF LOCAL d97 := FALSE [BOOL]
+  DEF LOCAL d98 := FALSE [BOOL]
+  DEF LOCAL d99 := FALSE [BOOL]
+  DEF LOCAL e10 := FALSE [BOOL]
+  DEF LOCAL e11 := FALSE [BOOL]
+  DEF LOCAL e12 := 0 [INT]
+  DEF LOCAL e13 := 0 [INT]
+  DEF LOCAL e14 := 0 [INT]
+  DEF LOCAL e15 := 0 [INT]
+  CALL RealIsZero(((PARAM A) -> b70)[REAL])
+  DEF LOCAL e16 := (RETURN b71) [BOOL]
   d96 := e16 [BOOL]
-  CALL RealIsZero(io.github.H20man13.DeClan.common.icode.Def@7ffb8a90)
-  io.github.H20man13.DeClan.common.icode.Def@4a301fa8
+  CALL RealIsZero(((PARAM B) -> b70)[REAL])
+  DEF LOCAL e17 := (RETURN b71) [BOOL]
   d97 := e17 [BOOL]
-  CALL RealIsNegative(io.github.H20man13.DeClan.common.icode.Def@2ea945a4)
-  io.github.H20man13.DeClan.common.icode.Def@f91cca3
+  CALL RealIsNegative(((PARAM A) -> b74)[REAL])
+  DEF LOCAL e18 := (RETURN b75) [BOOL]
   d98 := e18 [BOOL]
-  CALL RealIsNegative(io.github.H20man13.DeClan.common.icode.Def@2c9d68cb)
-  io.github.H20man13.DeClan.common.icode.Def@661aefaf
+  CALL RealIsNegative(((PARAM B) -> b74)[REAL])
+  DEF LOCAL e19 := (RETURN b75) [BOOL]
   d99 := e19 [BOOL]
-  CALL RealIsPositive(io.github.H20man13.DeClan.common.icode.Def@27a12ad)
-  io.github.H20man13.DeClan.common.icode.Def@30f3295
+  CALL RealIsPositive(((PARAM A) -> b78)[REAL])
+  DEF LOCAL e20 := (RETURN b79) [BOOL]
   e10 := e20 [BOOL]
-  CALL RealIsPositive(io.github.H20man13.DeClan.common.icode.Def@4493c90f)
-  io.github.H20man13.DeClan.common.icode.Def@75c521a5
+  CALL RealIsPositive(((PARAM B) -> b78)[REAL])
+  DEF LOCAL e21 := (RETURN b79) [BOOL]
   e11 := e21 [BOOL]
-  io.github.H20man13.DeClan.common.icode.Def@27f8aaca
-  io.github.H20man13.DeClan.common.icode.Def@5d99af3a
+  DEF LOCAL e22 := d96 LAND d97 [BOOL]
+  DEF LOCAL e23 := TRUE [BOOL]
   IF e22 EQ e23 THEN IFSTAT_73_SEQ_0_LEVEL_0 ELSE IFNEXT_73_SEQ_0_LEVEL_0
   LABEL IFSTAT_73_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@718de37
+  DEF LOCAL e24 := TRUE [BOOL]
   d95 := e24 [BOOL]
   GOTO IFEND_73_LEVEL_0
   LABEL IFNEXT_73_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@5b0c0f78
-  io.github.H20man13.DeClan.common.icode.Def@39405029
+  DEF LOCAL e25 := d98 LAND d97 [BOOL]
+  DEF LOCAL e26 := TRUE [BOOL]
   IF e25 EQ e26 THEN IFSTAT_73_SEQ_1_LEVEL_0 ELSE IFNEXT_73_SEQ_1_LEVEL_0
   LABEL IFSTAT_73_SEQ_1_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@29b0d844
+  DEF LOCAL e27 := FALSE [BOOL]
   d95 := e27 [BOOL]
   GOTO IFEND_73_LEVEL_0
   LABEL IFNEXT_73_SEQ_1_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@68184223
-  io.github.H20man13.DeClan.common.icode.Def@5354e797
+  DEF LOCAL e28 := d98 LAND e11 [BOOL]
+  DEF LOCAL e29 := TRUE [BOOL]
   IF e28 EQ e29 THEN IFSTAT_73_SEQ_2_LEVEL_0 ELSE IFNEXT_73_SEQ_2_LEVEL_0
   LABEL IFSTAT_73_SEQ_2_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@682e24cc
+  DEF LOCAL e30 := FALSE [BOOL]
   d95 := e30 [BOOL]
   GOTO IFEND_73_LEVEL_0
   LABEL IFNEXT_73_SEQ_2_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@4773a375
-  io.github.H20man13.DeClan.common.icode.Def@6d50f8e2
+  DEF LOCAL e31 := e10 LAND d97 [BOOL]
+  DEF LOCAL e32 := TRUE [BOOL]
   IF e31 EQ e32 THEN IFSTAT_73_SEQ_3_LEVEL_0 ELSE IFNEXT_73_SEQ_3_LEVEL_0
   LABEL IFSTAT_73_SEQ_3_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@194cc280
+  DEF LOCAL e33 := TRUE [BOOL]
   d95 := e33 [BOOL]
   GOTO IFEND_73_LEVEL_0
   LABEL IFNEXT_73_SEQ_3_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@5d8d21
-  io.github.H20man13.DeClan.common.icode.Def@5aefee54
+  DEF LOCAL e34 := e10 LAND d99 [BOOL]
+  DEF LOCAL e35 := TRUE [BOOL]
   IF e34 EQ e35 THEN IFSTAT_73_SEQ_4_LEVEL_0 ELSE IFNEXT_73_SEQ_4_LEVEL_0
   LABEL IFSTAT_73_SEQ_4_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@30928a03
+  DEF LOCAL e36 := TRUE [BOOL]
   d95 := e36 [BOOL]
   GOTO IFEND_73_LEVEL_0
   LABEL IFNEXT_73_SEQ_4_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@4fb51653
-  io.github.H20man13.DeClan.common.icode.Def@236dae01
+  DEF LOCAL e37 := d96 LAND e11 [BOOL]
+  DEF LOCAL e38 := TRUE [BOOL]
   IF e37 EQ e38 THEN IFSTAT_73_SEQ_5_LEVEL_0 ELSE IFNEXT_73_SEQ_5_LEVEL_0
   LABEL IFSTAT_73_SEQ_5_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@6556976
+  DEF LOCAL e39 := FALSE [BOOL]
   d95 := e39 [BOOL]
   GOTO IFEND_73_LEVEL_0
   LABEL IFNEXT_73_SEQ_5_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@2233392d
-  io.github.H20man13.DeClan.common.icode.Def@45d3a4b6
+  DEF LOCAL e40 := d96 LAND d99 [BOOL]
+  DEF LOCAL e41 := TRUE [BOOL]
   IF e40 EQ e41 THEN IFSTAT_73_SEQ_6_LEVEL_0 ELSE IFNEXT_73_SEQ_6_LEVEL_0
   LABEL IFSTAT_73_SEQ_6_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@b0017ab
+  DEF LOCAL e42 := TRUE [BOOL]
   d95 := e42 [BOOL]
   GOTO IFEND_73_LEVEL_0
   LABEL IFNEXT_73_SEQ_6_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@26b3c164
-  io.github.H20man13.DeClan.common.icode.Def@1d726ece
+  DEF LOCAL e43 := d98 LAND d99 [BOOL]
+  DEF LOCAL e44 := TRUE [BOOL]
   IF e43 EQ e44 THEN IFSTAT_73_SEQ_7_LEVEL_0 ELSE IFNEXT_73_SEQ_7_LEVEL_0
   LABEL IFSTAT_73_SEQ_7_LEVEL_0
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@455c8fc2)
-  io.github.H20man13.DeClan.common.icode.Def@4e6a658d
+  CALL RealExponent(((PARAM A) -> a4)[REAL])
+  DEF LOCAL e45 := (RETURN a5) [INT]
   e12 := e45 [INT]
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@766a35c5)
-  io.github.H20man13.DeClan.common.icode.Def@78e031d8
+  CALL RealExponent(((PARAM B) -> a4)[REAL])
+  DEF LOCAL e46 := (RETURN a5) [INT]
   e13 := e46 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@59e38399
-  io.github.H20man13.DeClan.common.icode.Def@44b8c325
+  DEF LOCAL e47 := e12 LT e13 [BOOL]
+  DEF LOCAL e48 := TRUE [BOOL]
   IF e47 EQ e48 THEN IFSTAT_74_SEQ_0_LEVEL_1 ELSE IFNEXT_74_SEQ_0_LEVEL_1
   LABEL IFSTAT_74_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@63db126a
+  DEF LOCAL e49 := TRUE [BOOL]
   d95 := e49 [BOOL]
   GOTO IFEND_74_LEVEL_1
   LABEL IFNEXT_74_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@1acc9138
-  io.github.H20man13.DeClan.common.icode.Def@5f7636b3
+  DEF LOCAL e50 := e12 EQ e13 [BOOL]
+  DEF LOCAL e51 := TRUE [BOOL]
   IF e50 EQ e51 THEN IFSTAT_74_SEQ_1_LEVEL_1 ELSE IFNEXT_74_SEQ_1_LEVEL_1
   LABEL IFSTAT_74_SEQ_1_LEVEL_1
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@5d556793)
-  io.github.H20man13.DeClan.common.icode.Def@66266611
+  CALL RealMantissa(((PARAM A) -> a8)[REAL])
+  DEF LOCAL e52 := (RETURN a9) [INT]
   e14 := e52 [INT]
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@189d7ebc)
-  io.github.H20man13.DeClan.common.icode.Def@763000b2
+  CALL RealMantissa(((PARAM B) -> a8)[REAL])
+  DEF LOCAL e53 := (RETURN a9) [INT]
   e15 := e53 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@af8818
-  io.github.H20man13.DeClan.common.icode.Def@55ec70f2
+  DEF LOCAL e54 := e14 LE e15 [BOOL]
+  DEF LOCAL e55 := TRUE [BOOL]
   IF e54 EQ e55 THEN IFSTAT_75_SEQ_0_LEVEL_2 ELSE IFNEXT_75_SEQ_0_LEVEL_2
   LABEL IFSTAT_75_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@26f78c6d
+  DEF LOCAL e56 := TRUE [BOOL]
   d95 := e56 [BOOL]
   GOTO IFEND_75_LEVEL_2
   LABEL IFNEXT_75_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@50b42d91
+  DEF LOCAL e57 := FALSE [BOOL]
   d95 := e57 [BOOL]
   GOTO IFEND_75_LEVEL_2
   LABEL IFNEXT_75_SEQ_1_LEVEL_2
   LABEL IFEND_75_LEVEL_2
   GOTO IFEND_74_LEVEL_1
   LABEL IFNEXT_74_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@2c2780d7
+  DEF LOCAL e58 := FALSE [BOOL]
   d95 := e58 [BOOL]
   GOTO IFEND_74_LEVEL_1
   LABEL IFNEXT_74_SEQ_2_LEVEL_1
   LABEL IFEND_74_LEVEL_1
   GOTO IFEND_73_LEVEL_0
   LABEL IFNEXT_73_SEQ_7_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@1a7a0e41
-  io.github.H20man13.DeClan.common.icode.Def@747d87
+  DEF LOCAL e59 := e10 LAND e11 [BOOL]
+  DEF LOCAL e60 := TRUE [BOOL]
   IF e59 EQ e60 THEN IFSTAT_73_SEQ_8_LEVEL_0 ELSE IFNEXT_73_SEQ_8_LEVEL_0
   LABEL IFSTAT_73_SEQ_8_LEVEL_0
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@715d10bd)
-  io.github.H20man13.DeClan.common.icode.Def@616c0779
+  CALL RealExponent(((PARAM A) -> a4)[REAL])
+  DEF LOCAL e61 := (RETURN a5) [INT]
   e12 := e61 [INT]
-  CALL RealExponent(io.github.H20man13.DeClan.common.icode.Def@2bae0513)
-  io.github.H20man13.DeClan.common.icode.Def@815cda4
+  CALL RealExponent(((PARAM B) -> a4)[REAL])
+  DEF LOCAL e62 := (RETURN a5) [INT]
   e12 := e62 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@1154fce3
-  io.github.H20man13.DeClan.common.icode.Def@1002667f
+  DEF LOCAL e63 := e12 GT e13 [BOOL]
+  DEF LOCAL e64 := TRUE [BOOL]
   IF e63 EQ e64 THEN IFSTAT_79_SEQ_0_LEVEL_1 ELSE IFNEXT_79_SEQ_0_LEVEL_1
   LABEL IFSTAT_79_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@4b5f7ff1
+  DEF LOCAL e65 := TRUE [BOOL]
   d95 := e65 [BOOL]
   GOTO IFEND_79_LEVEL_1
   LABEL IFNEXT_79_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@6d01f3d3
-  io.github.H20man13.DeClan.common.icode.Def@5b04b974
+  DEF LOCAL e66 := e12 EQ e13 [BOOL]
+  DEF LOCAL e67 := TRUE [BOOL]
   IF e66 EQ e67 THEN IFSTAT_79_SEQ_1_LEVEL_1 ELSE IFNEXT_79_SEQ_1_LEVEL_1
   LABEL IFSTAT_79_SEQ_1_LEVEL_1
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@58361df5)
-  io.github.H20man13.DeClan.common.icode.Def@68a641f5
+  CALL RealMantissa(((PARAM A) -> a8)[REAL])
+  DEF LOCAL e68 := (RETURN a9) [INT]
   e14 := e68 [INT]
-  CALL RealMantissa(io.github.H20man13.DeClan.common.icode.Def@adbb859)
-  io.github.H20man13.DeClan.common.icode.Def@746a7f6f
+  CALL RealMantissa(((PARAM B) -> a8)[REAL])
+  DEF LOCAL e69 := (RETURN a9) [INT]
   e15 := e69 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@1c5b0da2
-  io.github.H20man13.DeClan.common.icode.Def@46a84e35
+  DEF LOCAL e70 := e14 GE e15 [BOOL]
+  DEF LOCAL e71 := TRUE [BOOL]
   IF e70 EQ e71 THEN IFSTAT_80_SEQ_0_LEVEL_2 ELSE IFNEXT_80_SEQ_0_LEVEL_2
   LABEL IFSTAT_80_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@11e62fc9
+  DEF LOCAL e72 := TRUE [BOOL]
   d95 := e72 [BOOL]
   GOTO IFEND_80_LEVEL_2
   LABEL IFNEXT_80_SEQ_0_LEVEL_2
-  io.github.H20man13.DeClan.common.icode.Def@36d0bb9d
+  DEF LOCAL e73 := FALSE [BOOL]
   d95 := e73 [BOOL]
   GOTO IFEND_80_LEVEL_2
   LABEL IFNEXT_80_SEQ_1_LEVEL_2
   LABEL IFEND_80_LEVEL_2
   GOTO IFEND_79_LEVEL_1
   LABEL IFNEXT_79_SEQ_1_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@722286f8
+  DEF LOCAL e74 := FALSE [BOOL]
   d95 := e74 [BOOL]
   GOTO IFEND_79_LEVEL_1
   LABEL IFNEXT_79_SEQ_2_LEVEL_1
@@ -2064,47 +2064,47 @@ IASM "STR %r, %a"
   GOTO IFEND_73_LEVEL_0
   LABEL IFNEXT_73_SEQ_8_LEVEL_0
   LABEL IFEND_73_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@76ffb76f
+  DEF RETURN C := d95 [BOOL]
  RETURN
  PROC LABEL REqualTo
-  io.github.H20man13.DeClan.common.icode.Def@5647461e
-  io.github.H20man13.DeClan.common.icode.Def@65781318
-  io.github.H20man13.DeClan.common.icode.Def@30b4c09
-  io.github.H20man13.DeClan.common.icode.Def@8c4c7c8
-  io.github.H20man13.DeClan.common.icode.Def@64df1778
-  io.github.H20man13.DeClan.common.icode.Def@419a3828
-  CALL RealIsZero(io.github.H20man13.DeClan.common.icode.Def@18a85f16)
-  io.github.H20man13.DeClan.common.icode.Def@36fc214c
+  DEF LOCAL e75 := FALSE [BOOL]
+  DEF LOCAL e76 := FALSE [BOOL]
+  DEF LOCAL e77 := FALSE [BOOL]
+  DEF LOCAL e78 := 0 [INT]
+  DEF LOCAL e79 := 0 [INT]
+  DEF LOCAL e80 := 0 [INT]
+  CALL RealIsZero(((PARAM D) -> b70)[REAL])
+  DEF LOCAL e81 := (RETURN b71) [BOOL]
   e76 := e81 [BOOL]
-  CALL RealIsZero(io.github.H20man13.DeClan.common.icode.Def@2a84843c)
-  io.github.H20man13.DeClan.common.icode.Def@3a4fb23c
+  CALL RealIsZero(((PARAM E) -> b70)[REAL])
+  DEF LOCAL e82 := (RETURN b71) [BOOL]
   e77 := e82 [BOOL]
-  io.github.H20man13.DeClan.common.icode.Def@60450a8c
-  io.github.H20man13.DeClan.common.icode.Def@37e4b189
+  DEF LOCAL e83 := e76 LAND e77 [BOOL]
+  DEF LOCAL e84 := TRUE [BOOL]
   IF e83 EQ e84 THEN IFSTAT_84_SEQ_0_LEVEL_0 ELSE IFNEXT_84_SEQ_0_LEVEL_0
   LABEL IFSTAT_84_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@39cf762d
+  DEF LOCAL e85 := TRUE [BOOL]
   e75 := e85 [BOOL]
   GOTO IFEND_84_LEVEL_0
   LABEL IFNEXT_84_SEQ_0_LEVEL_0
-  CALL RealBinaryAsInt(io.github.H20man13.DeClan.common.icode.Def@7e56ed7a)
-  io.github.H20man13.DeClan.common.icode.Def@360f8956
+  CALL RealBinaryAsInt(((PARAM D) -> b54)[REAL])
+  DEF LOCAL e86 := (RETURN b55) [INT]
   e79 := e86 [INT]
-  CALL RealBinaryAsInt(io.github.H20man13.DeClan.common.icode.Def@24750ee7)
-  io.github.H20man13.DeClan.common.icode.Def@66c97a5a
+  CALL RealBinaryAsInt(((PARAM E) -> b54)[REAL])
+  DEF LOCAL e87 := (RETURN b55) [INT]
   e80 := e87 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@2fbd76c4
+  DEF LOCAL e88 := e79 IXOR e80 [INT]
   e78 := e88 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@65320f5c
-  io.github.H20man13.DeClan.common.icode.Def@693c272b
-  io.github.H20man13.DeClan.common.icode.Def@440a8bfc
+  DEF LOCAL e89 := 0 [INT]
+  DEF LOCAL e90 := e78 EQ e89 [BOOL]
+  DEF LOCAL e91 := TRUE [BOOL]
   IF e90 EQ e91 THEN IFSTAT_85_SEQ_0_LEVEL_1 ELSE IFNEXT_85_SEQ_0_LEVEL_1
   LABEL IFSTAT_85_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@c5ceef
+  DEF LOCAL e92 := TRUE [BOOL]
   e75 := e92 [BOOL]
   GOTO IFEND_85_LEVEL_1
   LABEL IFNEXT_85_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@75f86944
+  DEF LOCAL e93 := FALSE [BOOL]
   e75 := e93 [BOOL]
   GOTO IFEND_85_LEVEL_1
   LABEL IFNEXT_85_SEQ_1_LEVEL_1
@@ -2112,47 +2112,47 @@ IASM "STR %r, %a"
   GOTO IFEND_84_LEVEL_0
   LABEL IFNEXT_84_SEQ_1_LEVEL_0
   LABEL IFEND_84_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@7df51daf
+  DEF RETURN F := e75 [BOOL]
  RETURN
  PROC LABEL RNotEqualTo
-  io.github.H20man13.DeClan.common.icode.Def@6d302c86
-  io.github.H20man13.DeClan.common.icode.Def@43ac3579
-  io.github.H20man13.DeClan.common.icode.Def@75a8d601
-  io.github.H20man13.DeClan.common.icode.Def@2065a57e
-  io.github.H20man13.DeClan.common.icode.Def@4c5df9e8
-  io.github.H20man13.DeClan.common.icode.Def@6ef81ae7
-  CALL RealIsZero(io.github.H20man13.DeClan.common.icode.Def@5dd3d1e7)
-  io.github.H20man13.DeClan.common.icode.Def@5010c176
+  DEF LOCAL e94 := FALSE [BOOL]
+  DEF LOCAL e95 := FALSE [BOOL]
+  DEF LOCAL e96 := FALSE [BOOL]
+  DEF LOCAL e97 := 0 [INT]
+  DEF LOCAL e98 := 0 [INT]
+  DEF LOCAL e99 := 0 [INT]
+  CALL RealIsZero(((PARAM G) -> b70)[REAL])
+  DEF LOCAL f10 := (RETURN b71) [BOOL]
   e95 := f10 [BOOL]
-  CALL RealIsZero(io.github.H20man13.DeClan.common.icode.Def@73a1f025)
-  io.github.H20man13.DeClan.common.icode.Def@5d20e394
+  CALL RealIsZero(((PARAM H) -> b70)[REAL])
+  DEF LOCAL f11 := (RETURN b71) [BOOL]
   e96 := f11 [BOOL]
-  io.github.H20man13.DeClan.common.icode.Def@1ebf5d3e
-  io.github.H20man13.DeClan.common.icode.Def@48f224ee
+  DEF LOCAL f12 := e95 LAND e96 [BOOL]
+  DEF LOCAL f13 := TRUE [BOOL]
   IF f12 EQ f13 THEN IFSTAT_87_SEQ_0_LEVEL_0 ELSE IFNEXT_87_SEQ_0_LEVEL_0
   LABEL IFSTAT_87_SEQ_0_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@342ec50d
+  DEF LOCAL f14 := FALSE [BOOL]
   e94 := f14 [BOOL]
   GOTO IFEND_87_LEVEL_0
   LABEL IFNEXT_87_SEQ_0_LEVEL_0
-  CALL RealBinaryAsInt(io.github.H20man13.DeClan.common.icode.Def@6e48bc5f)
-  io.github.H20man13.DeClan.common.icode.Def@a7a4a05
+  CALL RealBinaryAsInt(((PARAM G) -> b54)[REAL])
+  DEF LOCAL f15 := (RETURN b55) [INT]
   e98 := f15 [INT]
-  CALL RealBinaryAsInt(io.github.H20man13.DeClan.common.icode.Def@53f6caf0)
-  io.github.H20man13.DeClan.common.icode.Def@11b26b2e
+  CALL RealBinaryAsInt(((PARAM H) -> b54)[REAL])
+  DEF LOCAL f16 := (RETURN b55) [INT]
   e99 := f16 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@3a338703
+  DEF LOCAL f17 := e98 IXOR e99 [INT]
   e97 := f17 [INT]
-  io.github.H20man13.DeClan.common.icode.Def@62c1c822
-  io.github.H20man13.DeClan.common.icode.Def@7853fc0
-  io.github.H20man13.DeClan.common.icode.Def@5eccf05
+  DEF LOCAL f18 := 0 [INT]
+  DEF LOCAL f19 := e97 EQ f18 [BOOL]
+  DEF LOCAL f20 := TRUE [BOOL]
   IF f19 EQ f20 THEN IFSTAT_88_SEQ_0_LEVEL_1 ELSE IFNEXT_88_SEQ_0_LEVEL_1
   LABEL IFSTAT_88_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@23414b24
+  DEF LOCAL f21 := FALSE [BOOL]
   e94 := f21 [BOOL]
   GOTO IFEND_88_LEVEL_1
   LABEL IFNEXT_88_SEQ_0_LEVEL_1
-  io.github.H20man13.DeClan.common.icode.Def@4f2d17b6
+  DEF LOCAL f22 := TRUE [BOOL]
   e94 := f22 [BOOL]
   GOTO IFEND_88_LEVEL_1
   LABEL IFNEXT_88_SEQ_1_LEVEL_1
@@ -2160,5 +2160,5 @@ IASM "STR %r, %a"
   GOTO IFEND_87_LEVEL_0
   LABEL IFNEXT_87_SEQ_1_LEVEL_0
   LABEL IFEND_87_LEVEL_0
-  io.github.H20man13.DeClan.common.icode.Def@61784aac
+  DEF RETURN I := e94 [BOOL]
  RETURN
