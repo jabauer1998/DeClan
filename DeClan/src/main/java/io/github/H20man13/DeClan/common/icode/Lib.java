@@ -636,7 +636,7 @@ public class Lib implements ICode, Iterable<ICode> {
                         sb.append(instruction.toString());
                         sb.append("\r\n");
                     } else {
-                        sb.append(Utils.formatStringToLeadingWhiteSpace(" " + instruction.toString()));
+                        sb.append(Utils.formatStringToLeadingWhiteSpace("  " + instruction.toString()));
                         sb.append("\r\n");
                     }
             }

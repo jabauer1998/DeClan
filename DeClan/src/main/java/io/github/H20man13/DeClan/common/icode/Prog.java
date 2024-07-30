@@ -121,7 +121,7 @@ public class Prog extends Lib implements ICode {
                         sb.append(instruction.toString());
                         sb.append("\r\n");
                     } else {
-                        sb.append(Utils.formatStringToLeadingWhiteSpace(" " + instruction.toString()));
+                        sb.append(Utils.formatStringToLeadingWhiteSpace("  " + instruction.toString()));
                         sb.append("\r\n");
                     }
             }
