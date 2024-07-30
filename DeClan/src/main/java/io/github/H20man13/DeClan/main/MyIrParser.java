@@ -281,6 +281,8 @@ public class MyIrParser {
             return parseGoto();
         } else if(willMatch(IrTokenType.CALL)){
             return parseProcedureCall();  
+        } else if(willMatch(IrTokenType.DEF)){
+            return parseDefinition();  
         } else {
             return parseAssignment();
         }
