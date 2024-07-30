@@ -598,6 +598,7 @@ public class Lib implements ICode, Iterable<ICode> {
                         sb.append(instruction.toString());
                         sb.append("\r\n");
                     }
+                    break;
                 case SYMBOL_SECTION:
                     if(instruction instanceof DataSec){
                         state = State.DATA_SECTION;

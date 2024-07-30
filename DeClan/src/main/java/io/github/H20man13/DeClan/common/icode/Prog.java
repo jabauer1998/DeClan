@@ -1,9 +1,6 @@
 package io.github.H20man13.DeClan.common.icode;
 
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
@@ -62,6 +59,7 @@ public class Prog extends Lib implements ICode {
                         sb.append(instruction.toString());
                         sb.append("\r\n");
                     }
+                    break;
                 case SYMBOL_SECTION:
                     if(instruction instanceof DataSec){
                         state = State.DATA_SECTION;
