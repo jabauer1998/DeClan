@@ -147,9 +147,9 @@ public class MyIrParser {
             toRet.add(icode);
             while(willMatch(IrTokenType.LABEL) || willMatch(IrTokenType.IF) 
             || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) 
-            || willMatch(IrTokenType.RETURN) || willMatch(IrTokenType.IASM) 
-            || willMatch(IrTokenType.IPARAM) || willMatch(IrTokenType.CALL)
-            || willMatch(IrTokenType.GLOBAL) || willMatch(IrTokenType.DEF)){
+            || willMatch(IrTokenType.IASM) || willMatch(IrTokenType.IPARAM) 
+            || willMatch(IrTokenType.CALL) || willMatch(IrTokenType.GLOBAL) 
+            || willMatch(IrTokenType.DEF)){
                 icode = parseInstruction();
                 toRet.add(icode);
             }
@@ -180,10 +180,10 @@ public class MyIrParser {
             icode = parseProcedureLabel();
             toRet.add(icode);
             while(willMatch(IrTokenType.LABEL) || willMatch(IrTokenType.IF) 
-            || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) 
-            || willMatch(IrTokenType.RETURN) || willMatch(IrTokenType.IASM) 
-            || willMatch(IrTokenType.IPARAM) || willMatch(IrTokenType.CALL)
-            || willMatch(IrTokenType.GLOBAL) || willMatch(IrTokenType.DEF)){
+            || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) || 
+            willMatch(IrTokenType.IASM) || willMatch(IrTokenType.IPARAM) || 
+            willMatch(IrTokenType.CALL) || willMatch(IrTokenType.GLOBAL) || 
+            willMatch(IrTokenType.DEF)){
                 icode = parseInstruction();
                 toRet.add(icode);
             }
