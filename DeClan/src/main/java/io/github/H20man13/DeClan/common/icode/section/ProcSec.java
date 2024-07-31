@@ -20,11 +20,7 @@ public class ProcSec implements ICode {
 
     @Override
     public boolean equals(Object obj){
-        if(obj instanceof ProcSec){
-            return true;
-        } else {
-            return false;
-        }
+        return obj instanceof ProcSec;
     }
 
     @Override

@@ -15,6 +15,12 @@ public class DataSec implements ICode {
     public boolean isBranch() {
         return false;
     }
+
+    @Override
+    public boolean equals(Object obj){
+        return obj instanceof DataSec;
+    }
+    
     @Override
     public P asPattern() {
         return P.PAT(P.DATA(), P.SECTION());

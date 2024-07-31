@@ -30,11 +30,7 @@ public class CodeSec implements ICode {
 
     @Override
     public boolean equals(Object obj){
-        if(obj instanceof CodeSec){
-            return true;
-        } else {
-            return false;
-        }
+        return obj instanceof CodeSec;
     }
 
     @Override

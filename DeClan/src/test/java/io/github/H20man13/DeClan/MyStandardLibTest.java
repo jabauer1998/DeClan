@@ -10,6 +10,7 @@ import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.ast.Library;
 import io.github.H20man13.DeClan.common.ElaborateReaderSource;
+import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
@@ -32,7 +33,12 @@ public class MyStandardLibTest {
         String irFile = irDir + '\\' + libName + ".ilib";
         Lib irLib = parseIrSource(irFile, errLog);
 
-        assertTrue("Error ir lib \n\n" + irLib.toString() + "is not equal to declanLib " + declanLib.toString(), irLib.equals(declanLib));
+        assertTrue("Number of instructions in irLib not equal to number of ir instructions in generated declan lib \nirLib: " + irLib.getSize() + "\ndeclanLib: " + declanLib.getSize(), irLib.getSize() == declanLib.getSize());
+        for(int i = 0; i < irLib.getSize(); i++){
+            ICode irLibInstr = irLib.getInstruction(i);
+            ICode declanLibInstr = declanLib.getInstruction(i);
+            assertTrue("Ir file instruction " + irLibInstr.toString() + "\n\n is not equal to declanLib instr \n\n" + declanLibInstr.toString(), declanLibInstr.equals(irLibInstr));
+        }
     }
 
     private static Lib parseAndGenerateDeclanSource(String declanFile, ErrorLog errLog){

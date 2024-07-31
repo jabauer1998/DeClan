@@ -21,6 +21,11 @@ public class BssSec implements ICode {
     }
 
     @Override
+    public boolean equals(Object obj){
+        return obj instanceof BssSec;
+    }
+
+    @Override
     public String toString(){
         return "BSS SECTION";
     }
