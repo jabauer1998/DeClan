@@ -1,21 +1,17 @@
 package io.github.H20man13.DeClan;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.StringReader;
-import java.util.List;
 import java.util.Scanner;
 
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import edu.depauw.declan.common.ErrorLog;
 import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.ast.Program;
 import io.github.H20man13.DeClan.common.ReaderSource;
-import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
-import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
@@ -90,15 +86,13 @@ public class ICodeGeneratorTest {
     public void testBinaryOp(){
         String program = "SYMBOL SECTION\r\n"
                        + "DATA SECTION\r\n"
+                       + "BSS SECTION\r\n"
                        + "CODE SECTION\r\n"
                        + " x := 456 [INT]\r\n"
                        + " z := 48393 [INT]\r\n"
                        + " v := x IADD z [INT]\r\n"
                        + " y := v ISUB v [INT]\r\n"
                        + " e := y IMUL g [INT]\r\n"
-                       + " v := x RADD z [REAL]\r\n"
-                       + " y := v RSUB v [REAL]\r\n"
-                       + " e := y RMUL g [REAL]\r\n"
                        + " y := z LOR x [BOOL]\r\n"
                        + " Z := b IOR x [INT]\r\n"
                        + " g := v LAND z [BOOL]\r\n"
@@ -130,8 +124,9 @@ public class ICodeGeneratorTest {
     public void testUnaryOp(){
         String program = "SYMBOL SECTION\r\n"
                        + "DATA SECTION\r\n"
-                       + " GLOBAL x := 38393 [INT]\r\n"
-                       + " GLOBAL z := BNOT y [BOOL]\r\n"
+                       + " DEF GLOBAL x := 38393 [INT]\r\n"
+                       + " DEF GLOBAL z := BNOT y [BOOL]\r\n"
+                       + "BSS SECTION\r\n"
                        + "CODE SECTION\r\n"
                        + "END\r\n"
                        + "PROC SECTION\r\n";
@@ -152,8 +147,9 @@ public class ICodeGeneratorTest {
     public void testBooleanAssignment(){
         String program = "SYMBOL SECTION\r\n"
                        + "DATA SECTION\r\n"
-                       + " GLOBAL v := FALSE [BOOL]\r\n"
-                       + " GLOBAL z := TRUE [BOOL]\r\n"
+                       + " DEF GLOBAL v := FALSE [BOOL]\r\n"
+                       + " DEF GLOBAL z := TRUE [BOOL]\r\n"
+                       + "BSS SECTION\r\n"
                        + "CODE SECTION\r\n"
                        + "END\r\n"
                        + "PROC SECTION\r\n";
@@ -174,8 +170,9 @@ public class ICodeGeneratorTest {
     public void testNumAssignment(){
         String program = "SYMBOL SECTION\r\n"
                        + "DATA SECTION\r\n"
-                       + " GLOBAL x := 89309 [INT]\r\n"
-                       + " GLOBAL z := 438.343 [INT]\r\n"
+                       + " DEF GLOBAL x := 89309 [INT]\r\n"
+                       + " DEF GLOBAL z := 438.343 [INT]\r\n"
+                       + "BSS SECTION\r\n"
                        + "CODE SECTION\r\n"
                        + "END\r\n"
                        + "PROC SECTION\r\n";
@@ -196,18 +193,19 @@ public class ICodeGeneratorTest {
     public void testProcedureCall(){
         String program = "SYMBOL SECTION\r\n"
                        + "DATA SECTION\r\n"
+                       + "BSS SECTION\r\n"
                        + "CODE SECTION\r\n"
-                       + " t := 899 [INT]\r\n"
-                       + " g := 89 [INT]\r\n"
-                       + " f := 98 [INT]\r\n"
+                       + " DEF t := 899 [INT]\r\n"
+                       + " DEF g := 89 [INT]\r\n"
+                       + " DEF f := 98 [INT]\r\n"
                        + " CALL func((t -> x)[INT], (g -> y)[INT], (f -> z)[INT])\r\n"
-                       + " EXTERNAL RETURN x := z [INT]\r\n"
+                       + " DEF x := (RETURN z) [INT]\r\n"
                        + "END\r\n"
                        + "PROC SECTION\r\n"
                        + " PROC LABEL func\r\n"
-                       + "  x := 78 [INT]\r\n"
-                       + "  y := 79 [INT]\r\n"
-                       + "  INTERNAL RETURN z := 48 [INT]\r\n"
+                       + "  DEF x := 78 [INT]\r\n"
+                       + "  DEF y := 79 [INT]\r\n"
+                       + "  DEF RETURN z := 48 [INT]\r\n"
                        + " RETURN\r\n";
 
 
@@ -227,7 +225,8 @@ public class ICodeGeneratorTest {
     public void testStringDecl(){
         String program = "SYMBOL SECTION\r\n"
                        + "DATA SECTION\r\n"
-                       + " GLOBAL t := \"Text Here\" [STRING]\r\n"
+                       + " DEF GLOBAL t := \"Text Here\" [STRING]\r\n"
+                       + "BSS SECTION\r\n"
                        + "CODE SECTION\r\n"
                        + "END\r\n"
                        + "PROC SECTION\r\n";
@@ -248,37 +247,16 @@ public class ICodeGeneratorTest {
     public void testIfStatement(){
         String program = "SYMBOL SECTION\r\n"
                        + "DATA SECTION\r\n"
+                       + " DEF GLOBAL trueVal := TRUE [BOOL]\r\n"
+                       + "BSS SECTION\r\n"
                        + "CODE SECTION\n"
                        + " LABEL y\r\n"
-                       + " IF x EQ TRUE THEN z ELSE y\r\n"
+                       + " IF x EQ trueVal\r\n"
+                       + " THEN z\r\n"
+                       + " ELSE y\r\n"
                        + " LABEL z\r\n"
                        + "END\r\n"
                        + "PROC SECTION\r\n";
-
-        Source mySource = new ReaderSource(new StringReader(program));
-        ErrorLog errorLog = new ErrorLog();
-        MyIrLexer lexer = new MyIrLexer(mySource, errorLog);
-        MyIrParser parser = new MyIrParser(lexer, errorLog);
-
-        Prog programICode = parser.parseProgram();
-
-        assertTrue(!parser.containsErrors());
-
-        testReaderSource(programICode, program);
-    }
-
-    @Test
-    public void testParamaterPlacement(){
-        String program = "SYMBOL SECTION\r\n"
-                       + "DATA SECTION\r\n"
-                       + "CODE SECTION\r\n"
-                       + "END\r\n"
-                       + "PROC SECTION\r\n"
-                       + " PROC LABEL x\r\n"
-                       + "  PARAM v := y [INT]\r\n"
-                       + "  PARAM z := t [INT]\r\n"
-                       + "  g := z IADD v [INT]\r\n"
-                       + " RETURN\r\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();

@@ -1,19 +1,20 @@
 SYMBOL SECTION
- b CONST INTERNAL i
- c INTERNAL result
- d INTERNAL readResult
- e EXTERNAL PARAM IntToReal 0
- f EXTERNAL RETURN IntToReal
- h EXTERNAL PARAM WriteReal 0
+ ENTRY b CONST INTERNAL i
+ ENTRY c INTERNAL result
+ ENTRY d INTERNAL readResult
+ ENTRY e EXTERNAL PARAM IntToReal 0
+ ENTRY f EXTERNAL RETURN IntToReal
+ ENTRY h EXTERNAL PARAM WriteReal 0
 DATA SECTION
- a := 5 [INT]
- GLOBAL b := a [INT]
- GLOBAL c := 0.0 [REAL]
- GLOBAL d := 0.0 [REAL]
+ DEF a := 5 [INT]
+ DEF GLOBAL b := a [INT]
+BSS SECTION
+ DEF GLOBAL c := 0.0 [REAL]
+ DEF GLOBAL d := 0.0 [REAL]
 CODE SECTION
- CALL IntToReal((b -> e)[INT])
- EXTERNAL RETURN g := f [REAL]
+ CALL IntToReal(((GLOBAL b) -> e)[INT])
+ DEF g := (RETURN f) [REAL]
  c := g [REAL]
- CALL WriteReal((c -> h)[REAL])
+ CALL WriteReal(((GLOBAL c) -> h)[REAL])
 END
 PROC SECTION

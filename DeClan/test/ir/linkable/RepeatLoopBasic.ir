@@ -1,23 +1,27 @@
 SYMBOL SECTION
- a INTERNAL i
- e EXTERNAL PARAM WriteInt 0
+ ENTRY a INTERNAL i
+ ENTRY f EXTERNAL PARAM WriteInt 0
 DATA SECTION
- GLOBAL a := 0 [INT]
+BSS SECTION
+ DEF GLOBAL a := 0 [INT]
 CODE SECTION
- b := 1 [INT]
+ DEF b := 1 [INT]
  a := b [INT]
- c := 10 [INT]
- d := a GE c [BOOL]
+ DEF c := 10 [INT]
+ DEF d := (GLOBAL a) GE c [BOOL]
+ DEF e := TRUE [BOOL]
  LABEL REPEATBEG_0_LEVEL_0
- IF d EQ TRUE THEN REPEATEND_0_LEVEL_0 ELSE REPEATLOOP_0_LEVEL_0
+ IF d EQ e
+ THEN REPEATEND_0_LEVEL_0
+ ELSE REPEATLOOP_0_LEVEL_0
  LABEL REPEATLOOP_0_LEVEL_0
- CALL WriteInt((a -> e)[INT])
- f := 1 [INT]
- g := a IADD f [INT]
- a := g [INT]
- h := 10 [INT]
- i := a GE h [BOOL]
- d := i [BOOL]
+ CALL WriteInt(((GLOBAL a) -> f)[INT])
+ DEF g := 1 [INT]
+ DEF h := (GLOBAL a) IADD g [INT]
+ a := h [INT]
+ DEF i := 10 [INT]
+ DEF j := (GLOBAL a) GE i [BOOL]
+ d := j [BOOL]
  GOTO REPEATBEG_0_LEVEL_0
  LABEL REPEATEND_0_LEVEL_0
  CALL WriteLn()

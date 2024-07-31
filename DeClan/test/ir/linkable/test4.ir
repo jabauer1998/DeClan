@@ -1,119 +1,120 @@
 SYMBOL SECTION
- a INTERNAL n
- b INTERNAL i
- c INTERNAL result
- j EXTERNAL RETURN ReadInt
- n EXTERNAL PARAM WriteInt 0
- d INTERNAL PARAM M 0
- e INTERNAL RETURN M
- f INTERNAL PARAM F 0
- g INTERNAL RETURN F
- h INTERNAL PARAM Fact 0
- i INTERNAL RETURN Fact
+ ENTRY a INTERNAL n
+ ENTRY b INTERNAL i
+ ENTRY c INTERNAL result
+ ENTRY j EXTERNAL RETURN ReadInt
+ ENTRY n EXTERNAL PARAM WriteInt 0
 DATA SECTION
- GLOBAL a := 0 [INT]
- GLOBAL b := 0 [INT]
- GLOBAL c := 0 [INT]
+BSS SECTION
+ DEF GLOBAL a := 0 [INT]
+ DEF GLOBAL b := 0 [INT]
+ DEF GLOBAL c := 0 [INT]
 CODE SECTION
  CALL ReadInt()
- EXTERNAL RETURN k := j [INT]
+ DEF k := (RETURN j) [INT]
  a := k [INT]
- l := 0 [INT]
+ DEF l := 0 [INT]
  b := l [INT]
  LABEL FORBEG_0_LEVEL_0
- IF b LT a THEN FORLOOP_0_LEVEL_0 ELSE FOREND_0_LEVEL_0
+ IF (GLOBAL b) LT (GLOBAL a)
+ THEN FORLOOP_0_LEVEL_0
+ ELSE FOREND_0_LEVEL_0
  LABEL FORLOOP_0_LEVEL_0
- CALL F((b -> f)[INT])
- EXTERNAL RETURN m := g [INT]
+ CALL F(((GLOBAL b) -> f)[INT])
+ DEF m := (RETURN g) [INT]
  c := m [INT]
- CALL WriteInt((c -> n)[INT])
- CALL Fact((b -> h)[INT])
- EXTERNAL RETURN o := i [INT]
+ CALL WriteInt(((GLOBAL c) -> n)[INT])
+ CALL Fact(((GLOBAL b) -> h)[INT])
+ DEF o := (RETURN i) [INT]
  c := o [INT]
- CALL WriteInt((c -> n)[INT])
+ CALL WriteInt(((GLOBAL c) -> n)[INT])
  CALL WriteLn()
- p := 1 [INT]
- q := b IADD p [INT]
- b := q [INT]
+ DEF p := 1 [INT]
  GOTO FORBEG_0_LEVEL_0
  LABEL FOREND_0_LEVEL_0
 END
 PROC SECTION
  PROC LABEL M
-  PARAM t := d [INT]
-  r := 0 [INT]
-  s := 0 [INT]
-  u := 0 [INT]
-  v := t EQ u [BOOL]
-  IF v EQ TRUE THEN IFSTAT_0_SEQ_0_LEVEL_0 ELSE IFNEXT_0_SEQ_0_LEVEL_0
+  DEF q := 0 [INT]
+  DEF r := 0 [INT]
+  DEF s := 0 [INT]
+  DEF t := (PARAM d) EQ s [BOOL]
+  DEF u := TRUE [BOOL]
+  IF t EQ u
+  THEN IFSTAT_0_SEQ_0_LEVEL_0
+  ELSE IFNEXT_0_SEQ_0_LEVEL_0
   LABEL IFSTAT_0_SEQ_0_LEVEL_0
-  w := 0 [INT]
-  s := w [INT]
+  DEF v := 0 [INT]
+  r := v [INT]
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_0_LEVEL_0
-  x := 1 [INT]
-  y := t ISUB x [INT]
-  CALL M((y -> d)[INT])
-  EXTERNAL RETURN z := e [INT]
+  DEF w := 1 [INT]
+  DEF x := (PARAM d) ISUB w [INT]
+  CALL M((x -> d)[INT])
+  DEF y := (RETURN e) [INT]
+  q := y [INT]
+  CALL F((q -> f)[INT])
+  DEF z := (RETURN g) [INT]
   r := z [INT]
-  CALL F((r -> f)[INT])
-  EXTERNAL RETURN A := g [INT]
-  s := A [INT]
-  B := t ISUB s [INT]
-  s := B [INT]
+  DEF A := (PARAM d) ISUB r [INT]
+  r := A [INT]
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_1_LEVEL_0
   LABEL IFEND_0_LEVEL_0
-  INTERNAL RETURN e := s [INT]
+  DEF RETURN e := r [INT]
  RETURN
  PROC LABEL F
-  PARAM E := f [INT]
-  C := 0 [INT]
-  D := 0 [INT]
-  F := 0 [INT]
-  G := E EQ F [BOOL]
-  IF G EQ TRUE THEN IFSTAT_1_SEQ_0_LEVEL_0 ELSE IFNEXT_1_SEQ_0_LEVEL_0
+  DEF B := 0 [INT]
+  DEF C := 0 [INT]
+  DEF D := 0 [INT]
+  DEF E := (PARAM f) EQ D [BOOL]
+  DEF F := TRUE [BOOL]
+  IF E EQ F
+  THEN IFSTAT_1_SEQ_0_LEVEL_0
+  ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
-  H := 1 [INT]
-  D := H [INT]
+  DEF G := 1 [INT]
+  C := G [INT]
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
-  I := 1 [INT]
-  J := E ISUB I [INT]
-  CALL F((J -> f)[INT])
-  EXTERNAL RETURN K := g [INT]
+  DEF H := 1 [INT]
+  DEF I := (PARAM f) ISUB H [INT]
+  CALL F((I -> f)[INT])
+  DEF J := (RETURN g) [INT]
+  B := J [INT]
+  CALL M((B -> d)[INT])
+  DEF K := (RETURN e) [INT]
   C := K [INT]
-  CALL M((C -> d)[INT])
-  EXTERNAL RETURN L := e [INT]
-  D := L [INT]
-  M := E ISUB D [INT]
-  D := M [INT]
+  DEF L := (PARAM f) ISUB C [INT]
+  C := L [INT]
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_1_LEVEL_0
   LABEL IFEND_1_LEVEL_0
-  INTERNAL RETURN g := D [INT]
+  DEF RETURN g := C [INT]
  RETURN
  PROC LABEL Fact
-  PARAM P := h [INT]
-  N := 0 [INT]
-  O := 0 [INT]
-  Q := 0 [INT]
-  R := P EQ Q [BOOL]
-  IF R EQ TRUE THEN IFSTAT_2_SEQ_0_LEVEL_0 ELSE IFNEXT_2_SEQ_0_LEVEL_0
+  DEF M := 0 [INT]
+  DEF N := 0 [INT]
+  DEF O := 0 [INT]
+  DEF P := (PARAM h) EQ O [BOOL]
+  DEF Q := TRUE [BOOL]
+  IF P EQ Q
+  THEN IFSTAT_2_SEQ_0_LEVEL_0
+  ELSE IFNEXT_2_SEQ_0_LEVEL_0
   LABEL IFSTAT_2_SEQ_0_LEVEL_0
-  S := 1 [INT]
-  O := S [INT]
+  DEF R := 1 [INT]
+  N := R [INT]
   GOTO IFEND_2_LEVEL_0
   LABEL IFNEXT_2_SEQ_0_LEVEL_0
-  T := 1 [INT]
-  U := P ISUB T [INT]
-  CALL Fact((U -> h)[INT])
-  EXTERNAL RETURN V := i [INT]
+  DEF S := 1 [INT]
+  DEF T := (PARAM h) ISUB S [INT]
+  CALL Fact((T -> h)[INT])
+  DEF U := (RETURN i) [INT]
+  M := U [INT]
+  DEF V := (PARAM h) IMUL M [INT]
   N := V [INT]
-  W := P IMUL N [INT]
-  O := W [INT]
   GOTO IFEND_2_LEVEL_0
   LABEL IFNEXT_2_SEQ_1_LEVEL_0
   LABEL IFEND_2_LEVEL_0
-  INTERNAL RETURN i := O [INT]
+  DEF RETURN i := N [INT]
  RETURN

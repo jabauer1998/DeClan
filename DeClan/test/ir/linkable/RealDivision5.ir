@@ -1,30 +1,27 @@
 SYMBOL SECTION
- f CONST INTERNAL a
- h EXTERNAL PARAM Mod 0
- i EXTERNAL PARAM Mod 1
- j EXTERNAL RETURN Mod
- l CONST INTERNAL b
- m INTERNAL result
- n EXTERNAL PARAM Divide 0
- o EXTERNAL PARAM Divide 1
- p EXTERNAL RETURN Divide
- r EXTERNAL PARAM WriteReal 0
+ ENTRY f CONST INTERNAL a
+ ENTRY i CONST INTERNAL b
+ ENTRY j INTERNAL result
+ ENTRY k EXTERNAL PARAM Divide 0
+ ENTRY l EXTERNAL PARAM Divide 1
+ ENTRY m EXTERNAL RETURN Divide
+ ENTRY o EXTERNAL PARAM WriteReal 0
 DATA SECTION
- a := 6 [INT]
- b := 6 [INT]
- c := 1 [INT]
- d := b IADD c [INT]
- e := a IMUL d [INT]
- GLOBAL f := e [INT]
- g := 10 [INT]
- CALL Mod((f -> h)[INT], (g -> i)[INT])
- EXTERNAL RETURN k := j [INT]
- GLOBAL l := k [INT]
- GLOBAL m := 0.0 [REAL]
+ DEF a := 6 [INT]
+ DEF b := 6 [INT]
+ DEF c := 1 [INT]
+ DEF d := b IADD c [INT]
+ DEF e := a IMUL d [INT]
+ DEF GLOBAL f := e [INT]
+ DEF g := 10 [INT]
+ DEF h := (GLOBAL f) IMOD g [INT]
+ DEF GLOBAL i := h [INT]
+BSS SECTION
+ DEF GLOBAL j := 0.0 [REAL]
 CODE SECTION
- CALL Divide((f -> n)[INT], (l -> o)[INT])
- EXTERNAL RETURN q := p [REAL]
- m := q [REAL]
- CALL WriteReal((m -> r)[REAL])
+ CALL Divide(((GLOBAL f) -> k)[INT], ((GLOBAL i) -> l)[INT])
+ DEF n := (RETURN m) [REAL]
+ j := n [REAL]
+ CALL WriteReal(((GLOBAL j) -> o)[REAL])
 END
 PROC SECTION

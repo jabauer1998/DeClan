@@ -1,84 +1,80 @@
 SYMBOL SECTION
- a INTERNAL x
- b INTERNAL n
- c INTERNAL n2
- d INTERNAL x2
- l EXTERNAL PARAM WriteInt 0
- m EXTERNAL PARAM WriteReal 0
- n EXTERNAL PARAM Divide 0
- o EXTERNAL PARAM Divide 1
- p EXTERNAL RETURN Divide
- z EXTERNAL PARAM IntToReal 0
- A EXTERNAL RETURN IntToReal
- C EXTERNAL PARAM RAdd 0
- D EXTERNAL PARAM RAdd 1
- E EXTERNAL RETURN RAdd
- H EXTERNAL PARAM RMul 0
- I EXTERNAL PARAM RMul 1
- J EXTERNAL RETURN RMul
- f INTERNAL PARAM p 0
- e INTERNAL PARAM p 1
- S EXTERNAL PARAM Round 0
- T EXTERNAL RETURN Round
- g INTERNAL RETURN p
+ ENTRY a INTERNAL x
+ ENTRY b INTERNAL n
+ ENTRY c INTERNAL n2
+ ENTRY d INTERNAL x2
+ ENTRY l EXTERNAL PARAM WriteInt 0
+ ENTRY m EXTERNAL PARAM WriteReal 0
+ ENTRY n EXTERNAL PARAM Divide 0
+ ENTRY o EXTERNAL PARAM Divide 1
+ ENTRY p EXTERNAL RETURN Divide
+ ENTRY z EXTERNAL PARAM IntToReal 0
+ ENTRY A EXTERNAL RETURN IntToReal
+ ENTRY C EXTERNAL PARAM RAdd 0
+ ENTRY D EXTERNAL PARAM RAdd 1
+ ENTRY E EXTERNAL RETURN RAdd
+ ENTRY H EXTERNAL PARAM RMul 0
+ ENTRY I EXTERNAL PARAM RMul 1
+ ENTRY J EXTERNAL RETURN RMul
+ ENTRY Q EXTERNAL PARAM Round 0
+ ENTRY R EXTERNAL RETURN Round
 DATA SECTION
- GLOBAL a := 0 [INT]
- GLOBAL b := 0 [INT]
- GLOBAL c := 0.0 [REAL]
- GLOBAL d := 0.0 [REAL]
+BSS SECTION
+ DEF GLOBAL a := 0 [INT]
+ DEF GLOBAL b := 0 [INT]
+ DEF GLOBAL c := 0.0 [REAL]
+ DEF GLOBAL d := 0.0 [REAL]
 CODE SECTION
- h := 1 [INT]
+ DEF h := 1 [INT]
  b := h [INT]
- i := 1.0 [REAL]
+ DEF i := 1.0 [REAL]
  c := i [REAL]
- j := 2 [INT]
+ DEF j := 2 [INT]
  a := j [INT]
- k := 2.0 [REAL]
+ DEF k := 2.0 [REAL]
  d := k [REAL]
- CALL WriteInt((b -> l)[INT])
- CALL WriteReal((c -> m)[REAL])
- CALL WriteReal((d -> m)[REAL])
+ CALL WriteInt(((GLOBAL b) -> l)[INT])
+ CALL WriteReal(((GLOBAL c) -> m)[REAL])
+ CALL WriteReal(((GLOBAL d) -> m)[REAL])
  CALL WriteLn()
- CALL Divide((b -> n)[INT], (a -> o)[INT])
- EXTERNAL RETURN q := p [REAL]
+ CALL Divide(((GLOBAL b) -> n)[INT], ((GLOBAL a) -> o)[INT])
+ DEF q := (RETURN p) [REAL]
  CALL WriteReal((q -> m)[REAL])
- r := 5 [INT]
- s := b IADD r [INT]
- t := 6 [INT]
- u := b IADD t [INT]
- v := s IMUL u [INT]
+ DEF r := 5 [INT]
+ DEF s := (GLOBAL b) IADD r [INT]
+ DEF t := 6 [INT]
+ DEF u := (GLOBAL b) IADD t [INT]
+ DEF v := s IMUL u [INT]
  CALL WriteInt((v -> l)[INT])
- w := 4 [INT]
- x := a IADD w [INT]
- y := 5.0 [REAL]
- CALL IntToReal((a -> z)[INT])
- EXTERNAL RETURN B := A [REAL]
+ DEF w := 4 [INT]
+ DEF x := (GLOBAL a) IADD w [INT]
+ DEF y := 5.0 [REAL]
+ CALL IntToReal(((GLOBAL a) -> z)[INT])
+ DEF B := (RETURN A) [REAL]
  CALL RAdd((B -> C)[REAL], (y -> D)[REAL])
- EXTERNAL RETURN F := E [REAL]
+ DEF F := (RETURN E) [REAL]
  CALL IntToReal((x -> z)[INT])
- EXTERNAL RETURN G := A [REAL]
+ DEF G := (RETURN A) [REAL]
  CALL RMul((G -> H)[REAL], (F -> I)[REAL])
- EXTERNAL RETURN K := J [REAL]
+ DEF K := (RETURN J) [REAL]
  CALL WriteReal((K -> m)[REAL])
  CALL WriteLn()
- L := 3.1415 [REAL]
- CALL p((b -> e)[INT], (L -> f)[REAL])
- EXTERNAL RETURN M := g [INT]
+ DEF L := 3.1415 [REAL]
+ CALL p(((GLOBAL b) -> e)[INT], (L -> f)[REAL])
+ DEF M := (RETURN g) [INT]
  a := M [INT]
- CALL WriteReal((d -> m)[REAL])
+ CALL WriteReal(((GLOBAL d) -> m)[REAL])
  CALL WriteLn()
 END
 PROC SECTION
  PROC LABEL p
-  PARAM O := f [REAL]
-  PARAM P := e [INT]
-  N := 0 [INT]
-  CALL IntToReal((P -> z)[INT])
-  EXTERNAL RETURN Q := A [REAL]
-  CALL RAdd((O -> C)[REAL], (Q -> D)[REAL])
-  EXTERNAL RETURN R := E [REAL]
-  CALL Round((R -> S)[REAL])
-  EXTERNAL RETURN U := T [INT]
-  N := U [INT]
-  INTERNAL RETURN g := N [INT]
+  DEF N := 0 [INT]
+  CALL IntToReal(((PARAM e) -> z)[INT])
+  DEF O := (RETURN A) [REAL]
+  CALL RAdd(((PARAM f) -> C)[REAL], (O -> D)[REAL])
+  DEF P := (RETURN E) [REAL]
+  CALL Round((P -> Q)[REAL])
+  DEF S := (RETURN R) [INT]
+  N := S [INT]
+  DEF RETURN g := N [INT]
  RETURN
