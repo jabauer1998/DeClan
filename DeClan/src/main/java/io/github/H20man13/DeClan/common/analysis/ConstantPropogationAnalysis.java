@@ -84,19 +84,11 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Exp>> {
                             switch (exp.op){
                                 case IADD: result = OpUtil.iAdd(val1, val2);
                                     break;
-                                case RADD: result = OpUtil.rAdd(val1, val2);
-                                    break;
                                 case ISUB: result = OpUtil.iSub(val1, val2);
-                                    break;
-                                case RSUB: result = OpUtil.rSub(val1, val2);
                                     break;
                                 case IMUL: result = OpUtil.iMul(val1, val2);
                                     break;
-                                case RMUL: result = OpUtil.rMul(val1, val2);
-                                    break;
                                 case IDIV: result = OpUtil.iDiv(val1, val2);
-                                    break;
-                                case RDIVIDE: result = OpUtil.rDivide(val1, val2);
                                     break;
                                 case IMOD: result = OpUtil.iMod(val1, val2);
                                     break;

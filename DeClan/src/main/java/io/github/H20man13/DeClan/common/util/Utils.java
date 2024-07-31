@@ -104,10 +104,6 @@ public class Utils {
             case ISUB: return factory.createIntegerSubtractionNode(scope, place, left, right);
             case IMUL: return factory.createIntegerMultiplicationNode(scope, place, left, right);
             case IDIV: return factory.createIntegerDivNode(scope, place, left, right);
-            case RADD: return factory.createRealAdditionNode(scope, place, left, right);
-            case RSUB: return factory.createRealSubtractionNode(scope, place, left, right);
-            case RMUL: return factory.createRealMultiplicationNode(scope, place, left, right);
-            case RDIVIDE: return factory.createRealDivisionNode(scope, place, left, right);
             case LAND: return factory.createLogicalAndNode(scope, place, left, right);
             case IAND: return factory.createBitwiseAndNode(scope, place, left, right);
             case IOR: return factory.createBitwiseOrNode(scope, place, left, right);

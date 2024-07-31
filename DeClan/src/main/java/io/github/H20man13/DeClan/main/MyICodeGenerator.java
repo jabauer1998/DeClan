@@ -479,11 +479,7 @@ public class MyICodeGenerator{
                result = builder.buildExternalFunctionCall(scope, "RAdd", args, ICode.Type.REAL);
             }
             builder.buildAssignment(curValue.scope, curValue.ident, result, ICode.Type.REAL);
-        } else {
-          IdentExp result = builder.buildDefinition(scope, new BinExp(curValue, BinExp.Operator.RADD, incriment), ICode.Type.REAL);
-          builder.buildDefinition(scope, curValue.ident, result, ICode.Type.INT);
         }
-
         builder.buildForLoopEnd();
     } else {
       generateAssignmentIr(scope, forbranch.getInitAssignment(), builder);

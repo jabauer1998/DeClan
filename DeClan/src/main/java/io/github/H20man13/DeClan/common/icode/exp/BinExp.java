@@ -2,7 +2,6 @@ package io.github.H20man13.DeClan.common.icode.exp;
 
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.util.ConversionUtils;
-import io.github.H20man13.DeClan.common.util.Utils;
 
 public class BinExp implements Exp {
     public IdentExp right;
@@ -26,10 +25,6 @@ public class BinExp implements Exp {
         IDIV,
         IRSHIFT,
         ILSHIFT,
-        RADD,
-        RSUB,
-        RMUL,
-        RDIVIDE,
         LAND,
         LOR,
         GE,

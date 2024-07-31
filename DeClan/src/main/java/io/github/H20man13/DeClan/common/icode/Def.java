@@ -28,6 +28,19 @@ public class Def implements ICode {
     }
 
     @Override
+    public boolean equals(Object obj){
+        if(obj instanceof Def){
+            Def toCheck = (Def)obj;
+            if(toCheck.label.equals(label))
+                if(toCheck.scope == scope)
+                    if(toCheck.type == type)
+                        if(toCheck.val.equals(val))
+                            return true;
+        }
+        return false;
+    }
+
+    @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
         

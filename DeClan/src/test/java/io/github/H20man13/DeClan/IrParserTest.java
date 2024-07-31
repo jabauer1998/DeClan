@@ -1,14 +1,13 @@
 package io.github.H20man13.DeClan;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.StringReader;
 
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import edu.depauw.declan.common.ErrorLog;
-import edu.depauw.declan.common.Source;
 import edu.depauw.declan.common.ErrorLog.LogItem;
+import edu.depauw.declan.common.Source;
 import io.github.H20man13.DeClan.common.ReaderSource;
 import io.github.H20man13.DeClan.main.MyIrLexer;
 import io.github.H20man13.DeClan.main.MyIrParser;
@@ -142,9 +141,10 @@ public class IrParserTest {
     public void testProcedureCall(){
         String program = "SYMBOL SECTION\n" 
                        + "DATA SECTION\n"
-                       + "t := 899 [INT]\n"
-                       + "g := 89 [INT]\n"
-                       + "f := 98 [INT]\n"
+                       + "DEF GLOBAL t := 899 [INT]\n"
+                       + "DEF GLOBAL g := 89 [INT]\n"
+                       + "DEF GLOBAL f := 98 [INT]\n"
+                       + "BSS SECTION\n"
                        + "CODE SECTION\n"
                        + "CALL func ((t -> x)[INT], (g -> y)[INT], (f -> z)[INT])\n"
                        + "END\n"
@@ -173,7 +173,8 @@ public class IrParserTest {
     public void testStringDecl(){
         String program = "SYMBOL SECTION\n"
                        + "DATA SECTION\n"
-                       + "t := \"Text Here\" [STRING]\n"
+                       + "DEF GLOBAL t := \"Text Here\" [STRING]\n"
+                       + "BSS SECTION\n"
                        + "CODE SECTION\n"
                        + "t := \"Text Here Too\" [STRING]\n"
                        + "END\n"
@@ -197,9 +198,11 @@ public class IrParserTest {
     public void testIfStatement(){
         String program = "SYMBOL SECTION\n"
                        + "DATA SECTION\n"
+                       + "DEF GLOBAL trueVal := TRUE [BOOL]\n"
+                       + "BSS SECTION\n"
                        + "CODE SECTION\n"
                        + "LABEL y\n"
-                       + "IF x EQ TRUE THEN z ELSE y\n"
+                       + "IF x EQ trueVal THEN z ELSE y\n"
                        + "LABEL z\n"
                        + "END\n"
                        + "PROC SECTION\n";
@@ -222,6 +225,7 @@ public class IrParserTest {
     public void testInlineAssembly(){
         String program = "SYMBOL SECTION\n"
                        + "DATA SECTION\n"
+                       + "BSS SECTION\n"
                        + "CODE SECTION\n"
                        + "IPARAM x\n"
                        + "IPARAM z\n"

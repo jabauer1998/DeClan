@@ -237,9 +237,6 @@ public class MyICodeTypeChecker {
         || expression.op == BinExp.Operator.ISUB || expression.op == BinExp.Operator.IMUL
         || expression.op == BinExp.Operator.IMOD || expression.op == BinExp.Operator.IXOR){
             return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);	
-        } else if(expression.op == BinExp.Operator.RDIVIDE || expression.op == BinExp.Operator.RADD
-                || expression.op == BinExp.Operator.RSUB || expression.op == BinExp.Operator.RMUL){
-            return new TypeCheckerQualities(TypeCheckerQualities.REAL);	
         } else {
             errLog.add("Unknown Operation type " + expression.op, new Position(instructionNumber, 0));
             return new TypeCheckerQualities(TypeCheckerQualities.NA);

@@ -1,15 +1,11 @@
 package io.github.H20man13.DeClan.common.util;
 
-import io.github.H20man13.DeClan.common.dag.DagNode;
+import java.math.BigInteger;
+
 import io.github.H20man13.DeClan.common.dag.DagNode.ScopeType;
 import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
-
-import java.math.BigInteger;
-import java.rmi.UnexpectedException;
-
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.exception.ConversionException;
-import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
@@ -29,10 +25,6 @@ public class ConversionUtils {
             case ISUB: return BinExp.Operator.ISUB;
             case IMUL: return BinExp.Operator.IMUL;
             case IDIV: return BinExp.Operator.IDIV;
-            case RADD: return BinExp.Operator.RADD;
-            case RSUB: return BinExp.Operator.RSUB;
-            case RMUL: return BinExp.Operator.RMUL;
-            case RDIVIDE: return BinExp.Operator.RDIVIDE;
             case IMOD: return BinExp.Operator.IMOD;
             case LAND: return BinExp.Operator.LAND;
             case LOR: return BinExp.Operator.LOR;
@@ -97,10 +89,6 @@ public class ConversionUtils {
             case IDIV: return P.IDIV();
             case LAND: return P.BAND();
             case IMOD: return P.IMOD();
-            case RMUL: return P.RMUL();
-            case RDIVIDE: return P.RDIVIDE();
-            case RADD: return P.RADD();
-            case RSUB: return P.RSUB();
             case IAND: return P.IAND();
             case IOR: return P.IOR();
             case IXOR: return P.IXOR();
@@ -183,14 +171,10 @@ public class ConversionUtils {
             case GT: return BinExp.Operator.GT;
             case LE: return BinExp.Operator.LE;
             case LT: return BinExp.Operator.LT;
-            case RADD: return BinExp.Operator.RADD;
-            case RSUB: return BinExp.Operator.RSUB;
-            case RMUL: return BinExp.Operator.RMUL;
             case IADD: return BinExp.Operator.IADD;
             case ISUB: return BinExp.Operator.ISUB;
             case IMUL: return BinExp.Operator.IMUL;
             case IDIV: return BinExp.Operator.IDIV;
-            case RDIVIDE: return BinExp.Operator.RDIVIDE;
             case IXOR: return BinExp.Operator.IXOR;
             case IMOD: return BinExp.Operator.IMOD;
             case LOR: return BinExp.Operator.LOR;
@@ -199,7 +183,7 @@ public class ConversionUtils {
             case IOR: return BinExp.Operator.IOR;
             case IRSHIFT: return BinExp.Operator.IRSHIFT;
             case ILSHIFT: return BinExp.Operator.ILSHIFT;
-            default: throw new ConversionException("toBinOp", IrTokenType.class.getName(), BinExp.Operator.class.getName());
+            default: throw new ConversionException("toBinOp:" + type, IrTokenType.class.getName(), BinExp.Operator.class.getName());
         }
     }
 
