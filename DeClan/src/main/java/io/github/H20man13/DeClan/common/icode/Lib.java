@@ -25,8 +25,13 @@ import io.github.H20man13.DeClan.common.util.Utils;
 public class Lib implements ICode, Iterable<ICode> {
     protected List<ICode> instructions;
 
-    public Lib(){
+    public Lib(boolean insertHeaders){
         this.instructions = new LinkedList<ICode>();
+        if(insertHeaders){
+            instructions.add(new SymSec());
+            instructions.add(new DataSec());
+            instructions.add(new ProcSec());
+        }
     }
 
     public Lib(List<ICode> instructions){

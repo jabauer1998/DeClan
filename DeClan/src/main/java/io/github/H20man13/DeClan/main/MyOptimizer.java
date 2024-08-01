@@ -347,7 +347,7 @@ public class MyOptimizer {
 
     public void rebuildFromFlowGraph(){
         if(this.globalFlowGraph != null){
-            this.intermediateCode = new Prog();
+            this.intermediateCode = new Prog(false);
             for(BlockNode dataBlock: this.globalFlowGraph){
                 for(ICode icode: dataBlock){
                     this.intermediateCode.addInstruction(icode);

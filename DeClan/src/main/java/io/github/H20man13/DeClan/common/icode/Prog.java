@@ -13,8 +13,15 @@ import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class Prog extends Lib implements ICode {
-    public Prog(){
-        super();
+    public Prog(boolean insertHeaders){
+        super(false);
+        if(insertHeaders){
+            instructions.add(new SymSec());
+            instructions.add(new DataSec());
+            instructions.add(new BssSec());
+            instructions.add(new CodeSec());
+            instructions.add(new ProcSec());
+        }
     }
 
     public Prog(List<ICode> instructions){

@@ -3908,7 +3908,7 @@ public class MyIrLinker {
     }
 
     public Prog performLinkage(Prog program, Lib... libraries){
-        Prog newProg = new Prog();
+        Prog newProg = new Prog(true);
         linkDataSections(program, libraries, newProg);
         linkCodeSection(program, libraries, newProg);
         return newProg;
@@ -3921,7 +3921,7 @@ public class MyIrLinker {
     }
 
     public Lib performLinkage(Lib library, Lib... libraries){
-        Lib newLib = new Lib();
+        Lib newLib = new Lib(true);
         linkDataSections(library, libraries, newLib);
         linkProcedureSections(library, libraries, newLib);
         return newLib;
