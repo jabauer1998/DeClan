@@ -484,33 +484,6 @@ public class MyIrLinker {
                             }
                         }
                     }
-
-                    int beginBss = library.beginningOfBssSection();
-                    int endBss = library.endOfBssSection();
-                    for(int b = beginBss; b <= endBss; b++){
-                        ICode instr = library.getInstruction(b);
-                        if(instr instanceof Def){
-                            Def define = (Def)instr;
-                            if(define.label.equals(identName)){
-                                if(!placeIsUniqueAcrossLibraries(define.label, single, libraries)){
-                                    String place = null;    
-                                    do{
-                                        place = gen.genNext();
-                                    } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
-                                    
-                                    replacePlaceAcrossLibraries(define.label, place, single, libraries, library);
-                                }
-
-
-                                int endNewData = newLib.endOfDataSection();
-                                if(!newLib.dataSectionContainsInstruction(define))
-                                    newLib.addInstruction(endNewData + 1, define);
-                                if(!newLib.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
-                                    newLib.addSymEntry(libEntry);
-                                return;
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -731,33 +704,6 @@ public class MyIrLinker {
                 }
             }
         }
-
-        int beginBss = currentLib.beginningOfBssSection();
-        int endBss = currentLib.endOfBssSection();
-        for(int i = beginBss; i <= endBss; i++){
-            ICode instruction = currentLib.getInstruction(i);
-            if(instruction instanceof Def){
-                Def definition = (Def)instruction;
-                if(!placeIsUniqueAcrossLibraries(definition.label, single, libraries)){
-                    String place = null;    
-                    do{
-                        place = gen.genNext();
-                    } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
-                    
-                    replacePlaceAcrossLibraries(definition.label, place, single, libraries, currentLib);
-                }
-
-                int endNewBss = newLib.endOfBssSection();
-
-                if(!newLib.dataSectionContainsInstruction(definition))
-                    newLib.addInstruction(endNewBss + 1, definition);
-                if(currentLib.containsVariableEntryWithICodePlace(labelName, SymEntry.INTERNAL)){
-                    VarSymEntry entry = currentLib.getVariableEntryByICodePlace(labelName, SymEntry.INTERNAL);
-                    if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
-                        newLib.addSymEntry(entry);
-                }
-            }
-        }
     }
 
      private void fetchInternalDependentInstructions(Lib currentLib, Prog program, Lib[] libraries, String labelName, Prog newProgram){
@@ -951,35 +897,6 @@ public class MyIrLinker {
                             if(!newProgram.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 newProgram.addSymEntry(entry);
                         }
-                    }
-                    return;
-                }
-            }
-        }
-
-        int beginBss = currentLib.beginningOfBssSection();
-        int endBss = currentLib.endOfBssSection();
-        for(int i = beginBss; i <= endBss; i++){
-            ICode instruction = currentLib.getInstruction(i);
-            if(instruction instanceof Def){
-                Def definition = (Def)instruction;
-                if(definition.label.equals(labelName)){
-                    if(!placeIsUniqueAcrossProgramAndLibraries(definition.label, program, libraries)){
-                        String place = null;    
-                        do{
-                            place = gen.genNext();
-                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
-
-                        replacePlaceAcrossProgramAndLibraries(definition.label, place, program, libraries, currentLib);
-                    }
-
-                    int endNewBss = newProgram.endOfBssSection();
-                    if(!newProgram.dataSectionContainsInstruction(definition))
-                        newProgram.addInstruction(endNewBss + 1, definition);
-                    if(currentLib.containsVariableEntryWithICodePlace(labelName, SymEntry.INTERNAL)){
-                        VarSymEntry entry = currentLib.getVariableEntryByICodePlace(labelName, SymEntry.INTERNAL);
-                        if(!newProgram.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
-                            newProgram.addSymEntry(entry);
                     }
                     return;
                 }

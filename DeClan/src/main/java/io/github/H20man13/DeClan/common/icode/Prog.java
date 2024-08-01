@@ -137,6 +137,28 @@ public class Prog extends Lib implements ICode {
     }
 
     @Override
+    public int endOfDataSection(){
+        int begin = beginningOfDataSection();
+        for(int i = begin; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof BssSec){
+                return i - 1;
+            }
+        }
+        return -1;
+    }
+
+    public int beginningOfBssSection(){
+        int begin = endOfDataSection();
+        for(int i = begin; i < instructions.size(); i++){
+            ICode instruction = instructions.get(i);
+            if(instruction instanceof BssSec){
+                return i + 1;
+            }
+        }
+        return -1;
+    }
+
     public int endOfBssSection(){
         int begin = beginningOfBssSection();
         for(int i = begin; i < instructions.size(); i++){
@@ -165,6 +187,8 @@ public class Prog extends Lib implements ICode {
             ICode instruction = instructions.get(i);
             if(instruction instanceof End){
                 return i;
+            } else if(instruction instanceof ProcSec){
+                return i - 1;
             }
         }
         return -1;

@@ -237,47 +237,49 @@ public class MyLinkerTest {
     @Test
     public void linkExternalCall1(){
         String prog1 = "SYMBOL SECTION\n"
-                     + "v EXTERNAL lib1VariableName\n"
-                     + "s EXTERNAL RETURN func\n"
+                     + " ENTRY v EXTERNAL lib1VariableName\n"
+                     + " ENTRY s EXTERNAL RETURN func\n"
                      + "DATA SECTION\n"
-                     + " GLOBAL a := 20 [INT]\n"
-                     + " GLOBAL b := 500 [INT]\n"
+                     + " DEF GLOBAL a := 20 [INT]\n"
+                     + " DEF GLOBAL b := 500 [INT]\n"
+                     + "BSS SECTION\n"
                      + "CODE SECTION\n"
                      + " CALL func ( )\n"
-                     + " EXTERNAL RETURN d := s [INT]"
-                     + " g := d IADD v [INT]\n"
+                     + " DEF d := (RETURN s) [INT]"
+                     + " DEF g := d IADD (GLOBAL v) [INT]\n"
                      + "END\n"
                      + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
-                    + "a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
+                    + " ENTRY a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
                     + "DATA SECTION\n"
-                    + "GLOBAL a := 3 [INT]\n"
+                    + " DEF GLOBAL a := 3 [INT]\n"
                     + "PROC SECTION\n";
 
         String lib2 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
                     + "PROC SECTION\n"
                     + "PROC LABEL func\n"
-                    + " a := 3 [INT]\n"
-                    + " INTERNAL RETURN b := a [INT]\n"
+                    + " DEF a := 3 [INT]\n"
+                    + " DEF RETURN b := a [INT]\n"
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
-                     " f INTERNAL lib1VariableName\r\n" + //
+                     " ENTRY f INTERNAL lib1VariableName\r\n" + //
                      "DATA SECTION\r\n" + //
-                     " GLOBAL a := 20 [INT]\r\n" + //
-                     " GLOBAL b := 500 [INT]\r\n" + //
-                     " GLOBAL f := 3 [INT]\r\n" + //
+                     " DEF GLOBAL a := 20 [INT]\r\n" + //
+                     " DEF GLOBAL b := 500 [INT]\r\n" + //
+                     " DEF GLOBAL f := 3 [INT]\r\n" + //
+                     "BSS SECTION\r\n" + //
                      "CODE SECTION\r\n" + //
                      " CALL func()\r\n" + //
-                     " EXTERNAL RETURN d := e [INT]\r\n" + //
-                     " g := d IADD f [INT]\r\n" + //
+                     " DEF d := (RETURN e) [INT]\r\n" + //
+                     " DEF g := d IADD (GLOBAL f) [INT]\r\n" + //
                      "END\r\n" + //
                      "PROC SECTION\r\n" + //
                      " PROC LABEL func\r\n" + //
-                     "  c := 3 [INT]\r\n" + //
-                     "  INTERNAL RETURN e := c [INT]\r\n" + //
+                     "  DEF c := 3 [INT]\r\n" + //
+                     "  DEF RETURN e := c [INT]\r\n" + //
                      " RETURN\r\n";
 
                      
