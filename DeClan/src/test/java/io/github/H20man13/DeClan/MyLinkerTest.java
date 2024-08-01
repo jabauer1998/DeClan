@@ -1,11 +1,10 @@
 package io.github.H20man13.DeClan;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.FileReader;
 import java.io.StringReader;
 import java.util.Scanner;
 
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import edu.depauw.declan.common.ErrorLog;
@@ -120,8 +119,9 @@ public class MyLinkerTest {
                     + "DATA SECTION\n"
                     + " GLOBAL a := 20 [INT]\n"
                     + " GLOBAL v := 30 [INT]\n"
+                    + "BSS SECTION\n"
                     + "CODE SECTION\n"
-                    + " d := a IADD v [INT]\n"
+                    + " d := (GLOBAL a) IADD (GLOBAL v) [INT]\n"
                     + "END\n"
                     + "PROC SECTION\n";
 
@@ -135,7 +135,7 @@ public class MyLinkerTest {
                     + "PROC SECTION\n"
                     + " PROC LABEL func\n"
                     + "  a := 3 [INT]\n"
-                    + "  INTERNAL RETURN b := a [INT]\n"
+                    + "  RETURN b := a [INT]\n"
                     + " RETURN\n";
 
         String res = "SYMBOL SECTION\r\n" + //
