@@ -14,19 +14,40 @@ DATA SECTION
  DEF g37 := 127 [INT]
 BSS SECTION
 CODE SECTION
- DEF RETURN h44 := k5 [REAL]
- k5 := k7 [REAL]
- DEF k7 := (RETURN h41) [REAL]
- CALL RAdd(((PARAM d) -> h42)[REAL], (k6 -> h43)[REAL])
 PROC SECTION
  PROC LABEL RSub_0
+  CALL RAdd(((PARAM d) -> h42)[REAL], (k6 -> h43)[REAL])
+  DEF k7 := (RETURN h41) [REAL]
+  k5 := k7 [REAL]
+  DEF RETURN h44 := k5 [REAL]
+  DEF k5 := 0.0 [REAL]
+  CALL RNeg(((PARAM e) -> f38)[REAL])
+  DEF k6 := (RETURN f37) [REAL]
  RETURN
  PROC LABEL RNeg
  RETURN
  PROC LABEL RLessThan_0
   PROC LABEL RealBinaryAsInt
+  DEF f27 := 0 [INT]
+  DEF f28 := 0.0 [REAL]
+  IPARAM f28
+  IPARAM (PARAM m)
+  IASM "LDR %r, %a"
+  IPARAM f28
+  IPARAM f27
+  IASM "STR %r, %a"
+  DEF RETURN f29 := f27 [INT]
  RETURN
  PROC LABEL IntBinaryAsReal
+  DEF f32 := 0.0 [REAL]
+  DEF f33 := 0 [INT]
+  IPARAM f33
+  IPARAM (PARAM o)
+  IASM "LDR %r, %a"
+  IPARAM f33
+  IPARAM f32
+  IASM "STR %r, %a"
+  DEF RETURN f34 := f32 [REAL]
  RETURN
  PROC LABEL RAdd
  RETURN
@@ -37,16 +58,73 @@ PROC SECTION
   LABEL IFSTAT_0_SEQ_0_LEVEL_0_1
   f42 := f69 [INT]
   PROC LABEL RealSign
+  DEF f56 := 0 [INT]
+  DEF f57 := 0 [INT]
+  CALL RealBinaryAsInt(((PARAM q) -> g11)[REAL])
+  DEF f59 := (RETURN g13) [INT]
+  f57 := f59 [INT]
+  DEF f60 := 31 [INT]
+  DEF f61 := f57 IRSHIFT f60 [INT]
+  DEF f62 := 1 [INT]
+  DEF f63 := f61 IAND f62 [INT]
+  f56 := f63 [INT]
+  DEF RETURN f64 := f56 [INT]
  RETURN
  PROC LABEL RealExponent
-  DEF RETURN f83 := f71 [INT]
-  f71 := f80 [INT]
+  DEF f71 := 0 [INT]
+  DEF f72 := 0 [INT]
+  DEF f73 := 0 [INT]
+  CALL RealBinaryAsInt(((PARAM s) -> g11)[REAL])
+  DEF f75 := (RETURN g13) [INT]
+  f72 := f75 [INT]
+  DEF f76 := 23 [INT]
+  DEF f77 := f72 IRSHIFT f76 [INT]
+  DEF f78 := 255 [INT]
+  DEF f79 := f77 IAND f78 [INT]
   DEF f80 := f73 ISUB (GLOBAL g49) [INT]
+  f71 := f80 [INT]
+  DEF RETURN f83 := f71 [INT]
+  f73 := f79 [INT]
  RETURN
  PROC LABEL RealMantissa
+  DEF f90 := 0 [INT]
+  DEF f91 := 0 [INT]
+  DEF f92 := 0 [INT]
+  DEF f93 := 0 [INT]
+  CALL RealBinaryAsInt(((PARAM o) -> g11)[REAL])
+  DEF f95 := (RETURN g13) [INT]
+  f91 := f95 [INT]
+  DEF f96 := 8388607 [INT]
+  DEF f97 := f91 IAND f96 [INT]
+  f92 := f97 [INT]
+  CALL RealIsZero(((PARAM o) -> g22)[REAL])
+  DEF g23 := (RETURN g21) [BOOL]
+  DEF g24 := TRUE [BOOL]
+  IF g23 EQ g24
+  THEN IFSTAT_6_SEQ_0_LEVEL_0_0
+  ELSE IFNEXT_6_SEQ_0_LEVEL_0_0
+  LABEL IFSTAT_6_SEQ_0_LEVEL_0_0
+  f90 := f92 [INT]
+  GOTO IFEND_6_LEVEL_0_0
+  LABEL IFNEXT_6_SEQ_0_LEVEL_0_0
+  DEF g25 := 8388608 [INT]
+  DEF g26 := f92 IOR g25 [INT]
+  f90 := g26 [INT]
+  GOTO IFEND_6_LEVEL_0_0
+  LABEL IFNEXT_6_SEQ_1_LEVEL_0
+  LABEL IFEND_6_LEVEL_0_0
+  DEF RETURN g27 := f90 [INT]
  RETURN
  PROC LABEL RealIsZero
  RETURN
  PROC LABEL IntIsZero_0
   PROC LABEL WriteReal
+  DEF h50 := 0 [INT]
+  IPARAM h50
+  IASM "MOV %r, R0"
+  IPARAM (PARAM f)
+  IASM "LDR R0, %a"
+  IASM "SWI 2"
+  IPARAM h50
+  IASM "MOV R0, %r"
  RETURN

@@ -916,7 +916,6 @@ public class MyIrLinker {
             ICode returnStat = program.getInstruction(endProcedure);
             newProg.addInstruction(endOfNewProcedureSection + 2, returnStat);
 
-            endOfNewProcedureSection += 2;
 
             for(int instructionIndex = beginningProcedure + 1; instructionIndex <= (endProcedure - 1); instructionIndex++){
                 ICode icode = program.getInstruction(instructionIndex);
@@ -1204,8 +1203,8 @@ public class MyIrLinker {
                     }
                 }
 
-                newProg.addInstruction(endOfNewProcedureSection + 1, icode);
-                endOfNewProcedureSection++;
+                int beforeReturnOfProcedure = newProg.endOfProcedure(procName);
+                newProg.addInstruction(beforeReturnOfProcedure, icode);
             }
         }
     }
@@ -1221,8 +1220,6 @@ public class MyIrLinker {
 
             ICode returnStat = library.getInstruction(endProcedure);
             newProg.addInstruction(endOfNewProcedureSection + 2, returnStat);
-
-            endOfNewProcedureSection += 2;
 
             for(int instructionIndex = beginningProcedure + 1; instructionIndex <= (endProcedure + 1); instructionIndex++){
                 ICode icode = library.getInstruction(instructionIndex);
@@ -1535,9 +1532,9 @@ public class MyIrLinker {
                         library.replaceLabel(labelICode.label, newLabel);
                     }
                 }
-                
-                newProg.addInstruction(endOfNewProcedureSection + 1, icode);
-                endOfNewProcedureSection++;
+
+                int beforeEndOfProcedure = newProg.endOfProcedure(procName);
+                newProg.addInstruction(beforeEndOfProcedure, icode);
             }
         }
     }
@@ -1555,7 +1552,6 @@ public class MyIrLinker {
             ICode returnStat = library.getInstruction(endProcedure);
             newLib.addInstruction(endOfNewProcedureSection + 2, returnStat);
 
-            endOfNewProcedureSection += 2;
             for(int instructionIndex = beginningProcedure + 1; instructionIndex <= (endProcedure - 1); instructionIndex++){
                 ICode icode = library.getInstruction(instructionIndex);
 
@@ -1868,8 +1864,8 @@ public class MyIrLinker {
                     }
                 }
 
-                newLib.addInstruction(endOfNewProcedureSection + 1, icode);
-                endOfNewProcedureSection++;
+                int beforeEndOfProcedure = newLib.endOfProcedure(procName);
+                newLib.addInstruction(beforeEndOfProcedure, icode);
             }
         }
     }
@@ -1890,7 +1886,6 @@ public class MyIrLinker {
                     ICode returnStat = library.getInstruction(endProcedure);
                     newProg.addInstruction(endOfNewProcedureSection + 2, returnStat);
 
-                    endOfNewProcedureSection += 2;
 
                     for(int instructionIndex = beginningProcedure + 1; instructionIndex <= (endProcedure - 1); instructionIndex++){
                         ICode icode = library.getInstruction(instructionIndex);
@@ -2164,8 +2159,8 @@ public class MyIrLinker {
                             }
                         }
 
-
-                        newProg.addInstruction(endOfNewProcedureSection + 1, icode);
+                        int beforeEndOfProcedure = newProg.endOfProcedure(procName);
+                        newProg.addInstruction(beforeEndOfProcedure, icode);
                     }
                     break loop;
                 }
@@ -2188,7 +2183,7 @@ public class MyIrLinker {
                     ICode returnStat = library.getInstruction(endProcedure);
                     newLib.addInstruction(endOfNewProcedureSection + 2, returnStat);
 
-                    endOfNewProcedureSection += 2;
+                    endOfNewProcedureSection++;
 
                     for(int instructionIndex = beginningProcedure + 1; instructionIndex <= (endProcedure - 1); instructionIndex++){
                         ICode icode = library.getInstruction(instructionIndex);
