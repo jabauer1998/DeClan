@@ -651,6 +651,16 @@ public class Lib implements ICode, Iterable<ICode> {
 
     public boolean containsPlace(String place){
         for(ICode instruction: instructions){
+            if(instruction instanceof BssSec)
+                continue;
+            if(instruction instanceof DataSec)
+                continue;
+            if(instruction instanceof SymSec)
+                continue;
+            if(instruction instanceof CodeSec)
+                continue;
+            if(instruction instanceof ProcSec)
+                continue;               
             if(instruction.containsPlace(place))
                 return true;
         }
@@ -660,6 +670,16 @@ public class Lib implements ICode, Iterable<ICode> {
 
     public boolean containsLabel(String label){
         for(ICode instruction: instructions){
+            if(instruction instanceof BssSec)
+                continue;
+            if(instruction instanceof DataSec)
+                continue;
+            if(instruction instanceof SymSec)
+                continue;
+            if(instruction instanceof CodeSec)
+                continue;
+            if(instruction instanceof ProcSec)
+                continue;
             if(instruction.containsLabel(label))
                 return true;
         }
@@ -670,6 +690,16 @@ public class Lib implements ICode, Iterable<ICode> {
     @Override
     public void replacePlace(String from, String to) {
         for(ICode instruction: instructions){
+            if(instruction instanceof BssSec)
+                continue;
+            if(instruction instanceof DataSec)
+                continue;
+            if(instruction instanceof SymSec)
+                continue;
+            if(instruction instanceof CodeSec)
+                continue;
+            if(instruction instanceof ProcSec)
+                continue;
             instruction.replacePlace(from, to);
         }
     }
@@ -677,6 +707,16 @@ public class Lib implements ICode, Iterable<ICode> {
     @Override
     public void replaceLabel(String from, String to) {
         for(ICode instruction: instructions){
+            if(instruction instanceof BssSec)
+                continue;
+            if(instruction instanceof DataSec)
+                continue;
+            if(instruction instanceof SymSec)
+                continue;
+            if(instruction instanceof CodeSec)
+                continue;
+            if(instruction instanceof ProcSec)
+                continue;
             instruction.replaceLabel(from, to);
         }
     }

@@ -117,33 +117,33 @@ public class MyLinkerTest {
     public void linkProgramWithNothingInCommon(){
        String prog1 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
-                    + " GLOBAL a := 20 [INT]\n"
-                    + " GLOBAL v := 30 [INT]\n"
+                    + " DEF GLOBAL a := 20 [INT]\n"
+                    + " DEF GLOBAL v := 30 [INT]\n"
                     + "BSS SECTION\n"
                     + "CODE SECTION\n"
-                    + " d := (GLOBAL a) IADD (GLOBAL v) [INT]\n"
+                    + " DEF d := (GLOBAL a) IADD (GLOBAL v) [INT]\n"
                     + "END\n"
                     + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
-                    + " GLOBAL a := 3 [INT]\n"
+                    + " DEF GLOBAL a := 3 [INT]\n"
                     + "PROC SECTION\n";
 
         String lib2 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
                     + "PROC SECTION\n"
                     + " PROC LABEL func\n"
-                    + "  a := 3 [INT]\n"
-                    + "  RETURN b := a [INT]\n"
+                    + "  DEF a := 3 [INT]\n"
+                    + "  DEF RETURN b := a [INT]\n"
                     + " RETURN\n";
 
         String res = "SYMBOL SECTION\r\n" + //
                      "DATA SECTION\r\n" + //
-                     " GLOBAL a := 20 [INT]\r\n" + //
-                     " GLOBAL v := 30 [INT]\r\n" + //
+                     " DEF GLOBAL a := 20 [INT]\r\n" + //
+                     " DEF GLOBAL v := 30 [INT]\r\n" + //
                      "CODE SECTION\r\n" + //
-                     " d := a IADD v [INT]\r\n" + //
+                     " DEF d := a IADD v [INT]\r\n" + //
                      "END\r\n" + //
                      "PROC SECTION\r\n";
 
@@ -153,33 +153,35 @@ public class MyLinkerTest {
     @Test
     public void linkExternalVariable(){
         String prog1 = "SYMBOL SECTION\n"
-                     + "a EXTERNAL lib1VariableName\n"
+                     + "ENTRY a EXTERNAL lib1VariableName\n"
                      + "DATA SECTION\n"
-                     + " GLOBAL v := 30 [INT]\n"
+                     + " DEF GLOBAL v := 30 [INT]\n"
+                     + "BSS SECTION\n"
                      + "CODE SECTION\n"
                      + " d := a IADD v [INT]\n"
                      + "END\n"
                      + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
-                    + " a INTERNAL lib1VariableName\n"
+                    + " ENTRY a INTERNAL lib1VariableName\n"
                     + "DATA SECTION\n"
-                    + " GLOBAL a := 3 [INT]\n"
+                    + " DEF GLOBAL a := 3 [INT]\n"
                     + "PROC SECTION\n";
 
         String lib2 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
                     + "PROC SECTION\n"
                     + "PROC LABEL func\n"
-                    + " a := 3 [INT]\n"
-                    + " INTERNAL RETURN b := a [INT]\n"
+                    + " DEF a := 3 [INT]\n"
+                    + " DEF RETURN b := a [INT]\n"
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
-                     " c INTERNAL lib1VariableName\r\n" + //
+                     " ENTRY c INTERNAL lib1VariableName\r\n" + //
                      "DATA SECTION\r\n" + //
-                     " GLOBAL v := 30 [INT]\r\n" + //
-                     " GLOBAL c := 3 [INT]\r\n" + //
+                     " DEF GLOBAL v := 30 [INT]\r\n" + //
+                     " DEF GLOBAL c := 3 [INT]\r\n" + //
+                     "BSS SECTION\r\n" +
                      "CODE SECTION\r\n" + //
                      " d := c IADD v [INT]\r\n" + //
                      "END\r\n" + //
@@ -191,10 +193,11 @@ public class MyLinkerTest {
     @Test
     public void checkVariableRename(){
         String prog1 = "SYMBOL SECTION\n"
-                     + "b EXTERNAL lib1VariableName\n"
+                     + "ENTRY b EXTERNAL lib1VariableName\n"
                      + "DATA SECTION\n"
-                     + " GLOBAL v := 30 [INT]\n"
-                     + " GLOBAL a := 20 [INT]\n"
+                     + " DEF GLOBAL v := 30 [INT]\n"
+                     + " DEF GLOBAL a := 20 [INT]\n"
+                     + "BSS SECTION\n"
                      + "CODE SECTION\n"
                      + " d := b IADD v [INT]\n"
                      + " g := d IADD a [INT]\n"
@@ -202,30 +205,31 @@ public class MyLinkerTest {
                      + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
-                    + "a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
+                    + "ENTRY a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
                     + "DATA SECTION\n"
-                    + " GLOBAL a := 3 [INT]\n"
+                    + " DEF GLOBAL a := 3 [INT]\n"
                     + "PROC SECTION\n";
 
         String lib2 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
                     + "PROC SECTION\n"
                     + "PROC LABEL func\n"
-                    + " a := 3 [INT]\n"
-                    + " INTERNAL RETURN b := a [INT]\n"
+                    + " DEF a := 3 [INT]\n"
+                    + " DEF RETURN b := a [INT]\n"
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
-                     " c INTERNAL lib1VariableName\r\n" + //
+                     " ENTRY c INTERNAL lib1VariableName\r\n" + //
                      "DATA SECTION\r\n" + //
-                     " GLOBAL v := 30 [INT]\r\n" + //
-                     " GLOBAL a := 20 [INT]\r\n" + //
-                     " GLOBAL c := 3 [INT]\r\n" + //
-                    "CODE SECTION\r\n" + //
-                    " d := c IADD v [INT]\r\n" + //
-                    " g := d IADD a [INT]\r\n" + //
-                    "END\r\n" + //
-                    "PROC SECTION\r\n";//
+                     " DEF GLOBAL v := 30 [INT]\r\n" + //
+                     " DEF GLOBAL a := 20 [INT]\r\n" + //
+                     " DEF GLOBAL c := 3 [INT]\r\n" + //
+                     "BSS SECTION\r\n" +
+                     "CODE SECTION\r\n" + //
+                     " d := c IADD v [INT]\r\n" + //
+                     " g := d IADD a [INT]\r\n" + //
+                     "END\r\n" + //
+                     "PROC SECTION\r\n";//
 
         linkProgramStrings(exp, prog1, lib1, lib2);
     }
