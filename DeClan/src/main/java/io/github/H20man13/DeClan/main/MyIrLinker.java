@@ -24,10 +24,6 @@ import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
-import io.github.H20man13.DeClan.common.icode.section.CodeSec;
-import io.github.H20man13.DeClan.common.icode.section.DataSec;
-import io.github.H20man13.DeClan.common.icode.section.ProcSec;
-import io.github.H20man13.DeClan.common.icode.section.SymSec;
 import io.github.H20man13.DeClan.common.icode.symbols.ParamSymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.RetSymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
@@ -116,8 +112,7 @@ public class MyIrLinker {
                                                 }
                                             }
     
-                                            int endNewData = newProgram.endOfDataSection();
-                                            newProgram.addInstruction(endNewData + 1, funcCall);
+                                            newProgram.addDataInstruction(funcCall);
                                         }
                                     }
 
@@ -148,9 +143,8 @@ public class MyIrLinker {
                                         replacePlaceAcrossProgramAndLibraries(assignLib.label, place, program, libraries, library);
                                     }
 
-                                    int endNewData = newProgram.endOfDataSection();
                                     if(!newProgram.dataSectionContainsInstruction(assignLib))
-                                        newProgram.addInstruction(endNewData + 1, assignLib);
+                                        newProgram.addDataInstruction(assignLib);
                                     if(!newProgram.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
                                         newProgram.addSymEntry(libEntry);
                                 } else if(exp instanceof UnExp){
@@ -185,9 +179,8 @@ public class MyIrLinker {
                                         replacePlaceAcrossProgramAndLibraries(assignLib.label, place, program, libraries, library);
                                     }
 
-                                    int endNewData = newProgram.endOfDataSection();
                                     if(!newProgram.dataSectionContainsInstruction(assignLib))
-                                        newProgram.addInstruction(endNewData + 1, assignLib);
+                                        newProgram.addDataInstruction(assignLib);
                                     if(!newProgram.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
                                         newProgram.addSymEntry(libEntry);
                                 } else if(exp instanceof BinExp){
@@ -244,9 +237,8 @@ public class MyIrLinker {
                                         replacePlaceAcrossProgramAndLibraries(assignLib.label, place, program, libraries, library);
                                     }
 
-                                    int endNewData = newProgram.endOfDataSection();
                                     if(!newProgram.dataSectionContainsInstruction(assignLib))
-                                        newProgram.addInstruction(endNewData + 1, assignLib);
+                                        newProgram.addDataInstruction(assignLib);
                                     if(!newProgram.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
                                         newProgram.addSymEntry(libEntry);
                                 } else {
@@ -259,9 +251,8 @@ public class MyIrLinker {
                                         replacePlaceAcrossProgramAndLibraries(assignLib.label, place, program, libraries, library);
                                     }
 
-                                    int endNewData = newProgram.endOfDataSection();
                                     if(!newProgram.dataSectionContainsInstruction(assignLib))
-                                        newProgram.addInstruction(endNewData + 1, assignLib);
+                                        newProgram.addDataInstruction(assignLib);
                                     if(!newProgram.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
                                         newProgram.addSymEntry(libEntry);
                                 }
@@ -328,8 +319,7 @@ public class MyIrLinker {
                                                 }
                                             }
             
-                                            int endNewData = library.endOfDataSection();
-                                            newLib.addInstruction(endNewData + 1, funcCall);
+                                            newLib.addDataInstruction(funcCall);
                                         }
                                     }
 
@@ -363,7 +353,7 @@ public class MyIrLinker {
 
                                     int endNewData = newLib.endOfDataSection();
                                     if(!newLib.dataSectionContainsInstruction(assignLib))
-                                         newLib.addInstruction(endNewData + 1, assignLib);
+                                        newLib.addDataInstruction(assignLib);
                                     if(!newLib.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
                                         newLib.addSymEntry(libEntry);
                                 } else if(exp instanceof UnExp){
@@ -399,9 +389,8 @@ public class MyIrLinker {
                                     }
 
 
-                                    int endNewData = newLib.endOfDataSection();
                                     if(!newLib.dataSectionContainsInstruction(assignLib))
-                                        newLib.addInstruction(endNewData + 1, assignLib);
+                                        newLib.addDataInstruction(assignLib);
                                     if(!newLib.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
                                         newLib.addSymEntry(libEntry);
                                 } else if(exp instanceof BinExp){
@@ -458,9 +447,8 @@ public class MyIrLinker {
                                         replacePlaceAcrossLibraries(assignLib.label, place, single, libraries, library);
                                     }
 
-                                    int endNewData = newLib.endOfDataSection();
                                     if(!newLib.dataSectionContainsInstruction(assignLib))
-                                        newLib.addInstruction(endNewData + 1, assignLib);
+                                        newLib.addDataInstruction(assignLib);
                                     if(!newLib.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
                                         newLib.addSymEntry(libEntry);
                                 } else {
@@ -473,10 +461,8 @@ public class MyIrLinker {
                                         replacePlaceAcrossLibraries(assignLib.label, place, single, libraries, library);
                                     }
 
-
-                                    int endNewData = newLib.endOfDataSection();
                                     if(!newLib.dataSectionContainsInstruction(assignLib))
-                                        newLib.addInstruction(endNewData + 1, assignLib);
+                                        newLib.addDataInstruction(assignLib);
                                     if(!newLib.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
                                         newLib.addSymEntry(libEntry);
                                 }
@@ -538,8 +524,7 @@ public class MyIrLinker {
                                     }
                                 }
 
-                                int endData = currentLib.endOfDataSection();
-                                newLib.addInstruction(endData + 1, funcCall);
+                                newLib.addDataInstruction(funcCall);
                             }
                         }
 
@@ -570,9 +555,8 @@ public class MyIrLinker {
                             replacePlaceAcrossLibraries(assign.label, place, single, libraries, currentLib);
                         }
 
-                        int endData = newLib.endOfDataSection();
                         if(!newLib.dataSectionContainsInstruction(assign))
-                            newLib.addInstruction(endData + 1, assign);
+                            newLib.addDataInstruction(assign);
                         if(currentLib.containsVariableEntryWithICodePlace(labelName, SymEntry.INTERNAL)){
                             VarSymEntry entry = currentLib.getVariableEntryByICodePlace(labelName, SymEntry.INTERNAL);
                             if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
@@ -610,9 +594,8 @@ public class MyIrLinker {
                             replacePlaceAcrossLibraries(assign.label, place, single, libraries, currentLib);
                         }
 
-                        int endData = newLib.endOfDataSection();
                         if(!newLib.dataSectionContainsInstruction(assign))
-                            newLib.addInstruction(endData + 1, assign);
+                            newLib.addDataInstruction(assign);
                         if(currentLib.containsVariableEntryWithICodePlace(labelName, SymEntry.INTERNAL)){
                             VarSymEntry entry = currentLib.getVariableEntryByICodePlace(labelName, SymEntry.INTERNAL);
                             if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
@@ -672,9 +655,8 @@ public class MyIrLinker {
                             replacePlaceAcrossLibraries(assign.label, place, single, libraries, currentLib);
                         }
 
-                        int endData = newLib.endOfDataSection();
                         if(!newLib.dataSectionContainsInstruction(assign))
-                            newLib.addInstruction(endData + 1, assign);
+                            newLib.addDataInstruction(assign);
                         if(currentLib.containsVariableEntryWithICodePlace(labelName, SymEntry.INTERNAL)){
                             VarSymEntry entry = currentLib.getVariableEntryByICodePlace(labelName, SymEntry.INTERNAL);
                             if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
@@ -690,10 +672,8 @@ public class MyIrLinker {
                             replacePlaceAcrossLibraries(assign.label, place, single, libraries, currentLib);
                         }
 
-                        int endData = newLib.endOfDataSection();
-
                         if(!newLib.dataSectionContainsInstruction(assign))
-                            newLib.addInstruction(endData + 1, assign);
+                            newLib.addDataInstruction(assign);
                         if(currentLib.containsVariableEntryWithICodePlace(labelName, SymEntry.INTERNAL)){
                             VarSymEntry entry = currentLib.getVariableEntryByICodePlace(labelName, SymEntry.INTERNAL);
                             if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
@@ -755,8 +735,7 @@ public class MyIrLinker {
                                     }
                                 }
 
-                                int endData = newProgram.endOfDataSection();
-                                newProgram.addInstruction(endData + 1, funcCall);
+                                newProgram.addDataInstruction(funcCall);
                             }
                         }
 
@@ -769,9 +748,8 @@ public class MyIrLinker {
                             replacePlaceAcrossProgramAndLibraries(assign.label, newPlace, program, libraries, currentLib);
                         }
 
-                        int endData = newProgram.endOfDataSection();
                         if(!newProgram.dataSectionContainsInstruction(assign))
-                            newProgram.addInstruction(endData + 1, assign);
+                            newProgram.addDataInstruction(assign);
                         if(currentLib.containsVariableEntryWithICodePlace(labelName, SymEntry.INTERNAL)){
                             VarSymEntry entry = currentLib.getVariableEntryByICodePlace(labelName, SymEntry.INTERNAL);
                             if(!newProgram.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
@@ -809,9 +787,8 @@ public class MyIrLinker {
                             replacePlaceAcrossProgramAndLibraries(assign.label, place, program, libraries, currentLib);
                         }
 
-                        int endData = newProgram.endOfDataSection();
                         if(!newProgram.dataSectionContainsInstruction(assign))
-                            newProgram.addInstruction(endData + 1, assign);
+                            newProgram.addDataInstruction(assign);
                         if(currentLib.containsVariableEntryWithICodePlace(labelName, SymEntry.INTERNAL)){
                             VarSymEntry entry = currentLib.getVariableEntryByICodePlace(labelName, SymEntry.INTERNAL);
                             if(!newProgram.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
@@ -871,9 +848,8 @@ public class MyIrLinker {
                             replacePlaceAcrossProgramAndLibraries(assign.label, place, program, libraries, currentLib);
                         }
 
-                        int endDataSection = newProgram.endOfDataSection();
                         if(!newProgram.dataSectionContainsInstruction(assign))
-                            newProgram.addInstruction(endDataSection + 1, assign);
+                            newProgram.addDataInstruction(assign);
                         if(currentLib.containsVariableEntryWithICodePlace(labelName, SymEntry.INTERNAL)){
                             VarSymEntry entry = currentLib.getVariableEntryByICodePlace(labelName, SymEntry.INTERNAL);
                             if(!newProgram.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
@@ -889,9 +865,8 @@ public class MyIrLinker {
                             replacePlaceAcrossProgramAndLibraries(assign.label, place, program, libraries, currentLib);
                         }
 
-                        int endData = newProgram.endOfDataSection();
                         if(!newProgram.dataSectionContainsInstruction(assign))
-                            newProgram.addInstruction(endData + 1, assign);
+                            newProgram.addDataInstruction(assign);
                         if(currentLib.containsVariableEntryWithICodePlace(labelName, SymEntry.INTERNAL)){
                             VarSymEntry entry = currentLib.getVariableEntryByICodePlace(labelName, SymEntry.INTERNAL);
                             if(!newProgram.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
@@ -909,13 +884,8 @@ public class MyIrLinker {
             int beginningProcedure = program.beginningOfProcedure(procName);
             int endProcedure = program.endOfProcedure(procName);
 
-            int endOfNewProcedureSection = newProg.endOfProcedureSection();
-            ICode functionLabel = program.getInstruction(beginningProcedure);
-            newProg.addInstruction(endOfNewProcedureSection + 1, functionLabel);
 
-            ICode returnStat = program.getInstruction(endProcedure);
-            newProg.addInstruction(endOfNewProcedureSection + 2, returnStat);
-
+            newProg.addProcedureHeader(procName);
 
             for(int instructionIndex = beginningProcedure + 1; instructionIndex <= (endProcedure - 1); instructionIndex++){
                 ICode icode = program.getInstruction(instructionIndex);
@@ -1203,8 +1173,7 @@ public class MyIrLinker {
                     }
                 }
 
-                int beforeReturnOfProcedure = newProg.endOfProcedure(procName);
-                newProg.addInstruction(beforeReturnOfProcedure, icode);
+                newProg.addProcedureInstruction(procName, icode);
             }
         }
     }
@@ -1214,14 +1183,9 @@ public class MyIrLinker {
             int beginningProcedure = library.beginningOfProcedure(procName);
             int endProcedure = library.endOfProcedure(procName);
 
-            int endOfNewProcedureSection = newProg.endOfProcedureSection();
-            ICode functionLabel = library.getInstruction(beginningProcedure);
-            newProg.addInstruction(endOfNewProcedureSection + 1, functionLabel);
+            newProg.addProcedureHeader(procName);
 
-            ICode returnStat = library.getInstruction(endProcedure);
-            newProg.addInstruction(endOfNewProcedureSection + 2, returnStat);
-
-            for(int instructionIndex = beginningProcedure + 1; instructionIndex <= (endProcedure + 1); instructionIndex++){
+            for(int instructionIndex = beginningProcedure + 1; instructionIndex <= (endProcedure - 1); instructionIndex++){
                 ICode icode = library.getInstruction(instructionIndex);
 
                 if(icode instanceof Assign){
@@ -1533,8 +1497,7 @@ public class MyIrLinker {
                     }
                 }
 
-                int beforeEndOfProcedure = newProg.endOfProcedure(procName);
-                newProg.addInstruction(beforeEndOfProcedure, icode);
+                newProg.addProcedureInstruction(procName, icode);
             }
         }
     }
@@ -1545,12 +1508,7 @@ public class MyIrLinker {
             int beginningProcedure = library.beginningOfProcedure(procName);
             int endProcedure = library.endOfProcedure(procName);
 
-            int endOfNewProcedureSection = newLib.endOfProcedureSection();
-            ICode functionLabel = library.getInstruction(beginningProcedure);
-            newLib.addInstruction(endOfNewProcedureSection + 1, functionLabel);
-
-            ICode returnStat = library.getInstruction(endProcedure);
-            newLib.addInstruction(endOfNewProcedureSection + 2, returnStat);
+            newLib.addProcedureHeader(procName);
 
             for(int instructionIndex = beginningProcedure + 1; instructionIndex <= (endProcedure - 1); instructionIndex++){
                 ICode icode = library.getInstruction(instructionIndex);
@@ -1864,8 +1822,7 @@ public class MyIrLinker {
                     }
                 }
 
-                int beforeEndOfProcedure = newLib.endOfProcedure(procName);
-                newLib.addInstruction(beforeEndOfProcedure, icode);
+                newLib.addProcedureInstruction(procName, icode);
             }
         }
     }
@@ -1879,12 +1836,7 @@ public class MyIrLinker {
                     int beginningProcedure = library.beginningOfProcedure(procName);
                     int endProcedure = library.endOfProcedure(procName);
 
-                    int endOfNewProcedureSection = newProg.endOfProcedureSection();
-                    ICode functionLabel = library.getInstruction(beginningProcedure);
-                    newProg.addInstruction(endOfNewProcedureSection + 1, functionLabel);
-
-                    ICode returnStat = library.getInstruction(endProcedure);
-                    newProg.addInstruction(endOfNewProcedureSection + 2, returnStat);
+                    newProg.addProcedureHeader(procName);
 
 
                     for(int instructionIndex = beginningProcedure + 1; instructionIndex <= (endProcedure - 1); instructionIndex++){
@@ -2159,8 +2111,7 @@ public class MyIrLinker {
                             }
                         }
 
-                        int beforeEndOfProcedure = newProg.endOfProcedure(procName);
-                        newProg.addInstruction(beforeEndOfProcedure, icode);
+                        newProg.addProcedureInstruction(procName, icode);
                     }
                     break loop;
                 }
@@ -2176,14 +2127,7 @@ public class MyIrLinker {
                     int beginningProcedure = library.beginningOfProcedure(procName);
                     int endProcedure = library.endOfProcedure(procName);
 
-                    int endOfNewProcedureSection = newLib.endOfProcedureSection();
-                    ICode functionLabel = library.getInstruction(beginningProcedure);
-                    newLib.addInstruction(endOfNewProcedureSection + 1, functionLabel);
-
-                    ICode returnStat = library.getInstruction(endProcedure);
-                    newLib.addInstruction(endOfNewProcedureSection + 2, returnStat);
-
-                    endOfNewProcedureSection++;
+                    newLib.addProcedureHeader(procName);
 
                     for(int instructionIndex = beginningProcedure + 1; instructionIndex <= (endProcedure - 1); instructionIndex++){
                         ICode icode = library.getInstruction(instructionIndex);
@@ -2509,8 +2453,7 @@ public class MyIrLinker {
                             }
                         }
 
-                        newLib.addInstruction(endOfNewProcedureSection, icode);
-                        endOfNewProcedureSection++;
+                        newLib.addProcedureInstruction(procName, icode);
                     }
                     break loop;
                 }
@@ -3130,7 +3073,6 @@ public class MyIrLinker {
         int beginningOfDataSection = startingProgram.beginningOfDataSection();
         int endOfDataSection = startingProgram.endOfDataSection();
 
-        int endOfNewDataSection = newProg.endOfDataSection();
         for(int i = beginningOfDataSection; i <= endOfDataSection; i++){
             ICode instruction = startingProgram.getInstruction(i);
             if(instruction instanceof Def){
@@ -3225,8 +3167,8 @@ public class MyIrLinker {
                         replacePlaceAcrossProgramAndLibraries(origPlace, place, startingProgram, libraries, startingProgram);
                     }
                 }
-                newProg.addInstruction(endOfNewDataSection + 1, assign);
-                endOfNewDataSection++;
+
+                newProg.addDataInstruction(instruction);
             } else if(instruction instanceof Call){
                 Call call = (Call)instruction;
                 
@@ -3261,8 +3203,111 @@ public class MyIrLinker {
                     }
                 }
 
-                newProg.addInstruction(endOfNewDataSection + 1, call);
-                endOfNewDataSection++;
+                newProg.addDataInstruction(instruction);
+            }
+        }
+    }
+
+    private void linkBssSection(Prog startingProgram, Lib[] libraries, Prog newProg){
+        int beginningOfBssSection = startingProgram.beginningOfBssSection();
+        int endOfBssSection = startingProgram.endOfBssSection();
+
+        for(int i = beginningOfBssSection; i <= endOfBssSection; i++){
+            ICode instruction = startingProgram.getInstruction(i);
+            if(instruction instanceof Def){
+                Def assign = (Def)instruction;
+
+                String originalPlace = assign.label;
+                if(!placeIsUniqueAcrossProgramAndLibraries(originalPlace, startingProgram, libraries)){
+                    String place;
+                    do{
+                        place = gen.genNext();
+                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
+
+                    replacePlaceAcrossProgramAndLibraries(originalPlace, place, startingProgram, libraries, startingProgram);
+                }
+
+                Exp assignExp = assign.val;
+                if(assignExp instanceof BinExp){
+                    BinExp assignBinExp = (BinExp)assignExp;
+
+                    if(assignBinExp.left instanceof IdentExp){
+                        IdentExp leftIdent = (IdentExp)assignBinExp.left;
+                        if(startingProgram.containsVariableEntryWithICodePlace(leftIdent.ident, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = startingProgram.getVariableEntryByICodePlace(leftIdent.ident, SymEntry.EXTERNAL);
+                            if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                fetchExternalDependentInstructions(entry.declanIdent, startingProgram, libraries, newProg);
+                        }
+
+                        String origPlace = leftIdent.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(origPlace, startingProgram, libraries)){
+                            String place;
+                            do{
+                                place = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
+
+                            replacePlaceAcrossProgramAndLibraries(origPlace, place, startingProgram, libraries, startingProgram);
+                        }
+                    }
+
+                    if(assignBinExp.right instanceof IdentExp){
+                        IdentExp rightIdent = (IdentExp)assignBinExp.right;
+                        if(startingProgram.containsVariableEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = startingProgram.getVariableEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL);
+                            if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                fetchExternalDependentInstructions(entry.declanIdent, startingProgram, libraries, newProg);
+                        }
+
+                        String origPlace = rightIdent.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(origPlace, startingProgram, libraries)){
+                            String place;
+                            do{
+                                place = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
+
+                            replacePlaceAcrossProgramAndLibraries(origPlace, place, startingProgram, libraries, startingProgram);
+                        }
+                    }
+                } else if(assignExp instanceof UnExp){
+                    UnExp assignUnExp = (UnExp)assignExp;
+                    if(assignUnExp.right instanceof IdentExp){
+                        IdentExp rightIdent = (IdentExp)assignUnExp.right;
+                        if(startingProgram.containsVariableEntryWithICodePlace(rightIdent.ident, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = startingProgram.getVariableEntryByICodePlace(rightIdent.ident, SymEntry.EXTERNAL);
+                            if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                fetchExternalDependentInstructions(entry.declanIdent, startingProgram, libraries, newProg);
+                        }
+
+                        String origPlace = rightIdent.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(origPlace, startingProgram, libraries)){
+                            String place;
+                            do{
+                                place = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
+
+                            replacePlaceAcrossProgramAndLibraries(origPlace, place, startingProgram, libraries, startingProgram);
+                        }
+                    }
+                } else if(assignExp instanceof IdentExp){
+                    IdentExp assignIdentExp = (IdentExp)assignExp;
+                    if(startingProgram.containsVariableEntryWithICodePlace(assignIdentExp.ident, SymEntry.EXTERNAL)){
+                        VarSymEntry entry = startingProgram.getVariableEntryByICodePlace(assignIdentExp.ident, SymEntry.EXTERNAL);
+                        if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                            fetchExternalDependentInstructions(entry.declanIdent, startingProgram, libraries, newProg);
+                    }
+
+                    String origPlace = assignIdentExp.ident;
+                    if(!placeIsUniqueAcrossProgramAndLibraries(origPlace, startingProgram, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
+
+                        replacePlaceAcrossProgramAndLibraries(origPlace, place, startingProgram, libraries, startingProgram);
+                    }
+                }
+
+                newProg.addDataInstruction(instruction);
             }
         }
     }
@@ -3271,7 +3316,6 @@ public class MyIrLinker {
         int beginningOfDataSection = startingLibrary.beginningOfDataSection();
         int endOfDataSection = startingLibrary.endOfDataSection();
 
-        int endOfNewDataSection = newLib.endOfDataSection();
         for(int i = beginningOfDataSection; i <= endOfDataSection; i++){
             ICode instruction = startingLibrary.getInstruction(i);
             if(instruction instanceof Def){
@@ -3366,8 +3410,7 @@ public class MyIrLinker {
                         replacePlaceAcrossLibraries(origPlace, place, startingLibrary, libraries, startingLibrary);
                     }
                 }
-                newLib.addInstruction(endOfNewDataSection + 1, assign);
-                endOfNewDataSection++;
+                newLib.addDataInstruction(assign);
             } else if(instruction instanceof Call){
                 Call call = (Call)instruction;
                 
@@ -3401,9 +3444,7 @@ public class MyIrLinker {
                         replacePlaceAcrossLibraries(paramName, place, startingLibrary, libraries, startingLibrary);
                     }
                 }
-
-                newLib.addInstruction(endOfNewDataSection + 1, call);
-                endOfNewDataSection++;
+                newLib.addDataInstruction(call);
             }
         }
     }
@@ -3415,7 +3456,6 @@ public class MyIrLinker {
         int codeSectionBegin = program.beginningOfCodeSection();
         int codeSectionEnd = program.endOfCodeSection();
 
-        int endOfNewProgCode = newProg.endOfCodeSection();
         for(int i = codeSectionBegin; i <= codeSectionEnd; i++){
             ICode icode = program.getInstruction(i);
             if(icode instanceof Assign){
@@ -3724,9 +3764,7 @@ public class MyIrLinker {
                     program.replaceLabel(labelICode.label, newLabel);
                 }
             }
-
-            newProg.addInstruction(endOfNewProgCode + 1, icode);
-            endOfNewProgCode++;
+            newProg.addProgramInstruction(icode);
         }
     }
 
@@ -3737,25 +3775,24 @@ public class MyIrLinker {
     }
 
     private void linkProcedureSections(Lib library, Lib[] libraries, Lib newLib){
-        int beginningNewLibProcedures = newLib.beginningOfProcedureSection();
-        int endNewLibProcedures = newLib.endOfProcedureSection();
 
         int beginningOfLibProcedures = library.beginningOfProcedureSection();
         int endOfLibProcedures = library.endOfProcedureSection();
 
         ProcedureState state = ProcedureState.PROCEDURE_INIT;
+        String procName = null;
         for(int i = beginningOfLibProcedures; i <= endOfLibProcedures; i++){
             ICode instruction = library.getInstruction(i);
             switch(state){
                 case PROCEDURE_INIT:
                     if(instruction instanceof ProcLabel){
                         ProcLabel label = (ProcLabel)instruction;
-                        if(newLib.containsProcedure(label.label)){
+                        procName = label.label;
+                        if(newLib.containsProcedure(procName)){
                            state = ProcedureState.PROCEDURE_SKIP; 
                         } else {
                            state = ProcedureState.PROCEDURE_BODY;
-                           newLib.addInstruction(endNewLibProcedures + 1, instruction);
-                           endNewLibProcedures++;
+                           newLib.addProcedureHeader(label.label);
                         }
                     }
                     break;
@@ -3767,11 +3804,8 @@ public class MyIrLinker {
                 case PROCEDURE_BODY:
                     if(instruction instanceof Return){
                         state = ProcedureState.PROCEDURE_INIT;
-                        newLib.addInstruction(endNewLibProcedures, instruction);
-                        endNewLibProcedures++;
                     } else {
-                        newLib.addInstruction(endNewLibProcedures, instruction);
-                        endNewLibProcedures++;
+                        newLib.addProcedureInstruction(procName, instruction);
                     }
                     break;
                 default:
@@ -3788,12 +3822,12 @@ public class MyIrLinker {
                     case PROCEDURE_INIT:
                         if(instruction instanceof ProcLabel){
                             ProcLabel label = (ProcLabel)instruction;
-                            if(newLib.containsProcedure(label.label)){
+                            procName = label.label;
+                            if(newLib.containsProcedure(procName)){
                                state = ProcedureState.PROCEDURE_SKIP; 
                             } else {
                                state = ProcedureState.PROCEDURE_BODY;
-                               newLib.addInstruction(endNewLibProcedures + 1, instruction);
-                               endNewLibProcedures++;
+                               newLib.addProcedureHeader(procName);
                             }
                         }
                         break;
@@ -3805,11 +3839,8 @@ public class MyIrLinker {
                     case PROCEDURE_BODY:
                         if(instruction instanceof Return){
                             state = ProcedureState.PROCEDURE_INIT;
-                            newLib.addInstruction(endNewLibProcedures, instruction);
-                            endNewLibProcedures++;
                         } else {
-                            newLib.addInstruction(endNewLibProcedures, instruction);
-                            endNewLibProcedures++;
+                            newLib.addProcedureInstruction(procName, instruction);
                         }
                         break;
                     default:
@@ -3822,6 +3853,7 @@ public class MyIrLinker {
     public Prog performLinkage(Prog program, Lib... libraries){
         Prog newProg = new Prog(true);
         linkDataSections(program, libraries, newProg);
+        linkBssSection(program, libraries, newProg);
         linkCodeSection(program, libraries, newProg);
         return newProg;
     }

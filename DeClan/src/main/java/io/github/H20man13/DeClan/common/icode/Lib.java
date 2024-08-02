@@ -34,6 +34,12 @@ public class Lib implements ICode, Iterable<ICode> {
         }
     }
 
+    public void addProcedureHeader(String procName){
+        int end = endOfProcedureSection();
+        addInstruction(end + 1, new ProcLabel(procName));
+        addInstruction(end + 2, new Return());
+    }
+
     public Lib(List<ICode> instructions){
         this.instructions = instructions;
     }
@@ -50,12 +56,22 @@ public class Lib implements ICode, Iterable<ICode> {
         return instructions.get(index);
     }
 
-    public void addInstruction(int index, ICode instruction){
+    protected void addInstruction(int index, ICode instruction){
         this.instructions.add(index, instruction);
     }
 
     public void addInstruction(ICode instruction){
         this.instructions.add(instruction);
+    }
+
+    public void addProcedureInstruction(String procName, ICode instruction){
+        int endProcedure = endOfProcedure(procName);
+        addInstruction(endProcedure, instruction);
+    }
+
+    public void addDataInstruction(ICode instruction){
+        int dataEnd = endOfDataSection();
+        addInstruction(dataEnd + 1, instruction);
     }
 
     public void addSymEntry(SymEntry entry){

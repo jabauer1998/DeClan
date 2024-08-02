@@ -1,25 +1,28 @@
 SYMBOL SECTION
 DATA SECTION
+ DEF GLOBAL f23 := 0 [INT]
+ DEF GLOBAL f24 := 0 [INT]
+ DEF GLOBAL f25 := 0 [INT]
 BSS SECTION
 CODE SECTION
  CALL ReadInt()
- DEF f26 := (RETURN f27) [INT]
- f28 := f26 [INT]
- DEF f29 := 0 [INT]
- f30 := f29 [INT]
+ DEF f29 := (RETURN f30) [INT]
+ f23 := f29 [INT]
+ DEF f31 := 0 [INT]
+ f24 := f31 [INT]
  LABEL FORBEG_0_LEVEL_0
- IF (GLOBAL f30) LT (GLOBAL f28)
+ IF (GLOBAL f24) LT (GLOBAL f23)
  THEN FORLOOP_0_LEVEL_0
  ELSE FOREND_0_LEVEL_0
  LABEL FORLOOP_0_LEVEL_0
- CALL F(((GLOBAL f30) -> f35)[INT])
- DEF f57 := (RETURN f41) [INT]
- f58 := f57 [INT]
- CALL WriteInt(((GLOBAL f58) -> f74)[INT])
- CALL Fact(((GLOBAL f30) -> f65)[INT])
+ CALL F(((GLOBAL f24) -> f36)[INT])
+ DEF f58 := (RETURN f42) [INT]
+ f25 := f58 [INT]
+ CALL WriteInt(((GLOBAL f25) -> f74)[INT])
+ CALL Fact(((GLOBAL f24) -> f65)[INT])
  DEF f73 := (RETURN f71) [INT]
- f58 := f73 [INT]
- CALL WriteInt(((GLOBAL f58) -> f74)[INT])
+ f25 := f73 [INT]
+ CALL WriteInt(((GLOBAL f25) -> f74)[INT])
  CALL WriteLn()
  DEF f75 := 1 [INT]
  GOTO FORBEG_0_LEVEL_0
@@ -27,75 +30,74 @@ CODE SECTION
 END
 PROC SECTION
  PROC LABEL ReadInt
-  DEF f23 := 0 [INT]
-  DEF f24 := 0 [INT]
-  IPARAM f24
+  DEF f26 := 0 [INT]
+  DEF f27 := 0 [INT]
+  IPARAM f27
   IASM "MOV %r, R0"
   IASM "SWI 3"
-  IPARAM f23
+  IPARAM f26
   IASM "STR R0, %a"
-  IPARAM f24
+  IPARAM f27
   IASM "MOV R0, %r"
-  DEF RETURN f25 := f23 [INT]
+  DEF RETURN f28 := f26 [INT]
  RETURN
  PROC LABEL F
-  DEF f31 := 0 [INT]
   DEF f32 := 0 [INT]
   DEF f33 := 0 [INT]
-  DEF f34 := (PARAM f35) EQ f33 [BOOL]
-  DEF f36 := TRUE [BOOL]
-  IF f34 EQ f36
+  DEF f34 := 0 [INT]
+  DEF f35 := (PARAM f36) EQ f34 [BOOL]
+  DEF f37 := TRUE [BOOL]
+  IF f35 EQ f37
   THEN IFSTAT_1_SEQ_0_LEVEL_0_0
   ELSE IFNEXT_1_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0_0
-  DEF f37 := 1 [INT]
-  f32 := f37 [INT]
+  DEF f38 := 1 [INT]
+  f33 := f38 [INT]
   GOTO IFEND_1_LEVEL_0_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0_0
-  DEF f38 := 1 [INT]
-  DEF f39 := (PARAM f35) ISUB f38 [INT]
-  CALL F((f39 -> f35)[INT])
-  DEF f40 := (RETURN f41) [INT]
-  f31 := f40 [INT]
-  CALL M((f31 -> f46)[INT])
-  DEF f55 := (RETURN f52) [INT]
-  f32 := f55 [INT]
-  DEF f56 := (PARAM f35) ISUB f32 [INT]
-  f32 := f56 [INT]
+  DEF f39 := 1 [INT]
+  DEF f40 := (PARAM f36) ISUB f39 [INT]
+  CALL F((f40 -> f36)[INT])
+  DEF f41 := (RETURN f42) [INT]
+  f32 := f41 [INT]
+  CALL M((f32 -> f47)[INT])
+  DEF f56 := (RETURN f53) [INT]
+  f33 := f56 [INT]
+  DEF f57 := (PARAM f36) ISUB f33 [INT]
+  f33 := f57 [INT]
   GOTO IFEND_1_LEVEL_0_0
   LABEL IFNEXT_1_SEQ_1_LEVEL_0_0
   LABEL IFEND_1_LEVEL_0_0
-  DEF RETURN f41 := f32 [INT]
+  DEF RETURN f42 := f33 [INT]
  RETURN
  PROC LABEL M
-  DEF f42 := 0 [INT]
   DEF f43 := 0 [INT]
   DEF f44 := 0 [INT]
-  DEF f45 := (PARAM f46) EQ f44 [BOOL]
-  DEF f47 := TRUE [BOOL]
-  IF f45 EQ f47
+  DEF f45 := 0 [INT]
+  DEF f46 := (PARAM f47) EQ f45 [BOOL]
+  DEF f48 := TRUE [BOOL]
+  IF f46 EQ f48
   THEN IFSTAT_0_SEQ_0_LEVEL_0_0
   ELSE IFNEXT_0_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_0_SEQ_0_LEVEL_0_0
-  DEF f48 := 0 [INT]
-  f43 := f48 [INT]
+  DEF f49 := 0 [INT]
+  f44 := f49 [INT]
   GOTO IFEND_0_LEVEL_0_0
   LABEL IFNEXT_0_SEQ_0_LEVEL_0_0
-  DEF f49 := 1 [INT]
-  DEF f50 := (PARAM f46) ISUB f49 [INT]
-  CALL M((f50 -> f46)[INT])
-  DEF f51 := (RETURN f52) [INT]
-  f42 := f51 [INT]
-  CALL F((f42 -> f35)[INT])
-  DEF f53 := (RETURN f41) [INT]
-  f43 := f53 [INT]
-  DEF f54 := (PARAM f46) ISUB f43 [INT]
-  f43 := f54 [INT]
+  DEF f50 := 1 [INT]
+  DEF f51 := (PARAM f47) ISUB f50 [INT]
+  CALL M((f51 -> f47)[INT])
+  DEF f52 := (RETURN f53) [INT]
+  f43 := f52 [INT]
+  CALL F((f43 -> f36)[INT])
+  DEF f54 := (RETURN f42) [INT]
+  f44 := f54 [INT]
+  DEF f55 := (PARAM f47) ISUB f44 [INT]
+  f44 := f55 [INT]
   GOTO IFEND_0_LEVEL_0_0
   LABEL IFNEXT_0_SEQ_1_LEVEL_0_0
   LABEL IFEND_0_LEVEL_0_0
-  DEF RETURN f52 := f43 [INT]
-  PROC LABEL F
+  DEF RETURN f53 := f44 [INT]
  RETURN
  PROC LABEL WriteInt
   DEF f59 := 0 [INT]

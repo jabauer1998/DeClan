@@ -43,6 +43,16 @@ public class Prog extends Lib implements ICode {
         throw new ICodeFormatException(this, "Cant generate a pattern of a Prog");
     }
 
+    public void addBssInstruction(ICode instr){
+        int endBss = endOfBssSection();
+        addInstruction(endBss + 1, instr);
+    }
+
+    public void addProgramInstruction(ICode instr){
+        int endCode = endOfCodeSection();
+        addInstruction(endCode + 1, instr);
+    }
+
 
     private enum State{
         PROCEDURE_SECTION,
