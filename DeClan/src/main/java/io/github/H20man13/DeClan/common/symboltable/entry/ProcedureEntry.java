@@ -6,13 +6,13 @@ import java.lang.String;
 import java.lang.StringBuilder;
 import java.util.List;
 
-import edu.depauw.declan.common.Position;
-import edu.depauw.declan.common.ast.Declaration;
-import edu.depauw.declan.common.ast.Expression;
-import edu.depauw.declan.common.ast.ParamaterDeclaration;
-import edu.depauw.declan.common.ast.Statement;
-import edu.depauw.declan.common.ast.VariableDeclaration;
 import io.github.H20man13.DeClan.common.Copyable;
+import io.github.H20man13.DeClan.common.position.Position;
+import io.github.H20man13.DeClan.common.ast.Declaration;
+import io.github.H20man13.DeClan.common.ast.Expression;
+import io.github.H20man13.DeClan.common.ast.ParamaterDeclaration;
+import io.github.H20man13.DeClan.common.ast.Statement;
+import io.github.H20man13.DeClan.common.ast.VariableDeclaration;
 
 import java.util.ArrayList;
 

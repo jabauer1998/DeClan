@@ -4,10 +4,10 @@ import java.lang.StackWalker.StackFrame;
 import java.security.cert.CertPathValidatorException.BasicReason;
 import java.util.List;
 
-import edu.depauw.declan.common.ErrorLog;
-import edu.depauw.declan.common.Position;
-import edu.depauw.declan.common.ast.BinaryOperation;
+import io.github.H20man13.DeClan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.Position;
 import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.ast.BinaryOperation;
 import io.github.H20man13.DeClan.common.exception.ICodeGeneratorException;
 import io.github.H20man13.DeClan.common.exception.ICodeTypeCheckerException;
 import io.github.H20man13.DeClan.common.icode.Assign;
@@ -113,7 +113,27 @@ public class MyICodeTypeChecker {
     private boolean typeCheckPossibleAssignmentsAndParamaters(ICode icode){
         if(icode instanceof Assign) return typeCheckPossibleAssignment((Assign)icode);
         else if(icode instanceof Call) return typeCheckPossibleParamaters((Call)icode);
+        else if(icode instanceof Def) return typeCheckPossibleDefinition((Def)icode);
         return true;
+    }
+
+    private boolean typeCheckPossibleDefinition(Def assign){
+        TypeCheckerQualities qual = typeCheckExpression(assign.val);
+        ICode.Type displayedType = assign.type;
+
+        if((qual.containsQualities(TypeCheckerQualities.INTEGER) && displayedType != Assign.Type.INT)
+        || (qual.containsQualities(TypeCheckerQualities.REAL) && displayedType != Assign.Type.REAL)
+        || (qual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedType != Assign.Type.BOOL)
+        || (qual.containsQualities(TypeCheckerQualities.STRING) && displayedType != Assign.Type.STRING)){
+            throw new ICodeTypeCheckerException("typeCheckPossibleDefinition", assign, instructionNumber, "Error invalid operation between types: \nType 1: " + qual.toString() + "\nType 2: " + displayedType);
+        }
+
+        if(qual.missingQualities(TypeCheckerQualities.NA)){
+            TypeCheckerQualities newType = ConversionUtils.assignTypeToTypeCheckerQualities(displayedType);
+            variableQualities.addEntry(assign.label, newType);
+            return true;
+        }
+        return false;
     }
 
     private boolean typeCheckPossibleAssignment(Assign assign){
@@ -124,7 +144,7 @@ public class MyICodeTypeChecker {
         || (qual.containsQualities(TypeCheckerQualities.REAL) && displayedType != Assign.Type.REAL)
         || (qual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedType != Assign.Type.BOOL)
         || (qual.containsQualities(TypeCheckerQualities.STRING) && displayedType != Assign.Type.STRING)){
-            errLog.add("Error in assignment " + assign + " expression is of type " + qual.toString() + " but is utilized in assignment of type " + displayedType, new Position(instructionNumber, 0));
+            throw new ICodeTypeCheckerException("typeCheckPossibleAssignment", assign, instructionNumber, "Error in assignment " + assign + " expression is of type " + qual.toString() + " but is utilized in assignment of type " + displayedType);
         }
 
         if(qual.missingQualities(TypeCheckerQualities.NA)){
@@ -147,7 +167,7 @@ public class MyICodeTypeChecker {
                     || (sourceQual.containsQualities(TypeCheckerQualities.REAL) && displayedParamType != Assign.Type.REAL)
                     || (sourceQual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedParamType != Assign.Type.BOOL)
                     || (sourceQual.containsQualities(TypeCheckerQualities.STRING) && displayedParamType != Assign.Type.STRING)){
-                        errLog.add("Error in function call " + proc.pname + ": param " + exp.ident + " is of type " + sourceQual.toString() + " but it is used in paramater assignment of type " + displayedParamType.toString(), new Position(instructionNumber, 0));
+                        throw new ICodeTypeCheckerException("typeCheckPossibleParamaters", proc, instructionNumber, "Error in function call " + proc.pname + ": param " + exp.ident + " is of type " + sourceQual.toString() + " but it is used in paramater assignment of type " + displayedParamType.toString());
                     }
                     if(!variableQualities.entryExists(param.label)){
                         variableQualities.addEntry(param.label, ConversionUtils.assignTypeToTypeCheckerQualities(displayedParamType));
@@ -157,7 +177,7 @@ public class MyICodeTypeChecker {
                         || (qual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedParamType != Assign.Type.BOOL)
                         || (qual.containsQualities(TypeCheckerQualities.STRING) && displayedParamType != Assign.Type.STRING)
                         || (qual.containsQualities(TypeCheckerQualities.REAL) && displayedParamType != Assign.Type.REAL)){
-                            errLog.add("Error in function call " + proc.pname + ": param " + param.label + " is of type " + sourceQual.toString() + " but it is given a value in paramater assignment of type " + displayedParamType.toString(), new Position(instructionNumber, 0));
+                            throw new ICodeTypeCheckerException("typeCheckPossibleParamaters", proc, instructionNumber, "Error in function call " + proc.pname + ": param " + param.label + " is of type " + sourceQual.toString() + " but it is given a value in paramater assignment of type " + displayedParamType.toString());
                         }
                     }
                 } else {
@@ -176,28 +196,28 @@ public class MyICodeTypeChecker {
 
     private void typeCheckProcedureLabel(Call icode){
         if(!labels.entryExists(icode.pname)){
-            errLog.add("Error No label found for procedure entry " + icode.pname, new Position(instructionNumber, 0));
+            throw new ICodeTypeCheckerException("typeCheckProcedureLabel", icode, instructionNumber, "Error No label found for procedure entry " + icode.pname);
         }
     }
 
     private void typeCheckGotoStatement(Goto icode){
         if(!labels.entryExists(icode.label)){
-            errLog.add("Error No label found for goto statement " + icode.label, new Position(instructionNumber, 0));
+            throw new ICodeTypeCheckerException("typeCheckProcedureLabel", icode, instructionNumber, "Error No label found for goto statement " + icode.label);
         }
     }
 
     private void typeCheckIfStatement(If ifStat){
         TypeCheckerQualities type = typeCheckExpression(ifStat.exp);
         if(!type.containsQualities(TypeCheckerQualities.BOOLEAN)){
-            errLog.add("Error expected Boolean resulting type on the right hand side of the assignment", new Position(instructionNumber, 0));
+            throw new ICodeTypeCheckerException("typeCheckIfStatement", ifStat, instructionNumber, "Error expected Boolean resulting type on the right hand side of the assignment");
         }
 
         if(!labels.entryExists(ifStat.ifTrue)){
-            errLog.add("Error no label found for if statement label " + ifStat.ifTrue, new Position(instructionNumber, 0));
+            throw new ICodeTypeCheckerException("typeCheckIFStatement", ifStat, instructionNumber, "Error no label found for if statement label " + ifStat.ifTrue);
         }
 
         if(!labels.entryExists(ifStat.ifFalse)){
-            errLog.add("Error no label found for if statement label " + ifStat.ifFalse, new Position(instructionNumber, 0));
+            throw new ICodeTypeCheckerException("typeCheckIfStatement", ifStat, instructionNumber, "Error no label found for if statement label " + ifStat.ifFalse);
         }
     }
 
@@ -219,11 +239,11 @@ public class MyICodeTypeChecker {
         TypeCheckerQualities rightQual = typeCheckExpression(expression.right);
 
         if(leftQual.containsQualities(TypeCheckerQualities.STRING)){
-            errLog.add("Error the left hand side of the binary expression contains a String value", new Position(instructionNumber, 0));
+            throw new ICodeTypeCheckerException("typeCheckBinaryExpression", expression, instructionNumber, "Error the left hand side of the binary expression contains a String value");
         }
 
         if(rightQual.containsQualities(TypeCheckerQualities.STRING)){
-            errLog.add("Error the right hand side of the binary expression contains a String value", new Position(instructionNumber, 0));
+            throw new ICodeTypeCheckerException("typeCheckBinaryExpression", expression, instructionNumber, "Error the right hand side of the binary expression contains a String value");
         }
 	
         if(expression.op == BinExp.Operator.EQ || expression.op == BinExp.Operator.NE 
@@ -238,8 +258,7 @@ public class MyICodeTypeChecker {
         || expression.op == BinExp.Operator.IMOD || expression.op == BinExp.Operator.IXOR){
             return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);	
         } else {
-            errLog.add("Unknown Operation type " + expression.op, new Position(instructionNumber, 0));
-            return new TypeCheckerQualities(TypeCheckerQualities.NA);
+            throw new ICodeTypeCheckerException("typeCheckBinaryExpression", expression, instructionNumber, "Unknown Operation type " + expression.op);
         }
     }
 
@@ -247,7 +266,7 @@ public class MyICodeTypeChecker {
         TypeCheckerQualities rightQual = typeCheckExpression(expression.right);
 
         if(rightQual.containsQualities(TypeCheckerQualities.STRING)){
-            errLog.add("Error in unary operation cant have string as input for expression " + expression, new Position(instructionNumber, 0));
+            throw new ICodeTypeCheckerException("typeCheckUnaryExpression", expression, instructionNumber, "Error in unary operation cant have string as input for expression " + expression);
         }
 
         switch(expression.op){
@@ -256,8 +275,7 @@ public class MyICodeTypeChecker {
             case BNOT: return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
             case INOT: return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
             default:
-                errLog.add("Error unknown Operation type " + expression.op, new Position(instructionNumber, 0));
-                return new TypeCheckerQualities(TypeCheckerQualities.NA);
+                throw new ICodeTypeCheckerException("typeCheckUnaryExpression", expression, instructionNumber, "Error unknown Operation type " + expression.op);
         }
     }
 
@@ -284,6 +302,4 @@ public class MyICodeTypeChecker {
     private TypeCheckerQualities typeCheckBoolean(){
         return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
     }
-
-    
 }

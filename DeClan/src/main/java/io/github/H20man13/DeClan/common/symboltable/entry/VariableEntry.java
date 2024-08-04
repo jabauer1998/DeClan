@@ -5,8 +5,8 @@ import static io.github.H20man13.DeClan.main.MyIO.*;
 import java.lang.String;
 import java.lang.StringBuilder;
 
-import edu.depauw.declan.common.Position;
 import io.github.H20man13.DeClan.common.Copyable;
+import io.github.H20man13.DeClan.common.position.Position;
 
 public class VariableEntry implements Copyable<VariableEntry>{
     

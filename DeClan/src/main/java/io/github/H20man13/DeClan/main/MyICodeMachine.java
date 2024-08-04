@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Stack;
 
-import edu.depauw.declan.common.ErrorLog;
-import edu.depauw.declan.common.Position;
+import io.github.H20man13.DeClan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.Position;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.exception.ICodeGeneratorException;
 import io.github.H20man13.DeClan.common.exception.ICodeVmException;

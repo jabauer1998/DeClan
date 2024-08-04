@@ -7,10 +7,10 @@ import java.util.List;
 
 import org.junit.Test;
 
-import edu.depauw.declan.common.ErrorLog;
-import io.github.H20man13.DeClan.common.ReaderSource;
+import io.github.H20man13.DeClan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.Prog;
+import io.github.H20man13.DeClan.common.source.ReaderSource;
 import io.github.H20man13.DeClan.main.MyIrLexer;
 import io.github.H20man13.DeClan.main.MyIrParser;
 import io.github.H20man13.DeClan.main.MyOptimizer;

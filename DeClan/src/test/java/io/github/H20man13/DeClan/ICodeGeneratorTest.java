@@ -8,11 +8,11 @@ import java.util.Scanner;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-import edu.depauw.declan.common.ErrorLog;
-import edu.depauw.declan.common.Source;
-import edu.depauw.declan.common.ast.Program;
-import io.github.H20man13.DeClan.common.ReaderSource;
+import io.github.H20man13.DeClan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.ast.Program;
 import io.github.H20man13.DeClan.common.icode.Prog;
+import io.github.H20man13.DeClan.common.source.ReaderSource;
+import io.github.H20man13.DeClan.common.source.Source;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.MyICodeGenerator;

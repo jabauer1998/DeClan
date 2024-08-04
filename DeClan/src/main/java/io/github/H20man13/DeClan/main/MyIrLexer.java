@@ -1,9 +1,8 @@
 package io.github.H20man13.DeClan.main;
 
-import edu.depauw.declan.common.ErrorLog;
-import edu.depauw.declan.common.Lexer;
-import edu.depauw.declan.common.Position;
-import edu.depauw.declan.common.Source;
+import io.github.H20man13.DeClan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.Position;
+import io.github.H20man13.DeClan.common.source.Source;
 import io.github.H20man13.DeClan.common.token.IrToken;
 import io.github.H20man13.DeClan.common.token.IrTokenType;
 

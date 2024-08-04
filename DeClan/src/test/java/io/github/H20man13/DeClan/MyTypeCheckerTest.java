@@ -6,11 +6,11 @@ import java.io.FileReader;
 
 import org.junit.Test;
 
-import edu.depauw.declan.common.ErrorLog;
-import edu.depauw.declan.common.Source;
-import edu.depauw.declan.common.ErrorLog.LogItem;
-import edu.depauw.declan.common.ast.Program;
-import io.github.H20man13.DeClan.common.ElaborateReaderSource;
+import io.github.H20man13.DeClan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.ErrorLog.LogItem;
+import io.github.H20man13.DeClan.common.ast.Program;
+import io.github.H20man13.DeClan.common.source.ElaborateReaderSource;
+import io.github.H20man13.DeClan.common.source.Source;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.MyTypeChecker;

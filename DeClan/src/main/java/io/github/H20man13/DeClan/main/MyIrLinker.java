@@ -3,9 +3,9 @@ package io.github.H20man13.DeClan.main;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.depauw.declan.common.ErrorLog;
-import edu.depauw.declan.common.ast.Library;
-import edu.depauw.declan.common.ast.Program;
+import io.github.H20man13.DeClan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.ast.Library;
+import io.github.H20man13.DeClan.common.ast.Program;
 import io.github.H20man13.DeClan.common.exception.ICodeLinkerException;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.gen.LabelGenerator;

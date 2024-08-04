@@ -1,6 +1,6 @@
 package io.github.H20man13.DeClan.common.exception;
 
-import edu.depauw.declan.common.ast.ASTNode;
+import io.github.H20man13.DeClan.common.ast.ASTNode;
 
 public class ICodeGeneratorException extends RuntimeException {
     public ICodeGeneratorException(ASTNode astNode, String message){

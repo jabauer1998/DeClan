@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.depauw.declan.common.ast.Identifier;
-import edu.depauw.declan.model.SymbolTable;
+import io.github.H20man13.DeClan.common.ast.Identifier;
 import io.github.H20man13.DeClan.common.dag.DagGraph;
 import io.github.H20man13.DeClan.common.dag.DagInlineAssemblyNode;
 import io.github.H20man13.DeClan.common.dag.DagNode;

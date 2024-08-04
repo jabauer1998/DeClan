@@ -7,9 +7,9 @@ import java.io.FileReader;
 
 import org.junit.Test;
 
-import edu.depauw.declan.common.ErrorLog;
-import edu.depauw.declan.common.Source;
-import io.github.H20man13.DeClan.common.ReaderSource;
+import io.github.H20man13.DeClan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.source.ReaderSource;
+import io.github.H20man13.DeClan.common.source.Source;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
 

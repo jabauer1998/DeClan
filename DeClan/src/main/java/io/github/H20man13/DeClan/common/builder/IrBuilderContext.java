@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import edu.depauw.declan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;

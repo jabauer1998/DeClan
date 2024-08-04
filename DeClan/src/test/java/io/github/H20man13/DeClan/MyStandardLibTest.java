@@ -6,12 +6,12 @@ import java.io.FileReader;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-import edu.depauw.declan.common.ErrorLog;
-import edu.depauw.declan.common.Source;
-import edu.depauw.declan.common.ast.Library;
-import io.github.H20man13.DeClan.common.ElaborateReaderSource;
+import io.github.H20man13.DeClan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.ast.Library;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.Lib;
+import io.github.H20man13.DeClan.common.source.ElaborateReaderSource;
+import io.github.H20man13.DeClan.common.source.Source;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.MyICodeGenerator;

@@ -8,10 +8,10 @@ import java.util.List;
 
 import org.junit.Test;
 
-import edu.depauw.declan.common.ErrorLog;
-import edu.depauw.declan.common.Source;
-import edu.depauw.declan.common.ErrorLog.LogItem;
-import io.github.H20man13.DeClan.common.ReaderSource;
+import io.github.H20man13.DeClan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.ErrorLog.LogItem;
+import io.github.H20man13.DeClan.common.source.ReaderSource;
+import io.github.H20man13.DeClan.common.source.Source;
 import io.github.H20man13.DeClan.common.token.IrToken;
 import io.github.H20man13.DeClan.common.token.IrTokenType;
 import io.github.H20man13.DeClan.main.MyIrLexer;

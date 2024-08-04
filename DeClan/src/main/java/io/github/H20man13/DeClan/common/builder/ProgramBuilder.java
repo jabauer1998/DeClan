@@ -2,7 +2,7 @@ package io.github.H20man13.DeClan.common.builder;
 
 import java.util.Collections;
 
-import edu.depauw.declan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.builder.template.CompletableBuilder;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.End;

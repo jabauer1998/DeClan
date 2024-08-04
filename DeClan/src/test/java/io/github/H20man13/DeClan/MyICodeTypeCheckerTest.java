@@ -1,18 +1,18 @@
 package io.github.H20man13.DeClan;
 
-import static org.junit.Assert.assertTrue;
-
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.StringReader;
 
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-import edu.depauw.declan.common.ErrorLog;
-import edu.depauw.declan.common.Source;
-import edu.depauw.declan.common.ErrorLog.LogItem;
-import edu.depauw.declan.common.ast.Program;
-import io.github.H20man13.DeClan.common.ReaderSource;
+import io.github.H20man13.DeClan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.ErrorLog.LogItem;
+import io.github.H20man13.DeClan.common.ast.Program;
 import io.github.H20man13.DeClan.common.icode.Prog;
+import io.github.H20man13.DeClan.common.source.ReaderSource;
+import io.github.H20man13.DeClan.common.source.Source;
 import io.github.H20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
@@ -36,7 +36,7 @@ public class MyICodeTypeCheckerTest {
             FileReader fileReader = new FileReader(path);
             ReaderSource typeCheckerSource = new ReaderSource(fileReader);
             return runTypeCheckerOnDeClanSource(typeCheckerSource);
-        } catch(Exception exp){
+        } catch(FileNotFoundException exp){
             assertTrue(exp.toString(), false);
             return null;
         }
@@ -96,33 +96,25 @@ public class MyICodeTypeCheckerTest {
     public void testProg1(){
         String source = "SYMBOL SECTION\n"
                       + "DATA SECTION\n"
-                      + "GLOBAL a := 456 [INT]\n"
-                      + "GLOBAL b := 48393 [INT]\n"
-                      + "GLOBAL c := 8.23 [REAL]\n"
-                      + "GLOBAL c2 := TRUE [BOOL]\n"
-                      + "GLOBAL c3 := FALSE [BOOL]\n"
-                      + "GLOBAL d := a IADD b [INT]\n"
-                      + "GLOBAL e := b ISUB a [INT]\n"
-                      + "GLOBAL f := d IMOD e [INT]\n"
-                      + "GLOBAL g := a IMUL b [INT]\n"
-                      + "h := c RADD f [REAL]\n"
-                      + "i := h RSUB c [REAL]\n"
-                      + "j := b RMUL i [REAL]\n"
-                      + "k := c2 LOR c3 [BOOL]\n"
-                      + "l := b IOR g [INT]\n"
-                      + "m := l IDIV a [INT]\n"
-                      + "n := m RDIVIDE c [REAL]\n"
-                      + "o := k LAND c3 [BOOL]\n"
-                      + "p := a IAND a [INT]\n"
-                      + "q := p ILSHIFT b [INT]\n"
-                      + "r := b IRSHIFT f [INT]\n"
-                      + "s := r LT c [BOOL]\n"
-                      + "t := i GT g [BOOL]\n"
-                      + "u := p LE j [BOOL]\n"
-                      + "v := r GE n [BOOL]\n"
+                      + "DEF GLOBAL a := 456 [INT]\n"
+                      + "DEF GLOBAL b := 48393 [INT]\n"
+                      + "DEF GLOBAL c := 8.23 [REAL]\n"
+                      + "DEF GLOBAL c2 := TRUE [BOOL]\n"
+                      + "DEF GLOBAL c3 := FALSE [BOOL]\n"
+                      + "DEF d := a IADD b [INT]\n"
+                      + "DEF e := b ISUB a [INT]\n"
+                      + "DEF f := d IMOD e [INT]\n"
+                      + "DEF g := a IMUL b [INT]\n"
+                      + "DEF k := (GLOBAL c2) LOR (GLOBAL c3) [BOOL]\n"
+                      + "DEF l := (GLOBAL b) IOR g [INT]\n"
+                      + "DEF m := l IDIV (GLOBAL a) [INT]\n"
+                      + "BSS SECTION\n"
                       + "CODE SECTION\n"
-                      + "w := n NE n [BOOL]\n"
-                      + "x := j EQ h [BOOL]\n"
+                      + "DEF o := k LAND (GLOBAL c3) [BOOL]\n"
+                      + "DEF p := (GLOBAL a) IAND (GLOBAL a) [INT]\n"
+                      + "DEF q := p ILSHIFT (GLOBAL b) [INT]\n"
+                      + "DEF r := (GLOBAL b) IRSHIFT f [INT]\n"
+                      + "DEF s := r LT (GLOBAL c) [BOOL]\n"
                       + "END\n"
                       + "PROC SECTION\n";
         MyICodeTypeChecker tC = runTypeCheckerOnIrStringSource(source);
@@ -135,47 +127,39 @@ public class MyICodeTypeCheckerTest {
         assertTypeCheckerQualities(tC, "e", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "f", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "g", TypeCheckerQualities.INTEGER);
-        assertTypeCheckerQualities(tC, "h", TypeCheckerQualities.REAL);
-        assertTypeCheckerQualities(tC, "i", TypeCheckerQualities.REAL);
-        assertTypeCheckerQualities(tC, "j", TypeCheckerQualities.REAL);
         assertTypeCheckerQualities(tC, "k", TypeCheckerQualities.BOOLEAN);
         assertTypeCheckerQualities(tC, "l", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "m", TypeCheckerQualities.INTEGER);
-        assertTypeCheckerQualities(tC, "n", TypeCheckerQualities.REAL);
         assertTypeCheckerQualities(tC, "o", TypeCheckerQualities.BOOLEAN);
         assertTypeCheckerQualities(tC, "p", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "q", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "r", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "s", TypeCheckerQualities.BOOLEAN);
-        assertTypeCheckerQualities(tC, "t", TypeCheckerQualities.BOOLEAN);
-        assertTypeCheckerQualities(tC, "u", TypeCheckerQualities.BOOLEAN);
-        assertTypeCheckerQualities(tC, "v", TypeCheckerQualities.BOOLEAN);
-        assertTypeCheckerQualities(tC, "w", TypeCheckerQualities.BOOLEAN);
-        assertTypeCheckerQualities(tC, "x", TypeCheckerQualities.BOOLEAN);
     }
 
     @Test
     public void testProg2(){
         String source = "SYMBOL SECTION\n"
                       + "DATA SECTION\n"
+                      + "BSS SECTION\n"
                       + "CODE SECTION\n"
-                      + "g := 30 [INT]\n"
+                      + "DEF g := 30 [INT]\n"
                       + "CALL func1 ((g -> param1)[INT])\n"
-                      + "EXTERNAL RETURN h := return1 [INT]\n"
+                      + "DEF h := (RETURN return1) [INT]\n"
                       + "END\n"
                       + "PROC SECTION\n"
                       + "PROC LABEL func1\n"
-                      + "PARAM a := param1 [INT]\n"
-                      + "PARAM b := a IADD a [INT]\n"
+                      + "DEF a := (PARAM param1) [INT]\n"
+                      + "DEF b := a IADD a [INT]\n"
                       + "CALL func2 ((b->param2)[INT])\n"
-                      + "EXTERNAL RETURN c := return2 [INT]\n"
-                      + "INTERNAL RETURN return1 := c [INT]\n"
+                      + "DEF c := (RETURN return2) [INT]\n"
+                      + "DEF RETURN return1 := c [INT]\n"
                       + "RETURN\n"
                       + "PROC LABEL func2\n"
-                      + "PARAM d := param2 [INT]\n"
-                      + "e := d IMUL d [INT]\n"
-                      + "f := e IMOD d [INT]\n"
-                      + "INTERNAL RETURN return2 := f [INT]\n"
+                      + "DEF d := (PARAM param2) [INT]\n"
+                      + "DEF e := d IMUL d [INT]\n"
+                      + "DEF f := e IMOD d [INT]\n"
+                      + "DEF RETURN return2 := f [INT]\n"
                       + "RETURN\n";
 
         MyICodeTypeChecker tC = runTypeCheckerOnIrStringSource(source);

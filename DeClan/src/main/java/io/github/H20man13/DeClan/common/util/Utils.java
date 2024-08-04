@@ -10,9 +10,8 @@ import java.util.Set;
 
 import javax.naming.NameNotFoundException;
 
-import edu.depauw.declan.common.ast.Identifier;
-import edu.depauw.declan.model.SymbolTable;
 import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.ast.Identifier;
 import io.github.H20man13.DeClan.common.dag.DagNode;
 import io.github.H20man13.DeClan.common.dag.DagNodeFactory;
 import io.github.H20man13.DeClan.common.dag.DagNullNode;

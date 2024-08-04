@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.management.RuntimeErrorException;
-
-import edu.depauw.declan.model.SymbolTable;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.AnticipatedExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.AvailableExpressionsAnalysis;

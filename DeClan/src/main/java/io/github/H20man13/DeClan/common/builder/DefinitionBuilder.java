@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import edu.depauw.declan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.builder.template.ResetableBuilder;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;

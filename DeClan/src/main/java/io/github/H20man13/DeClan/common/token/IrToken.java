@@ -2,7 +2,7 @@ package io.github.H20man13.DeClan.common.token;
 
 import java.util.Objects;
 
-import edu.depauw.declan.common.Position;
+import io.github.H20man13.DeClan.common.position.Position;
 
 public class IrToken {
     private final IrTokenType type;

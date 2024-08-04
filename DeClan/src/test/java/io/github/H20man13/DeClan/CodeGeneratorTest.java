@@ -18,13 +18,13 @@ import org.antlr.v4.runtime.misc.TestRig;
 import org.antlr.v4.runtime.tree.gui.TreeViewer;
 import org.junit.Test;
 
-import edu.depauw.declan.common.ErrorLog;
-import edu.depauw.declan.common.ErrorLog.LogItem;
-import edu.depauw.declan.common.ast.Program;
-import io.github.H20man13.DeClan.common.ReaderSource;
+import io.github.H20man13.DeClan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.ErrorLog.LogItem;
+import io.github.H20man13.DeClan.common.ast.Program;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.Prog;
+import io.github.H20man13.DeClan.common.source.ReaderSource;
 import io.github.H20man13.DeClan.common.util.Utils;
 import io.github.H20man13.DeClan.main.MyCodeGenerator;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
