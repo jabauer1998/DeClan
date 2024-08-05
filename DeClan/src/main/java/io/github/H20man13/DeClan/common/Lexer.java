@@ -1,8 +1,6 @@
-package io.github.H20man13.DeClan.main;
+package io.github.H20man13.DeClan.common;
 
 import java.util.Iterator;
-
-import io.github.H20man13.DeClan.common.token.DeclanToken;
 
 /**
  * A Lexer is essentially an iterator over the tokens in an input source. When
@@ -10,7 +8,7 @@ import io.github.H20man13.DeClan.common.token.DeclanToken;
  * 
  * @author bhoward
  */
-public interface DeclanLexer extends Iterator<DeclanToken>, AutoCloseable {
+public interface Lexer<TokType> extends Iterator<TokType>, AutoCloseable {
 	/**
 	 * Specialized declaration of close() that guarantees no exceptions are thrown.
 	 */

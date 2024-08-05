@@ -2,7 +2,7 @@ package io.github.H20man13.DeClan.main;
 
 import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.ErrorLog;
-import io.github.H20man13.DeClan.common.Position;
+import io.github.H20man13.DeClan.common.position.Position;
 import io.github.H20man13.DeClan.common.ErrorLog.LogItem;
 import io.github.H20man13.DeClan.common.ast.ASTVisitor;
 import io.github.H20man13.DeClan.common.ast.Asm;

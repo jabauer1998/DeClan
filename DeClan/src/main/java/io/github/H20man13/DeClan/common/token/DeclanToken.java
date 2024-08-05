@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.token;
 
+import io.github.H20man13.DeClan.common.position.Position;
+
 import java.util.Objects;
 
 /**
@@ -11,7 +13,7 @@ import java.util.Objects;
  * 
  * @author bhoward
  */
-public class DeclanToken {
+public class DeclanToken implements Token {
 	private final DeclanTokenType type;
 	private final String lexeme;
 	private final Position position;

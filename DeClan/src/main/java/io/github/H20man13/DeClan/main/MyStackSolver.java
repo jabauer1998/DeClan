@@ -10,7 +10,7 @@ import java.lang.String;
  *The default input is the string provided but it can also take in a command line argument string and use that as well
  *@author Jacob Bauer
  */
-public class StackSolver {
+public class MyStackSolver {
     private static String standardInput  = "7\n"
 	          + "6\n"
 	          + "SUBTRACT\n"

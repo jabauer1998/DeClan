@@ -1,6 +1,7 @@
 package io.github.H20man13.DeClan.common;
 
 import io.github.H20man13.DeClan.common.position.Position;
+import static io.github.H20man13.DeClan.main.MyIO.*;
 
 
 import java.util.Iterator;

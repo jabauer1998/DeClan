@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import io.github.H20man13.DeClan.common.position.Position;
 
-public class IrToken {
+public class IrToken implements Token{
     private final IrTokenType type;
     private final String lexeme;
     private final Position position;

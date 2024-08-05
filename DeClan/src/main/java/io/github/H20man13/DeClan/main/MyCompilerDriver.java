@@ -27,8 +27,8 @@ import io.github.H20man13.DeClan.common.source.Source;
 import io.github.H20man13.DeClan.common.util.Utils;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerLexer;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser;
-import io.github.H20man13.DeClan.main.assembler.AssemblerVisitor;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.ProgramContext;
+import io.github.H20man13.DeClan.main.assembler.AssemblerVisitor;
 
 public class MyCompilerDriver {
     private static Config parseConfig(String[] args){

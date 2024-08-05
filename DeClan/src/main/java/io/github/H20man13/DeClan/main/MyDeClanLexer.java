@@ -2,8 +2,9 @@ package io.github.H20man13.DeClan.main;
 
 import java.util.NoSuchElementException;
 
+import io.github.H20man13.DeClan.common.Lexer;
 import io.github.H20man13.DeClan.common.ErrorLog;
-import io.github.H20man13.DeClan.common.Position;
+import io.github.H20man13.DeClan.common.position.Position;
 import io.github.H20man13.DeClan.common.source.Source;
 import io.github.H20man13.DeClan.common.token.DeclanToken;
 
@@ -15,7 +16,7 @@ import static io.github.H20man13.DeClan.main.MyIO.*;
  * This Lexer also supports the options for project 1 which are floating point and hex numerals aswell as nested comments
  * @author Jacob Bauer
  */
-public class MyDeClanLexer implements DeclanLexer {
+public class MyDeClanLexer implements Lexer<DeclanToken> {
 	private Source source;
 	private DeclanToken nextToken;
     private ErrorLog errorLog;

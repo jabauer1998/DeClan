@@ -1,7 +1,6 @@
 package io.github.H20man13.DeClan.main;
 
 import io.github.H20man13.DeClan.common.ErrorLog;
-import io.github.H20man13.DeClan.common.Position;
 import io.github.H20man13.DeClan.common.ast.ASTVisitor;
 import io.github.H20man13.DeClan.common.ast.Asm;
 import io.github.H20man13.DeClan.common.ast.Assignment;
@@ -42,6 +41,8 @@ import java.lang.StringBuilder;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+
+import io.github.H20man13.DeClan.common.position.Position;
 
 /**
  * This is the Indexer class 

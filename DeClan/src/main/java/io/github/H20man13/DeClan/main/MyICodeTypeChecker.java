@@ -5,7 +5,7 @@ import java.security.cert.CertPathValidatorException.BasicReason;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.ErrorLog;
-import io.github.H20man13.DeClan.common.Position;
+import io.github.H20man13.DeClan.common.position.Position;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.ast.BinaryOperation;
 import io.github.H20man13.DeClan.common.exception.ICodeGeneratorException;
@@ -27,6 +27,7 @@ import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.pat.P;
+import io.github.H20man13.DeClan.common.position.Position;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.IntEntry;
 import io.github.H20man13.DeClan.common.symboltable.entry.NullEntry;

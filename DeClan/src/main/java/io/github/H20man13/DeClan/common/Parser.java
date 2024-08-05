@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.main;
+package io.github.H20man13.DeClan.common;
 
 import io.github.H20man13.DeClan.common.ast.Program;
 
@@ -8,7 +8,7 @@ import io.github.H20man13.DeClan.common.ast.Program;
  * 
  * @author bhoward
  */
-public interface DeclanParser extends AutoCloseable {
+public interface Parser extends AutoCloseable {
 	/**
 	 * @return an abstract syntax tree of class Program, or throw a ParseException
 	 */

@@ -4,9 +4,10 @@ import java.io.File;
 import java.io.FileReader;
 
 import io.github.H20man13.DeClan.common.ErrorLog;
-import io.github.H20man13.DeClan.common.Position;
+import io.github.H20man13.DeClan.common.position.Position;
 import io.github.H20man13.DeClan.common.ast.Library;
 import io.github.H20man13.DeClan.common.icode.Lib;
+import io.github.H20man13.DeClan.common.position.Position;
 import io.github.H20man13.DeClan.common.source.ElaborateReaderSource;
 import io.github.H20man13.DeClan.common.source.Source;
 
