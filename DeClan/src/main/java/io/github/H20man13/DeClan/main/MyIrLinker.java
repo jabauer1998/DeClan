@@ -1198,6 +1198,40 @@ public class MyIrLinker {
                         } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
                         
                         replacePlaceAcrossProgramAndLibraries(assignment.place, newPlace, prog, libraries, library);
+                        
+                        if(library.containsInternalParamaterByPlace(newPlace)){
+                        	if(!newProg.containsInternalParamaterByPlace(newPlace)) {
+                        		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                        		newProg.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalReturnByPlace(newPlace)) {
+                        	if(!newProg.containsInternalReturnByPlace(newPlace)) {
+                        		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                        		newProg.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalVariableByPlace(newPlace)) {
+                        	if(!newProg.containsInternalVariableByPlace(newPlace)) {
+                        		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                        		newProg.addSymEntry(entry);
+                        	}
+                        }
+                    } else {
+                    	if(library.containsInternalParamaterByPlace(assignment.place)){
+                        	if(!newProg.containsInternalParamaterByPlace(assignment.place)) {
+                        		SymEntry entry = library.getInternalParamaterByPlace(assignment.place);
+                        		newProg.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalReturnByPlace(assignment.place)) {
+                        	if(!newProg.containsInternalReturnByPlace(assignment.place)) {
+                        		SymEntry entry = library.getInternalReturnByPlace(assignment.place);
+                        		newProg.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalVariableByPlace(assignment.place)) {
+                        	if(!newProg.containsInternalVariableByPlace(assignment.place)) {
+                        		SymEntry entry = library.getInternalVariableByPlace(assignment.place);
+                        		newProg.addSymEntry(entry);
+                        	}
+                        }
                     }
 
                     Exp assignExp = assignment.value;
@@ -1219,6 +1253,40 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newProg.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newProg.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newProg.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(ident.ident)){
+                            	if(!newProg.containsInternalParamaterByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(ident.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(ident.ident)) {
+                            	if(!newProg.containsInternalReturnByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(ident.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(ident.ident)) {
+                            	if(!newProg.containsInternalVariableByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(ident.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
                         }
                     } else if(assignExp instanceof UnExp){
                         UnExp unExp = (UnExp)assignExp;
@@ -1240,6 +1308,40 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newProg.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newProg.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newProg.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(ident.ident)){
+                            	if(!newProg.containsInternalParamaterByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(ident.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(ident.ident)) {
+                            	if(!newProg.containsInternalReturnByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(ident.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(ident.ident)) {
+                            	if(!newProg.containsInternalVariableByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(ident.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
                         }
                     } else if(assignExp instanceof BinExp){
                         BinExp binExp = (BinExp)assignExp;
@@ -1261,6 +1363,40 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(leftOldPlace, newPlace, prog, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newProg.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newProg.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newProg.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(leftExp.ident)){
+                            	if(!newProg.containsInternalParamaterByPlace(leftExp.ident)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(leftExp.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(leftExp.ident)) {
+                            	if(!newProg.containsInternalReturnByPlace(leftExp.ident)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(leftExp.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(leftExp.ident)) {
+                            	if(!newProg.containsInternalVariableByPlace(leftExp.ident)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(leftExp.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
                         }
 
                         IdentExp rightExp = binExp.right;
@@ -1280,6 +1416,40 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newProg.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newProg.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newProg.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(rightExp.ident)){
+                            	if(!newProg.containsInternalParamaterByPlace(rightExp.ident)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(rightExp.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(rightExp.ident)) {
+                            	if(!newProg.containsInternalReturnByPlace(rightExp.ident)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(rightExp.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(rightExp.ident)) {
+                            	if(!newProg.containsInternalVariableByPlace(rightExp.ident)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(rightExp.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
                         }
                     }
                 } else if(icode instanceof Def){
@@ -1292,6 +1462,40 @@ public class MyIrLinker {
                         } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
                         
                         replacePlaceAcrossProgramAndLibraries(definition.label, newPlace, prog, libraries, library);
+                        
+                        if(library.containsInternalParamaterByPlace(newPlace)){
+                        	if(!newProg.containsInternalParamaterByPlace(newPlace)) {
+                        		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                        		newProg.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalReturnByPlace(newPlace)) {
+                        	if(!newProg.containsInternalReturnByPlace(newPlace)) {
+                        		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                        		newProg.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalVariableByPlace(newPlace)) {
+                        	if(!newProg.containsInternalVariableByPlace(newPlace)) {
+                        		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                        		newProg.addSymEntry(entry);
+                        	}
+                        }
+                    } else {
+                    	if(library.containsInternalParamaterByPlace(definition.label)){
+                        	if(!newProg.containsInternalParamaterByPlace(definition.label)) {
+                        		SymEntry entry = library.getInternalParamaterByPlace(definition.label);
+                        		newProg.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalReturnByPlace(definition.label)) {
+                        	if(!newProg.containsInternalReturnByPlace(definition.label)) {
+                        		SymEntry entry = library.getInternalReturnByPlace(definition.label);
+                        		newProg.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalVariableByPlace(definition.label)) {
+                        	if(!newProg.containsInternalVariableByPlace(definition.label)) {
+                        		SymEntry entry = library.getInternalVariableByPlace(definition.label);
+                        		newProg.addSymEntry(entry);
+                        	}
+                        }
                     }
 
                     Exp assignExp = definition.val;
@@ -1313,6 +1517,40 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newProg.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newProg.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newProg.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(ident.ident)){
+                            	if(!newProg.containsInternalParamaterByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(ident.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(ident.ident)) {
+                            	if(!newProg.containsInternalReturnByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(ident.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(ident.ident)) {
+                            	if(!newProg.containsInternalVariableByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(ident.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
                         }
                     } else if(assignExp instanceof UnExp){
                         UnExp unExp = (UnExp)assignExp;
@@ -1334,6 +1572,40 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newProg.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newProg.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newProg.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(ident.ident)){
+                            	if(!newProg.containsInternalParamaterByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(ident.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(ident.ident)) {
+                            	if(!newProg.containsInternalReturnByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(ident.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(ident.ident)) {
+                            	if(!newProg.containsInternalVariableByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(ident.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
                         }
                     } else if(assignExp instanceof BinExp){
                         BinExp binExp = (BinExp)assignExp;
@@ -1355,6 +1627,40 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(leftOldPlace, newPlace, prog, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newProg.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newProg.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newProg.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(leftExp.ident)){
+                            	if(!newProg.containsInternalParamaterByPlace(leftExp.ident)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(leftExp.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(leftExp.ident)) {
+                            	if(!newProg.containsInternalReturnByPlace(leftExp.ident)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(leftExp.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(leftExp.ident)) {
+                            	if(!newProg.containsInternalVariableByPlace(leftExp.ident)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(leftExp.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
                         }
 
                         IdentExp rightExp = binExp.right;
@@ -1374,6 +1680,40 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newProg.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newProg.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newProg.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(rightExp.ident)){
+                            	if(!newProg.containsInternalParamaterByPlace(rightExp.ident)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(rightExp.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(rightExp.ident)) {
+                            	if(!newProg.containsInternalReturnByPlace(rightExp.ident)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(rightExp.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(rightExp.ident)) {
+                            	if(!newProg.containsInternalVariableByPlace(rightExp.ident)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(rightExp.ident);
+                            		newProg.addSymEntry(entry);
+                            	}
+                            }
                         }
                     }
                 } else if(icode instanceof If){
@@ -1523,12 +1863,48 @@ public class MyIrLinker {
                         } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
                         
                         replacePlaceAcrossLibraries(assignment.place, newPlace, single, libraries, library);
+                        
+                        if(library.containsInternalParamaterByPlace(newPlace)){
+                        	if(!newLib.containsInternalParamaterByPlace(newPlace)) {
+                        		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                        		newLib.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalReturnByPlace(newPlace)) {
+                        	if(!newLib.containsInternalReturnByPlace(newPlace)) {
+                        		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                        		newLib.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalVariableByPlace(newPlace)) {
+                        	if(!newLib.containsInternalVariableByPlace(newPlace)) {
+                        		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                        		newLib.addSymEntry(entry);
+                        	}
+                        }
+                    } else {
+                    	if(library.containsInternalParamaterByPlace(assignment.place)){
+                        	if(!newLib.containsInternalParamaterByPlace(assignment.place)) {
+                        		SymEntry entry = library.getInternalParamaterByPlace(assignment.place);
+                        		newLib.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalReturnByPlace(assignment.place)) {
+                        	if(!newLib.containsInternalReturnByPlace(assignment.place)) {
+                        		SymEntry entry = library.getInternalReturnByPlace(assignment.place);
+                        		newLib.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalVariableByPlace(assignment.place)) {
+                        	if(!newLib.containsInternalVariableByPlace(assignment.place)) {
+                        		SymEntry entry = library.getInternalVariableByPlace(assignment.place);
+                        		newLib.addSymEntry(entry);
+                        	}
+                        }
                     }
+                    
+                    
 
                     Exp assignExp = assignment.value;
                     if(assignExp instanceof IdentExp){
                         IdentExp ident = (IdentExp)assignExp;
-                        if(library.containsVariableEntryWithICodePlace(ident.ident, SymEntry.EXTERNAL)){
+                        if(library.containsExternalVariableByPlace(ident.ident)){
                             VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                             if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
@@ -1544,7 +1920,43 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
         
                             replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newLib.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newLib.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newLib.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(ident.ident)){
+                            	if(!newLib.containsInternalParamaterByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(ident.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(ident.ident)) {
+                            	if(!newLib.containsInternalReturnByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(ident.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(ident.ident)) {
+                            	if(!newLib.containsInternalVariableByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(ident.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
                         }
+                        
+                        
                     } else if(assignExp instanceof UnExp){
                         UnExp unExp = (UnExp)assignExp;
                         
@@ -1565,6 +1977,40 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
         
                             replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newLib.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newLib.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newLib.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(ident.ident)){
+                            	if(!newLib.containsInternalParamaterByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(ident.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(ident.ident)) {
+                            	if(!newLib.containsInternalReturnByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(ident.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(ident.ident)) {
+                            	if(!newLib.containsInternalVariableByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(ident.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
                         }
                     } else if(assignExp instanceof BinExp){
                         BinExp binExp = (BinExp)assignExp;
@@ -1586,6 +2032,40 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
         
                             replacePlaceAcrossLibraries(leftOldPlace, newPlace, single, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newLib.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newLib.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newLib.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(leftOldPlace)){
+                            	if(!newLib.containsInternalParamaterByPlace(leftOldPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(leftOldPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(leftOldPlace)) {
+                            	if(!newLib.containsInternalReturnByPlace(leftOldPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(leftOldPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(leftOldPlace)) {
+                            	if(!newLib.containsInternalVariableByPlace(leftOldPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(leftOldPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
                         }
 
                         IdentExp rightExp = binExp.right;
@@ -1605,6 +2085,40 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
         
                             replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newLib.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newLib.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newLib.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(oldPlace)){
+                            	if(!newLib.containsInternalParamaterByPlace(oldPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(oldPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(oldPlace)) {
+                            	if(!newLib.containsInternalReturnByPlace(oldPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(oldPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(oldPlace)) {
+                            	if(!newLib.containsInternalVariableByPlace(oldPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(oldPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
                         }
                     }
                 } else if(icode instanceof Def){
@@ -1617,6 +2131,40 @@ public class MyIrLinker {
                         } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
                         
                         replacePlaceAcrossLibraries(definition.label, newPlace, single, libraries, library);
+                        
+                        if(library.containsInternalParamaterByPlace(newPlace)){
+                        	if(!newLib.containsInternalParamaterByPlace(newPlace)) {
+                        		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                        		newLib.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalReturnByPlace(newPlace)) {
+                        	if(!newLib.containsInternalReturnByPlace(newPlace)) {
+                        		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                        		newLib.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalVariableByPlace(newPlace)) {
+                        	if(!newLib.containsInternalVariableByPlace(newPlace)) {
+                        		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                        		newLib.addSymEntry(entry);
+                        	}
+                        }
+                    } else {
+                    	if(library.containsInternalParamaterByPlace(definition.label)){
+                        	if(!newLib.containsInternalParamaterByPlace(definition.label)) {
+                        		SymEntry entry = library.getInternalParamaterByPlace(definition.label);
+                        		newLib.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalReturnByPlace(definition.label)) {
+                        	if(!newLib.containsInternalReturnByPlace(definition.label)) {
+                        		SymEntry entry = library.getInternalReturnByPlace(definition.label);
+                        		newLib.addSymEntry(entry);
+                        	}
+                        } else if(library.containsInternalVariableByPlace(definition.label)) {
+                        	if(!newLib.containsInternalVariableByPlace(definition.label)) {
+                        		SymEntry entry = library.getInternalVariableByPlace(definition.label);
+                        		newLib.addSymEntry(entry);
+                        	}
+                        }
                     }
 
                     Exp assignExp = definition.val;
@@ -1638,7 +2186,43 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
         
                             replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newLib.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newLib.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newLib.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(ident.ident)){
+                            	if(!newLib.containsInternalParamaterByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(ident.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(ident.ident)) {
+                            	if(!newLib.containsInternalReturnByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(ident.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(ident.ident)) {
+                            	if(!newLib.containsInternalVariableByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(ident.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
                         }
+                        
+                        
                     } else if(assignExp instanceof UnExp){
                         UnExp unExp = (UnExp)assignExp;
                         
@@ -1659,6 +2243,40 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
         
                             replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newLib.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newLib.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newLib.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(ident.ident)){
+                            	if(!newLib.containsInternalParamaterByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(ident.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(ident.ident)) {
+                            	if(!newLib.containsInternalReturnByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(ident.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(ident.ident)) {
+                            	if(!newLib.containsInternalVariableByPlace(ident.ident)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(ident.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
                         }
                     } else if(assignExp instanceof BinExp){
                         BinExp binExp = (BinExp)assignExp;
@@ -1680,6 +2298,40 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
         
                             replacePlaceAcrossLibraries(leftOldPlace, newPlace, single, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newLib.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newLib.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newLib.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(leftExp.ident)){
+                            	if(!newLib.containsInternalParamaterByPlace(leftExp.ident)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(leftExp.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(leftExp.ident)) {
+                            	if(!newLib.containsInternalReturnByPlace(leftExp.ident)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(leftExp.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(leftExp.ident)) {
+                            	if(!newLib.containsInternalVariableByPlace(leftExp.ident)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(leftExp.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
                         }
 
                         IdentExp rightExp = binExp.right;
@@ -1699,6 +2351,40 @@ public class MyIrLinker {
                             } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
         
                             replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
+                            
+                            if(library.containsInternalParamaterByPlace(newPlace)){
+                            	if(!newLib.containsInternalParamaterByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(newPlace)) {
+                            	if(!newLib.containsInternalReturnByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(newPlace)) {
+                            	if(!newLib.containsInternalVariableByPlace(newPlace)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(newPlace);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
+                        } else {
+                        	if(library.containsInternalParamaterByPlace(rightExp.ident)){
+                            	if(!newLib.containsInternalParamaterByPlace(rightExp.ident)) {
+                            		SymEntry entry = library.getInternalParamaterByPlace(rightExp.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalReturnByPlace(rightExp.ident)) {
+                            	if(!newLib.containsInternalReturnByPlace(rightExp.ident)) {
+                            		SymEntry entry = library.getInternalReturnByPlace(rightExp.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            } else if(library.containsInternalVariableByPlace(rightExp.ident)) {
+                            	if(!newLib.containsInternalVariableByPlace(rightExp.ident)) {
+                            		SymEntry entry = library.getInternalVariableByPlace(rightExp.ident);
+                            		newLib.addSymEntry(entry);
+                            	}
+                            }
                         }
                     }
                 } else if(icode instanceof If){
@@ -2024,7 +2710,7 @@ public class MyIrLinker {
                             If ifStat = (If)icode;
 
                             BinExp exp = ifStat.exp;
-                            IdentExp leftExp = (IdentExp)exp.left;
+                            IdentExp leftExp = exp.left;
                             if(library.containsVariableEntryWithICodePlace(leftExp.ident, SymEntry.EXTERNAL)){
                                 VarSymEntry entry = library.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
                                 if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
@@ -2043,7 +2729,7 @@ public class MyIrLinker {
                                 replacePlaceAcrossProgramAndLibraries(leftPlace, newPlace, prog, libraries, library);
                             }
                             
-                            IdentExp rightExp = (IdentExp)exp.right;
+                            IdentExp rightExp = exp.right;
                             if(library.containsVariableEntryWithICodePlace(rightExp.ident, SymEntry.EXTERNAL)){
                                 VarSymEntry entry = library.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
                                 if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
