@@ -227,7 +227,7 @@ public class MyICodeGenerator{
     IdentEntryList alias = new IdentEntryList();
     for(int i = 0; i < args.size(); i++){
 	    String argAlias = gen.genNext();
-      alias.add(new IdentExp(Scope.PARAM, argAlias));
+        alias.add(new IdentExp(Scope.PARAM, argAlias));
     }
 
     procArgs.addEntry(procedureName, alias);
@@ -250,6 +250,7 @@ public class MyICodeGenerator{
       String actual = decl.getIdentifier().getLexeme();
       IdentExp alias = list.get(i);
       varEnvironment.addEntry(actual, alias);
+      builder.addParamEntry(procedureName, SymEntry.INTERNAL, alias.ident, i);
     }
 
     List <Declaration> localVars = procDecl.getLocalVariables();
@@ -274,6 +275,7 @@ public class MyICodeGenerator{
       Exp retPlace = generateExpressionIr(Scope.LOCAL, retExp, builder);
       IdentExp returnPlace = procEnvironment.getEntry(procedureName);
       builder.buildDefinition(Scope.RETURN, returnPlace.ident, retPlace, ConversionUtils.typeCheckerQualitiesToAssignType(qual));
+      builder.addReturnEntry(procedureName, SymEntry.INTERNAL, returnPlace.ident);
     }
     builder.buildReturnStatement();
     varEnvironment.removeScope();
