@@ -1,37 +1,59 @@
 SYMBOL SECTION
  ENTRY f24 CONST INTERNAL a
  ENTRY f26 CONST INTERNAL b
- ENTRY f42 CONST INTERNAL c
- ENTRY f44 CONST INTERNAL d
- ENTRY i83 CONST INTERNAL realBias
+ ENTRY f30 INTERNAL RETURN RealBinaryAsInt
+ ENTRY f34 INTERNAL RETURN IntBinaryAsReal
+ ENTRY f36 INTERNAL RETURN RNeg
+ ENTRY f39 CONST INTERNAL c
+ ENTRY f41 CONST INTERNAL d
+ ENTRY f59 INTERNAL PARAM Abs 0
+ ENTRY f63 INTERNAL PARAM INeg 0
+ ENTRY f66 INTERNAL RETURN INeg
+ ENTRY f68 INTERNAL RETURN Abs
+ ENTRY f75 INTERNAL PARAM IntIsNegative 0
+ ENTRY f83 INTERNAL RETURN IntIsNegative
+ ENTRY f88 INTERNAL PARAM IntIsZero 0
+ ENTRY f92 INTERNAL RETURN IntIsZero
+ ENTRY h63 CONST INTERNAL realBias
+ ENTRY g47 INTERNAL RETURN IntToReal
+ ENTRY g57 INTERNAL RETURN RealSign
+ ENTRY g70 INTERNAL RETURN RealExponent
+ ENTRY g90 INTERNAL RETURN RealIsZero
+ ENTRY g96 INTERNAL RETURN RealMantissa
+ ENTRY g99 INTERNAL RETURN RMul
+ ENTRY h23 INTERNAL PARAM Div 0
+ ENTRY h52 INTERNAL PARAM Div 1
+ ENTRY h62 INTERNAL RETURN Div
+ ENTRY h64 INTERNAL RETURN RDivide
+ ENTRY h68 INTERNAL RETURN RNotEqualTo
 DATA SECTION
  DEF f23 := 0 [INT]
  DEF GLOBAL f24 := f23 [INT]
  DEF f25 := 1.2 [REAL]
  DEF GLOBAL f26 := f25 [REAL]
  DEF f27 := 3.14 [REAL]
- CALL RNeg((f27 -> f39)[REAL])
- DEF f40 := (RETURN f41) [REAL]
- DEF GLOBAL f42 := f40 [REAL]
- DEF f43 := 42 [INT]
- DEF GLOBAL f44 := f43 [INT]
- DEF GLOBAL f45 := FALSE [BOOL]
- DEF g48 := 127 [INT]
- DEF GLOBAL i83 := g48 [INT]
+ CALL RNeg((f27 -> f37)[REAL])
+ DEF f38 := (RETURN f36) [REAL]
+ DEF GLOBAL f39 := f38 [REAL]
+ DEF f40 := 42 [INT]
+ DEF GLOBAL f41 := f40 [INT]
+ DEF GLOBAL f42 := FALSE [BOOL]
+ DEF g33 := 127 [INT]
+ DEF GLOBAL h63 := g33 [INT]
 BSS SECTION
 CODE SECTION
- CALL IntToReal(((GLOBAL f24) -> h78)[INT])
- DEF g65 := (RETURN h80) [REAL]
- CALL RMul((g65 -> h74)[REAL], ((GLOBAL f26) -> h75)[REAL])
- DEF h76 := (RETURN h77) [REAL]
- CALL IntToReal(((GLOBAL f44) -> h78)[INT])
- DEF h79 := (RETURN h80) [REAL]
- CALL RDivide(((GLOBAL f42) -> i87)[REAL], (h79 -> i88)[REAL])
- DEF i89 := (RETURN i90) [REAL]
- CALL RNotEqualTo((h76 -> j10)[REAL], (i89 -> j11)[REAL])
- DEF j12 := (RETURN j13) [BOOL]
- f45 := j12 [BOOL]
- CALL WriteBool(((GLOBAL f45) -> j15)[BOOL])
+ CALL IntToReal(((GLOBAL f24) -> g48)[INT])
+ DEF g49 := (RETURN g47) [REAL]
+ CALL RMul((g49 -> h10)[REAL], ((GLOBAL f26) -> h11)[REAL])
+ DEF h12 := (RETURN g99) [REAL]
+ CALL IntToReal(((GLOBAL f41) -> g48)[INT])
+ DEF h13 := (RETURN g47) [REAL]
+ CALL RDivide(((GLOBAL f39) -> h65)[REAL], (h13 -> h66)[REAL])
+ DEF h67 := (RETURN h64) [REAL]
+ CALL RNotEqualTo((h12 -> h69)[REAL], (h67 -> h70)[REAL])
+ DEF h71 := (RETURN h68) [BOOL]
+ f42 := h71 [BOOL]
+ CALL WriteBool(((GLOBAL f42) -> h73)[BOOL])
 END
 PROC SECTION
  PROC LABEL RNeg
@@ -43,21 +65,21 @@ PROC SECTION
   DEF b52 := 31 [INT]
   DEF b53 := b51 ILSHIFT b52 [INT]
   b47 := b53 [INT]
-  CALL RealBinaryAsInt(((PARAM p) -> i97)[REAL])
-  DEF b56 := (RETURN i98) [INT]
+  CALL RealBinaryAsInt(((PARAM f37) -> f31)[REAL])
+  DEF b56 := (RETURN f30) [INT]
   b48 := b56 [INT]
   DEF b57 := b48 IXOR b47 [INT]
   b50 := b57 [INT]
-  CALL IntBinaryAsReal((b50 -> i84)[INT])
-  DEF b58 := (RETURN i85) [REAL]
+  CALL IntBinaryAsReal((b50 -> f35)[INT])
+  DEF b58 := (RETURN f34) [REAL]
   b49 := b58 [REAL]
-  DEF RETURN f38 := b49 [REAL]
+  DEF RETURN f36 := b49 [REAL]
  RETURN
  PROC LABEL RealBinaryAsInt
   DEF f28 := 0 [INT]
   DEF f29 := 0.0 [REAL]
   IPARAM f29
-  IPARAM (PARAM m)
+  IPARAM (PARAM f31)
   IASM "LDR %r, %a"
   IPARAM f29
   IPARAM f28
@@ -65,20 +87,23 @@ PROC SECTION
   DEF RETURN f30 := f28 [INT]
  RETURN
  PROC LABEL IntBinaryAsReal
-  DEF f33 := 0.0 [REAL]
-  DEF f34 := 0 [INT]
-  IPARAM f34
-  IPARAM (PARAM g61)
-  IASM "LDR %r, %a"
-  IPARAM f34
+  DEF f32 := 0.0 [REAL]
+  DEF f33 := 0 [INT]
   IPARAM f33
+  IPARAM (PARAM f35)
+  IASM "LDR %r, %a"
+  IPARAM f33
+  IPARAM f32
   IASM "STR %r, %a"
-  DEF RETURN f35 := f33 [REAL]
+  DEF RETURN f34 := f32 [REAL]
  RETURN
  PROC LABEL IntToReal
-  DEF f46 := 0.0 [REAL]
+  DEF f43 := 0.0 [REAL]
+  DEF f44 := 0 [INT]
+  DEF f45 := FALSE [BOOL]
+  DEF f46 := 0 [INT]
   DEF f47 := 0 [INT]
-  DEF f48 := FALSE [BOOL]
+  DEF f48 := 0 [INT]
   DEF f49 := 0 [INT]
   DEF f50 := 0 [INT]
   DEF f51 := 0 [INT]
@@ -86,200 +111,197 @@ PROC SECTION
   DEF f53 := 0 [INT]
   DEF f54 := 0 [INT]
   DEF f55 := 0 [INT]
-  DEF f56 := 0 [INT]
-  DEF f57 := 0 [INT]
-  DEF f58 := 0 [INT]
-  CALL Abs(((PARAM a) -> f74)[INT])
-  DEF f75 := (RETURN f76) [INT]
-  f47 := f75 [INT]
-  f52 := f47 [INT]
-  DEF f77 := 0 [INT]
-  f51 := f77 [INT]
-  CALL IntIsNegative(((PARAM a) -> f91)[INT])
-  DEF f92 := (RETURN f93) [BOOL]
-  f48 := f92 [BOOL]
-  CALL IntIsZero((f52 -> i81)[INT])
-  DEF g13 := (RETURN i82) [BOOL]
-  DEF g15 := TRUE [BOOL]
-  IF g13 EQ g15
+  CALL Abs(((PARAM g48) -> f59)[INT])
+  DEF f69 := (RETURN f68) [INT]
+  f44 := f69 [INT]
+  f49 := f44 [INT]
+  DEF f70 := 0 [INT]
+  f48 := f70 [INT]
+  CALL IntIsNegative(((PARAM g48) -> f75)[INT])
+  DEF f84 := (RETURN f83) [BOOL]
+  f45 := f84 [BOOL]
+  CALL IntIsZero((f49 -> f88)[INT])
+  DEF f93 := (RETURN f92) [BOOL]
+  DEF f94 := TRUE [BOOL]
+  IF f93 EQ f94
   THEN IFSTAT_0_SEQ_0_LEVEL_0_1
   ELSE IFNEXT_0_SEQ_0_LEVEL_0_1
   LABEL IFSTAT_0_SEQ_0_LEVEL_0_1
-  DEF g16 := 0 [INT]
-  f49 := g16 [INT]
+  DEF f95 := 0 [INT]
+  f46 := f95 [INT]
   GOTO IFEND_0_LEVEL_0_1
   LABEL IFNEXT_0_SEQ_0_LEVEL_0_1
-  CALL IntIsZero((f52 -> i81)[INT])
-  DEF g18 := (RETURN i82) [BOOL]
-  DEF g20 := BNOT g18 [BOOL]
-  DEF g21 := TRUE [BOOL]
-  IF g20 EQ g21
+  CALL IntIsZero((f49 -> f88)[INT])
+  DEF f96 := (RETURN f92) [BOOL]
+  DEF f97 := BNOT f96 [BOOL]
+  DEF f98 := TRUE [BOOL]
+  IF f97 EQ f98
   THEN WHILESTAT_0_SEQ_0_LEVEL_0_0
   ELSE WHILENEXT_0_SEQ_0_LEVEL_0_0
   LABEL WHILECOND_0_SEQ_0_LEVEL_0_0
-  IF g20 EQ g21
+  IF f97 EQ f98
   THEN WHILESTAT_0_SEQ_0_LEVEL_0_0
   ELSE WHILEEND_0_LEVEL_0_0
   LABEL WHILESTAT_0_SEQ_0_LEVEL_0_0
-  DEF g22 := 1 [INT]
-  DEF g23 := f52 IAND g22 [INT]
-  f53 := g23 [INT]
-  DEF g24 := 1 [INT]
-  DEF g25 := f53 EQ g24 [BOOL]
-  DEF g26 := TRUE [BOOL]
-  IF g25 EQ g26
+  DEF f99 := 1 [INT]
+  DEF g10 := f49 IAND f99 [INT]
+  f50 := g10 [INT]
+  DEF g11 := 1 [INT]
+  DEF g12 := f50 EQ g11 [BOOL]
+  DEF g13 := TRUE [BOOL]
+  IF g12 EQ g13
   THEN IFSTAT_1_SEQ_0_LEVEL_1
   ELSE IFNEXT_1_SEQ_0_LEVEL_1
   LABEL IFSTAT_1_SEQ_0_LEVEL_1
-  f50 := f51 [INT]
+  f47 := f48 [INT]
   GOTO IFEND_1_LEVEL_1
   LABEL IFNEXT_1_SEQ_0_LEVEL_1
   LABEL IFEND_1_LEVEL_1
-  DEF g27 := 1 [INT]
-  DEF g28 := f51 IADD g27 [INT]
-  f51 := g28 [INT]
-  DEF g29 := 1 [INT]
-  DEF g30 := f52 IRSHIFT g29 [INT]
-  f52 := g30 [INT]
-  CALL IntIsZero((f52 -> i81)[INT])
-  DEF g32 := (RETURN i82) [BOOL]
-  DEF g34 := BNOT g32 [BOOL]
-  g20 := g34 [BOOL]
+  DEF g14 := 1 [INT]
+  DEF g15 := f48 IADD g14 [INT]
+  f48 := g15 [INT]
+  DEF g16 := 1 [INT]
+  DEF g17 := f49 IRSHIFT g16 [INT]
+  f49 := g17 [INT]
+  CALL IntIsZero((f49 -> f88)[INT])
+  DEF g18 := (RETURN f92) [BOOL]
+  DEF g19 := BNOT g18 [BOOL]
+  f97 := g19 [BOOL]
   GOTO WHILECOND_0_SEQ_0_LEVEL_0_0
   LABEL WHILENEXT_0_SEQ_0_LEVEL_0_0
   LABEL WHILEEND_0_LEVEL_0_0
-  DEF g35 := 23 [INT]
-  DEF g36 := f50 GT g35 [BOOL]
-  DEF g37 := TRUE [BOOL]
-  IF g36 EQ g37
+  DEF g20 := 23 [INT]
+  DEF g21 := f47 GT g20 [BOOL]
+  DEF g22 := TRUE [BOOL]
+  IF g21 EQ g22
   THEN IFSTAT_2_SEQ_0_LEVEL_1_0
   ELSE IFNEXT_2_SEQ_0_LEVEL_1_0
   LABEL IFSTAT_2_SEQ_0_LEVEL_1_0
-  DEF g38 := 23 [INT]
-  DEF g39 := f50 ISUB g38 [INT]
-  DEF g40 := f47 IRSHIFT g39 [INT]
-  f47 := g40 [INT]
+  DEF g23 := 23 [INT]
+  DEF g24 := f47 ISUB g23 [INT]
+  DEF g25 := f44 IRSHIFT g24 [INT]
+  f44 := g25 [INT]
   GOTO IFEND_2_LEVEL_1_0
   LABEL IFNEXT_2_SEQ_0_LEVEL_1_0
-  DEF g41 := 23 [INT]
-  DEF g42 := f50 LT g41 [BOOL]
-  DEF g43 := TRUE [BOOL]
-  IF g42 EQ g43
+  DEF g26 := 23 [INT]
+  DEF g27 := f47 LT g26 [BOOL]
+  DEF g28 := TRUE [BOOL]
+  IF g27 EQ g28
   THEN IFSTAT_2_SEQ_1_LEVEL_1_0
   ELSE IFNEXT_2_SEQ_1_LEVEL_1_0
   LABEL IFSTAT_2_SEQ_1_LEVEL_1_0
-  DEF g44 := 23 [INT]
-  DEF g45 := g44 ISUB f50 [INT]
-  DEF g46 := f47 ILSHIFT g45 [INT]
-  f47 := g46 [INT]
+  DEF g29 := 23 [INT]
+  DEF g30 := g29 ISUB f47 [INT]
+  DEF g31 := f44 ILSHIFT g30 [INT]
+  f44 := g31 [INT]
   GOTO IFEND_2_LEVEL_1_0
   LABEL IFNEXT_2_SEQ_1_LEVEL_1_0
   LABEL IFEND_2_LEVEL_1_0
-  DEF g47 := f50 IADD i83 [INT]
-  f55 := g47 [INT]
-  DEF g51 := 8388607 [INT]
-  f57 := g51 [INT]
-  DEF g52 := f47 IAND f57 [INT]
-  f56 := g52 [INT]
-  f49 := f56 [INT]
-  DEF g53 := 23 [INT]
-  DEF g54 := f55 ILSHIFT g53 [INT]
-  DEF g55 := f49 IOR g54 [INT]
-  f49 := g55 [INT]
-  DEF g56 := TRUE [BOOL]
-  IF f48 EQ g56
+  DEF g32 := f47 IADD h63 [INT]
+  f52 := g32 [INT]
+  DEF g36 := 8388607 [INT]
+  f54 := g36 [INT]
+  DEF g37 := f44 IAND f54 [INT]
+  f53 := g37 [INT]
+  f46 := f53 [INT]
+  DEF g38 := 23 [INT]
+  DEF g39 := f52 ILSHIFT g38 [INT]
+  DEF g40 := f46 IOR g39 [INT]
+  f46 := g40 [INT]
+  DEF g41 := TRUE [BOOL]
+  IF f45 EQ g41
   THEN IFSTAT_3_SEQ_0_LEVEL_1
   ELSE IFNEXT_3_SEQ_0_LEVEL_1
   LABEL IFSTAT_3_SEQ_0_LEVEL_1
-  DEF g57 := 1 [INT]
-  DEF g58 := 31 [INT]
-  DEF g59 := g57 ILSHIFT g58 [INT]
-  DEF g60 := f49 IOR g59 [INT]
-  f49 := g60 [INT]
+  DEF g42 := 1 [INT]
+  DEF g43 := 31 [INT]
+  DEF g44 := g42 ILSHIFT g43 [INT]
+  DEF g45 := f46 IOR g44 [INT]
+  f46 := g45 [INT]
   GOTO IFEND_3_LEVEL_1
   LABEL IFNEXT_3_SEQ_0_LEVEL_1
   LABEL IFEND_3_LEVEL_1
   GOTO IFEND_0_LEVEL_0_1
   LABEL IFNEXT_0_SEQ_1_LEVEL_0_1
   LABEL IFEND_0_LEVEL_0_1
-  CALL IntBinaryAsReal((f49 -> g61)[INT])
-  DEF g62 := (RETURN f35) [REAL]
-  f46 := g62 [REAL]
-  DEF RETURN g63 := f46 [REAL]
+  CALL IntBinaryAsReal((f46 -> f35)[INT])
+  DEF g46 := (RETURN f34) [REAL]
+  f43 := g46 [REAL]
+  DEF RETURN g47 := f43 [REAL]
  RETURN
  PROC LABEL Abs
-  DEF f59 := 0 [INT]
-  DEF f60 := 0 [INT]
-  DEF f61 := (PARAM f62) GE f60 [BOOL]
-  DEF f63 := TRUE [BOOL]
-  IF f61 EQ f63
+  DEF f56 := 0 [INT]
+  DEF f57 := 0 [INT]
+  DEF f58 := (PARAM f59) GE f57 [BOOL]
+  DEF f60 := TRUE [BOOL]
+  IF f58 EQ f60
   THEN IFSTAT_0_SEQ_0_LEVEL_0_0
   ELSE IFNEXT_0_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_0_SEQ_0_LEVEL_0_0
-  f59 := (PARAM f62) [INT]
+  f56 := (PARAM f59) [INT]
   GOTO IFEND_0_LEVEL_0_0
   LABEL IFNEXT_0_SEQ_0_LEVEL_0_0
-  CALL INeg(((PARAM f62) -> f70)[INT])
-  DEF f71 := (RETURN f72) [INT]
-  f59 := f71 [INT]
+  CALL INeg(((PARAM f59) -> f63)[INT])
+  DEF f67 := (RETURN f66) [INT]
+  f56 := f67 [INT]
   GOTO IFEND_0_LEVEL_0_0
   LABEL IFNEXT_0_SEQ_1_LEVEL_0_0
   LABEL IFEND_0_LEVEL_0_0
-  DEF RETURN f73 := f59 [INT]
+  DEF RETURN f68 := f56 [INT]
  RETURN
  PROC LABEL INeg
-  DEF f64 := 0 [INT]
-  DEF f65 := INOT (PARAM f66) [INT]
-  DEF f67 := 1 [INT]
-  DEF f68 := f65 IADD f67 [INT]
-  f64 := f68 [INT]
-  DEF RETURN f69 := f64 [INT]
+  DEF f61 := 0 [INT]
+  DEF f62 := INOT (PARAM f63) [INT]
+  DEF f64 := 1 [INT]
+  DEF f65 := f62 IADD f64 [INT]
+  f61 := f65 [INT]
+  DEF RETURN f66 := f61 [INT]
  RETURN
  PROC LABEL IntIsNegative
-  DEF f78 := FALSE [BOOL]
-  DEF f79 := 0 [INT]
-  DEF f80 := 31 [INT]
-  DEF f81 := (PARAM f82) IRSHIFT f80 [INT]
-  DEF f83 := 1 [INT]
-  DEF f84 := f81 IAND f83 [INT]
-  f79 := f84 [INT]
-  DEF f85 := 0 [INT]
-  DEF f86 := f79 EQ f85 [BOOL]
-  DEF f87 := TRUE [BOOL]
-  IF f86 EQ f87
+  DEF f71 := FALSE [BOOL]
+  DEF f72 := 0 [INT]
+  DEF f73 := 31 [INT]
+  DEF f74 := (PARAM f75) IRSHIFT f73 [INT]
+  DEF f76 := 1 [INT]
+  DEF f77 := f74 IAND f76 [INT]
+  f72 := f77 [INT]
+  DEF f78 := 0 [INT]
+  DEF f79 := f72 EQ f78 [BOOL]
+  DEF f80 := TRUE [BOOL]
+  IF f79 EQ f80
   THEN IFSTAT_2_SEQ_0_LEVEL_0_0
   ELSE IFNEXT_2_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_2_SEQ_0_LEVEL_0_0
-  DEF f88 := FALSE [BOOL]
-  f78 := f88 [BOOL]
+  DEF f81 := FALSE [BOOL]
+  f71 := f81 [BOOL]
   GOTO IFEND_2_LEVEL_0_0
   LABEL IFNEXT_2_SEQ_0_LEVEL_0_0
-  DEF f89 := TRUE [BOOL]
-  f78 := f89 [BOOL]
+  DEF f82 := TRUE [BOOL]
+  f71 := f82 [BOOL]
   GOTO IFEND_2_LEVEL_0_0
   LABEL IFNEXT_2_SEQ_1_LEVEL_0_0
   LABEL IFEND_2_LEVEL_0_0
-  DEF RETURN f90 := f78 [BOOL]
+  DEF RETURN f83 := f71 [BOOL]
  RETURN
  PROC LABEL IntIsZero
-  DEF f94 := FALSE [BOOL]
-  DEF f95 := 0 [INT]
-  DEF f96 := (PARAM f97) EQ f95 [BOOL]
-  DEF f98 := TRUE [BOOL]
-  IF f96 EQ f98
+  DEF f85 := FALSE [BOOL]
+  DEF f86 := 0 [INT]
+  DEF f87 := (PARAM f88) EQ f86 [BOOL]
+  DEF f89 := TRUE [BOOL]
+  IF f87 EQ f89
   THEN IFSTAT_1_SEQ_0_LEVEL_0_0
   ELSE IFNEXT_1_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0_0
-  DEF f99 := TRUE [BOOL]
-  f94 := f99 [BOOL]
+  DEF f90 := TRUE [BOOL]
+  f85 := f90 [BOOL]
   GOTO IFEND_1_LEVEL_0_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0_0
-  DEF g10 := FALSE [BOOL]
-  f94 := g10 [BOOL]
+  DEF f91 := FALSE [BOOL]
+  f85 := f91 [BOOL]
   GOTO IFEND_1_LEVEL_0_0
   LABEL IFNEXT_1_SEQ_1_LEVEL_0_0
   LABEL IFEND_1_LEVEL_0_0
-  DEF RETURN g11 := f94 [BOOL]
+  DEF RETURN f92 := f85 [BOOL]
  RETURN
  PROC LABEL RMul
   DEF k8 := 0.0 [REAL]
@@ -321,29 +343,29 @@ PROC SECTION
   DEF o4 := 0 [INT]
   DEF o5 := 0 [INT]
   DEF o6 := 0 [INT]
-  CALL RealSign(((PARAM g) -> h83)[REAL])
-  DEF o7 := (RETURN h84) [INT]
+  CALL RealSign(((PARAM h10) -> g58)[REAL])
+  DEF o7 := (RETURN g57) [INT]
   l0 := o7 [INT]
-  CALL RealSign(((PARAM h) -> h83)[REAL])
-  DEF o8 := (RETURN h84) [INT]
+  CALL RealSign(((PARAM h11) -> g58)[REAL])
+  DEF o8 := (RETURN g57) [INT]
   l1 := o8 [INT]
-  CALL RealExponent(((PARAM g) -> h87)[REAL])
-  DEF o9 := (RETURN h88) [INT]
+  CALL RealExponent(((PARAM h10) -> g71)[REAL])
+  DEF o9 := (RETURN g70) [INT]
   l2 := o9 [INT]
-  CALL RealExponent(((PARAM h) -> h87)[REAL])
-  DEF p0 := (RETURN h88) [INT]
+  CALL RealExponent(((PARAM h11) -> g71)[REAL])
+  DEF p0 := (RETURN g70) [INT]
   l3 := p0 [INT]
-  CALL RealMantissa(((PARAM g) -> h91)[REAL])
-  DEF p1 := (RETURN i18) [INT]
+  CALL RealMantissa(((PARAM h10) -> g97)[REAL])
+  DEF p1 := (RETURN g96) [INT]
   l4 := p1 [INT]
-  CALL RealMantissa(((PARAM h) -> h91)[REAL])
-  DEF p2 := (RETURN i18) [INT]
+  CALL RealMantissa(((PARAM h11) -> g97)[REAL])
+  DEF p2 := (RETURN g96) [INT]
   l5 := p2 [INT]
-  CALL IntIsZero((l4 -> i81)[INT])
-  DEF p3 := (RETURN i82) [BOOL]
+  CALL IntIsZero((l4 -> f88)[INT])
+  DEF p3 := (RETURN f92) [BOOL]
   DEF p4 := BNOT p3 [BOOL]
-  CALL IntIsZero((l5 -> i81)[INT])
-  DEF p5 := (RETURN i82) [BOOL]
+  CALL IntIsZero((l5 -> f88)[INT])
+  DEF p5 := (RETURN f92) [BOOL]
   DEF p6 := BNOT p5 [BOOL]
   DEF p7 := p4 LAND p6 [BOOL]
   DEF p8 := TRUE [BOOL]
@@ -378,8 +400,8 @@ PROC SECTION
   DEF r0 := 0 [INT]
   m5 := r0 [INT]
   m9 := l4 [INT]
-  CALL IntIsZero((m9 -> i81)[INT])
-  DEF r1 := (RETURN i82) [BOOL]
+  CALL IntIsZero((m9 -> f88)[INT])
+  DEF r1 := (RETURN f92) [BOOL]
   DEF r2 := BNOT r1 [BOOL]
   DEF r3 := TRUE [BOOL]
   IF r2 EQ r3
@@ -410,8 +432,8 @@ PROC SECTION
   DEF s1 := 1 [INT]
   DEF s2 := m9 IRSHIFT s1 [INT]
   m9 := s2 [INT]
-  CALL IntIsZero((m9 -> i81)[INT])
-  DEF s3 := (RETURN i82) [BOOL]
+  CALL IntIsZero((m9 -> f88)[INT])
+  DEF s3 := (RETURN f92) [BOOL]
   DEF s4 := BNOT s3 [BOOL]
   r2 := s4 [BOOL]
   GOTO WHILECOND_4_SEQ_0_LEVEL_0_0
@@ -444,8 +466,8 @@ PROC SECTION
   DEF t6 := 0 [INT]
   m7 := t6 [INT]
   m8 := l5 [INT]
-  CALL IntIsZero((m8 -> i81)[INT])
-  DEF t7 := (RETURN i82) [BOOL]
+  CALL IntIsZero((m8 -> f88)[INT])
+  DEF t7 := (RETURN f92) [BOOL]
   DEF t8 := BNOT t7 [BOOL]
   DEF t9 := TRUE [BOOL]
   IF t8 EQ t9
@@ -476,8 +498,8 @@ PROC SECTION
   DEF u7 := 1 [INT]
   DEF u8 := m8 IRSHIFT u7 [INT]
   m8 := u8 [INT]
-  CALL IntIsZero((m8 -> i81)[INT])
-  DEF u9 := (RETURN i82) [BOOL]
+  CALL IntIsZero((m8 -> f88)[INT])
+  DEF u9 := (RETURN f92) [BOOL]
   DEF v0 := BNOT u9 [BOOL]
   t8 := v0 [BOOL]
   GOTO WHILECOND_8_SEQ_0_LEVEL_0
@@ -517,8 +539,8 @@ PROC SECTION
   l9 := v7 [INT]
   n5 := n3 [INT]
   n6 := n4 [INT]
-  CALL IntIsZero((n5 -> i81)[INT])
-  DEF v8 := (RETURN i82) [BOOL]
+  CALL IntIsZero((n5 -> f88)[INT])
+  DEF v8 := (RETURN f92) [BOOL]
   DEF v9 := BNOT v8 [BOOL]
   DEF w0 := TRUE [BOOL]
   IF v9 EQ w0
@@ -559,15 +581,15 @@ PROC SECTION
   DEF x5 := n7 ILSHIFT x4 [INT]
   DEF x6 := n6 IOR x5 [INT]
   n6 := x6 [INT]
-  CALL IntIsZero((n5 -> i81)[INT])
-  DEF x7 := (RETURN i82) [BOOL]
+  CALL IntIsZero((n5 -> f88)[INT])
+  DEF x7 := (RETURN f92) [BOOL]
   DEF x8 := BNOT x7 [BOOL]
   v9 := x8 [BOOL]
   GOTO WHILECOND_10_SEQ_0_LEVEL_0
   LABEL WHILENEXT_10_SEQ_0_LEVEL_0
   LABEL WHILEEND_10_LEVEL_0
-  CALL IntIsZero((n6 -> i81)[INT])
-  DEF x9 := (RETURN i82) [BOOL]
+  CALL IntIsZero((n6 -> f88)[INT])
+  DEF x9 := (RETURN f92) [BOOL]
   DEF y0 := BNOT x9 [BOOL]
   DEF y1 := TRUE [BOOL]
   IF y0 EQ y1
@@ -598,8 +620,8 @@ PROC SECTION
   DEF y9 := 1 [INT]
   DEF z0 := n6 IRSHIFT y9 [INT]
   n6 := z0 [INT]
-  CALL IntIsZero((n6 -> i81)[INT])
-  DEF z1 := (RETURN i82) [BOOL]
+  CALL IntIsZero((n6 -> f88)[INT])
+  DEF z1 := (RETURN f92) [BOOL]
   DEF z2 := BNOT z1 [BOOL]
   y0 := z2 [BOOL]
   GOTO WHILECOND_12_SEQ_0_LEVEL_0
@@ -808,8 +830,8 @@ PROC SECTION
   l9 := K0 [INT]
   n5 := n3 [INT]
   n6 := n4 [INT]
-  CALL IntIsZero((n5 -> i81)[INT])
-  DEF K1 := (RETURN i82) [BOOL]
+  CALL IntIsZero((n5 -> f88)[INT])
+  DEF K1 := (RETURN f92) [BOOL]
   DEF K2 := BNOT K1 [BOOL]
   DEF K3 := TRUE [BOOL]
   IF K2 EQ K3
@@ -850,15 +872,15 @@ PROC SECTION
   DEF L8 := n7 ILSHIFT L7 [INT]
   DEF L9 := n6 IOR L8 [INT]
   n6 := L9 [INT]
-  CALL IntIsZero((n5 -> i81)[INT])
-  DEF M0 := (RETURN i82) [BOOL]
+  CALL IntIsZero((n5 -> f88)[INT])
+  DEF M0 := (RETURN f92) [BOOL]
   DEF M1 := BNOT M0 [BOOL]
   K2 := M1 [BOOL]
   GOTO WHILECOND_14_SEQ_0_LEVEL_0
   LABEL WHILENEXT_14_SEQ_0_LEVEL_0
   LABEL WHILEEND_14_LEVEL_0
-  CALL IntIsZero((n6 -> i81)[INT])
-  DEF M2 := (RETURN i82) [BOOL]
+  CALL IntIsZero((n6 -> f88)[INT])
+  DEF M2 := (RETURN f92) [BOOL]
   DEF M3 := BNOT M2 [BOOL]
   DEF M4 := TRUE [BOOL]
   IF M3 EQ M4
@@ -889,8 +911,8 @@ PROC SECTION
   DEF N2 := 1 [INT]
   DEF N3 := n6 IRSHIFT N2 [INT]
   n6 := N3 [INT]
-  CALL IntIsZero((n6 -> i81)[INT])
-  DEF N4 := (RETURN i82) [BOOL]
+  CALL IntIsZero((n6 -> f88)[INT])
+  DEF N4 := (RETURN f92) [BOOL]
   DEF N5 := BNOT N4 [BOOL]
   M3 := N5 [BOOL]
   GOTO WHILECOND_16_SEQ_0_LEVEL_0
@@ -976,7 +998,7 @@ PROC SECTION
   GOTO IFEND_28_LEVEL_1
   LABEL IFNEXT_28_SEQ_3_LEVEL_1
   LABEL IFEND_28_LEVEL_1
-  DEF R9 := l8 IADD (GLOBAL i83) [INT]
+  DEF R9 := l8 IADD (GLOBAL h63) [INT]
   l8 := R9 [INT]
   DEF S0 := 255 [INT]
   DEF S1 := l8 IAND S0 [INT]
@@ -996,96 +1018,96 @@ PROC SECTION
   GOTO IFEND_10_LEVEL_0_0
   LABEL IFNEXT_10_SEQ_0_LEVEL_0_0
   LABEL IFEND_10_LEVEL_0_0
-  CALL IntBinaryAsReal((k9 -> i84)[INT])
-  DEF T2 := (RETURN i85) [REAL]
+  CALL IntBinaryAsReal((k9 -> f35)[INT])
+  DEF T2 := (RETURN f34) [REAL]
   k8 := T2 [REAL]
-  DEF RETURN h73 := k8 [REAL]
+  DEF RETURN g99 := k8 [REAL]
  RETURN
  PROC LABEL RealSign
-  DEF g67 := 0 [INT]
-  DEF g68 := 0 [INT]
-  CALL RealBinaryAsInt(((PARAM q) -> i97)[REAL])
-  DEF g70 := (RETURN i98) [INT]
-  g68 := g70 [INT]
-  DEF g72 := 31 [INT]
-  DEF g73 := g68 IRSHIFT g72 [INT]
-  DEF g74 := 1 [INT]
-  DEF g75 := g73 IAND g74 [INT]
-  g67 := g75 [INT]
-  DEF RETURN g76 := g67 [INT]
+  DEF g50 := 0 [INT]
+  DEF g51 := 0 [INT]
+  CALL RealBinaryAsInt(((PARAM g58) -> f31)[REAL])
+  DEF g52 := (RETURN f30) [INT]
+  g51 := g52 [INT]
+  DEF g53 := 31 [INT]
+  DEF g54 := g51 IRSHIFT g53 [INT]
+  DEF g55 := 1 [INT]
+  DEF g56 := g54 IAND g55 [INT]
+  g50 := g56 [INT]
+  DEF RETURN g57 := g50 [INT]
  RETURN
  PROC LABEL RealExponent
-  DEF g81 := 0 [INT]
-  DEF g82 := 0 [INT]
-  DEF g83 := 0 [INT]
-  CALL RealBinaryAsInt(((PARAM s) -> i97)[REAL])
-  DEF g85 := (RETURN i98) [INT]
-  g82 := g85 [INT]
-  DEF g87 := 23 [INT]
-  DEF g88 := g82 IRSHIFT g87 [INT]
-  DEF g89 := 255 [INT]
-  DEF g90 := g88 IAND g89 [INT]
-  g83 := g90 [INT]
-  DEF g91 := g83 ISUB (GLOBAL i83) [INT]
-  g81 := g91 [INT]
-  DEF RETURN g94 := g81 [INT]
+  DEF g59 := 0 [INT]
+  DEF g60 := 0 [INT]
+  DEF g61 := 0 [INT]
+  CALL RealBinaryAsInt(((PARAM g71) -> f31)[REAL])
+  DEF g62 := (RETURN f30) [INT]
+  g60 := g62 [INT]
+  DEF g63 := 23 [INT]
+  DEF g64 := g60 IRSHIFT g63 [INT]
+  DEF g65 := 255 [INT]
+  DEF g66 := g64 IAND g65 [INT]
+  g61 := g66 [INT]
+  DEF g67 := g61 ISUB (GLOBAL h63) [INT]
+  g59 := g67 [INT]
+  DEF RETURN g70 := g59 [INT]
  RETURN
  PROC LABEL RealMantissa
-  DEF g99 := 0 [INT]
-  DEF h10 := 0 [INT]
-  DEF h11 := 0 [INT]
-  DEF h12 := 0 [INT]
-  CALL RealBinaryAsInt(((PARAM o) -> i97)[REAL])
-  DEF h14 := (RETURN i98) [INT]
-  h10 := h14 [INT]
-  DEF h16 := 8388607 [INT]
-  DEF h17 := h10 IAND h16 [INT]
-  h11 := h17 [INT]
-  CALL RealIsZero(((PARAM o) -> h32)[REAL])
-  DEF h33 := (RETURN h31) [BOOL]
-  DEF h34 := TRUE [BOOL]
-  IF h33 EQ h34
+  DEF g72 := 0 [INT]
+  DEF g73 := 0 [INT]
+  DEF g74 := 0 [INT]
+  DEF g75 := 0 [INT]
+  CALL RealBinaryAsInt(((PARAM g97) -> f31)[REAL])
+  DEF g76 := (RETURN f30) [INT]
+  g73 := g76 [INT]
+  DEF g77 := 8388607 [INT]
+  DEF g78 := g73 IAND g77 [INT]
+  g74 := g78 [INT]
+  CALL RealIsZero(((PARAM g97) -> g91)[REAL])
+  DEF g92 := (RETURN g90) [BOOL]
+  DEF g93 := TRUE [BOOL]
+  IF g92 EQ g93
   THEN IFSTAT_6_SEQ_0_LEVEL_0_0
   ELSE IFNEXT_6_SEQ_0_LEVEL_0_0
   LABEL IFSTAT_6_SEQ_0_LEVEL_0_0
-  g99 := h11 [INT]
+  g72 := g74 [INT]
   GOTO IFEND_6_LEVEL_0_0
   LABEL IFNEXT_6_SEQ_0_LEVEL_0_0
-  DEF h35 := 8388608 [INT]
-  DEF h36 := h11 IOR h35 [INT]
-  g99 := h36 [INT]
+  DEF g94 := 8388608 [INT]
+  DEF g95 := g74 IOR g94 [INT]
+  g72 := g95 [INT]
   GOTO IFEND_6_LEVEL_0_0
   LABEL IFNEXT_6_SEQ_1_LEVEL_0
   LABEL IFEND_6_LEVEL_0_0
-  DEF RETURN h37 := g99 [INT]
+  DEF RETURN g96 := g72 [INT]
  RETURN
  PROC LABEL RealIsZero
-  DEF h18 := FALSE [BOOL]
-  DEF h19 := 0 [INT]
-  DEF h20 := 0 [INT]
-  CALL RealBinaryAsInt(((PARAM h32) -> i97)[REAL])
-  DEF h22 := (RETURN i98) [INT]
-  h20 := h22 [INT]
-  DEF h24 := 2147483647 [INT]
-  DEF h25 := h20 IAND h24 [INT]
-  h19 := h25 [INT]
-  DEF h26 := 0 [INT]
-  DEF h27 := h19 EQ h26 [BOOL]
-  DEF h28 := TRUE [BOOL]
-  IF h27 EQ h28
+  DEF g79 := FALSE [BOOL]
+  DEF g80 := 0 [INT]
+  DEF g81 := 0 [INT]
+  CALL RealBinaryAsInt(((PARAM g91) -> f31)[REAL])
+  DEF g82 := (RETURN f30) [INT]
+  g81 := g82 [INT]
+  DEF g83 := 2147483647 [INT]
+  DEF g84 := g81 IAND g83 [INT]
+  g80 := g84 [INT]
+  DEF g85 := 0 [INT]
+  DEF g86 := g80 EQ g85 [BOOL]
+  DEF g87 := TRUE [BOOL]
+  IF g86 EQ g87
   THEN IFSTAT_0_SEQ_0_LEVEL_0_2
   ELSE IFNEXT_0_SEQ_0_LEVEL_0_2
   LABEL IFSTAT_0_SEQ_0_LEVEL_0_2
-  DEF h29 := TRUE [BOOL]
-  h18 := h29 [BOOL]
+  DEF g88 := TRUE [BOOL]
+  g79 := g88 [BOOL]
   GOTO IFEND_0_LEVEL_0_2
   LABEL IFNEXT_0_SEQ_0_LEVEL_0_2
-  DEF h30 := FALSE [BOOL]
-  h18 := h30 [BOOL]
+  DEF g89 := FALSE [BOOL]
+  g79 := g89 [BOOL]
   GOTO IFEND_0_LEVEL_0_2
   LABEL IFNEXT_0_SEQ_1_LEVEL_0_2
   LABEL IFEND_0_LEVEL_0_2
-  DEF RETURN h31 := h18 [BOOL]
+  DEF RETURN g90 := g79 [BOOL]
  RETURN
  PROC LABEL RDivide
   DEF T3 := 0.0 [REAL]
@@ -1124,28 +1146,28 @@ PROC SECTION
   DEF W6 := 0 [INT]
   DEF W7 := 0 [INT]
   DEF W8 := 0 [INT]
-  CALL RealSign(((PARAM j) -> h83)[REAL])
-  DEF W9 := (RETURN h84) [INT]
+  CALL RealSign(((PARAM h65) -> g58)[REAL])
+  DEF W9 := (RETURN g57) [INT]
   T5 := W9 [INT]
-  CALL RealSign(((PARAM k) -> h83)[REAL])
-  DEF X0 := (RETURN h84) [INT]
+  CALL RealSign(((PARAM h66) -> g58)[REAL])
+  DEF X0 := (RETURN g57) [INT]
   T6 := X0 [INT]
-  CALL RealExponent(((PARAM j) -> h87)[REAL])
-  DEF X1 := (RETURN h88) [INT]
+  CALL RealExponent(((PARAM h65) -> g71)[REAL])
+  DEF X1 := (RETURN g70) [INT]
   T7 := X1 [INT]
-  CALL RealExponent(((PARAM k) -> h87)[REAL])
-  DEF X2 := (RETURN h88) [INT]
+  CALL RealExponent(((PARAM h66) -> g71)[REAL])
+  DEF X2 := (RETURN g70) [INT]
   T8 := X2 [INT]
-  CALL RealMantissa(((PARAM j) -> h91)[REAL])
-  DEF X3 := (RETURN i18) [INT]
+  CALL RealMantissa(((PARAM h65) -> g97)[REAL])
+  DEF X3 := (RETURN g96) [INT]
   T9 := X3 [INT]
-  CALL RealMantissa(((PARAM k) -> h91)[REAL])
-  DEF X4 := (RETURN i18) [INT]
+  CALL RealMantissa(((PARAM h66) -> g97)[REAL])
+  DEF X4 := (RETURN g96) [INT]
   U0 := X4 [INT]
-  CALL IntIsZero((T9 -> i81)[INT])
-  DEF X5 := (RETURN i82) [BOOL]
-  CALL IntIsZero((U0 -> i81)[INT])
-  DEF X6 := (RETURN i82) [BOOL]
+  CALL IntIsZero((T9 -> f88)[INT])
+  DEF X5 := (RETURN f92) [BOOL]
+  CALL IntIsZero((U0 -> f88)[INT])
+  DEF X6 := (RETURN f92) [BOOL]
   DEF X7 := X5 LAND X6 [BOOL]
   DEF X8 := TRUE [BOOL]
   IF X7 EQ X8
@@ -1156,11 +1178,11 @@ PROC SECTION
   T4 := X9 [INT]
   GOTO IFEND_30_LEVEL_0
   LABEL IFNEXT_30_SEQ_0_LEVEL_0
-  CALL IntIsZero((T9 -> i81)[INT])
-  DEF Y0 := (RETURN i82) [BOOL]
+  CALL IntIsZero((T9 -> f88)[INT])
+  DEF Y0 := (RETURN f92) [BOOL]
   DEF Y1 := BNOT Y0 [BOOL]
-  CALL IntIsZero((U0 -> i81)[INT])
-  DEF Y2 := (RETURN i82) [BOOL]
+  CALL IntIsZero((U0 -> f88)[INT])
+  DEF Y2 := (RETURN f92) [BOOL]
   DEF Y3 := Y1 LAND Y2 [BOOL]
   DEF Y4 := TRUE [BOOL]
   IF Y3 EQ Y4
@@ -1171,10 +1193,10 @@ PROC SECTION
   T4 := Y5 [INT]
   GOTO IFEND_30_LEVEL_0
   LABEL IFNEXT_30_SEQ_1_LEVEL_0
-  CALL IntIsZero((T9 -> i81)[INT])
-  DEF Y6 := (RETURN i82) [BOOL]
-  CALL IntIsZero((U0 -> i81)[INT])
-  DEF Y7 := (RETURN i82) [BOOL]
+  CALL IntIsZero((T9 -> f88)[INT])
+  DEF Y6 := (RETURN f92) [BOOL]
+  CALL IntIsZero((U0 -> f88)[INT])
+  DEF Y7 := (RETURN f92) [BOOL]
   DEF Y8 := BNOT Y7 [BOOL]
   DEF Y9 := Y6 LAND Y8 [BOOL]
   DEF Z0 := TRUE [BOOL]
@@ -1198,13 +1220,13 @@ PROC SECTION
   DEF Z7 := 1 [INT]
   DEF Z8 := U6 IAND Z7 [INT]
   DEF Z9 := 0 [INT]
-  DEF i18 := Z8 EQ Z9 [BOOL]
+  DEF g96 := Z8 EQ Z9 [BOOL]
   DEF a10 := TRUE [BOOL]
-  IF i18 EQ a10
+  IF g96 EQ a10
   THEN WHILESTAT_18_SEQ_0_LEVEL_0
   ELSE WHILENEXT_18_SEQ_0_LEVEL_0
   LABEL WHILECOND_18_SEQ_0_LEVEL_0
-  IF i18 EQ a10
+  IF g96 EQ a10
   THEN WHILESTAT_18_SEQ_0_LEVEL_0
   ELSE WHILEEND_18_LEVEL_0
   LABEL WHILESTAT_18_SEQ_0_LEVEL_0
@@ -1218,7 +1240,7 @@ PROC SECTION
   DEF a16 := U6 IAND a15 [INT]
   DEF a17 := 0 [INT]
   DEF a18 := a16 EQ a17 [BOOL]
-  i18 := a18 [BOOL]
+  g96 := a18 [BOOL]
   GOTO WHILECOND_18_SEQ_0_LEVEL_0
   LABEL WHILENEXT_18_SEQ_0_LEVEL_0
   LABEL WHILEEND_18_LEVEL_0
@@ -1229,8 +1251,8 @@ PROC SECTION
   DEF a20 := 0 [INT]
   U4 := a20 [INT]
   U6 := U0 [INT]
-  CALL IntIsZero((U6 -> i81)[INT])
-  DEF a21 := (RETURN i82) [BOOL]
+  CALL IntIsZero((U6 -> f88)[INT])
+  DEF a21 := (RETURN f92) [BOOL]
   DEF a22 := BNOT a21 [BOOL]
   DEF a23 := TRUE [BOOL]
   IF a22 EQ a23
@@ -1261,8 +1283,8 @@ PROC SECTION
   DEF a31 := 1 [INT]
   DEF a32 := U6 IRSHIFT a31 [INT]
   U6 := a32 [INT]
-  CALL IntIsZero((U6 -> i81)[INT])
-  DEF a33 := (RETURN i82) [BOOL]
+  CALL IntIsZero((U6 -> f88)[INT])
+  DEF a33 := (RETURN f92) [BOOL]
   DEF a34 := BNOT a33 [BOOL]
   a22 := a34 [BOOL]
   GOTO WHILECOND_20_SEQ_0_LEVEL_0
@@ -1294,8 +1316,8 @@ PROC SECTION
   LABEL IFEND_32_LEVEL_1
   DEF a43 := T7 ISUB T8 [INT]
   U3 := a43 [INT]
-  CALL Div((T9 -> i76)[INT], (U0 -> i77)[INT])
-  DEF a47 := (RETURN i78) [INT]
+  CALL Div((T9 -> h23)[INT], (U0 -> h52)[INT])
+  DEF a47 := (RETURN h62) [INT]
   U2 := a47 [INT]
   DEF a48 := 23 [INT]
   DEF a49 := V7 GT a48 [BOOL]
@@ -1339,8 +1361,8 @@ PROC SECTION
   V5 := U2 [INT]
   DEF a67 := 0 [INT]
   V2 := a67 [INT]
-  CALL IntIsZero((V5 -> i81)[INT])
-  DEF a68 := (RETURN i82) [BOOL]
+  CALL IntIsZero((V5 -> f88)[INT])
+  DEF a68 := (RETURN f92) [BOOL]
   DEF a69 := BNOT a68 [BOOL]
   DEF a70 := TRUE [BOOL]
   IF a69 EQ a70
@@ -1371,8 +1393,8 @@ PROC SECTION
   DEF a78 := 1 [INT]
   DEF a79 := V5 IRSHIFT a78 [INT]
   V5 := a79 [INT]
-  CALL IntIsZero((V5 -> i81)[INT])
-  DEF a80 := (RETURN i82) [BOOL]
+  CALL IntIsZero((V5 -> f88)[INT])
+  DEF a80 := (RETURN f92) [BOOL]
   DEF a81 := BNOT a80 [BOOL]
   a69 := a81 [BOOL]
   GOTO WHILECOND_22_SEQ_0_LEVEL_0
@@ -1457,7 +1479,7 @@ PROC SECTION
   GOTO IFEND_36_LEVEL_1
   LABEL IFNEXT_36_SEQ_2_LEVEL_1
   LABEL IFEND_36_LEVEL_1
-  DEF b21 := U3 IADD (GLOBAL i83) [INT]
+  DEF b21 := U3 IADD (GLOBAL h63) [INT]
   U3 := b21 [INT]
   DEF b22 := 255 [INT]
   DEF b23 := U3 IAND b22 [INT]
@@ -1475,115 +1497,115 @@ PROC SECTION
   GOTO IFEND_30_LEVEL_0
   LABEL IFNEXT_30_SEQ_3_LEVEL_0
   LABEL IFEND_30_LEVEL_0
-  CALL IntBinaryAsReal((T4 -> i84)[INT])
-  DEF b32 := (RETURN i85) [REAL]
+  CALL IntBinaryAsReal((T4 -> f35)[INT])
+  DEF b32 := (RETURN f34) [REAL]
   T3 := b32 [REAL]
-  DEF RETURN i86 := T3 [REAL]
+  DEF RETURN h64 := T3 [REAL]
  RETURN
  PROC LABEL Div
-  DEF i23 := 0 [INT]
-  DEF i24 := 0 [INT]
-  DEF i25 := 0 [INT]
-  DEF i26 := 0 [INT]
-  DEF i27 := 0 [INT]
-  DEF i28 := 0 [INT]
-  DEF i29 := 0 [INT]
-  DEF i30 := 0 [INT]
-  DEF i31 := 0 [INT]
-  i25 := (PARAM i32) [INT]
-  DEF i33 := 0 [INT]
-  i28 := i33 [INT]
-  DEF i34 := 0 [INT]
-  i26 := i34 [INT]
-  CALL IntIsZero((i25 -> i81)[INT])
-  DEF i36 := (RETURN i82) [BOOL]
-  DEF i38 := BNOT i36 [BOOL]
-  DEF i39 := TRUE [BOOL]
-  IF i38 EQ i39
+  DEF h14 := 0 [INT]
+  DEF h15 := 0 [INT]
+  DEF h16 := 0 [INT]
+  DEF h17 := 0 [INT]
+  DEF h18 := 0 [INT]
+  DEF h19 := 0 [INT]
+  DEF h20 := 0 [INT]
+  DEF h21 := 0 [INT]
+  DEF h22 := 0 [INT]
+  h16 := (PARAM h23) [INT]
+  DEF h24 := 0 [INT]
+  h19 := h24 [INT]
+  DEF h25 := 0 [INT]
+  h17 := h25 [INT]
+  CALL IntIsZero((h16 -> f88)[INT])
+  DEF h26 := (RETURN f92) [BOOL]
+  DEF h27 := BNOT h26 [BOOL]
+  DEF h28 := TRUE [BOOL]
+  IF h27 EQ h28
   THEN WHILESTAT_0_SEQ_0_LEVEL_0_1
   ELSE WHILENEXT_0_SEQ_0_LEVEL_0_1
   LABEL WHILECOND_0_SEQ_0_LEVEL_0_1
-  IF i38 EQ i39
+  IF h27 EQ h28
   THEN WHILESTAT_0_SEQ_0_LEVEL_0_1
   ELSE WHILEEND_0_LEVEL_0_1
   LABEL WHILESTAT_0_SEQ_0_LEVEL_0_1
-  DEF i40 := 1 [INT]
-  DEF i41 := i25 IAND i40 [INT]
-  i27 := i41 [INT]
-  DEF i42 := 1 [INT]
-  DEF i43 := i27 EQ i42 [BOOL]
-  DEF i44 := TRUE [BOOL]
-  IF i43 EQ i44
+  DEF h29 := 1 [INT]
+  DEF h30 := h16 IAND h29 [INT]
+  h18 := h30 [INT]
+  DEF h31 := 1 [INT]
+  DEF h32 := h18 EQ h31 [BOOL]
+  DEF h33 := TRUE [BOOL]
+  IF h32 EQ h33
   THEN IFSTAT_0_SEQ_0_LEVEL_0_3
   ELSE IFNEXT_0_SEQ_0_LEVEL_0_3
   LABEL IFSTAT_0_SEQ_0_LEVEL_0_3
-  i26 := i28 [INT]
+  h17 := h19 [INT]
   GOTO IFEND_0_LEVEL_0_3
   LABEL IFNEXT_0_SEQ_0_LEVEL_0_3
   LABEL IFEND_0_LEVEL_0_3
-  DEF i45 := 1 [INT]
-  DEF i46 := i28 IADD i45 [INT]
-  i28 := i46 [INT]
-  DEF i47 := 1 [INT]
-  DEF i48 := i25 IRSHIFT i47 [INT]
-  i25 := i48 [INT]
-  CALL IntIsZero((i25 -> i81)[INT])
-  DEF i50 := (RETURN i82) [BOOL]
-  DEF i52 := BNOT i50 [BOOL]
-  i38 := i52 [BOOL]
+  DEF h34 := 1 [INT]
+  DEF h35 := h19 IADD h34 [INT]
+  h19 := h35 [INT]
+  DEF h36 := 1 [INT]
+  DEF h37 := h16 IRSHIFT h36 [INT]
+  h16 := h37 [INT]
+  CALL IntIsZero((h16 -> f88)[INT])
+  DEF h38 := (RETURN f92) [BOOL]
+  DEF h39 := BNOT h38 [BOOL]
+  h27 := h39 [BOOL]
   GOTO WHILECOND_0_SEQ_0_LEVEL_0_1
   LABEL WHILENEXT_0_SEQ_0_LEVEL_0_1
   LABEL WHILEEND_0_LEVEL_0_1
-  i29 := i26 [INT]
-  i25 := (PARAM i32) [INT]
-  DEF i53 := 0 [INT]
-  i31 := i53 [INT]
-  DEF i54 := 0 [INT]
-  i24 := i54 [INT]
-  DEF i55 := 0 [INT]
-  DEF i56 := i29 GE i55 [BOOL]
-  DEF i57 := TRUE [BOOL]
-  IF i56 EQ i57
+  h20 := h17 [INT]
+  h16 := (PARAM h23) [INT]
+  DEF h40 := 0 [INT]
+  h22 := h40 [INT]
+  DEF h41 := 0 [INT]
+  h15 := h41 [INT]
+  DEF h42 := 0 [INT]
+  DEF h43 := h20 GE h42 [BOOL]
+  DEF h44 := TRUE [BOOL]
+  IF h43 EQ h44
   THEN WHILESTAT_2_SEQ_0_LEVEL_0_1
   ELSE WHILENEXT_2_SEQ_0_LEVEL_0_1
   LABEL WHILECOND_2_SEQ_0_LEVEL_0_1
-  IF i56 EQ i57
+  IF h43 EQ h44
   THEN WHILESTAT_2_SEQ_0_LEVEL_0_1
   ELSE WHILEEND_2_LEVEL_0_1
   LABEL WHILESTAT_2_SEQ_0_LEVEL_0_1
-  DEF i58 := i25 IRSHIFT i29 [INT]
-  DEF i59 := 1 [INT]
-  DEF i60 := i58 IAND i59 [INT]
-  i30 := i60 [INT]
-  DEF i61 := 1 [INT]
-  DEF i62 := i31 ILSHIFT i61 [INT]
-  DEF i63 := i62 IOR i30 [INT]
-  i31 := i63 [INT]
-  DEF i64 := i31 GE (PARAM i65) [BOOL]
-  DEF i66 := TRUE [BOOL]
-  IF i64 EQ i66
+  DEF h45 := h16 IRSHIFT h20 [INT]
+  DEF h46 := 1 [INT]
+  DEF h47 := h45 IAND h46 [INT]
+  h21 := h47 [INT]
+  DEF h48 := 1 [INT]
+  DEF h49 := h22 ILSHIFT h48 [INT]
+  DEF h50 := h49 IOR h21 [INT]
+  h22 := h50 [INT]
+  DEF h51 := h22 GE (PARAM h52) [BOOL]
+  DEF h53 := TRUE [BOOL]
+  IF h51 EQ h53
   THEN IFSTAT_1_SEQ_0_LEVEL_0_1
   ELSE IFNEXT_1_SEQ_0_LEVEL_0_1
   LABEL IFSTAT_1_SEQ_0_LEVEL_0_1
-  DEF i67 := 1 [INT]
-  DEF i68 := i67 ILSHIFT i29 [INT]
-  DEF i69 := i24 IOR i68 [INT]
-  i24 := i69 [INT]
-  DEF i70 := i31 ISUB (PARAM i65) [INT]
-  i31 := i70 [INT]
+  DEF h54 := 1 [INT]
+  DEF h55 := h54 ILSHIFT h20 [INT]
+  DEF h56 := h15 IOR h55 [INT]
+  h15 := h56 [INT]
+  DEF h57 := h22 ISUB (PARAM h52) [INT]
+  h22 := h57 [INT]
   GOTO IFEND_1_LEVEL_0_1
   LABEL IFNEXT_1_SEQ_0_LEVEL_0_1
   LABEL IFEND_1_LEVEL_0_1
-  DEF i71 := 1 [INT]
-  DEF i72 := i29 ISUB i71 [INT]
-  i29 := i72 [INT]
-  DEF i73 := 0 [INT]
-  DEF i74 := i29 GE i73 [BOOL]
-  i56 := i74 [BOOL]
+  DEF h58 := 1 [INT]
+  DEF h59 := h20 ISUB h58 [INT]
+  h20 := h59 [INT]
+  DEF h60 := 0 [INT]
+  DEF h61 := h20 GE h60 [BOOL]
+  h43 := h61 [BOOL]
   GOTO WHILECOND_2_SEQ_0_LEVEL_0_1
   LABEL WHILENEXT_2_SEQ_0_LEVEL_0_1
   LABEL WHILEEND_2_LEVEL_0_1
-  DEF RETURN i75 := i24 [INT]
+  DEF RETURN h62 := h15 [INT]
  RETURN
  PROC LABEL RNotEqualTo
   DEF e94 := FALSE [BOOL]
@@ -1592,11 +1614,11 @@ PROC SECTION
   DEF e97 := 0 [INT]
   DEF e98 := 0 [INT]
   DEF e99 := 0 [INT]
-  CALL RealIsZero(((PARAM G) -> i93)[REAL])
-  DEF f10 := (RETURN i94) [BOOL]
+  CALL RealIsZero(((PARAM h69) -> g91)[REAL])
+  DEF f10 := (RETURN g90) [BOOL]
   e95 := f10 [BOOL]
-  CALL RealIsZero(((PARAM H) -> i93)[REAL])
-  DEF f11 := (RETURN i94) [BOOL]
+  CALL RealIsZero(((PARAM h70) -> g91)[REAL])
+  DEF f11 := (RETURN g90) [BOOL]
   e96 := f11 [BOOL]
   DEF f12 := e95 LAND e96 [BOOL]
   DEF f13 := TRUE [BOOL]
@@ -1608,11 +1630,11 @@ PROC SECTION
   e94 := f14 [BOOL]
   GOTO IFEND_87_LEVEL_0
   LABEL IFNEXT_87_SEQ_0_LEVEL_0
-  CALL RealBinaryAsInt(((PARAM G) -> i97)[REAL])
-  DEF f15 := (RETURN i98) [INT]
+  CALL RealBinaryAsInt(((PARAM h69) -> f31)[REAL])
+  DEF f15 := (RETURN f30) [INT]
   e98 := f15 [INT]
-  CALL RealBinaryAsInt(((PARAM H) -> i97)[REAL])
-  DEF f16 := (RETURN i98) [INT]
+  CALL RealBinaryAsInt(((PARAM h70) -> f31)[REAL])
+  DEF f16 := (RETURN f30) [INT]
   e99 := f16 [INT]
   DEF f17 := e98 IXOR e99 [INT]
   e97 := f17 [INT]
@@ -1635,15 +1657,15 @@ PROC SECTION
   GOTO IFEND_87_LEVEL_0
   LABEL IFNEXT_87_SEQ_1_LEVEL_0
   LABEL IFEND_87_LEVEL_0
-  DEF RETURN i99 := e94 [BOOL]
+  DEF RETURN h68 := e94 [BOOL]
  RETURN
  PROC LABEL WriteBool
-  DEF j14 := 0 [INT]
-  IPARAM j14
+  DEF h72 := 0 [INT]
+  IPARAM h72
   IASM "MOV %r, R0"
-  IPARAM (PARAM h)
+  IPARAM (PARAM h73)
   IASM "LDRB R0, %a"
   IASM "SWI 6"
-  IPARAM j14
+  IPARAM h72
   IASM "MOV R0, %r"
  RETURN

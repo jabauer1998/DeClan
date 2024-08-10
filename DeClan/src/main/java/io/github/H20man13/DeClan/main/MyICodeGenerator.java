@@ -250,7 +250,7 @@ public class MyICodeGenerator{
       String actual = decl.getIdentifier().getLexeme();
       IdentExp alias = list.get(i);
       varEnvironment.addEntry(actual, alias);
-      builder.addParamEntry(procedureName, SymEntry.INTERNAL, alias.ident, i);
+      builder.addParamEntry(alias.ident, SymEntry.INTERNAL, procedureName, i);
     }
 
     List <Declaration> localVars = procDecl.getLocalVariables();
@@ -275,7 +275,7 @@ public class MyICodeGenerator{
       Exp retPlace = generateExpressionIr(Scope.LOCAL, retExp, builder);
       IdentExp returnPlace = procEnvironment.getEntry(procedureName);
       builder.buildDefinition(Scope.RETURN, returnPlace.ident, retPlace, ConversionUtils.typeCheckerQualitiesToAssignType(qual));
-      builder.addReturnEntry(procedureName, SymEntry.INTERNAL, returnPlace.ident);
+      builder.addReturnEntry(returnPlace.ident, SymEntry.INTERNAL, procedureName);
     }
     builder.buildReturnStatement();
     varEnvironment.removeScope();
