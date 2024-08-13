@@ -3,6 +3,7 @@ package io.github.H20man13.DeClan.main;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import io.github.H20man13.DeClan.common.ast.ASTVisitor;
 import io.github.H20man13.DeClan.common.ast.Asm;
@@ -31,26 +32,27 @@ import io.github.H20man13.DeClan.common.ast.StrValue;
 import io.github.H20man13.DeClan.common.ast.UnaryOperation;
 import io.github.H20man13.DeClan.common.ast.VariableDeclaration;
 import io.github.H20man13.DeClan.common.ast.WhileElifBranch;
+import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 
 /**
  * This is an implementation of the ASTVisitor that encapsulates the algorithm
- * "print out the abstract syntax tree in postorder, suitable for execution on a
- * simple stack machine." It is used for Project 2 of CSC 426.
+ * "interpret project 2 It is used for Project 2-3 of CSC 426.
  * 
- * @author bhoward, Jacob Bauer
+ * @author jacobbauer
  */
-public class PostfixPrintVisitor implements ASTVisitor {
+public class MyPostfixInterpreterVisitor implements ASTVisitor {
 	/**
 	 * The environment is used to record the bindings of numeric values to
 	 * constants.
 	 */
-	private Map<String, String> environment;
-	private PrintWriter out;
+        private Map<String, VariableEntry> environment;
+		private PrintWriter out;
+        private Stack<Integer> accumulator;
 
 	/**
 	 * Construct a default PostfixPrintVisitor that writes to the console.
 	 */
-	public PostfixPrintVisitor() {
+	public MyPostfixInterpreterVisitor() {
 		this(new PrintWriter(System.out, true));
 	}
 
@@ -59,9 +61,10 @@ public class PostfixPrintVisitor implements ASTVisitor {
 	 * 
 	 * @param out
 	 */
-	public PostfixPrintVisitor(PrintWriter out) {
+	public MyPostfixInterpreterVisitor(PrintWriter out) {
 		this.environment = new HashMap<>();
 		this.out = out;
+		this.accumulator = new Stack<>();
 	}
 
 	@Override
@@ -70,16 +73,10 @@ public class PostfixPrintVisitor implements ASTVisitor {
 		for (Declaration Decl : program.getDecls()) {
 			Decl.accept(this);
 		}
-
 		// Process all of the statements in the program body
 		for (Statement statement : program.getStatements()) {
 			statement.accept(this);
 		}
-	}
-
-        @Override
-	public void visit(VariableDeclaration varDecl){
-	    //dont do anything not supported at this point in the project
 	}
 
 	@Override
@@ -87,138 +84,133 @@ public class PostfixPrintVisitor implements ASTVisitor {
 		// Bind a numeric value to a constant identifier
 		Identifier id = constDecl.getIdentifier();
 		NumValue num = (NumValue)constDecl.getValue();
-		environment.put(id.getLexeme(), num.getLexeme());
+		environment.put(id.getLexeme(), new VariableEntry(true, Integer.parseInt(num.getLexeme())));
 	}
 
         @Override
-	public void visit(ProcedureDeclaration procDecl) {
-	  
-	}
-        @Override
-	public void visit(IfElifBranch ifs){
-	  
+	public void visit(ProcedureDeclaration constDecl) {
+	    //not supported yet
 	}
 
         @Override
-	public void visit(WhileElifBranch ifs){
-	  
+	public void visit(VariableDeclaration varDecl) {
+	    //do nothing not supported yet
 	}
 
-        @Override
-	public void visit(ElseBranch ifs){
-	  
-	}
-
-        @Override
-	public void visit(RepeatBranch ifs){
-	  
-	}
-  
 	@Override
 	public void visit(ProcedureCall procedureCall) {
-		// For Project 2, the only recognized procedure is "PrintInt", which
-		// takes a single INTEGER argument. The output first prints out the
-		// argument in postfix, and then prints the "PRINT" instruction.
 		if (procedureCall.getProcedureName().getLexeme().equals("PrintInt")) {
 		        procedureCall.getArguments().get(0).accept(this);
-			out.println("PRINT");
+			out.println(accumulator.pop());
 		} else {
 			// Ignore all other procedure calls
 		}
 	}
 
-	@Override
-	public void visit(EmptyStatement emptyStatement) {
-		// Do nothing
+        @Override
+	public void visit(FunctionCall call) {
+	  //do nothing this is not needed yet
 	}
 
         @Override
+	public void visit(IfElifBranch ifs){
+	  //do nothing this is not needed yet
+	}
+        
+        @Override
+	public void visit(ElseBranch ifs){
+	  //do nothing this is not needed yet
+	}
+        
+        @Override
+	public void visit(WhileElifBranch ifs){
+	  //do nothing this is not needed yet
+	}
+
+        @Override
+	public void visit(RepeatBranch repeatStatement){
+		//do nothing this is not needed yet
+	}
+        
+        @Override
 	public void visit(Assignment assignment) {
-	    
+		//do nothing this is not needed yet
 	}
 
         @Override
 	public void visit(ForBranch assignment) {
-	    
+	    //do nothing this is not needed yet
 	}
-        
-	@Override
-	public void visit(UnaryOperation unaryOperation) {
-		// Handle a unary operation by printing out its subexpression
-		// in postfix, and then printing the instruction "NEGATE" in
-		// case the operator is MINUS.
-		unaryOperation.getExpression().accept(this);
 
+	@Override
+	public void visit(EmptyStatement emptyStatement){
+		//do nothing this is not needed yet
+	}
+
+	@Override
+	public void visit(UnaryOperation unaryOperation){
+		unaryOperation.getExpression().accept(this);
+		int value = accumulator.pop();
 		switch (unaryOperation.getOperator()) {
 		case PLUS:
-			// No output
-			break;
+		    accumulator.push(value);
+		    break;
 		case MINUS:
-			out.println("NEGATE");
-			break;
+		    accumulator.push(-value);
+		    break;
 		}
 	}
 
 	@Override
 	public void visit(BinaryOperation binaryOperation) {
-		// Handle a binary operation by printing out first the left
-		// and then the right subexpressions in postfix, and then
-		// printing the correct instruction for the operator.
 		binaryOperation.getLeft().accept(this);
+		int leftvalue = accumulator.pop();
 		binaryOperation.getRight().accept(this);
-
+		int rightvalue = accumulator.pop();
 		switch (binaryOperation.getOperator()) {
 		case PLUS:
-			out.println("ADD");
-			break;
+		    accumulator.push(leftvalue + rightvalue);
+		    break;
 		case MINUS:
-			out.println("SUBTRACT");
-			break;
+		    accumulator.push(leftvalue - rightvalue);
+		    break;
 		case TIMES:
-			out.println("MULTIPLY");
-			break;
+		    accumulator.push(leftvalue * rightvalue);
+		    break;
 		case DIV:
-			out.println("DIVIDE");
-			break;
+		    accumulator.push(leftvalue / rightvalue);
+		    break;
 		case MOD:
-			out.println("MODULO");
-			break;
+		    accumulator.push(leftvalue % rightvalue);
+		    break;
 		}
 	}
 
 	@Override
 	public void visit(NumValue numValue) {
-		// Handle a NumValue leaf by simply printing it out.
-		out.println(numValue.getLexeme());
+	    int value = Integer.parseInt(numValue.getLexeme());
+	    accumulator.push(value);
 	}
 
         @Override
-	public void visit(StrValue numValue) {
-	       
+	public void visit(StrValue strValue) {
+	   
 	}
 
         @Override
 	public void visit(BoolValue boolValue) {
-	       
-	}
-
-        @Override
-	public void visit(FunctionCall fcall) {
-	  
+	   
 	}
 
 	@Override
 	public void visit(Identifier identifier) {
-		// Handle an Identifier leaf by printing the corresponding
-		// numeric value from the environment. Since Project 2 does
-		// not do any semantic checking, just print "0" if the
-		// identifier has not been declared.
-		String value = environment.getOrDefault(identifier.getLexeme(), "0");
-		out.println(value);
+	    int value = (int)environment.get(identifier.getLexeme()).getValue();
+	    accumulator.push(value);
 	}
 
 	@Override
 	public void visit(ParamaterDeclaration declaration) {
+		
 	}
 
 	@Override

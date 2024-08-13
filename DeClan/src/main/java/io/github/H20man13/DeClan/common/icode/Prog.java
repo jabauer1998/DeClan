@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
@@ -144,6 +145,33 @@ public class Prog extends Lib implements ICode {
             }
         }
         return sb.toString();
+    }
+    
+    public List<ICode> getExecutableCode(){
+    	LinkedList<ICode> toRet = new LinkedList<ICode>();
+    	
+    	int beginningOfData = this.beginningOfDataSection();
+    	int endOfData = this.endOfDataSection();
+    	for(int i = beginningOfData; i <= endOfData; i++) {
+    		toRet.add(getInstruction(i));
+    	}
+    	int beginningOfBss = this.beginningOfBssSection();
+    	int endOfBss = this.endOfBssSection();
+    	for(int i = beginningOfBss; i <= endOfBss; i++) {
+    		toRet.add(getInstruction(i));
+    	}
+    	int beginningOfCode = this.beginningOfCodeSection();
+    	int endOfCode = this.endOfCodeSection();
+    	for(int i = beginningOfCode; i <= endOfCode; i++) {
+    		toRet.add(getInstruction(i));
+    	}
+    	int beginningOfProcedures = this.beginningOfProcedureSection();
+    	int endOfProcedures = this.endOfProcedureSection();
+    	for(int i = beginningOfProcedures; i <= endOfProcedures; i++) {
+    		toRet.add(getInstruction(i));
+    	}
+    	
+    	return toRet;
     }
 
     @Override
