@@ -76,7 +76,7 @@ public class MyICodeMachine {
     }
 
     public void interpretICode(Prog program){
-        interpretICode(program.getICode());
+        interpretICode(program.getExecutableCode());
     }
 
     private void interpretICode(List<ICode> instrs){
