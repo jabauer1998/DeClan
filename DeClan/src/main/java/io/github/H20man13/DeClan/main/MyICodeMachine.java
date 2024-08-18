@@ -14,6 +14,7 @@ import io.github.H20man13.DeClan.common.position.Position;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.exception.ICodeGeneratorException;
 import io.github.H20man13.DeClan.common.exception.ICodeVmException;
+import io.github.H20man13.DeClan.common.exception.ProgramFinishedException;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.Def;
@@ -85,97 +86,105 @@ public class MyICodeMachine {
         this.labelAddresses.addScope();
         this.procLabelAddresses.addScope();
         this.variableValues.addScope();
-        int programLength = instructions.size();
-        for(int i = 0; i < programLength; i++){
-            ICode instruction = instructions.get(i);
-            if(instruction instanceof Label){
-                Label label = (Label)instruction;
-                labelAddresses.addEntry(label.label, new IntEntry(i));
-            } else if(instruction instanceof ProcLabel){
-                ProcLabel label = (ProcLabel)instruction;
-                procLabelAddresses.addEntry(label.label, new IntEntry(i));
-            }
+        try {
+	        int programLength = instructions.size();
+	        for(int i = 0; i < programLength; i++){
+	            ICode instruction = instructions.get(i);
+	            if(instruction instanceof Label){
+	                Label label = (Label)instruction;
+	                labelAddresses.addEntry(label.label, new IntEntry(i));
+	            } else if(instruction instanceof ProcLabel){
+	                ProcLabel label = (ProcLabel)instruction;
+	                procLabelAddresses.addEntry(label.label, new IntEntry(i));
+	            }
+	        }
+	        this.machineState = State.INIT;
+	        this.programCounter = 0;
+	        for(this.programCounter = 0; this.programCounter < programLength; this.programCounter++){
+	            ICode instruction = instructions.get(this.programCounter);
+	            switch(this.machineState){
+	                case INIT:
+	                    if(instruction instanceof Assign) interpretAssignment((Assign)instruction);
+	                    else if(instruction instanceof Def) interpretDefinition((Def)instruction);
+	                    else if(instruction instanceof Call) interpretProcedureCall((Call)instruction);
+	                    else if(instruction instanceof If) interpretIfStatement((If)instruction);
+	                    else if(instruction instanceof Goto) interpretGotoStatement((Goto)instruction);
+	                    else if(instruction instanceof End) interpretEndStatement((End)instruction);
+	                    else if(instruction instanceof Return) interpretReturnStatement((Return)instruction);
+	                    else if(instruction instanceof Label) interpretLabelStatement((Label)instruction);
+	                    else if(instruction instanceof Inline) interpretInlineAssembly((Inline)instruction);
+	                    else throw new ICodeVmException(instruction, this.programCounter, "Invalid instruction type " + instruction.getClass().getName());
+	                    continue;
+	                case RETURN:
+	                    if(instruction instanceof Assign){
+	                        //Then we need to perform this assignment before deallocating the stacks
+	                        Assign placement = (Assign)instruction;
+	                        if(placement.value instanceof IdentExp){
+	                            IdentExp val = (IdentExp)placement.value;
+	                            if(val.scope == ICode.Scope.RETURN){
+	                                if(!variableValues.entryExists(placement.place))
+	                                    throw new ICodeVmException(placement, this.programCounter, "Value assigned to (in this case " + placement.place + ") doesnt exist");
+	                                if(tempReturnValue != null){
+	                                    variableValues.addEntry(placement.place, new VariableEntry(false, tempReturnValue));
+	                                    tempReturnValue = null;
+	                                } else {
+	                                    VariableEntry entry = variableValues.getEntry(val.ident);
+	                                    //Now we need to Deallocate the Top of the Stack
+	                                    variableValues.removeScope();
+	                                    variableValues.addEntry(placement.place, entry);
+	                                }
+	                            } else {
+	                                this.programCounter--;
+	                                variableValues.removeScope();
+	                            }
+	                        } else {
+	                            //De incriment the program counter
+	                            this.programCounter--;
+	                            variableValues.removeScope();
+	                        }
+	                    } else if(instruction instanceof Def){
+	                        Def placement = (Def)instruction;
+	                        if(placement.val instanceof IdentExp){
+	                            IdentExp val = (IdentExp)placement.val;
+	                            if(val.scope == ICode.Scope.RETURN){
+	                                if(tempReturnValue != null){
+	                                    variableValues.addEntry(placement.label, new VariableEntry(false, tempReturnValue));
+	                                    tempReturnValue = null;
+	                                } else {
+	                                    VariableEntry entry = variableValues.getEntry(val.ident);
+	                                    //Now we need to Deallocate the Top of the Stack
+	                                    variableValues.removeScope();
+	                                    variableValues.addEntry(placement.label, entry);
+	                                }
+	                            } else {
+	                                this.programCounter--;
+	                                variableValues.removeScope();
+	                            }
+	                        } else {
+	                            //De incriment the program counter
+	                            this.programCounter--;
+	                            variableValues.removeScope();
+	                        }
+	                    } else {
+	                        //Deincriment the program counter in order to have the same icode but in the init state\
+	                        this.programCounter--;
+	                        variableValues.removeScope();
+	                    }
+	                    this.machineState = State.INIT;
+	                    continue;
+	                default: 
+	                    throw new ICodeVmException(instruction, this.programCounter, "Machine is in unpredictable State");
+	            }
+	        }
+	        this.labelAddresses.removeScope();
+	        this.variableValues.removeScope();
+	        this.procLabelAddresses.removeScope();
+        } catch(ProgramFinishedException exp) {
+        	//Program finished Successfully can exit State machine
+        	this.labelAddresses.removeScope();
+        	this.variableValues.removeScope();
+        	this.procLabelAddresses.removeScope();
         }
-        this.machineState = State.INIT;
-        this.programCounter = 0;
-        for(this.programCounter = 0; this.programCounter < programLength; this.programCounter++){
-            ICode instruction = instructions.get(this.programCounter);
-            switch(this.machineState){
-                case INIT:
-                    if(instruction instanceof Assign) interpretAssignment((Assign)instruction);
-                    else if(instruction instanceof Def) interpretDefinition((Def)instruction);
-                    else if(instruction instanceof Call) interpretProcedureCall((Call)instruction);
-                    else if(instruction instanceof If) interpretIfStatement((If)instruction);
-                    else if(instruction instanceof Goto) interpretGotoStatement((Goto)instruction);
-                    else if(instruction instanceof End) interpretEndStatement((End)instruction);
-                    else if(instruction instanceof Return) interpretReturnStatement((Return)instruction);
-                    else if(instruction instanceof Label) interpretLabelStatement((Label)instruction);
-                    else if(instruction instanceof Inline) interpretInlineAssembly((Inline)instruction);
-                    else throw new ICodeVmException(instruction, this.programCounter, "Invalid instruction type " + instruction.getClass().getName());
-                    continue;
-                case RETURN:
-                    if(instruction instanceof Assign){
-                        //Then we need to perform this assignment before deallocating the stacks
-                        Assign placement = (Assign)instruction;
-                        if(placement.value instanceof IdentExp){
-                            IdentExp val = (IdentExp)placement.value;
-                            if(val.scope == ICode.Scope.RETURN){
-                                if(!variableValues.entryExists(placement.place))
-                                    throw new ICodeVmException(placement, this.programCounter, "Value assigned to (in this case " + placement.place + ") doesnt exist");
-                                if(tempReturnValue != null){
-                                    variableValues.addEntry(placement.place, new VariableEntry(false, tempReturnValue));
-                                    tempReturnValue = null;
-                                } else {
-                                    VariableEntry entry = variableValues.getEntry(val.ident);
-                                    //Now we need to Deallocate the Top of the Stack
-                                    variableValues.removeScope();
-                                    variableValues.addEntry(placement.place, entry);
-                                }
-                            } else {
-                                this.programCounter--;
-                                variableValues.removeScope();
-                            }
-                        } else {
-                            //De incriment the program counter
-                            this.programCounter--;
-                            variableValues.removeScope();
-                        }
-                    } else if(instruction instanceof Def){
-                        Def placement = (Def)instruction;
-                        if(placement.val instanceof IdentExp){
-                            IdentExp val = (IdentExp)placement.val;
-                            if(val.scope == ICode.Scope.RETURN){
-                                if(tempReturnValue != null){
-                                    variableValues.addEntry(placement.label, new VariableEntry(false, tempReturnValue));
-                                    tempReturnValue = null;
-                                } else {
-                                    VariableEntry entry = variableValues.getEntry(val.ident);
-                                    //Now we need to Deallocate the Top of the Stack
-                                    variableValues.removeScope();
-                                    variableValues.addEntry(placement.label, entry);
-                                }
-                            } else {
-                                this.programCounter--;
-                                variableValues.removeScope();
-                            }
-                        } else {
-                            //De incriment the program counter
-                            this.programCounter--;
-                            variableValues.removeScope();
-                        }
-                    } else {
-                        //Deincriment the program counter in order to have the same icode but in the init state\
-                        this.programCounter--;
-                        variableValues.removeScope();
-                    }
-                    this.machineState = State.INIT;
-                    continue;
-                default: 
-                    throw new ICodeVmException(instruction, this.programCounter, "Machine is in unpredictable State");
-            }
-        }
-        this.labelAddresses.removeScope();
-        this.variableValues.removeScope();
     }
 
     private void interpretInlineAssembly(Inline instruction) {
@@ -250,7 +259,7 @@ public class MyICodeMachine {
     }
 
     private void interpretEndStatement(End end){
-        //Do nothing
+        throw new ProgramFinishedException();
     }
 
     private void interpretLabelStatement(Label l){
@@ -579,32 +588,20 @@ public class MyICodeMachine {
     private Object interpretBinExp(BinExp expression){
         Object left = null;
         Object right = null;
-        if(expression.left.isConstant()){
-            left = ConversionUtils.getValue(expression.right);
-        } else if(expression.left instanceof IdentExp){
-            IdentExp leftIdent = (IdentExp)expression.right;
-            if(variableValues.entryExists(leftIdent.ident)){
-                VariableEntry entry = variableValues.getEntry(leftIdent.ident);
-                left = entry.getValue();
-            } else {
-                throw new ICodeVmException(expression, this.programCounter, "In Expression " + expression + " cant find value on the left hand side of the expression " + expression.left.toString());
-            }
+        IdentExp leftIdent = expression.left;
+        if(variableValues.entryExists(leftIdent.ident)){
+            VariableEntry entry = variableValues.getEntry(leftIdent.ident);
+            left = entry.getValue();
         } else {
-            throw new ICodeVmException(expression, this.programCounter, "Invalid expression type on the left hand side of expression");
+            throw new ICodeVmException(expression, this.programCounter, "In Expression " + expression + " cant find value on the left hand side of the expression " + expression.left.toString());
         }
 
-        if(expression.right.isConstant()){
-            right = ConversionUtils.getValue(expression.right);
-        } else if(expression.right instanceof IdentExp){
-            IdentExp rightIdent = (IdentExp)expression.right;
-            if(variableValues.entryExists(rightIdent.ident)){
-                VariableEntry entry = variableValues.getEntry(rightIdent.ident);
-                right = entry.getValue();
-            } else {
-                throw new ICodeVmException(expression, this.programCounter, "In Expression " + expression + " cant find value on the right hand side of the expression " + expression.right.toString());
-            }
+        IdentExp rightIdent = expression.right;
+        if(variableValues.entryExists(rightIdent.ident)){
+            VariableEntry entry = variableValues.getEntry(rightIdent.ident);
+            right = entry.getValue();
         } else {
-            throw new ICodeVmException(expression, this.programCounter, "Invalid expression type on the right hand side of expression");
+            throw new ICodeVmException(expression, this.programCounter, "In Expression " + expression + " cant find value on the right hand side of the expression " + expression.right.toString());
         }
 
         if(left != null && right != null){

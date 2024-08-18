@@ -480,6 +480,9 @@ public class MyICodeGenerator{
                result = builder.buildExternalFunctionCall(scope, "RAdd", args, ICode.Type.REAL);
             }
             builder.buildAssignment(curValue.scope, curValue.ident, result, ICode.Type.REAL);
+        } else if(qual.containsQualities(TypeCheckerQualities.INTEGER)) {
+        	BinExp exp = new BinExp(curValue, BinExp.Operator.IADD, incriment);
+        	builder.buildAssignment(curValue.scope, curValue.ident, exp, ICode.Type.INT);
         }
         builder.buildForLoopEnd();
     } else {
