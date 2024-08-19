@@ -381,8 +381,8 @@ public class MyICodeMachine {
                         VariableEntry entry = variableValues.getEntry(iExp.ident);
                         try{
                             Object val = entry.getValue();
-                            Boolean toBool = ConversionUtils.toBool(val);
-                            standardOutput.append("" + toBool);
+                            Float asReal = ConversionUtils.toReal(val);
+                            standardOutput.append("" + asReal);
                         } catch(IOException exp){
                             throw new ICodeVmException(arg1, this.programCounter, exp.getMessage());
                         }
