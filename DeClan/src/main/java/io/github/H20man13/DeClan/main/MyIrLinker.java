@@ -4660,7 +4660,7 @@ public class MyIrLinker {
                     }
                 }
 
-                newProg.addDataInstruction(instruction);
+                newProg.addBssInstruction(instruction);
             }
         }
     }
