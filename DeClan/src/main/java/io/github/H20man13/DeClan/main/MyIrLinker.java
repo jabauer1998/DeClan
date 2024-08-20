@@ -345,7 +345,6 @@ public class MyIrLinker {
                                     }
 
 
-                                    int endNewData = newLib.endOfDataSection();
                                     if(!newLib.dataSectionContainsInstruction(assignLib))
                                         newLib.addDataInstruction(assignLib);
                                     if(!newLib.containsVariableEntryWithIdentifier(identName, SymEntry.INTERNAL))
@@ -721,7 +720,7 @@ public class MyIrLinker {
                                 newProgram.addDataInstruction(funcCall);
                             }
                         }
-
+                        
                         if(!placeIsUniqueAcrossProgramAndLibraries(assign.label, program, libraries)){
                             String newPlace = null;    
                             do{
@@ -730,7 +729,24 @@ public class MyIrLinker {
 
                             replacePlaceAcrossProgramAndLibraries(assign.label, newPlace, program, libraries, currentLib);
                         }
+                        
+                        if(currentLib.containsVariableEntryWithICodePlace(identExp.ident, SymEntry.EXTERNAL)){
+                            VarSymEntry entry = currentLib.getVariableEntryByICodePlace(identExp.ident, SymEntry.EXTERNAL);
+                            if(!newProgram.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
+                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProgram, currentLib);
+                        } else {
+                            fetchInternalDependentInstructions(currentLib, program, libraries, identExp.ident, newProgram);
+                        }
+                        
+                        if(!placeIsUniqueAcrossProgramAndLibraries(identExp.ident, program, libraries)){
+                            String newPlace = null;    
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
 
+                            replacePlaceAcrossProgramAndLibraries(identExp.ident, newPlace, program, libraries, currentLib);
+                        }
+                        
                         if(!newProgram.dataSectionContainsInstruction(assign))
                             newProgram.addDataInstruction(assign);
                         if(currentLib.containsVariableEntryWithICodePlace(labelName, SymEntry.INTERNAL)){
@@ -1219,7 +1235,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                             if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                        } else if(!newProg.placeDefinedInProcedure(procName, ident.ident)) {
+                        } else if(!newProg.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN) {
                             fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
                         }
 
@@ -1274,7 +1290,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                             if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                        } else if(!newProg.placeDefinedInProcedure(procName, ident.ident)) {
+                        } else if(!newProg.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN) {
                             fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
                         }
 
@@ -1329,7 +1345,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
                             if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                        } else if(!newProg.placeDefinedInProcedure(procName, leftExp.ident)) {
+                        } else if(!newProg.placeDefinedInProcedure(procName, leftExp.ident) && leftExp.scope != ICode.Scope.PARAM && leftExp.scope != ICode.Scope.RETURN) {
                             fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
                         }
 
@@ -1382,7 +1398,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
                             if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                        } else if(!newProg.placeDefinedInProcedure(procName, rightExp.ident)) {
+                        } else if(!newProg.placeDefinedInProcedure(procName, rightExp.ident) && rightExp.scope != ICode.Scope.PARAM && rightExp.scope != ICode.Scope.RETURN) {
                             fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
                         }
 
@@ -1483,7 +1499,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                             if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                        } else if(!newProg.placeDefinedInProcedure(procName, ident.ident)) {
+                        } else if(!newProg.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN) {
                             fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
                         }
 
@@ -1538,7 +1554,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                             if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                        } else if(!newProg.placeDefinedInProcedure(procName, ident.ident)) {
+                        } else if(!newProg.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN) {
                             fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
                         }
 
@@ -1593,7 +1609,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
                             if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                        } else if(!newProg.placeDefinedInProcedure(procName, leftExp.ident)) {
+                        } else if(!newProg.placeDefinedInProcedure(procName, leftExp.ident) && leftExp.scope != ICode.Scope.PARAM && leftExp.scope != ICode.Scope.RETURN) {
                             fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
                         }
 
@@ -1646,7 +1662,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
                             if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                        } else if(!newProg.placeDefinedInProcedure(procName, rightExp.ident)) {
+                        } else if(!newProg.placeDefinedInProcedure(procName, rightExp.ident) && rightExp.scope != ICode.Scope.PARAM && rightExp.scope != ICode.Scope.RETURN) {
                             fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
                         }
 
@@ -1703,7 +1719,7 @@ public class MyIrLinker {
                         VarSymEntry entry = library.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
                         if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                             fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                    } else if(!newProg.placeDefinedInProcedure(procName, leftExp.ident)) {
+                    } else if(!newProg.placeDefinedInProcedure(procName, leftExp.ident) && leftExp.scope != ICode.Scope.PARAM && leftExp.scope != ICode.Scope.RETURN) {
                         fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
                     }
 
@@ -1722,7 +1738,7 @@ public class MyIrLinker {
                         VarSymEntry entry = library.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
                         if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                             fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                    } else if(!newProg.placeDefinedInProcedure(procName, rightExp.ident)) {
+                    } else if(!newProg.placeDefinedInProcedure(procName, rightExp.ident) && rightExp.scope != ICode.Scope.PARAM && rightExp.scope != ICode.Scope.RETURN) {
                         fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
                     }
 
@@ -1772,7 +1788,7 @@ public class MyIrLinker {
                                 VarSymEntry entry = library.getVariableEntryByICodePlace(place, SymEntry.EXTERNAL);
                                 if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                            } else if(!newProg.placeDefinedInProcedure(procName, place)) {
+                            } else if(!newProg.placeDefinedInProcedure(procName, place) && iExp.scope != ICode.Scope.PARAM && iExp.scope != ICode.Scope.RETURN) {
                                 fetchInternalDependentInstructions(library, prog, libraries, place, newProg);
                             }
                         }
@@ -1882,7 +1898,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                             if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                        } else if(!newLib.placeDefinedInProcedure(procName, ident.ident)){
+                        } else if(!newLib.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN){
                             fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
                         }
 
@@ -1939,7 +1955,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                             if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                        } else if(!newLib.placeDefinedInProcedure(procName, ident.ident)) {
+                        } else if(!newLib.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN) {
                             fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
                         }
 
@@ -1994,7 +2010,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
                             if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                        } else if(!newLib.placeDefinedInProcedure(procName, leftExp.ident)) {
+                        } else if(!newLib.placeDefinedInProcedure(procName, leftExp.ident) && leftExp.scope != ICode.Scope.PARAM && leftExp.scope != ICode.Scope.RETURN) {
                             fetchInternalDependentInstructions(library, single, libraries, leftExp.ident, newLib);
                         }
 
@@ -2047,7 +2063,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
                             if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                        } else if(!newLib.placeDefinedInProcedure(procName, rightExp.ident)) {
+                        } else if(!newLib.placeDefinedInProcedure(procName, rightExp.ident) && rightExp.scope != ICode.Scope.PARAM && rightExp.scope != ICode.Scope.RETURN) {
                             fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
                         }
 
@@ -2148,7 +2164,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                             if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                        } else if(!newLib.placeDefinedInProcedure(procName, ident.ident)){
+                        } else if(!newLib.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN){
                             fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
                         }
 
@@ -2205,7 +2221,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                             if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                        } else if(!newLib.placeDefinedInProcedure(procName, ident.ident)) {
+                        } else if(!newLib.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN) {
                             fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
                         }
 
@@ -2260,7 +2276,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
                             if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                        } else if(!newLib.placeDefinedInProcedure(procName, leftExp.ident)) {
+                        } else if(!newLib.placeDefinedInProcedure(procName, leftExp.ident) && leftExp.scope != ICode.Scope.PARAM && leftExp.scope != ICode.Scope.RETURN) {
                             fetchInternalDependentInstructions(library, single, libraries, leftExp.ident, newLib);
                         }
 
@@ -2313,7 +2329,7 @@ public class MyIrLinker {
                             VarSymEntry entry = library.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
                             if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                 fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                        } else if(!newLib.placeDefinedInProcedure(procName, rightExp.ident)) {
+                        } else if(!newLib.placeDefinedInProcedure(procName, rightExp.ident) && rightExp.scope != ICode.Scope.PARAM && rightExp.scope != ICode.Scope.RETURN) {
                             fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
                         }
 
@@ -2370,7 +2386,7 @@ public class MyIrLinker {
                         VarSymEntry entry = library.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
                         if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                             fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                    } else if(!newLib.placeDefinedInProcedure(procName, leftExp.ident)) {
+                    } else if(!newLib.placeDefinedInProcedure(procName, leftExp.ident) && leftExp.scope != ICode.Scope.PARAM && leftExp.scope != ICode.Scope.RETURN) {
                         fetchInternalDependentInstructions(library, single, libraries, leftExp.ident, newLib);
                     }
 
@@ -2389,7 +2405,7 @@ public class MyIrLinker {
                         VarSymEntry entry = library.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
                         if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                             fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                    } else if(!newLib.placeDefinedInProcedure(procName, rightExp.ident)) {
+                    } else if(!newLib.placeDefinedInProcedure(procName, rightExp.ident) && rightExp.scope != ICode.Scope.PARAM && rightExp.scope != ICode.Scope.RETURN){
                         fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
                     }
 
@@ -2439,7 +2455,7 @@ public class MyIrLinker {
                                 VarSymEntry entry = library.getVariableEntryByICodePlace(place, SymEntry.EXTERNAL);
                                 if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                            } else if(!library.placeDefinedInProcedure(procName, place)) {
+                            } else if(!library.placeDefinedInProcedure(procName, place) && iExp.scope != ICode.Scope.PARAM && iExp.scope != ICode.Scope.RETURN) {
                                 fetchInternalDependentInstructions(library, single, libraries, place, newLib);
                             }
                         }
@@ -2551,7 +2567,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                                     if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                                } else if(!newProg.placeDefinedInProcedure(procName, ident.ident)) {
+                                } else if(!newProg.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN) {
                                     fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
                                 }
                                 
@@ -2606,7 +2622,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                                     if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                                } else if(!newProg.placeDefinedInProcedure(procName, ident.ident)) {
+                                } else if(!newProg.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN) {
                                     fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
                                 }
                                 
@@ -2661,7 +2677,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
                                     if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                                } else if(!newProg.placeDefinedInProcedure(procName, leftExp.ident)) {
+                                } else if(!newProg.placeDefinedInProcedure(procName, leftExp.ident) && leftExp.scope != ICode.Scope.PARAM && leftExp.scope != ICode.Scope.RETURN) {
                                     fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
                                 }
 
@@ -2714,7 +2730,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
                                     if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                                } else if(!newProg.placeDefinedInProcedure(procName, rightExp.ident)){
+                                } else if(!newProg.placeDefinedInProcedure(procName, rightExp.ident) && rightExp.scope != ICode.Scope.PARAM && rightExp.scope != ICode.Scope.RETURN){
                                     fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
                                 }
 
@@ -2815,7 +2831,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                                     if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                                } else if(!newProg.placeDefinedInProcedure(procName, ident.ident)) {
+                                } else if(!newProg.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN) {
                                     fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
                                 }
                                 
@@ -2870,7 +2886,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                                     if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                                } else if(!newProg.placeDefinedInProcedure(procName, ident.ident)) {
+                                } else if(!newProg.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN) {
                                     fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
                                 }
                                 
@@ -2925,7 +2941,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
                                     if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                                } else if(!newProg.placeDefinedInProcedure(procName, leftExp.ident)) {
+                                } else if(!newProg.placeDefinedInProcedure(procName, leftExp.ident) && leftExp.scope != ICode.Scope.PARAM && leftExp.scope != ICode.Scope.RETURN) {
                                     fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
                                 }
 
@@ -2978,7 +2994,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
                                     if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                                } else if(!newProg.placeDefinedInProcedure(procName, rightExp.ident)){
+                                } else if(!newProg.placeDefinedInProcedure(procName, rightExp.ident) && rightExp.scope != ICode.Scope.PARAM && rightExp.scope != ICode.Scope.RETURN){
                                     fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
                                 }
 
@@ -3035,7 +3051,7 @@ public class MyIrLinker {
                                 VarSymEntry entry = library.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
                                 if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                            } else if(!newProg.placeDefinedInProcedure(procName, leftExp.ident)) {
+                            } else if(!newProg.placeDefinedInProcedure(procName, leftExp.ident) && leftExp.scope != ICode.Scope.PARAM && leftExp.scope != ICode.Scope.RETURN) {
                                 fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
                             }
 
@@ -3054,7 +3070,7 @@ public class MyIrLinker {
                                 VarSymEntry entry = library.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
                                 if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                            } else if(!newProg.placeDefinedInProcedure(procName, rightExp.ident)){
+                            } else if(!newProg.placeDefinedInProcedure(procName, rightExp.ident) && rightExp.scope != ICode.Scope.PARAM && rightExp.scope != ICode.Scope.RETURN){
                                 fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
                             }
 
@@ -3104,7 +3120,7 @@ public class MyIrLinker {
                                         VarSymEntry entry = library.getVariableEntryByICodePlace(place, SymEntry.EXTERNAL);
                                         if(!newProg.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                             fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                                    } else if(!newProg.placeDefinedInProcedure(procName, place)){
+                                    } else if(!newProg.placeDefinedInProcedure(procName, place) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN){
                                         fetchInternalDependentInstructions(library, prog, libraries, place, newProg);
                                     }
                                 }
@@ -3217,7 +3233,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                                     if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                                } else if(!newLib.placeDefinedInProcedure(procName, ident.ident)){
+                                } else if(!newLib.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN){
                                     fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
                                 }
 
@@ -3272,7 +3288,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                                     if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                                } else if(!newLib.placeDefinedInProcedure(procName, ident.ident)) {
+                                } else if(!newLib.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN){
                                     fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
                                 }
 
@@ -3327,7 +3343,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
                                     if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                                } else if(!newLib.placeDefinedInProcedure(procName, leftExp.ident)) {
+                                } else if(!newLib.placeDefinedInProcedure(procName, leftExp.ident) && leftExp.scope != ICode.Scope.PARAM && leftExp.scope != ICode.Scope.RETURN) {
                                     fetchInternalDependentInstructions(library, single, libraries, leftExp.ident, newLib);
                                 }
 
@@ -3380,7 +3396,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
                                     if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                                } else if(!newLib.placeDefinedInProcedure(procName, rightExp.ident)) {
+                                } else if(!newLib.placeDefinedInProcedure(procName, rightExp.ident) && rightExp.scope != ICode.Scope.PARAM && rightExp.scope != ICode.Scope.RETURN) {
                                     fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
                                 }
 
@@ -3481,7 +3497,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                                     if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                                } else if(!newLib.placeDefinedInProcedure(procName, ident.ident)){
+                                } else if(!newLib.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN){
                                     fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
                                 }
 
@@ -3536,7 +3552,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(ident.ident, SymEntry.EXTERNAL);
                                     if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                                } else if(!newLib.placeDefinedInProcedure(procName, ident.ident)) {
+                                } else if(!newLib.placeDefinedInProcedure(procName, ident.ident) && ident.scope != ICode.Scope.PARAM && ident.scope != ICode.Scope.RETURN) {
                                     fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
                                 }
 
@@ -3644,7 +3660,7 @@ public class MyIrLinker {
                                     VarSymEntry entry = library.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
                                     if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                         fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                                } else if(!newLib.placeDefinedInProcedure(procName, rightExp.ident)) {
+                                } else if(!newLib.placeDefinedInProcedure(procName, rightExp.ident) && rightExp.scope != ICode.Scope.PARAM && rightExp.scope != ICode.Scope.RETURN) {
                                     fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
                                 }
 
@@ -3701,7 +3717,7 @@ public class MyIrLinker {
                                 VarSymEntry entry = library.getVariableEntryByICodePlace(leftExp.ident, SymEntry.EXTERNAL);
                                 if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                            } else if(!newLib.placeDefinedInProcedure(procName, leftExp.ident)) {
+                            } else if(!newLib.placeDefinedInProcedure(procName, leftExp.ident) && leftExp.scope != ICode.Scope.PARAM && leftExp.scope != ICode.Scope.RETURN) {
                                 fetchInternalDependentInstructions(library, single, libraries, leftExp.ident, newLib);
                             }
 
@@ -3720,7 +3736,7 @@ public class MyIrLinker {
                                 VarSymEntry entry = library.getVariableEntryByICodePlace(rightExp.ident, SymEntry.EXTERNAL);
                                 if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                     fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                            } else if(!newLib.placeDefinedInProcedure(procName, rightExp.ident)) {
+                            } else if(!newLib.placeDefinedInProcedure(procName, rightExp.ident) && rightExp.scope != ICode.Scope.PARAM && rightExp.scope != ICode.Scope.RETURN) {
                                 fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
                             }
 
@@ -3770,7 +3786,7 @@ public class MyIrLinker {
                                         VarSymEntry entry = library.getVariableEntryByICodePlace(place, SymEntry.EXTERNAL);
                                         if(!newLib.containsVariableEntryWithIdentifier(entry.declanIdent, SymEntry.INTERNAL))
                                             fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
-                                    } else if(!newLib.placeDefinedInProcedure(procName, place)) {
+                                    } else if(!newLib.placeDefinedInProcedure(procName, place) && iExp.scope != ICode.Scope.PARAM && iExp.scope != ICode.Scope.RETURN) {
                                         fetchInternalDependentInstructions(library, single, libraries, place, newLib);
                                     }
                                 }
