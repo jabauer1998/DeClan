@@ -12,6 +12,9 @@ BEGIN
   WriteString("Answer is ");
   WriteInt(answer);
   WriteLn();
+  WriteInt(six);
+  WriteInt(seven);
+  WriteInt(answer);
   answer := six * seven * answer;
   WriteString("Answer is ");
   WriteInt(answer);

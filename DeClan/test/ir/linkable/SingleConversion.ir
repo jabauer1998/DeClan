@@ -6,15 +6,15 @@ SYMBOL SECTION
  ENTRY f EXTERNAL RETURN IntToReal
  ENTRY h EXTERNAL PARAM WriteReal 0
 DATA SECTION
- DEF a := 5 [INT]
- DEF GLOBAL b := a [INT]
+ DEF a := 5 <INT>
+ DEF GLOBAL b := a <INT>
 BSS SECTION
- DEF GLOBAL c := 0.0 [REAL]
- DEF GLOBAL d := 0.0 [REAL]
+ DEF GLOBAL c := 0.0 <REAL>
+ DEF GLOBAL d := 0.0 <REAL>
 CODE SECTION
- CALL IntToReal(((GLOBAL b) -> e)[INT])
- DEF g := (RETURN f) [REAL]
- GLOBAL c := g [REAL]
- CALL WriteReal(((GLOBAL c) -> h)[REAL])
+ CALL IntToReal([(GLOBAL b) -> e]<INT>)
+ DEF g := (RETURN f) <REAL>
+ GLOBAL c := g <REAL>
+ CALL WriteReal([(GLOBAL c) -> h]<REAL>)
 END
 PROC SECTION

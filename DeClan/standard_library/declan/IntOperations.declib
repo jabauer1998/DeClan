@@ -54,3 +54,7 @@ PROCEDURE Mod (dividend: INTEGER; divisor: INTEGER);
 	END
 	RETURN total
     END Mod;
+PROCEDURE Multiply (a: INTEGER; b: INTEGER);
+	VAR result: INTEGER;
+	BEGIN
+	END Multiply;

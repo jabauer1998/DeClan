@@ -33,95 +33,95 @@ SYMBOL SECTION
  ENTRY m INTERNAL RETURN Foo
  ENTRY a9 EXTERNAL PARAM WriteString 0
 DATA SECTION
- DEF a := 42 [INT]
- DEF GLOBAL b := a [INT]
- DEF c := 42.0 [REAL]
- DEF GLOBAL d := c [REAL]
+ DEF a := 42 <INT>
+ DEF GLOBAL b := a <INT>
+ DEF c := 42.0 <REAL>
+ DEF GLOBAL d := c <REAL>
 BSS SECTION
- DEF GLOBAL e := 0 [INT]
- DEF GLOBAL f := 0 [INT]
- DEF GLOBAL g := 0.0 [REAL]
- DEF GLOBAL h := 0.0 [REAL]
- DEF GLOBAL i := FALSE [BOOL]
+ DEF GLOBAL e := 0 <INT>
+ DEF GLOBAL f := 0 <INT>
+ DEF GLOBAL g := 0.0 <REAL>
+ DEF GLOBAL h := 0.0 <REAL>
+ DEF GLOBAL i := FALSE <BOOL>
 CODE SECTION
- CALL IntToReal(((GLOBAL b) -> o)[INT])
- DEF q := (RETURN p) [REAL]
- CALL RMul((q -> r)[REAL], ((GLOBAL h) -> s)[REAL])
- DEF u := (RETURN t) [REAL]
- CALL Foo(((GLOBAL e) -> j)[INT], ((GLOBAL g) -> k)[REAL], (u -> l)[REAL])
- DEF v := (RETURN m) [BOOL]
- GLOBAL i := v [BOOL]
- DEF w := TRUE [BOOL]
+ CALL IntToReal([(GLOBAL b) -> o]<INT>)
+ DEF q := (RETURN p) <REAL>
+ CALL RMul([q -> r]<REAL>, [(GLOBAL h) -> s]<REAL>)
+ DEF u := (RETURN t) <REAL>
+ CALL Foo([(GLOBAL e) -> j]<INT>, [(GLOBAL g) -> k]<REAL>, [u -> l]<REAL>)
+ DEF v := (RETURN m) <BOOL>
+ GLOBAL i := v <BOOL>
+ DEF w := TRUE <BOOL>
  IF (GLOBAL i) EQ w
  THEN IFSTAT_0_SEQ_0_LEVEL_0
  ELSE IFNEXT_0_SEQ_0_LEVEL_0
  LABEL IFSTAT_0_SEQ_0_LEVEL_0
- CALL WriteInt(((GLOBAL e) -> x)[INT])
+ CALL WriteInt([(GLOBAL e) -> x]<INT>)
  GOTO IFEND_0_LEVEL_0
  LABEL IFNEXT_0_SEQ_0_LEVEL_0
- CALL IntToReal(((GLOBAL b) -> o)[INT])
- DEF y := (RETURN p) [REAL]
- CALL RSub(((GLOBAL d) -> z)[REAL], (y -> A)[REAL])
- DEF C := (RETURN B) [REAL]
- CALL WriteReal((C -> D)[REAL])
+ CALL IntToReal([(GLOBAL b) -> o]<INT>)
+ DEF y := (RETURN p) <REAL>
+ CALL RSub([(GLOBAL d) -> z]<REAL>, [y -> A]<REAL>)
+ DEF C := (RETURN B) <REAL>
+ CALL WriteReal([C -> D]<REAL>)
  GOTO IFEND_0_LEVEL_0
  LABEL IFNEXT_0_SEQ_1_LEVEL_0
  LABEL IFEND_0_LEVEL_0
 END
 PROC SECTION
  PROC LABEL Foo
-  CALL IntToReal(((GLOBAL b) -> o)[INT])
-  DEF E := (RETURN p) [REAL]
-  CALL REqualTo((E -> F)[REAL], ((GLOBAL d) -> G)[REAL])
-  DEF I := (RETURN H) [BOOL]
-  DEF J := I [BOOL]
-  DEF K := 355 [INT]
-  DEF L := 113 [INT]
-  CALL Divide((K -> M)[INT], (L -> N)[INT])
-  DEF P := (RETURN O) [REAL]
-  DEF Q := P [REAL]
-  DEF R := 0 [INT]
-  R := (GLOBAL b) [INT]
+  CALL IntToReal([(GLOBAL b) -> o]<INT>)
+  DEF E := (RETURN p) <REAL>
+  CALL REqualTo([E -> F]<REAL>, [(GLOBAL d) -> G]<REAL>)
+  DEF I := (RETURN H) <BOOL>
+  DEF J := I <BOOL>
+  DEF K := 355 <INT>
+  DEF L := 113 <INT>
+  CALL Divide([K -> M]<INT>, [L -> N]<INT>)
+  DEF P := (RETURN O) <REAL>
+  DEF Q := P <REAL>
+  DEF R := 0 <INT>
+  R := (GLOBAL b) <INT>
   LABEL FORBEG_0_LEVEL_0
   IF R GT (PARAM j)
   THEN FORLOOP_0_LEVEL_0
   ELSE FOREND_0_LEVEL_0
   LABEL FORLOOP_0_LEVEL_0
   CALL Bar()
-  DEF S := 20 [INT]
-  CALL INeg((S -> T)[INT])
-  DEF V := (RETURN U) [INT]
-  R := R IADD V [INT]
+  DEF S := 20 <INT>
+  CALL INeg([S -> T]<INT>)
+  DEF V := (RETURN U) <INT>
+  R := R IADD V <INT>
   GOTO FORBEG_0_LEVEL_0
   LABEL FOREND_0_LEVEL_0
-  DEF W := 3.1415927 [REAL]
-  CALL RGreaterThan((Q -> X)[REAL], (W -> Y)[REAL])
-  DEF a0 := (RETURN Z) [BOOL]
-  DEF a1 := J LAND a0 [BOOL]
-  DEF RETURN m := a1 [BOOL]
+  DEF W := 3.1415927 <REAL>
+  CALL RGreaterThan([Q -> X]<REAL>, [W -> Y]<REAL>)
+  DEF a0 := (RETURN Z) <BOOL>
+  DEF a1 := J LAND a0 <BOOL>
+  DEF RETURN m := a1 <BOOL>
  RETURN
  PROC LABEL Bar
-  DEF a2 := FALSE [BOOL]
-  DEF a3 := 1 [INT]
-  DEF a4 := (GLOBAL e) IADD a3 [INT]
-  GLOBAL e := a4 [INT]
-  DEF a5 := BNOT (GLOBAL i) [BOOL]
-  DEF a6 := TRUE [BOOL]
+  DEF a2 := FALSE <BOOL>
+  DEF a3 := 1 <INT>
+  DEF a4 := (GLOBAL e) IADD a3 <INT>
+  GLOBAL e := a4 <INT>
+  DEF a5 := BNOT (GLOBAL i) <BOOL>
+  DEF a6 := TRUE <BOOL>
   IF a5 EQ a6
   THEN IFSTAT_1_SEQ_0_LEVEL_0
   ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
-  DEF a7 := TRUE [BOOL]
-  GLOBAL i := a7 [BOOL]
-  DEF a8 := "Doing foo with arg1=" [STRING]
-  CALL WriteString((a8 -> a9)[STRING])
-  CALL WriteInt(((GLOBAL f) -> x)[INT])
+  DEF a7 := TRUE <BOOL>
+  GLOBAL i := a7 <BOOL>
+  DEF a8 := "Doing foo with arg1=" <STRING>
+  CALL WriteString([a8 -> a9]<STRING>)
+  CALL WriteInt([(GLOBAL f) -> x]<INT>)
   CALL WriteLn()
-  DEF b0 := 0 [INT]
-  DEF b1 := 0 [INT]
-  CALL Foo(((GLOBAL f) -> j)[INT], (b0 -> k)[INT], (b1 -> l)[INT])
-  DEF b2 := (RETURN m) [BOOL]
-  a2 := b2 [BOOL]
+  DEF b0 := 0 <INT>
+  DEF b1 := 0 <INT>
+  CALL Foo([(GLOBAL f) -> j]<INT>, [b0 -> k]<INT>, [b1 -> l]<INT>)
+  DEF b2 := (RETURN m) <BOOL>
+  a2 := b2 <BOOL>
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFEND_1_LEVEL_0

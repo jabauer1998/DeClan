@@ -7,21 +7,21 @@ SYMBOL SECTION
  ENTRY m EXTERNAL RETURN Divide
  ENTRY o EXTERNAL PARAM WriteReal 0
 DATA SECTION
- DEF a := 6 [INT]
- DEF b := 6 [INT]
- DEF c := 1 [INT]
- DEF d := b IADD c [INT]
- DEF e := a IMUL d [INT]
- DEF GLOBAL f := e [INT]
- DEF g := 10 [INT]
- DEF h := (GLOBAL f) IMOD g [INT]
- DEF GLOBAL i := h [INT]
+ DEF a := 6 <INT>
+ DEF b := 6 <INT>
+ DEF c := 1 <INT>
+ DEF d := b IADD c <INT>
+ DEF e := a IMUL d <INT>
+ DEF GLOBAL f := e <INT>
+ DEF g := 10 <INT>
+ DEF h := (GLOBAL f) IMOD g <INT>
+ DEF GLOBAL i := h <INT>
 BSS SECTION
- DEF GLOBAL j := 0.0 [REAL]
+ DEF GLOBAL j := 0.0 <REAL>
 CODE SECTION
- CALL Divide(((GLOBAL f) -> k)[INT], ((GLOBAL i) -> l)[INT])
- DEF n := (RETURN m) [REAL]
- GLOBAL j := n [REAL]
- CALL WriteReal(((GLOBAL j) -> o)[REAL])
+ CALL Divide([(GLOBAL f) -> k]<INT>, [(GLOBAL i) -> l]<INT>)
+ DEF n := (RETURN m) <REAL>
+ GLOBAL j := n <REAL>
+ CALL WriteReal([(GLOBAL j) -> o]<REAL>)
 END
 PROC SECTION

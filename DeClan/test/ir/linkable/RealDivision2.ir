@@ -7,16 +7,16 @@ SYMBOL SECTION
  ENTRY h EXTERNAL RETURN RDivide
  ENTRY j EXTERNAL PARAM WriteReal 0
 DATA SECTION
- DEF a := 91.34375 [REAL]
- DEF GLOBAL b := a [REAL]
- DEF c := 0.14453125 [REAL]
- DEF GLOBAL d := c [REAL]
+ DEF a := 91.34375 <REAL>
+ DEF GLOBAL b := a <REAL>
+ DEF c := 0.14453125 <REAL>
+ DEF GLOBAL d := c <REAL>
 BSS SECTION
- DEF GLOBAL e := 0.0 [REAL]
+ DEF GLOBAL e := 0.0 <REAL>
 CODE SECTION
- CALL RDivide(((GLOBAL b) -> f)[REAL], ((GLOBAL d) -> g)[REAL])
- DEF i := (RETURN h) [REAL]
- GLOBAL e := i [REAL]
- CALL WriteReal(((GLOBAL e) -> j)[REAL])
+ CALL RDivide([(GLOBAL b) -> f]<REAL>, [(GLOBAL d) -> g]<REAL>)
+ DEF i := (RETURN h) <REAL>
+ GLOBAL e := i <REAL>
+ CALL WriteReal([(GLOBAL e) -> j]<REAL>)
 END
 PROC SECTION

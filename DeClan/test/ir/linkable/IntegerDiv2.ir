@@ -7,16 +7,16 @@ SYMBOL SECTION
  ENTRY h EXTERNAL RETURN Div
  ENTRY j EXTERNAL PARAM WriteInt 0
 DATA SECTION
- DEF a := 30 [INT]
- DEF GLOBAL b := a [INT]
- DEF c := 8 [INT]
- DEF GLOBAL d := c [INT]
+ DEF a := 30 <INT>
+ DEF GLOBAL b := a <INT>
+ DEF c := 8 <INT>
+ DEF GLOBAL d := c <INT>
 BSS SECTION
- DEF GLOBAL e := 0 [INT]
+ DEF GLOBAL e := 0 <INT>
 CODE SECTION
- CALL Div(((GLOBAL b) -> f)[INT], ((GLOBAL d) -> g)[INT])
- DEF i := (RETURN h) [INT]
- GLOBAL e := i [INT]
- CALL WriteInt(((GLOBAL e) -> j)[INT])
+ CALL Div([(GLOBAL b) -> f]<INT>, [(GLOBAL d) -> g]<INT>)
+ DEF i := (RETURN h) <INT>
+ GLOBAL e := i <INT>
+ CALL WriteInt([(GLOBAL e) -> j]<INT>)
 END
 PROC SECTION

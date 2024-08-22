@@ -76,7 +76,9 @@ public enum IrTokenType {
     LPAR,
     RPAR,
     LBRACK,
-    RBRACK;
+    RBRACK,
+    LANGLE,
+    RANGLE;
 
     public static final Map<String, IrTokenType> reservedIr;
     private static final Map<Character, IrTokenType> singleOperators;
@@ -180,5 +182,7 @@ public enum IrTokenType {
         addSingleOp(')', RPAR);
         addSingleOp('[', LBRACK);
         addSingleOp(']', RBRACK);
+        addSingleOp('<', LANGLE);
+        addSingleOp('>', RANGLE);
     }
 }
