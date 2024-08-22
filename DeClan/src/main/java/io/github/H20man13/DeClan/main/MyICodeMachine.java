@@ -508,7 +508,7 @@ public class MyICodeMachine {
                     IdentExp valExp = (IdentExp)arg.val;
                     if(variableValues.entryExists(valExp.ident)){
                         VariableEntry argSource = this.variableValues.getEntry(valExp.ident);
-                        argVals.add(argSource);
+                        argVals.add(argSource.copy());
                     } else {
                         throw new ICodeVmException(arg, this.programCounter, "Variable value for " + valExp.ident + " does not exist");
                     }
