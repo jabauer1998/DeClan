@@ -46,13 +46,13 @@ public class Def implements ICode {
         
         
         if(scope == ICode.Scope.PARAM){
-            sb.append('(');
+            sb.append('[');
             sb.append(val.toString());
             sb.append(" -> ");
             sb.append(label);
-            sb.append(")[");
+            sb.append("]<");
             sb.append(type);
-            sb.append(']');
+            sb.append('>');
         } else {
             sb.append("DEF ");
             if(scope != ICode.Scope.LOCAL){
@@ -62,9 +62,9 @@ public class Def implements ICode {
             sb.append(label);
             sb.append(" := ");
             sb.append(val.toString());
-            sb.append(" [");
+            sb.append(" <");
             sb.append(type.toString());
-            sb.append("]");
+            sb.append(">");
         }
         return sb.toString();
     }

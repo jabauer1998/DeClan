@@ -392,7 +392,7 @@ public class MyIrParser {
         
         List<Def> args = new LinkedList<>();
         
-        if(willMatch(IrTokenType.LPAR)){
+        if(willMatch(IrTokenType.LBRACK)){
             do{
                 Def assign = parseArgument();
                 args.add(assign);
@@ -459,11 +459,11 @@ public class MyIrParser {
     }
 
     private Def parseArgument(){
-        match(IrTokenType.LPAR);
+        match(IrTokenType.LBRACK);
         Exp value = parseExpression();
         match(IrTokenType.MAP);
         IrToken place = match(IrTokenType.ID);
-        match(IrTokenType.RPAR);
+        match(IrTokenType.RBRACK);
         ICode.Type type = parseType();
         return new Def(ICode.Scope.PARAM, place.getLexeme(), value, type);
     }
@@ -484,7 +484,7 @@ public class MyIrParser {
     }
 
     private ICode.Type parseType(){
-        match(IrTokenType.LBRACK);
+        match(IrTokenType.LANGLE);
 
         ICode.Type type;
         if(willMatch(IrTokenType.STRING)){
@@ -503,7 +503,7 @@ public class MyIrParser {
             throw new ParseException("In function parseType expected token of type INT/STRING/BOOL/REAL but found token of type " + skip());
         }
 
-        match(IrTokenType.RBRACK);
+        match(IrTokenType.RANGLE);
         return type;
     }
 

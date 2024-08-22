@@ -1,6 +1,7 @@
 package io.github.H20man13.DeClan.main;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 import io.github.H20man13.DeClan.common.ErrorLog;
@@ -84,7 +85,7 @@ public class MyStandardLibrary {
                     Lib toRet = parser.parseLibrary();
                     parser.close();
                     return toRet;
-                } catch(Exception exp){
+                } catch(FileNotFoundException exp){
                     throw new RuntimeException();
                 }
             }
