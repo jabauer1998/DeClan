@@ -166,7 +166,7 @@ public class MyICodeGenerator{
     builder.buildCodeSectionHeader();
     for (Statement statement : program.getStatements()) {
       statement.accept(typeChecker);
-      generateStatementIr(Scope.LOCAL, statement, builder);
+      generateStatementIr(statement, builder);
     }
     builder.buildCodeSectionEnd();
 
@@ -187,7 +187,7 @@ public class MyICodeGenerator{
   public void generateConstantIr(Scope scope, ConstDeclaration constDecl, DefinitionBuilder builder) {
     Identifier id = constDecl.getIdentifier();
     Expression valueExpr = constDecl.getValue();
-    Exp value = generateExpressionIr(Scope.LOCAL, valueExpr, builder);
+    Exp value = generateExpressionIr(valueExpr, builder);
     TypeCheckerQualities qual = valueExpr.acceptResult(typeChecker);
     ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
     IdentExp place = builder.buildDefinition(scope, value, type);
@@ -266,13 +266,13 @@ public class MyICodeGenerator{
     List <Statement> exec = procDecl.getExecutionStatements();
     for(int i = 0; i < exec.size(); i++){
       Statement stat = exec.get(i);
-	    generateStatementIr(Scope.LOCAL, stat, builder);
+	    generateStatementIr(stat, builder);
     }
 
     Expression retExp = procDecl.getReturnStatement();
     if(retExp != null){
       TypeCheckerQualities qual = retExp.acceptResult(typeChecker); 
-      Exp retPlace = generateExpressionIr(Scope.LOCAL, retExp, builder);
+      Exp retPlace = generateExpressionIr(retExp, builder);
       IdentExp returnPlace = procEnvironment.getEntry(procedureName);
       builder.buildDefinition(Scope.RETURN, returnPlace.ident, retPlace, ConversionUtils.typeCheckerQualitiesToAssignType(qual));
       builder.addReturnEntry(returnPlace.ident, SymEntry.INTERNAL, procedureName);
@@ -281,10 +281,10 @@ public class MyICodeGenerator{
     varEnvironment.removeScope();
   }
 
-  public void generateStatementIr(Scope scope, Statement stat, StatementBuilder builder){
-    if(stat instanceof ProcedureCall) generateProcedureCallIr(scope, (ProcedureCall)stat, builder);
-    else if(stat instanceof Branch) generateBranchIr(scope, (Branch)stat, builder);
-    else if(stat instanceof Assignment) generateAssignmentIr(scope, (Assignment)stat, builder);
+  public void generateStatementIr(Statement stat, StatementBuilder builder){
+    if(stat instanceof ProcedureCall) generateProcedureCallIr((ProcedureCall)stat, builder);
+    else if(stat instanceof Branch) generateBranchIr((Branch)stat, builder);
+    else if(stat instanceof Assignment) generateAssignmentIr((Assignment)stat, builder);
     else if(stat instanceof Asm) generateInlineAssemblyIr((Asm)stat, builder);
     else if(stat instanceof EmptyStatement){
          //Do nothing
@@ -294,7 +294,7 @@ public class MyICodeGenerator{
     }
   }
         
-  public void generateProcedureCallIr(Scope scope, ProcedureCall procedureCall, StatementBuilder builder) {
+  public void generateProcedureCallIr(ProcedureCall procedureCall, StatementBuilder builder) {
     String funcName = procedureCall.getProcedureName().getLexeme();
     List<Expression> valArgs = procedureCall.getArguments();
 
@@ -306,7 +306,7 @@ public class MyICodeGenerator{
         Expression valArg = valArgs.get(i);
         TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
         ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
-        Exp result = generateExpressionIr(Scope.LOCAL, valArg, builder);
+        Exp result = generateExpressionIr(valArg, builder);
         valArgResults.add(new Def(Scope.PARAM, argsToMap.get(i).ident, result, type));
       }
       builder.buildProcedureCall(funcName, valArgResults);
@@ -314,7 +314,7 @@ public class MyICodeGenerator{
       //Generate an External Procedure Call
       LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
       for(Expression valArg : valArgs){
-         Exp place = generateExpressionIr(scope, valArg, builder);
+         Exp place = generateExpressionIr(valArg, builder);
          TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
          ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
          args.add(new Tuple<Exp, ICode.Type>(place, type));
@@ -323,101 +323,101 @@ public class MyICodeGenerator{
     }
   }
 
-  public void generateWhileBranchIr(Scope scope, WhileElifBranch whilebranch, StatementBuilder builder){
+  public void generateWhileBranchIr(WhileElifBranch whilebranch, StatementBuilder builder){
     Expression toCheck = whilebranch.getExpression();
     List<Statement> toExec = whilebranch.getExecStatements();
-    IdentExp test = generateExpressionIr(scope, toCheck, builder);
+    IdentExp test = generateExpressionIr(toCheck, builder);
     
     builder.buildWhileLoopBeginning(test);
 
     builder.incrimentWhileLoopLevel();
     for(int i = 0; i < toExec.size(); i++){
-      generateStatementIr(scope, toExec.get(i), builder);
+      generateStatementIr(toExec.get(i), builder);
     }
 
-    Exp test2 = generateExpressionIr(scope, toCheck, builder);
+    Exp test2 = generateExpressionIr(toCheck, builder);
     TypeCheckerQualities qual = toCheck.acceptResult(typeChecker);
     ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
-    builder.buildAssignment(scope, test.toString(), test2, type);
+    builder.buildAssignment(test.scope, test.ident, test2, type);
 
     builder.deIncrimentWhileLoopLevel();
 
     Branch nextBranch = whilebranch.getNextBranch();
     if(nextBranch != null) {
       builder.buildElseWhileLoopBeginning();
-      generateBranchIr(scope, nextBranch, builder);
+      generateBranchIr(nextBranch, builder);
     } else {
       builder.buildWhileLoopEnd();
     }
   }
     
-  public void generateBranchIr(Scope scope, Branch branch, StatementBuilder builder){
-    if(branch instanceof IfElifBranch) generateIfBranchIr(scope, (IfElifBranch)branch, builder);
-    else if(branch instanceof ElseBranch) generateElseBranchIr(scope, (ElseBranch)branch, builder);
-    else if(branch instanceof WhileElifBranch) generateWhileBranchIr(scope, (WhileElifBranch)branch, builder);
-    else if(branch instanceof RepeatBranch) generateRepeatLoopIr(scope, (RepeatBranch)branch, builder);
-    else if(branch instanceof ForBranch) generateForLoopIr(scope, (ForBranch)branch, builder);
+  public void generateBranchIr(Branch branch, StatementBuilder builder){
+    if(branch instanceof IfElifBranch) generateIfBranchIr((IfElifBranch)branch, builder);
+    else if(branch instanceof ElseBranch) generateElseBranchIr((ElseBranch)branch, builder);
+    else if(branch instanceof WhileElifBranch) generateWhileBranchIr((WhileElifBranch)branch, builder);
+    else if(branch instanceof RepeatBranch) generateRepeatLoopIr((RepeatBranch)branch, builder);
+    else if(branch instanceof ForBranch) generateForLoopIr((ForBranch)branch, builder);
     else {
       errorLog.add("Error unexpected branch type " + branch.getClass().getSimpleName(), branch.getStart());
     }
   }
-  public void generateIfBranchIr(Scope scope, IfElifBranch ifbranch, StatementBuilder builder){
+  public void generateIfBranchIr(IfElifBranch ifbranch, StatementBuilder builder){
     Expression toCheck = ifbranch.getExpression();
-    IdentExp test = generateExpressionIr(scope, toCheck, builder);
+    IdentExp test = generateExpressionIr(toCheck, builder);
     builder.buildIfStatementBeginning(test);
 
     builder.incrimentIfStatementLevel();
     List<Statement> toExec = ifbranch.getExecStatements();
     for(int i = 0; i < toExec.size(); i++){
-      generateStatementIr(scope, toExec.get(i), builder);
+      generateStatementIr(toExec.get(i), builder);
     }
     builder.deIncrimentIfStatementLevel();
 
     if(ifbranch.getNextBranch() != null) {
       builder.buildElseIfStatementBeginning();
-      generateBranchIr(scope, ifbranch.getNextBranch(), builder);
+      generateBranchIr(ifbranch.getNextBranch(), builder);
     } else {
       builder.buildIfStatementEnd();
     }
   }
 
-  public void generateElseBranchIr(Scope scope, ElseBranch elsebranch, StatementBuilder builder){
+  public void generateElseBranchIr(ElseBranch elsebranch, StatementBuilder builder){
     List<Statement> toExec = elsebranch.getExecStatements();
     builder.incrimentIfStatementLevel();
     for(int i = 0; i < toExec.size(); i++){
-      generateStatementIr(scope, toExec.get(i), builder);
+      generateStatementIr(toExec.get(i), builder);
     }
     builder.deIncrimentIfStatementLevel();
     builder.buildIfStatementEnd();
   }
 
-  public void generateRepeatLoopIr(Scope scope, RepeatBranch repeatbranch, StatementBuilder builder){
+  public void generateRepeatLoopIr(RepeatBranch repeatbranch, StatementBuilder builder){
     Expression toCheck = repeatbranch.getExpression();
     List<Statement> toExec = repeatbranch.getExecStatements();
-    IdentExp test = generateExpressionIr(scope, toCheck, builder);
+    IdentExp test = generateExpressionIr(toCheck, builder);
 
     builder.buildRepeatLoopBeginning(test);
 
     builder.incrimentRepeatLoopLevel();
     for(int i = 0; i < toExec.size(); i++){
-	    generateStatementIr(scope, toExec.get(i), builder);
+	    generateStatementIr(toExec.get(i), builder);
     }
     builder.deIncrimentRepeatLoopLevel();
 
-    Exp test2 = generateExpressionIr(scope, toCheck, builder);
+    Exp test2 = generateExpressionIr(toCheck, builder);
     TypeCheckerQualities qual = toCheck.acceptResult(typeChecker);
     ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
-    builder.buildAssignment(scope, test.toString(), test2, type);
+    builder.buildAssignment(test.scope, test.toString(), test2, type);
 
     builder.buildRepeatLoopEnd();
   }
 
-  public void generateForLoopIr(Scope scope, ForBranch forbranch, StatementBuilder builder){
+  public void generateForLoopIr(ForBranch forbranch, StatementBuilder builder){
     Expression toMod = forbranch.getModifyExpression();
     List<Statement> toExec = forbranch.getExecStatements();
     if(toMod != null){
-        generateAssignmentIr(scope, forbranch.getInitAssignment(), builder);
-        IdentExp target = generateExpressionIr(scope, forbranch.getTargetExpression(), builder);
+        generateAssignmentIr(forbranch.getInitAssignment(), builder);
+        IdentExp target = generateExpressionIr(forbranch.getTargetExpression(), builder);
         
         IdentExp curValue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
 
@@ -449,11 +449,11 @@ public class MyICodeGenerator{
         
         builder.incrimentForLoopLevel();
         for(int i = 0; i < toExec.size(); i++){
-            generateStatementIr(scope, toExec.get(i), builder);
+            generateStatementIr(toExec.get(i), builder);
         }
         builder.deIncrimentForLoopLevel();
 
-        IdentExp incriment = generateExpressionIr(scope, toMod, builder);
+        IdentExp incriment = generateExpressionIr(toMod, builder);
         TypeCheckerQualities qual = toMod.acceptResult(typeChecker);
         if(qual.containsQualities(TypeCheckerQualities.REAL)){
           IdentExp result = null;
@@ -471,13 +471,13 @@ public class MyICodeGenerator{
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(curValue, ICode.Type.REAL));
                  args.add(new Tuple<Exp, ICode.Type>(incriment, ICode.Type.REAL));
-                 result = builder.buildExternalFunctionCall(scope, "RAdd", args, ICode.Type.REAL);
+                 result = builder.buildExternalFunctionCall(Scope.LOCAL, "RAdd", args, ICode.Type.REAL);
               }
             } else {
                LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                args.add(new Tuple<Exp, ICode.Type>(curValue, ICode.Type.REAL));
                args.add(new Tuple<Exp, ICode.Type>(incriment, ICode.Type.REAL));
-               result = builder.buildExternalFunctionCall(scope, "RAdd", args, ICode.Type.REAL);
+               result = builder.buildExternalFunctionCall(Scope.LOCAL, "RAdd", args, ICode.Type.REAL);
             }
             builder.buildAssignment(curValue.scope, curValue.ident, result, ICode.Type.REAL);
         } else if(qual.containsQualities(TypeCheckerQualities.INTEGER)) {
@@ -486,25 +486,26 @@ public class MyICodeGenerator{
         }
         builder.buildForLoopEnd();
     } else {
-      generateAssignmentIr(scope, forbranch.getInitAssignment(), builder);
-      IdentExp target = generateExpressionIr(scope, forbranch.getTargetExpression(), builder);
+      generateAssignmentIr(forbranch.getInitAssignment(), builder);
+      IdentExp target = generateExpressionIr(forbranch.getTargetExpression(), builder);
       IdentExp curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
       builder.buildForLoopBeginning(curvalue, BinExp.Operator.NE, target);
       builder.incrimentForLoopLevel();
       for(int i = 0; i < toExec.size(); i++){
-          generateStatementIr(scope, toExec.get(i), builder);
+          generateStatementIr(toExec.get(i), builder);
       }
       builder.deIncrimentForLoopLevel();
       builder.buildForLoopEnd();
     }
   }
         
-  public void generateAssignmentIr(Scope scope, Assignment assignment, AssignmentBuilder builder) {
+  public void generateAssignmentIr(Assignment assignment, AssignmentBuilder builder) {
     IdentExp place = varEnvironment.getEntry(assignment.getVariableName().getLexeme());
     Expression exp = assignment.getVariableValue();
-    Exp value = generateExpressionIr(scope, exp, builder);
+    Exp value = generateExpressionIr(exp, builder);
     TypeCheckerQualities qual = exp.acceptResult(typeChecker);
     TypeCheckerQualities convType = assignment.getVariableName().acceptResult(typeChecker);
+    
     if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.REAL)){
       if(procEnvironment.entryExists("RealToInt")){
         IdentExp argDest = procArgs.getEntry("RealToInt").getFirst();
@@ -514,7 +515,7 @@ public class MyICodeGenerator{
       } else {
         List<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
         args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.REAL));
-        value = builder.buildExternalFunctionCall(scope, "RealToInt", args, ICode.Type.INT);
+        value = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToInt", args, ICode.Type.INT);
       }
     } else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
       if(procEnvironment.entryExists("IntToReal")){
@@ -527,7 +528,7 @@ public class MyICodeGenerator{
       } else {
         List<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
         args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.INT));
-        value = builder.buildExternalFunctionCall(scope, "IntToReal", args, ICode.Type.REAL);
+        value = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToReal", args, ICode.Type.REAL);
       }
     } else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
       if(procEnvironment.entryExists("IntToBool")){
@@ -540,7 +541,7 @@ public class MyICodeGenerator{
       } else {
         List<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
         args.add(new Tuple<Exp,ICode.Type>(value, ICode.Type.INT));
-        value = builder.buildExternalFunctionCall(scope, "IntToBool", args, ICode.Type.BOOL);
+        value = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToBool", args, ICode.Type.BOOL);
       }
     } else if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
       if(procEnvironment.entryExists("BoolToInt")){
@@ -552,7 +553,7 @@ public class MyICodeGenerator{
       } else {
         List<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
         args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.BOOL));
-        value = builder.buildExternalFunctionCall(scope, "BoolToInt", args, ICode.Type.INT);
+        value = builder.buildExternalFunctionCall(Scope.LOCAL, "BoolToInt", args, ICode.Type.INT);
       }
     } else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.REAL)){
       if(procEnvironment.entryExists("RealToBool")){
@@ -565,7 +566,7 @@ public class MyICodeGenerator{
       } else {
         List<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
         args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.REAL));
-        value = builder.buildExternalFunctionCall(scope, "RealToBool", args, ICode.Type.BOOL);
+        value = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToBool", args, ICode.Type.BOOL);
       }
     } else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
       if(procEnvironment.entryExists("BoolToReal")){
@@ -577,11 +578,11 @@ public class MyICodeGenerator{
       } else {
         List<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
         args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.BOOL));
-        value = builder.buildExternalFunctionCall(scope, "BoolToReal", args, ICode.Type.REAL);
+        value = builder.buildExternalFunctionCall(Scope.LOCAL, "BoolToReal", args, ICode.Type.REAL);
       }
     }
     ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(convType);
-    builder.buildAssignment(scope, place.ident, value, type);
+    builder.buildAssignment(place.scope, place.ident, value, type);
   }
 
   public void generateInlineAssemblyIr(Asm asm, StatementBuilder builder) {
@@ -598,25 +599,25 @@ public class MyICodeGenerator{
   }
 
   
-  public IdentExp generateExpressionIr(Scope scope, Expression exp, DefinitionBuilder builder){
-    if(exp instanceof BinaryOperation) return generateBinaryOperationIr(scope, (BinaryOperation)exp, builder);
-    else if(exp instanceof FunctionCall) return generateFunctionCallIr(scope, (FunctionCall)exp, builder);
-    else if(exp instanceof UnaryOperation) return generateUnaryOperationIr(scope, (UnaryOperation)exp, builder);
+  public IdentExp generateExpressionIr(Expression exp, DefinitionBuilder builder){
+    if(exp instanceof BinaryOperation) return generateBinaryOperationIr((BinaryOperation)exp, builder);
+    else if(exp instanceof FunctionCall) return generateFunctionCallIr((FunctionCall)exp, builder);
+    else if(exp instanceof UnaryOperation) return generateUnaryOperationIr((UnaryOperation)exp, builder);
     else if(exp instanceof Identifier) return generateIdentifierIr((Identifier)exp, builder);
-    else if(exp instanceof NumValue) return generateNumberIr(scope, (NumValue)exp, builder);
-    else if(exp instanceof BoolValue) return generateBooleanIr(scope, (BoolValue)exp, builder);
-    else if(exp instanceof StrValue) return generateStringIr(scope, (StrValue)exp, builder);
+    else if(exp instanceof NumValue) return generateNumberIr((NumValue)exp, builder);
+    else if(exp instanceof BoolValue) return generateBooleanIr((BoolValue)exp, builder);
+    else if(exp instanceof StrValue) return generateStringIr((StrValue)exp, builder);
     else {
       throw new RuntimeException("Error Invalid Expression Type found when generating Ir at" + exp.getStart().toString());
     }
   }
   
   
-  public IdentExp generateBinaryOperationIr(Scope scope, BinaryOperation binaryOperation, DefinitionBuilder builder) {
-      IdentExp leftValue = generateExpressionIr(scope, binaryOperation.getLeft(), builder);
+  public IdentExp generateBinaryOperationIr(BinaryOperation binaryOperation, DefinitionBuilder builder) {
+      IdentExp leftValue = generateExpressionIr(binaryOperation.getLeft(), builder);
       TypeCheckerQualities leftType = binaryOperation.getLeft().acceptResult(typeChecker);
       
-      IdentExp rightValue = generateExpressionIr(scope, binaryOperation.getRight(), builder);
+      IdentExp rightValue = generateExpressionIr(binaryOperation.getRight(), builder);
       TypeCheckerQualities rightType = binaryOperation.getRight().acceptResult(typeChecker);
 
       if(binaryOperation.getOperator() == BinaryOperation.OpType.AND || binaryOperation.getOperator() == BinaryOperation.OpType.OR){
@@ -631,12 +632,12 @@ public class MyICodeGenerator{
              } else {
                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                leftValue = builder.buildExternalFunctionCall(scope, "RealToBool", args, ICode.Type.BOOL);
+                leftValue = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToBool", args, ICode.Type.BOOL);
              }
            } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-              leftValue = builder.buildExternalFunctionCall(scope, "RealToBool", args, ICode.Type.BOOL);
+              leftValue = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToBool", args, ICode.Type.BOOL);
            }
         } else if(leftType.containsQualities(TypeCheckerQualities.INTEGER)){
           if(procArgs.entryExists("IntToBool") && procEnvironment.entryExists("IntToBool")){
@@ -649,12 +650,12 @@ public class MyICodeGenerator{
             } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
-              leftValue = builder.buildExternalFunctionCall(scope, "IntToBool", args, ICode.Type.BOOL);
+              leftValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToBool", args, ICode.Type.BOOL);
             }
           } else {
             LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
             args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
-            leftValue = builder.buildExternalFunctionCall(scope, "IntToBool", args, ICode.Type.BOOL);
+            leftValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToBool", args, ICode.Type.BOOL);
           }
         }
 
@@ -669,12 +670,12 @@ public class MyICodeGenerator{
              } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-              rightValue = builder.buildExternalFunctionCall(scope, "RealToBool", args, ICode.Type.BOOL);
+              rightValue = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToBool", args, ICode.Type.BOOL);
              }
            } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-              rightValue = builder.buildExternalFunctionCall(scope, "RealToBool", args, ICode.Type.BOOL);
+              rightValue = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToBool", args, ICode.Type.BOOL);
            }
         } else if(rightType.containsQualities(TypeCheckerQualities.INTEGER)){
           if(procArgs.entryExists("IntToBool") && procEnvironment.entryExists("IntToBool")){
@@ -687,18 +688,18 @@ public class MyICodeGenerator{
              } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-              rightValue = builder.buildExternalFunctionCall(scope, "IntToBool", args, ICode.Type.BOOL);
+              rightValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToBool", args, ICode.Type.BOOL);
              }
            } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-              rightValue = builder.buildExternalFunctionCall(scope, "IntToBool", args, ICode.Type.BOOL);
+              rightValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToBool", args, ICode.Type.BOOL);
            }
         }
 
         switch(binaryOperation.getOperator()){
-          case AND: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.LAND, rightValue, ICode.Type.BOOL);
-          case OR: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.LOR, rightValue, ICode.Type.BOOL);
+          case AND: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.LAND, rightValue, ICode.Type.BOOL);
+          case OR: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.LOR, rightValue, ICode.Type.BOOL);
           default: return leftValue;
         }
       } else if(leftType.containsQualities(TypeCheckerQualities.REAL) || rightType.containsQualities(TypeCheckerQualities.REAL)){
@@ -713,12 +714,12 @@ public class MyICodeGenerator{
              } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
-              leftValue = builder.buildExternalFunctionCall(scope, "IntToReal", args, ICode.Type.REAL);
+              leftValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToReal", args, ICode.Type.REAL);
              }
            } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
-              leftValue = builder.buildExternalFunctionCall(scope, "IntToReal", args, ICode.Type.REAL);
+              leftValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToReal", args, ICode.Type.REAL);
            }
         }
 
@@ -733,12 +734,12 @@ public class MyICodeGenerator{
              } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-              rightValue = builder.buildExternalFunctionCall(scope, "IntToReal", args, ICode.Type.REAL);
+              rightValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToReal", args, ICode.Type.REAL);
              }
            } else {
             LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
             args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-            rightValue = builder.buildExternalFunctionCall(scope, "IntToReal", args, ICode.Type.REAL);
+            rightValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToReal", args, ICode.Type.REAL);
            }
         }
       
@@ -758,13 +759,13 @@ public class MyICodeGenerator{
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                  args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(scope, "RAdd", args, ICode.Type.REAL);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RAdd", args, ICode.Type.REAL);
               }
             } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-              return builder.buildExternalFunctionCall(scope, "RAdd", args, ICode.Type.REAL);
+              return builder.buildExternalFunctionCall(Scope.LOCAL, "RAdd", args, ICode.Type.REAL);
             }
           case MINUS: 
             if(procArgs.entryExists("RSub") && procEnvironment.entryExists("RSub")){
@@ -780,13 +781,13 @@ public class MyICodeGenerator{
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                  args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(scope, "RSub", args, ICode.Type.REAL);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RSub", args, ICode.Type.REAL);
               }
             } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-              return builder.buildExternalFunctionCall(scope, "RSub", args, ICode.Type.REAL);
+              return builder.buildExternalFunctionCall(Scope.LOCAL, "RSub", args, ICode.Type.REAL);
             }
           case TIMES: 
             if(procArgs.entryExists("RMul") && procEnvironment.entryExists("RMul")){
@@ -803,13 +804,13 @@ public class MyICodeGenerator{
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                  args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(scope, "RMul", args, ICode.Type.REAL);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RMul", args, ICode.Type.REAL);
               }
             } else {
                LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-               return builder.buildExternalFunctionCall(scope, "RMul", args, ICode.Type.REAL);
+               return builder.buildExternalFunctionCall(Scope.LOCAL, "RMul", args, ICode.Type.REAL);
             }
           case DIVIDE:
             if(procArgs.entryExists("RDivide") && procEnvironment.entryExists("RDivide")){
@@ -826,13 +827,13 @@ public class MyICodeGenerator{
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                  args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(scope, "RDivide", args, ICode.Type.REAL);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RDivide", args, ICode.Type.REAL);
               }
             } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-              return builder.buildExternalFunctionCall(scope, "RDivide", args, ICode.Type.REAL);
+              return builder.buildExternalFunctionCall(Scope.LOCAL, "RDivide", args, ICode.Type.REAL);
             }
           case DIV:
             if(procArgs.entryExists("RDiv") && procEnvironment.entryExists("RDiv")){
@@ -849,13 +850,13 @@ public class MyICodeGenerator{
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                  args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(scope, "RDiv", args, ICode.Type.INT);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RDiv", args, ICode.Type.INT);
               }
             } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-              return builder.buildExternalFunctionCall(scope, "RDiv", args, ICode.Type.INT);
+              return builder.buildExternalFunctionCall(Scope.LOCAL, "RDiv", args, ICode.Type.INT);
             }
           case LE:
             if(procArgs.entryExists("RLessThanOrEqualTo") && procEnvironment.entryExists("RLessThanOrEqualTo")){
@@ -872,13 +873,13 @@ public class MyICodeGenerator{
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                  args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(scope, "RLessThanOrEqualTo", args, ICode.Type.BOOL);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RLessThanOrEqualTo", args, ICode.Type.BOOL);
               }
             } else {
                LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-               return builder.buildExternalFunctionCall(scope, "RLessThanOrEqualTo", args, ICode.Type.BOOL);
+               return builder.buildExternalFunctionCall(Scope.LOCAL, "RLessThanOrEqualTo", args, ICode.Type.BOOL);
             }
           case LT:
             if(procArgs.entryExists("RLessThan") && procEnvironment.entryExists("RLessThan")){
@@ -895,13 +896,13 @@ public class MyICodeGenerator{
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                  args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(scope, "RLessThan", args, ICode.Type.BOOL);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RLessThan", args, ICode.Type.BOOL);
               }
             } else {
                LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                return builder.buildExternalFunctionCall(scope, "RLessThan", args, ICode.Type.BOOL);
+                return builder.buildExternalFunctionCall(Scope.LOCAL, "RLessThan", args, ICode.Type.BOOL);
             }
           case GE:
             if(procArgs.entryExists("RGreaterThanOrEqualTo") && procEnvironment.entryExists("RGreaterThanOrEqualTo")){
@@ -918,13 +919,13 @@ public class MyICodeGenerator{
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                  args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(scope, "RGreaterThanOrEqualTo", args, ICode.Type.BOOL);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RGreaterThanOrEqualTo", args, ICode.Type.BOOL);
               }
             } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-              return builder.buildExternalFunctionCall(scope, "RGreaterThanOrEqualTo", args, ICode.Type.BOOL);
+              return builder.buildExternalFunctionCall(Scope.LOCAL, "RGreaterThanOrEqualTo", args, ICode.Type.BOOL);
             }
           case GT:
             if(procArgs.entryExists("RGreaterThan") && procEnvironment.entryExists("RGreaterThan")){
@@ -941,13 +942,13 @@ public class MyICodeGenerator{
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                  args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(scope, "RGreaterThan", args, ICode.Type.BOOL);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RGreaterThan", args, ICode.Type.BOOL);
               }
             } else {
                LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-               return builder.buildExternalFunctionCall(scope, "RGreaterThan", args, ICode.Type.BOOL);
+               return builder.buildExternalFunctionCall(Scope.LOCAL, "RGreaterThan", args, ICode.Type.BOOL);
             }
           case EQ:
             if(procArgs.entryExists("REqualTo") && procEnvironment.entryExists("REqualTo")){
@@ -965,13 +966,13 @@ public class MyICodeGenerator{
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                  args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(scope, "REqualTo", args, ICode.Type.BOOL);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "REqualTo", args, ICode.Type.BOOL);
               }
             } else {
                LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-               return builder.buildExternalFunctionCall(scope, "REqualTo", args, ICode.Type.BOOL);
+               return builder.buildExternalFunctionCall(Scope.LOCAL, "REqualTo", args, ICode.Type.BOOL);
             }
           case NE: 
             if(procArgs.entryExists("RNotEqualTo") && procEnvironment.entryExists("RNotEqualTo")){
@@ -988,21 +989,21 @@ public class MyICodeGenerator{
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                  args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(scope, "RNotEqualTo", args, ICode.Type.BOOL);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RNotEqualTo", args, ICode.Type.BOOL);
               }
             } else {
                LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                return builder.buildExternalFunctionCall(scope, "RNotEqualTo", args, ICode.Type.BOOL);
+                return builder.buildExternalFunctionCall(Scope.LOCAL, "RNotEqualTo", args, ICode.Type.BOOL);
             }
           default: return leftValue;
       }
     } else {
       switch (binaryOperation.getOperator()){
-        case PLUS: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.IADD, rightValue, ICode.Type.INT);
-        case MINUS: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.ISUB, rightValue, ICode.Type.INT);
-        case TIMES: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.IMUL, rightValue, ICode.Type.INT);
+        case PLUS: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.IADD, rightValue, ICode.Type.INT);
+        case MINUS: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.ISUB, rightValue, ICode.Type.INT);
+        case TIMES: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.IMUL, rightValue, ICode.Type.INT);
         case DIV: 
           if(procArgs.entryExists("Div") && procEnvironment.entryExists("Div")){
               IdentEntryList params = procArgs.getEntry("Div");
@@ -1018,13 +1019,13 @@ public class MyICodeGenerator{
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
                  args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-                 return builder.buildExternalFunctionCall(scope, "Div", args, ICode.Type.INT);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "Div", args, ICode.Type.INT);
               }
             } else {
                LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
                args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-               return builder.buildExternalFunctionCall(scope, "Div", args, ICode.Type.INT);
+               return builder.buildExternalFunctionCall(Scope.LOCAL, "Div", args, ICode.Type.INT);
             }
         case DIVIDE: 
             if(procArgs.entryExists("Divide") && procEnvironment.entryExists("Divide")){
@@ -1041,32 +1042,32 @@ public class MyICodeGenerator{
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
                  args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-                 return builder.buildExternalFunctionCall(scope, "Divide", args, ICode.Type.REAL);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "Divide", args, ICode.Type.REAL);
               }
             } else {
                LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
                args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-               return builder.buildExternalFunctionCall(scope, "Divide", args, ICode.Type.REAL);
+               return builder.buildExternalFunctionCall(Scope.LOCAL, "Divide", args, ICode.Type.REAL);
             }
-        case MOD: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.IMOD, rightValue, ICode.Type.INT);
-        case LE: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.LE, rightValue, ICode.Type.BOOL);
-        case LT: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.LT, rightValue, ICode.Type.BOOL);
-        case GE: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.GE, rightValue, ICode.Type.BOOL);
-        case GT: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.GT, rightValue, ICode.Type.BOOL);
-        case BAND: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.IAND, rightValue, ICode.Type.INT);
-        case BOR: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.IOR, rightValue, ICode.Type.INT);
-        case BXOR: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.IXOR, rightValue, ICode.Type.INT);
-        case LSHIFT: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.ILSHIFT, rightValue, ICode.Type.INT);
-        case RSHIFT: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.IRSHIFT, rightValue, ICode.Type.INT);
-        case EQ: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.EQ, rightValue, ICode.Type.BOOL);
-        case NE: return builder.buildBinaryDefinition(scope, leftValue, BinExp.Operator.NE, rightValue, ICode.Type.BOOL);
+        case MOD: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.IMOD, rightValue, ICode.Type.INT);
+        case LE: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.LE, rightValue, ICode.Type.BOOL);
+        case LT: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.LT, rightValue, ICode.Type.BOOL);
+        case GE: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.GE, rightValue, ICode.Type.BOOL);
+        case GT: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.GT, rightValue, ICode.Type.BOOL);
+        case BAND: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.IAND, rightValue, ICode.Type.INT);
+        case BOR: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.IOR, rightValue, ICode.Type.INT);
+        case BXOR: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.IXOR, rightValue, ICode.Type.INT);
+        case LSHIFT: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.ILSHIFT, rightValue, ICode.Type.INT);
+        case RSHIFT: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.IRSHIFT, rightValue, ICode.Type.INT);
+        case EQ: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.EQ, rightValue, ICode.Type.BOOL);
+        case NE: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.NE, rightValue, ICode.Type.BOOL);
         default: return leftValue;
       }
     }
   }
 
-  public IdentExp generateFunctionCallIr(Scope scope, FunctionCall funcCall, DefinitionBuilder builder) {
+  public IdentExp generateFunctionCallIr(FunctionCall funcCall, DefinitionBuilder builder) {
     String funcName = funcCall.getFunctionName().getLexeme();
     List<Expression> valArgs = funcCall.getArguments();
     TypeCheckerQualities returnType = funcCall.acceptResult(typeChecker);
@@ -1080,7 +1081,7 @@ public class MyICodeGenerator{
         Expression valArg = valArgs.get(i);
         TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
         ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
-	      Exp result = generateExpressionIr(scope, valArg, builder);
+	      Exp result = generateExpressionIr(valArg, builder);
 	      valArgResults.add(new Def(Scope.PARAM, argsToMap.get(i).ident, result, type));
       }
       IdentExp returnPlace = procEnvironment.getEntry(funcName);
@@ -1090,18 +1091,18 @@ public class MyICodeGenerator{
       //Build external function call
       LinkedList<Tuple<Exp, ICode.Type>> procedureArgs = new LinkedList<Tuple<Exp, ICode.Type>>();
       for(Expression arg : valArgs){
-        Exp place = generateExpressionIr(scope, arg, builder);
+        Exp place = generateExpressionIr(arg, builder);
         TypeCheckerQualities qual = arg.acceptResult(typeChecker);
         ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
         procedureArgs.add(new Tuple<Exp, ICode.Type>(place, type));
       }
 
-      return builder.buildExternalFunctionCall(scope, funcName, procedureArgs, retType);
+      return builder.buildExternalFunctionCall(Scope.LOCAL, funcName, procedureArgs, retType);
     }
   }
 
-  public IdentExp generateUnaryOperationIr(Scope scope, UnaryOperation unaryOperation, DefinitionBuilder builder) {
-    IdentExp value = generateExpressionIr(scope, unaryOperation.getExpression(), builder);
+  public IdentExp generateUnaryOperationIr(UnaryOperation unaryOperation, DefinitionBuilder builder) {
+    IdentExp value = generateExpressionIr(unaryOperation.getExpression(), builder);
     TypeCheckerQualities rightType = unaryOperation.getExpression().acceptResult(typeChecker);
 
     if(unaryOperation.getOperator() == UnaryOperation.OpType.NOT){
@@ -1116,12 +1117,12 @@ public class MyICodeGenerator{
              } else {
                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                 args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.REAL));
-                value = builder.buildExternalFunctionCall(scope, "RealToBool", args, ICode.Type.BOOL);
+                value = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToBool", args, ICode.Type.BOOL);
              }
            } else {
              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
              args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.REAL));
-             value = builder.buildExternalFunctionCall(scope, "RealToBool", args, ICode.Type.BOOL);
+             value = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToBool", args, ICode.Type.BOOL);
            }
         } else if(rightType.containsQualities(TypeCheckerQualities.INTEGER)){
           if(procArgs.entryExists("IntToBool") && procEnvironment.entryExists("IntToBool")){
@@ -1134,16 +1135,16 @@ public class MyICodeGenerator{
             } else {
               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
               args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.INT));
-              value = builder.buildExternalFunctionCall(scope, "IntToBool", args, ICode.Type.BOOL);
+              value = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToBool", args, ICode.Type.BOOL);
             }
           } else {
             LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
             args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.INT));
-            value = builder.buildExternalFunctionCall(scope, "IntToBool", args, ICode.Type.BOOL);
+            value = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToBool", args, ICode.Type.BOOL);
           }
         }
         IdentExp expVal = value;
-        return builder.buildUnaryDefinition(scope, UnExp.Operator.BNOT, expVal, ICode.Type.BOOL);
+        return builder.buildUnaryDefinition(Scope.LOCAL, UnExp.Operator.BNOT, expVal, ICode.Type.BOOL);
     } else if(rightType.containsQualities(TypeCheckerQualities.REAL)){
       switch(unaryOperation.getOperator()){
         case MINUS: 
@@ -1159,12 +1160,12 @@ public class MyICodeGenerator{
                  errorLog.add("Cant find the function RNeg that contains one argument", unaryOperation.getStart());
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(scope, "RNeg", args, ICode.Type.REAL);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RNeg", args, ICode.Type.REAL);
               }
             } else {
                LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.REAL));
-               return builder.buildExternalFunctionCall(scope, "RNeg", args, ICode.Type.REAL);
+               return builder.buildExternalFunctionCall(Scope.LOCAL, "RNeg", args, ICode.Type.REAL);
             }
         default:
           errorLog.add("Error unexpected Operation for Real Value " + unaryOperation.getOperator(), unaryOperation.getStart());
@@ -1185,14 +1186,14 @@ public class MyICodeGenerator{
                  errorLog.add("Cant find the function INeg that contains one argument", unaryOperation.getStart());
                  LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                  args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.INT));
-                 return builder.buildExternalFunctionCall(scope, "INeg", args, ICode.Type.INT);
+                 return builder.buildExternalFunctionCall(Scope.LOCAL, "INeg", args, ICode.Type.INT);
               }
             } else {
                LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
                args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.INT));
-               return builder.buildExternalFunctionCall(scope, "INeg", args, ICode.Type.INT);
+               return builder.buildExternalFunctionCall(Scope.LOCAL, "INeg", args, ICode.Type.INT);
             }
-        case BNOT: return builder.buildUnaryDefinition(scope, UnExp.Operator.INOT, value, ICode.Type.INT);
+        case BNOT: return builder.buildUnaryDefinition(Scope.LOCAL, UnExp.Operator.INOT, value, ICode.Type.INT);
         default: return value;
 	    }
     }
@@ -1215,26 +1216,26 @@ public class MyICodeGenerator{
     }
   }
 
-  public IdentExp generateNumberIr(Scope scope, NumValue numValue, DefinitionBuilder builder){
+  public IdentExp generateNumberIr(NumValue numValue, DefinitionBuilder builder){
       String rawnum = Utils.ifHexToInt(numValue.getLexeme());
       if(rawnum.contains(".")){
-         return builder.buildDefinition(scope, new RealExp(Float.parseFloat(rawnum)), ICode.Type.REAL);
+         return builder.buildDefinition(Scope.LOCAL, new RealExp(Float.parseFloat(rawnum)), ICode.Type.REAL);
       } else {
         try{
-          return builder.buildDefinition(scope, new IntExp(Integer.parseInt(rawnum)), ICode.Type.INT);
+          return builder.buildDefinition(Scope.LOCAL, new IntExp(Integer.parseInt(rawnum)), ICode.Type.INT);
         } catch(NumberFormatException e){
-          return builder.buildDefinition(scope, new IntExp(Integer.parseUnsignedInt(rawnum)), ICode.Type.INT);
+          return builder.buildDefinition(Scope.LOCAL, new IntExp(Integer.parseUnsignedInt(rawnum)), ICode.Type.INT);
         }
       }
   }
 
-  public IdentExp generateBooleanIr(Scope scope, BoolValue boolValue, DefinitionBuilder builder){
+  public IdentExp generateBooleanIr(BoolValue boolValue, DefinitionBuilder builder){
       String lexeme = boolValue.getLexeme(); //change to hex if you need to otherwise unchanged
-      return builder.buildDefinition(scope, new BoolExp(Boolean.parseBoolean(lexeme)), ICode.Type.BOOL);
+      return builder.buildDefinition(Scope.LOCAL, new BoolExp(Boolean.parseBoolean(lexeme)), ICode.Type.BOOL);
   }
 
-  public IdentExp generateStringIr(Scope scope, StrValue strValue, DefinitionBuilder builder){
-      return builder.buildDefinition(scope, new StrExp(strValue.getLexeme()), ICode.Type.STRING);
+  public IdentExp generateStringIr(StrValue strValue, DefinitionBuilder builder){
+      return builder.buildDefinition(Scope.LOCAL, new StrExp(strValue.getLexeme()), ICode.Type.STRING);
   }
 
 

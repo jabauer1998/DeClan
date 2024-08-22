@@ -4909,6 +4909,7 @@ public class MyIrLinker {
                         replacePlaceAcrossProgramAndLibraries(rightOldPlace, place, program, libraries, program);
                     }
                 }
+                
             } else if(icode instanceof Def){
                 Def assignment = (Def)icode;
 
