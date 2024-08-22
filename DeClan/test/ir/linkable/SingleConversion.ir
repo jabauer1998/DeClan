@@ -14,7 +14,7 @@ BSS SECTION
 CODE SECTION
  CALL IntToReal(((GLOBAL b) -> e)[INT])
  DEF g := (RETURN f) [REAL]
- c := g [REAL]
+ GLOBAL c := g [REAL]
  CALL WriteReal(((GLOBAL c) -> h)[REAL])
 END
 PROC SECTION

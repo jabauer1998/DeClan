@@ -4,7 +4,7 @@ BSS SECTION
  DEF GLOBAL f24 := 0 [INT]
 CODE SECTION
  DEF f25 := 1 [INT]
- f24 := f25 [INT]
+ GLOBAL f24 := f25 [INT]
  DEF f26 := 10 [INT]
  DEF f27 := (GLOBAL f24) GE f26 [BOOL]
  DEF f28 := TRUE [BOOL]
@@ -16,7 +16,7 @@ CODE SECTION
  CALL WriteInt(((GLOBAL f24) -> f30)[INT])
  DEF f31 := 1 [INT]
  DEF f32 := (GLOBAL f24) IADD f31 [INT]
- f24 := f32 [INT]
+ GLOBAL f24 := f32 [INT]
  DEF f33 := 10 [INT]
  DEF f34 := (GLOBAL f24) GE f33 [BOOL]
  f27 := f34 [BOOL]

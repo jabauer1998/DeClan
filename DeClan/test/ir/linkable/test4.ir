@@ -18,9 +18,9 @@ BSS SECTION
 CODE SECTION
  CALL ReadInt()
  DEF k := (RETURN j) [INT]
- a := k [INT]
+ GLOBAL a := k [INT]
  DEF l := 0 [INT]
- b := l [INT]
+ GLOBAL b := l [INT]
  LABEL FORBEG_0_LEVEL_0
  IF (GLOBAL b) LT (GLOBAL a)
  THEN FORLOOP_0_LEVEL_0
@@ -28,11 +28,11 @@ CODE SECTION
  LABEL FORLOOP_0_LEVEL_0
  CALL F(((GLOBAL b) -> f)[INT])
  DEF m := (RETURN g) [INT]
- c := m [INT]
+ GLOBAL c := m [INT]
  CALL WriteInt(((GLOBAL c) -> n)[INT])
  CALL Fact(((GLOBAL b) -> h)[INT])
  DEF o := (RETURN i) [INT]
- c := o [INT]
+ GLOBAL c := o [INT]
  CALL WriteInt(((GLOBAL c) -> n)[INT])
  CALL WriteLn()
  DEF p := 1 [INT]

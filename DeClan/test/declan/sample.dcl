@@ -9,7 +9,12 @@ PROCEDURE gcd(a, b: INTEGER);
   END gcd;
 BEGIN
   answer := gcd(six, seven);
+  WriteString("Answer is ");
+  WriteInt(answer);
+  WriteLn();
   answer := six * seven * answer;
+  WriteString("Answer is ");
+  WriteInt(answer);
   WriteReal(answer * 1.);
   WriteLn()
 END. (* Don't forget the ending period! *)

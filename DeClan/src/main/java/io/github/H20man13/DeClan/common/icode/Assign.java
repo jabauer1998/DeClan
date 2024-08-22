@@ -36,6 +36,10 @@ public class Assign implements ICode{
 
         if(this.scope == Scope.GLOBAL){
             sb.append("GLOBAL ");
+        } else if(this.scope == Scope.PARAM) {
+        	sb.append("PARAM ");
+        } else if(this.scope == Scope.RETURN) {
+        	sb.append("RETURN ");
         } else if(this.scope != Scope.LOCAL){
             throw new ICodeFormatException(this, "Invalid scope type for assignment " + scope);
         }

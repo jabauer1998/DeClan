@@ -16,7 +16,7 @@ DATA SECTION
 BSS SECTION
  DEF GLOBAL f := 0 [INT]
 CODE SECTION
- f := (GLOBAL e) [INT]
+ GLOBAL f := (GLOBAL e) [INT]
  DEF i := 0 [INT]
  DEF j := (GLOBAL f) LT i [BOOL]
  DEF k := TRUE [BOOL]
@@ -26,7 +26,7 @@ CODE SECTION
  LABEL IFSTAT_0_SEQ_0_LEVEL_0
  CALL INeg(((GLOBAL f) -> b)[INT])
  DEF l := (RETURN c) [INT]
- f := l [INT]
+ GLOBAL f := l [INT]
  GOTO IFEND_0_LEVEL_0
  LABEL IFNEXT_0_SEQ_0_LEVEL_0
  DEF m := 0 [INT]
@@ -61,7 +61,7 @@ PROC SECTION
   DEF z := 2 [INT]
   CALL Div((y -> A)[INT], (z -> B)[INT])
   DEF D := (RETURN C) [INT]
-  g := D [INT]
+  PARAM g := D [INT]
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
   DEF E := 0 [INT]
@@ -82,7 +82,7 @@ PROC SECTION
   DEF K := 2 [INT]
   CALL Div(((PARAM g) -> A)[INT], (K -> B)[INT])
   DEF L := (RETURN C) [INT]
-  g := L [INT]
+  PARAM g := L [INT]
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_2_LEVEL_0
   LABEL IFEND_1_LEVEL_0

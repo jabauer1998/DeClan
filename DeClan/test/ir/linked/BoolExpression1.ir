@@ -52,7 +52,7 @@ CODE SECTION
  DEF h68 := (RETURN h65) [REAL]
  CALL RNotEqualTo((h13 -> h70)[REAL], (h68 -> h71)[REAL])
  DEF h72 := (RETURN h69) [BOOL]
- f43 := h72 [BOOL]
+ GLOBAL f43 := h72 [BOOL]
  CALL WriteBool(((GLOBAL f43) -> h74)[BOOL])
 END
 PROC SECTION

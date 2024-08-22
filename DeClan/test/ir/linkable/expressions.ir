@@ -93,10 +93,10 @@ BSS SECTION
 CODE SECTION
  CALL RDivide(((GLOBAL d) -> C)[REAL], ((GLOBAL d) -> D)[REAL])
  DEF U := (RETURN E) [REAL]
- L := U [REAL]
+ GLOBAL L := U [REAL]
  DEF V := 10 [INT]
  DEF W := (GLOBAL v) IMOD V [INT]
- O := W [INT]
+ GLOBAL O := W [INT]
  CALL RNeg(((GLOBAL p) -> f)[REAL])
  DEF X := (RETURN g) [REAL]
  CALL IntToReal(((GLOBAL b) -> i)[INT])
@@ -105,7 +105,7 @@ CODE SECTION
  DEF Z := (RETURN z) [REAL]
  CALL RSub((X -> a0)[REAL], (Z -> a1)[REAL])
  DEF a3 := (RETURN a2) [REAL]
- M := a3 [REAL]
+ GLOBAL M := a3 [REAL]
  CALL WriteInt(((GLOBAL b) -> a4)[INT])
  CALL WriteReal(((GLOBAL L) -> a5)[REAL])
  CALL WriteReal(((GLOBAL L) -> a5)[REAL])
@@ -113,10 +113,10 @@ CODE SECTION
  CALL WriteLn()
  CALL Div(((GLOBAL v) -> a6)[INT], ((GLOBAL O) -> a7)[INT])
  DEF a9 := (RETURN a8) [INT]
- P := a9 [INT]
+ GLOBAL P := a9 [INT]
  CALL Divide(((GLOBAL v) -> b0)[INT], ((GLOBAL O) -> b1)[INT])
  DEF b3 := (RETURN b2) [REAL]
- N := b3 [REAL]
+ GLOBAL N := b3 [REAL]
  CALL WriteInt(((GLOBAL P) -> a4)[INT])
  CALL WriteReal(((GLOBAL N) -> a5)[REAL])
  CALL WriteLn()
@@ -124,7 +124,7 @@ CODE SECTION
  DEF b6 := (RETURN b5) [INT]
  CALL IntToReal((b6 -> i)[INT])
  DEF b7 := (RETURN j) [REAL]
- N := b7 [REAL]
+ GLOBAL N := b7 [REAL]
  CALL WriteReal(((GLOBAL N) -> a5)[REAL])
  DEF b8 := TRUE [BOOL]
  IF (GLOBAL K) EQ b8
@@ -151,16 +151,16 @@ CODE SECTION
  CALL RGreaterThan(((GLOBAL L) -> c6)[REAL], (c5 -> c7)[REAL])
  DEF c9 := (RETURN c8) [BOOL]
  DEF d0 := c4 LAND c9 [BOOL]
- R := d0 [BOOL]
+ GLOBAL R := d0 [BOOL]
  DEF d1 := BNOT (GLOBAL K) [BOOL]
  CALL IntToReal(((GLOBAL b) -> i)[INT])
  DEF d2 := (RETURN j) [REAL]
  CALL RGreaterThanOrEqualTo(((GLOBAL L) -> d3)[REAL], (d2 -> d4)[REAL])
  DEF d6 := (RETURN d5) [BOOL]
  DEF d7 := d1 LOR d6 [BOOL]
- S := d7 [BOOL]
+ GLOBAL S := d7 [BOOL]
  DEF d8 := (GLOBAL R) EQ (GLOBAL S) [BOOL]
- T := d8 [BOOL]
+ GLOBAL T := d8 [BOOL]
  DEF d9 := "Q is " [STRING]
  CALL WriteString((d9 -> e0)[STRING])
  CALL WriteBool(((GLOBAL S) -> e1)[BOOL])

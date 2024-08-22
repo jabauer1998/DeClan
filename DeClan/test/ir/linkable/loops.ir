@@ -8,7 +8,7 @@ BSS SECTION
  DEF GLOBAL a := 0 [INT]
 CODE SECTION
  DEF b := 1 [INT]
- a := b [INT]
+ GLOBAL a := b [INT]
  DEF c := 10 [INT]
  LABEL FORBEG_0_LEVEL_0
  IF (GLOBAL a) LT c
@@ -22,7 +22,7 @@ CODE SECTION
  LABEL FOREND_0_LEVEL_0
  CALL WriteLn()
  DEF f := 1 [INT]
- a := f [INT]
+ GLOBAL a := f [INT]
  DEF g := 10 [INT]
  LABEL FORBEG_1_LEVEL_0
  IF (GLOBAL a) LT g
@@ -36,7 +36,7 @@ CODE SECTION
  LABEL FOREND_1_LEVEL_0
  CALL WriteLn()
  DEF i := 10 [INT]
- a := i [INT]
+ GLOBAL a := i [INT]
  DEF j := 1 [INT]
  LABEL FORBEG_2_LEVEL_0
  IF (GLOBAL a) GT j
@@ -52,7 +52,7 @@ CODE SECTION
  LABEL FOREND_2_LEVEL_0
  CALL WriteLn()
  DEF o := 10 [INT]
- a := o [INT]
+ GLOBAL a := o [INT]
  DEF p := 1 [INT]
  LABEL FORBEG_3_LEVEL_0
  IF (GLOBAL a) GT p
@@ -68,7 +68,7 @@ CODE SECTION
  LABEL FOREND_3_LEVEL_0
  CALL WriteLn()
  DEF s := 1 [INT]
- a := s [INT]
+ GLOBAL a := s [INT]
  DEF t := 10 [INT]
  DEF u := (GLOBAL a) LE t [BOOL]
  DEF v := TRUE [BOOL]
@@ -83,7 +83,7 @@ CODE SECTION
  CALL WriteInt(((GLOBAL a) -> d)[INT])
  DEF w := 1 [INT]
  DEF x := (GLOBAL a) IADD w [INT]
- a := x [INT]
+ GLOBAL a := x [INT]
  DEF y := 10 [INT]
  DEF z := (GLOBAL a) LE y [BOOL]
  u := z [BOOL]
@@ -92,7 +92,7 @@ CODE SECTION
  LABEL WHILEEND_0_LEVEL_0
  CALL WriteLn()
  DEF A := 1 [INT]
- a := A [INT]
+ GLOBAL a := A [INT]
  DEF B := 10 [INT]
  DEF C := (GLOBAL a) LE B [BOOL]
  DEF D := 2 [INT]
@@ -112,7 +112,7 @@ CODE SECTION
  CALL WriteInt(((GLOBAL a) -> d)[INT])
  DEF J := 1 [INT]
  DEF K := (GLOBAL a) IADD J [INT]
- a := K [INT]
+ GLOBAL a := K [INT]
  DEF L := 10 [INT]
  DEF M := (GLOBAL a) LE L [BOOL]
  DEF N := 2 [INT]
@@ -136,7 +136,7 @@ CODE SECTION
  LABEL WHILESTAT_2_SEQ_1_LEVEL_0
  DEF V := 1 [INT]
  DEF W := (GLOBAL a) IADD V [INT]
- a := W [INT]
+ GLOBAL a := W [INT]
  DEF X := 10 [INT]
  DEF Y := (GLOBAL a) LE X [BOOL]
  T := Y [BOOL]
@@ -145,7 +145,7 @@ CODE SECTION
  LABEL WHILEEND_2_LEVEL_0
  CALL WriteLn()
  DEF Z := 10 [INT]
- a := Z [INT]
+ GLOBAL a := Z [INT]
  DEF a0 := 1 [INT]
  DEF a1 := (GLOBAL a) LT a0 [BOOL]
  DEF a2 := TRUE [BOOL]
@@ -157,7 +157,7 @@ CODE SECTION
  CALL WriteInt(((GLOBAL a) -> d)[INT])
  DEF a3 := 2 [INT]
  DEF a4 := (GLOBAL a) ISUB a3 [INT]
- a := a4 [INT]
+ GLOBAL a := a4 [INT]
  DEF a5 := 1 [INT]
  DEF a6 := (GLOBAL a) LT a5 [BOOL]
  a1 := a6 [BOOL]
@@ -165,7 +165,7 @@ CODE SECTION
  LABEL REPEATEND_0_LEVEL_0
  CALL WriteLn()
  DEF a7 := 10 [INT]
- a := a7 [INT]
+ GLOBAL a := a7 [INT]
  DEF a8 := 1 [INT]
  DEF a9 := (GLOBAL a) GE a8 [BOOL]
  DEF b0 := TRUE [BOOL]
@@ -177,7 +177,7 @@ CODE SECTION
  CALL WriteInt(((GLOBAL a) -> d)[INT])
  DEF b1 := 1 [INT]
  DEF b2 := (GLOBAL a) IADD b1 [INT]
- a := b2 [INT]
+ GLOBAL a := b2 [INT]
  DEF b3 := 1 [INT]
  DEF b4 := (GLOBAL a) GE b3 [BOOL]
  a9 := b4 [BOOL]

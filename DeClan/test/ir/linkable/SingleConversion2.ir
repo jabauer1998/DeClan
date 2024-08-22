@@ -12,7 +12,7 @@ BSS SECTION
 CODE SECTION
  CALL RealToInt(((GLOBAL b) -> d)[REAL])
  DEF f := (RETURN e) [INT]
- c := f [INT]
+ GLOBAL c := f [INT]
  CALL WriteInt(((GLOBAL c) -> g)[INT])
 END
 PROC SECTION

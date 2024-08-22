@@ -27,13 +27,13 @@ BSS SECTION
 CODE SECTION
  CALL IntToReal(((GLOBAL b) -> j)[INT])
  DEF l := (RETURN k) [REAL]
- f := l [REAL]
+ GLOBAL f := l [REAL]
  CALL IntToReal(((GLOBAL d) -> j)[INT])
  DEF m := (RETURN k) [REAL]
- g := m [REAL]
+ GLOBAL g := m [REAL]
  CALL RDivide(((GLOBAL f) -> n)[REAL], ((GLOBAL g) -> o)[REAL])
  DEF q := (RETURN p) [REAL]
- e := q [REAL]
+ GLOBAL e := q [REAL]
  DEF r := "Result as real: " [STRING]
  CALL WriteString((r -> s)[STRING])
  CALL WriteReal(((GLOBAL e) -> t)[REAL])

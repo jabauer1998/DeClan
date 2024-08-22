@@ -29,7 +29,7 @@ CODE SECTION
  DEF h32 := (RETURN h29) [REAL]
  CALL RealToInt((h32 -> h42)[REAL])
  DEF h43 := (RETURN h41) [INT]
- f39 := h43 [INT]
+ GLOBAL f39 := h43 [INT]
  CALL WriteReal(((GLOBAL f39) -> h45)[INT])
 END
 PROC SECTION

@@ -16,7 +16,7 @@ BSS SECTION
 CODE SECTION
  CALL Div(((GLOBAL b) -> f)[INT], ((GLOBAL d) -> g)[INT])
  DEF i := (RETURN h) [INT]
- e := i [INT]
+ GLOBAL e := i [INT]
  CALL WriteInt(((GLOBAL e) -> j)[INT])
 END
 PROC SECTION

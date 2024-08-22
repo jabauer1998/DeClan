@@ -21,7 +21,7 @@ BSS SECTION
 CODE SECTION
  CALL Divide(((GLOBAL f) -> k)[INT], ((GLOBAL i) -> l)[INT])
  DEF n := (RETURN m) [REAL]
- j := n [REAL]
+ GLOBAL j := n [REAL]
  CALL WriteReal(((GLOBAL j) -> o)[REAL])
 END
 PROC SECTION

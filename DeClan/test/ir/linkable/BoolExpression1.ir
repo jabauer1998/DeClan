@@ -42,7 +42,7 @@ CODE SECTION
  DEF x := (RETURN w) [REAL]
  CALL RNotEqualTo((s -> y)[REAL], (x -> z)[REAL])
  DEF B := (RETURN A) [BOOL]
- l := B [BOOL]
+ GLOBAL l := B [BOOL]
  CALL WriteBool(((GLOBAL l) -> C)[BOOL])
 END
 PROC SECTION

@@ -44,7 +44,7 @@ CODE SECTION
  CALL RGreaterThanOrEqualTo(((GLOBAL f29) -> h61)[REAL], (g63 -> h62)[REAL])
  DEF h63 := (RETURN h60) [BOOL]
  DEF h64 := f60 LOR h63 [BOOL]
- f30 := h64 [BOOL]
+ GLOBAL f30 := h64 [BOOL]
  CALL WriteBool(((GLOBAL f30) -> f59)[BOOL])
 END
 PROC SECTION

@@ -38,13 +38,13 @@ BSS SECTION
 CODE SECTION
  CALL IntToReal(((GLOBAL f25) -> g42)[INT])
  DEF g43 := (RETURN g41) [REAL]
- f29 := g43 [REAL]
+ GLOBAL f29 := g43 [REAL]
  CALL IntToReal(((GLOBAL f27) -> g42)[INT])
  DEF g44 := (RETURN g41) [REAL]
- f30 := g44 [REAL]
+ GLOBAL f30 := g44 [REAL]
  CALL RDivide(((GLOBAL f29) -> h58)[REAL], ((GLOBAL f30) -> h59)[REAL])
  DEF h60 := (RETURN h57) [REAL]
- f28 := h60 [REAL]
+ GLOBAL f28 := h60 [REAL]
  DEF h61 := "Result as real: " [STRING]
  CALL WriteString((h61 -> h79)[STRING])
  CALL WriteReal(((GLOBAL f28) -> h81)[REAL])

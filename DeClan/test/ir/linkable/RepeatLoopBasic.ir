@@ -6,7 +6,7 @@ BSS SECTION
  DEF GLOBAL a := 0 [INT]
 CODE SECTION
  DEF b := 1 [INT]
- a := b [INT]
+ GLOBAL a := b [INT]
  DEF c := 10 [INT]
  DEF d := (GLOBAL a) GE c [BOOL]
  DEF e := TRUE [BOOL]
@@ -18,7 +18,7 @@ CODE SECTION
  CALL WriteInt(((GLOBAL a) -> f)[INT])
  DEF g := 1 [INT]
  DEF h := (GLOBAL a) IADD g [INT]
- a := h [INT]
+ GLOBAL a := h [INT]
  DEF i := 10 [INT]
  DEF j := (GLOBAL a) GE i [BOOL]
  d := j [BOOL]

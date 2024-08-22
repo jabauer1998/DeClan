@@ -30,7 +30,7 @@ CODE SECTION
  CALL RGreaterThanOrEqualTo(((GLOBAL f) -> o)[REAL], (n -> p)[REAL])
  DEF r := (RETURN q) [BOOL]
  DEF s := k LOR r [BOOL]
- g := s [BOOL]
+ GLOBAL g := s [BOOL]
  CALL WriteBool(((GLOBAL g) -> j)[BOOL])
 END
 PROC SECTION

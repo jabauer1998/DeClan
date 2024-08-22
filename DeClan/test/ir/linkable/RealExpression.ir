@@ -40,10 +40,10 @@ CODE SECTION
  DEF s := (RETURN j) [REAL]
  CALL RMul(((GLOBAL d) -> t)[REAL], (s -> u)[REAL])
  DEF w := (RETURN v) [REAL]
- r := w [REAL]
+ GLOBAL r := w [REAL]
  CALL RSub(((GLOBAL p) -> x)[REAL], ((GLOBAL r) -> y)[REAL])
  DEF A := (RETURN z) [REAL]
- q := A [REAL]
+ GLOBAL q := A [REAL]
  DEF B := "Result is " [STRING]
  CALL WriteString((B -> C)[STRING])
  CALL WriteReal(((GLOBAL q) -> D)[REAL])

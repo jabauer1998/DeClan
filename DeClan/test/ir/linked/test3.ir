@@ -54,7 +54,7 @@ CODE SECTION
  DEF h10 := (RETURN g97) [REAL]
  CALL Foo(((GLOBAL f28) -> h84)[INT], ((GLOBAL f30) -> i24)[REAL], (h10 -> i25)[REAL])
  DEF i69 := (RETURN i27) [BOOL]
- f32 := i69 [BOOL]
+ GLOBAL f32 := i69 [BOOL]
  DEF i70 := TRUE [BOOL]
  IF (GLOBAL f32) EQ i70
  THEN IFSTAT_0_SEQ_0_LEVEL_0_4
@@ -1707,7 +1707,7 @@ PROC SECTION
   DEF h85 := FALSE [BOOL]
   DEF h86 := 1 [INT]
   DEF h87 := (GLOBAL f28) IADD h86 [INT]
-  f28 := h87 [INT]
+  GLOBAL f28 := h87 [INT]
   DEF h88 := BNOT (GLOBAL f32) [BOOL]
   DEF h89 := TRUE [BOOL]
   IF h88 EQ h89
@@ -1715,7 +1715,7 @@ PROC SECTION
   ELSE IFNEXT_1_SEQ_0_LEVEL_0_2
   LABEL IFSTAT_1_SEQ_0_LEVEL_0_2
   DEF h90 := TRUE [BOOL]
-  f32 := h90 [BOOL]
+  GLOBAL f32 := h90 [BOOL]
   DEF h91 := "Doing foo with arg1=" [STRING]
   CALL WriteString((h91 -> i19)[STRING])
   CALL WriteInt(((GLOBAL f29) -> i21)[INT])

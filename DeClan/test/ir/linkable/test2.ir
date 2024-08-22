@@ -16,7 +16,7 @@ DATA SECTION
 BSS SECTION
  DEF GLOBAL f := 0 [INT]
 CODE SECTION
- f := (GLOBAL e) [INT]
+ GLOBAL f := (GLOBAL e) [INT]
  DEF i := 0 [INT]
  DEF j := (GLOBAL f) LT i [BOOL]
  DEF k := TRUE [BOOL]
@@ -30,7 +30,7 @@ CODE SECTION
  LABEL WHILESTAT_0_SEQ_0_LEVEL_0
  CALL INeg(((GLOBAL f) -> b)[INT])
  DEF l := (RETURN c) [INT]
- f := l [INT]
+ GLOBAL f := l [INT]
  DEF m := 0 [INT]
  DEF n := (GLOBAL f) LT m [BOOL]
  j := n [BOOL]
@@ -55,7 +55,7 @@ CODE SECTION
  LABEL WHILENEXT_0_SEQ_1_LEVEL_0
  LABEL WHILEEND_0_LEVEL_0
  DEF t := 10 [INT]
- f := t [INT]
+ GLOBAL f := t [INT]
  DEF u := 2 [INT]
  LABEL FORBEG_0_LEVEL_0
  IF (GLOBAL f) GT u
@@ -102,7 +102,7 @@ PROC SECTION
   DEF K := 2 [INT]
   CALL Div((J -> L)[INT], (K -> M)[INT])
   DEF O := (RETURN N) [INT]
-  g := O [INT]
+  PARAM g := O [INT]
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_0_LEVEL_0
   DEF P := 0 [INT]
@@ -123,7 +123,7 @@ PROC SECTION
   DEF V := 2 [INT]
   CALL Div(((PARAM g) -> L)[INT], (V -> M)[INT])
   DEF W := (RETURN N) [INT]
-  g := W [INT]
+  PARAM g := W [INT]
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_2_LEVEL_0
   LABEL IFEND_0_LEVEL_0

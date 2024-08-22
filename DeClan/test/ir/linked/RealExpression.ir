@@ -46,10 +46,10 @@ CODE SECTION
  DEF i34 := (RETURN g44) [REAL]
  CALL RMul(((GLOBAL f27) -> i37)[REAL], (i34 -> i38)[REAL])
  DEF i39 := (RETURN i36) [REAL]
- i33 := i39 [REAL]
+ GLOBAL i33 := i39 [REAL]
  CALL RSub(((GLOBAL i31) -> i41)[REAL], ((GLOBAL i33) -> i42)[REAL])
  DEF i43 := (RETURN i40) [REAL]
- i32 := i43 [REAL]
+ GLOBAL i32 := i43 [REAL]
  DEF i44 := "Result is " [STRING]
  CALL WriteString((i44 -> i60)[STRING])
  CALL WriteReal(((GLOBAL i32) -> i62)[REAL])

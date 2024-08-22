@@ -9,7 +9,7 @@ BSS SECTION
  DEF GLOBAL c := 0 [INT]
 CODE SECTION
  DEF d := 0 [INT]
- c := d [INT]
+ GLOBAL c := d [INT]
  DEF e := (GLOBAL c) LT (GLOBAL b) [BOOL]
  DEF f := TRUE [BOOL]
  IF e EQ f
@@ -23,7 +23,7 @@ CODE SECTION
  CALL WriteInt(((GLOBAL c) -> g)[INT])
  DEF h := 1 [INT]
  DEF i := (GLOBAL c) IADD h [INT]
- c := i [INT]
+ GLOBAL c := i [INT]
  DEF j := (GLOBAL c) LT (GLOBAL b) [BOOL]
  e := j [BOOL]
  GOTO WHILECOND_0_SEQ_0_LEVEL_0

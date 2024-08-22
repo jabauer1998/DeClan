@@ -50,7 +50,7 @@ CODE SECTION
  DEF u := (RETURN t) [REAL]
  CALL Foo(((GLOBAL e) -> j)[INT], ((GLOBAL g) -> k)[REAL], (u -> l)[REAL])
  DEF v := (RETURN m) [BOOL]
- i := v [BOOL]
+ GLOBAL i := v [BOOL]
  DEF w := TRUE [BOOL]
  IF (GLOBAL i) EQ w
  THEN IFSTAT_0_SEQ_0_LEVEL_0
@@ -104,7 +104,7 @@ PROC SECTION
   DEF a2 := FALSE [BOOL]
   DEF a3 := 1 [INT]
   DEF a4 := (GLOBAL e) IADD a3 [INT]
-  e := a4 [INT]
+  GLOBAL e := a4 [INT]
   DEF a5 := BNOT (GLOBAL i) [BOOL]
   DEF a6 := TRUE [BOOL]
   IF a5 EQ a6
@@ -112,7 +112,7 @@ PROC SECTION
   ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
   DEF a7 := TRUE [BOOL]
-  i := a7 [BOOL]
+  GLOBAL i := a7 [BOOL]
   DEF a8 := "Doing foo with arg1=" [STRING]
   CALL WriteString((a8 -> a9)[STRING])
   CALL WriteInt(((GLOBAL f) -> x)[INT])

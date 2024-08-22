@@ -38,13 +38,13 @@ BSS SECTION
  DEF GLOBAL f27 := 0.0 [REAL]
 CODE SECTION
  DEF f28 := 1 [INT]
- f25 := f28 [INT]
+ GLOBAL f25 := f28 [INT]
  DEF f29 := 1.0 [REAL]
- f26 := f29 [REAL]
+ GLOBAL f26 := f29 [REAL]
  DEF f30 := 2 [INT]
- f24 := f30 [INT]
+ GLOBAL f24 := f30 [INT]
  DEF f31 := 2.0 [REAL]
- f27 := f31 [REAL]
+ GLOBAL f27 := f31 [REAL]
  CALL WriteInt(((GLOBAL f25) -> f33)[INT])
  CALL WriteReal(((GLOBAL f26) -> f35)[REAL])
  CALL WriteReal(((GLOBAL f27) -> f35)[REAL])
@@ -74,7 +74,7 @@ CODE SECTION
  DEF j22 := 3.1415 [REAL]
  CALL p(((GLOBAL f25) -> j68)[INT], (j22 -> j69)[REAL])
  DEF j70 := (RETURN j67) [INT]
- f24 := j70 [INT]
+ GLOBAL f24 := j70 [INT]
  CALL WriteReal(((GLOBAL f27) -> f35)[REAL])
  CALL WriteLn()
 END

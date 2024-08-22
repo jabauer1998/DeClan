@@ -83,10 +83,10 @@ BSS SECTION
 CODE SECTION
  CALL RDivide(((GLOBAL f27) -> i96)[REAL], ((GLOBAL f27) -> i97)[REAL])
  DEF U := (RETURN i95) [REAL]
- j14 := U [REAL]
+ GLOBAL j14 := U [REAL]
  DEF V := 10 [INT]
  DEF j22 := (GLOBAL i37) IMOD V [INT]
- j17 := j22 [INT]
+ GLOBAL j17 := j22 [INT]
  CALL RNeg(((GLOBAL i31) -> f38)[REAL])
  DEF j23 := (RETURN f37) [REAL]
  CALL IntToReal(((GLOBAL f25) -> g45)[INT])
@@ -95,7 +95,7 @@ CODE SECTION
  DEF j25 := (RETURN i40) [REAL]
  CALL RSub((j23 -> j27)[REAL], (j25 -> j28)[REAL])
  DEF j29 := (RETURN j26) [REAL]
- j15 := j29 [REAL]
+ GLOBAL j15 := j29 [REAL]
  CALL WriteInt(((GLOBAL f25) -> j31)[INT])
  CALL WriteReal(((GLOBAL j14) -> j33)[REAL])
  CALL WriteReal(((GLOBAL j14) -> j33)[REAL])
@@ -103,10 +103,10 @@ CODE SECTION
  CALL WriteLn()
  CALL Div(((GLOBAL i37) -> i54)[INT], ((GLOBAL j17) -> i83)[INT])
  DEF j34 := (RETURN i93) [INT]
- j18 := j34 [INT]
+ GLOBAL j18 := j34 [INT]
  CALL Divide(((GLOBAL i37) -> j42)[INT], ((GLOBAL j17) -> j43)[INT])
  DEF j44 := (RETURN j41) [REAL]
- j16 := j44 [REAL]
+ GLOBAL j16 := j44 [REAL]
  CALL WriteInt(((GLOBAL j18) -> j31)[INT])
  CALL WriteReal(((GLOBAL j16) -> j33)[REAL])
  CALL WriteLn()
@@ -114,7 +114,7 @@ CODE SECTION
  DEF j84 := (RETURN j82) [INT]
  CALL IntToReal((j84 -> g45)[INT])
  DEF j85 := (RETURN g44) [REAL]
- j16 := j85 [REAL]
+ GLOBAL j16 := j85 [REAL]
  CALL WriteReal(((GLOBAL j16) -> j33)[REAL])
  DEF j86 := TRUE [BOOL]
  IF (GLOBAL j13) EQ j86
@@ -141,16 +141,16 @@ CODE SECTION
  CALL RGreaterThan(((GLOBAL j14) -> k22)[REAL], (j93 -> k23)[REAL])
  DEF k24 := (RETURN k21) [BOOL]
  DEF k25 := j92 LAND k24 [BOOL]
- j20 := k25 [BOOL]
+ GLOBAL j20 := k25 [BOOL]
  DEF k26 := BNOT (GLOBAL j13) [BOOL]
  CALL IntToReal(((GLOBAL f25) -> g45)[INT])
  DEF d2 := (RETURN g44) [REAL]
  CALL RGreaterThanOrEqualTo(((GLOBAL j14) -> k28)[REAL], (d2 -> k29)[REAL])
  DEF d6 := (RETURN k27) [BOOL]
  DEF d7 := k26 LOR d6 [BOOL]
- j21 := d7 [BOOL]
+ GLOBAL j21 := d7 [BOOL]
  DEF d8 := (GLOBAL j20) EQ (GLOBAL j21) [BOOL]
- T := d8 [BOOL]
+ GLOBAL T := d8 [BOOL]
  DEF d9 := "Q is " [STRING]
  CALL WriteString((d9 -> k43)[STRING])
  CALL WriteBool(((GLOBAL j21) -> k45)[BOOL])

@@ -29,13 +29,13 @@ BSS SECTION
  DEF GLOBAL d := 0.0 [REAL]
 CODE SECTION
  DEF h := 1 [INT]
- b := h [INT]
+ GLOBAL b := h [INT]
  DEF i := 1.0 [REAL]
- c := i [REAL]
+ GLOBAL c := i [REAL]
  DEF j := 2 [INT]
- a := j [INT]
+ GLOBAL a := j [INT]
  DEF k := 2.0 [REAL]
- d := k [REAL]
+ GLOBAL d := k [REAL]
  CALL WriteInt(((GLOBAL b) -> l)[INT])
  CALL WriteReal(((GLOBAL c) -> m)[REAL])
  CALL WriteReal(((GLOBAL d) -> m)[REAL])
@@ -65,7 +65,7 @@ CODE SECTION
  DEF L := 3.1415 [REAL]
  CALL p(((GLOBAL b) -> e)[INT], (L -> f)[REAL])
  DEF M := (RETURN g) [INT]
- a := M [INT]
+ GLOBAL a := M [INT]
  CALL WriteReal(((GLOBAL d) -> m)[REAL])
  CALL WriteLn()
 END
