@@ -117,33 +117,33 @@ public class MyLinkerTest {
     public void linkProgramWithNothingInCommon(){
        String prog1 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
-                    + " DEF GLOBAL a := 20 [INT]\n"
-                    + " DEF GLOBAL v := 30 [INT]\n"
+                    + " DEF GLOBAL a := 20 <INT>\n"
+                    + " DEF GLOBAL v := 30 <INT>\n"
                     + "BSS SECTION\n"
                     + "CODE SECTION\n"
-                    + " DEF d := (GLOBAL a) IADD (GLOBAL v) [INT]\n"
+                    + " DEF d := (GLOBAL a) IADD (GLOBAL v) <INT>\n"
                     + "END\n"
                     + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
-                    + " DEF GLOBAL a := 3 [INT]\n"
+                    + " DEF GLOBAL a := 3 <INT>\n"
                     + "PROC SECTION\n";
 
         String lib2 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
                     + "PROC SECTION\n"
                     + " PROC LABEL func\n"
-                    + "  DEF a := 3 [INT]\n"
-                    + "  DEF RETURN b := a [INT]\n"
+                    + "  DEF a := 3 <INT>\n"
+                    + "  DEF RETURN b := a <INT>\n"
                     + " RETURN\n";
 
         String res = "SYMBOL SECTION\r\n" + //
                      "DATA SECTION\r\n" + //
-                     " DEF GLOBAL a := 20 [INT]\r\n" + //
-                     " DEF GLOBAL v := 30 [INT]\r\n" + //
+                     " DEF GLOBAL a := 20 <INT>\r\n" + //
+                     " DEF GLOBAL v := 30 <INT>\r\n" + //
                      "CODE SECTION\r\n" + //
-                     " DEF d := a IADD v [INT]\r\n" + //
+                     " DEF d := a IADD v <INT>\r\n" + //
                      "END\r\n" + //
                      "PROC SECTION\r\n";
 
@@ -155,35 +155,35 @@ public class MyLinkerTest {
         String prog1 = "SYMBOL SECTION\n"
                      + "ENTRY a EXTERNAL lib1VariableName\n"
                      + "DATA SECTION\n"
-                     + " DEF GLOBAL v := 30 [INT]\n"
+                     + " DEF GLOBAL v := 30 <INT>\n"
                      + "BSS SECTION\n"
                      + "CODE SECTION\n"
-                     + " d := a IADD v [INT]\n"
+                     + " d := a IADD v <INT>\n"
                      + "END\n"
                      + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
                     + " ENTRY a INTERNAL lib1VariableName\n"
                     + "DATA SECTION\n"
-                    + " DEF GLOBAL a := 3 [INT]\n"
+                    + " DEF GLOBAL a := 3 <INT>\n"
                     + "PROC SECTION\n";
 
         String lib2 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
                     + "PROC SECTION\n"
                     + "PROC LABEL func\n"
-                    + " DEF a := 3 [INT]\n"
-                    + " DEF RETURN b := a [INT]\n"
+                    + " DEF a := 3 <INT>\n"
+                    + " DEF RETURN b := a <INT>\n"
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
                      " ENTRY c INTERNAL lib1VariableName\r\n" + //
                      "DATA SECTION\r\n" + //
-                     " DEF GLOBAL v := 30 [INT]\r\n" + //
-                     " DEF GLOBAL c := 3 [INT]\r\n" + //
+                     " DEF GLOBAL v := 30 <INT>\r\n" + //
+                     " DEF GLOBAL c := 3 <INT>\r\n" + //
                      "BSS SECTION\r\n" +
                      "CODE SECTION\r\n" + //
-                     " d := c IADD v [INT]\r\n" + //
+                     " d := c IADD v <INT>\r\n" + //
                      "END\r\n" + //
                      "PROC SECTION\r\n";
 
@@ -195,39 +195,39 @@ public class MyLinkerTest {
         String prog1 = "SYMBOL SECTION\n"
                      + "ENTRY b EXTERNAL lib1VariableName\n"
                      + "DATA SECTION\n"
-                     + " DEF GLOBAL v := 30 [INT]\n"
-                     + " DEF GLOBAL a := 20 [INT]\n"
+                     + " DEF GLOBAL v := 30 <INT>\n"
+                     + " DEF GLOBAL a := 20 <INT>\n"
                      + "BSS SECTION\n"
                      + "CODE SECTION\n"
-                     + " d := b IADD v [INT]\n"
-                     + " g := d IADD a [INT]\n"
+                     + " d := b IADD v <INT>\n"
+                     + " g := d IADD a <INT>\n"
                      + "END\n"
                      + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
                     + "ENTRY a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
                     + "DATA SECTION\n"
-                    + " DEF GLOBAL a := 3 [INT]\n"
+                    + " DEF GLOBAL a := 3 <INT>\n"
                     + "PROC SECTION\n";
 
         String lib2 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
                     + "PROC SECTION\n"
                     + "PROC LABEL func\n"
-                    + " DEF a := 3 [INT]\n"
-                    + " DEF RETURN b := a [INT]\n"
+                    + " DEF a := 3 <INT>\n"
+                    + " DEF RETURN b := a <INT>\n"
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
                      " ENTRY c INTERNAL lib1VariableName\r\n" + //
                      "DATA SECTION\r\n" + //
-                     " DEF GLOBAL v := 30 [INT]\r\n" + //
-                     " DEF GLOBAL a := 20 [INT]\r\n" + //
-                     " DEF GLOBAL c := 3 [INT]\r\n" + //
+                     " DEF GLOBAL v := 30 <INT>\r\n" + //
+                     " DEF GLOBAL a := 20 <INT>\r\n" + //
+                     " DEF GLOBAL c := 3 <INT>\r\n" + //
                      "BSS SECTION\r\n" +
                      "CODE SECTION\r\n" + //
-                     " d := c IADD v [INT]\r\n" + //
-                     " g := d IADD a [INT]\r\n" + //
+                     " d := c IADD v <INT>\r\n" + //
+                     " g := d IADD a <INT>\r\n" + //
                      "END\r\n" + //
                      "PROC SECTION\r\n";//
 
@@ -240,46 +240,46 @@ public class MyLinkerTest {
                      + " ENTRY v EXTERNAL lib1VariableName\n"
                      + " ENTRY s EXTERNAL RETURN func\n"
                      + "DATA SECTION\n"
-                     + " DEF GLOBAL a := 20 [INT]\n"
-                     + " DEF GLOBAL b := 500 [INT]\n"
+                     + " DEF GLOBAL a := 20 <INT>\n"
+                     + " DEF GLOBAL b := 500 <INT>\n"
                      + "BSS SECTION\n"
                      + "CODE SECTION\n"
                      + " CALL func ( )\n"
-                     + " DEF d := (RETURN s) [INT]"
-                     + " DEF g := d IADD (GLOBAL v) [INT]\n"
+                     + " DEF d := (RETURN s) <INT>"
+                     + " DEF g := d IADD (GLOBAL v) <INT>\n"
                      + "END\n"
                      + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
                     + " ENTRY a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
                     + "DATA SECTION\n"
-                    + " DEF GLOBAL a := 3 [INT]\n"
+                    + " DEF GLOBAL a := 3 <INT>\n"
                     + "PROC SECTION\n";
 
         String lib2 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
                     + "PROC SECTION\n"
                     + "PROC LABEL func\n"
-                    + " DEF a := 3 [INT]\n"
-                    + " DEF RETURN b := a [INT]\n"
+                    + " DEF a := 3 <INT>\n"
+                    + " DEF RETURN b := a <INT>\n"
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
                      " ENTRY f INTERNAL lib1VariableName\r\n" + //
                      "DATA SECTION\r\n" + //
-                     " DEF GLOBAL a := 20 [INT]\r\n" + //
-                     " DEF GLOBAL b := 500 [INT]\r\n" + //
-                     " DEF GLOBAL f := 3 [INT]\r\n" + //
+                     " DEF GLOBAL a := 20 <INT>\r\n" + //
+                     " DEF GLOBAL b := 500 <INT>\r\n" + //
+                     " DEF GLOBAL f := 3 <INT>\r\n" + //
                      "BSS SECTION\r\n" + //
                      "CODE SECTION\r\n" + //
                      " CALL func()\r\n" + //
-                     " DEF d := (RETURN e) [INT]\r\n" + //
-                     " DEF g := d IADD (GLOBAL f) [INT]\r\n" + //
+                     " DEF d := (RETURN e) <INT>\r\n" + //
+                     " DEF g := d IADD (GLOBAL f) <INT>\r\n" + //
                      "END\r\n" + //
                      "PROC SECTION\r\n" + //
                      " PROC LABEL func\r\n" + //
-                     "  DEF c := 3 [INT]\r\n" + //
-                     "  DEF RETURN e := c [INT]\r\n" + //
+                     "  DEF c := 3 <INT>\r\n" + //
+                     "  DEF RETURN e := c <INT>\r\n" + //
                      " RETURN\r\n";
 
                      
@@ -293,13 +293,13 @@ public class MyLinkerTest {
                      + " ENTRY v EXTERNAL lib1VariableName\n"
                      + " ENTRY s EXTERNAL RETURN func2\n"
                      + "DATA SECTION\n"
-                     + " DEF GLOBAL a := 20 [INT]\n"
-                     + " DEF GLOBAL b := 500 [INT]\n"
+                     + " DEF GLOBAL a := 20 <INT>\n"
+                     + " DEF GLOBAL b := 500 <INT>\n"
                      + "BSS SECTION\n"
                      + "CODE SECTION\n"
                      + " CALL func2 ()\n"
-                     + " DEF d := (RETURN s) [INT]\n"
-                     + " g := d IADD (GLOBAL v) [INT]\n"
+                     + " DEF d := (RETURN s) <INT>\n"
+                     + " g := d IADD (GLOBAL v) <INT>\n"
                      + "END\n"
                      + "PROC SECTION\n";
 
@@ -307,45 +307,45 @@ public class MyLinkerTest {
                     + " ENTRY a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
                     + " ENTRY g EXTERNAL RETURN func2\n"
                     + "DATA SECTION\n"
-                    + " DEF GLOBAL a := 3 [INT]\n"
+                    + " DEF GLOBAL a := 3 <INT>\n"
                     + "PROC SECTION\n"
                     + " PROC LABEL func2\n"
                     + "  CALL func1()\n"
-                    + "  DEF b := (RETURN g) [INT]\n"
-                    + "  DEF c := b ISUB (GLOBAL a) [INT]\n"
-                    + "  DEF RETURN d := c [INT]\n"
+                    + "  DEF b := (RETURN g) <INT>\n"
+                    + "  DEF c := b ISUB (GLOBAL a) <INT>\n"
+                    + "  DEF RETURN d := c <INT>\n"
                     + " RETURN\n";
 
         String lib2 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
                     + "PROC SECTION\n"
                     + "PROC LABEL func1\n"
-                    + " DEF a := 3 [INT]\n"
-                    + " DEF RETURN b := a [INT]\n"
+                    + " DEF a := 3 <INT>\n"
+                    + " DEF RETURN b := a <INT>\n"
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
                      " ENTRY j INTERNAL lib1VariableName\r\n" + //
                      "DATA SECTION\r\n" + //
-                     " DEF GLOBAL a := 20 [INT]\r\n" + //
-                     " DEF GLOBAL b := 500 [INT]\r\n" + //
-                     " DEF GLOBAL j := 3 [INT]\r\n" + //
+                     " DEF GLOBAL a := 20 <INT>\r\n" + //
+                     " DEF GLOBAL b := 500 <INT>\r\n" + //
+                     " DEF GLOBAL j := 3 <INT>\r\n" + //
                      "BSS SECTION\r\n" +
                      "CODE SECTION\r\n" + //
-                     " CALL func2 ( ) [INT]\r\n" + //
-                     " DEF e := (RETURN d) [INT]\r\n" + //
-                     " DEF g := e IADD (GLOBAL j) [INT]\r\n" + //
+                     " CALL func2 ( ) <INT>\r\n" + //
+                     " DEF e := (RETURN d) <INT>\r\n" + //
+                     " DEF g := e IADD (GLOBAL j) <INT>\r\n" + //
                      "END\r\n" + //
                      "PROC SECTION\r\n" + //
                      " PROC LABEL func2\r\n" + //
                      "  CALL func1() \r\n" + //
-                     "  DEF f := (RETURN i) [INT]\r\n" + //
-                     "  DEF c := f ISUB (GLOBAL j) [INT]\r\n" + //
-                     "  DEF RETURN d := c [INT]\r\n" + //
+                     "  DEF f := (RETURN i) <INT>\r\n" + //
+                     "  DEF c := f ISUB (GLOBAL j) <INT>\r\n" + //
+                     "  DEF RETURN d := c <INT>\r\n" + //
                      " RETURN\r\n" + //
                      " PROC LABEL func1\r\n" + //
-                     "  DEF h := 3 [INT]\r\n" + //
-                     "  DEF RETURN i := h [INT]\r\n" + //
+                     "  DEF h := 3 <INT>\r\n" + //
+                     "  DEF RETURN i := h <INT>\r\n" + //
                      " RETURN\r\n";
 
          linkProgramStrings(exp, prog1, lib1, lib2);
@@ -357,17 +357,17 @@ public class MyLinkerTest {
                      + " ENTRY v EXTERNAL lib1VariableName\n"
                      + " ENTRY s EXTERNAL RETURN func2\n"
                      + "DATA SECTION\n"
-                     + " DEF GLOBAL a := 20 [INT]\n"
-                     + " DEF GLOBAL b := 500 [INT]\n"
+                     + " DEF GLOBAL a := 20 <INT>\n"
+                     + " DEF GLOBAL b := 500 <INT>\n"
                      + "BSS SECTION\n"
                      + "CODE SECTION\n"
                      + " CALL func2 ( )\n"
-                     + " DEF d := (RETURN s) [INT]\n"
-                     + " DEF g := d IADD (GLOBAL v) [INT]\n"
+                     + " DEF d := (RETURN s) <INT>\n"
+                     + " DEF g := d IADD (GLOBAL v) <INT>\n"
                      + "LABEL begin2\n"
                      + "IF g EQ v THEN begin ELSE end\n"
                      + "LABEL begin\n"
-                     + "DEF g := d IADD (GLOBAL v) [INT]\n"
+                     + "DEF g := d IADD (GLOBAL v) <INT>\n"
                      + "GOTO begin2\n"
                      + "LABEL end\n"
                      + "END\n"
@@ -377,75 +377,75 @@ public class MyLinkerTest {
                     + " ENTRY a INTERNAL lib1VariableName\n"
                     + " ENTRY h INTERNAL RETURN func2\n"
                     + "DATA SECTION\n"
-                    + " DEF GLOBAL a := 3 [INT]\n"
+                    + " DEF GLOBAL a := 3 <INT>\n"
                     + "PROC SECTION\n"
                     + " PROC LABEL func2\n"
                     + "  CALL func1 ()\n"
-                    + "  DEF b := (RETURN h) [INT]\n"
-                    + "  DEF c := b ISUB (GLOBAL a) [INT]\n"
+                    + "  DEF b := (RETURN h) <INT>\n"
+                    + "  DEF c := b ISUB (GLOBAL a) <INT>\n"
                     + "  LABEL begin2\n"
                     + "  IF c EQ b THEN begin ELSE end\n"
                     + "  LABEL begin\n"
-                    + "  DEF e := c IADD b [INT]\n"
+                    + "  DEF e := c IADD b <INT>\n"
                     + "  GOTO begin2\n"
                     + "  LABEL end\n"
-                    + "  DEF RETURN d := e [INT]\n"
+                    + "  DEF RETURN d := e <INT>\n"
                     + " RETURN\n";
 
         String lib2 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
                     + "PROC SECTION\n"
                     + "PROC LABEL func1\n"
-                    + "  DEF a := 3 [INT]\n"
+                    + "  DEF a := 3 <INT>\n"
                     + "  LABEL begin2\n"
                     + "  IF a EQ a THEN begin ELSE end\n"
                     + "  LABEL begin\n"
-                    + "  DEF e := a IADD a [INT]\n"
+                    + "  DEF e := a IADD a <INT>\n"
                     + "  GOTO begin2\n"
                     + "  LABEL end\n"
-                    + "  DEF RETURN b := e [INT]\n"
+                    + "  DEF RETURN b := e <INT>\n"
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
                      " ENTRY l INTERNAL lib1VariableName\r\n" + //
                      "DATA SECTION\r\n" + //
-                     " DEF GLOBAL a := 20 [INT]\r\n" + //
-                     " DEF GLOBAL b := 500 [INT]\r\n" + //
-                     " DEF GLOBAL l := 3 [INT]\r\n" + //
+                     " DEF GLOBAL a := 20 <INT>\r\n" + //
+                     " DEF GLOBAL b := 500 <INT>\r\n" + //
+                     " DEF GLOBAL l := 3 <INT>\r\n" + //
                      "BSS SECTION\r\n" + //
                      "CODE SECTION\r\n" + //
-                     " CALL func2 () [INT]\r\n" + //
-                     " DEF f := (RETURN d) [INT]\r\n" + //
-                     " DEF g := f IADD (GLOBAL l) [INT]\r\n" + //
+                     " CALL func2 ()\r\n" + //
+                     " DEF f := (RETURN d) <INT>\r\n" + //
+                     " DEF g := f IADD (GLOBAL l) <INT>\r\n" + //
                      " LABEL begin2\r\n" + //
                      " IF g EQ (GLOBAL l) THEN begin ELSE end\r\n" + //
                      " LABEL begin\r\n" + //
-                     " DEF g := f IADD (GLOBAL l) [INT]\r\n" + //
+                     " DEF g := f IADD (GLOBAL l) <INT>\r\n" + //
                      " GOTO begin2\r\n" + //
                      " LABEL end\r\n" + //
                      "END\r\n" + //
                      "PROC SECTION\r\n" + //
                      " PROC LABEL func2\r\n" + //
                      "  CALL func1 (  )\r\n" + //
-                     "  DEF i := (RETURN j) [INT]\r\n" + //
-                     "  DEF c := i ISUB (GLOBAL l) [INT]\r\n" + //
+                     "  DEF i := (RETURN j) <INT>\r\n" + //
+                     "  DEF c := i ISUB (GLOBAL l) <INT>\r\n" + //
                      "  LABEL begin2_1\r\n" + //
                      "  IF c EQ i THEN begin_1 ELSE end_1\r\n" + //
                      "  LABEL begin_1\r\n" + //
-                     "  DEF h := c IADD i [INT]\r\n" + //
+                     "  DEF h := c IADD i <INT>\r\n" + //
                      "  GOTO begin2_1\r\n" + //
                      "  LABEL end_1\r\n" + //
-                     "  DEF RETURN d := h [INT]\r\n" + //
+                     "  DEF RETURN d := h <INT>\r\n" + //
                      " RETURN\r\n" + //
                      " PROC LABEL func1\r\n" + //
-                     "  DEF k := 3 [INT]\r\n" + //
+                     "  DEF k := 3 <INT>\r\n" + //
                      "  LABEL begin2_0\r\n" + //
                      "  IF k EQ k THEN begin_0 ELSE end_0\r\n" + //
                      "  LABEL begin_0\r\n" + //
-                     "  DEF e := k IADD k [INT]\r\n" + //
+                     "  DEF e := k IADD k <INT>\r\n" + //
                      "  GOTO begin2_0\r\n" + //
                      "  LABEL end_0\r\n" + //
-                     "  DEF RETURN j := e [INT]\r\n" + //
+                     "  DEF RETURN j := e <INT>\r\n" + //
                      " RETURN\r\n";
 
         linkProgramStrings(exp, prog1, lib1, lib2);

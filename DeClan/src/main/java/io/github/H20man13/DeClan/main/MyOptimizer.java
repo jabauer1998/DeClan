@@ -65,17 +65,9 @@ import io.github.H20man13.DeClan.common.util.Utils;
 public class MyOptimizer {
     private Prog intermediateCode;
     private FlowGraph globalFlowGraph;
-    private AnticipatedExpressionsAnalysis anticipatedAnal;
-    private AvailableExpressionsAnalysis availableAnal;
-    private PostponableExpressionsAnalysis postponableAnal;
-    private UsedExpressionAnalysis usedAnal;
     private ConstantPropogationAnalysis propAnal;
     private LiveVariableAnalysis liveAnal;
     private Map<ICode, Environment<String, LiveInfo>> livelinessInformation;
-    private Map<FlowGraphNode, Set<Exp>> latest;
-    private Map<FlowGraphNode, Set<Exp>> earliest;
-    private Map<ICode, Set<Exp>> used;
-    private Set<Exp> globalFlowSet;
 
     private enum OptName{
         COMMON_SUB_EXPRESSION_ELIMINATION,
@@ -85,16 +77,8 @@ public class MyOptimizer {
 
     public MyOptimizer(Prog intermediateCode){
         this.intermediateCode = intermediateCode;
-        this.latest = new HashMap<FlowGraphNode, Set<Exp>>();
-        this.earliest = new HashMap<FlowGraphNode, Set<Exp>>();
-        this.used = new HashMap<ICode, Set<Exp>>();
-        this.globalFlowSet = new HashSet<Exp>();
         this.livelinessInformation = new HashMap<ICode, Environment<String, LiveInfo>>();
         this.globalFlowGraph = null;
-        this.anticipatedAnal = null;
-        this.availableAnal = null;
-        this.postponableAnal = null;
-        this.usedAnal = null;
         this.propAnal = null;
     }
 
@@ -218,7 +202,7 @@ public class MyOptimizer {
             if(leaderIndex + 1 < firstSize){
                 endIndex = firsts.get(leaderIndex + 1);
             } else {
-                endIndex = intermediateCode.getSize();
+                endIndex = intermediateCode.getSize() - 1;
             }
             List<ICode> basicBlockList = new LinkedList<ICode>();
             for(int i = beginIndex; i <= endIndex; i++){
@@ -659,115 +643,6 @@ public class MyOptimizer {
         return firsts;
     }
 
-    private void buildGlobalExpressionSemilattice(){
-        for(BlockNode block : this.globalFlowGraph.getBlocks()){
-            for(ICode icode : block.getICode()){
-                if(icode instanceof Assign){
-                    Assign ident = (Assign)icode;
-                    if(!Utils.setContainsExp(this.globalFlowSet, ident.value)){
-                        this.globalFlowSet.add(ident.value);
-                    }
-                }
-            }
-        }
-    }
-
-    private void buildEarliest(){
-        this.earliest.put(this.globalFlowGraph.getExit(), new HashSet<Exp>());
-        this.earliest.put(this.globalFlowGraph.getEntry(), new HashSet<Exp>());
-        for(BlockNode block : this.globalFlowGraph.getBlocks()){
-            Set<Exp> earliest = new HashSet<Exp>();
-            for(ICode icode : block.getICode()){
-                earliest.addAll(this.anticipatedAnal.getInstructionInputSet(icode));
-                earliest.removeAll(this.availableAnal.getInstructionInputSet(icode));
-            }
-            this.earliest.put(block, earliest);
-        }
-    }
-
-    private void buildUsedExpressions(){
-        for(BlockNode block : this.globalFlowGraph.getBlocks()){
-            for(ICode icode : block.getICode()){
-                Set<Exp> blockUsed = new HashSet<Exp>();
-                if(icode instanceof Assign){
-                    Assign utilICode = (Assign)icode;
-                    blockUsed.add(utilICode.value);
-                } else if(icode instanceof If){
-                    If ifICode = (If)icode;
-                    blockUsed.add(ifICode.exp);
-                }
-                this.used.put(icode, blockUsed);
-            }
-        }
-    }
-
-    private void runAvailableExpressionAnalysis(){
-        this.availableAnal = new AvailableExpressionsAnalysis(this.globalFlowGraph, this.globalFlowSet);
-        this.availableAnal.run();
-    }
-
-    private void runAnticipatedExpressionAnalysis(){
-        this.anticipatedAnal = new AnticipatedExpressionsAnalysis(this.globalFlowGraph, this.globalFlowSet);    
-        this.anticipatedAnal.run();
-    }
-
-    private void runPosponableExpressionAnalysis(){
-        this.postponableAnal = new PostponableExpressionsAnalysis(this.globalFlowGraph, this.globalFlowSet, this.earliest, this.used);
-        this.postponableAnal.run();
-    }
-
-    private void buildLatest(){
-        for(BlockNode block : this.globalFlowGraph.getBlocks()){
-            Set<Exp> latest = new HashSet<Exp>();
-            
-            Map<FlowGraphNode, Set<Exp>> earliestUnionPosponableSaved = new HashMap<FlowGraphNode, Set<Exp>>();
-            for (FlowGraphNode sucessor : block.getSuccessors()){
-                Set<Exp> earliestUnionPosponable = new HashSet<Exp>();
-
-                Set<Exp> earliestOfSuccessor = earliest.get(sucessor);
-                earliestUnionPosponable.addAll(earliestOfSuccessor);
-
-                Set<Exp> postponableInput = postponableAnal.getBlockInputSet(sucessor);
-                earliestUnionPosponable.addAll(postponableInput);
-
-                earliestUnionPosponableSaved.put(sucessor, earliestUnionPosponable);
-            }
-
-            Set<Exp> intersectionOfAllSucessors = new HashSet<Exp>();
-            intersectionOfAllSucessors.addAll(this.globalFlowSet);
-
-            for(FlowGraphNode sucessor : block.getSuccessors()){
-                Set<Exp> earliestUnionPosponable = earliestUnionPosponableSaved.get(sucessor);
-                intersectionOfAllSucessors.retainAll(earliestUnionPosponable);
-            }
-
-            Set<Exp> usedUnionCompliment = new HashSet<Exp>();
-
-            Set<Exp> compliment = new HashSet<Exp>();
-            compliment.addAll(this.globalFlowSet);
-            compliment.removeAll(intersectionOfAllSucessors);
-
-            for(ICode icode : block.getICode()){
-                usedUnionCompliment.addAll(this.used.get(icode));
-            }
-            usedUnionCompliment.addAll(compliment);
-
-            Set<Exp> earliestUnionPosponable = new HashSet<Exp>();
-            earliestUnionPosponable.addAll(this.earliest.get(block));
-            earliestUnionPosponable.addAll(this.postponableAnal.getBlockInputSet(block));
-
-            latest.addAll(earliestUnionPosponable);
-            latest.retainAll(usedUnionCompliment);
-
-            this.latest.put(block, latest);
-        }
-    }
-
-    private void runUsedExpressionAnalysis(){
-        this.usedAnal = new UsedExpressionAnalysis(this.globalFlowGraph, this.used, this.latest);
-        this.usedAnal.run();
-    }
-
     private void runConstantPropogationAnalysis(){
         if(this.globalFlowGraph == null){
             buildFlowGraph();
@@ -783,66 +658,6 @@ public class MyOptimizer {
         this.liveAnal = new LiveVariableAnalysis(this.globalFlowGraph);
         this.liveAnal.run();
     }
-
-    /*
-    public void performPartialRedundancyElimination(){
-        for(BlockNode block : this.globalFlowGraph.getBlocks()){
-            Set<Exp> latestInstructionUsedOutput = new HashSet<Exp>();
-            latestInstructionUsedOutput.addAll(this.latest.get(block));
-            latestInstructionUsedOutput.retainAll(this.usedAnal.getBlockOutputSet(block));
-
-            Map<Exp, String> identifierMap = new HashMap<Exp, String>();
-            List<ICode> toPreAppendToBeginning = new LinkedList<ICode>();
-            for(Exp latestInstructionOutput : latestInstructionUsedOutput){
-                String register = gen.genNext();
-                toPreAppendToBeginning.add(new Assign(register, latestInstructionOutput));
-                identifierMap.put(latestInstructionOutput, register);
-            }
-
-            Set<Exp> notLatest = new HashSet<Exp>();
-            notLatest.addAll(this.globalFlowSet);
-            notLatest.removeAll(this.latest.get(block));
-
-            Set<Exp> notLatestUnionUsedOut = new HashSet<Exp>();
-            notLatestUnionUsedOut.addAll(notLatest);
-            notLatestUnionUsedOut.addAll(usedAnal.getBlockOutputSet(block));
-
-            Set<Exp> useIntersectionNotLatestUnionUsedOut = new HashSet<Exp>();
-
-            for(ICode icode : block.getICode()){
-                useIntersectionNotLatestUnionUsedOut.addAll(this.used.get(icode));
-            }
-
-            useIntersectionNotLatestUnionUsedOut.retainAll(notLatestUnionUsedOut);
-            
-
-            List<ICode> icodeList = block.getICode();
-            for(int i = 0; i < icodeList.size(); i++){
-                ICode elem = icodeList.get(i);
-                if(elem instanceof Assign){
-                    Assign assignElem = (Assign)elem;
-                    String place = assignElem.place;
-                    Exp codeExp = assignElem.value;
-                    if(codeExp != null && place != null){
-                        if(Utils.setContainsExp(useIntersectionNotLatestUnionUsedOut, codeExp)){
-                            String value = identifierMap.get(codeExp);
-                            if(value != null){
-                                Assign var = new Assign(place, new IdentExp(value));
-                                icodeList.set(i, var);
-                            }
-                        }
-                    }
-                }
-            }
-            
-            List<ICode> resultList = new LinkedList<ICode>();
-            resultList.addAll(toPreAppendToBeginning);
-            resultList.addAll(icodeList);
-
-            block.getBlock().setICode(resultList);
-        }
-    }
-    */
 
     public void performDeadCodeElimination(){
         setUpOptimization(OptName.DEAD_CODE_ELIMINATION);
