@@ -200,7 +200,7 @@ public class MyOptimizer {
             int beginIndex = firsts.get(leaderIndex);
             int endIndex;
             if(leaderIndex + 1 < firstSize){
-                endIndex = firsts.get(leaderIndex + 1);
+                endIndex = firsts.get(leaderIndex + 1) - 1;
             } else {
                 endIndex = intermediateCode.getSize() - 1;
             }
