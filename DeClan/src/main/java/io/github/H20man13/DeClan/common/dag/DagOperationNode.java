@@ -25,9 +25,10 @@ public class DagOperationNode implements DagNode {
     private Op operation;
     private ValueType type;
     private ScopeType scope;
+    private boolean isDefinition;
 
     
-    public DagOperationNode(ScopeType scope, String identifier, Op operation, List<DagNode> children, ValueType type){
+    public DagOperationNode(boolean isDefinition, ScopeType scope, String identifier, Op operation, List<DagNode> children, ValueType type){
         this.children = new LinkedList<DagNode>();
         this.children.addAll(children);
         for(DagNode child : children){
@@ -40,6 +41,7 @@ public class DagOperationNode implements DagNode {
         this.ancestors = new ArrayList<>();
         this.scope = scope;
         this.type = type;
+        this.isDefinition = isDefinition;
     }
 
     public List<String> getIdentifiers(){
@@ -60,7 +62,7 @@ public class DagOperationNode implements DagNode {
 
     @Override
     public boolean containsId(IdentExp ident) {
-        return this.identifiers.contains(ident) && ConversionUtils.assignScopeToDagScopeType(ident.scope) == scope;
+        return this.identifiers.contains(ident.ident) && ConversionUtils.assignScopeToDagScopeType(ident.scope) == scope;
     }
 
     @Override
@@ -116,7 +118,46 @@ public class DagOperationNode implements DagNode {
     public List<DagNode> getChildren() {
         return this.children;
     }
-
+    
+    @Override
+    public String toString() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append(identifiers.toString());
+    	int maxChildLength = 0;
+    	for(DagNode child: children) {
+    		maxChildLength += child.getIdentifiers().toString().length();
+    	}
+    	maxChildLength -= (identifiers.toString().length() + children.getLast().getIdentifiers().toString().length()) - 1;
+    	
+    	for(int i = 0; i < maxChildLength; i++) {
+    		sb.append('-');
+    	}
+    	sb.append('\n');
+    	for(int x = 0; x < 2; x++) {
+    		sb.append('|');
+    		for(int i = 1; i < children.size(); i++) {
+    			DagNode pastChild = children.get(i - 1);
+    			for(int z = 0; z < pastChild.getIdentifiers().toString().length() - 1; z++) {
+    				sb.append(' ');
+    			}
+    			sb.append('|');
+        	}
+    		sb.append('\n');
+    	}
+    	sb.append('V');
+		for(int i = 1; i < children.size(); i++) {
+			DagNode pastChild = children.get(i - 1);
+			for(int z = 0; z < pastChild.getIdentifiers().toString().length() - 1; z++) {
+				sb.append(' ');
+			}
+			sb.append('V');
+			sb.append('\n');
+    	}
+    	for(DagNode child: children) {
+    		sb.append(child.getIdentifiers().toString());
+    	}
+    	return sb.toString();
+    }
     public Op getOperator(){
         return this.operation;
     }
@@ -129,5 +170,9 @@ public class DagOperationNode implements DagNode {
     @Override
     public ValueType getValueType() {
         return this.type;
+    }
+    
+    public boolean isDef() {
+    	return isDefinition;
     }
 }

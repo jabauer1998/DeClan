@@ -20,7 +20,7 @@ public class End implements ICode {
 
 	@Override
 	public boolean isBranch() {
-		return false;
+		return true;
 	}
 
 	@Override

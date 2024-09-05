@@ -19,7 +19,7 @@ import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 
-public class LiveVariableAnalysis extends Analysis<String> {
+public class LiveVariableAnalysis extends InstructionAnalysis<String> {
 
     private Map<ICode, Set<String>> defSets;
     private Map<ICode, Set<String>> useSets;
@@ -84,7 +84,7 @@ public class LiveVariableAnalysis extends Analysis<String> {
     }
 
     @Override
-    public Set<String> transferFunction(FlowGraphNode block, ICode instruction, Set<String> inputSet) {
+    public Set<String> transferFunction(ICode instruction, Set<String> inputSet) {
         Set<String> resultSet = new HashSet<String>();
 
         resultSet.addAll(inputSet);

@@ -10,7 +10,7 @@ import javax.swing.RowFilter.Entry;
 import io.github.H20man13.DeClan.common.icode.ICode;
 
 public class EntryNode implements FlowGraphNode {
-    private FlowGraphNode entry;
+    public FlowGraphNode entry;
 
     public EntryNode(FlowGraphNode entry){
         this.entry = entry;   

@@ -13,8 +13,9 @@ public class DagVariableNode implements DagNode {
     private List<DagNode> ancestors;
     private ValueType varType;
     private ScopeType scope;
+    private boolean isDefinition;
 
-    public DagVariableNode(ScopeType scope, String ident, DagNode child, ValueType type){
+    public DagVariableNode(boolean isDefinition, ScopeType scope, String ident, DagNode child, ValueType type){
         this.identifiers = new LinkedList<>();
         this.ancestors = new ArrayList<>();
         child.addAncestor(this);
@@ -22,6 +23,11 @@ public class DagVariableNode implements DagNode {
         this.child = child;
         this.varType = type;
         this.scope = scope;
+        this.isDefinition = isDefinition;
+     }
+    
+    public boolean isDef() {
+    	return isDefinition;
     }
 
     public DagNode getChild(){
@@ -91,5 +97,14 @@ public class DagVariableNode implements DagNode {
     @Override
     public ValueType getValueType() {
         return this.varType;
+    }
+    
+    @Override
+    public String toString() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append(identifiers.toString());
+    	sb.append("\n|\n|\nV\n");
+    	sb.append(child.getIdentifiers().toString());
+    	return sb.toString();
     }
 }

@@ -25,11 +25,11 @@ public class MyOptimizerTest {
     public void testSimpleCommonSubExpressionElimination(){
         String inputSource = "SYMBOL SECTION\n"
                            + "DATA SECTION\n"
-                           + "GLOBAL a := 1 <INT>\n"
-                           + "GLOBAL b := 2 <INT>\n" 
-                           + "i := a IADD b <INT>\n"
-                           + "z := a IADD b <INT>\n"
-                           + "f := z IADD i <INT>\n"
+                           + "DEF a := 1 <INT>\n"
+                           + "DEF b := 2 <INT>\n" 
+                           + "DEF GLOBAL i := a IADD b <INT>\n"
+                           + "DEF GLOBAL z := a IADD b <INT>\n"
+                           + "DEF GLOBAL f := (GLOBAL z) IADD (GLOBAL i) <INT>\n"
                            + "BSS SECTION\n"
                            + "CODE SECTION\n"
                            + "END\n"
@@ -37,11 +37,10 @@ public class MyOptimizerTest {
 
         String targetSource = "SYMBOL SECTION\r\n"
                             + "DATA SECTION\r\n"
-                            + " GLOBAL a := 1 <INT>\r\n"
-                            + " GLOBAL b := 2 <INT>\r\n"
-                            + " i := a IADD b <INT>\r\n"
-                            + " z := i <INT>\r\n"
-                            + " f := i IADD i <INT>\r\n"
+                            + " DEF a := 1 <INT>\r\n"
+                            + " DEF b := 2 <INT>\r\n"
+                            + " DEF GLOBAL i := a IADD b <INT>\r\n"
+                            + " DEF GLOBAL f := (GLOBAL i) IADD (GLOBAL i) <INT>\r\n"
                             + "BSS SECTION\r\n"
                             + "CODE SECTION\r\n"
                             + "END\r\n"
@@ -65,33 +64,39 @@ public class MyOptimizerTest {
     public void testComplexCommonSubExpressionElimination(){
         String inputSource = "SYMBOL SECTION\n"
                            + "DATA SECTION\n"
+                           + " DEF GLOBAL t := TRUE <BOOL>\n"
                            + "BSS SECTION\n"
                            + "CODE SECTION\n"
                            + " LABEL block1\n"
-                           + " a := 1 <INT>\n"
-                           + " b := 2 <INT>\n" 
-                           + " i := a IADD b <INT>\n"
-                           + " z := a IADD b <INT>\n"
-                           + " f := z IADD i <INT>\n"
+                           + " DEF a := 1 <INT>\n"
+                           + " DEF b := 2 <INT>\n" 
+                           + " DEF i := a IADD b <INT>\n"
+                           + " DEF z := a IADD b <INT>\n"
+                           + " DEF f := z IADD i <INT>\n"
                            + " LABEL block2\n"
-                           + " IF z EQ TRUE THEN block1 ELSE block2\n"
+                           + " IF z EQ t "
+                           + " THEN block1 "
+                           + " ELSE block2\n"
                            + "END\n"
                            + "PROC SECTION\n";
 
         String targetSource = "SYMBOL SECTION\r\n" + //
-                        "DATA SECTION\r\n" + //
-                        "BSS SECTION\r\n" + //
-                        "CODE SECTION\r\n" + //
-                        " LABEL block1\r\n" + //
-                        " a := 1 <INT>\r\n" + //
-                        " b := 2 <INT>\r\n" + //
-                        " i := a IADD b <INT>\r\n" + //
-                        " z := i <INT>\r\n" + //
-                        " f := i IADD i <INT>\r\n" + //
-                        " LABEL block2\r\n" + //
-                        " IF z EQ TRUE THEN block1 ELSE block2\r\n" + //
-                        "END\r\n" + //
-                        "PROC SECTION\r\n";
+                              "DATA SECTION\r\n" + //
+                              " DEF GLOBAL t := TRUE <BOOL>\r\n" + //
+	                          "BSS SECTION\r\n" + //
+	                          "CODE SECTION\r\n" + //
+	                          " LABEL block1\r\n" + //
+	                          " DEF a := 1 <INT>\r\n" + //
+	                          " DEF b := 2 <INT>\r\n" + //
+	                          " DEF i := a IADD b <INT>\r\n" + //
+	                          " DEF z := i <INT>\r\n" + //
+	                          " DEF f := i IADD i <INT>\r\n" + //
+	                          " LABEL block2\r\n" + //
+	                          " IF z EQ t\r\n" + //
+	                          " THEN block1\r\n" + //
+	                          " ELSE block2\r\n" + //
+	                          "END\r\n" + //
+	                          "PROC SECTION\r\n";
 
         ErrorLog errLog = new ErrorLog();
         ReaderSource source = new ReaderSource(new StringReader(inputSource));
@@ -109,31 +114,33 @@ public class MyOptimizerTest {
     public void testDeadCodeElimination(){
         String inputSource = "SYMBOL SECTION\n"
                            + "DATA SECTION\n"
-                           + "  DEF GLOBAL z := TRUE <BOOL>\n"
+                           + " DEF GLOBAL g := TRUE <BOOL>\n"
                            + "BSS SECTION\n"
                            + "CODE SECTION\n"
                            + "LABEL block1\n"
-                           + "a := 1 <INT>\n"
-                           + "b := 60 <INT>\n" 
-                           + "i := a IADD a <INT>\n"
-                           + "g := i IADD a <INT>\n"
+                           + "DEF a := 1 <INT>\n"
+                           + "DEF b := 60 <INT>\n" 
+                           + "DEF i := a IADD a <INT>\n"
+                           + "DEF g := i IADD a <INT>\n"
                            + "CALL func ([i -> x]<INT>)\n"
-                           + "f := (RETURN z) <INT>\n"
-                           + "IF f EQ (GLOBAL z) THEN block1 ELSE block1\n"
+                           + "DEF f := (RETURN z) <INT>\n"
+                           + "IF f EQ (GLOBAL g) THEN block1 ELSE block1\n"
                            + "END\n"
                            + "PROC SECTION\n";
 
         String targetSource =   "SYMBOL SECTION\r\n" + //
                                 "DATA SECTION\r\n" + //
-                                " DEF GLOBAL z := TRUE <BOOL>\r\n" + //
+                                " DEF GLOBAL g := TRUE <BOOL>\r\n" + //
                                 "BSS SECTION\r\n" + //
                                 "CODE SECTION\r\n" + //
                                 " LABEL block1\r\n" + //
-                                " a := 1 <INT>\r\n" + //
-                                " i := a IADD a <INT>\r\n" + //
+                                " DEF a := 1 <INT>\r\n" + //
+                                " DEF i := a IADD a <INT>\r\n" + //
                                 " CALL func([i -> x]<INT>)\r\n" + //
-                                " f := (RETURN z) <INT>\r\n" + //
-                                " IF f EQ TRUE THEN block1 ELSE block1\r\n" + //
+                                " DEF f := (RETURN z) <INT>\r\n" + //
+                                " IF f EQ (GLOBAL g)\r\n" + //
+                                " THEN block1\r\n" + //
+                                " ELSE block1\r\n" + //
                                 "END\r\n" + //
                                 "PROC SECTION\r\n";
 

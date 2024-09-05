@@ -23,7 +23,7 @@ import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.OpUtil;
 import io.github.H20man13.DeClan.common.util.Utils;
 
-public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Exp>> {
+public class ConstantPropogationAnalysis extends InstructionAnalysis<Tuple<String, Exp>> {
 
     private Map<ICode, Set<Tuple<String, Exp>>> constDefinitions;
     private Map<ICode, Set<Tuple<String, Exp>>> killDefinitions;
@@ -163,7 +163,7 @@ public class ConstantPropogationAnalysis extends Analysis<Tuple<String, Exp>> {
     }
 
     @Override
-    public Set<Tuple<String, Exp>> transferFunction(FlowGraphNode block, ICode instruction, Set<Tuple<String, Exp>> inputSet){
+    public Set<Tuple<String, Exp>> transferFunction(ICode instruction, Set<Tuple<String, Exp>> inputSet){
         Set<Tuple<String, Exp>> result = new HashSet<Tuple<String, Exp>>();
         result.addAll(inputSet);
 

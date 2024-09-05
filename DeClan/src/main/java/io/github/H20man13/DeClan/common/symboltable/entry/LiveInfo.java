@@ -15,4 +15,17 @@ public class LiveInfo implements Copyable<LiveInfo>{
     public LiveInfo copy() {
         return new LiveInfo(this.isAlive, this.nextUse);
     }
+    
+    @Override
+    public String toString() {
+    	StringBuilder sb = new StringBuilder();
+    	if(isAlive) {
+    		sb.append("Is Alive at ");
+    	} else {
+    		sb.append("Is Dead at ");
+    	}
+    	
+    	sb.append(nextUse);
+    	return sb.toString();
+    }
 }

@@ -50,6 +50,10 @@ public class DagNullNode implements DagNode {
             }
         }
     }
+    
+    public String toString() {
+    	return identifiers.toString();
+    }
 
     @Override
     public boolean isRoot() {

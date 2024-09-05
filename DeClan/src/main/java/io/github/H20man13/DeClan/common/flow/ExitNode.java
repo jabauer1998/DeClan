@@ -8,7 +8,7 @@ import java.util.Set;
 import io.github.H20man13.DeClan.common.icode.ICode;
 
 public class ExitNode implements FlowGraphNode{
-    private FlowGraphNode exit;
+    public FlowGraphNode exit;
 
     public ExitNode(BlockNode exit){
         this.exit = exit;

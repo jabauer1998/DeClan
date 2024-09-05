@@ -10,27 +10,28 @@ import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 
-public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
+public class AnticipatedExpressionsAnalysis extends BasicBlockAnalysis<Exp>{
 
-    private Map<ICode, Set<Exp>> genSets;
-    private Map<ICode, Set<Exp>> killSets;
+    private Map<FlowGraphNode, Set<Exp>> genSets;
+    private Map<FlowGraphNode, Set<Exp>> killSets;
 
     public AnticipatedExpressionsAnalysis(FlowGraph flowGraph, Set<Exp> globalFlowSet) {
         super(flowGraph, Direction.BACKWARDS, Meet.INTERSECTION, globalFlowSet);
-        genSets = new HashMap<ICode, Set<Exp>>();
-        killSets =  new HashMap<ICode, Set<Exp>>();
+        genSets = new HashMap<FlowGraphNode, Set<Exp>>();
+        killSets =  new HashMap<FlowGraphNode, Set<Exp>>();
 
         for(BlockNode block : flowGraph.getBlocks()){
-            List<ICode> codeList = block.getAllICode();
+            List<ICode> codeList = block.getICode();
+            Set<Exp> instructionKill = new HashSet<Exp>();
+            Set<Exp> instructionGen = new HashSet<Exp>();
             for(int i = codeList.size() - 1; i >= 0; i--){
-                Set<Exp> instructionKill = new HashSet<Exp>();
-                Set<Exp> instructionGen = new HashSet<Exp>();
                 ICode icode = codeList.get(i);
                 if(icode instanceof Assign){
                     Assign assIcode = (Assign)icode;
@@ -81,10 +82,60 @@ public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
                             instructionGen.add(exp);
                         }
                     }
+                } else if(icode instanceof Def) {
+                	Def definition = (Def)icode;
+                    if(definition.val instanceof IdentExp){
+                        IdentExp exp = (IdentExp)definition.val;
+                        int defIndex = searchForDefinition(codeList, i, exp.ident);
+                        if(defIndex != -1){
+                            if(!searchForPreviousExpression(codeList, defIndex, exp)){
+                                instructionKill.add(exp);
+                            }
+                        } else {
+                                instructionGen.add(exp);
+                        }
+                    } else if(definition.val instanceof UnExp){
+                        UnExp exp = (UnExp)definition.val;
+
+                        if(!exp.right.isConstant()){
+                            int defIndex = searchForDefinition(codeList, i, exp.right.toString());
+
+                            if(defIndex != -1){
+                                if(!searchForPreviousExpression(codeList, defIndex, exp)){
+                                    instructionKill.add(exp);
+                                }
+                            } else {
+                                instructionGen.add(exp);
+                            }
+                        }
+                    } else if(definition.val instanceof BinExp){
+                        BinExp exp = (BinExp)definition.val;
+
+                        int defIndex1 = searchForDefinition(codeList, i, exp.left.toString());
+                        int defIndex2 = searchForDefinition(codeList, i, exp.right.toString());
+
+                        if(defIndex1 != -1 || defIndex2 != -1){
+                            boolean shouldKill = false;
+                            if(defIndex1 != -1 && !searchForPreviousExpression(codeList, defIndex1, exp)){
+                                shouldKill = true;
+                            }
+
+                            if(defIndex2 != -1 && !searchForPreviousExpression(codeList, defIndex2, exp)){
+                                shouldKill = true;
+                            }
+
+                            if(shouldKill){
+                                instructionKill.add(exp);
+                            }
+                        } else {
+                            instructionGen.add(exp);
+                        }
+                    }
                 }
-                killSets.put(icode, instructionKill);
-                genSets.put(icode, instructionGen);
             }
+            
+            genSets.put(block, instructionGen);
+            killSets.put(block, instructionKill);
         }
     }
 
@@ -118,12 +169,12 @@ public class AnticipatedExpressionsAnalysis extends Analysis<Exp>{
 
 
     @Override
-    public Set<Exp> transferFunction(FlowGraphNode block, ICode instruction, Set<Exp> inputSet) {
+    public Set<Exp> transferFunction(FlowGraphNode block, Set<Exp> inputSet) {
         Set<Exp> result = new HashSet<Exp>();
         
         result.addAll(inputSet);
-        result.removeAll(killSets.get(instruction));
-        result.addAll(genSets.get(instruction));
+        result.removeAll(killSets.get(block));
+        result.addAll(genSets.get(block));
 
         return result;
     }

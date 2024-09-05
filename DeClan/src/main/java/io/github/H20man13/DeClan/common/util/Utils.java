@@ -96,38 +96,38 @@ public class Utils {
         return false;
     }
 
-    public static DagNode createBinaryNode(ICode.Scope origScope, BinExp.Operator op, String place, DagNode left, DagNode right) {
+    public static DagNode createBinaryNode(boolean isDefinition, ICode.Scope origScope, BinExp.Operator op, String place, DagNode left, DagNode right) {
         ScopeType scope = ConversionUtils.assignScopeToDagScopeType(origScope);
         switch(op){
-            case IADD: return factory.createIntegerAdditionNode(scope, place, left, right);
-            case ISUB: return factory.createIntegerSubtractionNode(scope, place, left, right);
-            case IMUL: return factory.createIntegerMultiplicationNode(scope, place, left, right);
-            case IDIV: return factory.createIntegerDivNode(scope, place, left, right);
-            case LAND: return factory.createLogicalAndNode(scope, place, left, right);
-            case IAND: return factory.createBitwiseAndNode(scope, place, left, right);
-            case IOR: return factory.createBitwiseOrNode(scope, place, left, right);
-            case IXOR: return factory.createBitwiseXorNode(scope, place, left, right);
-            case ILSHIFT: return factory.createLeftShiftNode(scope, place, left, right);
-            case IRSHIFT: return factory.createRightShiftNode(scope, place, left, right);
-            case IMOD: return factory.createIntegerModuleNode(scope, place, left, right);
-            case LOR: return factory.createLogicalOrNode(scope, place, left, right);
-            case GT: return factory.createGreaterThanNode(scope, place, left, right);
-            case GE: return factory.createGreaterThanOrEqualNode(scope, place, left, right);
-            case LT: return factory.createLessThanNode(scope, place, left, right);
-            case LE: return factory.createLessThanOrEqualNode(scope, place, left, right);
-            case EQ: return factory.createEqualsNode(scope, place, left, right);
-            case NE: return factory.createNotEqualsNode(scope, place, left, right);
+            case IADD: return factory.createIntegerAdditionNode(isDefinition, scope, place, left, right);
+            case ISUB: return factory.createIntegerSubtractionNode(isDefinition, scope, place, left, right);
+            case IMUL: return factory.createIntegerMultiplicationNode(isDefinition, scope, place, left, right);
+            case IDIV: return factory.createIntegerDivNode(isDefinition, scope, place, left, right);
+            case LAND: return factory.createLogicalAndNode(isDefinition, scope, place, left, right);
+            case IAND: return factory.createBitwiseAndNode(isDefinition, scope, place, left, right);
+            case IOR: return factory.createBitwiseOrNode(isDefinition, scope, place, left, right);
+            case IXOR: return factory.createBitwiseXorNode(isDefinition, scope, place, left, right);
+            case ILSHIFT: return factory.createLeftShiftNode(isDefinition, scope, place, left, right);
+            case IRSHIFT: return factory.createRightShiftNode(isDefinition, scope, place, left, right);
+            case IMOD: return factory.createIntegerModuleNode(isDefinition, scope, place, left, right);
+            case LOR: return factory.createLogicalOrNode(isDefinition, scope, place, left, right);
+            case GT: return factory.createGreaterThanNode(isDefinition, scope, place, left, right);
+            case GE: return factory.createGreaterThanOrEqualNode(isDefinition, scope, place, left, right);
+            case LT: return factory.createLessThanNode(isDefinition, scope, place, left, right);
+            case LE: return factory.createLessThanOrEqualNode(isDefinition, scope, place, left, right);
+            case EQ: return factory.createEqualsNode(isDefinition, scope, place, left, right);
+            case NE: return factory.createNotEqualsNode(isDefinition, scope, place, left, right);
             default: throw new UtilityException("createBinaryNode", "Error cant create binary node with operator " + op);
         }
     }
 
-    public static DagNode createUnaryNode(ICode.Scope origScope, UnExp.Operator op, String place, DagNode right){
+    public static DagNode createUnaryNode(boolean isDefinition, ICode.Scope origScope, UnExp.Operator op, String place, DagNode right){
         ScopeType scope = ConversionUtils.assignScopeToDagScopeType(origScope);
         switch(op){
-            case INEG: return factory.createIntegerNegationNode(scope, place, right);
-            case RNEG: return factory.createRealNegationNode(scope, place, right);
-            case BNOT: return factory.createNotNode(scope, place, right);
-            case INOT: return factory.createBitwiseNotNode(scope, place, right);
+            case INEG: return factory.createIntegerNegationNode(isDefinition, scope, place, right);
+            case RNEG: return factory.createRealNegationNode(isDefinition, scope, place, right);
+            case BNOT: return factory.createNotNode(isDefinition, scope, place, right);
+            case INOT: return factory.createBitwiseNotNode(isDefinition, scope, place, right);
             default: throw new UtilityException("createUnaryNode", "Cant create Unary Node with operator " + op);
         }
     }
@@ -184,7 +184,23 @@ public class Utils {
                 return true;
             } else if(lastICode instanceof Call){
                 return true;
-            }else {
+            } else if(lastICode instanceof End){
+            	return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+    
+    public static boolean endOfBlockIsEnd(BasicBlock block){
+        List<ICode> codeInBlock = block.getIcode();
+        if(codeInBlock.size() > 0){
+            ICode lastICode = codeInBlock.get(codeInBlock.size() - 1);
+            if(lastICode instanceof End){
+            	return true;
+            } else {
                 return false;
             }
         } else {
@@ -268,16 +284,54 @@ public class Utils {
      sb.append(endString);
      return sb.toString();
   }
+  
+  public enum WhiteSpaceType{
+	  TRAILING,
+	  LEADING
+  }
+  
+  public static String padWhiteSpace(String input, int expectedLength, WhiteSpaceType type) {
+	  int actualLength = input.length();
+	  if(actualLength > expectedLength)
+		  throw new UtilityException("padWhiteSpace", "The actual length of string-\n" + input + "(Length=" + actualLength + ")\n exceded the expected length " + expectedLength);
+	  
+	  if(actualLength == expectedLength)
+		  return input;
+	  
+	  int numSpaces = expectedLength - actualLength;
+	  StringBuilder sb = new StringBuilder();
+	  
+	  if(type == WhiteSpaceType.LEADING)
+		  for(int i = 0; i < numSpaces; i++)
+			  sb.append(' ');
+	  
+	  sb.append(input);
+	  
+	  if(type == WhiteSpaceType.TRAILING)
+		 for(int i = 0; i < numSpaces; i++)
+			 sb.append(' ');
+	  
+	  return sb.toString();
+  }
 
   public static String to32BitBinary(Float realValue){
      Integer asInt = Float.floatToRawIntBits(realValue);
      return to32BitBinary(asInt);
   }
 
-    public static void deleteFile(String fileName){
-        File file = new File(fileName);
-        if(file.exists()){
-            file.delete();
-        }
+  public static void deleteFile(String fileName){
+    File file = new File(fileName);
+    if(file.exists()){
+        file.delete();
     }
+  }
+  
+  public static int getLengthOfUnsignedNumber(int number) {
+	  int count = 1;
+	  while(number >= 10) {
+		  count++;
+		  number /= 10;
+	  }
+	  return count;
+  }
 }

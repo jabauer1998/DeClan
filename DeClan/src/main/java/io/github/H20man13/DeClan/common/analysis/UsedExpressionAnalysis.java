@@ -9,7 +9,7 @@ import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 
-public class UsedExpressionAnalysis extends Analysis<Exp> {
+public class UsedExpressionAnalysis extends BasicBlockAnalysis<Exp> {
     private Map<ICode, Set<Exp>> usedSets;
     private Map<FlowGraphNode, Set<Exp>> latest;
 
@@ -21,10 +21,10 @@ public class UsedExpressionAnalysis extends Analysis<Exp> {
     }
 
     @Override
-    public Set<Exp> transferFunction(FlowGraphNode block, ICode Node, Set<Exp> inputSet) {
+    public Set<Exp> transferFunction(FlowGraphNode block, Set<Exp> inputSet) {
         Set<Exp> result = new HashSet<Exp>();
 
-        Set<Exp> usedInBlock = usedSets.get(Node);
+        Set<Exp> usedInBlock = usedSets.get(block);
         result.addAll(usedInBlock);
         result.addAll(inputSet);
         result.removeAll(latest.get(block));

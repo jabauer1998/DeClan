@@ -1,12 +1,16 @@
 package io.github.H20man13.DeClan.common.dag;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.util.Utils;
 
-public class DagGraph {
+public class DagGraph{
     private List<DagNode> dagNodes;
 
     public DagGraph(){
@@ -58,6 +62,20 @@ public class DagGraph {
             }
         }
         return null;
+    }
+    
+    @Override
+    public String toString() {
+    	StringBuilder sb = new StringBuilder();
+    	for(int i = 0; i < dagNodes.size(); i++) {
+    		DagNode node = dagNodes.get(i);
+    		sb.append("[Node ");
+    		sb.append(i);
+    		sb.append('\n');
+    		sb.append(Utils.formatStringToLeadingWhiteSpace("   " + node.toString()));
+    		sb.append("\n]\n");
+    	}
+    	return sb.toString();
     }
 
     public List<DagNode> getDagNodes(){
