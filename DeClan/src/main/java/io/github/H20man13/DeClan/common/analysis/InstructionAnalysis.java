@@ -36,19 +36,18 @@ public abstract class InstructionAnalysis<SetType> extends Analysis<ICode, SetTy
     public void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semiLattice){
         if(direction == Direction.FORWARDS){
             Map<ICode, Set<SetType>> outputCache = new HashMap<ICode, Set<SetType>>();
-            Map<ICode, Set<SetType>> outputOfBlock = new HashMap<ICode, Set<SetType>>();
 
             for(BlockNode block : flowGraph.getBlocks()){
             	if(block.getICode().size() > 0) {
             		ICode lastICode = block.getICode().getLast();
             		Set<SetType> semilatticeCopy = new HashSet<SetType>();
                     semilatticeCopy.addAll(semiLattice);
-                    outputOfBlock.put(lastICode, semilatticeCopy);
+                    addOutputSet(lastICode, semilatticeCopy);
             	}
             }
 
-            while(changesHaveOccured(outputOfBlock, outputCache)){
-                outputCache = deepCopyMap(outputOfBlock);
+            while(changesHaveOccuredOnOutputs(outputCache)){
+                outputCache = deepCopyOutputMap();
                 for(BlockNode block : flowGraph.getBlocks()){
                     Set<SetType> inputSet = new HashSet<SetType>();
 
@@ -66,28 +65,22 @@ public abstract class InstructionAnalysis<SetType> extends Analysis<ICode, SetTy
                         inputSet = transferFunction(instr, inputSet);
                         addOutputSet(instr, inputSet);
                     }
-                    
-                    if(!block.getICode().isEmpty()) {
-                    	ICode last = block.getICode().getLast();
-                    	outputOfBlock.put(last, inputSet);
-                    }
                 }
             }
         } else {
             Map<ICode, Set<SetType>> inputCache = new HashMap<ICode, Set<SetType>>();
-            Map<ICode, Set<SetType>> inputToBlock = new HashMap<ICode, Set<SetType>>();
 
             for(BlockNode block : flowGraph.getBlocks()){
             	if(!block.getICode().isEmpty()) {
             		ICode firstICode = block.getICode().getFirst();
             		Set<SetType> semilatticeCopy = new HashSet<SetType>();
             		semilatticeCopy.addAll(semiLattice);
-            		inputToBlock.put(firstICode, semilatticeCopy);
+            		addInputSet(firstICode, semilatticeCopy);
             	}
             }
 
-            while(changesHaveOccured(inputToBlock, inputCache)){
-                inputCache = deepCopyMap(inputToBlock);
+            while(changesHaveOccuredOnInputs(inputCache)){
+                inputCache = deepCopyInputMap();
                 List<BlockNode> blocks = flowGraph.getBlocks();
                 for(int b = blocks.size() - 1; b >= 0; b--){
                     BlockNode block = blocks.get(b);
@@ -97,22 +90,17 @@ public abstract class InstructionAnalysis<SetType> extends Analysis<ICode, SetTy
                     for(FlowGraphNode node : block.getSuccessors()){
                     	if(!node.getICode().isEmpty()) {
                     		ICode first = node.getICode().getFirst();
-                    		sucessorLists.add(this.getInputSet(first));
+                    		sucessorLists.add(getInputSet(first));
                     	}
                     }
                     outputSet = meetOperation.apply(sucessorLists);
 
-                    List<ICode> icodeList = block.getAllICode();
+                    List<ICode> icodeList = block.getICode();
                     for(int i = icodeList.size() - 1; i >= 0; i--){
                         ICode icode = icodeList.get(i);
                         addOutputSet(icode, outputSet);
                         outputSet = transferFunction(icode, outputSet);
                         addInputSet(icode, outputSet);
-                    }
-                    
-                    if(!block.getICode().isEmpty()) {
-                    	ICode firstICode = block.getICode().getFirst();
-                    	inputToBlock.put(firstICode, outputSet);
                     }
                 }
             }

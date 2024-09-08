@@ -122,14 +122,34 @@ public abstract class Analysis<AnalysisType, SetType> implements AnalysisBase {
     	mappedInputs.put(anslysisType, setToAdd);
     }
     
-    protected boolean changesHaveOccured(Map<AnalysisType, Set<SetType>> actual, Map<AnalysisType, Set<SetType>> cached){
-        Set<AnalysisType> keys = actual.keySet();
+    protected Map<AnalysisType, Set<SetType>> deepCopyOutputMap() {
+    	Map<AnalysisType, Set<SetType>> result = new HashMap<AnalysisType, Set<SetType>>();
+        for(AnalysisType key : mappedOutputs.keySet()){
+            Set<SetType> resultSet = new HashSet<SetType>();
+            resultSet.addAll(mappedOutputs.get(key));
+            result.put(key, resultSet);
+        }
+        return result;
+    }
+    
+    protected Map<AnalysisType, Set<SetType>> deepCopyInputMap() {
+    	Map<AnalysisType, Set<SetType>> result = new HashMap<AnalysisType, Set<SetType>>();
+        for(AnalysisType key : mappedInputs.keySet()){
+            Set<SetType> resultSet = new HashSet<SetType>();
+            resultSet.addAll(mappedInputs.get(key));
+            result.put(key, resultSet);
+        }
+        return result;
+    }
+    
+    protected boolean changesHaveOccuredOnOutputs(Map<AnalysisType, Set<SetType>> cached){
+        Set<AnalysisType> keys = mappedOutputs.keySet();
         for(AnalysisType key : keys){
             if(!cached.containsKey(key)){
                 return true;
             }
 
-            Set<SetType> actualData = actual.get(key);
+            Set<SetType> actualData = mappedOutputs.get(key);
             Set<SetType> cachedData = cached.get(key);
 
             if(actualData.size() != cachedData.size()){
@@ -144,14 +164,26 @@ public abstract class Analysis<AnalysisType, SetType> implements AnalysisBase {
         return false;
     }
     
-    protected Map<AnalysisType, Set<SetType>> deepCopyMap(Map<AnalysisType, Set<SetType>> outputsOrInputs) {
-        Map<AnalysisType, Set<SetType>> result = new HashMap<AnalysisType, Set<SetType>>();
-        for(AnalysisType key : outputsOrInputs.keySet()){
-            Set<SetType> resultSet = new HashSet<SetType>();
-            resultSet.addAll(outputsOrInputs.get(key));
-            result.put(key, resultSet);
+    protected boolean changesHaveOccuredOnInputs(Map<AnalysisType, Set<SetType>> cached){
+        Set<AnalysisType> keys = mappedInputs.keySet();
+        for(AnalysisType key : keys){
+            if(!cached.containsKey(key)){
+                return true;
+            }
+
+            Set<SetType> actualData = mappedInputs.get(key);
+            Set<SetType> cachedData = cached.get(key);
+
+            if(actualData.size() != cachedData.size()){
+                return true;
+            }
+
+            if(!actualData.equals(cachedData)){
+                return true;
+            }
         }
-        return result;
+
+        return false;
     }
     
     public void run() {

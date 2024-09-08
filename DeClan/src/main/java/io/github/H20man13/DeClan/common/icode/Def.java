@@ -19,7 +19,7 @@ public class Def implements ICode {
 
     @Override
     public boolean isConstant() {
-        return false;    
+        return val.isConstant();  
     }
 
     @Override

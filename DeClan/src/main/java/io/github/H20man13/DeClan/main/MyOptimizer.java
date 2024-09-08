@@ -68,7 +68,6 @@ public class MyOptimizer {
     private FlowGraph globalFlowGraph;
     private ConstantPropogationAnalysis propAnal;
     private LiveVariableAnalysis liveAnal;
-    private Map<ICode, Environment<String, LiveInfo>> livelinessInformation;
 
     private enum OptName{
         COMMON_SUB_EXPRESSION_ELIMINATION,
@@ -78,9 +77,9 @@ public class MyOptimizer {
 
     public MyOptimizer(Prog intermediateCode){
         this.intermediateCode = intermediateCode;
-        this.livelinessInformation = new HashMap<ICode, Environment<String, LiveInfo>>();
         this.globalFlowGraph = null;
         this.propAnal = null;
+        this.liveAnal = null;
     }
 
     public LiveVariableAnalysis getLiveVariableAnalysis(){
@@ -129,7 +128,9 @@ public class MyOptimizer {
     }
 
     private static void linkUpFunctionCalls(List<BlockNode> nodes, Map<String, BlockNode> functionBlocks){
-        for(BlockNode node : nodes){
+        int nodeSize = nodes.size();
+    	for(int i = 0; i < nodeSize; i++){
+        	BlockNode node = nodes.get(i);
             BasicBlock block = node.getBlock();
             if(Utils.endOfBlockIsJump(block)){
                 ICode lastCode = block.getIcode().get(block.getIcode().size() - 1);
@@ -139,6 +140,10 @@ public class MyOptimizer {
                     if(labeledNode != null){
                         node.addSuccessor(labeledNode);
                         labeledNode.addPredecessor(node);
+                    } else if(i + 1 < nodeSize) {
+                    	BlockNode retNode = nodes.get(i + 1);
+                    	node.addSuccessor(retNode);
+                    	retNode.addPredecessor(node);
                     }
                 }
             }
@@ -280,110 +285,6 @@ public class MyOptimizer {
     	throw new OptimizerException("findEndingBlock", "Cant find block with End Exception");
     }
 
-    private void updateICodeLivelinessInformation(Environment<String, LiveInfo> symbolTable, ICode icode, int x){
-        if(icode instanceof Assign){
-            Assign icodeAssign = (Assign)icode;
-            if(icodeAssign.value instanceof IdentExp){
-                IdentExp identExp = (IdentExp)icodeAssign.value;
-                symbolTable.addEntry(identExp.ident, new LiveInfo(true, x));
-            } else if(icodeAssign.value instanceof BinExp){
-                BinExp binExp = (BinExp)icodeAssign.value;
-
-                if(binExp.right instanceof IdentExp){
-                    IdentExp rightExp = (IdentExp)binExp.right;
-                    symbolTable.addEntry(rightExp.ident, new LiveInfo(true, x));
-                }
-
-                if(binExp.left instanceof IdentExp){
-                    IdentExp leftExp = (IdentExp)binExp.left;
-                    symbolTable.addEntry(leftExp.ident, new LiveInfo(true, x));
-                }
-            } else if(icodeAssign.value instanceof UnExp){
-                UnExp unExp = (UnExp)icodeAssign.value;
-
-                if(unExp.right instanceof IdentExp){
-                    IdentExp rightExp = (IdentExp)unExp.right;
-                    symbolTable.addEntry(rightExp.ident, new LiveInfo(true, x));
-                }
-            }
-        } else if(icode instanceof Def){
-        	Def icodeAssign = (Def)icode;
-            symbolTable.addEntry(icodeAssign.label, new LiveInfo(false, x));
-            if(icodeAssign.val instanceof IdentExp){
-                IdentExp identExp = (IdentExp)icodeAssign.val;
-                symbolTable.addEntry(identExp.ident, new LiveInfo(true, x));
-            } else if(icodeAssign.val instanceof BinExp){
-                BinExp binExp = (BinExp)icodeAssign.val;
-
-                if(binExp.right instanceof IdentExp){
-                    IdentExp rightExp = (IdentExp)binExp.right;
-                    symbolTable.addEntry(rightExp.ident, new LiveInfo(true, x));
-                }
-
-                if(binExp.left instanceof IdentExp){
-                    IdentExp leftExp = (IdentExp)binExp.left;
-                    symbolTable.addEntry(leftExp.ident, new LiveInfo(true, x));
-                }
-            } else if(icodeAssign.val instanceof UnExp){
-                UnExp unExp = (UnExp)icodeAssign.val;
-
-                if(unExp.right instanceof IdentExp){
-                    IdentExp rightExp = (IdentExp)unExp.right;
-                    symbolTable.addEntry(rightExp.ident, new LiveInfo(true, x));
-                }
-            }
-        } else if(icode instanceof If){
-            If ifStat = (If)icode;
-
-            BinExp binExp = ifStat.exp;
-
-            if(binExp.left instanceof IdentExp){
-                IdentExp leftIdent = (IdentExp)binExp.left;
-                symbolTable.addEntry(leftIdent.ident, new LiveInfo(true, x));
-            }
-
-            if(binExp.right instanceof IdentExp){
-                IdentExp rightIdent = (IdentExp)binExp.right;
-                symbolTable.addEntry(rightIdent.ident, new LiveInfo(true, x));
-            }
-        } else if(icode instanceof Call){
-            Call icodeCall = (Call)icode;
-            for(Def param : icodeCall.params){
-                if(param.val instanceof IdentExp){
-                    IdentExp paramVal = (IdentExp)param.val;
-                    symbolTable.addEntry(paramVal.ident, new LiveInfo(true, x));
-                } else if(param.val instanceof UnExp){
-                    UnExp exp = (UnExp)param.val;
-                    symbolTable.addEntry(exp.right.ident, new LiveInfo(true, x));
-                } else if(param.val instanceof BinExp){
-                    BinExp exp = (BinExp)param.val;
-                    symbolTable.addEntry(exp.left.ident, new LiveInfo(true, x));
-                    symbolTable.addEntry(exp.right.ident, new LiveInfo(true, x));
-                }
-            }
-        } else if(icode instanceof Inline) {
-        	Inline icodeInline = (Inline)icode;
-        	for(IdentExp ident: icodeInline.params) {
-        		symbolTable.addEntry(ident.ident, new LiveInfo(true, x));
-        	}
-        }
-        livelinessInformation.put(icode, symbolTable.copy());
-    }
-
-    private void updateCodeLivelinessInformation(Environment<String, LiveInfo> symbolTable){
-        int size = intermediateCode.getSize();
-        for(int i = size - 1; i >= 0; i--){
-            ICode icode = intermediateCode.getInstruction(i);
-            updateICodeLivelinessInformation(symbolTable, icode, i);
-        }
-    }
-
-    private void updateLiveLinessInformation() {
-        Environment<String, LiveInfo> symbolTable = new Environment<String, LiveInfo>();
-        symbolTable.addScope();
-        updateCodeLivelinessInformation(symbolTable);
-    }
-
     public void rebuildFromFlowGraph(){
         if(this.globalFlowGraph != null){
             this.intermediateCode = new Prog(false);
@@ -401,23 +302,39 @@ public class MyOptimizer {
                 DagGraph dag = buildDagForBlock(block, true);
                 regenerateICodeForBlock(block, dag);
             }
-            rebuildFromFlowGraph();
             cleanUpOptimization(OptName.COMMON_SUB_EXPRESSION_ELIMINATION);
     }
+    
+    private void resetLiveVariableAnalysis() {
+    	this.liveAnal = null;
+    }
+    
+    private void resetFlowGraph() {
+    	this.globalFlowGraph = null;
+    }
+    
+    private void resetConstantPropogationAnalysis() {
+    	this.propAnal = null;
+    }
+    
+    
 
     private void cleanUpOptimization(OptName name){
         switch(name){
             case COMMON_SUB_EXPRESSION_ELIMINATION:
-                this.globalFlowGraph = null;
-                this.livelinessInformation = new HashMap<ICode, Environment<String, LiveInfo>>();
+            	rebuildFromFlowGraph();
+                resetFlowGraph();
+                resetLiveVariableAnalysis();
                 break;
             case CONSTANT_PROPOGATION:
-                this.propAnal = null;
-                this.globalFlowGraph = null;
+            	rebuildFromFlowGraph();
+                resetConstantPropogationAnalysis();
+                resetFlowGraph();
                 break;
             case DEAD_CODE_ELIMINATION:
-                this.liveAnal = null;
-                this.globalFlowGraph = null;
+            	rebuildFromFlowGraph();
+            	resetFlowGraph();
+                resetLiveVariableAnalysis();
                 break;
         }
     }
@@ -425,8 +342,8 @@ public class MyOptimizer {
     private void setUpOptimization(OptName name){
         switch(name){
             case COMMON_SUB_EXPRESSION_ELIMINATION:
-                updateLiveLinessInformation();
                 buildFlowGraph();
+                runLiveVariableAnalysis();
                 break;
             case CONSTANT_PROPOGATION:
                 buildFlowGraph();
@@ -443,7 +360,7 @@ public class MyOptimizer {
         List<ICode> result = new LinkedList<ICode>();
         List<ICode> initialList = block.getICode();
 
-        Environment<String, LiveInfo> liveAtEndOfBlock = this.livelinessInformation.get(initialList.get(initialList.size() - 1));
+        Set<String> liveAtEndOfBlock = this.liveAnal.getInputSet(initialList.get(initialList.size() - 1));
 
         for(DagNode node : dag.getDagNodes()){
         	if(node instanceof DagIgnoredInstruction) {
@@ -452,11 +369,8 @@ public class MyOptimizer {
         	} else {
         		List<String> isAlive = new LinkedList<String>();
                 for(String identifier: node.getIdentifiers()){
-                    if(liveAtEndOfBlock.entryExists(identifier)){
-                        LiveInfo info = liveAtEndOfBlock.getEntry(identifier);
-                        if(info.isAlive){
-                            isAlive.add(identifier);
-                        }
+                    if(liveAtEndOfBlock.contains(identifier)){
+                    	isAlive.add(identifier);
                     }
                 }
 
@@ -549,15 +463,12 @@ public class MyOptimizer {
         block.getBlock().setICode(result);
     }
 
-    private static IdentExp getIdentifier(DagNode node, Environment<String, LiveInfo> table){
+    private static IdentExp getIdentifier(DagNode node, Set<String> table){
         List<String> identifiers = node.getIdentifiers();
         ScopeType scope = node.getScopeType();
         for(String identifier : identifiers){
-            if(table.entryExists(identifier)){
-                LiveInfo life = table.getEntry(identifier);
-                if(life.isAlive){
-                    return new IdentExp(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier);
-                }
+            if(table.contains(identifier)){
+            	return new IdentExp(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier);
             }
         }
 
@@ -805,28 +716,44 @@ public class MyOptimizer {
     }
 
     public void performDeadCodeElimination(){
-        setUpOptimization(OptName.DEAD_CODE_ELIMINATION);
-        for(BlockNode block : this.globalFlowGraph.getBlocks()){
-            List<ICode> result = new LinkedList<ICode>();
-            for(ICode icode : block.getICode()){
-                if(icode instanceof Assign){
-                    Assign assICode = (Assign)icode;
-                    Set<String> liveVariables = this.liveAnal.getOutputSet(icode);
-                    if(liveVariables.contains(assICode.place)){
-                        result.add(assICode);
+        boolean changes = true;
+        while(changes) {
+        	changes = false;
+        	setUpOptimization(OptName.DEAD_CODE_ELIMINATION);
+        	for(BlockNode block : this.globalFlowGraph.getBlocks()){
+                List<ICode> result = new LinkedList<ICode>();
+                for(ICode icode : block.getICode()){
+                    if(icode instanceof Assign){
+                        Assign assICode = (Assign)icode;
+                        Set<String> liveVariables = this.liveAnal.getOutputSet(icode);
+                        if(liveVariables.contains(assICode.place)){
+                            result.add(assICode);
+                        } else {
+                        	changes = true;
+                        }
+                    } else if(icode instanceof Def){
+                    	Def assICode = (Def)icode;
+                    	Set<String> liveVariables = this.liveAnal.getOutputSet(icode);
+                        if(liveVariables.contains(assICode.label)){
+                            result.add(assICode);
+                        } else {
+                        	changes = true;
+                        }
+                    } else {
+                        result.add(icode);
                     }
-                } else {
-                    result.add(icode);
                 }
+                block.getBlock().setICode(result);
             }
-            block.getBlock().setICode(result);
+        	cleanUpOptimization(OptName.DEAD_CODE_ELIMINATION);
         }
-        rebuildFromFlowGraph();
-        cleanUpOptimization(OptName.DEAD_CODE_ELIMINATION);
     }
 
     public void performConstantPropogation(){
-            setUpOptimization(OptName.CONSTANT_PROPOGATION);
+        boolean changes = true;
+        while(changes) {
+        	changes = false;
+        	setUpOptimization(OptName.CONSTANT_PROPOGATION);
             for(BlockNode block : this.globalFlowGraph.getBlocks()){
                 List<ICode> icodeList = block.getICode();
                 for(int i = 0; i < icodeList.size(); i++){
@@ -844,6 +771,7 @@ public class MyOptimizer {
                                     sourceVal = identVal.ident;
                                 } else if(rightHandSide.isConstant()){
                                     varICode.value = rightHandSide;
+                                    changes = true;
                                     break;
                                 } else {
                                     break;
@@ -885,108 +813,126 @@ public class MyOptimizer {
                                         Object rightValEq = ConversionUtils.getValue(rightExp);
                                         Object resultEq = OpUtil.equal(leftValEq, rightValEq);
                                         varICode.value = ConversionUtils.valueToExp(resultEq);
+                                        changes = true;
                                         break;
                                     case NE:
                                         Object leftValNe = ConversionUtils.getValue(leftExp);
                                         Object rightValNe = ConversionUtils.getValue(rightExp);
                                         Object resultNe = OpUtil.notEqual(leftValNe, rightValNe);
                                         varICode.value = ConversionUtils.valueToExp(resultNe);
+                                        changes = true;
                                         break;
                                     case IADD:
                                         Object leftValueIAdd = ConversionUtils.getValue(leftExp);
                                         Object rightValueIAdd = ConversionUtils.getValue(rightExp);
                                         Object resultIAdd = OpUtil.iAdd(leftValueIAdd, rightValueIAdd);
                                         varICode.value = ConversionUtils.valueToExp(resultIAdd);
+                                        changes = true;
                                         break;
                                     case ISUB:
                                         Object leftValueISub = ConversionUtils.getValue(leftExp);
                                         Object rightValueISub = ConversionUtils.getValue(rightExp);
                                         Object resultISub = OpUtil.iSub(leftValueISub, rightValueISub);
                                         varICode.value = ConversionUtils.valueToExp(resultISub);
+                                        changes = true;
                                         break;
                                     case IMUL:
                                         Object leftValueIMul = ConversionUtils.getValue(leftExp);
                                         Object rightValueIMul = ConversionUtils.getValue(rightExp);
                                         Object resultIMul = OpUtil.iMul(leftValueIMul, rightValueIMul);
                                         varICode.value = ConversionUtils.valueToExp(resultIMul);
+                                        changes = true;
                                         break;
                                     case IDIV:
                                         Object leftValueIDiv = ConversionUtils.getValue(leftExp);
                                         Object rightValueIDiv = ConversionUtils.getValue(rightExp);
                                         Object resultIDiv = OpUtil.iDiv(leftValueIDiv, rightValueIDiv);
                                         varICode.value = ConversionUtils.valueToExp(resultIDiv);
+                                        changes = true;
                                         break;
                                     case IMOD:
                                         Object leftValueIMod = ConversionUtils.getValue(leftExp);
                                         Object rightValueIMod = ConversionUtils.getValue(rightExp);
                                         Object resultIMod = OpUtil.iMod(leftValueIMod, rightValueIMod);
                                         varICode.value = ConversionUtils.valueToExp(resultIMod);
+                                        changes = true;
                                         break;
                                     case ILSHIFT:
                                         Object leftValueILShift = ConversionUtils.getValue(leftExp);
                                         Object rightValueILShift = ConversionUtils.getValue(rightExp);
                                         Object resultILShift = OpUtil.leftShift(leftValueILShift, rightValueILShift);
                                         varICode.value = ConversionUtils.valueToExp(resultILShift);
+                                        changes = true;
                                         break;
                                     case IRSHIFT:
                                         Object leftValueIRShift = ConversionUtils.getValue(leftExp);
                                         Object rightValueIRShift = ConversionUtils.getValue(rightExp);
                                         Object resultIRShift = OpUtil.rightShift(leftValueIRShift, rightValueIRShift);
                                         varICode.value = ConversionUtils.valueToExp(resultIRShift);
+                                        changes = true;
                                         break;
                                     case IAND: 
                                         Object leftValueIAnd = ConversionUtils.getValue(leftExp);
                                         Object rightValueIAnd = ConversionUtils.getValue(rightExp);
                                         Object resultIAnd = OpUtil.bitwiseAnd(leftValueIAnd, rightValueIAnd);
                                         varICode.value = ConversionUtils.valueToExp(resultIAnd);
+                                        changes = true;
                                         break;
                                     case IOR:
                                         Object leftValueIOr = ConversionUtils.getValue(leftExp);
                                         Object rightValueIOr = ConversionUtils.getValue(rightExp);
                                         Object resultIOr = OpUtil.bitwiseOr(leftValueIOr, rightValueIOr);
                                         varICode.value = ConversionUtils.valueToExp(resultIOr);
+                                        changes = true;
                                         break;
                                     case IXOR:
                                         Object leftValueXOr = ConversionUtils.getValue(leftExp);
                                         Object rightValueXOr = ConversionUtils.getValue(rightExp);
                                         Object resultXor = OpUtil.bitwiseXor(leftValueXOr, rightValueXOr);
                                         varICode.value = ConversionUtils.valueToExp(resultXor);
+                                        changes = true;
                                         break;
                                     case GE:
                                         Object leftValueGe = ConversionUtils.getValue(leftExp);
                                         Object rightValueGe = ConversionUtils.getValue(rightExp);
                                         Object resultValueGe = OpUtil.greaterThanOrEqualTo(leftValueGe, rightValueGe);
                                         varICode.value = ConversionUtils.valueToExp(resultValueGe);
+                                        changes = true;
                                         break;
                                     case GT:
                                         Object leftValueGt = ConversionUtils.getValue(leftExp);
                                         Object rightValueGt = ConversionUtils.getValue(rightExp);
                                         Object resultValueGt = OpUtil.greaterThan(leftValueGt, rightValueGt);
                                         varICode.value = ConversionUtils.valueToExp(resultValueGt);
+                                        changes = true;
                                         break;
                                     case LE:
                                         Object leftValueLe = ConversionUtils.getValue(leftExp);
                                         Object rightValueLe = ConversionUtils.getValue(rightExp);
                                         Object resultLe = OpUtil.lessThanOrEqualTo(leftValueLe, rightValueLe);
                                         varICode.value = ConversionUtils.valueToExp(resultLe);
+                                        changes = true;
                                         break;
                                     case LT:
                                         Object leftValueLt = ConversionUtils.getValue(leftExp);
                                         Object rightValueLt = ConversionUtils.getValue(rightExp);
                                         Object resultLt = OpUtil.lessThan(leftValueLt, rightValueLt);
                                         varICode.value = ConversionUtils.valueToExp(resultLt);
+                                        changes = true;
                                         break;
                                     case LAND:
                                         Object leftValueLand = ConversionUtils.getValue(leftExp);
                                         Object rightValueLand = ConversionUtils.getValue(rightExp);
                                         Object resultLand = OpUtil.and(leftValueLand, rightValueLand);
                                         varICode.value = ConversionUtils.valueToExp(resultLand);
+                                        changes = true;
                                         break;
                                     case LOR:
                                         Object leftValueLor = ConversionUtils.getValue(leftExp);
                                         Object rightValueLor = ConversionUtils.getValue(rightExp);
                                         Object resultLor = OpUtil.or(leftValueLor, rightValueLor);
                                         varICode.value = ConversionUtils.valueToExp(resultLor);
+                                        changes = true;
                                         break;
                                     default:
                                         throw new OptimizerException(icode.getClass().getEnclosingMethod().getName(), "UnExpected binary operation found when optomizing expression " + varICode.value);
@@ -994,6 +940,227 @@ public class MyOptimizer {
                             }
                         } else if(varICode.value instanceof UnExp){
                             UnExp unExpVal = (UnExp)varICode.value;
+    
+                            IdentExp identRight = unExpVal.right;
+                            String sourceVal = identRight.ident;
+                            Exp rightExp = identRight;
+                            while(Utils.containsExpInSet(values, sourceVal)){
+                                rightExp = Utils.getExpFromSet(values, sourceVal);
+                                if(rightExp instanceof IdentExp){
+                                    identRight = (IdentExp)rightExp;
+                                    sourceVal = identRight.ident;
+                                    changes = true;
+                                } else {
+                                    break;
+                                }
+                            }
+
+                            if(rightExp.isConstant()){
+                                switch(unExpVal.op){
+                                    case INEG:
+                                        Object rightValINeg = ConversionUtils.getValue(rightExp);
+                                        Object resultINeg = OpUtil.iNegate(rightValINeg);
+                                        varICode.value = ConversionUtils.valueToExp(resultINeg);
+                                        changes = true;
+                                        break;
+                                    case INOT:
+                                        Object rightValueINot = ConversionUtils.getValue(rightExp);
+                                        Object resultINot = OpUtil.bitwiseNot(rightValueINot);
+                                        varICode.value = ConversionUtils.valueToExp(resultINot);
+                                        changes = true;
+                                        break;
+                                    case BNOT:
+                                        Object rightValueBNot = ConversionUtils.getValue(rightExp);
+                                        Object resultBNot = OpUtil.not(rightValueBNot);
+                                        varICode.value = ConversionUtils.valueToExp(resultBNot);
+                                        changes = true;
+                                        break;
+                                    default:
+                                        throw new OptimizerException(rightExp.getClass().getEnclosingMethod().getName(), "Error invalid operation in " + unExpVal);
+                                }
+                            }
+                        }
+                    } else if(icode instanceof Def){
+                        Def varICode = (Def)icode;
+                        if(varICode.val instanceof IdentExp){
+                            IdentExp identVal = (IdentExp)varICode.val;
+                            String sourceVal = identVal.ident;
+                            while(Utils.containsExpInSet(values, sourceVal)){
+                                Exp rightHandSide = Utils.getExpFromSet(values, sourceVal);
+                                if(rightHandSide instanceof IdentExp){
+                                    identVal = (IdentExp)rightHandSide;
+                                    sourceVal = identVal.ident;
+                                } else if(rightHandSide.isConstant()){
+                                    varICode.val = rightHandSide;
+                                    changes = true;
+                                    break;
+                                } else {
+                                    break;
+                                }
+                            }
+                        } else if(varICode.val instanceof BinExp){
+                            BinExp binExpVal = (BinExp)varICode.val;
+
+                            IdentExp identLeft = binExpVal.left;
+                            String sourceVal1 = identLeft.ident;
+                            Exp leftExp = identLeft;
+                            while(Utils.containsExpInSet(values, sourceVal1)){
+                                leftExp = Utils.getExpFromSet(values, sourceVal1);
+                                if(leftExp instanceof IdentExp){
+                                    identLeft = (IdentExp)leftExp;
+                                    sourceVal1 = identLeft.ident;
+                                } else {
+                                    break;
+                                }
+                            }
+    
+                            IdentExp identRight = (IdentExp)binExpVal.right;
+                            String sourceVal2 = identRight.ident;
+                            Exp rightExp = identRight;
+                            while(Utils.containsExpInSet(values, sourceVal2)){
+                                rightExp = Utils.getExpFromSet(values, sourceVal2);
+                                if(rightExp instanceof IdentExp){
+                                    identRight = (IdentExp)rightExp;
+                                    sourceVal2 = identRight.ident;
+                                } else {
+                                    break;
+                                }
+                            }
+
+                            if(leftExp.isConstant() && rightExp.isConstant()){
+                                switch(binExpVal.op){
+                                    case EQ:
+                                        Object leftValEq = ConversionUtils.getValue(leftExp);
+                                        Object rightValEq = ConversionUtils.getValue(rightExp);
+                                        Object resultEq = OpUtil.equal(leftValEq, rightValEq);
+                                        varICode.val = ConversionUtils.valueToExp(resultEq);
+                                        changes = true;
+                                        break;
+                                    case NE:
+                                        Object leftValNe = ConversionUtils.getValue(leftExp);
+                                        Object rightValNe = ConversionUtils.getValue(rightExp);
+                                        Object resultNe = OpUtil.notEqual(leftValNe, rightValNe);
+                                        varICode.val = ConversionUtils.valueToExp(resultNe);
+                                        changes = true;
+                                        break;
+                                    case IADD:
+                                        Object leftValueIAdd = ConversionUtils.getValue(leftExp);
+                                        Object rightValueIAdd = ConversionUtils.getValue(rightExp);
+                                        Object resultIAdd = OpUtil.iAdd(leftValueIAdd, rightValueIAdd);
+                                        varICode.val = ConversionUtils.valueToExp(resultIAdd);
+                                        changes = true;
+                                        break;
+                                    case ISUB:
+                                        Object leftValueISub = ConversionUtils.getValue(leftExp);
+                                        Object rightValueISub = ConversionUtils.getValue(rightExp);
+                                        Object resultISub = OpUtil.iSub(leftValueISub, rightValueISub);
+                                        varICode.val = ConversionUtils.valueToExp(resultISub);
+                                        changes = true;
+                                        break;
+                                    case IMUL:
+                                        Object leftValueIMul = ConversionUtils.getValue(leftExp);
+                                        Object rightValueIMul = ConversionUtils.getValue(rightExp);
+                                        Object resultIMul = OpUtil.iMul(leftValueIMul, rightValueIMul);
+                                        varICode.val = ConversionUtils.valueToExp(resultIMul);
+                                        changes = true;
+                                        break;
+                                    case IDIV:
+                                        Object leftValueIDiv = ConversionUtils.getValue(leftExp);
+                                        Object rightValueIDiv = ConversionUtils.getValue(rightExp);
+                                        Object resultIDiv = OpUtil.iDiv(leftValueIDiv, rightValueIDiv);
+                                        varICode.val = ConversionUtils.valueToExp(resultIDiv);
+                                        changes = true;
+                                        break;
+                                    case IMOD:
+                                        Object leftValueIMod = ConversionUtils.getValue(leftExp);
+                                        Object rightValueIMod = ConversionUtils.getValue(rightExp);
+                                        Object resultIMod = OpUtil.iMod(leftValueIMod, rightValueIMod);
+                                        varICode.val = ConversionUtils.valueToExp(resultIMod);
+                                        changes = true;
+                                        break;
+                                    case ILSHIFT:
+                                        Object leftValueILShift = ConversionUtils.getValue(leftExp);
+                                        Object rightValueILShift = ConversionUtils.getValue(rightExp);
+                                        Object resultILShift = OpUtil.leftShift(leftValueILShift, rightValueILShift);
+                                        varICode.val = ConversionUtils.valueToExp(resultILShift);
+                                        changes = true;
+                                        break;
+                                    case IRSHIFT:
+                                        Object leftValueIRShift = ConversionUtils.getValue(leftExp);
+                                        Object rightValueIRShift = ConversionUtils.getValue(rightExp);
+                                        Object resultIRShift = OpUtil.rightShift(leftValueIRShift, rightValueIRShift);
+                                        varICode.val = ConversionUtils.valueToExp(resultIRShift);
+                                        changes = true;
+                                        break;
+                                    case IAND: 
+                                        Object leftValueIAnd = ConversionUtils.getValue(leftExp);
+                                        Object rightValueIAnd = ConversionUtils.getValue(rightExp);
+                                        Object resultIAnd = OpUtil.bitwiseAnd(leftValueIAnd, rightValueIAnd);
+                                        varICode.val = ConversionUtils.valueToExp(resultIAnd);
+                                        changes = true;
+                                        break;
+                                    case IOR:
+                                        Object leftValueIOr = ConversionUtils.getValue(leftExp);
+                                        Object rightValueIOr = ConversionUtils.getValue(rightExp);
+                                        Object resultIOr = OpUtil.bitwiseOr(leftValueIOr, rightValueIOr);
+                                        varICode.val = ConversionUtils.valueToExp(resultIOr);
+                                        changes = true;
+                                        break;
+                                    case IXOR:
+                                        Object leftValueXOr = ConversionUtils.getValue(leftExp);
+                                        Object rightValueXOr = ConversionUtils.getValue(rightExp);
+                                        Object resultXor = OpUtil.bitwiseXor(leftValueXOr, rightValueXOr);
+                                        varICode.val = ConversionUtils.valueToExp(resultXor);
+                                        changes = true;
+                                        break;
+                                    case GE:
+                                        Object leftValueGe = ConversionUtils.getValue(leftExp);
+                                        Object rightValueGe = ConversionUtils.getValue(rightExp);
+                                        Object resultValueGe = OpUtil.greaterThanOrEqualTo(leftValueGe, rightValueGe);
+                                        varICode.val = ConversionUtils.valueToExp(resultValueGe);
+                                        changes = true;
+                                        break;
+                                    case GT:
+                                        Object leftValueGt = ConversionUtils.getValue(leftExp);
+                                        Object rightValueGt = ConversionUtils.getValue(rightExp);
+                                        Object resultValueGt = OpUtil.greaterThan(leftValueGt, rightValueGt);
+                                        varICode.val = ConversionUtils.valueToExp(resultValueGt);
+                                        changes = true;
+                                        break;
+                                    case LE:
+                                        Object leftValueLe = ConversionUtils.getValue(leftExp);
+                                        Object rightValueLe = ConversionUtils.getValue(rightExp);
+                                        Object resultLe = OpUtil.lessThanOrEqualTo(leftValueLe, rightValueLe);
+                                        varICode.val = ConversionUtils.valueToExp(resultLe);
+                                        changes = true;
+                                        break;
+                                    case LT:
+                                        Object leftValueLt = ConversionUtils.getValue(leftExp);
+                                        Object rightValueLt = ConversionUtils.getValue(rightExp);
+                                        Object resultLt = OpUtil.lessThan(leftValueLt, rightValueLt);
+                                        varICode.val = ConversionUtils.valueToExp(resultLt);
+                                        changes = true;
+                                        break;
+                                    case LAND:
+                                        Object leftValueLand = ConversionUtils.getValue(leftExp);
+                                        Object rightValueLand = ConversionUtils.getValue(rightExp);
+                                        Object resultLand = OpUtil.and(leftValueLand, rightValueLand);
+                                        varICode.val = ConversionUtils.valueToExp(resultLand);
+                                        changes = true;
+                                        break;
+                                    case LOR:
+                                        Object leftValueLor = ConversionUtils.getValue(leftExp);
+                                        Object rightValueLor = ConversionUtils.getValue(rightExp);
+                                        Object resultLor = OpUtil.or(leftValueLor, rightValueLor);
+                                        varICode.val = ConversionUtils.valueToExp(resultLor);
+                                        changes = true;
+                                        break;
+                                    default:
+                                        throw new OptimizerException(icode.getClass().getEnclosingMethod().getName(), "UnExpected binary operation found when optomizing expression " + varICode.val);
+                                }
+                            }
+                        } else if(varICode.val instanceof UnExp){
+                            UnExp unExpVal = (UnExp)varICode.val;
     
                             IdentExp identRight = unExpVal.right;
                             String sourceVal = identRight.ident;
@@ -1013,17 +1180,20 @@ public class MyOptimizer {
                                     case INEG:
                                         Object rightValINeg = ConversionUtils.getValue(rightExp);
                                         Object resultINeg = OpUtil.iNegate(rightValINeg);
-                                        varICode.value = ConversionUtils.valueToExp(resultINeg);
+                                        varICode.val = ConversionUtils.valueToExp(resultINeg);
+                                        changes = true;
                                         break;
                                     case INOT:
                                         Object rightValueINot = ConversionUtils.getValue(rightExp);
                                         Object resultINot = OpUtil.bitwiseNot(rightValueINot);
-                                        varICode.value = ConversionUtils.valueToExp(resultINot);
+                                        varICode.val = ConversionUtils.valueToExp(resultINot);
+                                        changes = true;
                                         break;
                                     case BNOT:
                                         Object rightValueBNot = ConversionUtils.getValue(rightExp);
                                         Object resultBNot = OpUtil.not(rightValueBNot);
-                                        varICode.value = ConversionUtils.valueToExp(resultBNot);
+                                        varICode.val = ConversionUtils.valueToExp(resultBNot);
+                                        changes = true;
                                         break;
                                     default:
                                         throw new OptimizerException(rightExp.getClass().getEnclosingMethod().getName(), "Error invalid operation in " + unExpVal);
@@ -1033,7 +1203,7 @@ public class MyOptimizer {
                     }
                 }
             }
-            rebuildFromFlowGraph();
             cleanUpOptimization(OptName.CONSTANT_PROPOGATION);
+        }
     }
 }

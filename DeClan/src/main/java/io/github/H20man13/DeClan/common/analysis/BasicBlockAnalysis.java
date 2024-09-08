@@ -36,7 +36,6 @@ public abstract class BasicBlockAnalysis<SetType> extends Analysis<FlowGraphNode
     public void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semiLattice){
         if(direction == Direction.FORWARDS){
             Map<FlowGraphNode, Set<SetType>> outputCache = new HashMap<FlowGraphNode, Set<SetType>>();
-            Map<FlowGraphNode, Set<SetType>> outputOfBlock = new HashMap<FlowGraphNode, Set<SetType>>();
             
             addInputSet(flowGraph.getEntry(), new HashSet<SetType>());
             addOutputSet(flowGraph.getEntry(), new HashSet<SetType>());
@@ -44,11 +43,11 @@ public abstract class BasicBlockAnalysis<SetType> extends Analysis<FlowGraphNode
             for(BlockNode block : flowGraph.getBlocks()){
         		Set<SetType> semilatticeCopy = new HashSet<SetType>();
                 semilatticeCopy.addAll(semiLattice);
-                outputOfBlock.put(block, semilatticeCopy);
+                addOutputSet(block, semilatticeCopy);
             }
 
-            while(changesHaveOccured(outputOfBlock, outputCache)){
-                outputCache = deepCopyMap(outputOfBlock);
+            while(changesHaveOccuredOnOutputs(outputCache)){
+                outputCache = deepCopyOutputMap();
                 for(BlockNode block : flowGraph.getBlocks()){
                     Set<SetType> inputSet = new HashSet<SetType>();
 
@@ -62,9 +61,6 @@ public abstract class BasicBlockAnalysis<SetType> extends Analysis<FlowGraphNode
                     addInputSet(block, inputSet);
                     Set<SetType> outputSet = transferFunction(block, inputSet);
                     addOutputSet(block, outputSet);
-                    
-                    
-                    outputOfBlock.put(block, outputSet);
                 }
             }
             
@@ -72,7 +68,6 @@ public abstract class BasicBlockAnalysis<SetType> extends Analysis<FlowGraphNode
             addOutputSet(flowGraph.getExit(), new HashSet<SetType>());
         } else {
             Map<FlowGraphNode, Set<SetType>> inputCache = new HashMap<FlowGraphNode, Set<SetType>>();
-            Map<FlowGraphNode, Set<SetType>> inputToBlock = new HashMap<FlowGraphNode, Set<SetType>>();
             
             addOutputSet(flowGraph.getExit(), new HashSet<SetType>());
             addInputSet(flowGraph.getExit(), new HashSet<SetType>());
@@ -80,11 +75,11 @@ public abstract class BasicBlockAnalysis<SetType> extends Analysis<FlowGraphNode
             for(BlockNode block : flowGraph.getBlocks()){
         		Set<SetType> semilatticeCopy = new HashSet<SetType>();
         		semilatticeCopy.addAll(semiLattice);
-        		inputToBlock.put(block, semilatticeCopy);
+        		addInputSet(block, semilatticeCopy);
             }
 
-            while(changesHaveOccured(inputToBlock, inputCache)){
-                inputCache = deepCopyMap(inputToBlock);
+            while(changesHaveOccuredOnInputs(inputCache)){
+                inputCache = deepCopyInputMap();
                 List<BlockNode> blocks = flowGraph.getBlocks();
                 for(int b = blocks.size() - 1; b >= 0; b--){
                     BlockNode block = blocks.get(b);
@@ -99,12 +94,10 @@ public abstract class BasicBlockAnalysis<SetType> extends Analysis<FlowGraphNode
                     addOutputSet(block, outputSet);
                     Set<SetType> inputSet = transferFunction(block, outputSet);
                     addInputSet(block, inputSet);
-                    
-                    inputToBlock.put(block, inputSet);
                 }
             }
             
-            inputToBlock.put(flowGraph.getEntry(), new HashSet<>());
+            addInputSet(flowGraph.getEntry(), new HashSet<>());
         }
     }
 

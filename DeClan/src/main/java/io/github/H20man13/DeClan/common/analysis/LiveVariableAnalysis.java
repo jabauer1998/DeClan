@@ -31,49 +31,62 @@ public class LiveVariableAnalysis extends InstructionAnalysis<String> {
         this.useSets = new HashMap<ICode, Set<String>>();
         
         for(BlockNode block : flowGraph.getBlocks()){
-            for(ICode code : block.getAllICode()){
+            for(ICode code : block.getICode()){
                 Set<String> instructionDef = new HashSet<String>();
                 Set<String> instructionUse = new HashSet<String>();
                 if(code instanceof Assign){
                     Assign assCode = (Assign)code;
                     instructionDef.add(assCode.place);
-                    if(!assCode.isConstant()){
-                        if(assCode.value instanceof BinExp){
-                            BinExp defPlace = (BinExp)assCode.value;
-
-                            if(defPlace.left instanceof IdentExp){
-                                instructionUse.add(defPlace.left.toString());
-                            }
-
-                            if(defPlace.right instanceof IdentExp){
-                                instructionUse.add(defPlace.right.toString());
-                            }
-                        } else if(assCode.value instanceof UnExp){
-                            UnExp defPlace = (UnExp)assCode.value;
-
-                            if(defPlace.right instanceof IdentExp){
-                                instructionUse.add(defPlace.right.toString());
-                            }
-                        } else if(assCode.value instanceof IdentExp){
-                            IdentExp defPlace = (IdentExp)assCode.value;
-                            instructionUse.add(defPlace.ident);
-                        }
+                    if(assCode.value instanceof BinExp){
+                        BinExp defPlace = (BinExp)assCode.value;
+                        
+                        instructionUse.add(defPlace.left.ident);
+                        instructionUse.add(defPlace.right.ident);
+                    } else if(assCode.value instanceof UnExp){
+                        UnExp defPlace = (UnExp)assCode.value;
+                        
+                        instructionUse.add(defPlace.right.ident);
+                    } else if(assCode.value instanceof IdentExp){
+                        IdentExp defPlace = (IdentExp)assCode.value;
+                        instructionUse.add(defPlace.ident);
+                    }
+                } else if(code instanceof Def){
+                	Def assCode = (Def)code;
+                    instructionDef.add(assCode.label);
+                    if(assCode.val instanceof BinExp){
+                        BinExp defPlace = (BinExp)assCode.val;
+                        
+                        instructionUse.add(defPlace.left.ident);
+                        instructionUse.add(defPlace.right.ident);
+                    } else if(assCode.val instanceof UnExp){
+                        UnExp defPlace = (UnExp)assCode.val;
+                        
+                        instructionUse.add(defPlace.right.ident);
+                    } else if(assCode.val instanceof IdentExp){
+                        IdentExp defPlace = (IdentExp)assCode.val;
+                        instructionUse.add(defPlace.ident);
                     }
                 } else if(code instanceof If){
                     BinExp exp = ((If)code).exp;
-
-                    if(exp.left instanceof IdentExp){
-                        instructionUse.add(exp.left.toString());
-                    }
-
-                    if(exp.right instanceof IdentExp){
-                        instructionUse.add(exp.right.toString());
-                    }
+                    
+                    instructionUse.add(exp.left.ident);
+                    instructionUse.add(exp.right.ident);
                 } else if(code instanceof Call){
                     Call placement = (Call)code;
                     for(Def arg : placement.params){
                         instructionDef.add(arg.label);
-                        instructionUse.add(arg.val.toString());
+                        
+                        if(arg.val instanceof IdentExp) {
+                        	IdentExp expIdent = (IdentExp)arg.val;
+                        	instructionUse.add(expIdent.ident);
+                        } else if(arg.val instanceof UnExp){
+                        	UnExp unaryExpression = (UnExp)arg.val;
+                        	instructionUse.add(unaryExpression.right.ident);
+                        } else if(arg.val instanceof BinExp) {
+                        	BinExp binaryExpression = (BinExp)arg.val;
+                        	instructionUse.add(binaryExpression.left.ident);
+                        	instructionUse.add(binaryExpression.right.ident);
+                        }
                     }
                 }
                 defSets.put(code, instructionDef);
