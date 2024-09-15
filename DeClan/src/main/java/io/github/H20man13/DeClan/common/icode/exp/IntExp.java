@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.icode.exp;
 
+import java.util.Objects;
+
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class IntExp implements Exp {
@@ -51,5 +53,10 @@ public class IntExp implements Exp {
     @Override
     public void replacePlace(String from, String to) {
         //Do nothing
+    }
+    
+    @Override
+    public int hashCode() {
+    	return Objects.hashCode(value);
     }
 }

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
@@ -840,5 +841,10 @@ public class Lib implements ICode, Iterable<ICode> {
     @Override
     public Iterator<ICode> iterator() {
         return this.instructions.iterator();
+    }
+    
+    @Override
+    public int hashCode() {
+    	return instructions.hashCode();
     }
 }

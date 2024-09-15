@@ -120,6 +120,10 @@ public class FlowGraph implements Iterable<BlockNode>{
     	}
     	return setOfInts;
     }
+    
+    public void addBlock(BlockNode block) {
+    	this.blockNodes.add(block);
+    }
 
     public List<BlockNode> getBlocks(){
         return blockNodes;

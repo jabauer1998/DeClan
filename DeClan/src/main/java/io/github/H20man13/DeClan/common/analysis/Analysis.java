@@ -20,15 +20,12 @@ public abstract class Analysis<AnalysisType, SetType> implements AnalysisBase {
     private Map<AnalysisType, Set<SetType>> mappedOutputs;
     private Map<AnalysisType, Set<SetType>> mappedInputs;
     
-    private Function<List<Set<SetType>>, Set<SetType>> unionOperation;
-    private Function<List<Set<SetType>>, Set<SetType>> intersectionOperation;
-    
 	public abstract Set<SetType> transferFunction(AnalysisType type, Set<SetType> inputSet);
 	
 	public Analysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, Set<SetType> semiLattice) {
 		this.flowGraph = flowGraph;
         this.direction = direction;
-        this.unionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
+        Function<List<Set<SetType>>,Set<SetType>> unionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
             @Override
             public Set<SetType> apply(List<Set<SetType>> t) {
                 Set<SetType> result = new HashSet<SetType>();
@@ -38,7 +35,7 @@ public abstract class Analysis<AnalysisType, SetType> implements AnalysisBase {
                 return result;
             } 
         };
-        this.intersectionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
+        Function<List<Set<SetType>>,Set<SetType>> intersectionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
             @Override
             public Set<SetType> apply(List<Set<SetType>> t) {
                 Set<SetType> result = unionOperation.apply(t);
@@ -63,7 +60,7 @@ public abstract class Analysis<AnalysisType, SetType> implements AnalysisBase {
 	public Analysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semilattice){
         this.flowGraph = flowGraph;
         this.direction = direction;
-        this.unionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
+        Function<List<Set<SetType>>,Set<SetType>> unionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
             @Override
             public Set<SetType> apply(List<Set<SetType>> t) {
                 Set<SetType> result = new HashSet<SetType>();
@@ -73,7 +70,7 @@ public abstract class Analysis<AnalysisType, SetType> implements AnalysisBase {
                 return result;
             } 
         };
-        this.intersectionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
+        Function<List<Set<SetType>>,Set<SetType>> intersectionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
             @Override
             public Set<SetType> apply(List<Set<SetType>> t) {
                 Set<SetType> result = unionOperation.apply(t);
@@ -184,6 +181,23 @@ public abstract class Analysis<AnalysisType, SetType> implements AnalysisBase {
         }
 
         return false;
+    }
+    
+    public String toString() {
+    	StringBuilder sb = new StringBuilder();
+    	for(AnalysisType analysisElem: this.mappedInputs.keySet()) {
+    		sb.append("Input Set\r\n");
+    		Set<SetType> inputSet = mappedInputs.get(analysisElem);
+    		sb.append(inputSet.toString());
+    		sb.append("\n|\nV\n");
+    		sb.append(analysisElem.toString());
+    		sb.append("|\nV\n");    		
+    		sb.append("Output Set\r\n");
+    		Set<SetType> outputSet = mappedOutputs.get(analysisElem);
+    		sb.append(outputSet);
+    		sb.append("\r\n\r\n\r\n");
+    	}
+    	return sb.toString();
     }
     
     public void run() {

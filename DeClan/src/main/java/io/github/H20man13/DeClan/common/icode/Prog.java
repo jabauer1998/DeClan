@@ -243,4 +243,9 @@ public class Prog extends Lib implements ICode {
         }
         return -1;
     }
+    
+    @Override
+    public int hashCode() {
+    	return instructions.hashCode();
+    }
 }

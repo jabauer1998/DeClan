@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import java.util.Objects;
+
 import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.pat.P;
@@ -102,5 +104,10 @@ public class Def implements ICode {
     @Override
     public void replaceLabel(String from, String to) {
         //Do nothing
+    }
+    
+    @Override
+    public int hashCode() {
+    	return Objects.hash(label, type, scope, val);
     }
 }

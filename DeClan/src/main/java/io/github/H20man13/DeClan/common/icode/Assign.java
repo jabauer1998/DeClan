@@ -3,6 +3,7 @@ package io.github.H20man13.DeClan.common.icode;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
@@ -105,5 +106,10 @@ public class Assign implements ICode{
     @Override
     public void replaceLabel(String from, String to) {
         //Do nothing
+    }
+    
+    @Override
+    public int hashCode() {
+    	return Objects.hash(place, value, scope, type);
     }
 }

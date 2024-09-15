@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common;
 
+import java.util.Objects;
+
 public class Tuple<SourceType, DestType> {
     public SourceType source;
     public DestType dest;

@@ -29,4 +29,6 @@ public interface ICode {
     public boolean containsLabel(String label);
     public void replacePlace(String from, String to);
     public void replaceLabel(String from, String to);
+    @Override
+    public int hashCode();
 }

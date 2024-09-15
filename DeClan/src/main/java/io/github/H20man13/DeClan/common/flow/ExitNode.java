@@ -12,7 +12,6 @@ public class ExitNode implements FlowGraphNode{
 
     public ExitNode(BlockNode exit){
         this.exit = exit;
-        exit.addSuccessor(this);
     }
 
     @Override

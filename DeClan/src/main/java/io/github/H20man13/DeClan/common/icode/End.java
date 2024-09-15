@@ -55,4 +55,9 @@ public class End implements ICode {
 	public void replaceLabel(String from, String to) {
 		//Do nothing
 	}
+	
+	@Override
+	public int hashCode() {
+		return 42;
+	}
 }

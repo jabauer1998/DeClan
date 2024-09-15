@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import java.util.Objects;
+
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.pat.P;
 
@@ -80,5 +82,10 @@ public class If implements ICode {
 
 		if(this.ifFalse.equals(from))
 			this.ifFalse = to;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(exp, ifTrue, ifFalse);
 	}
 }

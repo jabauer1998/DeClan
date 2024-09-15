@@ -53,4 +53,8 @@ public class StrExp implements Exp{
         //Do nothing
     }
     
+    @Override
+    public int hashCode() {
+    	return value.hashCode();
+    }
 }

@@ -33,7 +33,8 @@ public abstract class InstructionAnalysis<SetType> extends Analysis<ICode, SetTy
         super(flowGraph, direction, meetOperation);
     }
 
-    public void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semiLattice){
+    @Override
+    protected void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semiLattice){
         if(direction == Direction.FORWARDS){
             Map<ICode, Set<SetType>> outputCache = new HashMap<ICode, Set<SetType>>();
 

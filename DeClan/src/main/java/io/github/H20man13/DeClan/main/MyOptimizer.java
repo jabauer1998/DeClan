@@ -39,6 +39,7 @@ import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.ICode.Scope;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Prog;
@@ -68,11 +69,21 @@ public class MyOptimizer {
     private FlowGraph globalFlowGraph;
     private ConstantPropogationAnalysis propAnal;
     private LiveVariableAnalysis liveAnal;
+    private AnticipatedExpressionsAnalysis anticipatedAnal;
+    private PostponableExpressionsAnalysis posponableAnal;
+    private UsedExpressionAnalysis usedAnal;
+    private AvailableExpressionsAnalysis availableAnal;
+    private Map<ICode, Set<Tuple<Exp, ICode.Type>>> earliestSets;
+    private Map<ICode, Set<Tuple<Exp, ICode.Type>>> latestSets;
+    private Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets;
+    private Set<Tuple<Exp, ICode.Type>> globalExpressionSet;
+    private IrRegisterGenerator iGen;
 
     private enum OptName{
         COMMON_SUB_EXPRESSION_ELIMINATION,
         CONSTANT_PROPOGATION,
-        DEAD_CODE_ELIMINATION
+        DEAD_CODE_ELIMINATION,
+        PARTIAL_REDUNDANCY_ELIMINATION
     }
 
     public MyOptimizer(Prog intermediateCode){
@@ -80,6 +91,14 @@ public class MyOptimizer {
         this.globalFlowGraph = null;
         this.propAnal = null;
         this.liveAnal = null;
+        this.availableAnal = null;
+        this.posponableAnal = null;
+        this.anticipatedAnal = null;
+        this.earliestSets = null;
+        this.latestSets = null;
+        this.usedSets = null;
+        this.globalExpressionSet = null;
+        this.iGen = null;
     }
 
     public LiveVariableAnalysis getLiveVariableAnalysis(){
@@ -275,6 +294,30 @@ public class MyOptimizer {
         this.globalFlowGraph = flowGraph;
     }
     
+    private void modifyFlowGraph() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	
+    	for(BlockNode block: this.globalFlowGraph.getBlocks()) {
+    		if(block.getPredecessors().size() > 1) {
+    			List<FlowGraphNode> predecessors = block.getPredecessors();
+    			for(int i = 0; i < predecessors.size(); i++) {
+    				FlowGraphNode predecessor = predecessors.get(i);
+    				if(predecessor instanceof BlockNode) {
+    					BlockNode blockPredecessor = (BlockNode)predecessor;
+    					BlockNode newBlock = new BlockNode(new BasicBlock());
+    					blockPredecessor.removeSuccessor(block);
+    					blockPredecessor.addSuccessor(newBlock);
+    					newBlock.addSuccessor(block);
+    					block.removePredecessor(blockPredecessor);
+    					block.addPredecessor(newBlock);
+    					newBlock.addPredecessor(blockPredecessor);
+    				}
+    			}
+    		}
+    	}
+    }
+    
     private static BlockNode findEndingBlock(List<BlockNode> blocks) {
     	for(BlockNode block: blocks) {
     		if(Utils.endOfBlockIsEnd(block.getBlock())) {
@@ -317,7 +360,50 @@ public class MyOptimizer {
     	this.propAnal = null;
     }
     
+    private void resetAvailableExpressionAnalysis() {
+    	this.availableAnal = null;
+    }
     
+    private void resetAnticipatedExpressionAnalysis() {
+    	this.anticipatedAnal = null;
+    }
+    
+    private void resetEarliestSets() {
+    	this.earliestSets = null;
+    }
+    
+    private void resetLatestSets() {
+    	this.latestSets = null;
+    }
+    
+    private void resetUsedSets() {
+    	this.usedSets = null;
+    }
+    
+    private void resetPostponableExpressionAnalysis() {
+    	this.posponableAnal = null;
+    }
+    
+    private void resetUsedAnalysis() {
+    	this.usedAnal = null;
+    }
+    
+    private void resetGlobalFlowSet() {
+    	this.globalExpressionSet = null;
+    }
+    
+    private void setUpRegisterGenerator() {
+    	if(this.iGen == null)
+    		this.iGen = new IrRegisterGenerator();
+    	String genResult;
+    	do {
+    		genResult = iGen.genNext();
+    	} while(this.intermediateCode.containsPlace(genResult)); 
+    }
+    
+    private void resetRegisterGenerator() {
+    	this.iGen = null;
+    }
 
     private void cleanUpOptimization(OptName name){
         switch(name){
@@ -336,6 +422,19 @@ public class MyOptimizer {
             	resetFlowGraph();
                 resetLiveVariableAnalysis();
                 break;
+            case PARTIAL_REDUNDANCY_ELIMINATION:
+            	rebuildFromFlowGraph();
+            	resetFlowGraph();
+            	resetGlobalFlowSet();
+            	resetAvailableExpressionAnalysis();
+            	resetAnticipatedExpressionAnalysis();
+            	resetEarliestSets();
+            	resetUsedSets();
+            	resetPostponableExpressionAnalysis();
+            	resetLatestSets();
+            	resetUsedAnalysis();
+            	resetRegisterGenerator();
+            	break;
         }
     }
 
@@ -353,6 +452,18 @@ public class MyOptimizer {
                 buildFlowGraph();
                 runLiveVariableAnalysis();
                 break;
+            case PARTIAL_REDUNDANCY_ELIMINATION:
+            	buildFlowGraph();
+            	buildGlobalExpressionsSemilattice();
+            	runAnticipatedExpressionsAnalysis();
+            	runAvailableExpressionsAnalysis();
+            	buildEarliestSets();
+            	buildUsedExpressionSets();
+            	runPostponableExpressionAnalysis();
+            	buildLatestSets();
+            	runUsedExpressionAnalysis();
+            	setUpRegisterGenerator();
+            	break;
         }
     }
 
@@ -714,6 +825,200 @@ public class MyOptimizer {
         this.liveAnal = new LiveVariableAnalysis(this.globalFlowGraph);
         this.liveAnal.run();
     }
+    
+    private void buildGlobalExpressionsSemilattice(){
+    	this.globalExpressionSet = new HashSet<Tuple<Exp, ICode.Type>>();
+    	for(FlowGraphNode node: this.globalFlowGraph.getBlocks()) {
+    		for(ICode icode: node.getICode()) {
+    			if(icode instanceof Def) {
+    				Def definition = (Def)icode;
+    				this.globalExpressionSet.add(new Tuple<Exp, ICode.Type>(definition.val, definition.type));
+    			} else if(icode instanceof Assign) {
+    				Assign assignment = (Assign)icode;
+    				this.globalExpressionSet.add(new Tuple<Exp, ICode.Type>(assignment.value, assignment.getType()));
+    			} else if(icode instanceof If) {
+    				If stat = (If)icode;
+    				this.globalExpressionSet.add(new Tuple<Exp, ICode.Type>(stat.exp, ICode.Type.BOOL));
+    			} else if(icode instanceof Call) {
+    				Call call = (Call)icode;
+    				for(Def def: call.params) {
+    					this.globalExpressionSet.add(new Tuple<Exp, ICode.Type>(def.val, def.type));
+    				}
+    			}
+    		}
+    	}
+    }
+    
+    private void runAvailableExpressionsAnalysis() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	if(this.globalExpressionSet == null)
+    		buildGlobalExpressionsSemilattice();
+    	if(this.anticipatedAnal == null)
+    		runAnticipatedExpressionsAnalysis();
+    	this.availableAnal = new AvailableExpressionsAnalysis(this.globalFlowGraph, this.anticipatedAnal, this.globalExpressionSet);
+    	this.availableAnal.run();
+    }
+    
+    private void runAnticipatedExpressionsAnalysis() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	if(this.globalExpressionSet == null)
+    		buildGlobalExpressionsSemilattice();
+    	this.anticipatedAnal = new AnticipatedExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet);
+    	this.anticipatedAnal.run();
+    }
+    
+    private void buildEarliestSets() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	if(this.anticipatedAnal == null)
+    		runAnticipatedExpressionsAnalysis();
+    	if(this.availableAnal == null)
+    		runAvailableExpressionsAnalysis();
+    	this.earliestSets = new HashMap<ICode, Set<Tuple<Exp, ICode.Type>>>();
+    	for(FlowGraphNode block: this.globalFlowGraph.getBlocks()){
+    		for(ICode icode: block.getICode()) {
+    			Set<Tuple<Exp, ICode.Type>> earliestSet = new HashSet<Tuple<Exp, ICode.Type>>();
+        		Set<Tuple<Exp, ICode.Type>> anticipatedSet = this.anticipatedAnal.getInputSet(icode);
+        		Set<Tuple<Exp, ICode.Type>> availableSet = this.availableAnal.getInputSet(icode);
+        		for(Tuple<Exp, ICode.Type> anticipatedExp: anticipatedSet) {
+        			if(!availableSet.contains(anticipatedExp))
+        				earliestSet.add(anticipatedExp);
+        		}
+        		this.earliestSets.put(icode, earliestSet);
+    		}
+    	}
+    }
+    
+    private void buildUsedExpressionSets() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	this.usedSets = new HashMap<ICode, Set<Tuple<Exp, ICode.Type>>>();
+    	for(FlowGraphNode block: this.globalFlowGraph) {
+    		for(ICode icode: block.getICode()) {
+    			Set<Tuple<Exp, ICode.Type>> toAdd = new HashSet<Tuple<Exp, ICode.Type>>();
+    			if(icode instanceof Def) {
+    				Def definition = (Def)icode;
+    				toAdd.add(new Tuple<Exp, ICode.Type>(definition.val, definition.type));
+    			} else if(icode instanceof Assign) {
+    				Assign ass = (Assign)icode;
+    				toAdd.add(new Tuple<Exp, ICode.Type>(ass.value, ass.getType()));
+    			} else if(icode instanceof If) {
+    				If ifStat = (If)icode;
+    				toAdd.add(new Tuple<Exp, ICode.Type>(ifStat.exp, ICode.Type.BOOL));
+    			} else if(icode instanceof Call) {
+    				Call call = (Call)icode;
+    				for(Def param: call.params) {
+    					toAdd.add(new Tuple<Exp, ICode.Type>(param.val, param.type));
+    				}
+    			}
+    			this.usedSets.put(icode, toAdd);
+    		}
+    	}
+    }
+    
+    private void runPostponableExpressionAnalysis() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	if(this.usedSets == null)
+    		buildUsedExpressionSets();
+    	if(this.earliestSets == null)
+    		buildEarliestSets();
+    	this.posponableAnal = new PostponableExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet, this.earliestSets, this.usedSets);
+    	this.posponableAnal.run();
+    }
+    
+    private void buildLatestSets() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	if(this.earliestSets == null)
+    		buildEarliestSets();
+    	if(this.globalExpressionSet == null)
+    		this.buildGlobalExpressionsSemilattice();
+    	if(this.usedSets == null)
+    		buildUsedExpressionSets();
+    	if(this.posponableAnal == null)
+    		runPostponableExpressionAnalysis();
+    	
+    	this.latestSets = new HashMap<ICode, Set<Tuple<Exp, ICode.Type>>>();
+    	
+    	for(BlockNode block: this.globalFlowGraph.getBlocks()) {
+    		int blockLength = block.getICode().size();
+    		for(int i = blockLength - 1; i >= 0; i--) {
+    			ICode instruction = block.getICode().get(i);
+    			//Earliest[B] U Postponable[B].in
+        		Set<Tuple<Exp, ICode.Type>> firstPartOfEquation = new HashSet<Tuple<Exp, ICode.Type>>();
+        		Set<Tuple<Exp, ICode.Type>> earliestPart = earliestSets.get(instruction);
+        		Set<Tuple<Exp, ICode.Type>> postponablePart = posponableAnal.getInputSet(instruction);
+        		firstPartOfEquation.addAll(earliestPart);
+        		firstPartOfEquation.addAll(postponablePart);
+        		
+        		Set<Tuple<Exp, ICode.Type>> thirdPartOfEquation = new HashSet<Tuple<Exp, ICode.Type>>();
+        		
+        		if(i + 1 >= blockLength) {
+        			//Intersection of sucessors of earliest union postponable
+        			List<FlowGraphNode> successors = block.getSuccessors();
+            		if(!successors.isEmpty()) {
+            			FlowGraphNode sucessor = successors.getFirst();
+            			Set<Tuple<Exp, ICode.Type>> sucessorEarliestUnionPostponable = new HashSet<Tuple<Exp, ICode.Type>>();
+            			ICode sucessorICode = sucessor.getICode().getFirst();
+            			Set<Tuple<Exp, ICode.Type>> earliestOfSucessor = earliestSets.get(sucessorICode);
+            			sucessorEarliestUnionPostponable.addAll(earliestOfSucessor);
+            			sucessorEarliestUnionPostponable.addAll(this.posponableAnal.getInputSet(sucessorICode));
+            			thirdPartOfEquation.addAll(sucessorEarliestUnionPostponable);
+            			
+            			for(int x = 1; x < successors.size(); x++) {
+            				sucessor = successors.get(x);
+            				sucessorICode = sucessor.getICode().getFirst();
+                			sucessorEarliestUnionPostponable = new HashSet<Tuple<Exp, ICode.Type>>();
+                			sucessorEarliestUnionPostponable.addAll(earliestSets.get(sucessorICode));
+                			sucessorEarliestUnionPostponable.addAll(this.posponableAnal.getInputSet(sucessorICode));
+                			thirdPartOfEquation.retainAll(sucessorEarliestUnionPostponable);
+                		}
+            		}
+        		} else {
+        			ICode singleSuccessor = block.getICode().get(i + 1);
+        			Set<Tuple<Exp, ICode.Type>> sucessorEarliestUnionPostponable = new HashSet<Tuple<Exp, ICode.Type>>();
+        			sucessorEarliestUnionPostponable.addAll(this.earliestSets.get(singleSuccessor));
+        			sucessorEarliestUnionPostponable.addAll(this.posponableAnal.getInputSet(singleSuccessor));
+        			
+        			thirdPartOfEquation.addAll(sucessorEarliestUnionPostponable);
+        		}
+        		
+        		
+        		
+        		//Compliment of previous intersection
+        		Set<Tuple<Exp, ICode.Type>> forthPartOfEquation = new HashSet<Tuple<Exp, ICode.Type>>();
+        		for(Tuple<Exp, ICode.Type> exp: this.globalExpressionSet) {
+        			if(!thirdPartOfEquation.contains(exp))
+        				forthPartOfEquation.add(exp);
+        		}
+        		
+        		forthPartOfEquation.addAll(this.usedSets.get(instruction));
+        		
+        		Set<Tuple<Exp, ICode.Type>> secondPartOfEquation = new HashSet<Tuple<Exp, ICode.Type>>();
+        		secondPartOfEquation.addAll(firstPartOfEquation);
+        		secondPartOfEquation.retainAll(forthPartOfEquation);
+        		
+        		this.latestSets.put(instruction, secondPartOfEquation);
+        	}
+    	}
+    }
+    
+    private void runUsedExpressionAnalysis() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	if(this.usedSets == null)
+    		this.buildUsedExpressionSets();
+    	if(this.latestSets == null)
+    		this.buildLatestSets();
+    	
+    	this.usedAnal = new UsedExpressionAnalysis(this.globalFlowGraph, this.usedSets, this.latestSets);
+    	this.usedAnal.run();
+    }
+    
+    
 
     public void performDeadCodeElimination(){
         boolean changes = true;
@@ -1205,5 +1510,71 @@ public class MyOptimizer {
             }
             cleanUpOptimization(OptName.CONSTANT_PROPOGATION);
         }
+    }
+    
+    public void performPartialRedundancyElimination() {
+    	setUpOptimization(OptName.PARTIAL_REDUNDANCY_ELIMINATION);
+    	Map<Tuple<Exp, ICode.Type>, String> expressionMap = new HashMap<Tuple<Exp, ICode.Type>, String>();
+    	for(BlockNode block: this.globalFlowGraph.getBlocks()) {
+    		List<ICode> newICode = new LinkedList<ICode>();
+    		
+    		for(ICode icode: block.getICode()) {
+	    		Set<Tuple<Exp, ICode.Type>> newExpSet = new HashSet<Tuple<Exp, ICode.Type>>();
+	    		Set<Tuple<Exp, ICode.Type>> latestOfBlock = this.latestSets.get(icode);
+	    		Set<Tuple<Exp, ICode.Type>> usedAnalBlock = this.usedAnal.getOutputSet(icode);
+	    		newExpSet.addAll(latestOfBlock);
+	    		newExpSet.retainAll(usedAnalBlock);
+	    		
+	    		
+	    		for(Tuple<Exp, ICode.Type> expression: newExpSet) {
+	    			//If the current block already contains the expression
+	    			//Add the already existing place to the map
+					String next;
+					do {
+						next = iGen.genNext();
+					}while(this.intermediateCode.containsPlace(next));
+					//Otherwise create a new place with the generator
+					
+	    			newICode.add(new Def(Scope.LOCAL, next, expression.source, expression.dest));
+	    			expressionMap.put(expression, next);
+	    		}
+	    		
+	    		Set<Tuple<Exp, ICode.Type>> newVarSet = new HashSet<Tuple<Exp, ICode.Type>>();
+	    		newVarSet.addAll(this.usedAnal.getOutputSet(icode));
+	    		
+	    		for(Tuple<Exp, ICode.Type> semiLatticeElem: this.globalExpressionSet) {
+	    			if(!latestOfBlock.contains(semiLatticeElem)) {
+	    				newVarSet.add(semiLatticeElem);
+	    			}
+	    		}
+	    		
+	    		newVarSet.retainAll(this.usedSets.get(icode));
+	    		
+    			if(icode instanceof Assign){
+    				Assign assign = (Assign)icode;
+    				Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(assign.value, assign.getType());
+    				if(newVarSet.contains(myTuple)) {
+    					assign.value = new IdentExp(Scope.LOCAL, expressionMap.get(myTuple));
+    				}
+    			} else if(icode instanceof Def){
+    				Def assign = (Def)icode;
+    				Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(assign.val, assign.type);
+    				if(newVarSet.contains(myTuple)) {
+    					assign.val = new IdentExp(Scope.LOCAL, expressionMap.get(myTuple));
+    				}
+    			} else if(icode instanceof Call) {
+    				Call assign = (Call)icode;
+    				for(Def param: assign.params) {
+    					Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(param.val, param.type);
+        				if(newVarSet.contains(myTuple)) {
+        					param.val = new IdentExp(Scope.LOCAL, expressionMap.get(myTuple));
+        				}
+    				}
+    			}
+    			newICode.add(icode);
+    		}
+    		block.getBlock().setICode(newICode);
+    	}
+    	cleanUpOptimization(OptName.PARTIAL_REDUNDANCY_ELIMINATION);
     }
 }

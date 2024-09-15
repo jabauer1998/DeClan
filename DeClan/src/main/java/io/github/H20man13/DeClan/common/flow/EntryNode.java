@@ -13,7 +13,7 @@ public class EntryNode implements FlowGraphNode {
     public FlowGraphNode entry;
 
     public EntryNode(FlowGraphNode entry){
-        this.entry = entry;   
+        this.entry = entry;
     }
 
     @Override

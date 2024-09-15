@@ -3,6 +3,7 @@ package io.github.H20man13.DeClan.common.icode;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.pat.P;
@@ -64,5 +65,10 @@ public class Goto implements ICode {
 	public void replaceLabel(String from, String to) {
 		if(this.label.equals(from))
 			this.label = to;
+	}
+	
+	@Override
+	public int hashCode() {
+		return label.hashCode();
 	}
 }

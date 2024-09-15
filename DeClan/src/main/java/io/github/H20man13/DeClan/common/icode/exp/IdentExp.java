@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.icode.exp;
 
+import java.util.Objects;
+
 import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -77,5 +79,10 @@ public class IdentExp implements Exp, Copyable<IdentExp>{
     @Override
     public IdentExp copy() {
         return new IdentExp(scope, ident);
+    }
+    
+    @Override
+    public int hashCode() {
+    	return Objects.hash(ident, scope);
     }
 }

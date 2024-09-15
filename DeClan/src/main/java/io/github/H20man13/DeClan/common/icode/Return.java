@@ -56,4 +56,9 @@ public class Return implements ICode {
 	public void replaceLabel(String from, String to) {
 		//Do nothing this is just a placeholder
 	}
+	
+	@Override
+	public int hashCode() {
+		return 24;
+	}
 }

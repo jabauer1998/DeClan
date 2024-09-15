@@ -15,4 +15,7 @@ public interface Exp {
     public void replacePlace(String from, String to);
 
     public P asPattern(boolean hasContainer);
+    
+    @Override
+    public int hashCode();
 }

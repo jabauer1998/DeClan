@@ -33,7 +33,8 @@ public abstract class BasicBlockAnalysis<SetType> extends Analysis<FlowGraphNode
         super(flowGraph, direction, meetOperation);
     }
 
-    public void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semiLattice){
+    @Override
+    protected void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semiLattice){
         if(direction == Direction.FORWARDS){
             Map<FlowGraphNode, Set<SetType>> outputCache = new HashMap<FlowGraphNode, Set<SetType>>();
             

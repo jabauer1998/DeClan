@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.icode.exp;
 
+import java.util.Objects;
+
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
@@ -86,5 +88,10 @@ public class BinExp implements Exp {
     public void replacePlace(String from, String to) {
         left.replacePlace(from, to);
         right.replacePlace(from, to);
+    }
+    
+    @Override
+    public int hashCode() {
+    	return Objects.hash(left, op, right);
     }
 }
