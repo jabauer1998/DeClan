@@ -20,11 +20,6 @@ public class ExitNode implements FlowGraphNode{
     }
 
     @Override
-    public List<ICode> getAllICode(){
-        return new LinkedList<ICode>();
-    }
-
-    @Override
     public String toString(){
         return "EXIT";
     }

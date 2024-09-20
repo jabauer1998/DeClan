@@ -12,6 +12,7 @@ import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.AnticipatedExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.AvailableExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.ConstantPropogationAnalysis;
+import io.github.H20man13.DeClan.common.analysis.DominatorAnalysis;
 import io.github.H20man13.DeClan.common.analysis.LiveVariableAnalysis;
 import io.github.H20man13.DeClan.common.analysis.PostponableExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.UsedExpressionAnalysis;
@@ -23,6 +24,9 @@ import io.github.H20man13.DeClan.common.dag.DagNodeFactory;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.dag.DagValueNode;
 import io.github.H20man13.DeClan.common.dag.DagVariableNode;
+import io.github.H20man13.DeClan.common.dfst.DepthFirstSpanningTree;
+import io.github.H20man13.DeClan.common.dfst.DfstNode;
+import io.github.H20man13.DeClan.common.dfst.RootDfstNode;
 import io.github.H20man13.DeClan.common.dag.DagNode.ScopeType;
 import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
 import io.github.H20man13.DeClan.common.exception.OptimizerException;
@@ -72,12 +76,14 @@ public class MyOptimizer {
     private AnticipatedExpressionsAnalysis anticipatedAnal;
     private PostponableExpressionsAnalysis posponableAnal;
     private UsedExpressionAnalysis usedAnal;
+    private DominatorAnalysis domAnal;
     private AvailableExpressionsAnalysis availableAnal;
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> earliestSets;
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> latestSets;
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets;
     private Set<Tuple<Exp, ICode.Type>> globalExpressionSet;
     private IrRegisterGenerator iGen;
+    private DepthFirstSpanningTree dfst;
 
     private enum OptName{
         COMMON_SUB_EXPRESSION_ELIMINATION,
@@ -99,6 +105,7 @@ public class MyOptimizer {
         this.usedSets = null;
         this.globalExpressionSet = null;
         this.iGen = null;
+        this.dfst = null;
     }
 
     public LiveVariableAnalysis getLiveVariableAnalysis(){
@@ -849,6 +856,13 @@ public class MyOptimizer {
     	}
     }
     
+    private void runDominatorAnalysis() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	this.domAnal = new DominatorAnalysis(this.globalFlowGraph);
+    	this.domAnal.run();
+    }
+    
     private void runAvailableExpressionsAnalysis() {
     	if(this.globalFlowGraph == null)
     		buildFlowGraph();
@@ -1576,5 +1590,53 @@ public class MyOptimizer {
     		block.getBlock().setICode(newICode);
     	}
     	cleanUpOptimization(OptName.PARTIAL_REDUNDANCY_ELIMINATION);
+    }
+    
+    private void buildDfst() {
+    	if(this.globalFlowGraph == null)
+    		this.buildFlowGraph();
+    	if(this.domAnal == null)
+    		this.runDominatorAnalysis();
+    	
+    	FlowGraph fg = this.globalFlowGraph;
+    	EntryNode entryPoint = fg.getEntry();
+    	BlockNode entryNode = (BlockNode)entryPoint.entry;
+    	BasicBlock entryBlock = entryNode.getBlock();
+    	RootDfstNode root = new RootDfstNode(entryBlock);
+    	
+    	HashSet<RootDfstNode> visited = new HashSet<RootDfstNode>();
+    	visited.add(root);
+    	
+    	buildDfst(entryNode, root, visited);
+    	
+    	this.dfst = new DepthFirstSpanningTree(root);
+    }
+    
+    private void buildDfst(BlockNode subRoot, RootDfstNode childNode, HashSet<RootDfstNode> visited) {
+    	for(FlowGraphNode sucessor: subRoot.getSuccessors()) {
+    		if(sucessor instanceof BlockNode) {
+    			BlockNode child = (BlockNode)sucessor;
+    			DfstNode childChildNode = new DfstNode(child.getBlock());
+    			if(childNode.isAncestorOf(childChildNode)){
+    				if(this.domAnal.getInputSet(subRoot).contains(child)) {
+    					this.dfst.addBackEdge(childNode, childChildNode);
+    				} else {
+    					this.dfst.addRetreatingEdge(childNode, childChildNode);
+    				}
+    			} else if(visited.contains(childChildNode)) {
+    				for(RootDfstNode visitedNode: visited) {
+    					if(visitedNode.equals(childChildNode)) {
+    						RootDfstNode actualChildNode = visitedNode;
+    						this.dfst.addCrossEdge(childNode, actualChildNode);
+    						break;
+    					}
+    				}
+    			} else {
+    				visited.add(childChildNode);
+    				childNode.addTreeEdge(childChildNode);
+    				buildDfst(child, childChildNode, visited);
+    			}
+    		}
+    	}
     }
 }

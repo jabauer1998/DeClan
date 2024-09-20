@@ -61,7 +61,7 @@ public abstract class InstructionAnalysis<SetType> extends Analysis<ICode, SetTy
 
                     inputSet = meetOperation.apply(predecessorsLists);
 
-                    for(ICode instr : block.getAllICode()){
+                    for(ICode instr : block.getICode()){
                         addInputSet(instr, inputSet);
                         inputSet = transferFunction(instr, inputSet);
                         addOutputSet(instr, inputSet);

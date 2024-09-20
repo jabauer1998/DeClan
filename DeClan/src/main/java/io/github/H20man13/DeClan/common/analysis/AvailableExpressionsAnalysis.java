@@ -30,7 +30,7 @@ public class AvailableExpressionsAnalysis extends InstructionAnalysis<Tuple<Exp,
         killSets = new HashMap<ICode, Set<String>>();
         this.anticipatedAnalysis = analysis;
         for(BlockNode block : flowGraph.getBlocks()){
-            List<ICode> codeList = block.getAllICode();
+            List<ICode> codeList = block.getICode();
             for(int i = 0; i < codeList.size(); i++){
                 ICode icode = codeList.get(i);
                 Set<String> instructionKill = new HashSet<String>();

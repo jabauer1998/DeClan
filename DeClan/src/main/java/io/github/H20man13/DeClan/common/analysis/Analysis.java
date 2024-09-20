@@ -60,27 +60,6 @@ public abstract class Analysis<AnalysisType, SetType> implements AnalysisBase {
 	public Analysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semilattice){
         this.flowGraph = flowGraph;
         this.direction = direction;
-        Function<List<Set<SetType>>,Set<SetType>> unionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
-            @Override
-            public Set<SetType> apply(List<Set<SetType>> t) {
-                Set<SetType> result = new HashSet<SetType>();
-                for(Set<SetType> set : t){
-                    result.addAll(set);
-                }
-                return result;
-            } 
-        };
-        Function<List<Set<SetType>>,Set<SetType>> intersectionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
-            @Override
-            public Set<SetType> apply(List<Set<SetType>> t) {
-                Set<SetType> result = unionOperation.apply(t);
-                for(Set<SetType> set : t){
-                    result.retainAll(set);
-                }
-                return result;
-            }
-        };
-
         this.meetOperation = meetOperation;
         this.semiLattice = semilattice;
         this.mappedInputs = new HashMap<AnalysisType, Set<SetType>>();

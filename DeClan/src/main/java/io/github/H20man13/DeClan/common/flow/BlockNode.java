@@ -83,7 +83,7 @@ public class BlockNode implements FlowGraphNode, Iterable<ICode> {
     public List<FlowGraphNode> getSuccessors(){
         return this.successors;
     }
-
+    
     @Override
     public String toString(){
         return block.toString();
@@ -91,11 +91,6 @@ public class BlockNode implements FlowGraphNode, Iterable<ICode> {
 
     @Override
     public List<ICode> getICode() {
-        return block.getIcode();
-    }
-
-    @Override
-    public List<ICode> getAllICode(){
         return block.getIcode();
     }
 

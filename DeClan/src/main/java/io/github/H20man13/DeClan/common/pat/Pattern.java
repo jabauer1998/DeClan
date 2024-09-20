@@ -9,9 +9,8 @@ public class Pattern {
     //The First patterns we will initialize here are Two Step Patterns
 
     //The First pattern is to identify possible use cases of the Multiply and Accumulate Function
-    public static P multiplyAndAccumulate0 = P.PAT(P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMUL(), P.ID())),
-                                                   P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.ID())));
-
+    public static P multiplyAndAccumulate0 = P.PAT(P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IMUL(), P.ID())),
+                                                   P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.ID(), P.IADD(), P.ID())));
     //The Next pattern we will initialize is a Function call followed by a return Placement
     //There will be a pattern for just standard function Calls without a return as well
     public static P callWithReturn0 = P.PAT(P.PAT(P.CALL(), P.ID()),

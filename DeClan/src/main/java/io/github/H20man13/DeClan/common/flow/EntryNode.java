@@ -22,11 +22,6 @@ public class EntryNode implements FlowGraphNode {
     }
 
     @Override
-    public List<ICode> getAllICode(){
-        return new LinkedList<ICode>();
-    }
-
-    @Override
     public String toString(){
         return "ENTRY";
     }
