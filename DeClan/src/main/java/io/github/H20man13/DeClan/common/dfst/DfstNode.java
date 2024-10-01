@@ -11,7 +11,7 @@ import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 public class DfstNode extends RootDfstNode {
 	private RootDfstNode parent;
 	
-	public DfstNode(BasicBlock block) {
+	public DfstNode(BlockNode block) {
 		super(block);
 		parent = null;
 	}
@@ -26,7 +26,7 @@ public class DfstNode extends RootDfstNode {
 	
 	@Override
 	public boolean isAncestorOf(RootDfstNode childNode) {
-		if(childNode.equals(this)) {
+		if(this.equals(childNode)) {
 			return true;
 		} else if(childNode instanceof DfstNode) {
 			DfstNode dfstChildNode = (DfstNode)childNode;

@@ -3,23 +3,25 @@ package io.github.H20man13.DeClan.common.dfst;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.flow.BasicBlock;
+import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class RootDfstNode implements Iterable<DfstNode>{
-	private BasicBlock block;
+	private BlockNode block;
 	private LinkedList<DfstNode> advancingEdges;
 	
-	public RootDfstNode(BasicBlock block) {
+	public RootDfstNode(BlockNode block) {
 		this.block = block;
 		this.advancingEdges = new LinkedList<DfstNode>();
 	}
 	
 	public void addTreeEdge(DfstNode advancingEdge) {
 		advancingEdge.setParent(this);
-		advancingEdges.add(0, advancingEdge);
+		this.advancingEdges.add(advancingEdge);
 	}
 	
 	@Override
@@ -32,6 +34,10 @@ public class RootDfstNode implements Iterable<DfstNode>{
 		}
 	}
 	
+	public BlockNode getBlock() {
+		return block;
+	}
+	
 	public boolean isAncestorOf(RootDfstNode childNode) {
 		if(childNode.equals(this))
 			return true;
@@ -39,35 +45,8 @@ public class RootDfstNode implements Iterable<DfstNode>{
 			return false;
 	}
 	
-	public RootDfstNode getAncestorOf(RootDfstNode toGet) {
-		if(toGet.equals(this))
-			return this;
-		else
-			return null;
-	}
-	
 	public int numChildren() {
 		return this.advancingEdges.size();
-	}
-	
-	public Tuple<String, Integer> toString(Map<RootDfstNode, Integer> mapResults, int currentNumber){
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("Block ");
-		sb.append(currentNumber);
-		sb.append("\r\n");
-		sb.append(Utils.formatStringToLeadingWhiteSpace("  " + this.toString()));
-		sb.append("\r\n");
-		mapResults.put(this, currentNumber);
-		currentNumber++;
-		
-		for(DfstNode child: this){
-			Tuple<String, Integer> toStr = child.toString(mapResults, currentNumber);
-			currentNumber = toStr.dest;
-			sb.append(toStr.source);
-		}
-		
-		return new Tuple<String, Integer>(sb.toString(), currentNumber);
 	}
 	
 	@Override
@@ -78,5 +57,10 @@ public class RootDfstNode implements Iterable<DfstNode>{
 	@Override
 	public Iterator<DfstNode> iterator() {
 		return advancingEdges.iterator();
+	}
+	
+	@Override
+	public int hashCode() {
+		return block.hashCode();
 	}
 }

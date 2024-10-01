@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.dfst.DepthFirstSpanningTree;
+import io.github.H20man13.DeClan.common.dfst.DfstNode;
+import io.github.H20man13.DeClan.common.dfst.RootDfstNode;
 import io.github.H20man13.DeClan.common.util.Utils;
 import io.github.H20man13.DeClan.common.util.Utils.WhiteSpaceType;
 
@@ -119,6 +122,50 @@ public class FlowGraph implements Iterable<BlockNode>{
     		}
     	}
     	return setOfInts;
+    }
+    
+    public void dfstSort(DepthFirstSpanningTree tree) {
+    	List<RootDfstNode> dfstNodes =  tree.getDepthFirstOrderSequence();
+    	int dfstSize = dfstNodes.size();
+    	for(int i = 0; i < dfstSize; i++){
+    		BlockNode elem = blockNodes.get(i);
+    		RootDfstNode node = dfstNodes.get(i);
+    		if(!elem.getBlock().equals(node.getBlock())){
+    			for(int x = i + 1; x < dfstSize; x++) {
+    				BlockNode elemToSwap = blockNodes.get(x);
+    				if(elemToSwap.getBlock().equals(node.getBlock())) {
+    					swapElems(elem, elemToSwap);
+    				}
+    			}
+    		}
+    	}
+    }
+    
+    public void unsortFromCopy(List<BlockNode> blocks) {
+    	int dfstSize = blocks.size();
+    	for(int i = 0; i < dfstSize; i++){
+    		BlockNode elem = blockNodes.get(i);
+    		BlockNode node = blocks.get(i);
+    		if(!elem.getBlock().equals(node.getBlock())){
+    			for(int x = i + 1; x < dfstSize; x++) {
+    				BlockNode elemToSwap = blockNodes.get(x);
+    				if(elemToSwap.getBlock().equals(node.getBlock())) {
+    					swapElems(elem, elemToSwap);
+    				}
+    			}
+    		}
+    	}
+    }
+    
+    private void swapElems(BlockNode block1, BlockNode block2) {
+    	int beginIndex = this.blockNodes.indexOf(block1);
+    	int endIndex = this.blockNodes.indexOf(block2);
+    	
+    	BlockNode beginElem = this.blockNodes.get(beginIndex);
+    	BlockNode endElem = this.blockNodes.get(endIndex);
+    	
+    	blockNodes.set(endIndex, beginElem);
+    	blockNodes.set(beginIndex, endElem);
     }
     
     public void addBlock(BlockNode block) {

@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.main;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,6 +26,8 @@ import io.github.H20man13.DeClan.common.dag.DagNodeFactory;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.dag.DagValueNode;
 import io.github.H20man13.DeClan.common.dag.DagVariableNode;
+import io.github.H20man13.DeClan.common.dfst.BackEdgeLoop;
+import io.github.H20man13.DeClan.common.dfst.DepthFirstMetaEdge;
 import io.github.H20man13.DeClan.common.dfst.DepthFirstSpanningTree;
 import io.github.H20man13.DeClan.common.dfst.DfstNode;
 import io.github.H20man13.DeClan.common.dfst.RootDfstNode;
@@ -61,6 +65,11 @@ import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.icode.section.SymSec;
+import io.github.H20man13.DeClan.common.region.LoopBodyRegion;
+import io.github.H20man13.DeClan.common.region.LoopRegion;
+import io.github.H20man13.DeClan.common.region.Region;
+import io.github.H20man13.DeClan.common.region.RegionGraph;
+import io.github.H20man13.DeClan.common.region.RootRegion;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.LiveInfo;
 import io.github.H20man13.DeClan.common.symboltable.entry.ProcedureEntry;
@@ -84,6 +93,9 @@ public class MyOptimizer {
     private Set<Tuple<Exp, ICode.Type>> globalExpressionSet;
     private IrRegisterGenerator iGen;
     private DepthFirstSpanningTree dfst;
+    private List<BlockNode> origBlocks;
+    private Map<Tuple<BlockNode, BlockNode>, BackEdgeLoop> loops;
+    private RegionGraph regions;
 
     private enum OptName{
         COMMON_SUB_EXPRESSION_ELIMINATION,
@@ -106,6 +118,9 @@ public class MyOptimizer {
         this.globalExpressionSet = null;
         this.iGen = null;
         this.dfst = null;
+        this.origBlocks = null;
+        this.loops = null;
+        this.regions = null;
     }
 
     public LiveVariableAnalysis getLiveVariableAnalysis(){
@@ -301,30 +316,6 @@ public class MyOptimizer {
         this.globalFlowGraph = flowGraph;
     }
     
-    private void modifyFlowGraph() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	
-    	for(BlockNode block: this.globalFlowGraph.getBlocks()) {
-    		if(block.getPredecessors().size() > 1) {
-    			List<FlowGraphNode> predecessors = block.getPredecessors();
-    			for(int i = 0; i < predecessors.size(); i++) {
-    				FlowGraphNode predecessor = predecessors.get(i);
-    				if(predecessor instanceof BlockNode) {
-    					BlockNode blockPredecessor = (BlockNode)predecessor;
-    					BlockNode newBlock = new BlockNode(new BasicBlock());
-    					blockPredecessor.removeSuccessor(block);
-    					blockPredecessor.addSuccessor(newBlock);
-    					newBlock.addSuccessor(block);
-    					block.removePredecessor(blockPredecessor);
-    					block.addPredecessor(newBlock);
-    					newBlock.addPredecessor(blockPredecessor);
-    				}
-    			}
-    		}
-    	}
-    }
-    
     private static BlockNode findEndingBlock(List<BlockNode> blocks) {
     	for(BlockNode block: blocks) {
     		if(Utils.endOfBlockIsEnd(block.getBlock())) {
@@ -415,21 +406,25 @@ public class MyOptimizer {
     private void cleanUpOptimization(OptName name){
         switch(name){
             case COMMON_SUB_EXPRESSION_ELIMINATION:
+            	unsortFlowGraph();
             	rebuildFromFlowGraph();
                 resetFlowGraph();
                 resetLiveVariableAnalysis();
                 break;
             case CONSTANT_PROPOGATION:
+            	unsortFlowGraph();
             	rebuildFromFlowGraph();
                 resetConstantPropogationAnalysis();
                 resetFlowGraph();
                 break;
             case DEAD_CODE_ELIMINATION:
+            	unsortFlowGraph();
             	rebuildFromFlowGraph();
             	resetFlowGraph();
                 resetLiveVariableAnalysis();
                 break;
             case PARTIAL_REDUNDANCY_ELIMINATION:
+            	unsortFlowGraph();
             	rebuildFromFlowGraph();
             	resetFlowGraph();
             	resetGlobalFlowSet();
@@ -449,18 +444,34 @@ public class MyOptimizer {
         switch(name){
             case COMMON_SUB_EXPRESSION_ELIMINATION:
                 buildFlowGraph();
+                copyOrigBlocks();
+                runDominatorAnalysis();
+                buildDfst();
+                sortFlowGraph();
                 runLiveVariableAnalysis();
                 break;
             case CONSTANT_PROPOGATION:
                 buildFlowGraph();
+                copyOrigBlocks();
+                runDominatorAnalysis();
+                buildDfst();
+                sortFlowGraph();
                 runConstantPropogationAnalysis();
                 break;
             case DEAD_CODE_ELIMINATION:
                 buildFlowGraph();
+                copyOrigBlocks();
+                runDominatorAnalysis();
+                buildDfst();
+                sortFlowGraph();
                 runLiveVariableAnalysis();
                 break;
             case PARTIAL_REDUNDANCY_ELIMINATION:
             	buildFlowGraph();
+            	copyOrigBlocks();
+            	runDominatorAnalysis();
+            	buildDfst();
+            	sortFlowGraph();
             	buildGlobalExpressionsSemilattice();
             	runAnticipatedExpressionsAnalysis();
             	runAvailableExpressionsAnalysis();
@@ -881,6 +892,14 @@ public class MyOptimizer {
     		buildGlobalExpressionsSemilattice();
     	this.anticipatedAnal = new AnticipatedExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet);
     	this.anticipatedAnal.run();
+    }
+    
+    private void copyOrigBlocks() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	this.origBlocks = new LinkedList<BlockNode>();
+    	List<BlockNode> node = this.globalFlowGraph.getBlocks();
+    	this.origBlocks.addAll(node);
     }
     
     private void buildEarliestSets() {
@@ -1601,23 +1620,31 @@ public class MyOptimizer {
     	FlowGraph fg = this.globalFlowGraph;
     	EntryNode entryPoint = fg.getEntry();
     	BlockNode entryNode = (BlockNode)entryPoint.entry;
-    	BasicBlock entryBlock = entryNode.getBlock();
-    	RootDfstNode root = new RootDfstNode(entryBlock);
+    	RootDfstNode root = new RootDfstNode(entryNode);
+    	this.dfst = new DepthFirstSpanningTree(root);
     	
     	HashSet<RootDfstNode> visited = new HashSet<RootDfstNode>();
     	visited.add(root);
     	
     	buildDfst(entryNode, root, visited);
-    	
-    	this.dfst = new DepthFirstSpanningTree(root);
     }
     
     private void buildDfst(BlockNode subRoot, RootDfstNode childNode, HashSet<RootDfstNode> visited) {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	if(this.domAnal == null)
+    		runDominatorAnalysis();
     	for(FlowGraphNode sucessor: subRoot.getSuccessors()) {
     		if(sucessor instanceof BlockNode) {
     			BlockNode child = (BlockNode)sucessor;
-    			DfstNode childChildNode = new DfstNode(child.getBlock());
-    			if(childNode.isAncestorOf(childChildNode)){
+    			DfstNode childChildNode = new DfstNode(child);
+    			if(childChildNode.isAncestorOf(childNode)){
+    				for(RootDfstNode visitedNode: visited) {
+    					if(visitedNode.equals(childChildNode) && visitedNode instanceof DfstNode) {
+    						childChildNode = (DfstNode)visitedNode;
+    						break;
+    					}
+    				}
     				if(this.domAnal.getInputSet(subRoot).contains(child)) {
     					this.dfst.addBackEdge(childNode, childChildNode);
     				} else {
@@ -1639,4 +1666,177 @@ public class MyOptimizer {
     		}
     	}
     }
+    
+    private void defineLoops() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	if(this.domAnal == null)
+    		runDominatorAnalysis();
+    	if(this.dfst == null)
+    		buildDfst();
+    	
+    	this.loops = this.dfst.identifyLoops();
+    }
+    
+    private void unsortFlowGraph() {
+    	if(this.globalFlowGraph != null)
+    		if(this.origBlocks != null) {
+    			this.globalFlowGraph.unsortFromCopy(this.origBlocks);
+    			this.origBlocks = null;
+    		}
+    }
+    
+    private void sortFlowGraph() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	if(this.domAnal == null)
+    		runDominatorAnalysis();
+    	if(this.dfst == null)
+    		buildDfst();
+    	
+    	this.globalFlowGraph.dfstSort(this.dfst);
+    }
+    
+    private void buildRegionGraph() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	if(this.domAnal == null)
+    		runDominatorAnalysis();
+    	if(this.dfst == null)
+    		buildDfst();
+    	if(this.loops == null)
+    		this.defineLoops();
+    	
+    	List<Region> resultRegionList = new LinkedList<Region>();
+    	Map<FlowGraphNode, Region> mapToRegions = new HashMap<FlowGraphNode, Region>();
+    	for(BlockNode block: globalFlowGraph.getBlocks()) {
+    		RootRegion region = new RootRegion(block.getBlock());
+    		mapToRegions.put(block, region);
+    		resultRegionList.add(region);
+    	}
+    	
+    	for(BlockNode block: globalFlowGraph.getBlocks()) {
+    		Region currentRegion = mapToRegions.get(block);
+    		for(FlowGraphNode node: block.getSuccessors()) {
+    			Region sucessorRegion = mapToRegions.get(node);
+    			currentRegion.addSucessor(sucessorRegion);
+    		}
+    		for(FlowGraphNode node: block.getPredecessors()) {
+    			Region predRegion = mapToRegions.get(node);
+    			currentRegion.addPredecessor(predRegion);
+    		}
+    	}
+    	
+    	Map<Tuple<BlockNode, BlockNode>, BackEdgeLoop> loops = this.loops;
+    	Map<Tuple<BlockNode, BlockNode>, List<Tuple<BlockNode, BlockNode>>> dependsOn = new HashMap<Tuple<BlockNode, BlockNode>, List<Tuple<BlockNode, BlockNode>>>();
+    	Set<Tuple<BlockNode, BlockNode>> visited = new HashSet<Tuple<BlockNode, BlockNode>>();
+    	
+    	for(Tuple<BlockNode, BlockNode> backEdge: loops.keySet()) {
+    		for(Tuple<BlockNode, BlockNode> otherEdge: loops.keySet()){
+    			if(!backEdge.equals(otherEdge)) {
+    				BackEdgeLoop loop = loops.get(backEdge);
+    				BackEdgeLoop otherLoop = loops.get(otherEdge);
+    				if(loop.containsSubLoop(otherLoop)) {
+    					if(!dependsOn.containsKey(backEdge)) {
+    						dependsOn.put(backEdge, new LinkedList<Tuple<BlockNode, BlockNode>>());
+    					}
+    					List<Tuple<BlockNode, BlockNode>> loopList = dependsOn.get(backEdge);
+    					loopList.add(otherEdge);
+    				}
+    			}
+    		}
+    	}
+    	
+    	generateResultRegionLoops(resultRegionList, mapToRegions, loops, dependsOn, visited);
+    	
+    	List<Region> finalSubRegionList = new LinkedList<Region>();
+    	List<BlockNode> blocks = this.globalFlowGraph.getBlocks();
+    	for(int i = 0; i < blocks.size(); i++) {
+    		BlockNode currentBlock = blocks.get(i);
+    		finalSubRegionList.add(mapToRegions.get(currentBlock));
+    		if(containsLoopWithHeader(currentBlock)){
+    			BlockNode end = getSrcNode(currentBlock);
+    			while(!currentBlock.equals(end) && i < blocks.size()) {
+    				i++;
+    				currentBlock = blocks.get(i);
+    			}
+    		}
+    	}
+    	if(finalSubRegionList.size() > 1) {
+    		Region newRegion = new Region(finalSubRegionList);
+    		resultRegionList.add(newRegion);
+    	}
+    	
+    	this.regions = new RegionGraph(resultRegionList);
+    }
+    
+    private boolean containsLoopWithHeader(BlockNode node) {
+    	for(Tuple<BlockNode, BlockNode> loop: loops.keySet()){
+    		if(loop.dest.equals(node))
+    			return true;
+    	}
+    	return false;
+    }
+    
+    private BlockNode getSrcNode(BlockNode toSearch) {
+    	for(Tuple<BlockNode, BlockNode> loop: loops.keySet()){
+    		if(loop.dest.equals(toSearch))
+    			return loop.source;
+    	}
+    	throw new OptimizerException("getSrcNode", "No dest node found with " + toSearch);
+    }
+
+	private void generateResultRegionLoops(List<Region> resultRegionList, Map<FlowGraphNode, Region> mapToRegions,
+			Map<Tuple<BlockNode, BlockNode>, BackEdgeLoop> loops2,
+			Map<Tuple<BlockNode, BlockNode>, List<Tuple<BlockNode, BlockNode>>> dependsOn,
+			Set<Tuple<BlockNode, BlockNode>> visited) {
+		for(Tuple<BlockNode, BlockNode> loopEdge: loops2.keySet()) {
+			if(!visited.contains(loopEdge)) {
+				if(dependsOn.containsKey(loopEdge)) {
+					for(Tuple<BlockNode, BlockNode> loop: dependsOn.get(loopEdge)){
+						generateDependentRegion(loop, resultRegionList, mapToRegions, loops2, dependsOn, visited);
+					}
+				}
+				
+				List<Region> insideBody = new LinkedList<Region>();
+				for(BlockNode bodyNode: loops2.get(loopEdge)) {
+					insideBody.add(mapToRegions.get(bodyNode));
+				}
+				LoopBodyRegion bodyRegion = new LoopBodyRegion(insideBody);
+				
+				resultRegionList.add(bodyRegion);
+				bodyRegion.addSucessor(bodyRegion);
+				bodyRegion.addPredecessor(bodyRegion);
+				LoopRegion bodyCasing = new LoopRegion(bodyRegion);
+				mapToRegions.put(loopEdge.dest, bodyCasing);
+				resultRegionList.add(bodyCasing);
+				visited.add(loopEdge);
+			}
+		}
+	}
+
+	private void generateDependentRegion(Tuple<BlockNode, BlockNode> loop, List<Region> resultRegionList,
+			Map<FlowGraphNode, Region> mapToRegions, Map<Tuple<BlockNode, BlockNode>, BackEdgeLoop> loops2,
+			Map<Tuple<BlockNode, BlockNode>, List<Tuple<BlockNode, BlockNode>>> dependsOn,
+			Set<Tuple<BlockNode, BlockNode>> visited) {
+		if(!visited.contains(loop)) {
+			if(dependsOn.containsKey(loop)) {
+				for(Tuple<BlockNode, BlockNode> loopEdge: dependsOn.get(loop)){
+					generateDependentRegion(loopEdge, resultRegionList, mapToRegions, loops2, dependsOn, visited);
+				}
+			}
+			
+			List<Region> insideBody = new LinkedList<Region>();
+			for(BlockNode bodyNode: loops2.get(loop)) {
+				insideBody.add(mapToRegions.get(bodyNode));
+			}
+			LoopBodyRegion bodyRegion = new LoopBodyRegion(insideBody);
+			resultRegionList.add(bodyRegion);
+			bodyRegion.addSucessor(bodyRegion);
+			bodyRegion.addPredecessor(bodyRegion);
+			LoopRegion bodyCasing = new LoopRegion(bodyRegion);
+			resultRegionList.add(bodyCasing);
+			visited.add(loop);
+		}
+	}
 }
