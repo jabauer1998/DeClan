@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.Tuple;
-import io.github.H20man13.DeClan.common.analysis.LiveVariableAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.LiveVariableAnalysis;
 import io.github.H20man13.DeClan.common.arm.ArmCodeGenerator.VariableLength;
 import io.github.H20man13.DeClan.common.icode.ICode;
 

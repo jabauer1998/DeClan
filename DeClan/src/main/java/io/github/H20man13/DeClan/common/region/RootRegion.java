@@ -8,7 +8,7 @@ public class RootRegion extends Region {
 	private BasicBlock block;
 	
 	public RootRegion(BasicBlock block) {
-		super(new LinkedList<Region>());
+		super(null, new LinkedList<Region>());
 		this.block = block;
 	}
 }

@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common.analysis;
+package io.github.H20man13.DeClan.common.analysis.iterative;
 
 import java.util.HashMap;
 import java.util.HashSet;

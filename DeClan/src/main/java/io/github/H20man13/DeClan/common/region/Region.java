@@ -4,34 +4,91 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Region {
+import io.github.H20man13.DeClan.common.Tuple;
+
+public class Region implements Iterable<Region>{
+	private Region header;
 	private List<Region> subRegions;
-	private List<Region> predecessors;
-	private List<Region> sucessors;
+	private List<Tuple<Region, Region>> exitEdge;
+	private List<Tuple<Region, Region>> entryEdge;
+	private List<Tuple<Region, Region>> innerEdge;
 	
-	public Region(List<Region> subRegions) {
+	public Region(Region header, List<Region> subRegions) {
 		this.subRegions = subRegions;
-		this.sucessors = new LinkedList<Region>();
-		this.predecessors = new LinkedList<Region>();
+		this.exitEdge = new LinkedList<Tuple<Region, Region>>();
+		this.entryEdge = new LinkedList<Tuple<Region, Region>>();
+		this.innerEdge = new LinkedList<Tuple<Region, Region>>();
 	}
 	
-	public void addPredecessor(Region region) {
-		this.predecessors.add(region);
+	public Region getHeader() {
+		return header;
 	}
 	
-	public void addSucessor(Region region) {
-		this.sucessors.add(region);
+	public void addExitEdge(Region subRegion, Region outsideRegion) {
+		this.exitEdge.add(new Tuple<Region, Region>(subRegion, outsideRegion));
 	}
 	
-	public Iterator<Region> getPredecessors(){
-		return predecessors.iterator();
+	public void addEntryEdge(Region outsideRegion, Region subRegion) {
+		this.entryEdge.add(new Tuple<Region, Region>(outsideRegion, subRegion));
 	}
 	
-	public Iterator<Region> getSucessors(){
-		return sucessors.iterator();
+	public void addInnerEdge(Region subRegion1, Region subRegion2){
+		this.innerEdge.add(new Tuple<Region, Region>(subRegion1, subRegion2));
 	}
 	
-	public Iterator<Region> subRegions(){
+	public Iterable<Region> getInputsOutsideRegion(Region subRegion){
+		LinkedList<Region> srces = new LinkedList<Region>();
+		for(Tuple<Region, Region> entryEdge: this.entryEdge) {
+			if(entryEdge.dest.equals(subRegion))
+				srces.add(entryEdge.dest);
+		}
+		return srces;
+	}
+	
+	public Iterable<Region> getExitRegions(){
+		LinkedList<Region> exitRegions = new LinkedList<Region>();
+		for(Tuple<Region, Region> exitEdge: this.exitEdge) {
+			if(exitEdge.source instanceof RootRegion) {
+				if(!exitRegions.contains(exitEdge.source))
+					exitRegions.add(exitEdge.source);
+			} else {
+				Iterable<Region> allExitRegions = exitEdge.source.getExitRegions();
+				for(Region exitRegion: allExitRegions) {
+					if(!exitRegions.contains(exitRegion))
+						exitRegions.add(exitRegion);
+				}
+			}
+		}
+		return exitRegions;
+	}
+	
+	public Iterable<Region> getEntryRegions(){
+		LinkedList<Region> entryRegions = new LinkedList<Region>();
+		for(Tuple<Region, Region> entryEdge: this.entryEdge) {
+			if(entryEdge.dest instanceof RootRegion) {
+				if(!entryRegions.contains(entryEdge.dest))
+					entryRegions.add(entryEdge.dest);
+			} else {
+				Iterable<Region> allExitRegions = entryEdge.dest.getEntryRegions();
+				for(Region exitRegion: allExitRegions) {
+					if(!entryRegions.contains(exitRegion))
+						entryRegions.add(exitRegion);
+				}
+			}
+		}
+		return entryRegions;
+	}
+	
+	public Iterable<Region> getTargetsOutsideRegion(Region subRegion){
+		LinkedList<Region> targets = new LinkedList<Region>();
+		for(Tuple<Region, Region> exitEdge: this.exitEdge) {
+			if(exitEdge.source.equals(subRegion))
+				targets.add(exitEdge.dest);
+		}
+		return targets;
+	}
+	
+	public Iterator<Region> iterator(){
 		return subRegions.iterator();
 	}
 }

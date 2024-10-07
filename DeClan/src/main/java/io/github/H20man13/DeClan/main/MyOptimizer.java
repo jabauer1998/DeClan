@@ -11,13 +11,13 @@ import java.util.Set;
 
 import javax.management.RuntimeErrorException;
 import io.github.H20man13.DeClan.common.Tuple;
-import io.github.H20man13.DeClan.common.analysis.AnticipatedExpressionsAnalysis;
-import io.github.H20man13.DeClan.common.analysis.AvailableExpressionsAnalysis;
-import io.github.H20man13.DeClan.common.analysis.ConstantPropogationAnalysis;
-import io.github.H20man13.DeClan.common.analysis.DominatorAnalysis;
-import io.github.H20man13.DeClan.common.analysis.LiveVariableAnalysis;
-import io.github.H20man13.DeClan.common.analysis.PostponableExpressionsAnalysis;
-import io.github.H20man13.DeClan.common.analysis.UsedExpressionAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.AnticipatedExpressionsAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.AvailableExpressionsAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.ConstantPropogationAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.DominatorAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.LiveVariableAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.PostponableExpressionsAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.UsedExpressionAnalysis;
 import io.github.H20man13.DeClan.common.dag.DagGraph;
 import io.github.H20man13.DeClan.common.dag.DagIgnoredInstruction;
 import io.github.H20man13.DeClan.common.dag.DagInlineAssemblyNode;
@@ -1715,18 +1715,6 @@ public class MyOptimizer {
     		resultRegionList.add(region);
     	}
     	
-    	for(BlockNode block: globalFlowGraph.getBlocks()) {
-    		Region currentRegion = mapToRegions.get(block);
-    		for(FlowGraphNode node: block.getSuccessors()) {
-    			Region sucessorRegion = mapToRegions.get(node);
-    			currentRegion.addSucessor(sucessorRegion);
-    		}
-    		for(FlowGraphNode node: block.getPredecessors()) {
-    			Region predRegion = mapToRegions.get(node);
-    			currentRegion.addPredecessor(predRegion);
-    		}
-    	}
-    	
     	Map<Tuple<BlockNode, BlockNode>, BackEdgeLoop> loops = this.loops;
     	Map<Tuple<BlockNode, BlockNode>, List<Tuple<BlockNode, BlockNode>>> dependsOn = new HashMap<Tuple<BlockNode, BlockNode>, List<Tuple<BlockNode, BlockNode>>>();
     	Set<Tuple<BlockNode, BlockNode>> visited = new HashSet<Tuple<BlockNode, BlockNode>>();
@@ -1753,7 +1741,8 @@ public class MyOptimizer {
     	List<BlockNode> blocks = this.globalFlowGraph.getBlocks();
     	for(int i = 0; i < blocks.size(); i++) {
     		BlockNode currentBlock = blocks.get(i);
-    		finalSubRegionList.add(mapToRegions.get(currentBlock));
+    		Region reg = mapToRegions.get(currentBlock);
+    		finalSubRegionList.add(reg);
     		if(containsLoopWithHeader(currentBlock)){
     			BlockNode end = getSrcNode(currentBlock);
     			while(!currentBlock.equals(end) && i < blocks.size()) {
@@ -1762,6 +1751,7 @@ public class MyOptimizer {
     			}
     		}
     	}
+    	
     	if(finalSubRegionList.size() > 1) {
     		Region newRegion = new Region(finalSubRegionList);
     		resultRegionList.add(newRegion);
@@ -1804,10 +1794,18 @@ public class MyOptimizer {
 				}
 				LoopBodyRegion bodyRegion = new LoopBodyRegion(insideBody);
 				
+				for(Region insideBodyRegion: insideBody) {
+		    		for(Region sourceRegion: insideBodyRegion.getInputsOutsideRegion(insideBodyRegion)) {
+		    			bodyRegion.addEntryEdge(sourceRegion, insideBodyRegion);
+		    		}
+		    		for(Region destRegion: insideBodyRegion.getTargetsOutsideRegion(insideBodyRegion)) {
+		    			bodyRegion.addExitEdge(insideBodyRegion, destRegion);
+		    		}
+		    	}
+				
 				resultRegionList.add(bodyRegion);
-				bodyRegion.addSucessor(bodyRegion);
-				bodyRegion.addPredecessor(bodyRegion);
 				LoopRegion bodyCasing = new LoopRegion(bodyRegion);
+				bodyCasing.addInnerEdge(bodyRegion, bodyRegion);
 				mapToRegions.put(loopEdge.dest, bodyCasing);
 				resultRegionList.add(bodyCasing);
 				visited.add(loopEdge);
@@ -1831,10 +1829,19 @@ public class MyOptimizer {
 				insideBody.add(mapToRegions.get(bodyNode));
 			}
 			LoopBodyRegion bodyRegion = new LoopBodyRegion(insideBody);
+			
+			for(Region insideBodyRegion: insideBody) {
+	    		for(Region sourceRegion: insideBodyRegion.getInputsOutsideRegion(insideBodyRegion)) {
+	    			bodyRegion.addEntryEdge(sourceRegion, insideBodyRegion);
+	    		}
+	    		for(Region destRegion: insideBodyRegion.getTargetsOutsideRegion(insideBodyRegion)) {
+	    			bodyRegion.addExitEdge(insideBodyRegion, destRegion);
+	    		}
+	    	}
+			
 			resultRegionList.add(bodyRegion);
-			bodyRegion.addSucessor(bodyRegion);
-			bodyRegion.addPredecessor(bodyRegion);
 			LoopRegion bodyCasing = new LoopRegion(bodyRegion);
+			bodyCasing.addInnerEdge(bodyRegion, bodyRegion);
 			resultRegionList.add(bodyCasing);
 			visited.add(loop);
 		}

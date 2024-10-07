@@ -1,8 +1,10 @@
-package io.github.H20man13.DeClan.common.analysis;
+package io.github.H20man13.DeClan.common.analysis.iterative;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.analysis.AnalysisBase.Direction;
+import io.github.H20man13.DeClan.common.analysis.AnalysisBase.Meet;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 

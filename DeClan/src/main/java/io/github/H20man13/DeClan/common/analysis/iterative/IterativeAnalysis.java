@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common.analysis;
+package io.github.H20man13.DeClan.common.analysis.iterative;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,11 +7,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
+import io.github.H20man13.DeClan.common.analysis.AnalysisBase;
+import io.github.H20man13.DeClan.common.analysis.AnalysisBase.Direction;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.ICode;
 
-public abstract class Analysis<AnalysisType, SetType> implements AnalysisBase {
+public abstract class IterativeAnalysis<AnalysisType, SetType> implements AnalysisBase {
 	private FlowGraph flowGraph;
     private Direction direction;
     private Function<List<Set<SetType>>, Set<SetType>> meetOperation;
@@ -22,7 +24,7 @@ public abstract class Analysis<AnalysisType, SetType> implements AnalysisBase {
     
 	public abstract Set<SetType> transferFunction(AnalysisType type, Set<SetType> inputSet);
 	
-	public Analysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, Set<SetType> semiLattice) {
+	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, Set<SetType> semiLattice) {
 		this.flowGraph = flowGraph;
         this.direction = direction;
         Function<List<Set<SetType>>,Set<SetType>> unionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
@@ -57,7 +59,7 @@ public abstract class Analysis<AnalysisType, SetType> implements AnalysisBase {
         this.semiLattice = semiLattice;
 	}
 	
-	public Analysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semilattice){
+	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semilattice){
         this.flowGraph = flowGraph;
         this.direction = direction;
         this.meetOperation = meetOperation;
@@ -66,11 +68,11 @@ public abstract class Analysis<AnalysisType, SetType> implements AnalysisBase {
         this.mappedOutputs = new HashMap<AnalysisType, Set<SetType>>();
     }
 	
-	public Analysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation){
+	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation){
        this(flowGraph, direction, meetOperation, new HashSet<SetType>());
     }
 
-    public Analysis(FlowGraph flowGraph, Direction direction, Meet meetOperation){
+    public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation){
         this(flowGraph, direction, meetOperation, new HashSet<SetType>());
     }
     

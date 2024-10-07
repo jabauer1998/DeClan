@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common.analysis;
+package io.github.H20man13.DeClan.common.analysis.iterative;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
+import io.github.H20man13.DeClan.common.analysis.AnalysisBase;
 import io.github.H20man13.DeClan.common.analysis.AnalysisBase.Direction;
 import io.github.H20man13.DeClan.common.analysis.AnalysisBase.Meet;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
@@ -16,7 +17,7 @@ import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.ICode;
 
-public abstract class BasicBlockAnalysis<SetType> extends Analysis<FlowGraphNode, SetType> {
+public abstract class BasicBlockAnalysis<SetType> extends IterativeAnalysis<FlowGraphNode, SetType> {
     public BasicBlockAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, Set<SetType> semiLattice){
         super(flowGraph, direction, meetOperation, semiLattice);
     }

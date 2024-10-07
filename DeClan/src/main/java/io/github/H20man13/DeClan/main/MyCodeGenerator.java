@@ -13,7 +13,7 @@ import java.util.concurrent.Callable;
 import io.github.H20man13.DeClan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.position.Position;
 import io.github.H20man13.DeClan.common.Tuple;
-import io.github.H20man13.DeClan.common.analysis.LiveVariableAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.LiveVariableAnalysis;
 import io.github.H20man13.DeClan.common.arm.ArmCodeGenerator;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.pat.Pattern;
