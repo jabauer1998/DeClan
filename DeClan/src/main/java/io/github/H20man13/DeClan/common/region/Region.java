@@ -9,6 +9,7 @@ import io.github.H20man13.DeClan.common.Tuple;
 public class Region implements Iterable<Region>{
 	private Region header;
 	private List<Region> subRegions;
+	private Region parent;
 	private List<Tuple<Region, Region>> exitEdge;
 	private List<Tuple<Region, Region>> entryEdge;
 	private List<Tuple<Region, Region>> innerEdge;
@@ -18,6 +19,17 @@ public class Region implements Iterable<Region>{
 		this.exitEdge = new LinkedList<Tuple<Region, Region>>();
 		this.entryEdge = new LinkedList<Tuple<Region, Region>>();
 		this.innerEdge = new LinkedList<Tuple<Region, Region>>();
+		for(Region subReg: subRegions) {
+			subReg.setParent(this);
+		}
+	}
+	
+	public void setParent(Region parent) {
+		this.parent = parent;
+	}
+	
+	public Region getParent() {
+		return parent;
 	}
 	
 	public Region getHeader() {

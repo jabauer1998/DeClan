@@ -26,19 +26,46 @@ import io.github.H20man13.DeClan.common.analysis.region.function.SetExpression;
 public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 	private RegionGraph regions;
 	private Direction direction;
+	private Map<RegionFunctionHeader, RegionTransferFunction<SetType>> transferFunctions;
+	private Map<Region, Set<SetType>> mappedInputs;
+	private Map<Region, Set<SetType>> mappedOutputs;
+	private Set<SetType> semilattice;
+	
 	
 	public RegionAnalysis(RegionGraph regionGraph, Direction direction) {
 		this.regions = regionGraph;
 		this.direction = direction;
+		this.transferFunctions = new HashMap<RegionFunctionHeader, RegionTransferFunction<SetType>>();
+		this.mappedInputs = new HashMap<Region, Set<SetType>>();
+		this.mappedOutputs = new HashMap<Region, Set<SetType>>();
+		this.semilattice = new HashSet<SetType>();
+	}
+	
+	public RegionAnalysis(RegionGraph regionGraph, Direction direction, Set<SetType> semilattice) {
+		this.regions = regionGraph;
+		this.direction = direction;
+		this.transferFunctions = new HashMap<RegionFunctionHeader, RegionTransferFunction<SetType>>();
+		this.mappedInputs = new HashMap<Region, Set<SetType>>();
+		this.mappedOutputs = new HashMap<Region, Set<SetType>>();
+		this.semilattice = semilattice;
 	}
 	
 	public void run() {
-		runAnalysis(regions, direction);
+		buildTransferFunctions();
+		runAnalysis();
 	}
 	
-	protected void runAnalysis(RegionGraph regionGraph, Direction direction) {
+	private void runAnalysis() {
+		for(Region region:this.regions) {
+			RegionFunctionHeader header = new RegionFunctionHeader(region.getParent(), RegionFunctionHeader.Direction.IN, region);
+			RegionTransferFunction<SetType> rtf = transferFunctions.get(header);
+			Set<SetType> result = rtf.compute(mappedInputs.get(region.getParent()));
+			mappedInputs.put(region, result);
+		}
+	}
+	
+	private void buildTransferFunctions() {
 		HashSet<Region> discovered = new HashSet<Region>();
-		Map<RegionFunctionHeader, RegionTransferFunction<SetType>> transferFunctions = new HashMap<RegionFunctionHeader, RegionTransferFunction<SetType>>();
 		if(direction == Direction.FORWARDS) {
 			for(Region region: regions){
 				if(!discovered.contains(region)) {
@@ -110,7 +137,7 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 									}
 								}
 								RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, subRegion);
-								Closure<SetType> setType = closureOfFunction(iterator);
+								Closure<SetType> setType = closureOfFunction(subRegion, iterator);
 								transferFunctions.put(header, setType);
 								
 							}
@@ -217,7 +244,7 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 									}
 								}
 								RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, subRegion);
-								Closure<SetType> setType = closureOfFunction(iterator);
+								Closure<SetType> setType = closureOfFunction(subRegion, iterator);
 								transferFunctions.put(header, setType);
 								
 							}
@@ -326,7 +353,7 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 							}
 						}
 						RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, subRegion);
-						Closure<SetType> setType = closureOfFunction(iterator);
+						Closure<SetType> setType = closureOfFunction(subRegion, iterator);
 						transferFunctions.put(header, setType);
 						
 					}
@@ -429,7 +456,7 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 							}
 						}
 						RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, subRegion);
-						Closure<SetType> setType = closureOfFunction(iterator);
+						Closure<SetType> setType = closureOfFunction(subRegion, iterator);
 						transferFunctions.put(header, setType);
 						
 					}
@@ -466,7 +493,7 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 		}
 	}
 	
-	protected abstract Closure<SetType> closureOfFunction(RegionTransferFunction<SetType> input);
+	protected abstract Closure<SetType> closureOfFunction(Region reg, RegionTransferFunction<SetType> input);
 	protected abstract RegionTransferFunction<SetType> compositionOfFunctions(RegionTransferFunction<SetType> func1, RegionTransferFunction<SetType> func2);
 	protected abstract RegionTransferFunction<SetType> meetOfFunctions(RegionTransferFunction<SetType> exp1, RegionTransferFunction<SetType> exp2);
 	protected abstract RegionTransferFunction<SetType> transferFunction(Region region);

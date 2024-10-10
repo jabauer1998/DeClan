@@ -1753,7 +1753,7 @@ public class MyOptimizer {
     	}
     	
     	if(finalSubRegionList.size() > 1) {
-    		Region newRegion = new Region(finalSubRegionList);
+    		Region newRegion = new Region(finalSubRegionList.get(0), finalSubRegionList);
     		resultRegionList.add(newRegion);
     	}
     	
@@ -1792,7 +1792,7 @@ public class MyOptimizer {
 				for(BlockNode bodyNode: loops2.get(loopEdge)) {
 					insideBody.add(mapToRegions.get(bodyNode));
 				}
-				LoopBodyRegion bodyRegion = new LoopBodyRegion(insideBody);
+				LoopBodyRegion bodyRegion = new LoopBodyRegion(mapToRegions.get(loopEdge.dest), insideBody);
 				
 				for(Region insideBodyRegion: insideBody) {
 		    		for(Region sourceRegion: insideBodyRegion.getInputsOutsideRegion(insideBodyRegion)) {
@@ -1828,7 +1828,7 @@ public class MyOptimizer {
 			for(BlockNode bodyNode: loops2.get(loop)) {
 				insideBody.add(mapToRegions.get(bodyNode));
 			}
-			LoopBodyRegion bodyRegion = new LoopBodyRegion(insideBody);
+			LoopBodyRegion bodyRegion = new LoopBodyRegion(mapToRegions.get(loop.dest), insideBody);
 			
 			for(Region insideBodyRegion: insideBody) {
 	    		for(Region sourceRegion: insideBodyRegion.getInputsOutsideRegion(insideBodyRegion)) {

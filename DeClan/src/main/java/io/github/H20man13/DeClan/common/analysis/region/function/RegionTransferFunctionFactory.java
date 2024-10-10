@@ -30,4 +30,12 @@ public class RegionTransferFunctionFactory<SetType> {
 	public RegionTransferFunction<SetType> produceRegionTransferFunction(SetExpression<SetType> type){
 		return new RegionTransferFunction<SetType>(type);
 	}
+	
+	public Closure<SetType> produceClosureFunction(RegionTransferFunction<SetType> func){
+		return new Closure<SetType>(func);
+	}
+	
+	public SubtractionOperation<SetType> produceSubtractionOperation(SetExpression<SetType> set1, SetExpression<SetType> set2){
+		return new SubtractionOperation<SetType>(set1, set2);
+	}
 }
