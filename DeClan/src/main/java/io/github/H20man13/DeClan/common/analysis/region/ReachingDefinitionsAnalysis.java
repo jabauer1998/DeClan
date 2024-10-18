@@ -31,7 +31,6 @@ public class ReachingDefinitionsAnalysis extends RegionAnalysis<ICode> {
 		for(Region reg: regionGraph) {
 			if(reg instanceof RootRegion){
 				RootRegion root = (RootRegion)reg;
-				
 			}
 		}
 	}

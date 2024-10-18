@@ -1,8 +1,12 @@
 package io.github.H20man13.DeClan.common.region;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import io.github.H20man13.DeClan.common.Tuple;
 
@@ -102,5 +106,136 @@ public class Region implements Iterable<Region>{
 	
 	public Iterator<Region> iterator(){
 		return subRegions.iterator();
+	}
+	
+	@Override
+	public String toString() {
+		Map<Region, Integer> mapToInt = new HashMap<Region, Integer>();
+		int currentRegion = 0;
+		return genInnerRegion(this, mapToInt, currentRegion).dest;
+	}
+	
+	private static Tuple<Integer, String> genOuterRegion(Region r, Map<Region, Integer> mapToInt, int currentRegionNumber){
+		StringBuilder sb = new StringBuilder();
+		mapToInt.put(r, currentRegionNumber);
+		currentRegionNumber++;
+		sb.append("[Region ");
+		sb.append(mapToInt.get(r));
+		sb.append("\r\n");
+		sb.append("Contains Regions:\r\n");
+		for(Region region: r.subRegions) {
+			Tuple<Integer, String> gendSubRegion = genInnerRegion(region, mapToInt, currentRegionNumber);
+			sb.append(gendSubRegion.dest);
+			currentRegionNumber = gendSubRegion.source;
+		}
+		sb.append("Header Region=");
+		sb.append(mapToInt.get(r.header));
+		sb.append("\r\n");
+		if(r instanceof RootRegion) {
+			RootRegion root = (RootRegion)r;
+			sb.append("Text Region=\"\r\n");
+			sb.append(root.toString());
+			sb.append("\r\n\"\r\n");
+		}
+		return new Tuple<Integer, String>(currentRegionNumber, sb.toString());
+	}
+	
+	private static Tuple<Integer, String> genInnerRegion(Region r, Map<Region, Integer> mapToInt, int currentRegionNumber){
+		StringBuilder sb = new StringBuilder();
+		mapToInt.put(r, currentRegionNumber);
+		currentRegionNumber++;
+		sb.append("[Region ");
+		int rInt = mapToInt.get(r);
+		sb.append(rInt);
+		sb.append("\r\n");
+		sb.append("Contains Regions:\r\n");
+		for(Region region: r.subRegions) {
+			Tuple<Integer, String> gendSubRegion = genInnerRegion(region, mapToInt, currentRegionNumber);
+			sb.append(gendSubRegion.dest);
+			currentRegionNumber = gendSubRegion.source;
+		}
+		sb.append("Regions Outside ");
+		sb.append(rInt);
+		sb.append("\r\n");
+		for(Tuple<Region, Region> exitEdge: r.exitEdge) {
+			Region dest = exitEdge.dest;
+			if(!mapToInt.containsKey(dest)) {
+				Tuple<Integer, String> tuple = genOuterRegion(dest, mapToInt, currentRegionNumber);
+				sb.append(tuple.dest);
+				currentRegionNumber = tuple.source;
+			}
+		}
+		for(Tuple<Region, Region> entryEdge: r.entryEdge) {
+			Region dest = entryEdge.source;
+			if(!mapToInt.containsKey(dest)) {
+				Tuple<Integer, String> tuple = genOuterRegion(dest, mapToInt, currentRegionNumber);
+				sb.append(tuple.dest);
+				currentRegionNumber = tuple.source;
+			}
+		}
+		sb.append("Header Region=");
+		sb.append(mapToInt.get(r.header));
+		sb.append("\r\n");
+		if(r instanceof RootRegion) {
+			RootRegion root = (RootRegion)r;
+			sb.append("Text Region=\"\r\n");
+			sb.append(root.toString());
+			sb.append("\r\n\"\r\n");
+		}
+		sb.append("Exit Edges: {");
+		boolean first = true;
+		for(Tuple<Region, Region> exitEdge: r.exitEdge) {
+			if(first) {
+				sb.append('(');
+				sb.append(mapToInt.get(exitEdge.source));
+				sb.append(", ");
+				sb.append(mapToInt.get(exitEdge.dest));
+				sb.append(')');
+				first = false;
+			} else {
+				sb.append(", (");
+				sb.append(mapToInt.get(exitEdge.source));
+				sb.append(", ");
+				sb.append(mapToInt.get(exitEdge.dest));
+				sb.append(')');
+			}
+		}
+		sb.append("}\r\nOuter Edges: {");
+		first = true;
+		for(Tuple<Region, Region> entryEdge: r.entryEdge) {
+			if(first) {
+				sb.append('(');
+				sb.append(mapToInt.get(entryEdge.source));
+				sb.append(", ");
+				sb.append(mapToInt.get(entryEdge.dest));
+				sb.append(')');
+				first = false;
+			} else {
+				sb.append(", (");
+				sb.append(mapToInt.get(entryEdge.source));
+				sb.append(", ");
+				sb.append(mapToInt.get(entryEdge.dest));
+				sb.append(')');
+			}
+		}
+		sb.append("}\r\nInner Edges: {");
+		first = true;
+		for(Tuple<Region, Region> entryEdge: r.entryEdge) {
+			if(first) {
+				sb.append('(');
+				sb.append(mapToInt.get(entryEdge.source));
+				sb.append(", ");
+				sb.append(mapToInt.get(entryEdge.dest));
+				sb.append(')');
+				first = false;
+			} else {
+				sb.append(", (");
+				sb.append(mapToInt.get(entryEdge.source));
+				sb.append(", ");
+				sb.append(mapToInt.get(entryEdge.dest));
+				sb.append(')');
+			}
+		}
+		return new Tuple<Integer, String>(currentRegionNumber, sb.toString());
 	}
 }

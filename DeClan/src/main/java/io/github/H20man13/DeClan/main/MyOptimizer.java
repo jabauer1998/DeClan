@@ -17,6 +17,7 @@ import io.github.H20man13.DeClan.common.analysis.iterative.ConstantPropogationAn
 import io.github.H20man13.DeClan.common.analysis.iterative.DominatorAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.LiveVariableAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.PostponableExpressionsAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.ReachingDefinitionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.UsedExpressionAnalysis;
 import io.github.H20man13.DeClan.common.dag.DagGraph;
 import io.github.H20man13.DeClan.common.dag.DagIgnoredInstruction;
@@ -85,6 +86,7 @@ public class MyOptimizer {
     private AnticipatedExpressionsAnalysis anticipatedAnal;
     private PostponableExpressionsAnalysis posponableAnal;
     private UsedExpressionAnalysis usedAnal;
+    private ReachingDefinitionsAnalysis defAnal;
     private DominatorAnalysis domAnal;
     private AvailableExpressionsAnalysis availableAnal;
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> earliestSets;
@@ -110,6 +112,7 @@ public class MyOptimizer {
         this.propAnal = null;
         this.liveAnal = null;
         this.availableAnal = null;
+        this.defAnal = null;
         this.posponableAnal = null;
         this.anticipatedAnal = null;
         this.earliestSets = null;
@@ -350,6 +353,10 @@ public class MyOptimizer {
     	this.liveAnal = null;
     }
     
+    private void resetReachingDefinitionsAnalysis() {
+    	this.defAnal = null;
+    }
+    
     private void resetFlowGraph() {
     	this.globalFlowGraph = null;
     }
@@ -422,6 +429,7 @@ public class MyOptimizer {
             	rebuildFromFlowGraph();
             	resetFlowGraph();
                 resetLiveVariableAnalysis();
+                resetReachingDefinitionsAnalysis();
                 break;
             case PARTIAL_REDUNDANCY_ELIMINATION:
             	unsortFlowGraph();
@@ -465,6 +473,7 @@ public class MyOptimizer {
                 buildDfst();
                 sortFlowGraph();
                 runLiveVariableAnalysis();
+                runReachingDefinitionsAnalysis();
                 break;
             case PARTIAL_REDUNDANCY_ELIMINATION:
             	buildFlowGraph();
@@ -844,6 +853,15 @@ public class MyOptimizer {
         this.liveAnal.run();
     }
     
+    public void runReachingDefinitionsAnalysis(){
+        if(this.globalFlowGraph == null)
+            buildFlowGraph();
+        if(this.liveAnal == null)
+        	runLiveVariableAnalysis();
+        this.defAnal = new ReachingDefinitionsAnalysis(this.globalFlowGraph, this.liveAnal);
+        this.defAnal.run();
+    }
+    
     private void buildGlobalExpressionsSemilattice(){
     	this.globalExpressionSet = new HashSet<Tuple<Exp, ICode.Type>>();
     	for(FlowGraphNode node: this.globalFlowGraph.getBlocks()) {
@@ -1063,9 +1081,13 @@ public class MyOptimizer {
                 for(ICode icode : block.getICode()){
                     if(icode instanceof Assign){
                         Assign assICode = (Assign)icode;
-                        Set<String> liveVariables = this.liveAnal.getOutputSet(icode);
-                        if(liveVariables.contains(assICode.place)){
+                        Set<String> defsReached = this.defAnal.getInputSet(icode);
+                        Set<String> liveVar = this.liveAnal.getInputSet(icode);
+                        if(defsReached.contains(assICode.place) && liveVar.contains(assICode.place)){
                             result.add(assICode);
+                        } else if(liveVar.contains(assICode.place)) {
+                        	result.add(new Def(assICode.getScope(), assICode.place, assICode.value, assICode.getType()));
+                        	changes = true;
                         } else {
                         	changes = true;
                         }
