@@ -110,6 +110,8 @@ public class MyOptimizerTest {
         comparePrograms(optimizedProg, targetSource);
     }
     
+    
+    
     @Test 
     public void testDeadCodeElimination(){
         String inputSource = "SYMBOL SECTION\n"
@@ -136,6 +138,56 @@ public class MyOptimizerTest {
                                 " LABEL block1\r\n" + //
                                 " DEF a := 1 <INT>\r\n" + //
                                 " DEF i := a IADD a <INT>\r\n" + //
+                                " CALL func([i -> x]<INT>)\r\n" + //
+                                " DEF f := (RETURN z) <INT>\r\n" + //
+                                " IF f EQ (GLOBAL g)\r\n" + //
+                                " THEN block1\r\n" + //
+                                " ELSE block1\r\n" + //
+                                "END\r\n" + //
+                                "PROC SECTION\r\n";
+
+        ErrorLog errLog = new ErrorLog();
+        ReaderSource source = new ReaderSource(new StringReader(inputSource));
+        MyIrLexer lexer = new MyIrLexer(source, errLog);
+        MyIrParser parser = new MyIrParser(lexer, errLog);
+        Prog prog = parser.parseProgram();
+        MyOptimizer optimizer = new MyOptimizer(prog);
+        optimizer.performDeadCodeElimination();
+        //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
+        //It is called within the Optimizers constructor
+        Prog optimizedProg = optimizer.getICode();
+
+        comparePrograms(optimizedProg, targetSource);
+    }
+    
+    @Test 
+    public void testDeadCodeElimination2(){
+        String inputSource = "SYMBOL SECTION\n"
+                           + "DATA SECTION\n"
+                           + " DEF GLOBAL g := TRUE <BOOL>\n"
+                           + " DEF GLOBAL b := 2 <INT>"
+                           + "BSS SECTION\n"
+                           + "CODE SECTION\n"
+                           + "LABEL block1\n"
+                           + "DEF a := 1 <INT>\n"
+                           + "GLOBAL b := 60 <INT>\n" 
+                           + "DEF i := (GLOBAL b) IADD a <INT>\n"
+                           + "DEF h := i IADD a <INT>\n"
+                           + "CALL func ([i -> x]<INT>)\n"
+                           + "DEF f := (RETURN z) <INT>\n"
+                           + "IF f EQ (GLOBAL g) THEN block1 ELSE block1\n"
+                           + "END\n"
+                           + "PROC SECTION\n";
+
+        String targetSource =   "SYMBOL SECTION\r\n" + //
+                                "DATA SECTION\r\n" + //
+                                " DEF GLOBAL g := TRUE <BOOL>\r\n" + //
+                                "BSS SECTION\r\n" + //
+                                "CODE SECTION\r\n" + //
+                                " LABEL block1\r\n" + //
+                                " DEF a := 1 <INT>\r\n" + //
+                                " DEF GLOBAL b := 60 <INT>\r\n" +
+                                " DEF i := (GLOBAL b) IADD a <INT>\r\n" + //
                                 " CALL func([i -> x]<INT>)\r\n" + //
                                 " DEF f := (RETURN z) <INT>\r\n" + //
                                 " IF f EQ (GLOBAL g)\r\n" + //

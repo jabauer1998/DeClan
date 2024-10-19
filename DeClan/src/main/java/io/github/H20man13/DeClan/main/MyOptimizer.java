@@ -1082,7 +1082,7 @@ public class MyOptimizer {
                     if(icode instanceof Assign){
                         Assign assICode = (Assign)icode;
                         Set<String> defsReached = this.defAnal.getInputSet(icode);
-                        Set<String> liveVar = this.liveAnal.getInputSet(icode);
+                        Set<String> liveVar = this.liveAnal.getOutputSet(icode);
                         if(defsReached.contains(assICode.place) && liveVar.contains(assICode.place)){
                             result.add(assICode);
                         } else if(liveVar.contains(assICode.place)) {
