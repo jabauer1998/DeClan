@@ -15,7 +15,7 @@ import io.github.H20man13.DeClan.common.analysis.region.function.UnionOperation;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.region.Region;
 import io.github.H20man13.DeClan.common.region.RegionGraph;
-import io.github.H20man13.DeClan.common.region.RootRegion;
+import io.github.H20man13.DeClan.common.region.BlockRegion;
 
 public class ReachingDefinitionsAnalysis extends RegionAnalysis<ICode> {
 	private RegionTransferFunctionFactory<ICode> factory;
@@ -29,8 +29,8 @@ public class ReachingDefinitionsAnalysis extends RegionAnalysis<ICode> {
 		this.killDefs = new HashMap<Region, Set<ICode>>();
 		
 		for(Region reg: regionGraph) {
-			if(reg instanceof RootRegion){
-				RootRegion root = (RootRegion)reg;
+			if(reg instanceof BlockRegion){
+				BlockRegion root = (BlockRegion)reg;
 			}
 		}
 	}

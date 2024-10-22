@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.region.Region;
+import io.github.H20man13.DeClan.common.region.RegionBase;
 
 public class RegionFunctionHeader {
 	public enum Direction{
@@ -11,17 +12,17 @@ public class RegionFunctionHeader {
 		OUT
 	}
 	
-	private Region functionRegion;
+	private RegionBase functionRegion;
 	private Direction dir;
 	private Object blockOrRegion;
 	
-	public RegionFunctionHeader(Region region, Direction dir, FlowGraphNode block) {
+	public RegionFunctionHeader(RegionBase region, Direction dir, FlowGraphNode block) {
 		this.functionRegion = region;
 		this.dir = dir;
 		this.blockOrRegion = block;
 	}
 	
-	public RegionFunctionHeader(Region region, Direction dir, Region subRegion) {
+	public RegionFunctionHeader(RegionBase region, Direction dir, RegionBase subRegion) {
 		this.functionRegion = region;
 		this.dir = dir;
 		this.blockOrRegion = subRegion;

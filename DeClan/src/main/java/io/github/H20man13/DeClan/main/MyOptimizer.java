@@ -69,8 +69,11 @@ import io.github.H20man13.DeClan.common.icode.section.SymSec;
 import io.github.H20man13.DeClan.common.region.LoopBodyRegion;
 import io.github.H20man13.DeClan.common.region.LoopRegion;
 import io.github.H20man13.DeClan.common.region.Region;
+import io.github.H20man13.DeClan.common.region.RegionBase;
 import io.github.H20man13.DeClan.common.region.RegionGraph;
-import io.github.H20man13.DeClan.common.region.RootRegion;
+import io.github.H20man13.DeClan.common.region.BaseRegion;
+import io.github.H20man13.DeClan.common.region.BlockRegion;
+import io.github.H20man13.DeClan.common.region.InstructionRegion;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.LiveInfo;
 import io.github.H20man13.DeClan.common.symboltable.entry.ProcedureEntry;
@@ -1729,10 +1732,17 @@ public class MyOptimizer {
     	if(this.loops == null)
     		this.defineLoops();
     	
-    	List<Region> resultRegionList = new LinkedList<Region>();
-    	Map<FlowGraphNode, Region> mapToRegions = new HashMap<FlowGraphNode, Region>();
+    	List<RegionBase> resultRegionList = new LinkedList<RegionBase>();
+    	Map<FlowGraphNode, RegionBase> mapToRegions = new HashMap<FlowGraphNode, RegionBase>();
     	for(BlockNode block: globalFlowGraph.getBlocks()) {
-    		RootRegion region = new RootRegion(block.getBlock());
+    		List<RegionBase> subRegions = new LinkedList<RegionBase>();
+    		Map<ICode, RegionBase> icodeToRegion = new HashMap<ICode, RegionBase>();
+    		for(ICode icode: block.getICode()) {
+    			InstructionRegion region = new InstructionRegion(icode);
+    			subRegions.add(region);
+    			icodeToRegion.put(icode, region);
+    		}
+    		BlockRegion region = new BlockRegion(block.getBlock(), icodeToRegion.get(block.getICode().getFirst()), subRegions);
     		mapToRegions.put(block, region);
     		resultRegionList.add(region);
     	}
@@ -1759,11 +1769,11 @@ public class MyOptimizer {
     	
     	generateResultRegionLoops(resultRegionList, mapToRegions, loops, dependsOn, visited);
     	
-    	List<Region> finalSubRegionList = new LinkedList<Region>();
+    	List<RegionBase> finalSubRegionList = new LinkedList<RegionBase>();
     	List<BlockNode> blocks = this.globalFlowGraph.getBlocks();
     	for(int i = 0; i < blocks.size(); i++) {
     		BlockNode currentBlock = blocks.get(i);
-    		Region reg = mapToRegions.get(currentBlock);
+    		RegionBase reg = mapToRegions.get(currentBlock);
     		finalSubRegionList.add(reg);
     		if(containsLoopWithHeader(currentBlock)){
     			BlockNode end = getSrcNode(currentBlock);
@@ -1775,7 +1785,7 @@ public class MyOptimizer {
     	}
     	
     	if(finalSubRegionList.size() > 1) {
-    		Region newRegion = new Region(finalSubRegionList.get(0), finalSubRegionList);
+    		BaseRegion newRegion = new BaseRegion(finalSubRegionList.get(0), finalSubRegionList);
     		resultRegionList.add(newRegion);
     	}
     	
@@ -1798,7 +1808,7 @@ public class MyOptimizer {
     	throw new OptimizerException("getSrcNode", "No dest node found with " + toSearch);
     }
 
-	private void generateResultRegionLoops(List<Region> resultRegionList, Map<FlowGraphNode, Region> mapToRegions,
+	private void generateResultRegionLoops(List<RegionBase> resultRegionList, Map<FlowGraphNode, RegionBase> mapToRegions,
 			Map<Tuple<BlockNode, BlockNode>, BackEdgeLoop> loops2,
 			Map<Tuple<BlockNode, BlockNode>, List<Tuple<BlockNode, BlockNode>>> dependsOn,
 			Set<Tuple<BlockNode, BlockNode>> visited) {
@@ -1810,19 +1820,22 @@ public class MyOptimizer {
 					}
 				}
 				
-				List<Region> insideBody = new LinkedList<Region>();
+				List<RegionBase> insideBody = new LinkedList<RegionBase>();
 				for(BlockNode bodyNode: loops2.get(loopEdge)) {
 					insideBody.add(mapToRegions.get(bodyNode));
 				}
 				LoopBodyRegion bodyRegion = new LoopBodyRegion(mapToRegions.get(loopEdge.dest), insideBody);
 				
-				for(Region insideBodyRegion: insideBody) {
-		    		for(Region sourceRegion: insideBodyRegion.getInputsOutsideRegion(insideBodyRegion)) {
-		    			bodyRegion.addEntryEdge(sourceRegion, insideBodyRegion);
-		    		}
-		    		for(Region destRegion: insideBodyRegion.getTargetsOutsideRegion(insideBodyRegion)) {
-		    			bodyRegion.addExitEdge(insideBodyRegion, destRegion);
-		    		}
+				for(RegionBase insideBodyRegion: insideBody) {
+					if(insideBodyRegion instanceof BaseRegion) {
+						BaseRegion reg = (BaseRegion)insideBodyRegion;
+						for(RegionBase sourceRegion: reg.getInputsOutsideRegion(insideBodyRegion)) {
+			    			bodyRegion.addEntryEdge(sourceRegion, insideBodyRegion);
+			    		}
+			    		for(RegionBase destRegion: reg.getTargetsOutsideRegion(insideBodyRegion)) {
+			    			bodyRegion.addExitEdge(insideBodyRegion, destRegion);
+			    		}
+					}
 		    	}
 				
 				resultRegionList.add(bodyRegion);
@@ -1835,8 +1848,8 @@ public class MyOptimizer {
 		}
 	}
 
-	private void generateDependentRegion(Tuple<BlockNode, BlockNode> loop, List<Region> resultRegionList,
-			Map<FlowGraphNode, Region> mapToRegions, Map<Tuple<BlockNode, BlockNode>, BackEdgeLoop> loops2,
+	private void generateDependentRegion(Tuple<BlockNode, BlockNode> loop, List<RegionBase> resultRegionList,
+			Map<FlowGraphNode, RegionBase> mapToRegions, Map<Tuple<BlockNode, BlockNode>, BackEdgeLoop> loops2,
 			Map<Tuple<BlockNode, BlockNode>, List<Tuple<BlockNode, BlockNode>>> dependsOn,
 			Set<Tuple<BlockNode, BlockNode>> visited) {
 		if(!visited.contains(loop)) {
@@ -1846,19 +1859,22 @@ public class MyOptimizer {
 				}
 			}
 			
-			List<Region> insideBody = new LinkedList<Region>();
+			List<RegionBase> insideBody = new LinkedList<RegionBase>();
 			for(BlockNode bodyNode: loops2.get(loop)) {
 				insideBody.add(mapToRegions.get(bodyNode));
 			}
 			LoopBodyRegion bodyRegion = new LoopBodyRegion(mapToRegions.get(loop.dest), insideBody);
 			
-			for(Region insideBodyRegion: insideBody) {
-	    		for(Region sourceRegion: insideBodyRegion.getInputsOutsideRegion(insideBodyRegion)) {
-	    			bodyRegion.addEntryEdge(sourceRegion, insideBodyRegion);
-	    		}
-	    		for(Region destRegion: insideBodyRegion.getTargetsOutsideRegion(insideBodyRegion)) {
-	    			bodyRegion.addExitEdge(insideBodyRegion, destRegion);
-	    		}
+			for(RegionBase insideBodyRegion: insideBody) {
+				if(insideBodyRegion instanceof BaseRegion) {
+					BaseRegion base = (BaseRegion)insideBodyRegion;
+					for(RegionBase sourceRegion: base.getInputsOutsideRegion(insideBodyRegion)) {
+		    			bodyRegion.addEntryEdge(sourceRegion, insideBodyRegion);
+		    		}
+		    		for(RegionBase destRegion: base.getTargetsOutsideRegion(insideBodyRegion)) {
+		    			bodyRegion.addExitEdge(insideBodyRegion, destRegion);
+		    		}
+				}
 	    	}
 			
 			resultRegionList.add(bodyRegion);

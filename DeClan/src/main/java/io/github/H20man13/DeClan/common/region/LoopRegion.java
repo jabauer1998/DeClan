@@ -6,8 +6,8 @@ public class LoopRegion extends Region {
 	public LoopRegion(LoopBodyRegion region) {
 		super(region, genSubRegionFromBody(region));
 	}
-	private static LinkedList<Region> genSubRegionFromBody(LoopBodyRegion body){
-		LinkedList<Region> subRegion = new LinkedList<Region>();
+	private static LinkedList<RegionBase> genSubRegionFromBody(LoopBodyRegion body){
+		LinkedList<RegionBase> subRegion = new LinkedList<RegionBase>();
 		subRegion.add(body);
 		return subRegion;
 	}
