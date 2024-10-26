@@ -32,24 +32,32 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 	private Map<RegionBase, Set<SetType>> mappedInputs;
 	private Map<RegionBase, Set<SetType>> mappedOutputs;
 	private Set<SetType> semilattice;
+	private LoopStrategy strat;
+	
+	public enum LoopStrategy{
+		OBTAIN_CLOSURE,
+		ANALYZE_ITERATIONS
+	}
 	
 	
-	public RegionAnalysis(RegionGraph regionGraph, Direction direction) {
+	public RegionAnalysis(RegionGraph regionGraph, Direction direction, LoopStrategy strat) {
 		this.regions = regionGraph;
 		this.direction = direction;
 		this.transferFunctions = new HashMap<RegionFunctionHeader, RegionTransferFunction<SetType>>();
 		this.mappedInputs = new HashMap<RegionBase, Set<SetType>>();
 		this.mappedOutputs = new HashMap<RegionBase, Set<SetType>>();
 		this.semilattice = new HashSet<SetType>();
+		this.strat = strat;
 	}
 	
-	public RegionAnalysis(RegionGraph regionGraph, Direction direction, Set<SetType> semilattice) {
+	public RegionAnalysis(RegionGraph regionGraph, Direction direction, Set<SetType> semilattice, LoopStrategy strat) {
 		this.regions = regionGraph;
 		this.direction = direction;
 		this.transferFunctions = new HashMap<RegionFunctionHeader, RegionTransferFunction<SetType>>();
 		this.mappedInputs = new HashMap<RegionBase, Set<SetType>>();
 		this.mappedOutputs = new HashMap<RegionBase, Set<SetType>>();
 		this.semilattice = semilattice;
+		this.strat = strat;
 	}
 	
 	public void run() {
@@ -58,13 +66,25 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 	}
 	
 	private void runAnalysis() {
-		for(RegionBase region:this.regions) {
-			if(region instanceof Region) {
-				Region reg = (Region)region;
-				RegionFunctionHeader header = new RegionFunctionHeader(reg.getParent(), RegionFunctionHeader.Direction.IN, region);
-				RegionTransferFunction<SetType> rtf = transferFunctions.get(header);
-				Set<SetType> result = rtf.compute(mappedInputs.get(reg.getParent()));
-				mappedInputs.put(region, result);
+		if(this.direction == Direction.FORWARDS) {
+			for(RegionBase region:this.regions) {
+				if(region instanceof Region) {
+					Region reg = (Region)region;
+					RegionFunctionHeader header = new RegionFunctionHeader(reg.getParent(), RegionFunctionHeader.Direction.IN, region);
+					RegionTransferFunction<SetType> rtf = transferFunctions.get(header);
+					Set<SetType> result = rtf.compute(mappedInputs.get(reg.getParent()));
+					mappedInputs.put(region, result);
+				}
+			}
+		} else {
+			for(RegionBase region: this.regions) {
+				if(region instanceof Region) {
+					Region reg = (Region)region;
+					RegionFunctionHeader header = new RegionFunctionHeader(reg.getParent(), RegionFunctionHeader.Direction.IN, region);
+					RegionTransferFunction<SetType> rtf = transferFunctions.get(header);
+					Set<SetType> result = rtf.compute(mappedOutputs.get(reg.getParent()));
+					mappedOutputs.put(region, result);
+				}
 			}
 		}
 	}
