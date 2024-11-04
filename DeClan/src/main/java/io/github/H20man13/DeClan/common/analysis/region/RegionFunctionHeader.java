@@ -15,17 +15,25 @@ public class RegionFunctionHeader {
 	private RegionBase functionRegion;
 	private Direction dir;
 	private Object blockOrRegion;
+	private int iteration;
 	
 	public RegionFunctionHeader(RegionBase region, Direction dir, FlowGraphNode block) {
 		this.functionRegion = region;
 		this.dir = dir;
 		this.blockOrRegion = block;
+		this.iteration = -1;
 	}
 	
 	public RegionFunctionHeader(RegionBase region, Direction dir, RegionBase subRegion) {
 		this.functionRegion = region;
 		this.dir = dir;
 		this.blockOrRegion = subRegion;
+		this.iteration = -1;
+	}
+	
+	public RegionFunctionHeader(RegionBase region, Direction dir, RegionBase subRegion, int iteration) {
+		this(region, dir, subRegion);
+		this.iteration = iteration;
 	}
 	
 	@Override
@@ -35,13 +43,13 @@ public class RegionFunctionHeader {
 			if(functionRegion.equals(header.functionRegion))
 				if(dir == header.dir)
 					if(blockOrRegion.equals(header.blockOrRegion))
-						return true;
+						return this.iteration == header.iteration;
 		}
 		return false;
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.functionRegion, this.dir, this.blockOrRegion);
+		return Objects.hash(this.functionRegion, this.dir, this.blockOrRegion, this.iteration);
 	}
 }

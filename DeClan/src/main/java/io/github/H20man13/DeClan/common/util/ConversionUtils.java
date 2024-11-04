@@ -4,12 +4,18 @@ import java.math.BigInteger;
 
 import io.github.H20man13.DeClan.common.dag.DagNode.ScopeType;
 import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
+import io.github.H20man13.DeClan.common.analysis.region.expr.BinExpr;
+import io.github.H20man13.DeClan.common.analysis.region.expr.Expr;
+import io.github.H20man13.DeClan.common.analysis.region.expr.IntExpr;
+import io.github.H20man13.DeClan.common.analysis.region.expr.RefVar;
+import io.github.H20man13.DeClan.common.analysis.region.expr.UnExpr;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.exception.ConversionException;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.IntExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
@@ -255,5 +261,41 @@ public class ConversionUtils {
         } else {
             throw new ConversionException("toBool", input.getClass().getName(), Boolean.class.getName());
         }
+    }
+    
+    public static Expr toExprFromExp(Exp expression) {
+    	if(expression instanceof BinExp) return toExprFromBinExp((BinExp)expression);
+    	else if(expression instanceof UnExp) return toExprFromUnExp((UnExp)expression);
+    	else if(expression instanceof IdentExp) return toExprFromIdentExp((IdentExp)expression);
+    	else if(expression instanceof IntExp) return toExprFromIntExp((IntExp)expression);
+    	else throw new ConversionException("toExprFromExp", expression.getClass().getName(), Expr.class.getName());
+    }
+    
+    public static BinExpr toExprFromBinExp(BinExp exp) {
+    	BinExp.Operator op = exp.op;
+    	Expr left = toExprFromExp(exp.left);
+    	Expr right = toExprFromExp(exp.right);
+    	switch(op) {
+    	case IADD: return new BinExpr(left, BinExpr.Operator.IPLUS, right);
+    	case ISUB: return new BinExpr(left, BinExpr.Operator.IMINUS, right);
+    	default: throw new ConversionException("toExprFromBinExp", exp.getClass().getName(), BinExpr.class.getName());
+    	}
+    }
+    
+    public static UnExpr toExprFromUnExp(UnExp exp) {
+    	UnExp.Operator op = exp.op;
+    	Expr right = toExprFromExp(exp.right);
+    	switch(op) {
+    	case INOT: return new UnExpr(UnExpr.Operator.INEG, right);
+    	default: throw new ConversionException("toExprFromUnExp", exp.getClass().getName(), BinExpr.class.getName());
+    	}
+    }
+    
+    public static RefVar toExprFromIdentExp(IdentExp ident) {
+    	return new RefVar(ident.ident);
+    }
+    
+    public static IntExpr toExprFromIntExp(IntExp ident) {
+    	return new IntExpr(ident.value);
     }
 }

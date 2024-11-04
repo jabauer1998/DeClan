@@ -19,11 +19,13 @@ import io.github.H20man13.DeClan.common.region.RegionBase;
 import io.github.H20man13.DeClan.common.region.RegionGraph;
 import io.github.H20man13.DeClan.common.region.BaseRegion;
 import io.github.H20man13.DeClan.common.region.BlockRegion;
+import io.github.H20man13.DeClan.common.region.InstructionRegion;
 import io.github.H20man13.DeClan.common.analysis.region.function.Closure;
 import io.github.H20man13.DeClan.common.analysis.region.function.FunctionApplication;
 import io.github.H20man13.DeClan.common.analysis.region.function.RegionTransferFunction;
 import io.github.H20man13.DeClan.common.analysis.region.function.RegionTransferFunctionFactory;
 import io.github.H20man13.DeClan.common.analysis.region.function.SetExpression;
+import io.github.H20man13.DeClan.common.exception.RegionAnalysisException;
 
 public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 	private RegionGraph regions;
@@ -197,6 +199,28 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 							}
 						}
 					} else if(region instanceof BlockRegion) {
+						BlockRegion reg = (BlockRegion)region;
+						for(RegionBase subRegion: reg) {
+							if(subRegion.equals(reg.getHeader())){
+								RegionTransferFunction<SetType> ident = identityFunction();
+								RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, subRegion);
+								transferFunctions.put(header, ident);
+							} else if(subRegion instanceof InstructionRegion) {
+								InstructionRegion r = (InstructionRegion)subRegion;
+								RegionBase input = reg.getInputRegion(r);
+								RegionFunctionHeader formerOutput = new RegionFunctionHeader(input, RegionFunctionHeader.Direction.OUT, input);
+								RegionTransferFunction<SetType> outFunc = transferFunctions.get(formerOutput);
+								RegionFunctionHeader newInput = new RegionFunctionHeader(reg, RegionFunctionHeader.Direction.IN, r);
+								transferFunctions.put(newInput, outFunc);
+								RegionFunctionHeader ofRHeader = new RegionFunctionHeader(reg, RegionFunctionHeader.Direction.OUT, r);
+								RegionTransferFunction<SetType> transferForR = transferFunction(r);
+								RegionTransferFunction<SetType> comp = compositionOfFunctions(transferForR, outFunc);
+								transferFunctions.put(ofRHeader, comp);
+							} else {
+								throw new RegionAnalysisException("buildTransferFunctions", "Error unexpected Region type inside a block region");
+							}
+						}
+					} else if(region instanceof InstructionRegion){
 						RegionTransferFunction<SetType> ident = identityFunction();
 						RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, region);
 						transferFunctions.put(header, ident);
@@ -205,7 +229,7 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 						RegionFunctionHeader resultHeader = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, region);
 						transferFunctions.put(resultHeader, result);
 					} else {
-						throw new RuntimeException("Error unknown type of region encountered");
+						throw new RegionAnalysisException("buildTransferFunctions", "Error unknown type of region encountered");
 					}
 					discovered.add(region);
 				}
@@ -316,6 +340,28 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 							}
 						}
 					} else if(region instanceof BlockRegion) {
+						BlockRegion reg = (BlockRegion)region;
+						for(RegionBase subRegion: reg) {
+							if(subRegion.equals(reg.getHeader())){
+								RegionTransferFunction<SetType> ident = identityFunction();
+								RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, subRegion);
+								transferFunctions.put(header, ident);
+							} else if(subRegion instanceof InstructionRegion) {
+								InstructionRegion r = (InstructionRegion)subRegion;
+								RegionBase input = reg.getInputRegion(r);
+								RegionFunctionHeader formerOutput = new RegionFunctionHeader(input, RegionFunctionHeader.Direction.IN, input);
+								RegionTransferFunction<SetType> outFunc = transferFunctions.get(formerOutput);
+								RegionFunctionHeader newInput = new RegionFunctionHeader(reg, RegionFunctionHeader.Direction.OUT, r);
+								transferFunctions.put(newInput, outFunc);
+								RegionFunctionHeader ofRHeader = new RegionFunctionHeader(reg, RegionFunctionHeader.Direction.IN, r);
+								RegionTransferFunction<SetType> transferForR = transferFunction(r);
+								RegionTransferFunction<SetType> comp = compositionOfFunctions(transferForR, outFunc);
+								transferFunctions.put(ofRHeader, comp);
+							} else {
+								throw new RegionAnalysisException("buildTransferFunctions", "Error unexpected Region type inside a block region");
+							}
+						}
+					} else if(region instanceof InstructionRegion){
 						RegionTransferFunction<SetType> ident = identityFunction();
 						RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, region);
 						transferFunctions.put(header, ident);
@@ -324,7 +370,7 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 						RegionFunctionHeader resultHeader = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, region);
 						transferFunctions.put(resultHeader, result);
 					} else {
-						throw new RuntimeException("Error unknown type of region encountered");
+						throw new RegionAnalysisException("buildTransferFunctions", "Error unexpected type of region found");
 					}
 					discovered.add(region);
 				}
@@ -441,6 +487,28 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 					}
 				}
 			} else if(region instanceof BlockRegion) {
+				BlockRegion reg = (BlockRegion)region;
+				for(RegionBase subRegion: reg) {
+					if(subRegion.equals(reg.getHeader())){
+						RegionTransferFunction<SetType> ident = identityFunction();
+						RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, subRegion);
+						transferFunctions.put(header, ident);
+					} else if(subRegion instanceof InstructionRegion) {
+						InstructionRegion r = (InstructionRegion)subRegion;
+						RegionBase input = reg.getInputRegion(r);
+						RegionFunctionHeader formerOutput = new RegionFunctionHeader(input, RegionFunctionHeader.Direction.OUT, input);
+						RegionTransferFunction<SetType> outFunc = transferFunctions.get(formerOutput);
+						RegionFunctionHeader newInput = new RegionFunctionHeader(reg, RegionFunctionHeader.Direction.IN, r);
+						transferFunctions.put(newInput, outFunc);
+						RegionFunctionHeader ofRHeader = new RegionFunctionHeader(reg, RegionFunctionHeader.Direction.OUT, r);
+						RegionTransferFunction<SetType> transferForR = transferFunction(r);
+						RegionTransferFunction<SetType> comp = compositionOfFunctions(transferForR, outFunc);
+						transferFunctions.put(ofRHeader, comp);
+					} else {
+						throw new RegionAnalysisException("buildTransferFunctions", "Error unexpected Region type inside a block region");
+					}
+				}
+			} else if(region instanceof InstructionRegion){
 				RegionTransferFunction<SetType> ident = identityFunction();
 				RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, region);
 				transferFunctions.put(header, ident);
@@ -449,7 +517,7 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 				RegionFunctionHeader resultHeader = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, region);
 				transferFunctions.put(resultHeader, result);
 			} else {
-				throw new RuntimeException("Error unknown type of region encountered");
+				throw new RegionAnalysisException("buildTransferFunctions", "Error unknown type of region encountered");
 			}
 			discovered.add(region);
 		} else {
@@ -555,6 +623,28 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 					}
 				}
 			} else if(region instanceof BlockRegion) {
+				BlockRegion reg = (BlockRegion)region;
+				for(RegionBase subRegion: reg) {
+					if(subRegion.equals(reg.getHeader())){
+						RegionTransferFunction<SetType> ident = identityFunction();
+						RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, subRegion);
+						transferFunctions.put(header, ident);
+					} else if(subRegion instanceof InstructionRegion) {
+						InstructionRegion r = (InstructionRegion)subRegion;
+						RegionBase input = reg.getInputRegion(r);
+						RegionFunctionHeader formerOutput = new RegionFunctionHeader(input, RegionFunctionHeader.Direction.IN, input);
+						RegionTransferFunction<SetType> outFunc = transferFunctions.get(formerOutput);
+						RegionFunctionHeader newInput = new RegionFunctionHeader(reg, RegionFunctionHeader.Direction.OUT, r);
+						transferFunctions.put(newInput, outFunc);
+						RegionFunctionHeader ofRHeader = new RegionFunctionHeader(reg, RegionFunctionHeader.Direction.IN, r);
+						RegionTransferFunction<SetType> transferForR = transferFunction(r);
+						RegionTransferFunction<SetType> comp = compositionOfFunctions(transferForR, outFunc);
+						transferFunctions.put(ofRHeader, comp);
+					} else {
+						throw new RegionAnalysisException("buildTransferFunctions", "Error unexpected Region type inside a block region");
+					}
+				}
+			} else if(region instanceof InstructionRegion){
 				RegionTransferFunction<SetType> ident = identityFunction();
 				RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, region);
 				transferFunctions.put(header, ident);
@@ -563,7 +653,7 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 				RegionFunctionHeader resultHeader = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, region);
 				transferFunctions.put(resultHeader, result);
 			} else {
-				throw new RuntimeException("Error unknown type of region encountered");
+				throw new RegionAnalysisException("buildTransferFunctions", "Error unexpected type of region found");
 			}
 			discovered.add(region);
 		}

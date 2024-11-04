@@ -9,10 +9,6 @@ public class BinExpr implements Expr{
 	public enum Operator{
 		IPLUS,
 		IMINUS,
-		BAND,
-		BOR,
-		LAND,
-		LOR
 	}
 	
 	public BinExpr(Expr left, Operator op, Expr right) {
@@ -31,14 +27,6 @@ public class BinExpr implements Expr{
 		case IPLUS: sb.append('+');
 		break;
 		case IMINUS: sb.append('-');
-		break;
-		case BAND: sb.append('&');
-		break;
-		case BOR: sb.append("|");
-		break;
-		case LAND: sb.append("&&");
-		break;
-		case LOR: sb.append("||");
 		break;
 		}
 		sb.append(' ');
