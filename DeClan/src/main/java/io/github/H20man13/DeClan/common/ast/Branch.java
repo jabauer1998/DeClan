@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.ast;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.position.Position;
@@ -14,11 +15,18 @@ public abstract class Branch extends AbstractASTNode {
   
     public Branch(Position start, List<Statement> toExecute){
         super(start);
-	this.toExecute = toExecute;
+        this.toExecute = toExecute;
     }
   
     public List<Statement> getExecStatements(){
-	return toExecute;
+    	return toExecute;
     }
-  
+    
+    public List<Statement> getExecStatementsCopy(){
+    	LinkedList<Statement> toRet = new LinkedList<Statement>();
+    	for(Statement stat: toExecute) {
+    		toRet.add(stat);
+    	}
+    	return toRet;
+    }
 }

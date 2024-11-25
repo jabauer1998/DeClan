@@ -115,4 +115,9 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 	    return "==";
 	  }
     }
+
+	@Override
+	public boolean isConstant() {
+		return left.isConstant() && right.isConstant();
+	}
 }

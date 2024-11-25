@@ -31,7 +31,7 @@ public class RegionTransferFunctionFactory<SetType> {
 		return new RegionTransferFunction<SetType>(type);
 	}
 	
-	public Closure<SetType> produceClosureFunction(RegionTransferFunction<SetType> func){
+	public Closure<SetType> produceClosureFunction(SetExpression<SetType> func){
 		return new Closure<SetType>(func);
 	}
 	

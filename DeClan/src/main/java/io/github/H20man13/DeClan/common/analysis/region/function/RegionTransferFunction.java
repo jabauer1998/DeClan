@@ -2,7 +2,9 @@ package io.github.H20man13.DeClan.common.analysis.region.function;
 
 import java.util.Set;
 
-public class RegionTransferFunction<SetType> implements SetExpression<SetType> {
+import io.github.H20man13.DeClan.common.Computable;
+
+public class RegionTransferFunction<SetType> implements Computable<Set<SetType>>{
 	private SetExpression<SetType> setExpression;
 	
 	public RegionTransferFunction(SetExpression<SetType> funcExpression) {
@@ -12,5 +14,9 @@ public class RegionTransferFunction<SetType> implements SetExpression<SetType> {
 	@Override
 	public Set<SetType> compute(Set<SetType> input) {
 		return setExpression.compute(input);
+	}
+	
+	public SetExpression<SetType> getExpression(){
+		return setExpression;
 	}
 }

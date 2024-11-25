@@ -6,6 +6,7 @@ import java.util.List;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.exception.MalformedRegionException;
 import io.github.H20man13.DeClan.common.flow.BasicBlock;
+import io.github.H20man13.DeClan.common.icode.ICode;
 
 public class BlockRegion extends Region {
 	private BasicBlock block;
@@ -22,5 +23,15 @@ public class BlockRegion extends Region {
 			}
 		}
 		throw new MalformedRegionException("getInputRegion", ofThis, "Error instruction does not have a proper input region");
+	}
+	
+	@Override
+	public ICode getLastInstruction() {
+		return block.getIcode().getLast();
+	}
+	
+	@Override
+	public ICode getFirstInstruction() {
+		return block.getIcode().getFirst();
 	}
 }

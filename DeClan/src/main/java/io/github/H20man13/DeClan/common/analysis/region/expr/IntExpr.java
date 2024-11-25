@@ -2,6 +2,8 @@ package io.github.H20man13.DeClan.common.analysis.region.expr;
 
 import java.util.Objects;
 
+import io.github.H20man13.DeClan.common.Tuple;
+
 public class IntExpr implements Expr{
 	public int value;
 	
@@ -15,5 +17,10 @@ public class IntExpr implements Expr{
 	
 	public int hashCode() {
 		return Objects.hashCode(value);
+	}
+
+	@Override
+	public Expr simplify() {
+		return this;
 	}
 }

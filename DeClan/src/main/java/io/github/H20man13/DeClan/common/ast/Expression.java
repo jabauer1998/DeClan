@@ -17,4 +17,5 @@ public interface Expression extends ASTNode {
 	 * @param visitor
 	 */
 	<R> R acceptResult(ExpressionVisitor<R> visitor);
+	public boolean isConstant();
 }

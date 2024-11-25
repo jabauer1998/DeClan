@@ -44,4 +44,9 @@ public class StrValue extends AbstractASTNode implements Expression {
 	public <R> R acceptResult(ExpressionVisitor<R> visitor) {
 		return visitor.visitResult(this);
 	}
+
+	@Override
+	public boolean isConstant() {
+		return true;
+	}
 }

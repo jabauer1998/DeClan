@@ -334,4 +334,8 @@ public class Utils {
 	  }
 	  return count;
   }
+  
+  public static boolean solveIfStatementICode(If ifStat, Set<Tuple<String, Exp>> values) {
+	  
+  }
 }

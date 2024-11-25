@@ -10,16 +10,22 @@ import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.AnalysisBase;
 import io.github.H20man13.DeClan.common.analysis.AnalysisBase.Direction;
 import io.github.H20man13.DeClan.common.analysis.AnalysisBase.Meet;
+import io.github.H20man13.DeClan.common.analysis.iterative.ConstantPropogationAnalysis;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
+import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.region.LoopBodyRegion;
 import io.github.H20man13.DeClan.common.region.LoopRegion;
 import io.github.H20man13.DeClan.common.region.Region;
 import io.github.H20man13.DeClan.common.region.RegionBase;
 import io.github.H20man13.DeClan.common.region.RegionGraph;
+import io.github.H20man13.DeClan.common.util.Utils;
 import io.github.H20man13.DeClan.common.region.BaseRegion;
 import io.github.H20man13.DeClan.common.region.BlockRegion;
 import io.github.H20man13.DeClan.common.region.InstructionRegion;
+import io.github.H20man13.DeClan.common.analysis.region.expr.Expr;
 import io.github.H20man13.DeClan.common.analysis.region.function.Closure;
 import io.github.H20man13.DeClan.common.analysis.region.function.FunctionApplication;
 import io.github.H20man13.DeClan.common.analysis.region.function.RegionTransferFunction;
@@ -35,6 +41,7 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 	private Map<RegionBase, Set<SetType>> mappedOutputs;
 	private Set<SetType> semilattice;
 	private LoopStrategy strat;
+	private ConstantPropogationAnalysis constAnalysis;
 	
 	public enum LoopStrategy{
 		OBTAIN_CLOSURE,
@@ -42,7 +49,7 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 	}
 	
 	
-	public RegionAnalysis(RegionGraph regionGraph, Direction direction, LoopStrategy strat) {
+	public RegionAnalysis(RegionGraph regionGraph, Direction direction, LoopStrategy strat, ConstantPropogationAnalysis analysis) {
 		this.regions = regionGraph;
 		this.direction = direction;
 		this.transferFunctions = new HashMap<RegionFunctionHeader, RegionTransferFunction<SetType>>();
@@ -50,9 +57,10 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 		this.mappedOutputs = new HashMap<RegionBase, Set<SetType>>();
 		this.semilattice = new HashSet<SetType>();
 		this.strat = strat;
+		this.analysis = analysis;f
 	}
 	
-	public RegionAnalysis(RegionGraph regionGraph, Direction direction, Set<SetType> semilattice, LoopStrategy strat) {
+	public RegionAnalysis(RegionGraph regionGraph, Direction direction, Set<SetType> semilattice, LoopStrategy strat, ConstantPropogationAnalysis analysis) {
 		this.regions = regionGraph;
 		this.direction = direction;
 		this.transferFunctions = new HashMap<RegionFunctionHeader, RegionTransferFunction<SetType>>();
@@ -60,6 +68,7 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 		this.mappedOutputs = new HashMap<RegionBase, Set<SetType>>();
 		this.semilattice = semilattice;
 		this.strat = strat;
+		this.analysis = analysis;
 	}
 	
 	public void run() {
@@ -124,10 +133,9 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 										}
 									}
 								}
+								
 								RegionFunctionHeader finalHeader = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, subRegion);
 								transferFunctions.put(finalHeader, iterator);
-							
-							
 							
 								RegionFunctionHeader subRegionInput = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, subRegion);
 								if(!transferFunctions.containsKey(subRegionInput))
@@ -149,107 +157,86 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 						}
 					} else if(region instanceof LoopRegion) {
 						LoopRegion reg = (LoopRegion)region;
-						for(RegionBase subRegion: reg) {
-							if(subRegion.equals(reg.getHeader())){
-								RegionTransferFunction<SetType> ident = identityFunction();
-								RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, subRegion);
-								transferFunctions.put(header, ident);
-							} else if(subRegion instanceof BaseRegion) {
-								boolean first = true;
-								RegionTransferFunction<SetType> iterator = null;
-								BaseRegion base = (BaseRegion)subRegion;
-								RegionBase myHeader = base.getHeader();
-								if(myHeader instanceof BaseRegion) {
-									BaseRegion myBase = (BaseRegion)myHeader;
-									for(RegionBase myReg: myBase.getInputsOutsideRegion(subRegion)) {
-										RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, reg);
-										if(first) {
-											first = false;
-											if(!transferFunctions.containsKey(header))
-												analyzeRegion(myReg, direction, transferFunctions, discovered);
-											iterator = transferFunctions.get(header);
-										} else {
-											if(!transferFunctions.containsKey(header))
-												analyzeRegion(myReg, direction, transferFunctions, discovered);
-											iterator = meetOfFunctions(iterator, transferFunctions.get(header));
-										}
+						boolean first = true;
+						RegionTransferFunction<SetType> iterator = null;
+						BaseRegion base = (BaseRegion)subRegion;
+						RegionBase myHeader = base.getHeader();
+						
+						if(this.strat == LoopStrategy.OBTAIN_CLOSURE) {
+							if(myHeader instanceof BaseRegion) {
+								BaseRegion myBase = (BaseRegion)myHeader;
+								for(RegionBase myReg: myBase.getInputsOutsideRegion(myHeader)) {
+									RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, myReg);
+									if(first) {
+										first = false;
+										if(!transferFunctions.containsKey(header))
+											analyzeRegion(myReg, direction, transferFunctions, discovered);
+										iterator = transferFunctions.get(header);
+									} else {
+										if(!transferFunctions.containsKey(header))
+											analyzeRegion(myReg, direction, transferFunctions, discovered);
+										iterator = meetOfFunctions(iterator, transferFunctions.get(header));
 									}
 								}
-								
-								RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, subRegion);
-								Closure<SetType> setType = closureOfFunction(subRegion, iterator);
-								transferFunctions.put(header, setType);
+							}
 							
-								RegionFunctionHeader subRegionInput = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, subRegion);
-								if(!transferFunctions.containsKey(subRegionInput))
-									analyzeRegion(subRegion, direction, transferFunctions, discovered);
-								RegionTransferFunction<SetType> func2 = transferFunctions.get(subRegionInput);
-								for(RegionBase exitRegion: base.getExitRegions()){
-									RegionFunctionHeader exitHeader = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, exitRegion);
-									
-									
-									RegionFunctionHeader subRegionOutput = new RegionFunctionHeader(subRegion, RegionFunctionHeader.Direction.OUT, exitRegion);
-									if(!transferFunctions.containsKey(subRegionOutput))
-										analyzeRegion(exitRegion, direction, transferFunctions, discovered);
-									RegionTransferFunction<SetType> func1 = transferFunctions.get(subRegionOutput);
-									
-									RegionTransferFunction<SetType> resultApplication = compositionOfFunctions(func1, func2);
-									transferFunctions.put(exitHeader, resultApplication);
+							RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, subRegion);
+							Closure<SetType> setType = closureOfFunction(reg.getHeader(), iterator);
+							transferFunctions.put(header, setType);
+						} else {
+							int iteration = 0;
+							if(myHeader instanceof BaseRegion) {
+								BaseRegion myBase = (BaseRegion)myHeader;
+								for(RegionBase myReg: myBase.getInputsOutsideRegion(reg.getHeader())) {
+									RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, myReg);
+									if(first) {
+										first = false;
+										if(!transferFunctions.containsKey(header))
+											analyzeRegion(myReg, direction, transferFunctions, discovered);
+										iterator = transferFunctions.get(header);
+									} else {
+										if(!transferFunctions.containsKey(header))
+											analyzeRegion(myReg, direction, transferFunctions, discovered);
+										iterator = meetOfFunctions(iterator, transferFunctions.get(header));
+									}
 								}
 							}
-						}
-					} else if(region instanceof BlockRegion) {
-						BlockRegion reg = (BlockRegion)region;
-						for(RegionBase subRegion: reg) {
-							if(subRegion.equals(reg.getHeader())){
-								RegionTransferFunction<SetType> ident = identityFunction();
-								RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, subRegion);
-								transferFunctions.put(header, ident);
-							} else if(subRegion instanceof InstructionRegion) {
-								InstructionRegion r = (InstructionRegion)subRegion;
-								RegionBase input = reg.getInputRegion(r);
-								RegionFunctionHeader formerOutput = new RegionFunctionHeader(input, RegionFunctionHeader.Direction.OUT, input);
-								RegionTransferFunction<SetType> outFunc = transferFunctions.get(formerOutput);
-								RegionFunctionHeader newInput = new RegionFunctionHeader(reg, RegionFunctionHeader.Direction.IN, r);
-								transferFunctions.put(newInput, outFunc);
-								RegionFunctionHeader ofRHeader = new RegionFunctionHeader(reg, RegionFunctionHeader.Direction.OUT, r);
-								RegionTransferFunction<SetType> transferForR = transferFunction(r);
-								RegionTransferFunction<SetType> comp = compositionOfFunctions(transferForR, outFunc);
-								transferFunctions.put(ofRHeader, comp);
-							} else {
-								throw new RegionAnalysisException("buildTransferFunctions", "Error unexpected Region type inside a block region");
+							
+							RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, reg.getHeader(), iteration);
+							transferFunctions.put(header, iterator);
+							iteration++;
+							If ifStat = (If)constAnalysis.getInputSet(reg.getLoopCondition());
+							
+							while() {
+								RegionFunctionHeader subFunc = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, reg.getHeader());
+								RegionTransferFunction<SetType> body = transferFunctions.get(subFunc);
+								FunctionApplication<SetType> application = new FunctionApplication<SetType>(body, iterator);
+								iterator = new RegionTransferFunction<SetType>(application);
+								iteration++;
 							}
 							
-							RegionFunctionHeader subRegionInput = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, subRegion);
-							if(!transferFunctions.containsKey(subRegionInput))
-								analyzeRegion(subRegion, direction, transferFunctions, discovered);
-							RegionTransferFunction<SetType> func2 = transferFunctions.get(subRegionInput);
-							for(RegionBase exitRegion: reg.getExitRegions()){
-								RegionFunctionHeader exitHeader = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, exitRegion);
-								
-								RegionFunctionHeader subRegionOutput = new RegionFunctionHeader(subRegion, RegionFunctionHeader.Direction.IN, exitRegion);
-								if(!transferFunctions.containsKey(subRegionOutput))
-									analyzeRegion(exitRegion, direction, transferFunctions, discovered);
-								RegionTransferFunction<SetType> func1 = transferFunctions.get(subRegionOutput);
-								
-								RegionTransferFunction<SetType> resultApplication = compositionOfFunctions(func1, func2);
-								transferFunctions.put(exitHeader, resultApplication);
-							}
 						}
-					} else if(region instanceof InstructionRegion){
-						RegionTransferFunction<SetType> ident = identityFunction();
-						RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, region);
-						transferFunctions.put(header, ident);
-						RegionTransferFunction<SetType> func = transferFunction(region);
-						RegionTransferFunction<SetType> result = compositionOfFunctions(func, ident);
-						RegionFunctionHeader resultHeader = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, region);
-						transferFunctions.put(resultHeader, result);
-					} else {
-						throw new RegionAnalysisException("buildTransferFunctions", "Error unknown type of region encountered");
+						
+					
+						RegionFunctionHeader subRegionInput = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, subRegion);
+						if(!transferFunctions.containsKey(subRegionInput))
+							analyzeRegion(subRegion, direction, transferFunctions, discovered);
+						RegionTransferFunction<SetType> func2 = transferFunctions.get(subRegionInput);
+						for(RegionBase exitRegion: base.getExitRegions()){
+							RegionFunctionHeader exitHeader = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, exitRegion);
+							
+							
+							RegionFunctionHeader subRegionOutput = new RegionFunctionHeader(subRegion, RegionFunctionHeader.Direction.OUT, exitRegion);
+							if(!transferFunctions.containsKey(subRegionOutput))
+								analyzeRegion(exitRegion, direction, transferFunctions, discovered);
+							RegionTransferFunction<SetType> func1 = transferFunctions.get(subRegionOutput);
+							
+							RegionTransferFunction<SetType> resultApplication = compositionOfFunctions(func1, func2);
+							transferFunctions.put(exitHeader, resultApplication);
+						}
 					}
-					discovered.add(region);
+					}
 				}
-			}
 		} else {
 			for(RegionBase region: regions){
 				if(!discovered.contains(region)) {

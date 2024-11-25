@@ -81,4 +81,9 @@ public class UnaryOperation extends AbstractASTNode implements Expression {
 			return "!";
 		}
     }
+
+	@Override
+	public boolean isConstant() {
+		return expression.isConstant();
+	}
 }

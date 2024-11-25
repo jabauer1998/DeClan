@@ -8,4 +8,14 @@ public class InstructionRegion implements RegionBase {
 	public InstructionRegion(ICode instruction) {
 		this.instruction = instruction;
 	}
+
+	@Override
+	public ICode getFirstInstruction() {
+		return instruction;
+	}
+
+	@Override
+	public ICode getLastInstruction() {
+		return instruction;
+	}
 }

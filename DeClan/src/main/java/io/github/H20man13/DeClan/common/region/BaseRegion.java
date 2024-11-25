@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.exception.RegionAnalysisException;
+import io.github.H20man13.DeClan.common.icode.ICode;
 
 public class BaseRegion implements RegionBase, Iterable<RegionBase> {
 	protected RegionBase header;
@@ -93,5 +95,24 @@ public class BaseRegion implements RegionBase, Iterable<RegionBase> {
 	
 	public Iterator<RegionBase> iterator(){
 		return subRegions.iterator();
+	}
+	
+	public ICode getFirstInstruction() {
+		return header.getFirstInstruction();
+	}
+	
+	public ICode getLastInstruction() {
+		RegionBase last = null;
+		for(RegionBase reg: this.getExitRegions()) {
+			if(last == null) {
+				last = reg;
+			} else if(!last.equals(reg)) {
+				throw new RuntimeException("Error there are multiple exit instructions so there is no last instruction");
+			} else {
+				last = reg;
+			}
+		}
+		
+		return last.getLastInstruction();
 	}
 }
