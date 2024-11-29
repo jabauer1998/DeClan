@@ -75,7 +75,7 @@ import static io.github.H20man13.DeClan.main.MyIO.*;
 
 import java.io.Writer;
 import java.lang.String;
-
+import java.lang.module.ModuleDescriptor.Builder;
 import java.util.List;
 import java.util.function.Function;
 
@@ -408,44 +408,52 @@ public class MyICodeGenerator{
     TypeCheckerQualities qual = toCheck.acceptResult(typeChecker);
     ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
     builder.buildAssignment(test.scope, test.toString(), test2, type);
-
     builder.buildRepeatLoopEnd();
+  }
+  
+  public IdentExp generateInductionVariable(StatementBuilder builder) {
+	  return builder.buildDefinition(Scope.LOCAL, new IntExp(0), ICode.Type.INT);
   }
 
   public void generateForLoopIr(ForBranch forbranch, StatementBuilder builder){
     Expression toMod = forbranch.getModifyExpression();
     List<Statement> toExec = forbranch.getExecStatements();
     if(toMod != null){
-        generateAssignmentIr(forbranch.getInitAssignment(), builder);
-        IdentExp target = generateExpressionIr(forbranch.getTargetExpression(), builder);
-        
-        IdentExp curValue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+    	IdentExp curValueInduction = null;
+    	if(forbranch.isSimplifiable()) {
+    		int numTimes = forbranch.getLoopIterations();
+    		curValueInduction = generateInductionVariable(builder);
+    		generateAssignmentIr(forbranch.getInitAssignment(), builder);
+    		IdentExp target = builder.buildDefinition(Scope.LOCAL, new IntExp(numTimes), ICode.Type.INT);
+    		builder.buildForLoopBeginning(curValueInduction, BinExp.Operator.LT, target);
+    	} else {
+    		generateAssignmentIr(forbranch.getInitAssignment(), builder);
+            IdentExp target = generateExpressionIr(forbranch.getTargetExpression(), builder);
+            IdentExp curValue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+            Object actualIncriment = forbranch.getModifyExpression().acceptResult(interpreter);
 
-        Object actualIncriment = forbranch.getModifyExpression().acceptResult(interpreter);
-
-        if(actualIncriment instanceof Integer){
-          Integer intActualIncriment = ConversionUtils.toInt(actualIncriment);
-          if(intActualIncriment < 0){
-            builder.buildForLoopBeginning(curValue, BinExp.Operator.GT, target);
-          } else if(intActualIncriment > 0){
-            builder.buildForLoopBeginning(curValue, BinExp.Operator.LT, target);
-          } else {
-            builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
-          }
-        } else if(actualIncriment instanceof Float){
-          Float floatActualIncriment = ConversionUtils.toReal(actualIncriment);
-          if(floatActualIncriment < 0){
-            builder.buildForLoopBeginning(curValue, BinExp.Operator.GT, target);
-          } else if(floatActualIncriment > 0){
-            builder.buildForLoopBeginning(curValue, BinExp.Operator.LT, target);
-          } else {
-            builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
-          }
-        } else {
-          builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
-        }
-
-        
+            if(actualIncriment instanceof Integer){
+              Integer intActualIncriment = ConversionUtils.toInt(actualIncriment);
+              if(intActualIncriment < 0){
+                builder.buildForLoopBeginning(curValue, BinExp.Operator.GT, target);
+              } else if(intActualIncriment > 0){
+                builder.buildForLoopBeginning(curValue, BinExp.Operator.LT, target);
+              } else {
+                builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
+              }
+            } else if(actualIncriment instanceof Float){
+              Float floatActualIncriment = ConversionUtils.toReal(actualIncriment);
+              if(floatActualIncriment < 0){
+                builder.buildForLoopBeginning(curValue, BinExp.Operator.GT, target);
+              } else if(floatActualIncriment > 0){
+                builder.buildForLoopBeginning(curValue, BinExp.Operator.LT, target);
+              } else {
+                builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
+              }
+            } else {
+              builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
+            }
+    	}
         
         builder.incrimentForLoopLevel();
         for(int i = 0; i < toExec.size(); i++){
@@ -453,7 +461,12 @@ public class MyICodeGenerator{
         }
         builder.deIncrimentForLoopLevel();
 
-        IdentExp incriment = generateExpressionIr(toMod, builder);
+        if(forbranch.isSimplifiable()){
+        	IdentExp incr = builder.buildDefinition(ICode.Scope.LOCAL, new IntExp(1), ICode.Type.INT);
+        	builder.buildAssignment(curValueInduction.scope, curValueInduction.ident, new BinExp(curValueInduction, BinExp.Operator.IADD, incr), ICode.Type.INT);
+        }
+    	IdentExp curValue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+    	IdentExp incriment = generateExpressionIr(toMod, builder);
         TypeCheckerQualities qual = toMod.acceptResult(typeChecker);
         if(qual.containsQualities(TypeCheckerQualities.REAL)){
           IdentExp result = null;
@@ -1237,7 +1250,6 @@ public class MyICodeGenerator{
   public IdentExp generateStringIr(StrValue strValue, DefinitionBuilder builder){
       return builder.buildDefinition(Scope.LOCAL, new StrExp(strValue.getLexeme()), ICode.Type.STRING);
   }
-
 
   public String generateParamaterDeclarationIr(ParamaterDeclaration parDeclaration, DefinitionBuilder builder) {
     Identifier id = parDeclaration.getIdentifier();
