@@ -92,7 +92,7 @@ public class ForBranch extends Branch implements Statement {
     				throw new RuntimeException();
     			}
     		} else if(init instanceof Integer) {
-    			double iInit = (double)init;
+    			int iInit = (int)init;
     			Object cond = evaluateExpression(toCheck);
     			if(cond instanceof Double) {
     				double condD = (double)cond;
