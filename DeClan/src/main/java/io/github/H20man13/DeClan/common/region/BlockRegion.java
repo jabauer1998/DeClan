@@ -30,6 +30,14 @@ public class BlockRegion extends Region {
 		return block.getIcode().getLast();
 	}
 	
+	public int getNumberOfInstructions() {
+		return block.getIcode().size();
+	}
+	
+	public ICode getInstruction(int index) {
+		return block.getIcode().get(index);
+	}
+	
 	@Override
 	public ICode getFirstInstruction() {
 		return block.getIcode().getFirst();
