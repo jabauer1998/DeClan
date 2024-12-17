@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.symbols.ParamSymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.RetSymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
@@ -15,7 +16,7 @@ public class SymbolBuilder extends BaseBuilder {
         super();
     }
 
-    public boolean containsExternalArgument(String funcName, int paramNumber){
+    public boolean containsArgument(String funcName, int paramNumber, int externalOrInternal){
         int beginningOfSymbolSection = this.beginningOfSymbolTable();
         int endOfSymbolTable = this.endOfSymbolTable();
 
@@ -24,7 +25,7 @@ public class SymbolBuilder extends BaseBuilder {
                 ICode instr = getInstruction(i); 
                 if(instr instanceof ParamSymEntry){
                     ParamSymEntry param = (ParamSymEntry)instr;
-                    if(param.containsQualities(SymEntry.EXTERNAL))
+                    if(param.containsAllQualities(externalOrInternal))
                         if(param.funcName.equals(funcName))
                             if(param.paramNumber == paramNumber)
                                 return true;
@@ -34,7 +35,7 @@ public class SymbolBuilder extends BaseBuilder {
         return false;
     }
 
-    public boolean containsExternalReturn(String funcName){
+    public boolean containsReturn(String funcName, int externalOrInternal){
         int beginningOfSymbolSection = this.beginningOfSymbolTable();
         int endOfSymbolTable = this.endOfSymbolTable();
 
@@ -43,7 +44,7 @@ public class SymbolBuilder extends BaseBuilder {
                 ICode instr = getInstruction(i); 
                 if(instr instanceof RetSymEntry){
                     RetSymEntry ret = (RetSymEntry)instr;
-                    if(ret.containsQualities(SymEntry.EXTERNAL))
+                    if(ret.containsAllQualities(externalOrInternal))
                         if(ret.funcName.equals(funcName))
                             return true;
                 }
@@ -52,14 +53,14 @@ public class SymbolBuilder extends BaseBuilder {
         return false;
     }
 
-    public boolean containsExternalVariable(String identifier){
+    public boolean containsVariable(String identifier, int externalOrInternal){
         int symbolStart = beginningOfSymbolTable();
         int symbolEnd = endOfSymbolTable();
         for(int i = symbolStart; i <= symbolEnd; i++){
             ICode instruction = this.getInstruction(i);
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
-                if(entry.containsQualities(SymEntry.EXTERNAL))
+                if(entry.containsAllQualities(externalOrInternal))
                     if(entry.declanIdent.equals(identifier))
                         return true;
             }
@@ -68,7 +69,7 @@ public class SymbolBuilder extends BaseBuilder {
         return false;
     }
 
-    public String getVariablePlace(String ident){
+    public IdentExp getVariablePlace(String ident, int internalOrExternal){
         int symbolStart = beginningOfSymbolTable();
         int symbolEnd = endOfSymbolTable();
         for(int i = symbolStart; i <= symbolEnd; i++){
@@ -76,15 +77,21 @@ public class SymbolBuilder extends BaseBuilder {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.declanIdent.equals(ident))
-                    if(entry.containsQualities(SymEntry.EXTERNAL))
-                        return entry.icodePlace;
+                    if(entry.containsAllQualities(internalOrExternal))
+                    	if(entry.containsAllQualities(SymEntry.LOCAL)) {
+                    		return new IdentExp(ICode.Scope.LOCAL, entry.icodePlace);
+                    	} else if(entry.containsAllQualities(SymEntry.GLOBAL)) {
+                    		return new IdentExp(ICode.Scope.GLOBAL, entry.icodePlace);
+                    	} else {
+                    		throw new RuntimeException("Unexpected symbol type found for variable");
+                    	}
             }
         }
 
         throw new RuntimeException("Coulld not find symbol with identifier " + ident);
     }
 
-    public String getArgumentPlace(String funcName, int paramNumber){
+    public IdentExp getArgumentPlace(String funcName, int paramNumber, int internalExternal){
         int beginningOfSymbolSection = this.beginningOfSymbolTable();
         int endOfSymbolTable = this.endOfSymbolTable();
         
@@ -92,17 +99,17 @@ public class SymbolBuilder extends BaseBuilder {
             ICode instr = getInstruction(i); 
             if(instr instanceof ParamSymEntry){
                 ParamSymEntry param = (ParamSymEntry)instr;
-                if(param.containsQualities(SymEntry.EXTERNAL))
+                if(param.containsAllQualities(internalExternal))
                     if(param.funcName.equals(funcName))
                         if(param.paramNumber == paramNumber)
-                            return param.icodePlace;
+                            return new IdentExp(ICode.Scope.PARAM, param.icodePlace);
             }
         }
 
         throw new RuntimeException("No paramater found with funcName " + funcName + " and paramNumber=" + paramNumber);
     }
 
-    public String getReturnPlace(String funcName){
+    public IdentExp getReturnPlace(String funcName, int internalExternal){
         int beginningOfSymbolSection = this.beginningOfSymbolTable();
         int endOfSymbolTable = this.endOfSymbolTable();
         
@@ -110,9 +117,9 @@ public class SymbolBuilder extends BaseBuilder {
             ICode instr = getInstruction(i); 
             if(instr instanceof RetSymEntry){
                 RetSymEntry ret = (RetSymEntry)instr;
-                if(ret.containsQualities(SymEntry.EXTERNAL))
+                if(ret.containsAllQualities(internalExternal))
                     if(ret.funcName.equals(funcName))
-                        return ret.icodePlace;
+                        return new IdentExp(ICode.Scope.RETURN, ret.icodePlace);
             }
         }
 

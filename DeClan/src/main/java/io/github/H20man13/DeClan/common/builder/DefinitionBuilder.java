@@ -34,17 +34,266 @@ public class DefinitionBuilder extends SymbolBuilder{
         addInstruction(new Def(scope, place, value, type));
         return new IdentExp(scope, place);
     }
+    
+    public IdentExp buildRealToIntConversion(ICode.Scope resultScope, IdentExp input){
+    	return this.buildUnaryFunctionCall("RealToInt", resultScope, ICode.Type.INT, input, ICode.Type.REAL);
+    }
+    
+    public IdentExp buildIntToRealConversion(ICode.Scope resultScope, IdentExp input){
+    	return this.buildUnaryFunctionCall("IntToReal", resultScope, ICode.Type.REAL, input, ICode.Type.INT);
+    }
+    
+    public IdentExp buildRealToBoolConversion(ICode.Scope resultScope, IdentExp input){
+    	return this.buildUnaryFunctionCall("RealToBool", resultScope, ICode.Type.BOOL, input, ICode.Type.REAL);
+    }
+    
+    public IdentExp buildIntToBoolConversion(ICode.Scope resultScope, IdentExp input){
+    	return this.buildUnaryFunctionCall("IntToBool", resultScope, ICode.Type.BOOL, input, ICode.Type.INT);
+    }
+    
+    public IdentExp buildBoolToIntConversion(ICode.Scope resultScope, IdentExp input){
+    	return this.buildUnaryFunctionCall("BoolToInt", resultScope, ICode.Type.INT, input, ICode.Type.BOOL);
+    }
+    
+    public IdentExp buildBoolToRealConversion(ICode.Scope resultScope, IdentExp input){
+    	return this.buildUnaryFunctionCall("BoolToReal", resultScope, ICode.Type.REAL, input, ICode.Type.BOOL);
+    }
 
-    public IdentExp buildBinaryDefinition(ICode.Scope scope, IdentExp left, BinExp.Operator op,  IdentExp right, ICode.Type type){
+    private IdentExp buildBinaryDefinition(ICode.Scope scope, IdentExp left, BinExp.Operator op,  IdentExp right, ICode.Type type){
         String place = gen.genNext();
         addInstruction(new Def(scope, place, new BinExp(left, op, right), type));
         return new IdentExp(scope, place);
     }
+    
+    public IdentExp buildIntegerAdditionDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.IADD, right, ICode.Type.INT);
+    }
+    
+    public IdentExp buildIntegerSubtractionDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.ISUB, right, ICode.Type.INT);
+    }
+    
+    public IdentExp buildIntegerBitwiseAndDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.IAND, right, ICode.Type.INT);
+    }
+    
+    public IdentExp buildIntegerBitwiseOrDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.IOR, right, ICode.Type.INT);
+    }
+    
+    public IdentExp buildIntegerBitwiseXorDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.IXOR, right, ICode.Type.INT);
+    }
+    
+    public IdentExp buildIntegerLeftShiftDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.ILSHIFT, right, ICode.Type.INT);
+    }
+    
+    public IdentExp buildIntegerRightShiftDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.IRSHIFT, right, ICode.Type.INT);
+    }
+    
+    public IdentExp buildIntegerGreaterThenDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.GT, right, ICode.Type.BOOL);
+    }
+    
+    public IdentExp buildIntegerLessThenDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.LT, right, ICode.Type.BOOL);
+    }
+    
+    public IdentExp buildIntegerGreaterThenOrEqualToDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.GE, right, ICode.Type.BOOL);
+    }
+    
+    public IdentExp buildIntegerLessThenOrEqualToDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.LE, right, ICode.Type.BOOL);
+    }
+    
+    public IdentExp buildIntegerEqualToDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.EQ, right, ICode.Type.BOOL);
+    }
+    
+    public IdentExp buildIntegerNotEqualToDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.NE, right, ICode.Type.BOOL);
+    }
+    
+    public IdentExp buildBooleanOrDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.LOR, right, ICode.Type.BOOL);
+    }
+    
+    public IdentExp buildBooleanAndDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.LAND, right, ICode.Type.BOOL);
+    }
+    
+    private IdentExp buildBinaryFunctionCall(String funcName, ICode.Scope scope, ICode.Type retType, IdentExp left, ICode.Type leftType, IdentExp right, ICode.Type rightType) {
+    	if(containsArgument(funcName, 0, SymEntry.EXTERNAL) && containsArgument(funcName, 1, SymEntry.EXTERNAL)
+    	&& containsReturn(funcName, SymEntry.EXTERNAL)) {
+    		IdentExp leftPlace = this.getArgumentPlace(funcName, 0, SymEntry.EXTERNAL);
+    		IdentExp rightPlace = this.getArgumentPlace(funcName, 1, SymEntry.EXTERNAL);
+    		
+    		Def leftAssign = new Def(leftPlace.scope, leftPlace.ident, left, leftType);
+    		Def rightAssign = new Def(rightPlace.scope, rightPlace.ident, right, rightType);
+    		
+    		LinkedList<Def> args = new LinkedList<Def>();
+    		args.add(leftAssign);
+    		args.add(rightAssign);
+    		
+    		addInstruction(new Call(funcName, args));
+    		
+    		IdentExp retPlace = this.getReturnPlace(funcName, SymEntry.EXTERNAL);
+    		
+    		String newPlace = gen.genNext();
+    		addInstruction(new Def(ICode.Scope.LOCAL, newPlace, retPlace, retType));
+    		
+    		return new IdentExp(ICode.Scope.LOCAL, newPlace);
+    	} else if(containsArgument(funcName, 0, SymEntry.INTERNAL) && containsArgument(funcName, 1, SymEntry.INTERNAL)
+    	    	&& containsReturn(funcName, SymEntry.INTERNAL)) {
+    		IdentExp leftPlace = this.getArgumentPlace(funcName, 0, SymEntry.INTERNAL);
+    		IdentExp rightPlace = this.getArgumentPlace(funcName, 1, SymEntry.INTERNAL);
+    		
+    		Def leftAssign = new Def(leftPlace.scope, leftPlace.ident, left, leftType);
+    		Def rightAssign = new Def(rightPlace.scope, rightPlace.ident, right, rightType);
+    		
+    		LinkedList<Def> args = new LinkedList<Def>();
+    		args.add(leftAssign);
+    		args.add(rightAssign);
+    		
+    		addInstruction(new Call(funcName, args));
+    		
+    		IdentExp retPlace = this.getReturnPlace(funcName, SymEntry.INTERNAL);
+    		
+    		String newPlace = gen.genNext();
+    		addInstruction(new Def(scope, newPlace, retPlace, retType));
+    		
+    		return new IdentExp(scope, newPlace);
+    	} else {
+    		LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
+    		args.add(new Tuple<>(left, leftType));
+    		args.add(new Tuple<>(right, rightType));
+    		return this.buildExternalFunctionCall(scope, funcName, args, retType);
+    	}
+    }
+    
+    public IdentExp buildIntegerMultiplicationDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryFunctionCall("Multiply", scope, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT);
+    }
+    
+    public IdentExp buildIntegerModulo(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryFunctionCall("Mod", scope, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT);
+    }
+    
+    public IdentExp buildIntegerDivide(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryFunctionCall("Divide", scope, ICode.Type.REAL, left, ICode.Type.INT, right, ICode.Type.INT);
+    }
+    
+    public IdentExp buildIntegerDiv(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryFunctionCall("Div", scope, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT);
+    }
+    
+    public IdentExp buildRealAddition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryFunctionCall("RAdd", scope, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL);
+    }
+    
+    public IdentExp buildRealSubtraction(ICode.Scope scope, IdentExp left, IdentExp right){
+    	return this.buildBinaryFunctionCall("RSub", scope, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL);
+    }
+    
+    public IdentExp buildRealMultiplication(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryFunctionCall("RMul", scope, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL);
+    }
+    
+    public IdentExp buildRealDivision(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryFunctionCall("RDivide", scope, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL);
+    }
+    
+    public IdentExp buildRealDiv(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryFunctionCall("RDiv", scope, ICode.Type.INT, left, ICode.Type.REAL, right, ICode.Type.REAL);
+    }
+    
+    public IdentExp buildRealLessThan(ICode.Scope scope, IdentExp left, IdentExp right){
+    	return this.buildBinaryFunctionCall("RLessThan", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
+    }
+    
+    public IdentExp buildRealLessThanOrEqualTo(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryFunctionCall("RLessThanOrEqualTo", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
+    }
+    
+    public IdentExp buildRealGreaterThan(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryFunctionCall("RGreaterThan", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
+    }
+    
+    public IdentExp buildRealGreaterThenOrEqualTo(ICode.Scope scope, IdentExp left, IdentExp right){
+    	return this.buildBinaryFunctionCall("RGreaterThanOrEqualTo", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
+    }
+    
+    public IdentExp buildRNotEqualTo(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryFunctionCall("RNotEqualTo", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
+    }
+    
+    public IdentExp buildREqualTo(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryFunctionCall("REqualTo", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
+    }
 
-    public IdentExp buildUnaryDefinition(ICode.Scope scope, UnExp.Operator op, IdentExp right, ICode.Type type){
+    private IdentExp buildUnaryDefinition(ICode.Scope scope, UnExp.Operator op, IdentExp right, ICode.Type type){
         String place = gen.genNext();
         addInstruction(new Def(scope, place, new UnExp(op, right), type));
         return new IdentExp(scope, place);
+    }
+    
+    public IdentExp buildBooleanNotDefinition(ICode.Scope scope, IdentExp right) {
+    	return this.buildUnaryDefinition(scope, UnExp.Operator.BNOT, right, ICode.Type.BOOL);
+    }
+    
+    public IdentExp buildIntegerBitwiseNegationDefinition(ICode.Scope scope, IdentExp right) {
+    	return this.buildUnaryDefinition(scope, UnExp.Operator.INOT, right, ICode.Type.INT);
+    }
+    
+    private IdentExp buildUnaryFunctionCall(String funcName, ICode.Scope scope, ICode.Type retType, IdentExp right, ICode.Type rightType) {
+    	if(containsArgument(funcName, 0, SymEntry.EXTERNAL) && containsReturn(funcName, SymEntry.EXTERNAL)) {
+    		IdentExp rightPlace = this.getArgumentPlace(funcName, 0, SymEntry.EXTERNAL);
+    		
+    		Def rightAssign = new Def(rightPlace.scope, rightPlace.ident, right, rightType);
+    		
+    		LinkedList<Def> args = new LinkedList<Def>();
+    		args.add(rightAssign);
+    		
+    		addInstruction(new Call(funcName, args));
+    		
+    		IdentExp retPlace = this.getReturnPlace(funcName, SymEntry.EXTERNAL);
+    		
+    		String newPlace = gen.genNext();
+    		addInstruction(new Def(ICode.Scope.LOCAL, newPlace, retPlace, retType));
+    		
+    		return new IdentExp(ICode.Scope.LOCAL, newPlace);
+    	} else if(containsArgument(funcName, 0, SymEntry.INTERNAL) && containsReturn(funcName, SymEntry.INTERNAL)) {
+    		IdentExp rightPlace = this.getArgumentPlace(funcName, 0, SymEntry.INTERNAL);
+    		
+    		Def rightAssign = new Def(rightPlace.scope, rightPlace.ident, right, rightType);
+    		
+    		LinkedList<Def> args = new LinkedList<Def>();
+    		args.add(rightAssign);
+    		
+    		addInstruction(new Call(funcName, args));
+    		
+    		IdentExp retPlace = this.getReturnPlace(funcName, SymEntry.INTERNAL);
+    		
+    		String newPlace = gen.genNext();
+    		addInstruction(new Def(scope, newPlace, retPlace, retType));
+    		
+    		return new IdentExp(scope, newPlace);
+    	} else {
+    		LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
+    		args.add(new Tuple<>(right, rightType));
+    		return this.buildExternalFunctionCall(scope, funcName, args, retType);
+    	}
+    }
+    
+    public IdentExp buildIntegerNegationDefinition(ICode.Scope scope, IdentExp right) {
+    	return this.buildUnaryFunctionCall("INeg", scope, ICode.Type.INT, right, ICode.Type.INT);
+    }
+    
+    public IdentExp buildRealNegationDefinition(ICode.Scope scope, IdentExp right) {
+    	return this.buildUnaryFunctionCall("RNeg", scope, ICode.Type.REAL, right, ICode.Type.REAL);
     }
 
     public void buildDefinition(ICode.Scope scope, String place, Exp value, ICode.Type type){
@@ -57,12 +306,13 @@ public class DefinitionBuilder extends SymbolBuilder{
         addInstruction(paramDefinitionEnd, new Def(Scope.PARAM, place, value, type));
         return new IdentExp(Scope.PARAM, place);
     }
-
-    public IdentExp buildFunctionCall(String funcName, List<Def> params, Exp retPlace, ICode.Type type){
-        String place = gen.genNext();
-        addInstruction(new Call(funcName, params));
-        addInstruction(new Def(Scope.LOCAL, place, retPlace, type));
-        return new IdentExp(Scope.LOCAL, place);
+    
+    public IdentExp buildFunctionCall(String funcName, List<Def> definitions, IdentExp returnPlace, ICode.Type returnType) {
+    	addInstruction(new Call(funcName, definitions));
+    	String newReg = gen.genNext();
+    	addInstruction(new Call(funcName, definitions));
+    	addInstruction(new Def(ICode.Scope.LOCAL, newReg, returnPlace, returnType));
+    	return new IdentExp(ICode.Scope.LOCAL, newReg);
     }
 
     public IdentExp buildExternalFunctionCall(ICode.Scope scope, String funcName, List<Tuple<Exp, Assign.Type>> args, ICode.Type type){
@@ -72,8 +322,8 @@ public class DefinitionBuilder extends SymbolBuilder{
         for(int i = 0; i < newArgs.size(); i++){
             Tuple<Exp, Assign.Type> arg = newArgs.get(i);
             String next;
-            if(containsExternalArgument(funcName, i))
-                next = getArgumentPlace(funcName, i);
+            if(containsArgument(funcName, i, SymEntry.EXTERNAL))
+                next = getArgumentPlace(funcName, i, SymEntry.EXTERNAL).ident;
             else {
                 next = gen.genNext();
                 addParamEntry(next, SymEntry.EXTERNAL, funcName, i);
@@ -82,8 +332,8 @@ public class DefinitionBuilder extends SymbolBuilder{
         }
         addInstruction(new Call(funcName, newDefs));
         String oldPlace;
-        if(containsExternalReturn(funcName))
-            oldPlace = getReturnPlace(funcName);
+        if(containsReturn(funcName, SymEntry.EXTERNAL))
+            oldPlace = getReturnPlace(funcName, SymEntry.EXTERNAL).ident;
         else {
             oldPlace = gen.genNext();
             addReturnEntry(oldPlace, SymEntry.EXTERNAL, funcName);

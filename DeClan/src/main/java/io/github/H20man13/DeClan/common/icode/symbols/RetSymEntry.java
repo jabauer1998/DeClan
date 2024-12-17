@@ -5,28 +5,28 @@ import io.github.H20man13.DeClan.common.pat.P;
 public class RetSymEntry extends SymEntry{
     public String funcName;
 
-    private static final int constInternalRet = SymEntry.CONST | SymEntry.INTERNAL;
-    private static final int constExternalRet = SymEntry.CONST | SymEntry.EXTERNAL;
-    private static final int internalRet = SymEntry.INTERNAL;
-    private static final int externalRet = SymEntry.EXTERNAL;
-
     public RetSymEntry(String icodePlace, int symType, String funcName){
-        super(symType, icodePlace);
+        super(symType | SymEntry.RETURN, icodePlace);
         this.funcName = funcName;
+    }
+    
+    private RetSymEntry(RetSymEntry toCopy) {
+    	super(toCopy);
+    	this.funcName = toCopy.funcName;
     }
 
     @Override
     public P asPattern() {
-        if(this.symType == constExternalRet) return P.PAT(P.ID(), P.CONST(), P.EXTERNAL(), P.RETURN(), P.ID());
-        else if(this.symType == constInternalRet) return P.PAT(P.ID(), P.CONST(), P.INTERNAL(), P.RETURN(), P.ID());
-        else if(this.symType == internalRet) return P.PAT(P.ID(), P.INTERNAL(), P.RETURN(), P.ID());
-        else if(this.symType == externalRet) return P.PAT(P.ID(), P.EXTERNAL(), P.RETURN(), P.ID());
+        if(containsAllQualities(SymEntry.CONST | SymEntry.INTERNAL)) return P.PAT(P.ID(), P.CONST(), P.EXTERNAL(), P.RETURN(), P.ID());
+        else if(containsAllQualities(SymEntry.CONST | SymEntry.EXTERNAL)) return P.PAT(P.ID(), P.CONST(), P.INTERNAL(), P.RETURN(), P.ID());
+        else if(containsAllQualities(SymEntry.INTERNAL)) return P.PAT(P.ID(), P.INTERNAL(), P.RETURN(), P.ID());
+        else if(containsAllQualities(SymEntry.EXTERNAL)) return P.PAT(P.ID(), P.EXTERNAL(), P.RETURN(), P.ID());
         else return null;
     }
 
     @Override
     public SymEntry copy() {
-        return new RetSymEntry(icodePlace, symType, funcName);
+        return new RetSymEntry(this);
     }
 
     @Override
@@ -37,13 +37,13 @@ public class RetSymEntry extends SymEntry{
         sb.append(icodePlace);
         sb.append(' ');
         
-        if(this.containsQualities(CONST)){
+        if(this.containsAllQualities(CONST)){
             sb.append("CONST ");
         }
 
-        if(this.containsQualities(INTERNAL)){
+        if(this.containsAllQualities(INTERNAL)){
             sb.append("INTERNAL ");
-        } else if(this.containsQualities(EXTERNAL)){
+        } else if(this.containsAllQualities(EXTERNAL)){
             sb.append("EXTERNAL ");
         }
 

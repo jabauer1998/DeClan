@@ -12,9 +12,7 @@ public class UnExp implements Exp {
 
     public enum Operator{
         BNOT,
-        INEG,
-        INOT,
-        RNEG
+        INOT
     }
 
     public UnExp(Operator op, IdentExp right){

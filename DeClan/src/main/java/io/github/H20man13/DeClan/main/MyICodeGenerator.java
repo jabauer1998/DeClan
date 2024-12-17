@@ -59,6 +59,7 @@ import io.github.H20man13.DeClan.common.builder.IrBuilderContext;
 import io.github.H20man13.DeClan.common.builder.LibraryBuilder;
 import io.github.H20man13.DeClan.common.builder.ProgramBuilder;
 import io.github.H20man13.DeClan.common.builder.StatementBuilder;
+import io.github.H20man13.DeClan.common.builder.SymbolBuilder;
 import io.github.H20man13.DeClan.common.exception.ICodeGeneratorException;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
@@ -92,9 +93,6 @@ import java.util.LinkedList;
 
 public class MyICodeGenerator{
   private ErrorLog errorLog;
-  private Environment<String, IdentExp> varEnvironment;
-  private Environment<String, IdentExp> procEnvironment;
-  private Environment<String, IdentEntryList> procArgs;
   private MyTypeChecker typeChecker;
   private MyInterpreter interpreter;
   private IrBuilderContext ctx;
@@ -104,18 +102,12 @@ public class MyICodeGenerator{
     this.errorLog = errorLog;
     this.ctx = new IrBuilderContext();
     this.gen = new IrRegisterGenerator();
-    this.varEnvironment = new Environment<>();
-    this.procEnvironment = new Environment<>();
-    this.procArgs = new Environment<>();
     this.typeChecker = new MyTypeChecker(errorLog);
     this.interpreter = new MyInterpreter(errorLog, null, null, null);
   }
 
   public Lib generateLibraryIr(Library lib){
     LibraryBuilder builder = new LibraryBuilder(ctx, gen);
-    procEnvironment.addScope();
-    varEnvironment.addScope();
-    procArgs.addScope();
     typeChecker.addScope();
 
     builder.buildSymbolSectionHeader();
@@ -126,7 +118,7 @@ public class MyICodeGenerator{
       generateConstantIr(Scope.GLOBAL, decl, builder);
     }
 
-    loadFunctions(lib.getProcDecls());
+    loadFunctions(lib.getProcDecls(), builder);
     typeChecker.loadFunctions(lib.getProcDecls());
 
     builder.buildProcedureSectionHeader();
@@ -141,9 +133,6 @@ public class MyICodeGenerator{
 
   public Prog generateProgramIr(Program program) {
     ProgramBuilder builder = new ProgramBuilder(ctx, gen);
-    procEnvironment.addScope();
-    varEnvironment.addScope();
-    procArgs.addScope();
     typeChecker.addScope();
 
     builder.buildSymbolSectionHeader();
@@ -160,7 +149,7 @@ public class MyICodeGenerator{
       generateVariableIr(Scope.GLOBAL, decl, builder);
     }
 
-    loadFunctions(program.getProcDecls());
+    loadFunctions(program.getProcDecls(), builder);
     typeChecker.loadFunctions(program.getProcDecls());
 
     builder.buildCodeSectionHeader();
@@ -177,10 +166,6 @@ public class MyICodeGenerator{
       typeChecker.removeVarScope();
     }
 
-    varEnvironment.removeScope();
-    procEnvironment.removeScope();
-    procArgs.removeScope();
-
     return builder.completeBuild();
   }
 
@@ -191,9 +176,8 @@ public class MyICodeGenerator{
     TypeCheckerQualities qual = valueExpr.acceptResult(typeChecker);
     ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
     IdentExp place = builder.buildDefinition(scope, value, type);
-    varEnvironment.addEntry(id.getLexeme(), place);
     if(scope == ICode.Scope.GLOBAL)
-      builder.addVariableEntry(place.ident, SymEntry.CONST | SymEntry.INTERNAL, id.getLexeme());
+      builder.addVariableEntry(place.ident, SymEntry.CONST | SymEntry.GLOBAL | SymEntry.INTERNAL, id.getLexeme());
   }
 
   public void generateVariableIr(Scope scope, VariableDeclaration varDecl, DefinitionBuilder builder) {
@@ -209,49 +193,35 @@ public class MyICodeGenerator{
     } else {
       place = builder.buildDefinition(scope, new IntExp(0), ICode.Type.INT);
     }
-    varEnvironment.addEntry(id.getLexeme(), place);
     if(scope == ICode.Scope.GLOBAL)
-      builder.addVariableEntry(place.ident, SymEntry.INTERNAL, id.getLexeme());
+      builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id.getLexeme());
   }
 
-  private void loadFunctions(List<ProcedureDeclaration> decls){
+  private void loadFunctions(List<ProcedureDeclaration> decls, SymbolBuilder builder){
     for(ProcedureDeclaration decl : decls){
-      loadFunction(decl);
+      loadFunction(decl, builder);
     }
   }
 
-  public void loadFunction(ProcedureDeclaration procDecl){
+  public void loadFunction(ProcedureDeclaration procDecl, SymbolBuilder builder){
     String procedureName = procDecl.getProcedureName().getLexeme();
     List <ParamaterDeclaration> args = procDecl.getArguments();
     
-    IdentEntryList alias = new IdentEntryList();
     for(int i = 0; i < args.size(); i++){
 	    String argAlias = gen.genNext();
-        alias.add(new IdentExp(Scope.PARAM, argAlias));
+        builder.addParamEntry(argAlias, SymEntry.PARAM | SymEntry.INTERNAL, procedureName, i);
     }
-
-    procArgs.addEntry(procedureName, alias);
   
     String returnPlace = gen.genNext();
     Expression retExp = procDecl.getReturnStatement();
     if(retExp != null){
-      procEnvironment.addEntry(procedureName, new IdentExp(Scope.RETURN, returnPlace));
+      builder.addReturnEntry(returnPlace, SymEntry.RETURN | SymEntry.INTERNAL, procedureName);
     }
   } 
 
   public void generateProcedureIr(ProcedureDeclaration procDecl, StatementBuilder builder){
     String procedureName = procDecl.getProcedureName().getLexeme();
     builder.buildProcedureLabel(procedureName);
-    varEnvironment.addScope();
-
-    IdentEntryList list = procArgs.getEntry(procedureName);
-    for(int i = 0; i < procDecl.getArguments().size(); i++){
-      ParamaterDeclaration decl = procDecl.getArguments().get(i);
-      String actual = decl.getIdentifier().getLexeme();
-      IdentExp alias = list.get(i);
-      varEnvironment.addEntry(actual, alias);
-      builder.addParamEntry(alias.ident, SymEntry.INTERNAL, procedureName, i);
-    }
 
     List <Declaration> localVars = procDecl.getLocalVariables();
     for(int i = 0; i < localVars.size(); i++){
@@ -272,13 +242,12 @@ public class MyICodeGenerator{
     Expression retExp = procDecl.getReturnStatement();
     if(retExp != null){
       TypeCheckerQualities qual = retExp.acceptResult(typeChecker); 
-      Exp retPlace = generateExpressionIr(retExp, builder);
-      IdentExp returnPlace = procEnvironment.getEntry(procedureName);
-      builder.buildDefinition(Scope.RETURN, returnPlace.ident, retPlace, ConversionUtils.typeCheckerQualitiesToAssignType(qual));
-      builder.addReturnEntry(returnPlace.ident, SymEntry.INTERNAL, procedureName);
+      IdentExp retPlace = generateExpressionIr(retExp, builder);
+      IdentExp returnPlace = builder.getReturnPlace(procedureName, SymEntry.INTERNAL | SymEntry.RETURN);
+      builder.buildDefinition(returnPlace.scope, returnPlace.ident, retPlace, ConversionUtils.typeCheckerQualitiesToAssignType(qual));
+      builder.addReturnEntry(returnPlace.ident, SymEntry.INTERNAL | SymEntry.RETURN, procedureName);
     }
     builder.buildReturnStatement();
-    varEnvironment.removeScope();
   }
 
   public void generateStatementIr(Statement stat, StatementBuilder builder){
@@ -298,16 +267,16 @@ public class MyICodeGenerator{
     String funcName = procedureCall.getProcedureName().getLexeme();
     List<Expression> valArgs = procedureCall.getArguments();
 
-    if(procArgs.entryExists(funcName)){
+    if(builder.containsArgument(funcName, 0, SymEntry.EXTERNAL)){
       //Generate a standard Procedure Call
-      IdentEntryList argsToMap = procArgs.getEntry(funcName);
       List<Def> valArgResults = new ArrayList<Def>();
       for(int i = 0; i < valArgs.size(); i++){
         Expression valArg = valArgs.get(i);
         TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
         ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
         Exp result = generateExpressionIr(valArg, builder);
-        valArgResults.add(new Def(Scope.PARAM, argsToMap.get(i).ident, result, type));
+        IdentExp argToGet = builder.getArgumentPlace(funcName, i, SymEntry.EXTERNAL);
+        valArgResults.add(new Def(argToGet.scope, argToGet.ident, result, type));
       }
       builder.buildProcedureCall(funcName, valArgResults);
     } else {
@@ -418,14 +387,14 @@ public class MyICodeGenerator{
   public void generateForLoopIr(ForBranch forbranch, StatementBuilder builder){
     Expression toMod = forbranch.getModifyExpression();
     List<Statement> toExec = forbranch.getExecStatements();
+    Assignment initAssign = forbranch.getInitAssignment();
     if(toMod != null){
     	IdentExp curValueInduction = null;
     	if(forbranch.isSimplifiable()) {
     		int numTimes = forbranch.getLoopIterations();
     		curValueInduction = generateInductionVariable(builder);
-    		generateAssignmentIr(forbranch.getInitAssignment(), builder);
     		IdentExp target = builder.buildDefinition(Scope.LOCAL, new IntExp(numTimes), ICode.Type.INT);
-    		builder.buildForLoopBeginning(curValueInduction, BinExp.Operator.LT, target);
+    		builder.buildInductionBasedForLoopBeginning(curValueInduction, target, initAssign, toMod);
     	} else {
     		generateAssignmentIr(forbranch.getInitAssignment(), builder);
             IdentExp target = generateExpressionIr(forbranch.getTargetExpression(), builder);
@@ -513,86 +482,30 @@ public class MyICodeGenerator{
   }
         
   public void generateAssignmentIr(Assignment assignment, AssignmentBuilder builder) {
-    IdentExp place = varEnvironment.getEntry(assignment.getVariableName().getLexeme());
+	IdentExp place = null;
+	String myStr = assignment.getVariableName().getLexeme();
+	if(builder.containsVariable(myStr, SymEntry.INTERNAL)) {
+		place = builder.getVariablePlace(myStr, SymEntry.INTERNAL);
+	} else if(builder.containsVariable(myStr, SymEntry.EXTERNAL)) {
+		place = builder.getVariablePlace(myStr, SymEntry.EXTERNAL);
+	}
     Expression exp = assignment.getVariableValue();
-    Exp value = generateExpressionIr(exp, builder);
+    IdentExp value = generateExpressionIr(exp, builder);
     TypeCheckerQualities qual = exp.acceptResult(typeChecker);
     TypeCheckerQualities convType = assignment.getVariableName().acceptResult(typeChecker);
     
     if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.REAL)){
-      if(procEnvironment.entryExists("RealToInt")){
-        IdentExp argDest = procArgs.getEntry("RealToInt").getFirst();
-        List<Def> args = new LinkedList<Def>();
-        args.add(new Def(Scope.PARAM, argDest.ident, value, ICode.Type.REAL));
-        value = builder.buildFunctionCall("RealToInt", args, procEnvironment.getEntry("RealToInt"), ICode.Type.REAL);
-      } else {
-        List<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-        args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.REAL));
-        value = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToInt", args, ICode.Type.INT);
-      }
+      value = builder.buildRealToIntConversion(ICode.Scope.LOCAL, value);
     } else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
-      if(procEnvironment.entryExists("IntToReal")){
-        IdentExp argDest = procArgs.getEntry("IntToReal").getFirst();
-        List<Def> args = new LinkedList<Def>();
-        args.add(new Def(Scope.PARAM, argDest.ident, value, ICode.Type.INT));
-        IdentExp retPlace = procEnvironment.getEntry("IntToReal");
-
-        value = builder.buildFunctionCall("IntToReal", args, retPlace, ICode.Type.REAL);
-      } else {
-        List<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-        args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.INT));
-        value = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToReal", args, ICode.Type.REAL);
-      }
+      value = builder.buildIntToRealConversion(ICode.Scope.LOCAL, value);
     } else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
-      if(procEnvironment.entryExists("IntToBool")){
-        IdentExp argDest = procArgs.getEntry("IntToBool").getFirst();
-        List<Def> args = new LinkedList<Def>();
-        args.add(new Def(Scope.PARAM, argDest.ident, value, ICode.Type.INT));
-        IdentExp retPlace = procEnvironment.getEntry("IntToBool");
-
-        value = builder.buildFunctionCall("IntToBool", args, retPlace, ICode.Type.BOOL);
-      } else {
-        List<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-        args.add(new Tuple<Exp,ICode.Type>(value, ICode.Type.INT));
-        value = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToBool", args, ICode.Type.BOOL);
-      }
+      value = builder.buildIntToBoolConversion(ICode.Scope.LOCAL, value);
     } else if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
-      if(procEnvironment.entryExists("BoolToInt")){
-        IdentExp argDest = procArgs.getEntry("BoolToInt").getFirst();
-        List<Def> args = new LinkedList<Def>();
-        args.add(new Def(Scope.PARAM, argDest.ident, value, ICode.Type.BOOL));
-        IdentExp retPlace = procEnvironment.getEntry("BoolToInt");
-        value = builder.buildFunctionCall("BoolToInt", args, retPlace, ICode.Type.INT);
-      } else {
-        List<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-        args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.BOOL));
-        value = builder.buildExternalFunctionCall(Scope.LOCAL, "BoolToInt", args, ICode.Type.INT);
-      }
+      value = builder.buildBoolToIntConversion(ICode.Scope.LOCAL, value);
     } else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.REAL)){
-      if(procEnvironment.entryExists("RealToBool")){
-        IdentExp argDest = procArgs.getEntry("RealToBool").getFirst();
-        List<Def> args = new LinkedList<Def>();
-        args.add(new Def(Scope.PARAM, argDest.ident, value, ICode.Type.REAL));
-        IdentExp retPlace = procEnvironment.getEntry("RealToBool");
-
-        value = builder.buildFunctionCall("RealToBool", args, retPlace, ICode.Type.BOOL);
-      } else {
-        List<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-        args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.REAL));
-        value = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToBool", args, ICode.Type.BOOL);
-      }
+      value = builder.buildRealToBoolConversion(ICode.Scope.LOCAL, value);
     } else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
-      if(procEnvironment.entryExists("BoolToReal")){
-        IdentExp argDest = procArgs.getEntry("BoolToReal").getFirst();
-        List<Def> args = new LinkedList<Def>();
-        args.add(new Def(Scope.PARAM, argDest.ident, value, ICode.Type.BOOL));
-        IdentExp retPlace = procEnvironment.getEntry("BoolToReal");
-        value = builder.buildFunctionCall("BoolToReal", args, retPlace, ICode.Type.REAL);
-      } else {
-        List<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-        args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.BOOL));
-        value = builder.buildExternalFunctionCall(Scope.LOCAL, "BoolToReal", args, ICode.Type.REAL);
-      }
+      value = builder.buildBoolToRealConversion(ICode.Scope.LOCAL, value);
     }
     ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(convType);
     builder.buildAssignment(place.scope, place.ident, value, type);
@@ -601,9 +514,12 @@ public class MyICodeGenerator{
   public void generateInlineAssemblyIr(Asm asm, StatementBuilder builder) {
      List<IdentExp> icodeParams = new LinkedList<IdentExp>();
      for(String param : asm.getParamaters()){
-       if(varEnvironment.entryExists(param)){
-          IdentExp icodeParam = varEnvironment.getEntry(param);
+       if(builder.containsVariable(param, SymEntry.INTERNAL)){
+          IdentExp icodeParam = builder.getVariablePlace(param, SymEntry.INTERNAL);
           icodeParams.add(icodeParam);
+       } else if(builder.containsVariable(param, SymEntry.EXTERNAL)){
+    	   IdentExp icodeParam = builder.getVariablePlace(param, SymEntry.EXTERNAL);
+    	   icodeParams.add(icodeParam);
        } else {
           throw new ICodeGeneratorException(asm, "Input paramater " + param + " does not exist"); 
        }
@@ -635,473 +551,106 @@ public class MyICodeGenerator{
 
       if(binaryOperation.getOperator() == BinaryOperation.OpType.AND || binaryOperation.getOperator() == BinaryOperation.OpType.OR){
         if(leftType.containsQualities(TypeCheckerQualities.REAL)){
-          if(procArgs.entryExists("RealToBool") && procEnvironment.entryExists("RealToBool")){
-             IdentEntryList params = procArgs.getEntry("RealToBool");
-             if(params.size() >= 1){
-               LinkedList<Def> args = new LinkedList<Def>();
-               args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.REAL));
-               IdentExp entry = procEnvironment.getEntry("RealToBool");
-               leftValue = builder.buildFunctionCall("RealToBool", args, entry, ICode.Type.BOOL);
-             } else {
-                LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                leftValue = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToBool", args, ICode.Type.BOOL);
-             }
-           } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-              leftValue = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToBool", args, ICode.Type.BOOL);
-           }
+           leftValue = builder.buildRealToBoolConversion(ICode.Scope.LOCAL, leftValue);
         } else if(leftType.containsQualities(TypeCheckerQualities.INTEGER)){
-          if(procArgs.entryExists("IntToBool") && procEnvironment.entryExists("IntToBool")){
-            IdentEntryList params = procArgs.getEntry("IntToBool");
-            if(params.size() >= 1){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.INT));
-                IdentExp entry = procEnvironment.getEntry("IntToBool");
-                leftValue = builder.buildFunctionCall("IntToBool", args, entry, ICode.Type.BOOL);
-            } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
-              leftValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToBool", args, ICode.Type.BOOL);
-            }
-          } else {
-            LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-            args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
-            leftValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToBool", args, ICode.Type.BOOL);
-          }
+           leftValue = builder.buildIntToBoolConversion(ICode.Scope.LOCAL, leftValue);
         }
-
+        
         if(rightType.containsQualities(TypeCheckerQualities.REAL)){
-          if(procArgs.entryExists("RealToBool") && procEnvironment.entryExists("RealToBool")){
-             IdentEntryList params = procArgs.getEntry("RealToBool");
-             if(params.size() >= 1){
-               LinkedList<Def> args = new LinkedList<Def>();
-               args.add(new Def(Scope.PARAM, params.get(0).ident, rightValue, ICode.Type.REAL));
-               IdentExp entry = procEnvironment.getEntry("RealToBool");
-               rightValue = builder.buildFunctionCall("RealToBool", args, entry, ICode.Type.BOOL);
-             } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-              rightValue = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToBool", args, ICode.Type.BOOL);
-             }
-           } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-              rightValue = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToBool", args, ICode.Type.BOOL);
-           }
-        } else if(rightType.containsQualities(TypeCheckerQualities.INTEGER)){
-          if(procArgs.entryExists("IntToBool") && procEnvironment.entryExists("IntToBool")){
-             IdentEntryList params = procArgs.getEntry("IntToBool");
-             if(params.size() >= 1){
-               LinkedList<Def> args = new LinkedList<Def>();
-               args.add(new Def(Scope.PARAM, params.get(0).ident, rightValue, ICode.Type.INT));
-               IdentExp entry = procEnvironment.getEntry("IntToBool");
-               rightValue = builder.buildFunctionCall("IntToBool", args, entry, ICode.Type.BOOL);
-             } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-              rightValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToBool", args, ICode.Type.BOOL);
-             }
-           } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-              rightValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToBool", args, ICode.Type.BOOL);
-           }
+            rightValue = builder.buildRealToBoolConversion(ICode.Scope.LOCAL, rightValue);
+        } else if(leftType.containsQualities(TypeCheckerQualities.INTEGER)){
+            rightValue = builder.buildIntToBoolConversion(ICode.Scope.LOCAL, rightValue);
         }
 
         switch(binaryOperation.getOperator()){
-          case AND: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.LAND, rightValue, ICode.Type.BOOL);
-          case OR: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.LOR, rightValue, ICode.Type.BOOL);
+          case AND: return builder.buildBooleanAndDefinition(Scope.LOCAL, leftValue, rightValue);
+          case OR: return builder.buildBooleanOrDefinition(Scope.LOCAL, leftValue, rightValue);
           default: return leftValue;
         }
       } else if(leftType.containsQualities(TypeCheckerQualities.REAL) || rightType.containsQualities(TypeCheckerQualities.REAL)){
           if(leftType.containsQualities(TypeCheckerQualities.INTEGER)){
-           if(procArgs.entryExists("IntToReal") && procEnvironment.entryExists("IntToReal")){
-             IdentEntryList params = procArgs.getEntry("IntToReal");
-             if(params.size() >= 1){
-               LinkedList<Def> args = new LinkedList<Def>();
-               args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.INT));
-               IdentExp entry = procEnvironment.getEntry("IntToReal");
-               leftValue = builder.buildFunctionCall("IntToReal", args, entry, ICode.Type.REAL);
-             } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
-              leftValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToReal", args, ICode.Type.REAL);
-             }
-           } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
-              leftValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToReal", args, ICode.Type.REAL);
-           }
-        }
+        	  leftValue = builder.buildIntToRealConversion(ICode.Scope.LOCAL, leftValue);
+          }
 
-        if(rightType.containsQualities(TypeCheckerQualities.INTEGER)){
-          if(procArgs.entryExists("IntToReal") && procEnvironment.entryExists("IntToReal")){
-             IdentEntryList params = procArgs.getEntry("IntToReal");
-             if(params.size() >= 1){
-               LinkedList<Def> args = new LinkedList<Def>();
-               args.add(new Def(Scope.PARAM, params.get(0).ident, rightValue, ICode.Type.INT));
-               IdentExp entry = procEnvironment.getEntry("IntToReal");
-               rightValue = builder.buildFunctionCall("IntToReal", args, entry, ICode.Type.REAL);
-             } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-              rightValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToReal", args, ICode.Type.REAL);
-             }
-           } else {
-            LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-            args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-            rightValue = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToReal", args, ICode.Type.REAL);
-           }
-        }
+          if(rightType.containsQualities(TypeCheckerQualities.INTEGER)){
+        	  rightValue = builder.buildIntToRealConversion(ICode.Scope.LOCAL, rightValue);
+          }
       
       switch (binaryOperation.getOperator()){
-          case PLUS:
-            if(procArgs.entryExists("RAdd") && procEnvironment.entryExists("RAdd")){
-              IdentEntryList params = procArgs.getEntry("RAdd");
-              if(params.size() >= 2){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.REAL));
-                args.add(new Def(Scope.PARAM, params.get(1).ident, rightValue, ICode.Type.REAL));
-                IdentExp returnPlace = procEnvironment.getEntry("RAdd");
-
-                return builder.buildFunctionCall("RAdd", args, returnPlace, ICode.Type.REAL);
-              } else {
-                 errorLog.add("Cant find the function RAdd that contains two arguments", binaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RAdd", args, ICode.Type.REAL);
-              }
-            } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-              args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-              return builder.buildExternalFunctionCall(Scope.LOCAL, "RAdd", args, ICode.Type.REAL);
-            }
-          case MINUS: 
-            if(procArgs.entryExists("RSub") && procEnvironment.entryExists("RSub")){
-              IdentEntryList params = procArgs.getEntry("RSub");
-              if(params.size() >= 2){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.REAL));
-                args.add(new Def(Scope.PARAM, params.get(1).ident, rightValue, ICode.Type.REAL));
-                IdentExp returnPlace = procEnvironment.getEntry("RSub");
-                return builder.buildFunctionCall("RSub", args, returnPlace, ICode.Type.REAL);
-              } else {
-                 errorLog.add("Cant find the function Subtract that contains two arguments", binaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RSub", args, ICode.Type.REAL);
-              }
-            } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-              args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-              return builder.buildExternalFunctionCall(Scope.LOCAL, "RSub", args, ICode.Type.REAL);
-            }
-          case TIMES: 
-            if(procArgs.entryExists("RMul") && procEnvironment.entryExists("RMul")){
-              IdentEntryList params = procArgs.getEntry("RMul");
-              if(params.size() >= 2){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.REAL));
-                args.add(new Def(Scope.PARAM, params.get(1).ident, rightValue, ICode.Type.REAL));
-                IdentExp returnPlace = procEnvironment.getEntry("RMul");
-
-                return builder.buildFunctionCall("RMul", args, returnPlace, ICode.Type.REAL);
-              } else {
-                 errorLog.add("Cant find the function Divide that contains two arguments", binaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RMul", args, ICode.Type.REAL);
-              }
-            } else {
-               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-               return builder.buildExternalFunctionCall(Scope.LOCAL, "RMul", args, ICode.Type.REAL);
-            }
-          case DIVIDE:
-            if(procArgs.entryExists("RDivide") && procEnvironment.entryExists("RDivide")){
-              IdentEntryList params = procArgs.getEntry("RDivide");
-              if(params.size() >= 2){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.REAL));
-                args.add(new Def(Scope.PARAM, params.get(1).ident, rightValue, ICode.Type.REAL));
-                IdentExp returnPlace = procEnvironment.getEntry("RDivide");
-
-                return builder.buildFunctionCall("RDivide", args, returnPlace, ICode.Type.REAL);
-              } else {
-                 errorLog.add("Cant find the function Divide that contains two arguments", binaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RDivide", args, ICode.Type.REAL);
-              }
-            } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-              args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-              return builder.buildExternalFunctionCall(Scope.LOCAL, "RDivide", args, ICode.Type.REAL);
-            }
-          case DIV:
-            if(procArgs.entryExists("RDiv") && procEnvironment.entryExists("RDiv")){
-              IdentEntryList params = procArgs.getEntry("RDiv");
-              if(params.size() >= 2){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.REAL));
-                args.add(new Def(Scope.PARAM, params.get(1).ident, rightValue, ICode.Type.REAL));
-                IdentExp returnPlace = procEnvironment.getEntry("RDiv");
-
-                return builder.buildFunctionCall("RDiv", args, returnPlace, ICode.Type.INT);
-              } else {
-                 errorLog.add("Cant find the function Div that contains two arguments", binaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RDiv", args, ICode.Type.INT);
-              }
-            } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-              args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-              return builder.buildExternalFunctionCall(Scope.LOCAL, "RDiv", args, ICode.Type.INT);
-            }
-          case LE:
-            if(procArgs.entryExists("RLessThanOrEqualTo") && procEnvironment.entryExists("RLessThanOrEqualTo")){
-              IdentEntryList params = procArgs.getEntry("RLessThanOrEqualTo");
-              if(params.size() >= 2){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.REAL));
-                args.add(new Def(Scope.PARAM, params.get(1).ident, rightValue, ICode.Type.REAL));
-                IdentExp returnPlace = procEnvironment.getEntry("RLessThanOrEqualTo");
-
-                return builder.buildFunctionCall("RLessThanOrEqualTo", args, returnPlace, ICode.Type.BOOL);
-              } else {
-                 errorLog.add("Cant find the function RLessThanOrEqualTo that contains two arguments", binaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RLessThanOrEqualTo", args, ICode.Type.BOOL);
-              }
-            } else {
-               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-               return builder.buildExternalFunctionCall(Scope.LOCAL, "RLessThanOrEqualTo", args, ICode.Type.BOOL);
-            }
-          case LT:
-            if(procArgs.entryExists("RLessThan") && procEnvironment.entryExists("RLessThan")){
-              IdentEntryList params = procArgs.getEntry("RLessThan");
-              if(params.size() >= 2){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.REAL));
-                args.add(new Def(Scope.PARAM, params.get(1).ident, rightValue, ICode.Type.REAL));
-                IdentExp returnPlace = procEnvironment.getEntry("RLessThan");
-
-                return builder.buildFunctionCall("RLessThan", args, returnPlace, ICode.Type.BOOL);
-              } else {
-                 errorLog.add("Cant find the function RLessThan that contains two arguments", binaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RLessThan", args, ICode.Type.BOOL);
-              }
-            } else {
-               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                return builder.buildExternalFunctionCall(Scope.LOCAL, "RLessThan", args, ICode.Type.BOOL);
-            }
-          case GE:
-            if(procArgs.entryExists("RGreaterThanOrEqualTo") && procEnvironment.entryExists("RGreaterThanOrEqualTo")){
-              IdentEntryList params = procArgs.getEntry("RGreaterThanOrEqualTo");
-              if(params.size() >= 2){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.REAL));
-                args.add(new Def(Scope.PARAM, params.get(1).ident, rightValue, ICode.Type.REAL));
-                IdentExp returnPlace = procEnvironment.getEntry("RGreaterThanOrEqualTo");
-
-                return builder.buildFunctionCall("RGreaterThanOrEqualTo", args, returnPlace, ICode.Type.BOOL);
-              } else {
-                 errorLog.add("Cant find the function RGreaterThanOrEqualTo that contains two arguments", binaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RGreaterThanOrEqualTo", args, ICode.Type.BOOL);
-              }
-            } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-              args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-              return builder.buildExternalFunctionCall(Scope.LOCAL, "RGreaterThanOrEqualTo", args, ICode.Type.BOOL);
-            }
-          case GT:
-            if(procArgs.entryExists("RGreaterThan") && procEnvironment.entryExists("RGreaterThan")){
-              IdentEntryList params = procArgs.getEntry("RGreaterThan");
-              if(params.size() >= 2){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.REAL));
-                args.add(new Def(Scope.PARAM, params.get(1).ident, rightValue, ICode.Type.REAL));
-                IdentExp returnPlace = procEnvironment.getEntry("RGreaterThan");
-
-                return builder.buildFunctionCall("RGreaterThan", args, returnPlace, ICode.Type.BOOL);
-              } else {
-                 errorLog.add("Cant find the function RGreaterThan that contains two arguments", binaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RGreaterThan", args, ICode.Type.BOOL);
-              }
-            } else {
-               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-               return builder.buildExternalFunctionCall(Scope.LOCAL, "RGreaterThan", args, ICode.Type.BOOL);
-            }
-          case EQ:
-            if(procArgs.entryExists("REqualTo") && procEnvironment.entryExists("REqualTo")){
-              IdentEntryList params = procArgs.getEntry("REqualTo");
-              if(params.size() >= 2){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.REAL));
-                args.add(new Def(Scope.PARAM, params.get(1).ident, rightValue, ICode.Type.REAL));
-
-                IdentExp returnPlace = procEnvironment.getEntry("REqualTo");
-
-                return builder.buildFunctionCall("REqualTo", args, returnPlace, ICode.Type.BOOL);
-              } else {
-                 errorLog.add("Cant find the function REqualTo that contains two arguments", binaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "REqualTo", args, ICode.Type.BOOL);
-              }
-            } else {
-               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-               return builder.buildExternalFunctionCall(Scope.LOCAL, "REqualTo", args, ICode.Type.BOOL);
-            }
-          case NE: 
-            if(procArgs.entryExists("RNotEqualTo") && procEnvironment.entryExists("RNotEqualTo")){
-              IdentEntryList params = procArgs.getEntry("RNotEqualTo");
-              if(params.size() >= 2){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.REAL));
-                args.add(new Def(Scope.PARAM, params.get(1).ident, rightValue, ICode.Type.REAL));
-                IdentExp returnPlace = procEnvironment.getEntry("RNotEqualTo");
-
-                return builder.buildFunctionCall("RNotEqualTo", args, returnPlace, ICode.Type.BOOL);
-              } else {
-                 errorLog.add("Cant find the function RNotEqualTo that contains two arguments", binaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RNotEqualTo", args, ICode.Type.BOOL);
-              }
-            } else {
-               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.REAL));
-                args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.REAL));
-                return builder.buildExternalFunctionCall(Scope.LOCAL, "RNotEqualTo", args, ICode.Type.BOOL);
-            }
+          case PLUS: return builder.buildRealAddition(ICode.Scope.LOCAL, leftValue, rightValue);
+          case MINUS: return builder.buildRealSubtraction(ICode.Scope.LOCAL, leftValue, rightValue);
+          case TIMES: return builder.buildRealMultiplication(ICode.Scope.LOCAL, leftValue, rightValue);
+          case DIVIDE: return builder.buildRealDivision(ICode.Scope.LOCAL, leftValue, rightValue);
+          case DIV: return builder.buildRealDiv(ICode.Scope.LOCAL, leftValue, rightValue);
+          case LE: return builder.buildRealLessThanOrEqualTo(ICode.Scope.LOCAL, leftValue, rightValue);
+          case LT: return builder.buildRealLessThan(ICode.Scope.LOCAL, leftValue, rightValue);
+          case GE: return builder.buildRealGreaterThenOrEqualTo(ICode.Scope.LOCAL, leftValue, rightValue);
+          case GT: return builder.buildRealGreaterThan(ICode.Scope.LOCAL, leftValue, rightValue);
+          case EQ: return builder.buildREqualTo(ICode.Scope.LOCAL, leftValue, rightValue);
+          case NE: return builder.buildRNotEqualTo(ICode.Scope.LOCAL, leftValue, rightValue);
           default: return leftValue;
       }
     } else {
       switch (binaryOperation.getOperator()){
-        case PLUS: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.IADD, rightValue, ICode.Type.INT);
-        case MINUS: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.ISUB, rightValue, ICode.Type.INT);
-        case TIMES: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.IMUL, rightValue, ICode.Type.INT);
-        case DIV: 
-          if(procArgs.entryExists("Div") && procEnvironment.entryExists("Div")){
-              IdentEntryList params = procArgs.getEntry("Div");
-              if(params.size() >= 2){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.INT));
-                args.add(new Def(Scope.PARAM, params.get(1).ident, rightValue, ICode.Type.INT));
-                IdentExp returnPlace = procEnvironment.getEntry("Div");
-
-                return builder.buildFunctionCall("Div", args, returnPlace, ICode.Type.INT);
-              } else {
-                 errorLog.add("Cant find the function Div that contains two arguments", binaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
-                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "Div", args, ICode.Type.INT);
-              }
-            } else {
-               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
-               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-               return builder.buildExternalFunctionCall(Scope.LOCAL, "Div", args, ICode.Type.INT);
-            }
-        case DIVIDE: 
-            if(procArgs.entryExists("Divide") && procEnvironment.entryExists("Divide")){
-              IdentEntryList params = procArgs.getEntry("Divide");
-              if(params.size() >= 2){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, leftValue, ICode.Type.INT));
-                args.add(new Def(Scope.PARAM, params.get(1).ident, rightValue, ICode.Type.INT));
-                IdentExp returnPlace = procEnvironment.getEntry("Divide");
-
-                return builder.buildFunctionCall("Divide", args, returnPlace, ICode.Type.REAL);
-              } else {
-                 errorLog.add("Cant find the function Divide that contains two arguments", binaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
-                 args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "Divide", args, ICode.Type.REAL);
-              }
-            } else {
-               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-               args.add(new Tuple<Exp, ICode.Type>(leftValue, ICode.Type.INT));
-               args.add(new Tuple<Exp, ICode.Type>(rightValue, ICode.Type.INT));
-               return builder.buildExternalFunctionCall(Scope.LOCAL, "Divide", args, ICode.Type.REAL);
-            }
-        case MOD: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.IMOD, rightValue, ICode.Type.INT);
-        case LE: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.LE, rightValue, ICode.Type.BOOL);
-        case LT: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.LT, rightValue, ICode.Type.BOOL);
-        case GE: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.GE, rightValue, ICode.Type.BOOL);
-        case GT: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.GT, rightValue, ICode.Type.BOOL);
-        case BAND: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.IAND, rightValue, ICode.Type.INT);
-        case BOR: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.IOR, rightValue, ICode.Type.INT);
-        case BXOR: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.IXOR, rightValue, ICode.Type.INT);
-        case LSHIFT: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.ILSHIFT, rightValue, ICode.Type.INT);
-        case RSHIFT: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.IRSHIFT, rightValue, ICode.Type.INT);
-        case EQ: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.EQ, rightValue, ICode.Type.BOOL);
-        case NE: return builder.buildBinaryDefinition(Scope.LOCAL, leftValue, BinExp.Operator.NE, rightValue, ICode.Type.BOOL);
+        case PLUS: return builder.buildIntegerAdditionDefinition(Scope.LOCAL, leftValue, rightValue);
+        case MINUS: return builder.buildIntegerSubtractionDefinition(Scope.LOCAL, leftValue, rightValue);
+        case TIMES: return builder.buildIntegerMultiplicationDefinition(Scope.LOCAL, leftValue, rightValue);
+        case DIV: return builder.buildIntegerDiv(ICode.Scope.LOCAL, leftValue, rightValue);
+        case DIVIDE: return builder.buildIntegerDivide(ICode.Scope.LOCAL, leftValue, rightValue);
+        case MOD: return builder.buildIntegerModulo(Scope.LOCAL, leftValue, rightValue);
+        case LE: return builder.buildIntegerLessThenOrEqualToDefinition(Scope.LOCAL, leftValue, rightValue);
+        case LT: return builder.buildIntegerLessThenDefinition(Scope.LOCAL, leftValue, rightValue);
+        case GE: return builder.buildIntegerGreaterThenOrEqualToDefinition(Scope.LOCAL, leftValue, rightValue);
+        case GT: return builder.buildIntegerGreaterThenDefinition(Scope.LOCAL, leftValue, rightValue);
+        case BAND: return builder.buildIntegerBitwiseAndDefinition(Scope.LOCAL, leftValue, rightValue);
+        case BOR: return builder.buildIntegerBitwiseOrDefinition(Scope.LOCAL, leftValue, rightValue);
+        case BXOR: return builder.buildIntegerBitwiseXorDefinition(Scope.LOCAL, leftValue, rightValue);
+        case LSHIFT: return builder.buildIntegerLeftShiftDefinition(Scope.LOCAL, leftValue, rightValue);
+        case RSHIFT: return builder.buildIntegerRightShiftDefinition(Scope.LOCAL, leftValue, rightValue);
+        case EQ: return builder.buildIntegerEqualToDefinition(Scope.LOCAL, leftValue, rightValue);
+        case NE: return builder.buildIntegerNotEqualToDefinition(Scope.LOCAL, leftValue, rightValue);
         default: return leftValue;
       }
     }
   }
 
   public IdentExp generateFunctionCallIr(FunctionCall funcCall, DefinitionBuilder builder) {
-    String funcName = funcCall.getFunctionName().getLexeme();
-    List<Expression> valArgs = funcCall.getArguments();
-    TypeCheckerQualities returnType = funcCall.acceptResult(typeChecker);
-    ICode.Type retType = ConversionUtils.typeCheckerQualitiesToAssignType(returnType);
-    if(procArgs.entryExists(funcName)){
+	String funcName = funcCall.getFunctionName().getLexeme();
+	List<Expression> valArgs = funcCall.getArguments();
+	TypeCheckerQualities returnType = funcCall.acceptResult(typeChecker);
+	ICode.Type retType = ConversionUtils.typeCheckerQualitiesToAssignType(returnType);
       //Build Internal Function Call Sequence
-      IdentEntryList argsToMap = procArgs.getEntry(funcName);
-      List<Def> valArgResults = new ArrayList<Def>();
 
-      for(int i = 0; i < valArgs.size(); i++){
-        Expression valArg = valArgs.get(i);
-        TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
-        ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
-	      Exp result = generateExpressionIr(valArg, builder);
-	      valArgResults.add(new Def(Scope.PARAM, argsToMap.get(i).ident, result, type));
-      }
-      IdentExp returnPlace = procEnvironment.getEntry(funcName);
-
-      return builder.buildFunctionCall(funcName, valArgResults, returnPlace, retType);
-    } else {
-      //Build external function call
+	if(builder.containsReturn(funcName, SymEntry.INTERNAL)) {
+		LinkedList<Def> definitions = new LinkedList<Def>();
+		for(int i = 0; i < valArgs.size(); i++){
+		    Expression valArg = valArgs.get(i);
+		    TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
+		    ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+		    IdentExp result = generateExpressionIr(valArg, builder);
+		    IdentExp arg = builder.getArgumentPlace(funcName, i, SymEntry.INTERNAL);
+		    definitions.add(new Def(arg.scope, arg.ident, result, type));
+		}
+		
+		IdentExp returnPlace = builder.getReturnPlace(funcName, SymEntry.INTERNAL);
+		
+		return builder.buildFunctionCall(funcName, definitions, returnPlace, retType);
+	} else if(builder.containsReturn(funcName, SymEntry.EXTERNAL)) {
+		LinkedList<Def> definitions = new LinkedList<Def>();
+		for(int i = 0; i < valArgs.size(); i++){
+		    Expression valArg = valArgs.get(i);
+		    TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
+		    ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+		    IdentExp result = generateExpressionIr(valArg, builder);
+		    IdentExp arg = builder.getArgumentPlace(funcName, i, SymEntry.EXTERNAL);
+		    definitions.add(new Def(arg.scope, arg.ident, result, type));
+		}
+		
+		IdentExp returnPlace = builder.getReturnPlace(funcName, SymEntry.EXTERNAL);
+		
+		return builder.buildFunctionCall(funcName, definitions, returnPlace, retType);
+	} else {
+	 //Build external function call
       LinkedList<Tuple<Exp, ICode.Type>> procedureArgs = new LinkedList<Tuple<Exp, ICode.Type>>();
       for(Expression arg : valArgs){
         Exp place = generateExpressionIr(arg, builder);
@@ -1111,7 +660,8 @@ public class MyICodeGenerator{
       }
 
       return builder.buildExternalFunctionCall(Scope.LOCAL, funcName, procedureArgs, retType);
-    }
+	}
+	
   }
 
   public IdentExp generateUnaryOperationIr(UnaryOperation unaryOperation, DefinitionBuilder builder) {
@@ -1120,112 +670,37 @@ public class MyICodeGenerator{
 
     if(unaryOperation.getOperator() == UnaryOperation.OpType.NOT){
       if(rightType.containsQualities(TypeCheckerQualities.REAL)){
-          if(procArgs.entryExists("RealToBool") && procEnvironment.entryExists("RealToBool")){
-             IdentEntryList params = procArgs.getEntry("RealToBool");
-             if(params.size() >= 1){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, value, ICode.Type.REAL));
-                IdentExp entry = procEnvironment.getEntry("RealToBool");
-                value = builder.buildFunctionCall("RealToBool", args, entry, ICode.Type.BOOL);
-             } else {
-                LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.REAL));
-                value = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToBool", args, ICode.Type.BOOL);
-             }
-           } else {
-             LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-             args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.REAL));
-             value = builder.buildExternalFunctionCall(Scope.LOCAL, "RealToBool", args, ICode.Type.BOOL);
-           }
+          value = builder.buildRealToBoolConversion(ICode.Scope.LOCAL, value);
         } else if(rightType.containsQualities(TypeCheckerQualities.INTEGER)){
-          if(procArgs.entryExists("IntToBool") && procEnvironment.entryExists("IntToBool")){
-            IdentEntryList params = procArgs.getEntry("IntToBool");
-            if(params.size() >= 1){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, value, ICode.Type.INT));
-                IdentExp entry = procEnvironment.getEntry("IntToBool");
-                value = builder.buildFunctionCall("IntToBool", args, entry, ICode.Type.BOOL);
-            } else {
-              LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-              args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.INT));
-              value = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToBool", args, ICode.Type.BOOL);
-            }
-          } else {
-            LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-            args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.INT));
-            value = builder.buildExternalFunctionCall(Scope.LOCAL, "IntToBool", args, ICode.Type.BOOL);
-          }
+          value = builder.buildIntToBoolConversion(ICode.Scope.LOCAL, value);
         }
-        IdentExp expVal = value;
-        return builder.buildUnaryDefinition(Scope.LOCAL, UnExp.Operator.BNOT, expVal, ICode.Type.BOOL);
+        return builder.buildBooleanNotDefinition(ICode.Scope.LOCAL, value);
     } else if(rightType.containsQualities(TypeCheckerQualities.REAL)){
       switch(unaryOperation.getOperator()){
-        case MINUS: 
-          if(procArgs.entryExists("RNeg") && procEnvironment.entryExists("RNeg")){
-              IdentEntryList params = procArgs.getEntry("RNeg");
-              if(params.size() >= 1){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, value, ICode.Type.REAL));
-                IdentExp returnPlace = procEnvironment.getEntry("RNeg");
-
-                return builder.buildFunctionCall("RNeg", args, returnPlace, ICode.Type.REAL);
-              } else {
-                 errorLog.add("Cant find the function RNeg that contains one argument", unaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.REAL));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "RNeg", args, ICode.Type.REAL);
-              }
-            } else {
-               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-               args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.REAL));
-               return builder.buildExternalFunctionCall(Scope.LOCAL, "RNeg", args, ICode.Type.REAL);
-            }
+        case MINUS: return builder.buildRealNegationDefinition(ICode.Scope.LOCAL, value);
         default:
           errorLog.add("Error unexpected Operation for Real Value " + unaryOperation.getOperator(), unaryOperation.getStart());
           return value;
 	    }
     } else {
       switch(unaryOperation.getOperator()){
-        case MINUS:
-          if(procArgs.entryExists("INeg") && procEnvironment.entryExists("INeg")){
-              IdentEntryList params = procArgs.getEntry("INeg");
-              if(params.size() >= 1){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, value, ICode.Type.INT));
-                IdentExp returnPlace = procEnvironment.getEntry("INeg");
-
-                return builder.buildFunctionCall("INeg", args, returnPlace, ICode.Type.REAL);
-              } else {
-                 errorLog.add("Cant find the function INeg that contains one argument", unaryOperation.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.INT));
-                 return builder.buildExternalFunctionCall(Scope.LOCAL, "INeg", args, ICode.Type.INT);
-              }
-            } else {
-               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-               args.add(new Tuple<Exp, ICode.Type>(value, ICode.Type.INT));
-               return builder.buildExternalFunctionCall(Scope.LOCAL, "INeg", args, ICode.Type.INT);
-            }
-        case BNOT: return builder.buildUnaryDefinition(Scope.LOCAL, UnExp.Operator.INOT, value, ICode.Type.INT);
+        case MINUS: return builder.buildIntegerNegationDefinition(ICode.Scope.LOCAL, value);
+        case BNOT: return builder.buildIntegerBitwiseNegationDefinition(Scope.LOCAL, value);
         default: return value;
 	    }
     }
   }
 
   public IdentExp generateIdentifierIr(Identifier identifier, DefinitionBuilder builder){
-    if(varEnvironment.entryExists(identifier.getLexeme())){
-      IdentExp place = varEnvironment.getEntry(identifier.getLexeme());
-      return place;
+    if(builder.containsVariable(identifier.getLexeme(), SymEntry.INTERNAL)){
+      return builder.getVariablePlace(identifier.getLexeme(), SymEntry.INTERNAL);
+    } else if(builder.containsVariable(identifier.getLexeme(), SymEntry.EXTERNAL)){
+      return builder.getVariablePlace(identifier.getLexeme(), SymEntry.EXTERNAL);
     } else {
-        if(builder.containsExternalVariable(identifier.getLexeme())){
-          return new IdentExp(Scope.GLOBAL, builder.getVariablePlace(identifier.getLexeme()));
-        } else {
-            String place = gen.genNext();
-            builder.addVariableEntry(place, SymEntry.EXTERNAL, identifier.getLexeme());
-            IdentExp ident = new IdentExp(Scope.LOCAL, place);
-            varEnvironment.addEntry(identifier.getLexeme(), ident);
-            return ident;
-        }
+        String place = gen.genNext();
+        builder.addVariableEntry(place, SymEntry.GLOBAL | SymEntry.EXTERNAL, identifier.getLexeme());
+        IdentExp ident = new IdentExp(Scope.GLOBAL, place);
+        return ident;
     }
   }
 
@@ -1249,12 +724,5 @@ public class MyICodeGenerator{
 
   public IdentExp generateStringIr(StrValue strValue, DefinitionBuilder builder){
       return builder.buildDefinition(Scope.LOCAL, new StrExp(strValue.getLexeme()), ICode.Type.STRING);
-  }
-
-  public String generateParamaterDeclarationIr(ParamaterDeclaration parDeclaration, DefinitionBuilder builder) {
-    Identifier id = parDeclaration.getIdentifier();
-    String alias = gen.genNext();
-    varEnvironment.addEntry(id.getLexeme(), new IdentExp(Scope.PARAM, alias));
-    return alias;
   }
 }

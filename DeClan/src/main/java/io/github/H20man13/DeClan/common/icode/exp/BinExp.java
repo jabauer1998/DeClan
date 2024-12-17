@@ -19,12 +19,9 @@ public class BinExp implements Exp {
     public enum Operator{
         IADD,
         ISUB,
-        IMUL,
-        IMOD,
         IAND,
         IOR,
         IXOR,
-        IDIV,
         IRSHIFT,
         ILSHIFT,
         LAND,

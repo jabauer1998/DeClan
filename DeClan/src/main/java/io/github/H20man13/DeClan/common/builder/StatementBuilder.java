@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.ast.Assignment;
+import io.github.H20man13.DeClan.common.ast.Expression;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.Def;
@@ -15,9 +17,12 @@ import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.ICode.Scope;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp.Operator;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.IntExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
@@ -39,6 +44,70 @@ public abstract class StatementBuilder extends AssignmentBuilder{
     public void deIncrimentForLoopLevel(){
         ctx.deIncrimentForLoopLevel();
     }
+    
+    public void buildInductionBasedForLoopBeginning(IdentExp curValueInduction, Operator lt, IdentExp target, IdentExp initIdent, Object startingAtThis, Object byThis) {
+    	buildForLoopBeginning(curValueInduction, lt, target);
+    	if(byThis instanceof Integer) {
+    		int byThisInt = (int)byThis;
+    		if(byThisInt > 1) {
+    			IdentExp byThisMult = buildDefinition(Scope.LOCAL, new IntExp(byThisInt), ICode.Type.INT);
+    			if(startingAtThis instanceof Integer) {
+    				int startingAtInt = (int)startingAtThis;
+    				if(startingAtInt > 0){
+    					IdentExp startAdd = buildDefinition(Scope.LOCAL, new IntExp(startingAtInt), ICode.Type.INT);
+    					IdentExp byThisMultResult = buildDefinition(Scope.LOCAL, new BinExp(curValueInduction, BinExp.Operator.IMUL, byThisMult), ICode.Type.INT);
+    					buildAssignment(initIdent.scope, initIdent.ident, new BinExp(byThisMultResult, BinExp.Operator.IADD, startAdd), ICode.Type.INT);
+    				} else if(startingAtInt < 0){
+    					IdentExp startSub = buildDefinition(Scope.LOCAL, new IntExp(-startingAtInt), ICode.Type.INT);
+    					IdentExp byThisMultResult = buildDefinition(Scope.LOCAL, new BinExp(curValueInduction, BinExp.Operator.IMUL, byThisMult), ICode.Type.INT);
+    					buildAssignment(initIdent.scope, initIdent.ident, new BinExp(byThisMultResult, BinExp.Operator.ISUB, startSub), ICode.Type.INT);
+    				} else {
+    					buildAssignment(initIdent.scope, initIdent.ident, new BinExp(curValueInduction, BinExp.Operator.IMUL, byThisMult), ICode.Type.INT);
+    				}
+    			} else if(startingAtThis instanceof Double) {
+    				double startingAtDouble = (double)startingAtThis;
+    				if(startingAtDouble > 0.0) {
+    					
+    				} else if(startingAtDouble < 0.0) {
+    					
+    				} else {
+    					
+    				}
+    			} else {
+    				throw new RuntimeException("Unexpected type of Initial Expression in for statemenbt");
+    			}
+    		} else if(byThisInt < -1) {
+    			IdentExp byThisMult = buildDefinition(Scope.LOCAL, new IntExp(-byThisInt), ICode.Type.INT);
+    			byThisMult = buildDefinition(Scope.LOCAL, new UnExp(UnExp.Operator.INEG, byThisMult), ICode.Type.INT);
+    			if(startingAtThis instanceof Integer) {
+    				int startingAtInt = (int)startingAtThis;
+    				if(startingAtInt > 0){
+    					IdentExp startAdd = buildDefinition(Scope.LOCAL, new IntExp(startingAtInt), ICode.Type.INT);
+    					IdentExp byThisMultResult = buildDefinition(Scope.LOCAL, new BinExp(curValueInduction, BinExp.Operator.IMUL, byThisMult), ICode.Type.INT);
+    					buildAssignment(initIdent.scope, initIdent.ident, new BinExp(byThisMultResult, BinExp.Operator.IADD, startAdd), ICode.Type.INT);
+    				} else if(startingAtInt < 0){
+    					IdentExp startSub = buildDefinition(Scope.LOCAL, new IntExp(-startingAtInt), ICode.Type.INT);
+    					IdentExp byThisMultResult = buildDefinition(Scope.LOCAL, new BinExp(curValueInduction, BinExp.Operator.IMUL, byThisMult), ICode.Type.INT);
+    					buildAssignment(initIdent.scope, initIdent.ident, new BinExp(byThisMultResult, BinExp.Operator.ISUB, startSub), ICode.Type.INT);
+    				} else {
+    					buildAssignment(initIdent.scope, initIdent.ident, new BinExp(curValueInduction, BinExp.Operator.IMUL, byThisMult), ICode.Type.INT);
+    				}
+    			} else if(startingAtThis instanceof Double) {
+    				double startingAtDouble = (double)startingAtThis;
+    				if(startingAtDouble > 0.0) {
+    					
+    				} else if(startingAtDouble < 0.0) {
+    					
+    				} else {
+    					
+    				}
+    			} else {
+    				throw new RuntimeException("Unexpected type of Initial Expression in for branch");
+    			}    		}
+    	} else {
+    		throw new RuntimeException("Unexpected type of by expression in for branch");
+    	}
+	}
 
     public void buildForLoopBeginning(IdentExp currentValue, BinExp.Operator op, IdentExp target){
         int forLoopNumber = ctx.getForLoopNumber();
@@ -193,8 +262,8 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         for(int i = 0; i < newArgs.size(); i++){
             Tuple<Exp, ICode.Type> arg = newArgs.get(i);
             String newPlace;
-            if(containsExternalArgument(funcName, i)){
-                newPlace = getArgumentPlace(funcName, i);
+            if(containsArgument(funcName, i, SymEntry.EXTERNAL)){
+                newPlace = getArgumentPlace(funcName, i, SymEntry.EXTERNAL).ident;
             } else {
                 newPlace = gen.genNext();
                 addParamEntry(newPlace, SymEntry.EXTERNAL, funcName, i);

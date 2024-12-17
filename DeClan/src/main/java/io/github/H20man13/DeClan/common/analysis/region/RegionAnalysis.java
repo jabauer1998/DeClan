@@ -156,7 +156,6 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 						LoopRegion reg = (LoopRegion)region;
 						boolean first = true;
 						RegionTransferFunction<SetType> iterator = null;
-						BaseRegion base = (BaseRegion)reg;
 						RegionBase myHeader = base.getHeader();
 						
 						if(myHeader instanceof BaseRegion) {
@@ -176,9 +175,15 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 							}
 						}
 						
-						RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, region);
-						Closure<SetType> setType = closureOfFunction(reg.getHeader(), iterator);
-						transferFunctions.put(header, setType);
+						if(this.strat == LoopStrategy.OBTAIN_CLOSURE){
+							RegionFunctionHeader header = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, region);
+							Closure<SetType> setType = closureOfFunction(reg.getHeader(), iterator);
+							transferFunctions.put(header, setType);
+						} else {
+							//We need to obtain 
+						}
+						
+						
 						
 					
 						RegionFunctionHeader subRegionInput = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.IN, region);

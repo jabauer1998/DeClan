@@ -405,15 +405,7 @@ public class MyIrParser {
     }
 
     private UnExp parseUnaryExpression(){
-        if(willMatch(IrTokenType.INEG)){
-            skip();
-            IdentExp right = parseIdentifier();
-            return new UnExp(UnExp.Operator.INEG, right);
-        } else if(willMatch(IrTokenType.RNEG)){
-            skip();
-            IdentExp right = parseIdentifier();
-            return new UnExp(UnExp.Operator.RNEG, right);
-        } else if(willMatch(IrTokenType.BNOT)){
+        if(willMatch(IrTokenType.BNOT)){
             skip();
             IdentExp right = parseIdentifier();
             return new UnExp(UnExp.Operator.BNOT, right);

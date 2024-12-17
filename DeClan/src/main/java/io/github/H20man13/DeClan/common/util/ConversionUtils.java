@@ -28,9 +28,6 @@ public class ConversionUtils {
         switch(op){
             case IADD: return BinExp.Operator.IADD;
             case ISUB: return BinExp.Operator.ISUB;
-            case IMUL: return BinExp.Operator.IMUL;
-            case IDIV: return BinExp.Operator.IDIV;
-            case IMOD: return BinExp.Operator.IMOD;
             case LAND: return BinExp.Operator.LAND;
             case LOR: return BinExp.Operator.LOR;
             case IAND: return BinExp.Operator.IAND;
@@ -50,8 +47,6 @@ public class ConversionUtils {
 
     public static UnExp.Operator getUnOp(DagOperationNode.Op op){
         switch(op){
-            case INEG: return UnExp.Operator.INEG;
-            case RNEG: return UnExp.Operator.RNEG;
             case BNOT: return UnExp.Operator.BNOT;
             case INOT: return UnExp.Operator.INOT;
             default: throw new ConversionException("getUnOp", DagOperationNode.Op.class.getName(), UnExp.Operator.class.getName());
@@ -90,10 +85,7 @@ public class ConversionUtils {
         switch(op){
             case IADD: return P.IADD();
             case ISUB: return P.ISUB();
-            case IMUL: return P.IMUL();
-            case IDIV: return P.IDIV();
             case LAND: return P.BAND();
-            case IMOD: return P.IMOD();
             case IAND: return P.IAND();
             case IOR: return P.IOR();
             case IXOR: return P.IXOR();
@@ -112,9 +104,7 @@ public class ConversionUtils {
 
     public static P unOpToPattern(UnExp.Operator op){
         switch(op){
-            case INEG: return P.INEG();
             case BNOT: return P.BNOT();
-            case RNEG: return P.RNEG();
             case INOT: return P.INOT();
             default: throw new ConversionException("unOpToPattern", UnExp.Operator.class.getName(), P.class.getName());
         }
@@ -178,10 +168,7 @@ public class ConversionUtils {
             case LT: return BinExp.Operator.LT;
             case IADD: return BinExp.Operator.IADD;
             case ISUB: return BinExp.Operator.ISUB;
-            case IMUL: return BinExp.Operator.IMUL;
-            case IDIV: return BinExp.Operator.IDIV;
             case IXOR: return BinExp.Operator.IXOR;
-            case IMOD: return BinExp.Operator.IMOD;
             case LOR: return BinExp.Operator.LOR;
             case LAND: return BinExp.Operator.LAND;
             case IAND: return BinExp.Operator.IAND;

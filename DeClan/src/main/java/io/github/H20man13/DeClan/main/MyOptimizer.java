@@ -1199,27 +1199,6 @@ public class MyOptimizer {
                                         varICode.value = ConversionUtils.valueToExp(resultISub);
                                         changes = true;
                                         break;
-                                    case IMUL:
-                                        Object leftValueIMul = ConversionUtils.getValue(leftExp);
-                                        Object rightValueIMul = ConversionUtils.getValue(rightExp);
-                                        Object resultIMul = OpUtil.iMul(leftValueIMul, rightValueIMul);
-                                        varICode.value = ConversionUtils.valueToExp(resultIMul);
-                                        changes = true;
-                                        break;
-                                    case IDIV:
-                                        Object leftValueIDiv = ConversionUtils.getValue(leftExp);
-                                        Object rightValueIDiv = ConversionUtils.getValue(rightExp);
-                                        Object resultIDiv = OpUtil.iDiv(leftValueIDiv, rightValueIDiv);
-                                        varICode.value = ConversionUtils.valueToExp(resultIDiv);
-                                        changes = true;
-                                        break;
-                                    case IMOD:
-                                        Object leftValueIMod = ConversionUtils.getValue(leftExp);
-                                        Object rightValueIMod = ConversionUtils.getValue(rightExp);
-                                        Object resultIMod = OpUtil.iMod(leftValueIMod, rightValueIMod);
-                                        varICode.value = ConversionUtils.valueToExp(resultIMod);
-                                        changes = true;
-                                        break;
                                     case ILSHIFT:
                                         Object leftValueILShift = ConversionUtils.getValue(leftExp);
                                         Object rightValueILShift = ConversionUtils.getValue(rightExp);
@@ -1320,12 +1299,6 @@ public class MyOptimizer {
 
                             if(rightExp.isConstant()){
                                 switch(unExpVal.op){
-                                    case INEG:
-                                        Object rightValINeg = ConversionUtils.getValue(rightExp);
-                                        Object resultINeg = OpUtil.iNegate(rightValINeg);
-                                        varICode.value = ConversionUtils.valueToExp(resultINeg);
-                                        changes = true;
-                                        break;
                                     case INOT:
                                         Object rightValueINot = ConversionUtils.getValue(rightExp);
                                         Object resultINot = OpUtil.bitwiseNot(rightValueINot);
@@ -1418,27 +1391,6 @@ public class MyOptimizer {
                                         Object rightValueISub = ConversionUtils.getValue(rightExp);
                                         Object resultISub = OpUtil.iSub(leftValueISub, rightValueISub);
                                         varICode.val = ConversionUtils.valueToExp(resultISub);
-                                        changes = true;
-                                        break;
-                                    case IMUL:
-                                        Object leftValueIMul = ConversionUtils.getValue(leftExp);
-                                        Object rightValueIMul = ConversionUtils.getValue(rightExp);
-                                        Object resultIMul = OpUtil.iMul(leftValueIMul, rightValueIMul);
-                                        varICode.val = ConversionUtils.valueToExp(resultIMul);
-                                        changes = true;
-                                        break;
-                                    case IDIV:
-                                        Object leftValueIDiv = ConversionUtils.getValue(leftExp);
-                                        Object rightValueIDiv = ConversionUtils.getValue(rightExp);
-                                        Object resultIDiv = OpUtil.iDiv(leftValueIDiv, rightValueIDiv);
-                                        varICode.val = ConversionUtils.valueToExp(resultIDiv);
-                                        changes = true;
-                                        break;
-                                    case IMOD:
-                                        Object leftValueIMod = ConversionUtils.getValue(leftExp);
-                                        Object rightValueIMod = ConversionUtils.getValue(rightExp);
-                                        Object resultIMod = OpUtil.iMod(leftValueIMod, rightValueIMod);
-                                        varICode.val = ConversionUtils.valueToExp(resultIMod);
                                         changes = true;
                                         break;
                                     case ILSHIFT:
@@ -1540,12 +1492,6 @@ public class MyOptimizer {
 
                             if(rightExp.isConstant()){
                                 switch(unExpVal.op){
-                                    case INEG:
-                                        Object rightValINeg = ConversionUtils.getValue(rightExp);
-                                        Object resultINeg = OpUtil.iNegate(rightValINeg);
-                                        varICode.val = ConversionUtils.valueToExp(resultINeg);
-                                        changes = true;
-                                        break;
                                     case INOT:
                                         Object rightValueINot = ConversionUtils.getValue(rightExp);
                                         Object resultINot = OpUtil.bitwiseNot(rightValueINot);

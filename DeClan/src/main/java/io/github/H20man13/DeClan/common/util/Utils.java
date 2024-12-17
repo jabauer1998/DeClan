@@ -101,15 +101,12 @@ public class Utils {
         switch(op){
             case IADD: return factory.createIntegerAdditionNode(isDefinition, scope, place, left, right);
             case ISUB: return factory.createIntegerSubtractionNode(isDefinition, scope, place, left, right);
-            case IMUL: return factory.createIntegerMultiplicationNode(isDefinition, scope, place, left, right);
-            case IDIV: return factory.createIntegerDivNode(isDefinition, scope, place, left, right);
             case LAND: return factory.createLogicalAndNode(isDefinition, scope, place, left, right);
             case IAND: return factory.createBitwiseAndNode(isDefinition, scope, place, left, right);
             case IOR: return factory.createBitwiseOrNode(isDefinition, scope, place, left, right);
             case IXOR: return factory.createBitwiseXorNode(isDefinition, scope, place, left, right);
             case ILSHIFT: return factory.createLeftShiftNode(isDefinition, scope, place, left, right);
             case IRSHIFT: return factory.createRightShiftNode(isDefinition, scope, place, left, right);
-            case IMOD: return factory.createIntegerModuleNode(isDefinition, scope, place, left, right);
             case LOR: return factory.createLogicalOrNode(isDefinition, scope, place, left, right);
             case GT: return factory.createGreaterThanNode(isDefinition, scope, place, left, right);
             case GE: return factory.createGreaterThanOrEqualNode(isDefinition, scope, place, left, right);
@@ -124,8 +121,6 @@ public class Utils {
     public static DagNode createUnaryNode(boolean isDefinition, ICode.Scope origScope, UnExp.Operator op, String place, DagNode right){
         ScopeType scope = ConversionUtils.assignScopeToDagScopeType(origScope);
         switch(op){
-            case INEG: return factory.createIntegerNegationNode(isDefinition, scope, place, right);
-            case RNEG: return factory.createRealNegationNode(isDefinition, scope, place, right);
             case BNOT: return factory.createNotNode(isDefinition, scope, place, right);
             case INOT: return factory.createBitwiseNotNode(isDefinition, scope, place, right);
             default: throw new UtilityException("createUnaryNode", "Cant create Unary Node with operator " + op);

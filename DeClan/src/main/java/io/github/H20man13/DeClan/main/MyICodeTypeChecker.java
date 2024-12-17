@@ -252,11 +252,10 @@ public class MyICodeTypeChecker {
         || expression.op == BinExp.Operator.GT || expression.op == BinExp.Operator.GE
         || expression.op == BinExp.Operator.LAND || expression.op == BinExp.Operator.LOR){
             return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
-        } else if(expression.op == BinExp.Operator.IDIV || expression.op == BinExp.Operator.IAND 
+        } else if(expression.op == BinExp.Operator.IAND 
         || expression.op == BinExp.Operator.IOR || expression.op == BinExp.Operator.ILSHIFT 
         || expression.op == BinExp.Operator.IRSHIFT || expression.op == BinExp.Operator.IADD
-        || expression.op == BinExp.Operator.ISUB || expression.op == BinExp.Operator.IMUL
-        || expression.op == BinExp.Operator.IMOD || expression.op == BinExp.Operator.IXOR){
+        || expression.op == BinExp.Operator.ISUB || expression.op == BinExp.Operator.IXOR){
             return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);	
         } else {
             throw new ICodeTypeCheckerException("typeCheckBinaryExpression", expression, instructionNumber, "Unknown Operation type " + expression.op);
@@ -271,8 +270,6 @@ public class MyICodeTypeChecker {
         }
 
         switch(expression.op){
-            case RNEG: return new TypeCheckerQualities(TypeCheckerQualities.REAL);
-            case INEG: return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
             case BNOT: return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
             case INOT: return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
             default:

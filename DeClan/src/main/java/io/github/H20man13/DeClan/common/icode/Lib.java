@@ -88,7 +88,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.icodePlace.equals(ident))
-                    if(entry.containsQualities(mask))
+                    if(entry.containsAllQualities(mask))
                         return true;
             }
         }
@@ -103,7 +103,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.declanIdent.equals(ident))
-                    if(entry.containsQualities(mask))
+                    if(entry.containsAllQualities(mask))
                         return true;
             }
         }
@@ -118,7 +118,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.icodePlace.equals(ident))
-                    if(entry.containsQualities(mask))
+                    if(entry.containsAllQualities(mask))
                         return entry;
             }
         }
@@ -134,7 +134,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof RetSymEntry){
                 RetSymEntry entry = (RetSymEntry)instruction;
                 if(entry.icodePlace.equals(place))
-                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                    if(entry.containsAllQualities(SymEntry.EXTERNAL))
                         return true;
             }
         }
@@ -151,7 +151,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof RetSymEntry){
                 RetSymEntry entry = (RetSymEntry)instruction;
                 if(entry.icodePlace.equals(place))
-                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                    if(entry.containsAllQualities(SymEntry.EXTERNAL))
                         return entry;
             }
         }
@@ -168,7 +168,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof RetSymEntry){
                 RetSymEntry entry = (RetSymEntry)instruction;
                 if(entry.icodePlace.equals(place))
-                    if(entry.containsQualities(SymEntry.INTERNAL))
+                    if(entry.containsAllQualities(SymEntry.INTERNAL))
                         return true;
             }
         }
@@ -185,7 +185,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof RetSymEntry){
                 RetSymEntry entry = (RetSymEntry)instruction;
                 if(entry.icodePlace.equals(place))
-                    if(entry.containsQualities(SymEntry.INTERNAL))
+                    if(entry.containsAllQualities(SymEntry.INTERNAL))
                         return entry;
             }
         }
@@ -202,7 +202,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.icodePlace.equals(place))
-                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                    if(entry.containsAllQualities(SymEntry.EXTERNAL))
                         return true;
             }
         }
@@ -219,7 +219,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.icodePlace.equals(place))
-                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                    if(entry.containsAllQualities(SymEntry.EXTERNAL))
                         return entry;
             }
         }
@@ -236,7 +236,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.icodePlace.equals(place))
-                    if(entry.containsQualities(SymEntry.INTERNAL))
+                    if(entry.containsAllQualities(SymEntry.INTERNAL))
                         return true;
             }
         }
@@ -253,7 +253,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.icodePlace.equals(place))
-                    if(entry.containsQualities(SymEntry.INTERNAL))
+                    if(entry.containsAllQualities(SymEntry.INTERNAL))
                         return entry;
             }
         }
@@ -270,7 +270,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof ParamSymEntry){
                 ParamSymEntry entry = (ParamSymEntry)instruction;
                 if(entry.icodePlace.equals(place))
-                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                    if(entry.containsAllQualities(SymEntry.EXTERNAL))
                         return true;
             }
         }
@@ -287,7 +287,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof ParamSymEntry){
                 ParamSymEntry entry = (ParamSymEntry)instruction;
                 if(entry.icodePlace.equals(place))
-                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                    if(entry.containsAllQualities(SymEntry.EXTERNAL))
                         return entry;
             }
         }
@@ -304,7 +304,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof ParamSymEntry){
                 ParamSymEntry entry = (ParamSymEntry)instruction;
                 if(entry.icodePlace.equals(place))
-                    if(entry.containsQualities(SymEntry.INTERNAL))
+                    if(entry.containsAllQualities(SymEntry.INTERNAL))
                         return true;
             }
         }
@@ -321,7 +321,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof ParamSymEntry){
                 ParamSymEntry entry = (ParamSymEntry)instruction;
                 if(entry.icodePlace.equals(place))
-                    if(entry.containsQualities(SymEntry.INTERNAL))
+                    if(entry.containsAllQualities(SymEntry.INTERNAL))
                         return entry;
             }
         }
@@ -337,7 +337,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof RetSymEntry){
                 RetSymEntry entry = (RetSymEntry)instruction;
                 if(entry.funcName.equals(funcName))
-                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                    if(entry.containsAllQualities(SymEntry.EXTERNAL))
                         return true;
             }
         }
@@ -352,7 +352,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof RetSymEntry){
                 RetSymEntry entry = (RetSymEntry)instruction;
                 if(entry.funcName.equals(funcName))
-                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                    if(entry.containsAllQualities(SymEntry.EXTERNAL))
                         return entry;
             }
         }
@@ -368,7 +368,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof RetSymEntry){
                 RetSymEntry entry = (RetSymEntry)instruction;
                 if(entry.funcName.equals(funcName))
-                    if(entry.containsQualities(SymEntry.INTERNAL))
+                    if(entry.containsAllQualities(SymEntry.INTERNAL))
                         return true;
             }
         }
@@ -383,7 +383,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof RetSymEntry){
                 RetSymEntry entry = (RetSymEntry)instruction;
                 if(entry.funcName.equals(funcName))
-                    if(entry.containsQualities(SymEntry.INTERNAL))
+                    if(entry.containsAllQualities(SymEntry.INTERNAL))
                         return entry;
             }
         }
@@ -400,7 +400,7 @@ public class Lib implements ICode, Iterable<ICode> {
                 ParamSymEntry entry = (ParamSymEntry)instruction;
                 if(entry.paramNumber == number)
                     if(entry.funcName.equals(funcName))
-                        if(entry.containsQualities(SymEntry.EXTERNAL))
+                        if(entry.containsAllQualities(SymEntry.EXTERNAL))
                             return true;
             }
         }
@@ -416,7 +416,7 @@ public class Lib implements ICode, Iterable<ICode> {
                 ParamSymEntry entry = (ParamSymEntry)instruction;
                 if(entry.paramNumber == number)
                     if(entry.funcName.equals(funcName))
-                        if(entry.containsQualities(SymEntry.EXTERNAL))
+                        if(entry.containsAllQualities(SymEntry.EXTERNAL))
                             return entry;
             }
         }
@@ -433,7 +433,7 @@ public class Lib implements ICode, Iterable<ICode> {
                 ParamSymEntry entry = (ParamSymEntry)instruction;
                 if(entry.paramNumber == number)
                     if(entry.funcName.equals(funcName))
-                        if(entry.containsQualities(SymEntry.INTERNAL))
+                        if(entry.containsAllQualities(SymEntry.INTERNAL))
                             return true;
             }
         }
@@ -449,7 +449,7 @@ public class Lib implements ICode, Iterable<ICode> {
                 ParamSymEntry entry = (ParamSymEntry)instruction;
                 if(entry.paramNumber == number)
                     if(entry.funcName.equals(funcName))
-                        if(entry.containsQualities(SymEntry.INTERNAL))
+                        if(entry.containsAllQualities(SymEntry.INTERNAL))
                             return entry;
             }
         }
@@ -466,7 +466,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.declanIdent.equals(ident))
-                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                    if(entry.containsAllQualities(SymEntry.EXTERNAL))
                         return true;
             }
         }
@@ -483,7 +483,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.declanIdent.equals(ident))
-                    if(entry.containsQualities(SymEntry.EXTERNAL))
+                    if(entry.containsAllQualities(SymEntry.EXTERNAL))
                         return entry;
             }
         }
@@ -500,7 +500,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.declanIdent.equals(ident))
-                    if(entry.containsQualities(SymEntry.INTERNAL))
+                    if(entry.containsAllQualities(SymEntry.INTERNAL))
                         return true;
             }
         }
@@ -517,7 +517,7 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.declanIdent.equals(ident))
-                    if(entry.containsQualities(SymEntry.INTERNAL))
+                    if(entry.containsAllQualities(SymEntry.INTERNAL))
                         return entry;
             }
         }

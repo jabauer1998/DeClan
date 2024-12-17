@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.icode.symbols;
 
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class VarSymEntry extends SymEntry {
@@ -9,19 +10,24 @@ public class VarSymEntry extends SymEntry {
         super(type, icodePlace);
         this.declanIdent = declanIdent;
     }
+    
+    private VarSymEntry(VarSymEntry toCopy) {
+    	super(toCopy);
+    	this.declanIdent = toCopy.declanIdent;
+    }
 
     @Override
     public P asPattern() {
-        if(this.symType == (SymEntry.CONST | SymEntry.EXTERNAL)) return P.PAT(P.ID(), P.CONST(), P.EXTERNAL(), P.ID());
-        else if(this.symType == (SymEntry.CONST | SymEntry.INTERNAL)) return P.PAT(P.ID(), P.CONST(), P.INTERNAL(), P.ID());
-        else if(this.symType == (SymEntry.INTERNAL)) return P.PAT(P.ID(), P.INTERNAL(), P.ID());
-        else if(this.symType == (SymEntry.EXTERNAL)) return P.PAT(P.ID(), P.EXTERNAL(), P.ID());
+        if(containsAllQualities(SymEntry.CONST | SymEntry.EXTERNAL)) return P.PAT(P.ID(), P.CONST(), P.EXTERNAL(), P.ID());
+        else if(containsAllQualities(SymEntry.CONST | SymEntry.INTERNAL)) return P.PAT(P.ID(), P.CONST(), P.INTERNAL(), P.ID());
+        else if(containsAllQualities(SymEntry.INTERNAL)) return P.PAT(P.ID(), P.INTERNAL(), P.ID());
+        else if(containsAllQualities(SymEntry.EXTERNAL)) return P.PAT(P.ID(), P.EXTERNAL(), P.ID());
         else return null;
     }
 
     @Override
     public SymEntry copy() {
-        return new VarSymEntry(icodePlace, symType, declanIdent);
+        return new VarSymEntry(this);
     }
 
     @Override
@@ -32,13 +38,13 @@ public class VarSymEntry extends SymEntry {
         sb.append(icodePlace);
         sb.append(' ');
         
-        if(containsQualities(CONST)){
+        if(containsAllQualities(CONST)){
             sb.append("CONST ");
         }
 
-        if(containsQualities(INTERNAL)){
+        if(containsAllQualities(INTERNAL)){
             sb.append("INTERNAL ");
-        } else if(containsQualities(EXTERNAL)){
+        } else if(containsAllQualities(EXTERNAL)){
             sb.append("EXTERNAL ");
         }
 

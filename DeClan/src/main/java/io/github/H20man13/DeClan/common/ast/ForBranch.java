@@ -20,7 +20,6 @@ public class ForBranch extends Branch implements Statement {
     private final Assignment initAssign;
     private final Expression toCheck;
     private final Expression toMod;
-    private static int forLoopNumber = 0;
     
     public ForBranch(Position start, Assignment initAssign, Expression toCheck, Expression toMod, List<Statement> toExecute){
       super(start, toExecute);

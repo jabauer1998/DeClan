@@ -574,9 +574,7 @@ public class MyICodeMachine {
         if(right != null){
             switch(expression.op){
                 case BNOT: return OpUtil.not(right);
-                case INEG: return OpUtil.iNegate(right);
                 case INOT: return OpUtil.bitwiseNot(right);
-                case RNEG: return OpUtil.rNegate(right);
                 default: 
                     throw new ICodeVmException(expression, programCounter, "Unknown unary operation " + expression);
             }
@@ -608,14 +606,11 @@ public class MyICodeMachine {
             switch(expression.op){
                 case IADD: return OpUtil.iAdd(left, right);
                 case ISUB: return OpUtil.iSub(left, right);
-                case IMUL: return OpUtil.iMul(left, right);
                 case IAND: return OpUtil.bitwiseAnd(left, right);
                 case IOR: return OpUtil.bitwiseOr(left, right);
                 case IXOR: return OpUtil.bitwiseXor(left, right);
                 case ILSHIFT: return OpUtil.leftShift(left, right);
                 case IRSHIFT: return OpUtil.rightShift(left, right);
-                case IDIV: return OpUtil.iDiv(left, right);
-                case IMOD: return OpUtil.iMod(left, right);
                 case EQ: return OpUtil.equal(left, right);
                 case NE: return OpUtil.notEqual(left, right);
                 case GE: return OpUtil.greaterThanOrEqualTo(left, right);
