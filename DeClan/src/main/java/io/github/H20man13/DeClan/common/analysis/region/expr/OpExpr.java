@@ -13,6 +13,7 @@ public class OpExpr implements Expr{
 	public enum Operator{
 		IPLUS,
 		IMINUS,
+		ITIMES
 	}
 	
 	public OpExpr(Operator op, Expr... arguments) {
@@ -45,6 +46,7 @@ public class OpExpr implements Expr{
 				break;
 				case IMINUS: sb.append('-');
 				break;
+				case ITIMES: sb.append('*');
 				}
 				sb.append(' ');
 				sb.append(arguments[i].toString());

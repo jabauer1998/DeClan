@@ -45,7 +45,69 @@ public class ForBranch extends Branch implements Statement {
     }
     
     public boolean isSimplifiable() {
-    	return initAssign.getVariableValue().isConstant() && toCheck.isConstant() && toMod.isConstant();
+    	if(!initAssign.getVariableValue().isConstant())
+    		return false;
+    	if(!toCheck.isConstant())
+    		return false;
+    	if(!toMod.isConstant())
+    		return false;
+    	
+    	boolean found = false;
+    	for(Statement stat: this.getExecStatements()) {
+    		if(stat instanceof Assignment) {
+    			Assignment assign = (Assignment)stat;
+    			if(assign.getVariableName().getLexeme().equals(assign.getVariableName().getLexeme())) {
+    				if(assign.getVariableValue() instanceof BinaryOperation) {
+    					BinaryOperation operation = (BinaryOperation)assign.getVariableValue();
+    					if(operation.getLeft() instanceof Identifier && operation.getRight().isConstant()) {
+    						Object result = evaluateExpression(operation.getRight());
+    						boolean isNotZero = true;
+    						if(result instanceof Integer) {
+    							int resultZero = (int)result;
+    							if(resultZero == 0)
+    								isNotZero = false;
+    						} else if(result instanceof Double) {
+    							double resultZero = (double)result;
+    							if(resultZero == 0.0)
+    								isNotZero = false;
+    						} else {
+    							isNotZero = false;
+    						}
+    						Identifier left = (Identifier)operation.getLeft();
+    						if(left.getLexeme().equals(assign.getVariableName().getLexeme()) && !found  && isNotZero) {
+    							found = true;
+    						} else if(left.getLexeme().equals(assign.getVariableName().getLexeme()) && found && isNotZero) {
+    							return false;
+    						}
+    					} else if(operation.getRight() instanceof Identifier && operation.getLeft().isConstant()) {
+    						Object result = evaluateExpression(operation.getLeft());
+    						boolean isNotZero = true;
+    						if(result instanceof Integer) {
+    							int resultZero = (int)result;
+    							if(resultZero == 0)
+    								isNotZero = false;
+    						} else if(result instanceof Double) {
+    							double resultZero = (double)result;
+    							if(resultZero == 0.0)
+    								isNotZero = false;
+    						} else {
+    							isNotZero = false;
+    						}
+    						
+    						Identifier right = (Identifier)operation.getRight();
+    						
+    						if(right.getLexeme().equals(assign.getVariableName().getLexeme()) && !found && isNotZero) {
+    							found = true;
+    						} else if(right.getLexeme().equals(assign.getVariableName().getLexeme()) && found && isNotZero) {
+    							return false;
+    						}
+    					}
+    				}
+    			}
+    		}
+    	}
+    	
+    	return found;
     }
     
     private static Object evaluateExpression(Expression exp) {

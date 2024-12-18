@@ -398,7 +398,7 @@ public class MyICodeGenerator{
     	} else {
     		generateAssignmentIr(forbranch.getInitAssignment(), builder);
             IdentExp target = generateExpressionIr(forbranch.getTargetExpression(), builder);
-            IdentExp curValue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+            IdentExp curValue = builder.getVariablePlace(forbranch.getInitAssignment().getVariableName().getLexeme(), SymEntry.INTERNAL);
             Object actualIncriment = forbranch.getModifyExpression().acceptResult(interpreter);
 
             if(actualIncriment instanceof Integer){
@@ -434,33 +434,11 @@ public class MyICodeGenerator{
         	IdentExp incr = builder.buildDefinition(ICode.Scope.LOCAL, new IntExp(1), ICode.Type.INT);
         	builder.buildAssignment(curValueInduction.scope, curValueInduction.ident, new BinExp(curValueInduction, BinExp.Operator.IADD, incr), ICode.Type.INT);
         }
-    	IdentExp curValue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+    	IdentExp curValue = builder.getVariablePlace(forbranch.getInitAssignment().getVariableName().getLexeme(), SymEntry.INTERNAL);
     	IdentExp incriment = generateExpressionIr(toMod, builder);
         TypeCheckerQualities qual = toMod.acceptResult(typeChecker);
         if(qual.containsQualities(TypeCheckerQualities.REAL)){
-          IdentExp result = null;
-          if(procArgs.entryExists("RAdd") && procEnvironment.entryExists("RAdd")){
-              IdentEntryList params = procArgs.getEntry("RAdd");
-              if(params.size() >= 2){
-                LinkedList<Def> args = new LinkedList<Def>();
-                args.add(new Def(Scope.PARAM, params.get(0).ident, curValue, ICode.Type.REAL));
-                args.add(new Def(Scope.PARAM, params.get(1).ident, incriment, ICode.Type.REAL));
-
-                IdentExp returnPlace = procEnvironment.getEntry("RAdd");
-                result = builder.buildFunctionCall("RAdd", args, returnPlace, ICode.Type.REAL);
-              } else {
-                 errorLog.add("Cant find the function RAdd that contains two arguments", forbranch.getStart());
-                 LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-                 args.add(new Tuple<Exp, ICode.Type>(curValue, ICode.Type.REAL));
-                 args.add(new Tuple<Exp, ICode.Type>(incriment, ICode.Type.REAL));
-                 result = builder.buildExternalFunctionCall(Scope.LOCAL, "RAdd", args, ICode.Type.REAL);
-              }
-            } else {
-               LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
-               args.add(new Tuple<Exp, ICode.Type>(curValue, ICode.Type.REAL));
-               args.add(new Tuple<Exp, ICode.Type>(incriment, ICode.Type.REAL));
-               result = builder.buildExternalFunctionCall(Scope.LOCAL, "RAdd", args, ICode.Type.REAL);
-            }
+        	IdentExp result = builder.buildRealAddition(ICode.Scope.LOCAL, curValue, incriment);
             builder.buildAssignment(curValue.scope, curValue.ident, result, ICode.Type.REAL);
         } else if(qual.containsQualities(TypeCheckerQualities.INTEGER)) {
         	BinExp exp = new BinExp(curValue, BinExp.Operator.IADD, incriment);
