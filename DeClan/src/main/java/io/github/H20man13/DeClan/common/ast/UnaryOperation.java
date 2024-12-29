@@ -86,4 +86,9 @@ public class UnaryOperation extends AbstractASTNode implements Expression {
 	public boolean isConstant() {
 		return expression.isConstant();
 	}
+
+	@Override
+	public boolean containsIdentifier(String ident) {
+		return expression.containsIdentifier(ident);
+	}
 }

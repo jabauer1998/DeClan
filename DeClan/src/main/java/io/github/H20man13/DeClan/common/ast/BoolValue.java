@@ -49,4 +49,9 @@ public class BoolValue extends AbstractASTNode implements Expression {
 	public boolean isConstant() {
 		return true;
 	}
+
+	@Override
+	public boolean containsIdentifier(String ident) {
+		return false;
+	}
 }

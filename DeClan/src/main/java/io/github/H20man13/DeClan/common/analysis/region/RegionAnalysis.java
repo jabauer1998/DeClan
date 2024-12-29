@@ -156,7 +156,7 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 						LoopRegion reg = (LoopRegion)region;
 						boolean first = true;
 						RegionTransferFunction<SetType> iterator = null;
-						RegionBase myHeader = base.getHeader();
+						RegionBase myHeader = reg.getHeader();
 						
 						if(myHeader instanceof BaseRegion) {
 							BaseRegion myBase = (BaseRegion)myHeader;
@@ -190,7 +190,7 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 						if(!transferFunctions.containsKey(subRegionInput))
 							analyzeRegion(region, direction, transferFunctions, discovered);
 						RegionTransferFunction<SetType> func2 = transferFunctions.get(subRegionInput);
-						for(RegionBase exitRegion: base.getExitRegions()){
+						for(RegionBase exitRegion: reg.getExitRegions()){
 							RegionFunctionHeader exitHeader = new RegionFunctionHeader(region, RegionFunctionHeader.Direction.OUT, exitRegion);
 							
 							

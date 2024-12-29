@@ -82,11 +82,6 @@ public class SymbolicAnalysis extends RegionAnalysis<Tuple<String, Expr>> {
 						UnExp exp1 = (UnExp)assign.value;
 						Expr right = ConversionUtils.toExprFromIdentExp(exp1.right);
 						switch(exp1.op){
-						case INEG:
-							OpExpr un = new OpExpr(OpExpr.Operator.IMINUS, right);
-							Tuple<String, Expr> tup1 = new Tuple<String, Expr>(assign.place, un);
-							toGen.add(tup1);
-							break;
 						default:
 							NaaExpr naaExp = new NaaExpr();
 							Tuple<String, Expr> tup2 = new Tuple<String, Expr>(assign.place, naaExp);
@@ -140,11 +135,6 @@ public class SymbolicAnalysis extends RegionAnalysis<Tuple<String, Expr>> {
 						UnExp exp1 = (UnExp)assign.val;
 						Expr right = ConversionUtils.toExprFromIdentExp(exp1.right);
 						switch(exp1.op){
-						case INEG:
-							OpExpr un = new OpExpr(OpExpr.Operator.IMINUS, right);
-							Tuple<String, Expr> tup1 = new Tuple<String, Expr>(assign.label, un);
-							toGen.add(tup1);
-							break;
 						default:
 							NaaExpr naaExp = new NaaExpr();
 							Tuple<String, Expr> tup2 = new Tuple<String, Expr>(assign.label, naaExp);

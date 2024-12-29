@@ -37,6 +37,12 @@ public class Assignment extends AbstractASTNode implements Statement {
       mystring.append('\n');
       return mystring.toString();
     }
+    
+    public boolean isIncriment() {
+    	if(!(variableValue instanceof Identifier))
+    		return variableValue.containsIdentifier(variableName.getLexeme());
+    	return false;
+    }
 
     @Override
     public void accept(ASTVisitor visitor) {

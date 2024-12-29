@@ -45,4 +45,9 @@ public class Identifier extends AbstractASTNode implements Expression {
 	public boolean isConstant() {
 		return false;
 	}
+
+	@Override
+	public boolean containsIdentifier(String ident) {
+		return lexeme.equals(ident);
+	}
 }

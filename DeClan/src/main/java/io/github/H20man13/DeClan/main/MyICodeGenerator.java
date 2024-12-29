@@ -394,7 +394,7 @@ public class MyICodeGenerator{
     		int numTimes = forbranch.getLoopIterations();
     		curValueInduction = generateInductionVariable(builder);
     		IdentExp target = builder.buildDefinition(Scope.LOCAL, new IntExp(numTimes), ICode.Type.INT);
-    		builder.buildInductionBasedForLoopBeginning(curValueInduction, target, initAssign, toMod);
+    		builder.buildInductionBasedForLoopBeginning(curValueInduction, target, builder.getVariablePlace(initAssign.getVariableName().getLexeme(), SymEntry.INTERNAL), initAssign.getVariableValue().acceptResult(interpreter), toMod.acceptResult(interpreter));
     	} else {
     		generateAssignmentIr(forbranch.getInitAssignment(), builder);
             IdentExp target = generateExpressionIr(forbranch.getTargetExpression(), builder);
@@ -448,7 +448,7 @@ public class MyICodeGenerator{
     } else {
       generateAssignmentIr(forbranch.getInitAssignment(), builder);
       IdentExp target = generateExpressionIr(forbranch.getTargetExpression(), builder);
-      IdentExp curvalue = varEnvironment.getEntry(forbranch.getInitAssignment().getVariableName().getLexeme());
+      IdentExp curvalue = builder.getVariablePlace(forbranch.getInitAssignment().getVariableName().getLexeme(), SymEntry.INTERNAL);
       builder.buildForLoopBeginning(curvalue, BinExp.Operator.NE, target);
       builder.incrimentForLoopLevel();
       for(int i = 0; i < toExec.size(); i++){

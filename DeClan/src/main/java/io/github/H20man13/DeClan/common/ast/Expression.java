@@ -18,4 +18,5 @@ public interface Expression extends ASTNode {
 	 */
 	<R> R acceptResult(ExpressionVisitor<R> visitor);
 	public boolean isConstant();
+	public boolean containsIdentifier(String ident);
 }

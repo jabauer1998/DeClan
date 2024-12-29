@@ -120,4 +120,9 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 	public boolean isConstant() {
 		return left.isConstant() && right.isConstant();
 	}
+
+	@Override
+	public boolean containsIdentifier(String ident) {
+		return left.containsIdentifier(ident) || right.containsIdentifier(ident);
+	}
 }

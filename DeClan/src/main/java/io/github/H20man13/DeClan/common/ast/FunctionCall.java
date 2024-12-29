@@ -77,4 +77,12 @@ public class FunctionCall extends AbstractASTNode implements Expression {
 	public boolean isConstant() {
 		return false;
 	}
+	
+	public boolean containsIdentifier(String ident) {
+		for(Expression arg: arguments) {
+			if(arg.containsIdentifier(ident))
+				return true;
+		}
+		return false;
+	}
 }
