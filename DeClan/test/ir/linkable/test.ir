@@ -4,10 +4,16 @@ SYMBOL SECTION
  ENTRY e CONST INTERNAL answer
  ENTRY f INTERNAL n
  ENTRY g INTERNAL PARAM Display 0
- ENTRY w EXTERNAL PARAM WriteInt 0
- ENTRY A EXTERNAL PARAM Div 0
- ENTRY B EXTERNAL PARAM Div 1
- ENTRY C EXTERNAL RETURN Div
+ ENTRY g INTERNAL arg Display
+ ENTRY p EXTERNAL PARAM Display 0
+ ENTRY q INTERNAL answer Display
+ ENTRY s EXTERNAL PARAM Mod 0
+ ENTRY t EXTERNAL PARAM Mod 1
+ ENTRY u EXTERNAL RETURN Mod
+ ENTRY A EXTERNAL PARAM WriteInt 0
+ ENTRY E EXTERNAL PARAM Div 0
+ ENTRY F EXTERNAL PARAM Div 1
+ ENTRY G EXTERNAL RETURN Div
 DATA SECTION
  DEF a := 42 <INT>
  CALL INeg([a -> b]<INT>)
@@ -36,53 +42,54 @@ CODE SECTION
  THEN IFSTAT_0_SEQ_1_LEVEL_0
  ELSE IFNEXT_0_SEQ_1_LEVEL_0
  LABEL IFSTAT_0_SEQ_1_LEVEL_0
- CALL Display([(GLOBAL f) -> g]<INT>)
+ CALL Display([(GLOBAL f) -> p]<INT>)
  GOTO IFEND_0_LEVEL_0
  LABEL IFNEXT_0_SEQ_1_LEVEL_0
  LABEL IFEND_0_LEVEL_0
 END
 PROC SECTION
  PROC LABEL Display
-  DEF p := FALSE <BOOL>
-  DEF q := 2 <INT>
-  DEF r := (PARAM g) IMOD q <INT>
-  DEF s := 0 <INT>
-  DEF t := r NE s <BOOL>
-  p := t <BOOL>
-  DEF u := TRUE <BOOL>
-  IF p EQ u
+  DEF q := FALSE <BOOL>
+  DEF r := 2 <INT>
+  CALL Mod([(PARAM g) -> s]<INT>, [r -> t]<INT>)
+  DEF v := (RETURN u) <INT>
+  DEF w := 0 <INT>
+  DEF x := v NE w <BOOL>
+  GLOBAL e := x <BOOL>
+  DEF y := TRUE <BOOL>
+  IF (GLOBAL e) EQ y
   THEN IFSTAT_1_SEQ_0_LEVEL_0
   ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
-  DEF v := 1 <INT>
-  CALL WriteInt([v -> w]<INT>)
-  DEF x := 1 <INT>
-  DEF y := (PARAM g) ISUB x <INT>
-  DEF z := 2 <INT>
-  CALL Div([y -> A]<INT>, [z -> B]<INT>)
-  DEF D := (RETURN C) <INT>
-  PARAM g := D <INT>
+  DEF z := 1 <INT>
+  CALL WriteInt([z -> A]<INT>)
+  DEF B := 1 <INT>
+  DEF C := (PARAM g) ISUB B <INT>
+  DEF D := 2 <INT>
+  CALL Div([C -> E]<INT>, [D -> F]<INT>)
+  DEF H := (RETURN G) <INT>
+  PARAM g := H <INT>
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
-  DEF E := 0 <INT>
-  DEF F := (PARAM g) EQ E <BOOL>
-  DEF G := TRUE <BOOL>
-  IF F EQ G
+  DEF I := 0 <INT>
+  DEF J := (PARAM g) EQ I <BOOL>
+  DEF K := TRUE <BOOL>
+  IF J EQ K
   THEN IFSTAT_1_SEQ_1_LEVEL_0
   ELSE IFNEXT_1_SEQ_1_LEVEL_0
   LABEL IFSTAT_1_SEQ_1_LEVEL_0
-  DEF H := 1 <INT>
-  CALL INeg([H -> b]<INT>)
-  DEF I := (RETURN c) <INT>
-  CALL WriteInt([I -> w]<INT>)
+  DEF L := 1 <INT>
+  CALL INeg([L -> b]<INT>)
+  DEF M := (RETURN c) <INT>
+  CALL WriteInt([M -> A]<INT>)
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_1_LEVEL_0
-  DEF J := 0 <INT>
-  CALL WriteInt([J -> w]<INT>)
-  DEF K := 2 <INT>
-  CALL Div([(PARAM g) -> A]<INT>, [K -> B]<INT>)
-  DEF L := (RETURN C) <INT>
-  PARAM g := L <INT>
+  DEF N := 0 <INT>
+  CALL WriteInt([N -> A]<INT>)
+  DEF O := 2 <INT>
+  CALL Div([(PARAM g) -> E]<INT>, [O -> F]<INT>)
+  DEF P := (RETURN G) <INT>
+  PARAM g := P <INT>
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_2_LEVEL_0
   LABEL IFEND_1_LEVEL_0
