@@ -34,6 +34,24 @@ public class SymbolBuilder extends BaseBuilder {
         }
         return false;
     }
+    
+    public boolean containsArgument(String funcName, int externalOrInternal){
+        int beginningOfSymbolSection = this.beginningOfSymbolTable();
+        int endOfSymbolTable = this.endOfSymbolTable();
+
+        if(beginningOfSymbolSection != -1 && endOfSymbolTable != -1){
+            for(int i = beginningOfSymbolSection; i <= endOfSymbolTable; i++){
+                ICode instr = getInstruction(i); 
+                if(instr instanceof ParamSymEntry){
+                    ParamSymEntry param = (ParamSymEntry)instr;
+                    if(param.containsAllQualities(externalOrInternal))
+                        if(param.funcName.equals(funcName))
+                        	return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public boolean containsReturn(String funcName, int externalOrInternal){
         int beginningOfSymbolSection = this.beginningOfSymbolTable();
@@ -82,8 +100,10 @@ public class SymbolBuilder extends BaseBuilder {
                     		return new IdentExp(ICode.Scope.LOCAL, entry.icodePlace);
                     	} else if(entry.containsAllQualities(SymEntry.GLOBAL)) {
                     		return new IdentExp(ICode.Scope.GLOBAL, entry.icodePlace);
+                    	} else if(entry.containsAllQualities(SymEntry.PARAM)) {
+                    		return new IdentExp(ICode.Scope.PARAM, entry.icodePlace);
                     	} else {
-                    		throw new RuntimeException("Unexpected symbol type found for variable");
+                    		throw new RuntimeException("Error unexpected quality type for paramater");
                     	}
             }
         }
@@ -126,6 +146,11 @@ public class SymbolBuilder extends BaseBuilder {
         throw new RuntimeException("No return found with funcName " + funcName);
     }
 
+    public void addVariableEntry(String name, int mask, String declanName, String funcName){
+        int end = this.endOfSymbolTable() + 1;
+        addInstruction(end, new VarSymEntry(name, mask, declanName, funcName));
+    }
+    
     public void addVariableEntry(String name, int mask, String declanName){
         int end = this.endOfSymbolTable() + 1;
         addInstruction(end, new VarSymEntry(name, mask, declanName));

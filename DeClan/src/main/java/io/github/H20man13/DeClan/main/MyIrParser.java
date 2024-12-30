@@ -252,7 +252,13 @@ public class MyIrParser {
             return new RetSymEntry(irPlace.getLexeme(), resultMask, funcNameTok.getLexeme());
         } else {
             IrToken declanIdent = match(IrTokenType.ID);
-            return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme());
+            if(willMatch(IrTokenType.ID)) {
+            	IrToken funcName = match(IrTokenType.ID);
+            	return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme(), funcName.getLexeme());
+            } else {
+            	return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme());
+            }
+            
         }
     }
 

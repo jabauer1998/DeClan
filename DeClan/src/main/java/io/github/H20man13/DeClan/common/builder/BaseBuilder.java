@@ -38,6 +38,47 @@ public class BaseBuilder {
     protected void addInstruction(ICode instr){
         intermediateCode.add(instr);
     }
+    
+    public String symbolTableToString() {
+    	StringBuilder sb = new StringBuilder();
+    	for(int i = beginningOfSymbolTable(); i <= endOfSymbolTable(); i++) {
+    		ICode instruction = getInstruction(i);
+    		sb.append(instruction.toString());
+    		sb.append("\r\n");
+    	}
+    	return sb.toString();
+    }
+    
+    public String dataSectionToString() {
+    	StringBuilder sb = new StringBuilder();
+    	for(int i = beginningOfDataSection(); i <= endOfDataSection(); i++) {
+    		ICode instruction = getInstruction(i);
+    		sb.append(instruction.toString());
+    		sb.append("\r\n");
+    	}
+    	return sb.toString();
+    }
+    
+    public String codeSectionToString() {
+    	StringBuilder sb = new StringBuilder();
+    	for(int i = beginningOfCodeSection(); i <= endOfCodeSection(); i++) {
+    		ICode instruction = getInstruction(i);
+    		sb.append(instruction.toString());
+    		sb.append("\r\n");
+    	}
+    	return sb.toString();
+    }
+    
+    public String procedureSectionToString() {
+    	StringBuilder sb = new StringBuilder();
+    	for(int i = beginningOfProcedureSection(); i < endingOfProcedureSection(); i++){
+    		ICode instruction = getInstruction(i);
+    		sb.append(instruction.toString());
+    		sb.append("\r\n");
+    	}
+    	return sb.toString();
+    }
+    
 
     public int endOfSymbolTable(){
         int index = 0;
@@ -59,7 +100,7 @@ public class BaseBuilder {
         return -1;
     }
 
-    public int beegginingOfDataSection(){
+    public int beginningOfDataSection(){
         int index = 0;
         for(ICode icode: intermediateCode){
             if(icode instanceof DataSec)

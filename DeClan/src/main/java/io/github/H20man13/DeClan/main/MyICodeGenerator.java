@@ -179,6 +179,16 @@ public class MyICodeGenerator{
     if(scope == ICode.Scope.GLOBAL)
       builder.addVariableEntry(place.ident, SymEntry.CONST | SymEntry.GLOBAL | SymEntry.INTERNAL, id.getLexeme());
   }
+  
+  public void generateLocalConstantIr(String funcName, ConstDeclaration constDecl, DefinitionBuilder builder) {
+	    Identifier id = constDecl.getIdentifier();
+	    Expression valueExpr = constDecl.getValue();
+	    Exp value = generateExpressionIr(valueExpr, builder);
+	    TypeCheckerQualities qual = valueExpr.acceptResult(typeChecker);
+	    ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+	    IdentExp place = builder.buildDefinition(Scope.LOCAL, value, type);
+	    builder.addVariableEntry(place.ident, SymEntry.CONST | SymEntry.GLOBAL | SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName);
+	  }
 
   public void generateVariableIr(Scope scope, VariableDeclaration varDecl, DefinitionBuilder builder) {
     Identifier id = varDecl.getIdentifier();
@@ -196,6 +206,22 @@ public class MyICodeGenerator{
     if(scope == ICode.Scope.GLOBAL)
       builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id.getLexeme());
   }
+  
+  public void generateLocalVariableIr(String funcName, VariableDeclaration varDecl, DefinitionBuilder builder) {
+    Identifier id = varDecl.getIdentifier();
+    Identifier type = varDecl.getType();
+    IdentExp place = null;
+    if(type.getLexeme().equals("STRING")){
+      place = builder.buildDefinition(Scope.LOCAL, new StrExp("\0"), ICode.Type.STRING);
+    } else if(type.getLexeme().equals("REAL")) {
+      place = builder.buildDefinition(Scope.LOCAL, new RealExp(0), ICode.Type.REAL);
+    } else if(type.getLexeme().equals("BOOLEAN")){
+      place = builder.buildDefinition(Scope.LOCAL, new BoolExp(false), ICode.Type.BOOL);
+    } else {
+      place = builder.buildDefinition(Scope.LOCAL, new IntExp(0), ICode.Type.INT);
+    }
+    builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName);
+  }
 
   private void loadFunctions(List<ProcedureDeclaration> decls, SymbolBuilder builder){
     for(ProcedureDeclaration decl : decls){
@@ -210,6 +236,7 @@ public class MyICodeGenerator{
     for(int i = 0; i < args.size(); i++){
 	    String argAlias = gen.genNext();
         builder.addParamEntry(argAlias, SymEntry.PARAM | SymEntry.INTERNAL, procedureName, i);
+        builder.addVariableEntry(argAlias, SymEntry.PARAM | SymEntry.INTERNAL, args.get(i).getIdentifier().getLexeme(), procedureName);
     }
   
     String returnPlace = gen.genNext();
@@ -227,9 +254,9 @@ public class MyICodeGenerator{
     for(int i = 0; i < localVars.size(); i++){
       Declaration localDecl = localVars.get(i);
       if(localDecl instanceof VariableDeclaration){
-        generateVariableIr(Scope.LOCAL, (VariableDeclaration)localDecl, builder);
+        generateLocalVariableIr(procedureName, (VariableDeclaration)localDecl, builder);
       } else if(localDecl instanceof ConstDeclaration){
-        generateConstantIr(Scope.LOCAL, (ConstDeclaration)localDecl, builder);
+        generateLocalConstantIr(procedureName, (ConstDeclaration)localDecl, builder);
       }
     }
 
@@ -462,10 +489,10 @@ public class MyICodeGenerator{
   public void generateAssignmentIr(Assignment assignment, AssignmentBuilder builder) {
 	IdentExp place = null;
 	String myStr = assignment.getVariableName().getLexeme();
-	if(builder.containsVariable(myStr, SymEntry.INTERNAL)) {
-		place = builder.getVariablePlace(myStr, SymEntry.INTERNAL);
-	} else if(builder.containsVariable(myStr, SymEntry.EXTERNAL)) {
-		place = builder.getVariablePlace(myStr, SymEntry.EXTERNAL);
+	if(builder.containsVariable(myStr, SymEntry.ANY)) {
+		place = builder.getVariablePlace(myStr, SymEntry.ANY);
+	} else {
+		throw new ICodeGeneratorException(assignment, "Error no variable was found with attributes selected");
 	}
     Expression exp = assignment.getVariableValue();
     IdentExp value = generateExpressionIr(exp, builder);
@@ -492,12 +519,9 @@ public class MyICodeGenerator{
   public void generateInlineAssemblyIr(Asm asm, StatementBuilder builder) {
      List<IdentExp> icodeParams = new LinkedList<IdentExp>();
      for(String param : asm.getParamaters()){
-       if(builder.containsVariable(param, SymEntry.INTERNAL)){
+       if(builder.containsVariable(param, SymEntry.ANY)){
           IdentExp icodeParam = builder.getVariablePlace(param, SymEntry.INTERNAL);
           icodeParams.add(icodeParam);
-       } else if(builder.containsVariable(param, SymEntry.EXTERNAL)){
-    	   IdentExp icodeParam = builder.getVariablePlace(param, SymEntry.EXTERNAL);
-    	   icodeParams.add(icodeParam);
        } else {
           throw new ICodeGeneratorException(asm, "Input paramater " + param + " does not exist"); 
        }

@@ -23,6 +23,7 @@ public abstract class SymEntry implements ICode, Copyable<SymEntry> {
     	this(toCopy.symType, toCopy.icodePlace);
     }
 
+    public static final int ANY = 0b0;
     public static final int CONST = 0b1;
     public static final int EXTERNAL = 0b1000;
     public static final int INTERNAL = 0b10000;

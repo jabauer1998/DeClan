@@ -30,7 +30,7 @@ PROCEDURE Div (dividend: INTEGER; divisor: INTEGER);
 	    remainder := (remainder << 1) BOR bitAtIndex;
 	    IF (remainder >= divisor) THEN
 	        result := result BOR (1 << dividendIndex);
-		remainder := remainder - divisor;
+			remainder := remainder - divisor;
 	    END;
 	    dividendIndex := dividendIndex - 1;
 	END;
@@ -50,7 +50,7 @@ PROCEDURE Mod (dividend: INTEGER; divisor: INTEGER);
     BEGIN
 	total := dividend;
 	WHILE((total - divisor) >= 0) DO
-             total := total - divisor
+    	total := total - divisor
 	END
 	RETURN total
     END Mod;

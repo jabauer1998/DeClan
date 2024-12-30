@@ -9,7 +9,9 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import io.github.H20man13.DeClan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.ast.Library;
 import io.github.H20man13.DeClan.common.ast.Program;
+import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.source.ReaderSource;
 import io.github.H20man13.DeClan.common.source.Source;
@@ -20,7 +22,7 @@ import io.github.H20man13.DeClan.main.MyIrLexer;
 import io.github.H20man13.DeClan.main.MyIrParser;
 
 public class ICodeGeneratorTest {
-    public static void testReaderFile(Prog program, String programInput){
+    public static void testReaderFile(Lib program, String programInput){
         try{
             FileReader expectedReader = new FileReader(programInput);
             Scanner expectedScanner = new Scanner(expectedReader);
@@ -60,6 +62,26 @@ public class ICodeGeneratorTest {
 
         expectedScanner.close();
         actualScanner.close();
+    }
+    
+    private static void testStandardLibraryOnICode(String programName){
+        String expectedOutput = programName.replace(".declib", ".ilib").replace("standard_library/declan", "standard_library/ir/linkable");
+        try{
+            Source mySource = new ReaderSource(new FileReader(programName));
+            ErrorLog errLog = new ErrorLog();
+            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
+            MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
+            Library prog = parser.parseLibrary();
+            
+            MyICodeGenerator igen = new MyICodeGenerator(errLog);
+            
+            Lib program = igen.generateLibraryIr(prog);
+            testReaderFile(program, expectedOutput);
+
+            parser.close();
+        } catch(FileNotFoundException exp) {
+            assertTrue(exp.toString(), false);
+        }
     }
 
     private static void testDeclanFileOnICode(String programName){
@@ -456,5 +478,43 @@ public class ICodeGeneratorTest {
     public void testRealDivision4(){
         String programName = "test/declan/RealDivision4.dcl";
         testDeclanFileOnICode(programName);
+    }
+    
+    //Now add a bunch of tests to test the standard library
+    
+    @Test
+    public void testConversions(){
+        String programName = "standard_library/declan/Conversions.declib";
+        testStandardLibraryOnICode(programName);
+    }
+    
+    @Test
+    public void testIntOperations() {
+    	String programName = "standard_library/declan/IntOperations.declib";
+    	testStandardLibraryOnICode(programName);
+    }
+    
+    @Test
+    public void testIo() {
+    	String programName =  "standard_library/declan/Io.declib";
+    	testStandardLibraryOnICode(programName);
+    }
+    
+    @Test
+    public void testMath() {
+    	String programName = "standard_library/declan/Math.declib";
+    	testStandardLibraryOnICode(programName);
+    }
+    
+    @Test
+    public void testRealOperations() {
+    	String programName = "standard_library/declan/RealOperations.declib";
+    	testStandardLibraryOnICode(programName);
+    }
+    
+    @Test
+    public void testUtils() {
+    	String programName = "standard_library/declan/Utils.declib";
+    	testStandardLibraryOnICode(programName);
     }
 }
