@@ -18,7 +18,6 @@ import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
-import io.github.H20man13.DeClan.common.icode.symbols.ParamSymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 
 public class DefinitionBuilder extends SymbolBuilder{
@@ -126,10 +125,10 @@ public class DefinitionBuilder extends SymbolBuilder{
     }
     
     private IdentExp buildBinaryFunctionCall(String funcName, ICode.Scope scope, ICode.Type retType, IdentExp left, ICode.Type leftType, IdentExp right, ICode.Type rightType) {
-    	if(containsArgument(funcName, 0, SymEntry.EXTERNAL) && containsArgument(funcName, 1, SymEntry.EXTERNAL)
-    	&& containsReturn(funcName, SymEntry.EXTERNAL)) {
-    		IdentExp leftPlace = this.getArgumentPlace(funcName, 0, SymEntry.EXTERNAL);
-    		IdentExp rightPlace = this.getArgumentPlace(funcName, 1, SymEntry.EXTERNAL);
+    	if(containsEntry(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM) && containsEntry(funcName, 1, SymEntry.EXTERNAL | SymEntry.PARAM)
+    	&& containsEntry(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME)) {
+    		IdentExp leftPlace = this.getVariablePlace(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM);
+    		IdentExp rightPlace = this.getVariablePlace(funcName, 1, SymEntry.EXTERNAL | SymEntry.PARAM);
     		
     		Def leftAssign = new Def(leftPlace.scope, leftPlace.ident, left, leftType);
     		Def rightAssign = new Def(rightPlace.scope, rightPlace.ident, right, rightType);
@@ -140,16 +139,16 @@ public class DefinitionBuilder extends SymbolBuilder{
     		
     		addInstruction(new Call(funcName, args));
     		
-    		IdentExp retPlace = this.getReturnPlace(funcName, SymEntry.EXTERNAL);
+    		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		
     		String newPlace = gen.genNext();
     		addInstruction(new Def(ICode.Scope.LOCAL, newPlace, retPlace, retType));
     		
     		return new IdentExp(ICode.Scope.LOCAL, newPlace);
-    	} else if(containsArgument(funcName, 0, SymEntry.INTERNAL) && containsArgument(funcName, 1, SymEntry.INTERNAL)
-    	    	&& containsReturn(funcName, SymEntry.INTERNAL)) {
-    		IdentExp leftPlace = this.getArgumentPlace(funcName, 0, SymEntry.INTERNAL);
-    		IdentExp rightPlace = this.getArgumentPlace(funcName, 1, SymEntry.INTERNAL);
+    	} else if(containsEntry(funcName, 0, SymEntry.INTERNAL | SymEntry.PARAM) && containsEntry(funcName, 1, SymEntry.INTERNAL | SymEntry.PARAM)
+    	    	&& containsEntry(funcName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME)) {
+    		IdentExp leftPlace = this.getVariablePlace(funcName, 0, SymEntry.INTERNAL | SymEntry.PARAM);
+    		IdentExp rightPlace = this.getVariablePlace(funcName, 1, SymEntry.INTERNAL | SymEntry.PARAM);
     		
     		Def leftAssign = new Def(leftPlace.scope, leftPlace.ident, left, leftType);
     		Def rightAssign = new Def(rightPlace.scope, rightPlace.ident, right, rightType);
@@ -160,7 +159,7 @@ public class DefinitionBuilder extends SymbolBuilder{
     		
     		addInstruction(new Call(funcName, args));
     		
-    		IdentExp retPlace = this.getReturnPlace(funcName, SymEntry.INTERNAL);
+    		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		
     		String newPlace = gen.genNext();
     		addInstruction(new Def(scope, newPlace, retPlace, retType));
@@ -249,8 +248,8 @@ public class DefinitionBuilder extends SymbolBuilder{
     }
     
     private IdentExp buildUnaryFunctionCall(String funcName, ICode.Scope scope, ICode.Type retType, IdentExp right, ICode.Type rightType) {
-    	if(containsArgument(funcName, 0, SymEntry.EXTERNAL) && containsReturn(funcName, SymEntry.EXTERNAL)) {
-    		IdentExp rightPlace = this.getArgumentPlace(funcName, 0, SymEntry.EXTERNAL);
+    	if(containsEntry(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM) && containsEntry(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME)) {
+    		IdentExp rightPlace = this.getVariablePlace(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM);
     		
     		Def rightAssign = new Def(rightPlace.scope, rightPlace.ident, right, rightType);
     		
@@ -259,14 +258,14 @@ public class DefinitionBuilder extends SymbolBuilder{
     		
     		addInstruction(new Call(funcName, args));
     		
-    		IdentExp retPlace = this.getReturnPlace(funcName, SymEntry.EXTERNAL);
+    		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		
     		String newPlace = gen.genNext();
     		addInstruction(new Def(ICode.Scope.LOCAL, newPlace, retPlace, retType));
     		
     		return new IdentExp(ICode.Scope.LOCAL, newPlace);
-    	} else if(containsArgument(funcName, 0, SymEntry.INTERNAL) && containsReturn(funcName, SymEntry.INTERNAL)) {
-    		IdentExp rightPlace = this.getArgumentPlace(funcName, 0, SymEntry.INTERNAL);
+    	} else if(containsEntry(funcName, 0, SymEntry.INTERNAL | SymEntry.PARAM) && containsEntry(funcName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME)) {
+    		IdentExp rightPlace = this.getVariablePlace(funcName, 0, SymEntry.INTERNAL | SymEntry.PARAM);
     		
     		Def rightAssign = new Def(rightPlace.scope, rightPlace.ident, right, rightType);
     		
@@ -275,7 +274,7 @@ public class DefinitionBuilder extends SymbolBuilder{
     		
     		addInstruction(new Call(funcName, args));
     		
-    		IdentExp retPlace = this.getReturnPlace(funcName, SymEntry.INTERNAL);
+    		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		
     		String newPlace = gen.genNext();
     		addInstruction(new Def(scope, newPlace, retPlace, retType));
@@ -322,21 +321,21 @@ public class DefinitionBuilder extends SymbolBuilder{
         for(int i = 0; i < newArgs.size(); i++){
             Tuple<Exp, Assign.Type> arg = newArgs.get(i);
             String next;
-            if(containsArgument(funcName, i, SymEntry.EXTERNAL))
-                next = getArgumentPlace(funcName, i, SymEntry.EXTERNAL).ident;
+            if(containsEntry(funcName, i, SymEntry.EXTERNAL | SymEntry.PARAM))
+                next = getVariablePlace(funcName, i, SymEntry.EXTERNAL | SymEntry.PARAM).ident;
             else {
                 next = gen.genNext();
-                addParamEntry(next, SymEntry.EXTERNAL, funcName, i);
+                addVariableEntry(next, SymEntry.EXTERNAL | SymEntry.PARAM, funcName, i);
             }
             newDefs.add(new Def(Scope.PARAM, next, arg.source, arg.dest));
         }
         addInstruction(new Call(funcName, newDefs));
         String oldPlace;
-        if(containsReturn(funcName, SymEntry.EXTERNAL))
-            oldPlace = getReturnPlace(funcName, SymEntry.EXTERNAL).ident;
+        if(containsEntry(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME))
+            oldPlace = getVariablePlace(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME).ident;
         else {
             oldPlace = gen.genNext();
-            addReturnEntry(oldPlace, SymEntry.EXTERNAL, funcName);
+            addVariableEntry(oldPlace, SymEntry.EXTERNAL | SymEntry.RETURN, funcName, true);
         }
         String place = gen.genNext();
         addInstruction(new Def(Scope.LOCAL, place, new IdentExp(ICode.Scope.RETURN, oldPlace), type));

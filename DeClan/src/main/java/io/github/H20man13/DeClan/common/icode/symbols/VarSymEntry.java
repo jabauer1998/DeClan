@@ -6,23 +6,47 @@ import io.github.H20man13.DeClan.common.pat.P;
 public class VarSymEntry extends SymEntry {
     public String declanIdent;
     public String funcName;
+    public int paramNumber;
     
-    public VarSymEntry(String icodePlace, int type, String declanIdent){
+    public VarSymEntry(String icodePlace, int type, String identOrFunctionName, boolean isReturn){
         super(type, icodePlace);
-        this.declanIdent = declanIdent;
-        this.funcName = null;
+        
+        if(isReturn) {
+        	this.funcName = identOrFunctionName;
+        	this.declanIdent = null;
+        } else {
+        	this.declanIdent = identOrFunctionName;
+            this.funcName = null;
+        }
+        
+        this.paramNumber = -1;
     }
     
     public VarSymEntry(String icodePlace, int type, String declanIdent, String funcName){
         super(type, icodePlace);
         this.declanIdent = declanIdent;
         this.funcName = funcName;
+        this.paramNumber = -1;
+    }
+    
+    public VarSymEntry(String icodePlace, int type, String funcName, int paramNumber){
+        super(type, icodePlace);
+        this.funcName = funcName;
+        this.paramNumber = -1;
+    }
+    
+    public VarSymEntry(String icodePlace, int type, String declanIdent, String funcName, int paramNumber){
+        super(type, icodePlace);
+        this.declanIdent = declanIdent;
+        this.funcName = funcName;
+        this.paramNumber = paramNumber;
     }
     
     private VarSymEntry(VarSymEntry toCopy) {
     	super(toCopy);
     	this.declanIdent = toCopy.declanIdent;
     	this.funcName = toCopy.funcName;
+    	this.paramNumber = toCopy.paramNumber;
     }
 
     @Override
@@ -64,12 +88,25 @@ public class VarSymEntry extends SymEntry {
         } else if(containsAllQualities(EXTERNAL)){
             sb.append("EXTERNAL ");
         }
+        
+        if(containsAllQualities(RETURN))
+        	sb.append("RETURN ");
+        else if(containsAllQualities(PARAM))
+        	sb.append("PARAM ");
+        else if(containsAllQualities(LOCAL))
+        	sb.append("LOCAL ");
+        else if(containsAllQualities(GLOBAL))
+        	sb.append("GLOBAL ");
 
         sb.append(declanIdent);
         
         if(this.funcName != null) {
         	sb.append(' ');
         	sb.append(funcName);
+        	if(this.paramNumber > -1) {
+        		sb.append(' ');
+        		sb.append(this.paramNumber);
+        	}
         }
 
         return sb.toString();
@@ -79,12 +116,13 @@ public class VarSymEntry extends SymEntry {
     public boolean equals(Object obj) {
         if(obj instanceof VarSymEntry){
             VarSymEntry otherEntry = (VarSymEntry)obj;
-            if(otherEntry.declanIdent.equals(declanIdent))
-            	if(otherEntry.funcName != null && this.funcName != null) {
-            		if(otherEntry.funcName.equals(funcName))
-            			return super.equals(obj);
-            	} else if(otherEntry.funcName == null && funcName == null)
-            		return super.equals(obj);
+            if(otherEntry.paramNumber == this.paramNumber)
+	            if(otherEntry.declanIdent.equals(declanIdent))
+	            	if(otherEntry.funcName != null && this.funcName != null) {
+	            		if(otherEntry.funcName.equals(funcName))
+	            			return super.equals(obj);
+	            	} else if(otherEntry.funcName == null && funcName == null)
+	            		return super.equals(obj);
         }
         return false;
     }

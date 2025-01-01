@@ -418,11 +418,11 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         for(int i = 0; i < newArgs.size(); i++){
             Tuple<Exp, ICode.Type> arg = newArgs.get(i);
             String newPlace;
-            if(containsArgument(funcName, i, SymEntry.EXTERNAL)){
-                newPlace = getArgumentPlace(funcName, i, SymEntry.EXTERNAL).ident;
+            if(containsEntry(funcName, i, SymEntry.EXTERNAL | SymEntry.PARAM)){
+                newPlace = getVariablePlace(funcName, i, SymEntry.EXTERNAL | SymEntry.PARAM).ident;
             } else {
                 newPlace = gen.genNext();
-                addParamEntry(newPlace, SymEntry.EXTERNAL, funcName, i);
+                addVariableEntry(newPlace, SymEntry.EXTERNAL | SymEntry.PARAM, funcName, i);
             }
             newDefs.add(new Def(Scope.PARAM, newPlace, arg.source, arg.dest));
         }

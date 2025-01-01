@@ -5,73 +5,20 @@ import java.util.List;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.H20man13.DeClan.common.icode.symbols.ParamSymEntry;
-import io.github.H20man13.DeClan.common.icode.symbols.RetSymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.VarSymEntry;
 
 public class SymbolBuilder extends BaseBuilder {
-    
     public SymbolBuilder(){
         super();
     }
-
-    public boolean containsArgument(String funcName, int paramNumber, int externalOrInternal){
-        int beginningOfSymbolSection = this.beginningOfSymbolTable();
-        int endOfSymbolTable = this.endOfSymbolTable();
-
-        if(beginningOfSymbolSection != -1 && endOfSymbolTable != -1){
-            for(int i = beginningOfSymbolSection; i <= endOfSymbolTable; i++){
-                ICode instr = getInstruction(i); 
-                if(instr instanceof ParamSymEntry){
-                    ParamSymEntry param = (ParamSymEntry)instr;
-                    if(param.containsAllQualities(externalOrInternal))
-                        if(param.funcName.equals(funcName))
-                            if(param.paramNumber == paramNumber)
-                                return true;
-                }
-            }
-        }
-        return false;
-    }
     
-    public boolean containsArgument(String funcName, int externalOrInternal){
-        int beginningOfSymbolSection = this.beginningOfSymbolTable();
-        int endOfSymbolTable = this.endOfSymbolTable();
-
-        if(beginningOfSymbolSection != -1 && endOfSymbolTable != -1){
-            for(int i = beginningOfSymbolSection; i <= endOfSymbolTable; i++){
-                ICode instr = getInstruction(i); 
-                if(instr instanceof ParamSymEntry){
-                    ParamSymEntry param = (ParamSymEntry)instr;
-                    if(param.containsAllQualities(externalOrInternal))
-                        if(param.funcName.equals(funcName))
-                        	return true;
-                }
-            }
-        }
-        return false;
+    public enum SymbolBuilderSearchStrategy{
+    	SEARCH_VIA_FUNC_NAME,
+    	SEARCH_VIA_IDENT_NAME
     }
 
-    public boolean containsReturn(String funcName, int externalOrInternal){
-        int beginningOfSymbolSection = this.beginningOfSymbolTable();
-        int endOfSymbolTable = this.endOfSymbolTable();
-
-        if(beginningOfSymbolSection != -1 && endOfSymbolTable != -1){
-            for(int i = beginningOfSymbolSection; i <= endOfSymbolTable; i++){
-                ICode instr = getInstruction(i); 
-                if(instr instanceof RetSymEntry){
-                    RetSymEntry ret = (RetSymEntry)instr;
-                    if(ret.containsAllQualities(externalOrInternal))
-                        if(ret.funcName.equals(funcName))
-                            return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean containsVariable(String identifier, int externalOrInternal){
+    public boolean containsEntry(String identifierOrFunction, int externalOrInternal, SymbolBuilderSearchStrategy strat){
         int symbolStart = beginningOfSymbolTable();
         int symbolEnd = endOfSymbolTable();
         for(int i = symbolStart; i <= symbolEnd; i++){
@@ -79,71 +26,146 @@ public class SymbolBuilder extends BaseBuilder {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.containsAllQualities(externalOrInternal))
-                    if(entry.declanIdent.equals(identifier))
-                        return true;
-            }
+                	if(strat == SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME) {
+                		if(entry.declanIdent.equals(identifierOrFunction)) {
+                			return true;
+                		}
+                	} else {
+                		if(entry.funcName.equals(identifierOrFunction)) {
+                			return true;
+                		}
+                	}
+             }
         }
 
         return false;
     }
-
-    public IdentExp getVariablePlace(String ident, int internalOrExternal){
+        
+    public boolean containsEntry(String identifier, String funcName, int externalOrInternal){
         int symbolStart = beginningOfSymbolTable();
         int symbolEnd = endOfSymbolTable();
         for(int i = symbolStart; i <= symbolEnd; i++){
             ICode instruction = this.getInstruction(i);
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
-                if(entry.declanIdent.equals(ident))
-                    if(entry.containsAllQualities(internalOrExternal))
-                    	if(entry.containsAllQualities(SymEntry.LOCAL)) {
-                    		return new IdentExp(ICode.Scope.LOCAL, entry.icodePlace);
-                    	} else if(entry.containsAllQualities(SymEntry.GLOBAL)) {
-                    		return new IdentExp(ICode.Scope.GLOBAL, entry.icodePlace);
-                    	} else if(entry.containsAllQualities(SymEntry.PARAM)) {
-                    		return new IdentExp(ICode.Scope.PARAM, entry.icodePlace);
-                    	} else {
-                    		throw new RuntimeException("Error unexpected quality type for paramater");
-                    	}
-            }
-        }
-
-        throw new RuntimeException("Coulld not find symbol with identifier " + ident);
+                if(entry.containsAllQualities(externalOrInternal))
+            		if(entry.declanIdent.equals(identifier)){
+            			if(entry.funcName.equals(funcName)){
+            				return true;
+            			}
+            		}
+            	}
+             }
+        return false;
     }
-
-    public IdentExp getArgumentPlace(String funcName, int paramNumber, int internalExternal){
-        int beginningOfSymbolSection = this.beginningOfSymbolTable();
-        int endOfSymbolTable = this.endOfSymbolTable();
-        
-        for(int i = beginningOfSymbolSection; i <= endOfSymbolTable; i++){
-            ICode instr = getInstruction(i); 
-            if(instr instanceof ParamSymEntry){
-                ParamSymEntry param = (ParamSymEntry)instr;
-                if(param.containsAllQualities(internalExternal))
-                    if(param.funcName.equals(funcName))
-                        if(param.paramNumber == paramNumber)
-                            return new IdentExp(ICode.Scope.PARAM, param.icodePlace);
+    
+    public boolean containsEntry(String funcName, int paramNumber, int filter){
+        int symbolStart = beginningOfSymbolTable();
+        int symbolEnd = endOfSymbolTable();
+        for(int i = symbolStart; i <= symbolEnd; i++){
+            ICode instruction = this.getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(entry.containsAllQualities(filter))
+        			if(entry.funcName.equals(funcName))
+        				if(entry.paramNumber == paramNumber)
+        					return true;
             }
-        }
-
-        throw new RuntimeException("No paramater found with funcName " + funcName + " and paramNumber=" + paramNumber);
+         }
+        return false;
     }
-
-    public IdentExp getReturnPlace(String funcName, int internalExternal){
-        int beginningOfSymbolSection = this.beginningOfSymbolTable();
-        int endOfSymbolTable = this.endOfSymbolTable();
         
-        for(int i = beginningOfSymbolSection; i <= endOfSymbolTable; i++){
-            ICode instr = getInstruction(i); 
-            if(instr instanceof RetSymEntry){
-                RetSymEntry ret = (RetSymEntry)instr;
-                if(ret.containsAllQualities(internalExternal))
-                    if(ret.funcName.equals(funcName))
-                        return new IdentExp(ICode.Scope.RETURN, ret.icodePlace);
+        
+
+    public IdentExp getVariablePlace(String identifierOrFuncName, int internalOrExternal, SymbolBuilderSearchStrategy strat){
+        int symbolStart = beginningOfSymbolTable();
+        int symbolEnd = endOfSymbolTable();
+        for(int i = symbolStart; i <= symbolEnd; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(strat == SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME) {
+                	if(entry.funcName.equals(identifierOrFuncName)){
+                		if(entry.containsAllQualities(internalOrExternal))
+                        	if(entry.containsAllQualities(SymEntry.RETURN)) {
+                        		return new IdentExp(ICode.Scope.RETURN, entry.icodePlace);
+                        	}
+                	}
+                } else {
+                	if(entry.declanIdent.equals(identifierOrFuncName))
+                        if(entry.containsAllQualities(internalOrExternal))
+                        	if(entry.containsAllQualities(SymEntry.LOCAL)) {
+                        		return new IdentExp(ICode.Scope.LOCAL, entry.icodePlace);
+                        	} else if(entry.containsAllQualities(SymEntry.GLOBAL)) {
+                        		return new IdentExp(ICode.Scope.GLOBAL, entry.icodePlace);
+                        	} else if(entry.containsAllQualities(SymEntry.PARAM)) {
+                        		return new IdentExp(ICode.Scope.PARAM, entry.icodePlace);
+                        	}
+                }
             }
         }
 
-        throw new RuntimeException("No return found with funcName " + funcName);
+        throw new RuntimeException("Coulld not find symbol with identifier ");
+    }
+    
+    public IdentExp getVariablePlace(String funcName, int paramNumber, int internalOrExternal){
+        int symbolStart = beginningOfSymbolTable();
+        int symbolEnd = endOfSymbolTable();
+        for(int i = symbolStart; i <= symbolEnd; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+        		if(entry.funcName.equals(funcName)) {
+        			if(entry.paramNumber == paramNumber) {
+            			if(entry.containsAllQualities(internalOrExternal))
+            				if(entry.containsAllQualities(SymEntry.LOCAL)) {
+                        		return new IdentExp(ICode.Scope.LOCAL, entry.icodePlace);
+                        	} else if(entry.containsAllQualities(SymEntry.GLOBAL)) {
+                        		return new IdentExp(ICode.Scope.GLOBAL, entry.icodePlace);
+                        	} else if(entry.containsAllQualities(SymEntry.PARAM)) {
+                        		return new IdentExp(ICode.Scope.PARAM, entry.icodePlace);
+                        	}
+        			}
+            	}
+            }
+        }
+
+        throw new RuntimeException("Coulld not find symbol with identifier " + funcName);
+    }
+    
+    public IdentExp getVariablePlace(String identifierName, String funcName, int internalOrExternal){
+        int symbolStart = beginningOfSymbolTable();
+        int symbolEnd = endOfSymbolTable();
+        for(int i = symbolStart; i <= symbolEnd; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+            	if(entry.declanIdent.equals(identifierName)){
+            		if(entry.funcName.equals(funcName)) {
+            			if(entry.containsAllQualities(internalOrExternal))
+            				if(entry.containsAllQualities(SymEntry.LOCAL)) {
+                        		return new IdentExp(ICode.Scope.LOCAL, entry.icodePlace);
+                        	} else if(entry.containsAllQualities(SymEntry.GLOBAL)) {
+                        		return new IdentExp(ICode.Scope.GLOBAL, entry.icodePlace);
+                        	} else if(entry.containsAllQualities(SymEntry.PARAM)) {
+                        		return new IdentExp(ICode.Scope.PARAM, entry.icodePlace);
+                        	}
+            		}
+            	}
+            }
+        }
+
+        throw new RuntimeException("Coulld not find symbol with identifier ");
+    }
+    
+    public void addVariableEntry(String name, int mask, String declanName, String functionName, int paramNumber){
+        int end = this.endOfSymbolTable() + 1;
+        addInstruction(end, new VarSymEntry(name, mask, declanName, functionName, paramNumber));
+    }
+    
+    public void addVariableEntry(String name, int mask, String functionName, int paramNumber){
+        int end = this.endOfSymbolTable() + 1;
+        addInstruction(end, new VarSymEntry(name, mask, functionName, paramNumber));
     }
 
     public void addVariableEntry(String name, int mask, String declanName, String funcName){
@@ -151,18 +173,8 @@ public class SymbolBuilder extends BaseBuilder {
         addInstruction(end, new VarSymEntry(name, mask, declanName, funcName));
     }
     
-    public void addVariableEntry(String name, int mask, String declanName){
+    public void addVariableEntry(String name, int mask, String declanNameOrFunctionName, boolean isReturn){
         int end = this.endOfSymbolTable() + 1;
-        addInstruction(end, new VarSymEntry(name, mask, declanName));
-    }
-
-    public void addParamEntry(String name, int mask, String funcName, int paramNumber){
-        int end = this.endOfSymbolTable() + 1;
-        addInstruction(end, new ParamSymEntry(name, mask, funcName, paramNumber));
-    }
-
-    public void addReturnEntry(String name, int mask, String funcName){
-        int end = this.endOfSymbolTable() + 1;
-        addInstruction(end, new RetSymEntry(name, mask, funcName));
+        addInstruction(end, new VarSymEntry(name, mask, declanNameOrFunctionName, isReturn));
     }
 }

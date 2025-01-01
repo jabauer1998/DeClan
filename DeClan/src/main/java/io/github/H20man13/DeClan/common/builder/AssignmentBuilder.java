@@ -118,10 +118,10 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     }
     
     private void buildBinaryFunctionCall(String funcName, ICode.Scope scope, String place, ICode.Type retType, IdentExp left, ICode.Type leftType, IdentExp right, ICode.Type rightType) {
-    	if(containsArgument(funcName, 0, SymEntry.EXTERNAL) && containsArgument(funcName, 1, SymEntry.EXTERNAL)
-    	&& containsReturn(funcName, SymEntry.EXTERNAL)) {
-    		IdentExp leftPlace = this.getArgumentPlace(funcName, 0, SymEntry.EXTERNAL);
-    		IdentExp rightPlace = this.getArgumentPlace(funcName, 1, SymEntry.EXTERNAL);
+    	if(containsEntry(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM) && containsEntry(funcName, 1, SymEntry.EXTERNAL | SymEntry.PARAM)
+    	&& containsEntry(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME)) {
+    		IdentExp leftPlace = this.getVariablePlace(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM);
+    		IdentExp rightPlace = this.getVariablePlace(funcName, 1, SymEntry.EXTERNAL | SymEntry.PARAM);
     		
     		Def leftAssign = new Def(leftPlace.scope, leftPlace.ident, left, leftType);
     		Def rightAssign = new Def(rightPlace.scope, rightPlace.ident, right, rightType);
@@ -132,12 +132,12 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     		
     		addInstruction(new Call(funcName, args));
     		
-    		IdentExp retPlace = this.getReturnPlace(funcName, SymEntry.EXTERNAL);
+    		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		addInstruction(new Def(ICode.Scope.LOCAL, place, retPlace, retType));
-    	} else if(containsArgument(funcName, 0, SymEntry.INTERNAL) && containsArgument(funcName, 1, SymEntry.INTERNAL)
-    	    	&& containsReturn(funcName, SymEntry.INTERNAL)) {
-    		IdentExp leftPlace = this.getArgumentPlace(funcName, 0, SymEntry.INTERNAL);
-    		IdentExp rightPlace = this.getArgumentPlace(funcName, 1, SymEntry.INTERNAL);
+    	} else if(containsEntry(funcName, 0, SymEntry.INTERNAL | SymEntry.PARAM) && containsEntry(funcName, 1, SymEntry.INTERNAL | SymEntry.PARAM)
+    	    	&& containsEntry(funcName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME)) {
+    		IdentExp leftPlace = this.getVariablePlace(funcName, 0, SymEntry.INTERNAL | SymEntry.PARAM);
+    		IdentExp rightPlace = this.getVariablePlace(funcName, 1, SymEntry.INTERNAL | SymEntry.PARAM);
     		
     		Def leftAssign = new Def(leftPlace.scope, leftPlace.ident, left, leftType);
     		Def rightAssign = new Def(rightPlace.scope, rightPlace.ident, right, rightType);
@@ -148,7 +148,7 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     		
     		addInstruction(new Call(funcName, args));
     		
-    		IdentExp retPlace = this.getReturnPlace(funcName, SymEntry.INTERNAL);
+    		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		
     		addInstruction(new Def(scope, place, retPlace, retType));
     	} else {
@@ -233,8 +233,8 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     }
     
     private void buildUnaryFunctionCallAssignment(String funcName, ICode.Scope scope, String place, ICode.Type retType, IdentExp right, ICode.Type rightType) {
-    	if(containsArgument(funcName, 0, SymEntry.EXTERNAL) && containsReturn(funcName, SymEntry.EXTERNAL)) {
-    		IdentExp rightPlace = this.getArgumentPlace(funcName, 0, SymEntry.EXTERNAL);
+    	if(containsEntry(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM) && containsEntry(funcName, SymEntry.EXTERNAL | SymEntry.PARAM, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME)) {
+    		IdentExp rightPlace = this.getVariablePlace(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM);
     		
     		Def rightAssign = new Def(rightPlace.scope, rightPlace.ident, right, rightType);
     		
@@ -243,11 +243,11 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     		
     		addInstruction(new Call(funcName, args));
     		
-    		IdentExp retPlace = this.getReturnPlace(funcName, SymEntry.EXTERNAL);
+    		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		
     		addInstruction(new Def(scope, place, retPlace, retType));
-    	} else if(containsArgument(funcName, 0, SymEntry.INTERNAL) && containsReturn(funcName, SymEntry.INTERNAL)) {
-    		IdentExp rightPlace = this.getArgumentPlace(funcName, 0, SymEntry.INTERNAL);
+    	} else if(containsEntry(funcName, 0, SymEntry.INTERNAL | SymEntry.PARAM) && containsEntry(funcName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME)) {
+    		IdentExp rightPlace = this.getVariablePlace(funcName, 0, SymEntry.INTERNAL | SymEntry.PARAM);
     		
     		Def rightAssign = new Def(rightPlace.scope, rightPlace.ident, right, rightType);
     		
@@ -256,7 +256,7 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     		
     		addInstruction(new Call(funcName, args));
     		
-    		IdentExp retPlace = this.getReturnPlace(funcName, SymEntry.INTERNAL);
+    		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		
     		addInstruction(new Def(scope, place, retPlace, retType));
     	} else {
