@@ -27,13 +27,13 @@ public class SymbolBuilder extends BaseBuilder {
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.containsAllQualities(externalOrInternal))
                 	if(strat == SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME) {
-                		if(entry.declanIdent.equals(identifierOrFunction)) {
-                			return true;
-                		}
+                		if(entry.declanIdent != null)
+                			if(entry.declanIdent.equals(identifierOrFunction))
+                				return true;
                 	} else {
-                		if(entry.funcName.equals(identifierOrFunction)) {
-                			return true;
-                		}
+                		if(entry.funcName != null)
+                			if(entry.funcName.equals(identifierOrFunction))
+                				return true;
                 	}
              }
         }
@@ -41,22 +41,23 @@ public class SymbolBuilder extends BaseBuilder {
         return false;
     }
         
-    public boolean containsEntry(String identifier, String funcName, int externalOrInternal){
+    public boolean containsEntry(String identifier, String funcName, int filter){
         int symbolStart = beginningOfSymbolTable();
         int symbolEnd = endOfSymbolTable();
         for(int i = symbolStart; i <= symbolEnd; i++){
             ICode instruction = this.getInstruction(i);
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
-                if(entry.containsAllQualities(externalOrInternal))
-            		if(entry.declanIdent.equals(identifier)){
-            			if(entry.funcName.equals(funcName)){
-            				return true;
-            			}
-            		}
-            	}
-             }
-        return false;
+                if(entry.containsAllQualities(filter))
+                	if(entry.declanIdent != null)
+                		if(entry.declanIdent != null)
+                			if(entry.declanIdent.equals(identifier))
+                				if(entry.funcName != null)
+                					if(entry.funcName.equals(funcName))
+                						return true;
+            }
+         }
+         return false;
     }
     
     public boolean containsEntry(String funcName, int paramNumber, int filter){
@@ -67,9 +68,10 @@ public class SymbolBuilder extends BaseBuilder {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.containsAllQualities(filter))
-        			if(entry.funcName.equals(funcName))
-        				if(entry.paramNumber == paramNumber)
-        					return true;
+                	if(entry.funcName != null)
+                		if(entry.funcName.equals(funcName))
+                			if(entry.paramNumber == paramNumber)
+                				return true;
             }
          }
         return false;
@@ -85,22 +87,23 @@ public class SymbolBuilder extends BaseBuilder {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(strat == SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME) {
-                	if(entry.funcName.equals(identifierOrFuncName)){
-                		if(entry.containsAllQualities(internalOrExternal))
-                        	if(entry.containsAllQualities(SymEntry.RETURN)) {
-                        		return new IdentExp(ICode.Scope.RETURN, entry.icodePlace);
-                        	}
-                	}
+                	if(entry.funcName != null)
+                		if(entry.funcName.equals(identifierOrFuncName))
+                			if(entry.containsAllQualities(internalOrExternal))
+                				if(entry.containsAllQualities(SymEntry.RETURN))
+                					return new IdentExp(ICode.Scope.RETURN, entry.icodePlace);
+                	
                 } else {
-                	if(entry.declanIdent.equals(identifierOrFuncName))
-                        if(entry.containsAllQualities(internalOrExternal))
-                        	if(entry.containsAllQualities(SymEntry.LOCAL)) {
-                        		return new IdentExp(ICode.Scope.LOCAL, entry.icodePlace);
-                        	} else if(entry.containsAllQualities(SymEntry.GLOBAL)) {
-                        		return new IdentExp(ICode.Scope.GLOBAL, entry.icodePlace);
-                        	} else if(entry.containsAllQualities(SymEntry.PARAM)) {
-                        		return new IdentExp(ICode.Scope.PARAM, entry.icodePlace);
-                        	}
+                	if(entry.declanIdent != null)
+                		if(entry.declanIdent.equals(identifierOrFuncName))
+                			if(entry.containsAllQualities(internalOrExternal))
+                				if(entry.containsAllQualities(SymEntry.LOCAL)) {
+                					return new IdentExp(ICode.Scope.LOCAL, entry.icodePlace);
+                				} else if(entry.containsAllQualities(SymEntry.GLOBAL)) {
+                					return new IdentExp(ICode.Scope.GLOBAL, entry.icodePlace);
+                				} else if(entry.containsAllQualities(SymEntry.PARAM)) {
+                					return new IdentExp(ICode.Scope.PARAM, entry.icodePlace);
+                				}
                 }
             }
         }
@@ -115,22 +118,21 @@ public class SymbolBuilder extends BaseBuilder {
             ICode instruction = getInstruction(i);
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
-        		if(entry.funcName.equals(funcName)) {
-        			if(entry.paramNumber == paramNumber) {
-            			if(entry.containsAllQualities(internalOrExternal))
-            				if(entry.containsAllQualities(SymEntry.LOCAL)) {
-                        		return new IdentExp(ICode.Scope.LOCAL, entry.icodePlace);
-                        	} else if(entry.containsAllQualities(SymEntry.GLOBAL)) {
-                        		return new IdentExp(ICode.Scope.GLOBAL, entry.icodePlace);
-                        	} else if(entry.containsAllQualities(SymEntry.PARAM)) {
-                        		return new IdentExp(ICode.Scope.PARAM, entry.icodePlace);
-                        	}
-        			}
-            	}
+                if(entry.funcName != null)
+                	if(entry.funcName.equals(funcName))
+                		if(entry.paramNumber == paramNumber)
+                			if(entry.containsAllQualities(internalOrExternal))
+                				if(entry.containsAllQualities(SymEntry.LOCAL)) {
+                					return new IdentExp(ICode.Scope.LOCAL, entry.icodePlace);
+                				} else if(entry.containsAllQualities(SymEntry.GLOBAL)) {
+                					return new IdentExp(ICode.Scope.GLOBAL, entry.icodePlace);
+                				} else if(entry.containsAllQualities(SymEntry.PARAM)) {
+                					return new IdentExp(ICode.Scope.PARAM, entry.icodePlace);
+                				}
             }
         }
 
-        throw new RuntimeException("Coulld not find symbol with identifier " + funcName);
+        throw new RuntimeException("Could not find symbol with identifier " + funcName);
     }
     
     public IdentExp getVariablePlace(String identifierName, String funcName, int internalOrExternal){
@@ -140,22 +142,21 @@ public class SymbolBuilder extends BaseBuilder {
             ICode instruction = getInstruction(i);
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
-            	if(entry.declanIdent.equals(identifierName)){
-            		if(entry.funcName.equals(funcName)) {
-            			if(entry.containsAllQualities(internalOrExternal))
-            				if(entry.containsAllQualities(SymEntry.LOCAL)) {
-                        		return new IdentExp(ICode.Scope.LOCAL, entry.icodePlace);
-                        	} else if(entry.containsAllQualities(SymEntry.GLOBAL)) {
-                        		return new IdentExp(ICode.Scope.GLOBAL, entry.icodePlace);
-                        	} else if(entry.containsAllQualities(SymEntry.PARAM)) {
-                        		return new IdentExp(ICode.Scope.PARAM, entry.icodePlace);
-                        	}
-            		}
-            	}
+                if(entry.declanIdent != null)
+                	if(entry.declanIdent.equals(identifierName))
+                		if(entry.funcName != null)
+                			if(entry.funcName.equals(funcName))
+                				if(entry.containsAllQualities(internalOrExternal))
+                					if(entry.containsAllQualities(SymEntry.LOCAL))
+                						return new IdentExp(ICode.Scope.LOCAL, entry.icodePlace);
+                					else if(entry.containsAllQualities(SymEntry.GLOBAL))
+                						return new IdentExp(ICode.Scope.GLOBAL, entry.icodePlace);
+                					else if(entry.containsAllQualities(SymEntry.PARAM))
+                						return new IdentExp(ICode.Scope.PARAM, entry.icodePlace);
             }
         }
 
-        throw new RuntimeException("Coulld not find symbol with identifier ");
+        throw new RuntimeException("Could not find symbol with identifier ");
     }
     
     public void addVariableEntry(String name, int mask, String declanName, String functionName, int paramNumber){

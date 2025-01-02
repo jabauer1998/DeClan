@@ -146,7 +146,7 @@ public class Lib implements ICode, Iterable<ICode> {
             }
         }
 
-        throw new RuntimeException("Coulld not find symbol with identifier " + identifierName);
+        throw new RuntimeException("Coulld not find symbol with identifier " + funcName);
     }
     
     public VarSymEntry getVariableData(String identifierName, String funcName, int internalOrExternal){

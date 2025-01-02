@@ -32,7 +32,7 @@ public class VarSymEntry extends SymEntry {
     public VarSymEntry(String icodePlace, int type, String funcName, int paramNumber){
         super(type, icodePlace);
         this.funcName = funcName;
-        this.paramNumber = -1;
+        this.paramNumber = paramNumber;
     }
     
     public VarSymEntry(String icodePlace, int type, String declanIdent, String funcName, int paramNumber){
@@ -93,15 +93,15 @@ public class VarSymEntry extends SymEntry {
         	sb.append("RETURN ");
         else if(containsAllQualities(PARAM))
         	sb.append("PARAM ");
-        else if(containsAllQualities(LOCAL))
-        	sb.append("LOCAL ");
         else if(containsAllQualities(GLOBAL))
         	sb.append("GLOBAL ");
 
-        sb.append(declanIdent);
+        if(this.declanIdent != null){
+        	sb.append(declanIdent);
+        	sb.append(' ');
+        }
         
         if(this.funcName != null) {
-        	sb.append(' ');
         	sb.append(funcName);
         	if(this.paramNumber > -1) {
         		sb.append(' ');

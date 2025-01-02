@@ -301,7 +301,7 @@ public class MyICodeGenerator{
         TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
         ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
         Exp result = generateExpressionIr(valArg, builder);
-        IdentExp argToGet = builder.getVariablePlace(funcName, i, SymEntry.EXTERNAL);
+        IdentExp argToGet = builder.getVariablePlace(funcName, i, SymEntry.PARAM | SymEntry.EXTERNAL);
         valArgResults.add(new Def(argToGet.scope, argToGet.ident, result, type));
       }
       builder.buildProcedureCall(funcName, valArgResults);
