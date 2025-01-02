@@ -1,158 +1,151 @@
 SYMBOL SECTION
- ENTRY b INTERNAL PARAM WriteString 0
- ENTRY b INTERNAL s WriteString
- ENTRY d INTERNAL PARAM WriteInt 0
- ENTRY d INTERNAL i WriteInt
- ENTRY f INTERNAL PARAM WriteReal 0
- ENTRY f INTERNAL r WriteReal
- ENTRY h INTERNAL PARAM WriteBool 0
- ENTRY h INTERNAL b WriteBool
- ENTRY j INTERNAL RETURN ReadInt
- ENTRY k INTERNAL RETURN ReadReal
- ENTRY l INTERNAL RETURN ReadBool
- ENTRY m INTERNAL addressHolder WriteString
- ENTRY n INTERNAL offsetHolder WriteString
- ENTRY o INTERNAL valueHolder WriteString
- ENTRY p INTERNAL tempHolder WriteString
- ENTRY q EXTERNAL PARAM StringAsAddress 0
- ENTRY r EXTERNAL RETURN StringAsAddress
- ENTRY u EXTERNAL PARAM IntIsZero 0
- ENTRY v EXTERNAL RETURN IntIsZero
- ENTRY D INTERNAL tempReg WriteInt
- ENTRY E INTERNAL tempReg WriteReal
- ENTRY F INTERNAL tempReg WriteBool
- ENTRY G INTERNAL result ReadInt
- ENTRY H INTERNAL tempReg ReadInt
- ENTRY j INTERNAL RETURN ReadInt
- ENTRY I INTERNAL result ReadReal
- ENTRY J INTERNAL tempReg ReadReal
- ENTRY k INTERNAL RETURN ReadReal
- ENTRY K INTERNAL result ReadBool
- ENTRY L INTERNAL tempReg ReadBool
- ENTRY l INTERNAL RETURN ReadBool
+ ENTRY a INTERNAL PARAM s WriteString 0
+ ENTRY b INTERNAL PARAM i WriteInt 0
+ ENTRY c INTERNAL PARAM r WriteReal 0
+ ENTRY d INTERNAL PARAM b WriteBool 0
+ ENTRY e INTERNAL RETURN ReadInt
+ ENTRY f INTERNAL RETURN ReadReal
+ ENTRY g INTERNAL RETURN ReadBool
+ ENTRY h INTERNAL addressHolder WriteString
+ ENTRY i INTERNAL offsetHolder WriteString
+ ENTRY j INTERNAL valueHolder WriteString
+ ENTRY k INTERNAL tempHolder WriteString
+ ENTRY l EXTERNAL PARAM StringAsAddress 0
+ ENTRY m EXTERNAL RETURN StringAsAddress
+ ENTRY p EXTERNAL PARAM IntIsZero 0
+ ENTRY q EXTERNAL RETURN IntIsZero
+ ENTRY y INTERNAL tempReg WriteInt
+ ENTRY z INTERNAL tempReg WriteReal
+ ENTRY A INTERNAL tempReg WriteBool
+ ENTRY B INTERNAL result ReadInt
+ ENTRY C INTERNAL tempReg ReadInt
+ ENTRY D INTERNAL result ReadReal
+ ENTRY E INTERNAL tempReg ReadReal
+ ENTRY F INTERNAL result ReadBool
+ ENTRY G INTERNAL tempReg ReadBool
 DATA SECTION
 PROC SECTION
  PROC LABEL WriteLn
   IASM "SWI 4"
  RETURN
  PROC LABEL WriteString
-  DEF m := 0 <INT>
-  DEF n := 0 <INT>
+  DEF h := 0 <INT>
+  DEF i := 0 <INT>
+  DEF j := 0 <INT>
+  DEF k := 0 <INT>
+  CALL StringAsAddress([(PARAM a) -> l]<STRING>)
+  DEF n := (RETURN m) <INT>
+  h := n <INT>
   DEF o := 0 <INT>
-  DEF p := 0 <INT>
-  CALL StringAsAddress([(PARAM b) -> q]<STRING>)
-  DEF s := (RETURN r) <INT>
-  m := s <INT>
-  DEF t := 0 <INT>
-  n := t <INT>
-  IPARAM o
-  IPARAM m
-  IPARAM n
+  i := o <INT>
+  IPARAM j
+  IPARAM h
+  IPARAM i
   IASM "LDRB %r, [%r, +%r]"
-  IPARAM o
-  IPARAM o
+  IPARAM j
+  IPARAM j
   IASM "STR %r, %a"
-  CALL IntIsZero([o -> u]<INT>)
-  DEF w := (RETURN v) <BOOL>
-  DEF x := BNOT w <BOOL>
-  DEF y := TRUE <BOOL>
-  IF x EQ y
+  CALL IntIsZero([j -> p]<INT>)
+  DEF r := (RETURN q) <BOOL>
+  DEF s := BNOT r <BOOL>
+  DEF t := TRUE <BOOL>
+  IF s EQ t
   THEN WHILESTAT_0_SEQ_0_LEVEL_0
   ELSE WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILECOND_0_SEQ_0_LEVEL_0
-  IF x EQ y
+  IF s EQ t
   THEN WHILESTAT_0_SEQ_0_LEVEL_0
   ELSE WHILEEND_0_LEVEL_0
   LABEL WHILESTAT_0_SEQ_0_LEVEL_0
-  IPARAM p
+  IPARAM k
   IASM "MOV %r, R0"
-  IPARAM o
+  IPARAM j
   IASM "MOV R0, %r"
   IASM "SWI 6"
-  DEF z := 1 <INT>
-  DEF A := n IADD z <INT>
-  n := A <INT>
-  IPARAM o
-  IPARAM m
-  IPARAM n
+  DEF u := 1 <INT>
+  DEF v := i IADD u <INT>
+  i := v <INT>
+  IPARAM j
+  IPARAM h
+  IPARAM i
   IASM "LDRB %r, [%r, +%r]"
-  IPARAM o
-  IPARAM o
+  IPARAM j
+  IPARAM j
   IASM "STR %r, %a"
-  IPARAM p
+  IPARAM k
   IASM "MOV R0, %r"
-  CALL IntIsZero([o -> u]<INT>)
-  CALL IntIsZero([o -> u]<INT>)
-  DEF B := (RETURN v) <BOOL>
-  DEF C := BNOT B <BOOL>
-  x := C <BOOL>
+  CALL IntIsZero([j -> p]<INT>)
+  CALL IntIsZero([j -> p]<INT>)
+  DEF w := (RETURN q) <BOOL>
+  DEF x := BNOT w <BOOL>
+  s := x <BOOL>
   GOTO WHILECOND_0_SEQ_0_LEVEL_0
   LABEL WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILEEND_0_LEVEL_0
  RETURN
  PROC LABEL WriteInt
-  DEF D := 0 <INT>
-  IPARAM D
+  DEF y := 0 <INT>
+  IPARAM y
   IASM "MOV %r, R0"
-  IPARAM (PARAM d)
+  IPARAM (PARAM b)
   IASM "LDR R0, %a"
   IASM "SWI 1"
-  IPARAM D
+  IPARAM y
   IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteReal
-  DEF E := 0 <INT>
-  IPARAM D
+  DEF z := 0 <INT>
+  IPARAM y
   IASM "MOV %r, R0"
-  IPARAM (PARAM f)
+  IPARAM (PARAM c)
   IASM "LDR R0, %a"
   IASM "SWI 2"
-  IPARAM D
+  IPARAM y
   IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteBool
-  DEF F := 0 <INT>
-  IPARAM D
+  DEF A := 0 <INT>
+  IPARAM y
   IASM "MOV %r, R0"
-  IPARAM (PARAM h)
+  IPARAM (PARAM d)
   IASM "LDRB R0, %a"
   IASM "SWI 6"
-  IPARAM D
+  IPARAM y
   IASM "MOV R0, %r"
  RETURN
  PROC LABEL ReadInt
-  DEF G := 0 <INT>
-  DEF H := 0 <INT>
-  IPARAM D
+  DEF B := 0 <INT>
+  DEF C := 0 <INT>
+  IPARAM y
   IASM "MOV %r, R0"
   IASM "SWI 3"
-  IPARAM G
+  IPARAM B
   IASM "STR R0, %a"
-  IPARAM D
+  IPARAM y
   IASM "MOV R0, %r"
-  DEF RETURN j := G <INT>
+  DEF RETURN e := B <INT>
  RETURN
  PROC LABEL ReadReal
-  DEF I := 0.0 <REAL>
-  DEF J := 0 <INT>
-  IPARAM D
+  DEF D := 0.0 <REAL>
+  DEF E := 0 <INT>
+  IPARAM y
   IASM "MOV %r, R0"
   IASM "SWI 5"
-  IPARAM G
+  IPARAM B
   IASM "STR R0, %a"
-  IPARAM D
+  IPARAM y
   IASM "MOV R0, %r"
-  DEF RETURN k := G <REAL>
+  DEF RETURN f := B <REAL>
  RETURN
  PROC LABEL ReadBool
-  DEF K := FALSE <BOOL>
-  DEF L := 0 <INT>
-  IPARAM D
+  DEF F := FALSE <BOOL>
+  DEF G := 0 <INT>
+  IPARAM y
   IASM "MOV %r, R0"
   IASM "SWI 7"
-  IPARAM G
+  IPARAM B
   IASM "STRB R0, %a"
-  IPARAM D
+  IPARAM y
   IASM "MOV R0, %r"
-  DEF RETURN l := G <BOOL>
+  DEF RETURN g := B <BOOL>
  RETURN

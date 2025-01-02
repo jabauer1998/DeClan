@@ -1,64 +1,52 @@
 SYMBOL SECTION
- ENTRY a INTERNAL PARAM INeg 0
- ENTRY a INTERNAL n INeg
+ ENTRY a INTERNAL PARAM n INeg 0
  ENTRY b INTERNAL RETURN INeg
- ENTRY c INTERNAL PARAM Div 0
- ENTRY c INTERNAL dividend Div
- ENTRY d INTERNAL PARAM Div 1
- ENTRY d INTERNAL divisor Div
+ ENTRY c INTERNAL PARAM dividend Div 0
+ ENTRY d INTERNAL PARAM divisor Div 1
  ENTRY e INTERNAL RETURN Div
- ENTRY f INTERNAL PARAM Divide 0
- ENTRY f INTERNAL dividend Divide
- ENTRY g INTERNAL PARAM Divide 1
- ENTRY g INTERNAL divisor Divide
+ ENTRY f INTERNAL PARAM dividend Divide 0
+ ENTRY g INTERNAL PARAM divisor Divide 1
  ENTRY h INTERNAL RETURN Divide
- ENTRY i INTERNAL PARAM Mod 0
- ENTRY i INTERNAL dividend Mod
- ENTRY j INTERNAL PARAM Mod 1
- ENTRY j INTERNAL divisor Mod
+ ENTRY i INTERNAL PARAM dividend Mod 0
+ ENTRY j INTERNAL PARAM divisor Mod 1
  ENTRY k INTERNAL RETURN Mod
- ENTRY l INTERNAL PARAM Multiply 0
- ENTRY l INTERNAL a Multiply
- ENTRY m INTERNAL PARAM Multiply 1
- ENTRY m INTERNAL b Multiply
- ENTRY o INTERNAL result INeg
- ENTRY b INTERNAL RETURN INeg
- ENTRY s INTERNAL total Div
- ENTRY t INTERNAL result Div
- ENTRY u INTERNAL tempDividend Div
- ENTRY v INTERNAL dividendLastOne Div
- ENTRY w INTERNAL dividendLastDigit Div
- ENTRY x INTERNAL dividendCount Div
- ENTRY y INTERNAL dividendIndex Div
- ENTRY z INTERNAL bitAtIndex Div
- ENTRY A INTERNAL remainder Div
- ENTRY D EXTERNAL PARAM IntIsZero 0
- ENTRY E EXTERNAL RETURN IntIsZero
- ENTRY e INTERNAL RETURN Div
- ENTRY b4 INTERNAL divResult Divide
- ENTRY b5 INTERNAL realDividend Divide
- ENTRY b6 INTERNAL realDivisor Divide
- ENTRY b7 EXTERNAL PARAM IntToReal 0
- ENTRY b8 EXTERNAL RETURN IntToReal
- ENTRY c1 EXTERNAL PARAM RDivide 0
- ENTRY c2 EXTERNAL PARAM RDivide 1
- ENTRY c3 EXTERNAL RETURN RDivide
- ENTRY h INTERNAL RETURN Divide
- ENTRY c5 INTERNAL total Mod
- ENTRY c6 INTERNAL result Mod
- ENTRY k INTERNAL RETURN Mod
- ENTRY d5 INTERNAL result Multiply
+ ENTRY l INTERNAL PARAM a Multiply 0
+ ENTRY m INTERNAL PARAM b Multiply 1
+ ENTRY n INTERNAL result INeg
+ ENTRY r INTERNAL total Div
+ ENTRY s INTERNAL result Div
+ ENTRY t INTERNAL tempDividend Div
+ ENTRY u INTERNAL dividendLastOne Div
+ ENTRY v INTERNAL dividendLastDigit Div
+ ENTRY w INTERNAL dividendCount Div
+ ENTRY x INTERNAL dividendIndex Div
+ ENTRY y INTERNAL bitAtIndex Div
+ ENTRY z INTERNAL remainder Div
+ ENTRY C EXTERNAL PARAM IntIsZero 0
+ ENTRY D EXTERNAL RETURN IntIsZero
+ ENTRY b3 INTERNAL divResult Divide
+ ENTRY b4 INTERNAL realDividend Divide
+ ENTRY b5 INTERNAL realDivisor Divide
+ ENTRY b6 EXTERNAL PARAM IntToReal 0
+ ENTRY b7 EXTERNAL RETURN IntToReal
+ ENTRY c0 EXTERNAL PARAM RDivide 0
+ ENTRY c1 EXTERNAL PARAM RDivide 1
+ ENTRY c2 EXTERNAL RETURN RDivide
+ ENTRY c4 INTERNAL total Mod
+ ENTRY c5 INTERNAL result Mod
+ ENTRY d4 INTERNAL result Multiply
 DATA SECTION
 PROC SECTION
  PROC LABEL INeg
-  DEF o := 0 <INT>
-  DEF p := INOT (PARAM a) <INT>
-  DEF q := 1 <INT>
-  DEF r := p IADD q <INT>
-  o := r <INT>
-  DEF RETURN b := o <INT>
+  DEF n := 0 <INT>
+  DEF o := INOT (PARAM a) <INT>
+  DEF p := 1 <INT>
+  DEF q := o IADD p <INT>
+  n := q <INT>
+  DEF RETURN b := n <INT>
  RETURN
  PROC LABEL Div
+  DEF r := 0 <INT>
   DEF s := 0 <INT>
   DEF t := 0 <INT>
   DEF u := 0 <INT>
@@ -67,146 +55,145 @@ PROC SECTION
   DEF x := 0 <INT>
   DEF y := 0 <INT>
   DEF z := 0 <INT>
+  t := (PARAM c) <INT>
   DEF A := 0 <INT>
-  u := (PARAM c) <INT>
+  w := A <INT>
   DEF B := 0 <INT>
-  x := B <INT>
-  DEF C := 0 <INT>
-  v := C <INT>
-  CALL IntIsZero([u -> D]<INT>)
-  DEF F := (RETURN E) <BOOL>
-  DEF G := BNOT F <BOOL>
-  DEF H := TRUE <BOOL>
-  IF G EQ H
+  u := B <INT>
+  CALL IntIsZero([t -> C]<INT>)
+  DEF E := (RETURN D) <BOOL>
+  DEF F := BNOT E <BOOL>
+  DEF G := TRUE <BOOL>
+  IF F EQ G
   THEN WHILESTAT_0_SEQ_0_LEVEL_0
   ELSE WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILECOND_0_SEQ_0_LEVEL_0
-  IF G EQ H
+  IF F EQ G
   THEN WHILESTAT_0_SEQ_0_LEVEL_0
   ELSE WHILEEND_0_LEVEL_0
   LABEL WHILESTAT_0_SEQ_0_LEVEL_0
-  DEF I := 1 <INT>
-  DEF J := u IAND I <INT>
-  w := J <INT>
-  DEF K := 1 <INT>
-  DEF L := w EQ K <BOOL>
-  DEF M := TRUE <BOOL>
-  IF L EQ M
+  DEF H := 1 <INT>
+  DEF I := t IAND H <INT>
+  v := I <INT>
+  DEF J := 1 <INT>
+  DEF K := v EQ J <BOOL>
+  DEF L := TRUE <BOOL>
+  IF K EQ L
   THEN IFSTAT_0_SEQ_0_LEVEL_0
   ELSE IFNEXT_0_SEQ_0_LEVEL_0
   LABEL IFSTAT_0_SEQ_0_LEVEL_0
-  v := x <INT>
+  u := w <INT>
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_0_LEVEL_0
   LABEL IFEND_0_LEVEL_0
-  DEF N := 1 <INT>
-  DEF O := x IADD N <INT>
-  x := O <INT>
-  DEF P := 1 <INT>
-  DEF Q := u IRSHIFT P <INT>
-  u := Q <INT>
-  CALL IntIsZero([u -> D]<INT>)
-  CALL IntIsZero([u -> D]<INT>)
-  DEF R := (RETURN E) <BOOL>
-  DEF S := BNOT R <BOOL>
-  G := S <BOOL>
+  DEF M := 1 <INT>
+  DEF N := w IADD M <INT>
+  w := N <INT>
+  DEF O := 1 <INT>
+  DEF P := t IRSHIFT O <INT>
+  t := P <INT>
+  CALL IntIsZero([t -> C]<INT>)
+  CALL IntIsZero([t -> C]<INT>)
+  DEF Q := (RETURN D) <BOOL>
+  DEF R := BNOT Q <BOOL>
+  F := R <BOOL>
   GOTO WHILECOND_0_SEQ_0_LEVEL_0
   LABEL WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILEEND_0_LEVEL_0
-  y := v <INT>
-  u := (PARAM c) <INT>
+  x := u <INT>
+  t := (PARAM c) <INT>
+  DEF S := 0 <INT>
+  z := S <INT>
   DEF T := 0 <INT>
-  A := T <INT>
+  n := T <INT>
   DEF U := 0 <INT>
-  o := U <INT>
-  DEF V := 0 <INT>
-  DEF W := y GE V <BOOL>
-  DEF X := TRUE <BOOL>
-  IF W EQ X
+  DEF V := x GE U <BOOL>
+  DEF W := TRUE <BOOL>
+  IF V EQ W
   THEN WHILESTAT_2_SEQ_0_LEVEL_0
   ELSE WHILENEXT_2_SEQ_0_LEVEL_0
   LABEL WHILECOND_2_SEQ_0_LEVEL_0
-  IF W EQ X
+  IF V EQ W
   THEN WHILESTAT_2_SEQ_0_LEVEL_0
   ELSE WHILEEND_2_LEVEL_0
   LABEL WHILESTAT_2_SEQ_0_LEVEL_0
-  DEF Y := u IRSHIFT y <INT>
-  DEF Z := 1 <INT>
-  DEF a0 := Y IAND Z <INT>
-  z := a0 <INT>
-  DEF a1 := 1 <INT>
-  DEF a2 := A ILSHIFT a1 <INT>
-  DEF a3 := a2 IOR z <INT>
-  A := a3 <INT>
-  DEF a4 := A GE (PARAM d) <BOOL>
-  DEF a5 := TRUE <BOOL>
-  IF a4 EQ a5
+  DEF X := t IRSHIFT x <INT>
+  DEF Y := 1 <INT>
+  DEF Z := X IAND Y <INT>
+  y := Z <INT>
+  DEF a0 := 1 <INT>
+  DEF a1 := z ILSHIFT a0 <INT>
+  DEF a2 := a1 IOR y <INT>
+  z := a2 <INT>
+  DEF a3 := z GE (PARAM d) <BOOL>
+  DEF a4 := TRUE <BOOL>
+  IF a3 EQ a4
   THEN IFSTAT_1_SEQ_0_LEVEL_0
   ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
-  DEF a6 := 1 <INT>
-  DEF a7 := a6 ILSHIFT y <INT>
-  DEF a8 := o IOR a7 <INT>
-  o := a8 <INT>
-  DEF a9 := A ISUB (PARAM d) <INT>
-  A := a9 <INT>
+  DEF a5 := 1 <INT>
+  DEF a6 := a5 ILSHIFT x <INT>
+  DEF a7 := n IOR a6 <INT>
+  n := a7 <INT>
+  DEF a8 := z ISUB (PARAM d) <INT>
+  z := a8 <INT>
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFEND_1_LEVEL_0
-  DEF b0 := 1 <INT>
-  DEF b1 := y ISUB b0 <INT>
-  y := b1 <INT>
-  DEF b2 := 0 <INT>
-  DEF b3 := y GE b2 <BOOL>
-  W := b3 <BOOL>
+  DEF a9 := 1 <INT>
+  DEF b0 := x ISUB a9 <INT>
+  x := b0 <INT>
+  DEF b1 := 0 <INT>
+  DEF b2 := x GE b1 <BOOL>
+  V := b2 <BOOL>
   GOTO WHILECOND_2_SEQ_0_LEVEL_0
   LABEL WHILENEXT_2_SEQ_0_LEVEL_0
   LABEL WHILEEND_2_LEVEL_0
-  DEF RETURN e := o <INT>
+  DEF RETURN e := n <INT>
  RETURN
  PROC LABEL Divide
+  DEF b3 := 0.0 <REAL>
   DEF b4 := 0.0 <REAL>
   DEF b5 := 0.0 <REAL>
-  DEF b6 := 0.0 <REAL>
-  CALL IntToReal([(PARAM c) -> b7]<INT>)
-  DEF b9 := (RETURN b8) <REAL>
+  CALL IntToReal([(PARAM c) -> b6]<INT>)
+  DEF b8 := (RETURN b7) <REAL>
+  b4 := b8 <REAL>
+  CALL IntToReal([(PARAM d) -> b6]<INT>)
+  CALL IntToReal([(PARAM d) -> b6]<INT>)
+  DEF b9 := (RETURN b7) <REAL>
   b5 := b9 <REAL>
-  CALL IntToReal([(PARAM d) -> b7]<INT>)
-  CALL IntToReal([(PARAM d) -> b7]<INT>)
-  DEF c0 := (RETURN b8) <REAL>
-  b6 := c0 <REAL>
-  CALL RDivide([b5 -> c1]<REAL>, [b6 -> c2]<REAL>)
-  DEF c4 := (RETURN c3) <REAL>
-  b4 := c4 <REAL>
-  DEF RETURN h := b4 <REAL>
+  CALL RDivide([b4 -> c0]<REAL>, [b5 -> c1]<REAL>)
+  DEF c3 := (RETURN c2) <REAL>
+  b3 := c3 <REAL>
+  DEF RETURN h := b3 <REAL>
  RETURN
  PROC LABEL Mod
+  DEF c4 := 0 <INT>
   DEF c5 := 0 <INT>
-  DEF c6 := 0 <INT>
-  s := (PARAM c) <INT>
-  DEF c7 := s ISUB (PARAM d) <INT>
-  DEF c8 := 0 <INT>
-  DEF c9 := c7 GE c8 <BOOL>
-  DEF d0 := TRUE <BOOL>
-  IF c9 EQ d0
+  r := (PARAM c) <INT>
+  DEF c6 := r ISUB (PARAM d) <INT>
+  DEF c7 := 0 <INT>
+  DEF c8 := c6 GE c7 <BOOL>
+  DEF c9 := TRUE <BOOL>
+  IF c8 EQ c9
   THEN WHILESTAT_4_SEQ_0_LEVEL_0
   ELSE WHILENEXT_4_SEQ_0_LEVEL_0
   LABEL WHILECOND_4_SEQ_0_LEVEL_0
-  IF c9 EQ d0
+  IF c8 EQ c9
   THEN WHILESTAT_4_SEQ_0_LEVEL_0
   ELSE WHILEEND_4_LEVEL_0
   LABEL WHILESTAT_4_SEQ_0_LEVEL_0
-  DEF d1 := s ISUB (PARAM d) <INT>
-  s := d1 <INT>
-  DEF d2 := s ISUB (PARAM d) <INT>
-  DEF d3 := 0 <INT>
-  DEF d4 := d2 GE d3 <BOOL>
-  c9 := d4 <BOOL>
+  DEF d0 := r ISUB (PARAM d) <INT>
+  r := d0 <INT>
+  DEF d1 := r ISUB (PARAM d) <INT>
+  DEF d2 := 0 <INT>
+  DEF d3 := d1 GE d2 <BOOL>
+  c8 := d3 <BOOL>
   GOTO WHILECOND_4_SEQ_0_LEVEL_0
   LABEL WHILENEXT_4_SEQ_0_LEVEL_0
   LABEL WHILEEND_4_LEVEL_0
-  DEF RETURN k := s <INT>
+  DEF RETURN k := r <INT>
  RETURN
  PROC LABEL Multiply
-  DEF d5 := 0 <INT>
+  DEF d4 := 0 <INT>
  RETURN

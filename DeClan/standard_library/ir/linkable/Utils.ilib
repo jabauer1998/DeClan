@@ -1,77 +1,55 @@
 SYMBOL SECTION
- ENTRY b CONST INTERNAL realBias
- ENTRY c INTERNAL PARAM RealIsZero 0
- ENTRY c INTERNAL r RealIsZero
+ ENTRY b CONST INTERNAL GLOBAL realBias 
+ ENTRY c INTERNAL PARAM r RealIsZero 0
  ENTRY d INTERNAL RETURN RealIsZero
- ENTRY e INTERNAL PARAM IntIsZero 0
- ENTRY e INTERNAL n IntIsZero
+ ENTRY e INTERNAL PARAM n IntIsZero 0
  ENTRY f INTERNAL RETURN IntIsZero
- ENTRY g INTERNAL PARAM IntIsNegative 0
- ENTRY g INTERNAL n IntIsNegative
+ ENTRY g INTERNAL PARAM n IntIsNegative 0
  ENTRY h INTERNAL RETURN IntIsNegative
- ENTRY i INTERNAL PARAM RealIsNegative 0
- ENTRY i INTERNAL r RealIsNegative
+ ENTRY i INTERNAL PARAM r RealIsNegative 0
  ENTRY j INTERNAL RETURN RealIsNegative
- ENTRY k INTERNAL PARAM IntIsPositive 0
- ENTRY k INTERNAL n IntIsPositive
+ ENTRY k INTERNAL PARAM n IntIsPositive 0
  ENTRY l INTERNAL RETURN IntIsPositive
- ENTRY m INTERNAL PARAM RealIsPositive 0
- ENTRY m INTERNAL r RealIsPositive
+ ENTRY m INTERNAL PARAM r RealIsPositive 0
  ENTRY n INTERNAL RETURN RealIsPositive
- ENTRY o INTERNAL PARAM RealMantissa 0
- ENTRY o INTERNAL r RealMantissa
+ ENTRY o INTERNAL PARAM r RealMantissa 0
  ENTRY p INTERNAL RETURN RealMantissa
- ENTRY q INTERNAL PARAM RealSign 0
- ENTRY q INTERNAL r RealSign
+ ENTRY q INTERNAL PARAM r RealSign 0
  ENTRY r INTERNAL RETURN RealSign
- ENTRY s INTERNAL PARAM RealExponent 0
- ENTRY s INTERNAL r RealExponent
+ ENTRY s INTERNAL PARAM r RealExponent 0
  ENTRY t INTERNAL RETURN RealExponent
- ENTRY u INTERNAL PARAM MantissaNeg 0
- ENTRY u INTERNAL m MantissaNeg
+ ENTRY u INTERNAL PARAM m MantissaNeg 0
  ENTRY v INTERNAL RETURN MantissaNeg
- ENTRY w INTERNAL PARAM MantissaAbs 0
- ENTRY w INTERNAL m MantissaAbs
+ ENTRY w INTERNAL PARAM m MantissaAbs 0
  ENTRY x INTERNAL RETURN MantissaAbs
  ENTRY y INTERNAL result RealIsZero
  ENTRY z INTERNAL val RealIsZero
  ENTRY A INTERNAL exp RealIsZero
  ENTRY B EXTERNAL PARAM RealBinaryAsInt 0
  ENTRY C EXTERNAL RETURN RealBinaryAsInt
- ENTRY d INTERNAL RETURN RealIsZero
  ENTRY L INTERNAL result IntIsZero
- ENTRY f INTERNAL RETURN IntIsZero
  ENTRY R INTERNAL result IntIsNegative
  ENTRY S INTERNAL thirtyFirstBit IntIsNegative
- ENTRY h INTERNAL RETURN IntIsNegative
  ENTRY a2 INTERNAL result RealIsNegative
  ENTRY a3 INTERNAL rest RealIsNegative
  ENTRY a4 INTERNAL thirtyFirstBit RealIsNegative
- ENTRY j INTERNAL RETURN RealIsNegative
  ENTRY b7 INTERNAL result IntIsPositive
  ENTRY b8 INTERNAL thirtyFirstBit IntIsPositive
- ENTRY l INTERNAL RETURN IntIsPositive
  ENTRY c8 INTERNAL result RealIsPositive
  ENTRY c9 INTERNAL realAsInteger RealIsPositive
  ENTRY d0 INTERNAL thirtyFirstBit RealIsPositive
- ENTRY n INTERNAL RETURN RealIsPositive
  ENTRY e3 INTERNAL result RealMantissa
  ENTRY e4 INTERNAL realAsInt RealMantissa
  ENTRY e5 INTERNAL significand RealMantissa
  ENTRY e6 INTERNAL exp RealMantissa
- ENTRY p INTERNAL RETURN RealMantissa
  ENTRY f4 INTERNAL result RealSign
  ENTRY f5 INTERNAL realAsInteger RealSign
- ENTRY r INTERNAL RETURN RealSign
  ENTRY g1 INTERNAL result RealExponent
  ENTRY g2 INTERNAL realAsInteger RealExponent
  ENTRY g3 INTERNAL exponent RealExponent
- ENTRY t INTERNAL RETURN RealExponent
  ENTRY h0 INTERNAL result MantissaNeg
  ENTRY h1 INTERNAL lastBit MantissaNeg
- ENTRY v INTERNAL RETURN MantissaNeg
  ENTRY i7 INTERNAL result MantissaAbs
- ENTRY x INTERNAL RETURN MantissaAbs
 DATA SECTION
  DEF a := 127 <INT>
  DEF GLOBAL b := a <INT>
