@@ -117,12 +117,21 @@ public class VarSymEntry extends SymEntry {
         if(obj instanceof VarSymEntry){
             VarSymEntry otherEntry = (VarSymEntry)obj;
             if(otherEntry.paramNumber == this.paramNumber)
-	            if(otherEntry.declanIdent.equals(declanIdent))
-	            	if(otherEntry.funcName != null && this.funcName != null) {
+            	if((otherEntry.declanIdent != null && declanIdent != null)) {
+		            if(otherEntry.declanIdent.equals(declanIdent))
+		            	if(otherEntry.funcName != null && this.funcName != null) {
+		            		if(otherEntry.funcName.equals(funcName))
+		            			return super.equals(obj);
+		            	} else if(otherEntry.funcName == null && funcName == null)
+		            		return super.equals(obj);
+            	} else if(otherEntry.declanIdent == null && this.declanIdent == null) {
+            		if(otherEntry.funcName != null && this.funcName != null) {
 	            		if(otherEntry.funcName.equals(funcName))
 	            			return super.equals(obj);
 	            	} else if(otherEntry.funcName == null && funcName == null)
 	            		return super.equals(obj);
+            	}
+            
         }
         return false;
     }

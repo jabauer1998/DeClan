@@ -241,11 +241,17 @@ public class MyIrParser {
         if(willMatch(IrTokenType.PARAM)){
             skip();
             resultMask |= SymEntry.PARAM;
-            IrToken paramName = match(IrTokenType.ID);
-            IrToken funcNameTok = match(IrTokenType.ID);
-            IrToken funcParamNumberTok = match(IrTokenType.NUMBER);
-            Integer funcParamNumber = Integer.parseInt(funcParamNumberTok.getLexeme());
-            return new VarSymEntry(irPlace.getLexeme(), resultMask, paramName.getLexeme(), funcNameTok.getLexeme(), funcParamNumber);
+            IrToken paramNameOrFunctionName = match(IrTokenType.ID);
+            if(willMatch(IrTokenType.NUMBER)) {
+            	IrToken funcParamNumberTok = skip();
+                Integer funcParamNumber = Integer.parseInt(funcParamNumberTok.getLexeme());
+                return new VarSymEntry(irPlace.getLexeme(), resultMask, null, paramNameOrFunctionName.getLexeme(), funcParamNumber);
+            } else {
+            	 IrToken funcNameTok = match(IrTokenType.ID);
+            	 IrToken funcParamNumberTok = skip();
+                 Integer funcParamNumber = Integer.parseInt(funcParamNumberTok.getLexeme());
+                 return new VarSymEntry(irPlace.getLexeme(), resultMask, paramNameOrFunctionName.getLexeme(), funcNameTok.getLexeme(), funcParamNumber);
+            }
         } else if(willMatch(IrTokenType.RETURN)){
             skip();
             resultMask |= SymEntry.RETURN;

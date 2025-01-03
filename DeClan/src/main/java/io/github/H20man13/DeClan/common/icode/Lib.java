@@ -49,17 +49,17 @@ public class Lib implements ICode, Iterable<ICode> {
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.containsAllQualities(externalOrInternal))
                 	if(strategy == SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME) {
-                		if(entry.declanIdent.equals(identifierOrFunctionOrLocation)) {
-                			return true;
-                		}
+                		if(entry.declanIdent != null)
+                			if(entry.declanIdent.equals(identifierOrFunctionOrLocation))
+                				return true;
                 	} else if(strategy == SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME) {
-                		if(entry.funcName.equals(identifierOrFunctionOrLocation)) {
-                			return true;
-                		}
+                		if(entry.funcName != null)
+                			if(entry.funcName.equals(identifierOrFunctionOrLocation))
+                				return true;
                 	} else {
-                		if(entry.icodePlace.equals(identifierOrFunctionOrLocation)) {
-                			return true;
-                		}
+                		if(entry.icodePlace != null)
+                			if(entry.icodePlace.equals(identifierOrFunctionOrLocation))
+                				return true;
                 	}
              }
         }
@@ -67,7 +67,7 @@ public class Lib implements ICode, Iterable<ICode> {
         return false;
     }
         
-    public boolean containsEntry(String identifier, String funcName, int externalOrInternal){
+    public boolean containsEntry(String icodePlace, String funcName, int externalOrInternal){
         int symbolStart = beginningOfSymbolSection();
         int symbolEnd = endOfSymbolSection();
         for(int i = symbolStart; i <= symbolEnd; i++){
@@ -75,13 +75,13 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.containsAllQualities(externalOrInternal))
-            		if(entry.declanIdent.equals(identifier)){
-            			if(entry.funcName.equals(funcName)){
-            				return true;
-            			}
-            		}
-            	}
-             }
+                	if(entry.icodePlace != null)
+                		if(entry.icodePlace.equals(icodePlace))
+                			if(entry.funcName != null)
+	                			if(entry.funcName.equals(funcName))
+	                				return true;
+            }
+        }
         return false;
     }
     
@@ -93,9 +93,10 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.containsAllQualities(filter))
-        			if(entry.funcName.equals(funcName))
-        				if(entry.paramNumber == paramNumber)
-        					return true;
+                	if(entry.funcName != null)
+                		if(entry.funcName.equals(funcName))
+                			if(entry.paramNumber == paramNumber)
+                				return true;
             }
          }
         return false;
@@ -111,18 +112,20 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(strategy == SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME) {
-                	if(entry.funcName.equals(identifierOrFuncnameOrLocation)){
-                		if(entry.containsAllQualities(internalOrExternal))
-                        	return entry;
-                	}
+                	if(entry.funcName != null)
+                		if(entry.funcName.equals(identifierOrFuncnameOrLocation))
+                			if(entry.containsAllQualities(internalOrExternal))
+                				return entry;
                 } else if(strategy == SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME) {
-                	if(entry.declanIdent.equals(identifierOrFuncnameOrLocation))
-                        if(entry.containsAllQualities(internalOrExternal))
-                        	return entry;
+                	if(entry.declanIdent != null)
+                		if(entry.declanIdent.equals(identifierOrFuncnameOrLocation))
+                			if(entry.containsAllQualities(internalOrExternal))
+                				return entry;
                 } else {
-                	if(entry.icodePlace.equals(identifierOrFuncnameOrLocation))
-                        if(entry.containsAllQualities(internalOrExternal))
-                        	return entry;
+                	if(entry.icodePlace != null)
+                		if(entry.icodePlace.equals(identifierOrFuncnameOrLocation))
+                			if(entry.containsAllQualities(internalOrExternal))
+                				return entry;
                 }
             }
         }
@@ -137,12 +140,11 @@ public class Lib implements ICode, Iterable<ICode> {
             ICode instruction = getInstruction(i);
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
-        		if(entry.funcName.equals(funcName)) {
-        			if(entry.paramNumber == paramNumber) {
-            			if(entry.containsAllQualities(internalOrExternal))
-            				return entry;
-        			}
-        		}
+                if(entry.funcName != null)
+                	if(entry.funcName.equals(funcName))
+                		if(entry.paramNumber == paramNumber)
+                			if(entry.containsAllQualities(internalOrExternal))
+                				return entry;
             }
         }
 
@@ -156,12 +158,11 @@ public class Lib implements ICode, Iterable<ICode> {
             ICode instruction = getInstruction(i);
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
-            	if(entry.declanIdent.equals(identifierName)){
-            		if(entry.funcName.equals(funcName)) {
-            			if(entry.containsAllQualities(internalOrExternal))
-            				return entry;
-            		}
-            	}
+                if(entry.declanIdent != null)
+                	if(entry.declanIdent.equals(identifierName))
+                		if(entry.funcName.equals(funcName))
+                			if(entry.containsAllQualities(internalOrExternal))
+                				return entry;
             }
         }
 
