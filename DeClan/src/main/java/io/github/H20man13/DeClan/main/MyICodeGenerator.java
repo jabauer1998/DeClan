@@ -263,13 +263,13 @@ public class MyICodeGenerator{
     List <Statement> exec = procDecl.getExecutionStatements();
     for(int i = 0; i < exec.size(); i++){
       Statement stat = exec.get(i);
-	    generateStatementIr(stat, builder);
+	    generateStatementIr(stat, procedureName, builder);
     }
 
     Expression retExp = procDecl.getReturnStatement();
     if(retExp != null){
       TypeCheckerQualities qual = retExp.acceptResult(typeChecker); 
-      IdentExp retPlace = generateExpressionIr(retExp, builder);
+      IdentExp retPlace = generateExpressionIr(retExp, procedureName, builder);
       IdentExp returnPlace = builder.getVariablePlace(procedureName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
       builder.buildDefinition(returnPlace.scope, returnPlace.ident, retPlace, ConversionUtils.typeCheckerQualitiesToAssignType(qual));
     }
@@ -288,6 +288,19 @@ public class MyICodeGenerator{
       errorLog.add("Error generating invalid statment type " + stat.getClass().getSimpleName(), stat.getStart());
     }
   }
+  
+  public void generateStatementIr(Statement stat, String callerFuncName, StatementBuilder builder){
+	    if(stat instanceof ProcedureCall) generateProcedureCallIr((ProcedureCall)stat, callerFuncName, builder);
+	    else if(stat instanceof Branch) generateBranchIr((Branch)stat, callerFuncName, builder);
+	    else if(stat instanceof Assignment) generateAssignmentIr((Assignment)stat, callerFuncName, builder);
+	    else if(stat instanceof Asm) generateInlineAssemblyIr((Asm)stat, callerFuncName, builder);
+	    else if(stat instanceof EmptyStatement){
+	         //Do nothing
+	    }
+	    else {
+	      errorLog.add("Error generating invalid statment type " + stat.getClass().getSimpleName(), stat.getStart());
+	    }
+	  }
         
   public void generateProcedureCallIr(ProcedureCall procedureCall, StatementBuilder builder) {
     String funcName = procedureCall.getProcedureName().getLexeme();
@@ -317,6 +330,35 @@ public class MyICodeGenerator{
       builder.buildExternalProcedureCall(funcName, args);
     }
   }
+  
+  public void generateProcedureCallIr(ProcedureCall procedureCall, String callerFuncName, StatementBuilder builder) {
+	    String funcName = procedureCall.getProcedureName().getLexeme();
+	    List<Expression> valArgs = procedureCall.getArguments();
+
+	    if(builder.containsEntry(funcName, 0, SymEntry.PARAM | SymEntry.EXTERNAL)){
+	      //Generate a standard Procedure Call
+	      List<Def> valArgResults = new ArrayList<Def>();
+	      for(int i = 0; i < valArgs.size(); i++){
+	        Expression valArg = valArgs.get(i);
+	        TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
+	        ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+	        Exp result = generateExpressionIr(valArg, callerFuncName, builder);
+	        IdentExp argToGet = builder.getVariablePlace(funcName, i, SymEntry.PARAM | SymEntry.EXTERNAL);
+	        valArgResults.add(new Def(argToGet.scope, argToGet.ident, result, type));
+	      }
+	      builder.buildProcedureCall(funcName, valArgResults);
+	    } else {
+	      //Generate an External Procedure Call
+	      LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
+	      for(Expression valArg : valArgs){
+	         Exp place = generateExpressionIr(valArg, callerFuncName, builder);
+	         TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
+	         ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+	         args.add(new Tuple<Exp, ICode.Type>(place, type));
+	      }
+	      builder.buildExternalProcedureCall(funcName, args);
+	    }
+	  }
 
   public void generateWhileBranchIr(WhileElifBranch whilebranch, StatementBuilder builder){
     Expression toCheck = whilebranch.getExpression();
@@ -345,6 +387,34 @@ public class MyICodeGenerator{
       builder.buildWhileLoopEnd();
     }
   }
+  
+  public void generateWhileBranchIr(WhileElifBranch whilebranch, String callerFuncName, StatementBuilder builder){
+	    Expression toCheck = whilebranch.getExpression();
+	    List<Statement> toExec = whilebranch.getExecStatements();
+	    IdentExp test = generateExpressionIr(toCheck, callerFuncName, builder);
+	    
+	    builder.buildWhileLoopBeginning(test);
+
+	    builder.incrimentWhileLoopLevel();
+	    for(int i = 0; i < toExec.size(); i++){
+	      generateStatementIr(toExec.get(i), callerFuncName, builder);
+	    }
+
+	    Exp test2 = generateExpressionIr(toCheck, callerFuncName, builder);
+	    TypeCheckerQualities qual = toCheck.acceptResult(typeChecker);
+	    ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+	    builder.buildAssignment(test.scope, test.ident, test2, type);
+
+	    builder.deIncrimentWhileLoopLevel();
+
+	    Branch nextBranch = whilebranch.getNextBranch();
+	    if(nextBranch != null) {
+	      builder.buildElseWhileLoopBeginning();
+	      generateBranchIr(nextBranch, callerFuncName, builder);
+	    } else {
+	      builder.buildWhileLoopEnd();
+	    }
+	  }
     
   public void generateBranchIr(Branch branch, StatementBuilder builder){
     if(branch instanceof IfElifBranch) generateIfBranchIr((IfElifBranch)branch, builder);
@@ -356,6 +426,18 @@ public class MyICodeGenerator{
       errorLog.add("Error unexpected branch type " + branch.getClass().getSimpleName(), branch.getStart());
     }
   }
+  
+  public void generateBranchIr(Branch branch, String callerFuncName, StatementBuilder builder){
+	    if(branch instanceof IfElifBranch) generateIfBranchIr((IfElifBranch)branch, callerFuncName, builder);
+	    else if(branch instanceof ElseBranch) generateElseBranchIr((ElseBranch)branch, callerFuncName, builder);
+	    else if(branch instanceof WhileElifBranch) generateWhileBranchIr((WhileElifBranch)branch, builder);
+	    else if(branch instanceof RepeatBranch) generateRepeatLoopIr((RepeatBranch)branch, callerFuncName, builder);
+	    else if(branch instanceof ForBranch) generateForLoopIr((ForBranch)branch, callerFuncName, builder);
+	    else {
+	      errorLog.add("Error unexpected branch type " + branch.getClass().getSimpleName(), branch.getStart());
+	    }
+	  }
+  
   public void generateIfBranchIr(IfElifBranch ifbranch, StatementBuilder builder){
     Expression toCheck = ifbranch.getExpression();
     IdentExp test = generateExpressionIr(toCheck, builder);
@@ -375,6 +457,26 @@ public class MyICodeGenerator{
       builder.buildIfStatementEnd();
     }
   }
+  
+  public void generateIfBranchIr(IfElifBranch ifbranch, String callerFuncName, StatementBuilder builder){
+	    Expression toCheck = ifbranch.getExpression();
+	    IdentExp test = generateExpressionIr(toCheck, callerFuncName, builder);
+	    builder.buildIfStatementBeginning(test);
+
+	    builder.incrimentIfStatementLevel();
+	    List<Statement> toExec = ifbranch.getExecStatements();
+	    for(int i = 0; i < toExec.size(); i++){
+	      generateStatementIr(toExec.get(i), callerFuncName, builder);
+	    }
+	    builder.deIncrimentIfStatementLevel();
+
+	    if(ifbranch.getNextBranch() != null) {
+	      builder.buildElseIfStatementBeginning();
+	      generateBranchIr(ifbranch.getNextBranch(), callerFuncName, builder);
+	    } else {
+	      builder.buildIfStatementEnd();
+	    }
+	  }
 
   public void generateElseBranchIr(ElseBranch elsebranch, StatementBuilder builder){
     List<Statement> toExec = elsebranch.getExecStatements();
@@ -385,6 +487,16 @@ public class MyICodeGenerator{
     builder.deIncrimentIfStatementLevel();
     builder.buildIfStatementEnd();
   }
+  
+  public void generateElseBranchIr(ElseBranch elsebranch, String callerFuncName, StatementBuilder builder){
+	    List<Statement> toExec = elsebranch.getExecStatements();
+	    builder.incrimentIfStatementLevel();
+	    for(int i = 0; i < toExec.size(); i++){
+	      generateStatementIr(toExec.get(i), callerFuncName, builder);
+	    }
+	    builder.deIncrimentIfStatementLevel();
+	    builder.buildIfStatementEnd();
+	  }
 
   public void generateRepeatLoopIr(RepeatBranch repeatbranch, StatementBuilder builder){
     Expression toCheck = repeatbranch.getExpression();
@@ -405,6 +517,26 @@ public class MyICodeGenerator{
     builder.buildAssignment(test.scope, test.toString(), test2, type);
     builder.buildRepeatLoopEnd();
   }
+  
+  public void generateRepeatLoopIr(RepeatBranch repeatbranch, String callerFuncName, StatementBuilder builder){
+	    Expression toCheck = repeatbranch.getExpression();
+	    List<Statement> toExec = repeatbranch.getExecStatements();
+	    IdentExp test = generateExpressionIr(toCheck, callerFuncName, builder);
+
+	    builder.buildRepeatLoopBeginning(test);
+
+	    builder.incrimentRepeatLoopLevel();
+	    for(int i = 0; i < toExec.size(); i++){
+		    generateStatementIr(toExec.get(i), callerFuncName, builder);
+	    }
+	    builder.deIncrimentRepeatLoopLevel();
+
+	    Exp test2 = generateExpressionIr(toCheck, callerFuncName, builder);
+	    TypeCheckerQualities qual = toCheck.acceptResult(typeChecker);
+	    ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+	    builder.buildAssignment(test.scope, test.toString(), test2, type);
+	    builder.buildRepeatLoopEnd();
+	  }
   
   public IdentExp generateInductionVariable(StatementBuilder builder) {
 	  return builder.buildDefinition(Scope.LOCAL, new IntExp(0), ICode.Type.INT);
@@ -484,17 +616,94 @@ public class MyICodeGenerator{
       builder.buildForLoopEnd();
     }
   }
+  
+  public void generateForLoopIr(ForBranch forbranch, String callerFuncName, StatementBuilder builder){
+	    Expression toMod = forbranch.getModifyExpression();
+	    List<Statement> toExec = forbranch.getExecStatements();
+	    Assignment initAssign = forbranch.getInitAssignment();
+	    if(toMod != null){
+	    	IdentExp curValueInduction = null;
+	    	if(forbranch.isSimplifiable()) {
+	    		int numTimes = forbranch.getLoopIterations();
+	    		curValueInduction = generateInductionVariable(builder);
+	    		IdentExp target = builder.buildDefinition(Scope.LOCAL, new IntExp(numTimes), ICode.Type.INT);
+	    		builder.buildInductionBasedForLoopBeginning(curValueInduction, target, builder.getVariablePlace(initAssign.getVariableName().getLexeme(), SymEntry.INTERNAL, SymbolBuilder.SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME), initAssign.getVariableValue().acceptResult(interpreter), toMod.acceptResult(interpreter));
+	    	} else {
+	    		generateAssignmentIr(forbranch.getInitAssignment(), callerFuncName, builder);
+	            IdentExp target = generateExpressionIr(forbranch.getTargetExpression(), callerFuncName, builder);
+	            IdentExp curValue = builder.getVariablePlace(forbranch.getInitAssignment().getVariableName().getLexeme(), SymEntry.INTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+	            Object actualIncriment = forbranch.getModifyExpression().acceptResult(interpreter);
+
+	            if(actualIncriment instanceof Integer){
+	              Integer intActualIncriment = ConversionUtils.toInt(actualIncriment);
+	              if(intActualIncriment < 0){
+	                builder.buildForLoopBeginning(curValue, BinExp.Operator.GT, target);
+	              } else if(intActualIncriment > 0){
+	                builder.buildForLoopBeginning(curValue, BinExp.Operator.LT, target);
+	              } else {
+	                builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
+	              }
+	            } else if(actualIncriment instanceof Float){
+	              Float floatActualIncriment = ConversionUtils.toReal(actualIncriment);
+	              if(floatActualIncriment < 0){
+	                builder.buildForLoopBeginning(curValue, BinExp.Operator.GT, target);
+	              } else if(floatActualIncriment > 0){
+	                builder.buildForLoopBeginning(curValue, BinExp.Operator.LT, target);
+	              } else {
+	                builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
+	              }
+	            } else {
+	              builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
+	            }
+	    	}
+	        
+	        builder.incrimentForLoopLevel();
+	        for(int i = 0; i < toExec.size(); i++){
+	            generateStatementIr(toExec.get(i), callerFuncName, builder);
+	        }
+	        builder.deIncrimentForLoopLevel();
+
+	        if(forbranch.isSimplifiable()){
+	        	IdentExp incr = builder.buildDefinition(ICode.Scope.LOCAL, new IntExp(1), ICode.Type.INT);
+	        	builder.buildAssignment(curValueInduction.scope, curValueInduction.ident, new BinExp(curValueInduction, BinExp.Operator.IADD, incr), ICode.Type.INT);
+	        }
+	    	IdentExp curValue = builder.getVariablePlace(forbranch.getInitAssignment().getVariableName().getLexeme(), SymEntry.INTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+	    	IdentExp incriment = generateExpressionIr(toMod, builder);
+	        TypeCheckerQualities qual = toMod.acceptResult(typeChecker);
+	        if(qual.containsQualities(TypeCheckerQualities.REAL)){
+	        	IdentExp result = builder.buildRealAddition(ICode.Scope.LOCAL, curValue, incriment);
+	            builder.buildAssignment(curValue.scope, curValue.ident, result, ICode.Type.REAL);
+	        } else if(qual.containsQualities(TypeCheckerQualities.INTEGER)) {
+	        	BinExp exp = new BinExp(curValue, BinExp.Operator.IADD, incriment);
+	        	builder.buildAssignment(curValue.scope, curValue.ident, exp, ICode.Type.INT);
+	        }
+	        builder.buildForLoopEnd();
+	    } else {
+	      generateAssignmentIr(forbranch.getInitAssignment(), callerFuncName, builder);
+	      IdentExp target = generateExpressionIr(forbranch.getTargetExpression(), callerFuncName, builder);
+	      IdentExp curvalue = builder.getVariablePlace(forbranch.getInitAssignment().getVariableName().getLexeme(), SymEntry.INTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+	      builder.buildForLoopBeginning(curvalue, BinExp.Operator.NE, target);
+	      builder.incrimentForLoopLevel();
+	      for(int i = 0; i < toExec.size(); i++){
+	          generateStatementIr(toExec.get(i), builder);
+	      }
+	      builder.deIncrimentForLoopLevel();
+	      builder.buildForLoopEnd();
+	    }
+	  }
         
-  public void generateAssignmentIr(Assignment assignment, AssignmentBuilder builder) {
+  public void generateAssignmentIr(Assignment assignment, String callerFuncName, AssignmentBuilder builder) {
 	IdentExp place = null;
 	String myStr = assignment.getVariableName().getLexeme();
-	if(builder.containsEntry(myStr, SymEntry.ANY, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)) {
-		place = builder.getVariablePlace(myStr, SymEntry.ANY, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+	if(builder.containsEntry(myStr, callerFuncName, SymEntry.INTERNAL)) {
+		place = builder.getVariablePlace(myStr, callerFuncName, SymEntry.INTERNAL);
+	} else if(builder.containsEntry(myStr, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)) {
+		place = builder.getVariablePlace(myStr, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
 	} else {
 		throw new ICodeGeneratorException(assignment, "Error no variable was found with attributes selected");
 	}
     Expression exp = assignment.getVariableValue();
-    IdentExp value = generateExpressionIr(exp, builder);
+    IdentExp value = generateExpressionIr(exp, callerFuncName, builder);
     TypeCheckerQualities qual = exp.acceptResult(typeChecker);
     TypeCheckerQualities convType = assignment.getVariableName().acceptResult(typeChecker);
     
@@ -515,6 +724,36 @@ public class MyICodeGenerator{
     builder.buildAssignment(place.scope, place.ident, value, type);
   }
 
+  public void generateAssignmentIr(Assignment assignment, AssignmentBuilder builder) {
+		IdentExp place = null;
+		String myStr = assignment.getVariableName().getLexeme();
+		if(builder.containsEntry(myStr, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)) {
+			place = builder.getVariablePlace(myStr, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+		} else {
+			throw new ICodeGeneratorException(assignment, "Error no variable was found with attributes selected");
+		}
+	    Expression exp = assignment.getVariableValue();
+	    IdentExp value = generateExpressionIr(exp, builder);
+	    TypeCheckerQualities qual = exp.acceptResult(typeChecker);
+	    TypeCheckerQualities convType = assignment.getVariableName().acceptResult(typeChecker);
+	    
+	    if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.REAL)){
+	      value = builder.buildRealToIntConversion(ICode.Scope.LOCAL, value);
+	    } else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
+	      value = builder.buildIntToRealConversion(ICode.Scope.LOCAL, value);
+	    } else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
+	      value = builder.buildIntToBoolConversion(ICode.Scope.LOCAL, value);
+	    } else if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
+	      value = builder.buildBoolToIntConversion(ICode.Scope.LOCAL, value);
+	    } else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.REAL)){
+	      value = builder.buildRealToBoolConversion(ICode.Scope.LOCAL, value);
+	    } else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
+	      value = builder.buildBoolToRealConversion(ICode.Scope.LOCAL, value);
+	    }
+	    ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(convType);
+	    builder.buildAssignment(place.scope, place.ident, value, type);
+	  }
+  
   public void generateInlineAssemblyIr(Asm asm, StatementBuilder builder) {
      List<IdentExp> icodeParams = new LinkedList<IdentExp>();
      for(String param : asm.getParamaters()){
@@ -527,6 +766,22 @@ public class MyICodeGenerator{
      }
      builder.buildInlineAssembly(asm.getInlineAssembly(), icodeParams);
   }
+  
+  public void generateInlineAssemblyIr(Asm asm, String callerFuncName, StatementBuilder builder) {
+	     List<IdentExp> icodeParams = new LinkedList<IdentExp>();
+	     for(String param : asm.getParamaters()){
+	       if(builder.containsEntry(param, callerFuncName, SymEntry.INTERNAL)) {
+	          IdentExp icodeParam = builder.getVariablePlace(param, callerFuncName, SymEntry.INTERNAL);
+	          icodeParams.add(icodeParam);
+	       } else if(builder.containsEntry(param, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
+	    	   IdentExp icodeParam = builder.getVariablePlace(param, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+		       icodeParams.add(icodeParam);
+	       } else {
+	          throw new ICodeGeneratorException(asm, "Input paramater " + param + " does not exist"); 
+	       }
+	     }
+	     builder.buildInlineAssembly(asm.getInlineAssembly(), icodeParams);
+	  }
 
   
   public IdentExp generateExpressionIr(Expression exp, DefinitionBuilder builder){
@@ -542,12 +797,97 @@ public class MyICodeGenerator{
     }
   }
   
+  public IdentExp generateExpressionIr(Expression exp, String callerFuncName, DefinitionBuilder builder){
+	    if(exp instanceof BinaryOperation) return generateBinaryOperationIr((BinaryOperation)exp, callerFuncName, builder);
+	    else if(exp instanceof FunctionCall) return generateFunctionCallIr((FunctionCall)exp, callerFuncName, builder);
+	    else if(exp instanceof UnaryOperation) return generateUnaryOperationIr((UnaryOperation)exp, callerFuncName, builder);
+	    else if(exp instanceof Identifier) return generateIdentifierIr((Identifier)exp, callerFuncName, builder);
+	    else if(exp instanceof NumValue) return generateNumberIr((NumValue)exp, builder);
+	    else if(exp instanceof BoolValue) return generateBooleanIr((BoolValue)exp, builder);
+	    else if(exp instanceof StrValue) return generateStringIr((StrValue)exp, builder);
+	    else {
+	      throw new RuntimeException("Error Invalid Expression Type found when generating Ir at" + exp.getStart().toString());
+	    }
+	  }
+  
   
   public IdentExp generateBinaryOperationIr(BinaryOperation binaryOperation, DefinitionBuilder builder) {
       IdentExp leftValue = generateExpressionIr(binaryOperation.getLeft(), builder);
       TypeCheckerQualities leftType = binaryOperation.getLeft().acceptResult(typeChecker);
       
       IdentExp rightValue = generateExpressionIr(binaryOperation.getRight(), builder);
+      TypeCheckerQualities rightType = binaryOperation.getRight().acceptResult(typeChecker);
+
+      if(binaryOperation.getOperator() == BinaryOperation.OpType.AND || binaryOperation.getOperator() == BinaryOperation.OpType.OR){
+        if(leftType.containsQualities(TypeCheckerQualities.REAL)){
+           leftValue = builder.buildRealToBoolConversion(ICode.Scope.LOCAL, leftValue);
+        } else if(leftType.containsQualities(TypeCheckerQualities.INTEGER)){
+           leftValue = builder.buildIntToBoolConversion(ICode.Scope.LOCAL, leftValue);
+        }
+        
+        if(rightType.containsQualities(TypeCheckerQualities.REAL)){
+            rightValue = builder.buildRealToBoolConversion(ICode.Scope.LOCAL, rightValue);
+        } else if(leftType.containsQualities(TypeCheckerQualities.INTEGER)){
+            rightValue = builder.buildIntToBoolConversion(ICode.Scope.LOCAL, rightValue);
+        }
+
+        switch(binaryOperation.getOperator()){
+          case AND: return builder.buildBooleanAndDefinition(Scope.LOCAL, leftValue, rightValue);
+          case OR: return builder.buildBooleanOrDefinition(Scope.LOCAL, leftValue, rightValue);
+          default: return leftValue;
+        }
+      } else if(leftType.containsQualities(TypeCheckerQualities.REAL) || rightType.containsQualities(TypeCheckerQualities.REAL)){
+          if(leftType.containsQualities(TypeCheckerQualities.INTEGER)){
+        	  leftValue = builder.buildIntToRealConversion(ICode.Scope.LOCAL, leftValue);
+          }
+
+          if(rightType.containsQualities(TypeCheckerQualities.INTEGER)){
+        	  rightValue = builder.buildIntToRealConversion(ICode.Scope.LOCAL, rightValue);
+          }
+      
+      switch (binaryOperation.getOperator()){
+          case PLUS: return builder.buildRealAddition(ICode.Scope.LOCAL, leftValue, rightValue);
+          case MINUS: return builder.buildRealSubtraction(ICode.Scope.LOCAL, leftValue, rightValue);
+          case TIMES: return builder.buildRealMultiplication(ICode.Scope.LOCAL, leftValue, rightValue);
+          case DIVIDE: return builder.buildRealDivision(ICode.Scope.LOCAL, leftValue, rightValue);
+          case DIV: return builder.buildRealDiv(ICode.Scope.LOCAL, leftValue, rightValue);
+          case LE: return builder.buildRealLessThanOrEqualTo(ICode.Scope.LOCAL, leftValue, rightValue);
+          case LT: return builder.buildRealLessThan(ICode.Scope.LOCAL, leftValue, rightValue);
+          case GE: return builder.buildRealGreaterThenOrEqualTo(ICode.Scope.LOCAL, leftValue, rightValue);
+          case GT: return builder.buildRealGreaterThan(ICode.Scope.LOCAL, leftValue, rightValue);
+          case EQ: return builder.buildREqualTo(ICode.Scope.LOCAL, leftValue, rightValue);
+          case NE: return builder.buildRNotEqualTo(ICode.Scope.LOCAL, leftValue, rightValue);
+          default: return leftValue;
+      }
+    } else {
+      switch (binaryOperation.getOperator()){
+        case PLUS: return builder.buildIntegerAdditionDefinition(Scope.LOCAL, leftValue, rightValue);
+        case MINUS: return builder.buildIntegerSubtractionDefinition(Scope.LOCAL, leftValue, rightValue);
+        case TIMES: return builder.buildIntegerMultiplicationDefinition(Scope.LOCAL, leftValue, rightValue);
+        case DIV: return builder.buildIntegerDiv(ICode.Scope.LOCAL, leftValue, rightValue);
+        case DIVIDE: return builder.buildIntegerDivide(ICode.Scope.LOCAL, leftValue, rightValue);
+        case MOD: return builder.buildIntegerModulo(Scope.LOCAL, leftValue, rightValue);
+        case LE: return builder.buildIntegerLessThenOrEqualToDefinition(Scope.LOCAL, leftValue, rightValue);
+        case LT: return builder.buildIntegerLessThenDefinition(Scope.LOCAL, leftValue, rightValue);
+        case GE: return builder.buildIntegerGreaterThenOrEqualToDefinition(Scope.LOCAL, leftValue, rightValue);
+        case GT: return builder.buildIntegerGreaterThenDefinition(Scope.LOCAL, leftValue, rightValue);
+        case BAND: return builder.buildIntegerBitwiseAndDefinition(Scope.LOCAL, leftValue, rightValue);
+        case BOR: return builder.buildIntegerBitwiseOrDefinition(Scope.LOCAL, leftValue, rightValue);
+        case BXOR: return builder.buildIntegerBitwiseXorDefinition(Scope.LOCAL, leftValue, rightValue);
+        case LSHIFT: return builder.buildIntegerLeftShiftDefinition(Scope.LOCAL, leftValue, rightValue);
+        case RSHIFT: return builder.buildIntegerRightShiftDefinition(Scope.LOCAL, leftValue, rightValue);
+        case EQ: return builder.buildIntegerEqualToDefinition(Scope.LOCAL, leftValue, rightValue);
+        case NE: return builder.buildIntegerNotEqualToDefinition(Scope.LOCAL, leftValue, rightValue);
+        default: return leftValue;
+      }
+    }
+  }
+  
+  public IdentExp generateBinaryOperationIr(BinaryOperation binaryOperation, String callerFuncName, DefinitionBuilder builder) {
+      IdentExp leftValue = generateExpressionIr(binaryOperation.getLeft(), callerFuncName, builder);
+      TypeCheckerQualities leftType = binaryOperation.getLeft().acceptResult(typeChecker);
+      
+      IdentExp rightValue = generateExpressionIr(binaryOperation.getRight(), callerFuncName, builder);
       TypeCheckerQualities rightType = binaryOperation.getRight().acceptResult(typeChecker);
 
       if(binaryOperation.getOperator() == BinaryOperation.OpType.AND || binaryOperation.getOperator() == BinaryOperation.OpType.OR){
@@ -664,6 +1004,56 @@ public class MyICodeGenerator{
 	}
 	
   }
+  
+  public IdentExp generateFunctionCallIr(FunctionCall funcCall, String callerFuncName, DefinitionBuilder builder) {
+		String funcName = funcCall.getFunctionName().getLexeme();
+		List<Expression> valArgs = funcCall.getArguments();
+		TypeCheckerQualities returnType = funcCall.acceptResult(typeChecker);
+		ICode.Type retType = ConversionUtils.typeCheckerQualitiesToAssignType(returnType);
+	      //Build Internal Function Call Sequence
+
+		if(builder.containsEntry(funcName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME)) {
+			LinkedList<Def> definitions = new LinkedList<Def>();
+			for(int i = 0; i < valArgs.size(); i++){
+			    Expression valArg = valArgs.get(i);
+			    TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
+			    ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+			    IdentExp result = generateExpressionIr(valArg, callerFuncName, builder);
+			    IdentExp arg = builder.getVariablePlace(funcName, i, SymEntry.INTERNAL | SymEntry.PARAM);
+			    definitions.add(new Def(arg.scope, arg.ident, result, type));
+			}
+			
+			IdentExp returnPlace = builder.getVariablePlace(funcName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
+			
+			return builder.buildFunctionCall(funcName, definitions, returnPlace, retType);
+		} else if(builder.containsEntry(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME)) {
+			LinkedList<Def> definitions = new LinkedList<Def>();
+			for(int i = 0; i < valArgs.size(); i++){
+			    Expression valArg = valArgs.get(i);
+			    TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
+			    ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+			    IdentExp result = generateExpressionIr(valArg, builder);
+			    IdentExp arg = builder.getVariablePlace(funcName, i, SymEntry.EXTERNAL | SymEntry.PARAM);
+			    definitions.add(new Def(arg.scope, arg.ident, result, type));
+			}
+			
+			IdentExp returnPlace = builder.getVariablePlace(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
+			
+			return builder.buildFunctionCall(funcName, definitions, returnPlace, retType);
+		} else {
+		 //Build external function call
+	      LinkedList<Tuple<Exp, ICode.Type>> procedureArgs = new LinkedList<Tuple<Exp, ICode.Type>>();
+	      for(Expression arg : valArgs){
+	        Exp place = generateExpressionIr(arg, builder);
+	        TypeCheckerQualities qual = arg.acceptResult(typeChecker);
+	        ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+	        procedureArgs.add(new Tuple<Exp, ICode.Type>(place, type));
+	      }
+
+	      return builder.buildExternalFunctionCall(Scope.LOCAL, funcName, procedureArgs, retType);
+		}
+		
+	  }
 
   public IdentExp generateUnaryOperationIr(UnaryOperation unaryOperation, DefinitionBuilder builder) {
     IdentExp value = generateExpressionIr(unaryOperation.getExpression(), builder);
@@ -691,12 +1081,52 @@ public class MyICodeGenerator{
 	    }
     }
   }
+  
+  public IdentExp generateUnaryOperationIr(UnaryOperation unaryOperation, String funcName, DefinitionBuilder builder) {
+	    IdentExp value = generateExpressionIr(unaryOperation.getExpression(), funcName, builder);
+	    TypeCheckerQualities rightType = unaryOperation.getExpression().acceptResult(typeChecker);
 
+	    if(unaryOperation.getOperator() == UnaryOperation.OpType.NOT){
+	      if(rightType.containsQualities(TypeCheckerQualities.REAL)){
+	          value = builder.buildRealToBoolConversion(ICode.Scope.LOCAL, value);
+	        } else if(rightType.containsQualities(TypeCheckerQualities.INTEGER)){
+	          value = builder.buildIntToBoolConversion(ICode.Scope.LOCAL, value);
+	        }
+	        return builder.buildBooleanNotDefinition(ICode.Scope.LOCAL, value);
+	    } else if(rightType.containsQualities(TypeCheckerQualities.REAL)){
+	      switch(unaryOperation.getOperator()){
+	        case MINUS: return builder.buildRealNegationDefinition(ICode.Scope.LOCAL, value);
+	        default:
+	          errorLog.add("Error unexpected Operation for Real Value " + unaryOperation.getOperator(), unaryOperation.getStart());
+	          return value;
+		    }
+	    } else {
+	      switch(unaryOperation.getOperator()){
+	        case MINUS: return builder.buildIntegerNegationDefinition(ICode.Scope.LOCAL, value);
+	        case BNOT: return builder.buildIntegerBitwiseNegationDefinition(Scope.LOCAL, value);
+	        default: return value;
+		    }
+	    }
+	  }
+
+  public IdentExp generateIdentifierIr(Identifier identifier, String funcName, DefinitionBuilder builder){
+    if(builder.containsEntry(identifier.getLexeme(), funcName, SymEntry.INTERNAL)){
+      return builder.getVariablePlace(identifier.getLexeme(), funcName, SymEntry.INTERNAL);
+    } else if(builder.containsEntry(identifier.getLexeme(), SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
+      return builder.getVariablePlace(identifier.getLexeme(), SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+    } else {
+        String place = gen.genNext();
+        builder.addVariableEntry(place, SymEntry.GLOBAL | SymEntry.EXTERNAL, identifier.getLexeme(), false);
+        IdentExp ident = new IdentExp(Scope.GLOBAL, place);
+        return ident;
+    }
+  }
+  
   public IdentExp generateIdentifierIr(Identifier identifier, DefinitionBuilder builder){
-    if(builder.containsEntry(identifier.getLexeme(), SymEntry.INTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
-      return builder.getVariablePlace(identifier.getLexeme(), SymEntry.INTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
-    } else if(builder.containsEntry(identifier.getLexeme(), SymEntry.EXTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
-      return builder.getVariablePlace(identifier.getLexeme(), SymEntry.EXTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+    if(builder.containsEntry(identifier.getLexeme(), SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
+      return builder.getVariablePlace(identifier.getLexeme(), SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+    } else if(builder.containsEntry(identifier.getLexeme(), SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
+      return builder.getVariablePlace(identifier.getLexeme(), SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
     } else {
         String place = gen.genNext();
         builder.addVariableEntry(place, SymEntry.GLOBAL | SymEntry.EXTERNAL, identifier.getLexeme(), false);
