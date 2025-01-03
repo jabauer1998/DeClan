@@ -25,31 +25,32 @@ SYMBOL SECTION
  ENTRY y INTERNAL result RealIsZero
  ENTRY z INTERNAL val RealIsZero
  ENTRY A INTERNAL exp RealIsZero
- ENTRY B EXTERNAL PARAM RealBinaryAsInt 0
- ENTRY C EXTERNAL RETURN RealBinaryAsInt
- ENTRY L INTERNAL result IntIsZero
- ENTRY R INTERNAL result IntIsNegative
- ENTRY S INTERNAL thirtyFirstBit IntIsNegative
- ENTRY a2 INTERNAL result RealIsNegative
- ENTRY a3 INTERNAL rest RealIsNegative
- ENTRY a4 INTERNAL thirtyFirstBit RealIsNegative
- ENTRY b7 INTERNAL result IntIsPositive
- ENTRY b8 INTERNAL thirtyFirstBit IntIsPositive
- ENTRY c8 INTERNAL result RealIsPositive
- ENTRY c9 INTERNAL realAsInteger RealIsPositive
- ENTRY d0 INTERNAL thirtyFirstBit RealIsPositive
- ENTRY e3 INTERNAL result RealMantissa
- ENTRY e4 INTERNAL realAsInt RealMantissa
- ENTRY e5 INTERNAL significand RealMantissa
- ENTRY e6 INTERNAL exp RealMantissa
- ENTRY f4 INTERNAL result RealSign
- ENTRY f5 INTERNAL realAsInteger RealSign
- ENTRY g1 INTERNAL result RealExponent
- ENTRY g2 INTERNAL realAsInteger RealExponent
- ENTRY g3 INTERNAL exponent RealExponent
- ENTRY h0 INTERNAL result MantissaNeg
- ENTRY h1 INTERNAL lastBit MantissaNeg
- ENTRY i7 INTERNAL result MantissaAbs
+ ENTRY B EXTERNAL GLOBAL r 
+ ENTRY C EXTERNAL PARAM RealBinaryAsInt 0
+ ENTRY D EXTERNAL RETURN RealBinaryAsInt
+ ENTRY M INTERNAL result IntIsZero
+ ENTRY S INTERNAL result IntIsNegative
+ ENTRY T INTERNAL thirtyFirstBit IntIsNegative
+ ENTRY a3 INTERNAL result RealIsNegative
+ ENTRY a4 INTERNAL rest RealIsNegative
+ ENTRY a5 INTERNAL thirtyFirstBit RealIsNegative
+ ENTRY b8 INTERNAL result IntIsPositive
+ ENTRY b9 INTERNAL thirtyFirstBit IntIsPositive
+ ENTRY c9 INTERNAL result RealIsPositive
+ ENTRY d0 INTERNAL realAsInteger RealIsPositive
+ ENTRY d1 INTERNAL thirtyFirstBit RealIsPositive
+ ENTRY e4 INTERNAL result RealMantissa
+ ENTRY e5 INTERNAL realAsInt RealMantissa
+ ENTRY e6 INTERNAL significand RealMantissa
+ ENTRY e7 INTERNAL exp RealMantissa
+ ENTRY f5 INTERNAL result RealSign
+ ENTRY f6 INTERNAL realAsInteger RealSign
+ ENTRY g2 INTERNAL result RealExponent
+ ENTRY g3 INTERNAL realAsInteger RealExponent
+ ENTRY g4 INTERNAL exponent RealExponent
+ ENTRY h1 INTERNAL result MantissaNeg
+ ENTRY h2 INTERNAL lastBit MantissaNeg
+ ENTRY i8 INTERNAL result MantissaAbs
 DATA SECTION
  DEF a := 127 <INT>
  DEF GLOBAL b := a <INT>
@@ -58,289 +59,289 @@ PROC SECTION
   DEF y := FALSE <BOOL>
   DEF z := 0 <INT>
   DEF A := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM c) -> B]<REAL>)
-  DEF D := (RETURN C) <INT>
-  A := D <INT>
-  DEF E := 2147483647 <INT>
-  DEF F := A IAND E <INT>
-  z := F <INT>
-  DEF G := 0 <INT>
-  DEF H := z EQ G <BOOL>
-  DEF I := TRUE <BOOL>
-  IF H EQ I
+  CALL RealBinaryAsInt([(GLOBAL B) -> C]<REAL>)
+  DEF E := (RETURN D) <INT>
+  A := E <INT>
+  DEF F := 2147483647 <INT>
+  DEF G := A IAND F <INT>
+  z := G <INT>
+  DEF H := 0 <INT>
+  DEF I := z EQ H <BOOL>
+  DEF J := TRUE <BOOL>
+  IF I EQ J
   THEN IFSTAT_0_SEQ_0_LEVEL_0
   ELSE IFNEXT_0_SEQ_0_LEVEL_0
   LABEL IFSTAT_0_SEQ_0_LEVEL_0
-  DEF J := TRUE <BOOL>
-  y := J <BOOL>
+  DEF K := TRUE <BOOL>
+  y := K <BOOL>
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_0_LEVEL_0
-  DEF K := FALSE <BOOL>
-  y := K <BOOL>
+  DEF L := FALSE <BOOL>
+  y := L <BOOL>
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_1_LEVEL_0
   LABEL IFEND_0_LEVEL_0
   DEF RETURN d := y <BOOL>
  RETURN
  PROC LABEL IntIsZero
-  DEF L := FALSE <BOOL>
-  DEF M := 0 <INT>
-  DEF N := (PARAM e) EQ M <BOOL>
-  DEF O := TRUE <BOOL>
-  IF N EQ O
+  DEF M := FALSE <BOOL>
+  DEF N := 0 <INT>
+  DEF O := (PARAM e) EQ N <BOOL>
+  DEF P := TRUE <BOOL>
+  IF O EQ P
   THEN IFSTAT_1_SEQ_0_LEVEL_0
   ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
-  DEF P := TRUE <BOOL>
-  y := P <BOOL>
+  DEF Q := TRUE <BOOL>
+  M := Q <BOOL>
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
-  DEF Q := FALSE <BOOL>
-  y := Q <BOOL>
+  DEF R := FALSE <BOOL>
+  M := R <BOOL>
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_1_LEVEL_0
   LABEL IFEND_1_LEVEL_0
-  DEF RETURN f := y <BOOL>
+  DEF RETURN f := M <BOOL>
  RETURN
  PROC LABEL IntIsNegative
-  DEF R := FALSE <BOOL>
-  DEF S := 0 <INT>
-  DEF T := 31 <INT>
-  DEF U := (PARAM e) IRSHIFT T <INT>
-  DEF V := 1 <INT>
-  DEF W := U IAND V <INT>
-  S := W <INT>
-  DEF X := 0 <INT>
-  DEF Y := S EQ X <BOOL>
-  DEF Z := TRUE <BOOL>
-  IF Y EQ Z
+  DEF S := FALSE <BOOL>
+  DEF T := 0 <INT>
+  DEF U := 31 <INT>
+  DEF V := (PARAM g) IRSHIFT U <INT>
+  DEF W := 1 <INT>
+  DEF X := V IAND W <INT>
+  T := X <INT>
+  DEF Y := 0 <INT>
+  DEF Z := T EQ Y <BOOL>
+  DEF a0 := TRUE <BOOL>
+  IF Z EQ a0
   THEN IFSTAT_2_SEQ_0_LEVEL_0
   ELSE IFNEXT_2_SEQ_0_LEVEL_0
   LABEL IFSTAT_2_SEQ_0_LEVEL_0
-  DEF a0 := FALSE <BOOL>
-  y := a0 <BOOL>
+  DEF a1 := FALSE <BOOL>
+  S := a1 <BOOL>
   GOTO IFEND_2_LEVEL_0
   LABEL IFNEXT_2_SEQ_0_LEVEL_0
-  DEF a1 := TRUE <BOOL>
-  y := a1 <BOOL>
+  DEF a2 := TRUE <BOOL>
+  S := a2 <BOOL>
   GOTO IFEND_2_LEVEL_0
   LABEL IFNEXT_2_SEQ_1_LEVEL_0
   LABEL IFEND_2_LEVEL_0
-  DEF RETURN h := y <BOOL>
+  DEF RETURN h := S <BOOL>
  RETURN
  PROC LABEL RealIsNegative
-  DEF a2 := FALSE <BOOL>
-  DEF a3 := 0 <INT>
+  DEF a3 := FALSE <BOOL>
   DEF a4 := 0 <INT>
-  CALL RealSign([(PARAM c) -> q]<REAL>)
-  CALL RealSign([(PARAM c) -> q]<REAL>)
-  DEF a5 := (RETURN r) <INT>
-  S := a5 <INT>
-  CALL RealBinaryAsInt([(PARAM c) -> B]<REAL>)
-  CALL RealBinaryAsInt([(PARAM c) -> B]<REAL>)
-  DEF a6 := (RETURN C) <INT>
-  DEF a7 := 2147483647 <INT>
-  DEF a8 := a6 IAND a7 <INT>
-  a3 := a8 <INT>
-  DEF a9 := 1 <INT>
-  DEF b0 := S EQ a9 <BOOL>
-  CALL IntIsZero([a3 -> e]<INT>)
-  CALL IntIsZero([a3 -> e]<INT>)
-  DEF b1 := (RETURN f) <BOOL>
-  DEF b2 := BNOT b1 <BOOL>
-  DEF b3 := b0 LAND b2 <BOOL>
-  DEF b4 := TRUE <BOOL>
-  IF b3 EQ b4
+  DEF a5 := 0 <INT>
+  CALL RealSign([(PARAM i) -> q]<REAL>)
+  CALL RealSign([(PARAM i) -> q]<REAL>)
+  DEF a6 := (RETURN r) <INT>
+  a5 := a6 <INT>
+  CALL RealBinaryAsInt([(GLOBAL B) -> C]<REAL>)
+  CALL RealBinaryAsInt([(GLOBAL B) -> C]<REAL>)
+  DEF a7 := (RETURN D) <INT>
+  DEF a8 := 2147483647 <INT>
+  DEF a9 := a7 IAND a8 <INT>
+  a4 := a9 <INT>
+  DEF b0 := 1 <INT>
+  DEF b1 := a5 EQ b0 <BOOL>
+  CALL IntIsZero([a4 -> e]<INT>)
+  CALL IntIsZero([a4 -> e]<INT>)
+  DEF b2 := (RETURN f) <BOOL>
+  DEF b3 := BNOT b2 <BOOL>
+  DEF b4 := b1 LAND b3 <BOOL>
+  DEF b5 := TRUE <BOOL>
+  IF b4 EQ b5
   THEN IFSTAT_3_SEQ_0_LEVEL_0
   ELSE IFNEXT_3_SEQ_0_LEVEL_0
   LABEL IFSTAT_3_SEQ_0_LEVEL_0
-  DEF b5 := TRUE <BOOL>
-  y := b5 <BOOL>
+  DEF b6 := TRUE <BOOL>
+  a3 := b6 <BOOL>
   GOTO IFEND_3_LEVEL_0
   LABEL IFNEXT_3_SEQ_0_LEVEL_0
-  DEF b6 := FALSE <BOOL>
-  y := b6 <BOOL>
+  DEF b7 := FALSE <BOOL>
+  a3 := b7 <BOOL>
   GOTO IFEND_3_LEVEL_0
   LABEL IFNEXT_3_SEQ_1_LEVEL_0
   LABEL IFEND_3_LEVEL_0
-  DEF RETURN j := y <BOOL>
+  DEF RETURN j := a3 <BOOL>
  RETURN
  PROC LABEL IntIsPositive
-  DEF b7 := FALSE <BOOL>
-  DEF b8 := 0 <INT>
-  DEF b9 := 31 <INT>
-  DEF c0 := (PARAM e) IRSHIFT b9 <INT>
-  DEF c1 := 1 <INT>
-  DEF c2 := c0 IAND c1 <INT>
-  S := c2 <INT>
-  DEF c3 := 0 <INT>
-  DEF c4 := S EQ c3 <BOOL>
-  DEF c5 := TRUE <BOOL>
-  IF c4 EQ c5
+  DEF b8 := FALSE <BOOL>
+  DEF b9 := 0 <INT>
+  DEF c0 := 31 <INT>
+  DEF c1 := (PARAM k) IRSHIFT c0 <INT>
+  DEF c2 := 1 <INT>
+  DEF c3 := c1 IAND c2 <INT>
+  b9 := c3 <INT>
+  DEF c4 := 0 <INT>
+  DEF c5 := b9 EQ c4 <BOOL>
+  DEF c6 := TRUE <BOOL>
+  IF c5 EQ c6
   THEN IFSTAT_4_SEQ_0_LEVEL_0
   ELSE IFNEXT_4_SEQ_0_LEVEL_0
   LABEL IFSTAT_4_SEQ_0_LEVEL_0
-  DEF c6 := TRUE <BOOL>
-  y := c6 <BOOL>
+  DEF c7 := TRUE <BOOL>
+  b8 := c7 <BOOL>
   GOTO IFEND_4_LEVEL_0
   LABEL IFNEXT_4_SEQ_0_LEVEL_0
-  DEF c7 := FALSE <BOOL>
-  y := c7 <BOOL>
+  DEF c8 := FALSE <BOOL>
+  b8 := c8 <BOOL>
   GOTO IFEND_4_LEVEL_0
   LABEL IFNEXT_4_SEQ_1_LEVEL_0
   LABEL IFEND_4_LEVEL_0
-  DEF RETURN l := y <BOOL>
+  DEF RETURN l := b8 <BOOL>
  RETURN
  PROC LABEL RealIsPositive
-  DEF c8 := FALSE <BOOL>
-  DEF c9 := 0 <INT>
+  DEF c9 := FALSE <BOOL>
   DEF d0 := 0 <INT>
-  CALL RealSign([(PARAM c) -> q]<REAL>)
-  CALL RealSign([(PARAM c) -> q]<REAL>)
-  DEF d1 := (RETURN r) <INT>
-  S := d1 <INT>
-  CALL RealBinaryAsInt([(PARAM c) -> B]<REAL>)
-  CALL RealBinaryAsInt([(PARAM c) -> B]<REAL>)
-  DEF d2 := (RETURN C) <INT>
-  DEF d3 := 2147483647 <INT>
-  DEF d4 := d2 IAND d3 <INT>
-  c9 := d4 <INT>
-  DEF d5 := 0 <INT>
-  DEF d6 := S EQ d5 <BOOL>
-  CALL IntIsZero([c9 -> e]<INT>)
-  CALL IntIsZero([c9 -> e]<INT>)
-  DEF d7 := (RETURN f) <BOOL>
-  DEF d8 := BNOT d7 <BOOL>
-  DEF d9 := d6 LAND d8 <BOOL>
-  DEF e0 := TRUE <BOOL>
-  IF d9 EQ e0
+  DEF d1 := 0 <INT>
+  CALL RealSign([(PARAM m) -> q]<REAL>)
+  CALL RealSign([(PARAM m) -> q]<REAL>)
+  DEF d2 := (RETURN r) <INT>
+  d1 := d2 <INT>
+  CALL RealBinaryAsInt([(GLOBAL B) -> C]<REAL>)
+  CALL RealBinaryAsInt([(GLOBAL B) -> C]<REAL>)
+  DEF d3 := (RETURN D) <INT>
+  DEF d4 := 2147483647 <INT>
+  DEF d5 := d3 IAND d4 <INT>
+  d0 := d5 <INT>
+  DEF d6 := 0 <INT>
+  DEF d7 := d1 EQ d6 <BOOL>
+  CALL IntIsZero([d0 -> e]<INT>)
+  CALL IntIsZero([d0 -> e]<INT>)
+  DEF d8 := (RETURN f) <BOOL>
+  DEF d9 := BNOT d8 <BOOL>
+  DEF e0 := d7 LAND d9 <BOOL>
+  DEF e1 := TRUE <BOOL>
+  IF e0 EQ e1
   THEN IFSTAT_5_SEQ_0_LEVEL_0
   ELSE IFNEXT_5_SEQ_0_LEVEL_0
   LABEL IFSTAT_5_SEQ_0_LEVEL_0
-  DEF e1 := TRUE <BOOL>
-  y := e1 <BOOL>
+  DEF e2 := TRUE <BOOL>
+  c9 := e2 <BOOL>
   GOTO IFEND_5_LEVEL_0
   LABEL IFNEXT_5_SEQ_0_LEVEL_0
-  DEF e2 := FALSE <BOOL>
-  y := e2 <BOOL>
+  DEF e3 := FALSE <BOOL>
+  c9 := e3 <BOOL>
   GOTO IFEND_5_LEVEL_0
   LABEL IFNEXT_5_SEQ_1_LEVEL_0
   LABEL IFEND_5_LEVEL_0
-  DEF RETURN n := y <BOOL>
+  DEF RETURN n := c9 <BOOL>
  RETURN
  PROC LABEL RealMantissa
-  DEF e3 := 0 <INT>
   DEF e4 := 0 <INT>
   DEF e5 := 0 <INT>
   DEF e6 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM c) -> B]<REAL>)
-  CALL RealBinaryAsInt([(PARAM c) -> B]<REAL>)
-  DEF e7 := (RETURN C) <INT>
-  e4 := e7 <INT>
-  DEF e8 := 8388607 <INT>
-  DEF e9 := e4 IAND e8 <INT>
-  e5 := e9 <INT>
-  CALL RealIsZero([(PARAM c) -> c]<REAL>)
-  CALL RealIsZero([(PARAM c) -> c]<REAL>)
-  DEF f0 := (RETURN d) <BOOL>
-  DEF f1 := TRUE <BOOL>
-  IF f0 EQ f1
+  DEF e7 := 0 <INT>
+  CALL RealBinaryAsInt([(GLOBAL B) -> C]<REAL>)
+  CALL RealBinaryAsInt([(GLOBAL B) -> C]<REAL>)
+  DEF e8 := (RETURN D) <INT>
+  e5 := e8 <INT>
+  DEF e9 := 8388607 <INT>
+  DEF f0 := e5 IAND e9 <INT>
+  e6 := f0 <INT>
+  CALL RealIsZero([(PARAM o) -> c]<REAL>)
+  CALL RealIsZero([(PARAM o) -> c]<REAL>)
+  DEF f1 := (RETURN d) <BOOL>
+  DEF f2 := TRUE <BOOL>
+  IF f1 EQ f2
   THEN IFSTAT_6_SEQ_0_LEVEL_0
   ELSE IFNEXT_6_SEQ_0_LEVEL_0
   LABEL IFSTAT_6_SEQ_0_LEVEL_0
-  y := e5 <INT>
+  e4 := e6 <INT>
   GOTO IFEND_6_LEVEL_0
   LABEL IFNEXT_6_SEQ_0_LEVEL_0
-  DEF f2 := 8388608 <INT>
-  DEF f3 := e5 IOR f2 <INT>
-  y := f3 <INT>
+  DEF f3 := 8388608 <INT>
+  DEF f4 := e6 IOR f3 <INT>
+  e4 := f4 <INT>
   GOTO IFEND_6_LEVEL_0
   LABEL IFNEXT_6_SEQ_1_LEVEL_0
   LABEL IFEND_6_LEVEL_0
-  DEF RETURN p := y <INT>
+  DEF RETURN p := e4 <INT>
  RETURN
  PROC LABEL RealSign
-  DEF f4 := 0 <INT>
   DEF f5 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM c) -> B]<REAL>)
-  CALL RealBinaryAsInt([(PARAM c) -> B]<REAL>)
-  DEF f6 := (RETURN C) <INT>
-  c9 := f6 <INT>
-  DEF f7 := 31 <INT>
-  DEF f8 := c9 IRSHIFT f7 <INT>
-  DEF f9 := 1 <INT>
-  DEF g0 := f8 IAND f9 <INT>
-  y := g0 <INT>
-  DEF RETURN r := y <INT>
+  DEF f6 := 0 <INT>
+  CALL RealBinaryAsInt([(GLOBAL B) -> C]<REAL>)
+  CALL RealBinaryAsInt([(GLOBAL B) -> C]<REAL>)
+  DEF f7 := (RETURN D) <INT>
+  f6 := f7 <INT>
+  DEF f8 := 31 <INT>
+  DEF f9 := f6 IRSHIFT f8 <INT>
+  DEF g0 := 1 <INT>
+  DEF g1 := f9 IAND g0 <INT>
+  f5 := g1 <INT>
+  DEF RETURN r := f5 <INT>
  RETURN
  PROC LABEL RealExponent
-  DEF g1 := 0 <INT>
   DEF g2 := 0 <INT>
   DEF g3 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM c) -> B]<REAL>)
-  CALL RealBinaryAsInt([(PARAM c) -> B]<REAL>)
-  DEF g4 := (RETURN C) <INT>
-  c9 := g4 <INT>
-  DEF g5 := 23 <INT>
-  DEF g6 := c9 IRSHIFT g5 <INT>
-  DEF g7 := 255 <INT>
-  DEF g8 := g6 IAND g7 <INT>
-  g3 := g8 <INT>
-  DEF g9 := g3 ISUB (GLOBAL b) <INT>
-  y := g9 <INT>
-  DEF RETURN t := y <INT>
+  DEF g4 := 0 <INT>
+  CALL RealBinaryAsInt([(GLOBAL B) -> C]<REAL>)
+  CALL RealBinaryAsInt([(GLOBAL B) -> C]<REAL>)
+  DEF g5 := (RETURN D) <INT>
+  g3 := g5 <INT>
+  DEF g6 := 23 <INT>
+  DEF g7 := g3 IRSHIFT g6 <INT>
+  DEF g8 := 255 <INT>
+  DEF g9 := g7 IAND g8 <INT>
+  g4 := g9 <INT>
+  DEF h0 := g4 ISUB (GLOBAL b) <INT>
+  g2 := h0 <INT>
+  DEF RETURN t := g2 <INT>
  RETURN
  PROC LABEL MantissaNeg
-  DEF h0 := 0 <INT>
   DEF h1 := 0 <INT>
-  DEF h2 := 16777215 <INT>
-  DEF h3 := (PARAM u) IXOR h2 <INT>
-  y := h3 <INT>
-  DEF h4 := 1 <INT>
-  DEF h5 := y IADD h4 <INT>
-  y := h5 <INT>
-  DEF h6 := 23 <INT>
-  DEF h7 := y IRSHIFT h6 <INT>
-  DEF h8 := 1 <INT>
-  DEF h9 := h7 IAND h8 <INT>
-  h1 := h9 <INT>
-  DEF i0 := 1 <INT>
-  DEF i1 := h1 EQ i0 <BOOL>
-  DEF i2 := TRUE <BOOL>
-  IF i1 EQ i2
+  DEF h2 := 0 <INT>
+  DEF h3 := 16777215 <INT>
+  DEF h4 := (PARAM u) IXOR h3 <INT>
+  h1 := h4 <INT>
+  DEF h5 := 1 <INT>
+  DEF h6 := h1 IADD h5 <INT>
+  h1 := h6 <INT>
+  DEF h7 := 23 <INT>
+  DEF h8 := h1 IRSHIFT h7 <INT>
+  DEF h9 := 1 <INT>
+  DEF i0 := h8 IAND h9 <INT>
+  h2 := i0 <INT>
+  DEF i1 := 1 <INT>
+  DEF i2 := h2 EQ i1 <BOOL>
+  DEF i3 := TRUE <BOOL>
+  IF i2 EQ i3
   THEN IFSTAT_7_SEQ_0_LEVEL_0
   ELSE IFNEXT_7_SEQ_0_LEVEL_0
   LABEL IFSTAT_7_SEQ_0_LEVEL_0
-  DEF i3 := 8388607 <INT>
-  DEF i4 := y IAND i3 <INT>
-  y := i4 <INT>
-  DEF i5 := 2147483648 <INT>
-  DEF i6 := y IOR i5 <INT>
-  y := i6 <INT>
+  DEF i4 := 8388607 <INT>
+  DEF i5 := h1 IAND i4 <INT>
+  h1 := i5 <INT>
+  DEF i6 := 2147483648 <INT>
+  DEF i7 := h1 IOR i6 <INT>
+  h1 := i7 <INT>
   GOTO IFEND_7_LEVEL_0
   LABEL IFNEXT_7_SEQ_0_LEVEL_0
   LABEL IFEND_7_LEVEL_0
-  DEF RETURN v := y <INT>
+  DEF RETURN v := h1 <INT>
  RETURN
  PROC LABEL MantissaAbs
-  DEF i7 := 0 <INT>
-  CALL IntIsNegative([(PARAM u) -> g]<INT>)
-  CALL IntIsNegative([(PARAM u) -> g]<INT>)
-  DEF i8 := (RETURN h) <BOOL>
-  DEF i9 := TRUE <BOOL>
-  IF i8 EQ i9
+  DEF i8 := 0 <INT>
+  CALL IntIsNegative([(PARAM w) -> g]<INT>)
+  CALL IntIsNegative([(PARAM w) -> g]<INT>)
+  DEF i9 := (RETURN h) <BOOL>
+  DEF j0 := TRUE <BOOL>
+  IF i9 EQ j0
   THEN IFSTAT_8_SEQ_0_LEVEL_0
   ELSE IFNEXT_8_SEQ_0_LEVEL_0
   LABEL IFSTAT_8_SEQ_0_LEVEL_0
-  CALL MantissaNeg([(PARAM u) -> u]<INT>)
-  CALL MantissaNeg([(PARAM u) -> u]<INT>)
-  DEF j0 := (RETURN v) <INT>
-  y := j0 <INT>
+  CALL MantissaNeg([(PARAM w) -> u]<INT>)
+  CALL MantissaNeg([(PARAM w) -> u]<INT>)
+  DEF j1 := (RETURN v) <INT>
+  i8 := j1 <INT>
   GOTO IFEND_8_LEVEL_0
   LABEL IFNEXT_8_SEQ_0_LEVEL_0
-  y := (PARAM u) <INT>
+  i8 := (PARAM w) <INT>
   GOTO IFEND_8_LEVEL_0
   LABEL IFNEXT_8_SEQ_1_LEVEL_0
   LABEL IFEND_8_LEVEL_0
-  DEF RETURN x := y <INT>
+  DEF RETURN x := i8 <INT>
  RETURN
