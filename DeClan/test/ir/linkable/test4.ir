@@ -36,11 +36,9 @@ CODE SECTION
  ELSE FOREND_0_LEVEL_0
  LABEL FORLOOP_0_LEVEL_0
  CALL F([(GLOBAL b) -> f]<INT>)
- CALL F([(GLOBAL b) -> f]<INT>)
  DEF m := (RETURN g) <INT>
  GLOBAL c := m <INT>
  CALL WriteInt([(GLOBAL c) -> n]<INT>)
- CALL Fact([(GLOBAL b) -> h]<INT>)
  CALL Fact([(GLOBAL b) -> h]<INT>)
  DEF o := (RETURN i) <INT>
  GLOBAL c := o <INT>
@@ -56,89 +54,84 @@ PROC SECTION
   DEF q := 0 <INT>
   DEF r := 0 <INT>
   DEF s := 0 <INT>
-  DEF t := (GLOBAL a) EQ s <BOOL>
+  DEF t := (PARAM d) EQ s <BOOL>
   DEF u := TRUE <BOOL>
   IF t EQ u
   THEN IFSTAT_0_SEQ_0_LEVEL_0
   ELSE IFNEXT_0_SEQ_0_LEVEL_0
   LABEL IFSTAT_0_SEQ_0_LEVEL_0
   DEF v := 0 <INT>
-  GLOBAL c := v <INT>
+  r := v <INT>
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_0_LEVEL_0
   DEF w := 1 <INT>
-  DEF x := (GLOBAL a) ISUB w <INT>
-  CALL M([x -> d]<INT>)
+  DEF x := (PARAM d) ISUB w <INT>
   CALL M([x -> d]<INT>)
   DEF y := (RETURN e) <INT>
   q := y <INT>
   CALL F([q -> f]<INT>)
-  CALL F([q -> f]<INT>)
   DEF z := (RETURN g) <INT>
-  GLOBAL c := z <INT>
-  DEF A := (GLOBAL a) ISUB (GLOBAL c) <INT>
-  GLOBAL c := A <INT>
+  r := z <INT>
+  DEF A := (PARAM d) ISUB r <INT>
+  r := A <INT>
   GOTO IFEND_0_LEVEL_0
   LABEL IFNEXT_0_SEQ_1_LEVEL_0
   LABEL IFEND_0_LEVEL_0
-  DEF RETURN e := (GLOBAL c) <INT>
+  DEF RETURN e := r <INT>
  RETURN
  PROC LABEL F
   DEF B := 0 <INT>
   DEF C := 0 <INT>
   DEF D := 0 <INT>
-  DEF E := (GLOBAL a) EQ D <BOOL>
+  DEF E := (PARAM f) EQ D <BOOL>
   DEF F := TRUE <BOOL>
   IF E EQ F
   THEN IFSTAT_1_SEQ_0_LEVEL_0
   ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
   DEF G := 1 <INT>
-  GLOBAL c := G <INT>
+  C := G <INT>
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
   DEF H := 1 <INT>
-  DEF I := (GLOBAL a) ISUB H <INT>
-  CALL F([I -> f]<INT>)
+  DEF I := (PARAM f) ISUB H <INT>
   CALL F([I -> f]<INT>)
   DEF J := (RETURN g) <INT>
-  q := J <INT>
-  CALL M([q -> d]<INT>)
-  CALL M([q -> d]<INT>)
+  B := J <INT>
+  CALL M([B -> d]<INT>)
   DEF K := (RETURN e) <INT>
-  GLOBAL c := K <INT>
-  DEF L := (GLOBAL a) ISUB (GLOBAL c) <INT>
-  GLOBAL c := L <INT>
+  C := K <INT>
+  DEF L := (PARAM f) ISUB C <INT>
+  C := L <INT>
   GOTO IFEND_1_LEVEL_0
   LABEL IFNEXT_1_SEQ_1_LEVEL_0
   LABEL IFEND_1_LEVEL_0
-  DEF RETURN g := (GLOBAL c) <INT>
+  DEF RETURN g := C <INT>
  RETURN
  PROC LABEL Fact
   DEF M := 0 <INT>
   DEF N := 0 <INT>
   DEF O := 0 <INT>
-  DEF P := (GLOBAL a) EQ O <BOOL>
+  DEF P := (PARAM h) EQ O <BOOL>
   DEF Q := TRUE <BOOL>
   IF P EQ Q
   THEN IFSTAT_2_SEQ_0_LEVEL_0
   ELSE IFNEXT_2_SEQ_0_LEVEL_0
   LABEL IFSTAT_2_SEQ_0_LEVEL_0
   DEF R := 1 <INT>
-  GLOBAL c := R <INT>
+  N := R <INT>
   GOTO IFEND_2_LEVEL_0
   LABEL IFNEXT_2_SEQ_0_LEVEL_0
   DEF S := 1 <INT>
-  DEF T := (GLOBAL a) ISUB S <INT>
-  CALL Fact([T -> h]<INT>)
+  DEF T := (PARAM h) ISUB S <INT>
   CALL Fact([T -> h]<INT>)
   DEF U := (RETURN i) <INT>
-  q := U <INT>
-  CALL Multiply([(GLOBAL a) -> V]<INT>, [q -> W]<INT>)
+  M := U <INT>
+  CALL Multiply([(PARAM h) -> V]<INT>, [M -> W]<INT>)
   DEF Y := (RETURN X) <INT>
-  GLOBAL c := Y <INT>
+  N := Y <INT>
   GOTO IFEND_2_LEVEL_0
   LABEL IFNEXT_2_SEQ_1_LEVEL_0
   LABEL IFEND_2_LEVEL_0
-  DEF RETURN i := (GLOBAL c) <INT>
+  DEF RETURN i := N <INT>
  RETURN

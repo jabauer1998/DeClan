@@ -114,7 +114,6 @@ public class ICodeGeneratorTest {
                        + " z := 48393 <INT>\r\n"
                        + " v := x IADD z <INT>\r\n"
                        + " y := v ISUB v <INT>\r\n"
-                       + " e := y IMUL g <INT>\r\n"
                        + " y := z LOR x <BOOL>\r\n"
                        + " Z := b IOR x <INT>\r\n"
                        + " g := v LAND z <BOOL>\r\n"

@@ -25,7 +25,6 @@ BSS SECTION
  DEF GLOBAL e := 0 <INT>
 CODE SECTION
  CALL gcd([(GLOBAL b) -> f]<INT>, [(GLOBAL d) -> g]<INT>)
- CALL gcd([(GLOBAL b) -> f]<INT>, [(GLOBAL d) -> g]<INT>)
  DEF i := (RETURN h) <INT>
  GLOBAL e := i <INT>
  DEF j := "Answer is " <STRING>

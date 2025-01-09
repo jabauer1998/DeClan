@@ -53,7 +53,6 @@ CODE SECTION
  CALL RMul([p -> q]<REAL>, [(GLOBAL h) -> r]<REAL>)
  DEF t := (RETURN s) <REAL>
  CALL Foo([(GLOBAL e) -> j]<INT>, [(GLOBAL g) -> k]<REAL>, [t -> l]<REAL>)
- CALL Foo([(GLOBAL e) -> j]<INT>, [(GLOBAL g) -> k]<REAL>, [t -> l]<REAL>)
  DEF u := (RETURN m) <BOOL>
  GLOBAL i := u <BOOL>
  DEF v := TRUE <BOOL>
@@ -124,7 +123,6 @@ PROC SECTION
   CALL WriteLn()
   DEF a9 := 0 <INT>
   DEF b0 := 0 <INT>
-  CALL Foo([(GLOBAL f) -> j]<INT>, [a9 -> k]<INT>, [b0 -> l]<INT>)
   CALL Foo([(GLOBAL f) -> j]<INT>, [a9 -> k]<INT>, [b0 -> l]<INT>)
   DEF b1 := (RETURN m) <BOOL>
   a1 := b1 <BOOL>

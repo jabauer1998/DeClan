@@ -103,11 +103,8 @@ public class MyICodeTypeCheckerTest {
                       + "DEF GLOBAL c3 := FALSE <BOOL>\n"
                       + "DEF d := a IADD b <INT>\n"
                       + "DEF e := b ISUB a <INT>\n"
-                      + "DEF f := d IMOD e <INT>\n"
-                      + "DEF g := a IMUL b <INT>\n"
                       + "DEF k := (GLOBAL c2) LOR (GLOBAL c3) <BOOL>\n"
                       + "DEF l := (GLOBAL b) IOR g <INT>\n"
-                      + "DEF m := l IDIV (GLOBAL a) <INT>\n"
                       + "BSS SECTION\n"
                       + "CODE SECTION\n"
                       + "DEF o := k LAND (GLOBAL c3) <BOOL>\n"
@@ -125,11 +122,8 @@ public class MyICodeTypeCheckerTest {
         assertTypeCheckerQualities(tC, "c3", TypeCheckerQualities.BOOLEAN);
         assertTypeCheckerQualities(tC, "d", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "e", TypeCheckerQualities.INTEGER);
-        assertTypeCheckerQualities(tC, "f", TypeCheckerQualities.INTEGER);
-        assertTypeCheckerQualities(tC, "g", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "k", TypeCheckerQualities.BOOLEAN);
         assertTypeCheckerQualities(tC, "l", TypeCheckerQualities.INTEGER);
-        assertTypeCheckerQualities(tC, "m", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "o", TypeCheckerQualities.BOOLEAN);
         assertTypeCheckerQualities(tC, "p", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "q", TypeCheckerQualities.INTEGER);
@@ -157,9 +151,7 @@ public class MyICodeTypeCheckerTest {
                       + "RETURN\n"
                       + "PROC LABEL func2\n"
                       + "DEF d := (PARAM param2) <INT>\n"
-                      + "DEF e := d IMUL d <INT>\n"
-                      + "DEF f := e IMOD d <INT>\n"
-                      + "DEF RETURN return2 := f <INT>\n"
+                      + "DEF RETURN return2 := d <INT>\n"
                       + "RETURN\n";
 
         MyICodeTypeChecker tC = runTypeCheckerOnIrStringSource(source);
@@ -171,8 +163,6 @@ public class MyICodeTypeCheckerTest {
         assertTypeCheckerQualities(tC, "return2", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "return1", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "d", TypeCheckerQualities.INTEGER);
-        assertTypeCheckerQualities(tC, "e", TypeCheckerQualities.INTEGER);
-        assertTypeCheckerQualities(tC, "f", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "g", TypeCheckerQualities.INTEGER);
         assertTypeCheckerQualities(tC, "h", TypeCheckerQualities.INTEGER);
     }

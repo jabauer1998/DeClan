@@ -75,7 +75,6 @@ PROC SECTION
   IPARAM k
   IASM "MOV R0, %r"
   CALL IntIsZero([j -> p]<INT>)
-  CALL IntIsZero([j -> p]<INT>)
   DEF w := (RETURN q) <BOOL>
   DEF x := BNOT w <BOOL>
   s := x <BOOL>
@@ -95,57 +94,57 @@ PROC SECTION
  RETURN
  PROC LABEL WriteReal
   DEF z := 0 <INT>
-  IPARAM y
+  IPARAM z
   IASM "MOV %r, R0"
   IPARAM (PARAM c)
   IASM "LDR R0, %a"
   IASM "SWI 2"
-  IPARAM y
+  IPARAM z
   IASM "MOV R0, %r"
  RETURN
  PROC LABEL WriteBool
   DEF A := 0 <INT>
-  IPARAM y
+  IPARAM A
   IASM "MOV %r, R0"
   IPARAM (PARAM d)
   IASM "LDRB R0, %a"
   IASM "SWI 6"
-  IPARAM y
+  IPARAM A
   IASM "MOV R0, %r"
  RETURN
  PROC LABEL ReadInt
   DEF B := 0 <INT>
   DEF C := 0 <INT>
-  IPARAM y
+  IPARAM C
   IASM "MOV %r, R0"
   IASM "SWI 3"
   IPARAM B
   IASM "STR R0, %a"
-  IPARAM y
+  IPARAM C
   IASM "MOV R0, %r"
   DEF RETURN e := B <INT>
  RETURN
  PROC LABEL ReadReal
   DEF D := 0.0 <REAL>
   DEF E := 0 <INT>
-  IPARAM y
+  IPARAM E
   IASM "MOV %r, R0"
   IASM "SWI 5"
-  IPARAM B
+  IPARAM D
   IASM "STR R0, %a"
-  IPARAM y
+  IPARAM E
   IASM "MOV R0, %r"
-  DEF RETURN f := B <REAL>
+  DEF RETURN f := D <REAL>
  RETURN
  PROC LABEL ReadBool
   DEF F := FALSE <BOOL>
   DEF G := 0 <INT>
-  IPARAM y
+  IPARAM G
   IASM "MOV %r, R0"
   IASM "SWI 7"
-  IPARAM B
+  IPARAM F
   IASM "STRB R0, %a"
-  IPARAM y
+  IPARAM G
   IASM "MOV R0, %r"
-  DEF RETURN g := B <BOOL>
+  DEF RETURN g := F <BOOL>
  RETURN

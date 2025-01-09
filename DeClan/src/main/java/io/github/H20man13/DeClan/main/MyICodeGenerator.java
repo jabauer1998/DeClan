@@ -263,7 +263,7 @@ public class MyICodeGenerator{
     List <Statement> exec = procDecl.getExecutionStatements();
     for(int i = 0; i < exec.size(); i++){
       Statement stat = exec.get(i);
-	    generateStatementIr(stat, procedureName, builder);
+	  generateStatementIr(stat, procedureName, builder);
     }
 
     Expression retExp = procDecl.getReturnStatement();
@@ -306,7 +306,7 @@ public class MyICodeGenerator{
     String funcName = procedureCall.getProcedureName().getLexeme();
     List<Expression> valArgs = procedureCall.getArguments();
 
-    if(builder.containsEntry(funcName, 0, SymEntry.PARAM | SymEntry.EXTERNAL)){
+    if(builder.containsEntry(funcName, 0, SymEntry.PARAM | SymEntry.INTERNAL)){
       //Generate a standard Procedure Call
       List<Def> valArgResults = new ArrayList<Def>();
       for(int i = 0; i < valArgs.size(); i++){
@@ -314,7 +314,7 @@ public class MyICodeGenerator{
         TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
         ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
         Exp result = generateExpressionIr(valArg, builder);
-        IdentExp argToGet = builder.getVariablePlace(funcName, i, SymEntry.PARAM | SymEntry.EXTERNAL);
+        IdentExp argToGet = builder.getVariablePlace(funcName, i, SymEntry.PARAM | SymEntry.INTERNAL);
         valArgResults.add(new Def(argToGet.scope, argToGet.ident, result, type));
       }
       builder.buildProcedureCall(funcName, valArgResults);
@@ -335,7 +335,7 @@ public class MyICodeGenerator{
 	    String funcName = procedureCall.getProcedureName().getLexeme();
 	    List<Expression> valArgs = procedureCall.getArguments();
 
-	    if(builder.containsEntry(funcName, 0, SymEntry.PARAM | SymEntry.EXTERNAL)){
+	    if(builder.containsEntry(funcName, 0, SymEntry.PARAM | SymEntry.INTERNAL)){
 	      //Generate a standard Procedure Call
 	      List<Def> valArgResults = new ArrayList<Def>();
 	      for(int i = 0; i < valArgs.size(); i++){
@@ -343,10 +343,22 @@ public class MyICodeGenerator{
 	        TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
 	        ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
 	        Exp result = generateExpressionIr(valArg, callerFuncName, builder);
-	        IdentExp argToGet = builder.getVariablePlace(funcName, i, SymEntry.PARAM | SymEntry.EXTERNAL);
+	        IdentExp argToGet = builder.getVariablePlace(funcName, i, SymEntry.PARAM | SymEntry.INTERNAL);
 	        valArgResults.add(new Def(argToGet.scope, argToGet.ident, result, type));
 	      }
 	      builder.buildProcedureCall(funcName, valArgResults);
+	    } else if(builder.containsEntry(funcName, 0, SymEntry.PARAM | SymEntry.EXTERNAL)){
+		      //Generate a standard Procedure Call
+		      List<Def> valArgResults = new ArrayList<Def>();
+		      for(int i = 0; i < valArgs.size(); i++){
+		        Expression valArg = valArgs.get(i);
+		        TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
+		        ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+		        Exp result = generateExpressionIr(valArg, callerFuncName, builder);
+		        IdentExp argToGet = builder.getVariablePlace(funcName, i, SymEntry.PARAM | SymEntry.EXTERNAL);
+		        valArgResults.add(new Def(argToGet.scope, argToGet.ident, result, type));
+		      }
+		      builder.buildProcedureCall(funcName, valArgResults);
 	    } else {
 	      //Generate an External Procedure Call
 	      LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
@@ -430,7 +442,7 @@ public class MyICodeGenerator{
   public void generateBranchIr(Branch branch, String callerFuncName, StatementBuilder builder){
 	    if(branch instanceof IfElifBranch) generateIfBranchIr((IfElifBranch)branch, callerFuncName, builder);
 	    else if(branch instanceof ElseBranch) generateElseBranchIr((ElseBranch)branch, callerFuncName, builder);
-	    else if(branch instanceof WhileElifBranch) generateWhileBranchIr((WhileElifBranch)branch, builder);
+	    else if(branch instanceof WhileElifBranch) generateWhileBranchIr((WhileElifBranch)branch, callerFuncName, builder);
 	    else if(branch instanceof RepeatBranch) generateRepeatLoopIr((RepeatBranch)branch, callerFuncName, builder);
 	    else if(branch instanceof ForBranch) generateForLoopIr((ForBranch)branch, callerFuncName, builder);
 	    else {
@@ -729,6 +741,8 @@ public class MyICodeGenerator{
 		String myStr = assignment.getVariableName().getLexeme();
 		if(builder.containsEntry(myStr, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)) {
 			place = builder.getVariablePlace(myStr, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+		} else if (builder.containsEntry(myStr, SymEntry.LOCAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
+			place = builder.getVariablePlace(myStr, SymEntry.LOCAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
 		} else {
 			throw new ICodeGeneratorException(assignment, "Error no variable was found with attributes selected");
 		}
@@ -1032,7 +1046,7 @@ public class MyICodeGenerator{
 			    Expression valArg = valArgs.get(i);
 			    TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
 			    ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
-			    IdentExp result = generateExpressionIr(valArg, builder);
+			    IdentExp result = generateExpressionIr(valArg, callerFuncName, builder);
 			    IdentExp arg = builder.getVariablePlace(funcName, i, SymEntry.EXTERNAL | SymEntry.PARAM);
 			    definitions.add(new Def(arg.scope, arg.ident, result, type));
 			}
@@ -1044,7 +1058,7 @@ public class MyICodeGenerator{
 		 //Build external function call
 	      LinkedList<Tuple<Exp, ICode.Type>> procedureArgs = new LinkedList<Tuple<Exp, ICode.Type>>();
 	      for(Expression arg : valArgs){
-	        Exp place = generateExpressionIr(arg, builder);
+	        Exp place = generateExpressionIr(arg, callerFuncName, builder);
 	        TypeCheckerQualities qual = arg.acceptResult(typeChecker);
 	        ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
 	        procedureArgs.add(new Tuple<Exp, ICode.Type>(place, type));

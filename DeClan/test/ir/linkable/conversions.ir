@@ -69,7 +69,6 @@ CODE SECTION
  CALL WriteLn()
  DEF O := 3.1415 <REAL>
  CALL p([(GLOBAL b) -> e]<INT>, [O -> f]<REAL>)
- CALL p([(GLOBAL b) -> e]<INT>, [O -> f]<REAL>)
  DEF P := (RETURN g) <INT>
  GLOBAL a := P <INT>
  CALL WriteReal([(GLOBAL d) -> m]<REAL>)
@@ -78,9 +77,9 @@ END
 PROC SECTION
  PROC LABEL p
   DEF Q := 0 <INT>
-  CALL IntToReal([(GLOBAL b) -> C]<INT>)
+  CALL IntToReal([(PARAM e) -> C]<INT>)
   DEF R := (RETURN D) <REAL>
-  CALL RAdd([(GLOBAL a) -> F]<REAL>, [R -> G]<REAL>)
+  CALL RAdd([(PARAM f) -> F]<REAL>, [R -> G]<REAL>)
   DEF S := (RETURN H) <REAL>
   CALL Round([S -> T]<REAL>)
   DEF V := (RETURN U) <INT>

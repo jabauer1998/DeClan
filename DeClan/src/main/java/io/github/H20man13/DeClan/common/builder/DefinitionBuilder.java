@@ -307,7 +307,6 @@ public class DefinitionBuilder extends SymbolBuilder{
     }
     
     public IdentExp buildFunctionCall(String funcName, List<Def> definitions, IdentExp returnPlace, ICode.Type returnType) {
-    	addInstruction(new Call(funcName, definitions));
     	String newReg = gen.genNext();
     	addInstruction(new Call(funcName, definitions));
     	addInstruction(new Def(ICode.Scope.LOCAL, newReg, returnPlace, returnType));

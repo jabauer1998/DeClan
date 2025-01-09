@@ -262,15 +262,15 @@ public class MyIrParser {
         	IrToken declanIdent = match(IrTokenType.ID);
         	resultMask |= SymEntry.GLOBAL;
             return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme(), false);
-        } else if(willMatch(IrTokenType.ID)) {
-        	IrToken funcName = skip();
-        	resultMask |= SymEntry.LOCAL;
-        	IrToken declanIdent = match(IrTokenType.ID);
-        	return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme(), funcName.getLexeme());
         } else {
+        	IrToken declanIdent = skip();
         	resultMask |= SymEntry.LOCAL;
-        	IrToken declanIdent = match(IrTokenType.ID);
-        	return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme(), false);
+        	if(willMatch(IrTokenType.ID)) {
+        		IrToken funcName = skip();
+            	return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme(), funcName.getLexeme());
+        	} else {
+            	return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme(), false);
+        	}
         }
     }
 

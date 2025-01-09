@@ -49,17 +49,17 @@ public class Lib implements ICode, Iterable<ICode> {
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.containsAllQualities(externalOrInternal))
                 	if(strategy == SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME) {
-                		if(entry.declanIdent != null)
-                			if(entry.declanIdent.equals(identifierOrFunctionOrLocation))
-                				return true;
+            				if(entry.declanIdent != null)
+            					if(entry.declanIdent.equals(identifierOrFunctionOrLocation))
+            						return true;
                 	} else if(strategy == SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME) {
-                		if(entry.funcName != null)
-                			if(entry.funcName.equals(identifierOrFunctionOrLocation))
-                				return true;
+            				if(entry.funcName != null)
+            					if(entry.funcName.equals(identifierOrFunctionOrLocation))
+            						return true;
                 	} else {
-                		if(entry.icodePlace != null)
-                			if(entry.icodePlace.equals(identifierOrFunctionOrLocation))
-                				return true;
+            			if(entry.icodePlace != null)
+            				if(entry.icodePlace.equals(identifierOrFunctionOrLocation))
+            					return true;
                 	}
              }
         }
@@ -67,7 +67,7 @@ public class Lib implements ICode, Iterable<ICode> {
         return false;
     }
         
-    public boolean containsEntry(String icodePlace, String funcName, int externalOrInternal){
+    public boolean containsEntry(String icodePlace, String funcName, int externalOrInternal, SymbolSearchStrategy strat){
         int symbolStart = beginningOfSymbolSection();
         int symbolEnd = endOfSymbolSection();
         for(int i = symbolStart; i <= symbolEnd; i++){
@@ -75,11 +75,19 @@ public class Lib implements ICode, Iterable<ICode> {
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
                 if(entry.containsAllQualities(externalOrInternal))
-                	if(entry.icodePlace != null)
-                		if(entry.icodePlace.equals(icodePlace))
-                			if(entry.funcName != null)
-	                			if(entry.funcName.equals(funcName))
-	                				return true;
+                	if(strat == SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) {
+                		if(entry.icodePlace != null)
+                    		if(entry.icodePlace.equals(icodePlace))
+                    			if(entry.funcName != null)
+    	                			if(entry.funcName.equals(funcName))
+    	                				return true;
+                	} else if(strat == SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME) {
+                		if(entry.declanIdent != null)
+                    		if(entry.declanIdent.equals(icodePlace))
+                    			if(entry.funcName != null)
+    	                			if(entry.funcName.equals(funcName))
+    	                				return true;
+                	}
             }
         }
         return false;
@@ -151,18 +159,27 @@ public class Lib implements ICode, Iterable<ICode> {
         throw new RuntimeException("Coulld not find symbol with identifier " + funcName);
     }
     
-    public VarSymEntry getVariableData(String identifierName, String funcName, int internalOrExternal){
+    public VarSymEntry getVariableData(String identifierName, String funcName, int internalOrExternal, SymbolSearchStrategy strat){
         int symbolStart = beginningOfSymbolSection();
         int symbolEnd = endOfSymbolSection();
         for(int i = symbolStart; i <= symbolEnd; i++){
             ICode instruction = getInstruction(i);
             if(instruction instanceof VarSymEntry){
                 VarSymEntry entry = (VarSymEntry)instruction;
-                if(entry.declanIdent != null)
-                	if(entry.declanIdent.equals(identifierName))
-                		if(entry.funcName.equals(funcName))
-                			if(entry.containsAllQualities(internalOrExternal))
-                				return entry;
+                if(strat == SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME) {
+                	if(entry.declanIdent != null)
+                		if(entry.declanIdent.equals(identifierName))
+                        	if(entry.funcName != null)
+                        		if(entry.funcName.equals(funcName))
+                        			if(entry.containsAllQualities(internalOrExternal))
+                        				return entry;
+                } else if(strat == SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) {
+                	if(entry.icodePlace.equals(identifierName))
+                    	if(entry.funcName != null)
+                    		if(entry.funcName.equals(funcName))
+                    			if(entry.containsAllQualities(internalOrExternal))
+                    				return entry;
+                }
             }
         }
 
