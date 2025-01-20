@@ -567,6 +567,6 @@ public abstract class P {
 
     @Override
     public int hashCode(){
-        return Objects.hashCode(this);
+        return this.toString().hashCode();
     }
 }

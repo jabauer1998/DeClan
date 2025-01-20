@@ -48,6 +48,7 @@ import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
+import io.github.H20man13.DeClan.common.icode.section.BssSec;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
@@ -103,12 +104,23 @@ public class MyCodeGenerator {
 			return false;
 		}
 	}
+	
+	private void skipSymbolTable() {
+		i = 0;
+		ICode instruction = intermediateCode.get(i);
+		while(!(instruction instanceof DataSec)) {
+			i++;
+			instruction = intermediateCode.get(i);
+		}
+	}
 
 	public void codeGen() {
 		try {
 			int size = intermediateCode.size();
 
-			for (i = 0; i < size; i++) {
+			skipSymbolTable();
+			
+			for (; i < size; i++) {
 				ICode icode1 = intermediateCode.get(i);
 				if (i + 1 < size) {
 					ICode icode2 = intermediateCode.get(i + 1);
@@ -243,6 +255,12 @@ public class MyCodeGenerator {
 
 		// Init Proc Label Pattern
 		initProcLabel0();
+		
+		//Init header patterns
+		initDataSectionHeader();
+		initBssSectionHeader();
+		initCodeSectionHeader();
+		initProcSectionHeader();
 
 		// Init End Pattern
 		initEnd0();
@@ -3176,13 +3194,164 @@ public class MyCodeGenerator {
 			}
 		});
 	}
+	
+	private void initDataSectionHeader() {
+		codeGenFunctions.put(Pattern.dataSectionHeader, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				int x = i + 1;
+				int toAllocate = 0;
+				ICode instruction = null;
+				do {
+					instruction = intermediateCode.get(x);
+					if (instruction instanceof Def) {
+						Def definition = (Def) instruction;
+						if (definition.scope == ICode.Scope.LOCAL) {
+							if (definition.type == ICode.Type.BOOL) {
+								toAllocate += 1;
+							} else {
+								toAllocate += 4;
+							}
+						}
+					}
+					x++;
+				} while (!(instruction instanceof BssSec));
+
+				int offSet = toAllocate;
+				x = i + 1;
+				while (offSet > 0) {
+					instruction = intermediateCode.get(x);
+					if (instruction instanceof Def) {
+						Def definition = (Def) instruction;
+						if (definition.scope == ICode.Scope.LOCAL) {
+							cGen.addVariable(definition.label, VariableLength.WORD, offSet);
+							if (definition.type == ICode.Type.BOOL) {
+								offSet -= 1;
+							} else {
+								offSet -= 4;
+							}
+						}
+					} else if (instruction instanceof BssSec) {
+						break;
+					}
+				}
+				
+				rGen.freeTempRegs();
+				return null;
+			}
+		});
+	}
+	
+	private void initBssSectionHeader() {
+		codeGenFunctions.put(Pattern.bssSectionHeader, new Callable<Void>() {
+
+			@Override
+			public Void call() throws Exception {
+				int x = i - 1;
+				ICode instruction = null;
+				int localStack = 0;
+				do {
+					instruction = intermediateCode.get(x);
+					if(instruction instanceof Def) {
+						Def definition = (Def)instruction;
+						if(definition.scope == ICode.Scope.LOCAL) {
+							if(definition.type == ICode.Type.BOOL)
+								localStack += 1;
+							else
+								localStack += 4;
+						}
+					}
+					x--;
+				} while(!(instruction instanceof DataSec));
+				
+				cGen.addInstruction("SUB R13, R13, #" + localStack);
+				rGen.freeTempRegs();
+				return null;
+			}
+		});
+	}
+	
+	private void initCodeSectionHeader() {
+		codeGenFunctions.put(Pattern.codeSectionHeader, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				int x = i + 1;
+				int toAllocate = 0;
+				ICode instruction = null;
+				do {
+					instruction = intermediateCode.get(x);
+					if (instruction instanceof Def) {
+						Def definition = (Def) instruction;
+						if (definition.scope == ICode.Scope.LOCAL) {
+							if (definition.type == ICode.Type.BOOL) {
+								toAllocate += 1;
+							} else {
+								toAllocate += 4;
+							}
+						}
+					}
+					x++;
+				} while (!(instruction instanceof End));
+
+				int offSet = toAllocate;
+				x = i + 1;
+				while (offSet > 0) {
+					instruction = intermediateCode.get(x);
+					if (instruction instanceof Def) {
+						Def definition = (Def) instruction;
+						if (definition.scope == ICode.Scope.LOCAL) {
+							cGen.addVariable(definition.label, VariableLength.WORD, offSet);
+							if (definition.type == ICode.Type.BOOL) {
+								offSet -= 1;
+							} else {
+								offSet -= 4;
+							}
+						}
+					} else if (instruction instanceof End) {
+						break;
+					}
+				}
+				
+				rGen.freeTempRegs();
+				return null;
+			}
+		});
+	}
 
 	private void initEnd0() {
 		codeGenFunctions.put(Pattern.end0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
+				int x = i - 1;
+				ICode instruction = null;
+				int localStack = 0;
+				do {
+					instruction = intermediateCode.get(x);
+					if(instruction instanceof Def) {
+						Def definition = (Def)instruction;
+						if(definition.scope == ICode.Scope.LOCAL) {
+							if(definition.type == ICode.Type.BOOL)
+								localStack += 1;
+							else
+								localStack += 4;
+						}
+					}
+					x--;
+				} while(!(instruction instanceof CodeSec));
+				
+				cGen.addInstruction("SUB R13, R13, #" + localStack);
 				cGen.addInstruction("STP");
 				rGen.freeTempRegs();
+				return null;
+			}
+		});
+	}
+	
+	private void initProcSectionHeader() {
+		codeGenFunctions.put(Pattern.procSectionHeader, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				// DO nothing when this pattern is discovered
 				return null;
 			}
 		});

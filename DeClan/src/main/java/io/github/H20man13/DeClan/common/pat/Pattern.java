@@ -126,6 +126,12 @@ public class Pattern {
     public static P if6 = P.PAT(P.IF(), P.PAT(P.ID(), P.BEQ(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if7 = P.PAT(P.IF(), P.PAT(P.ID(), P.BNE(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
 
+    //Declare all usefull headers inside the code generator
+    public static P dataSectionHeader = P.PAT(P.DATA(), P.SECTION());
+    public static P bssSectionHeader = P.PAT(P.BSS(), P.SECTION());
+    public static P codeSectionHeader = P.PAT(P.CODE(), P.SECTION());
+    public static P procSectionHeader = P.PAT(P.PROC(), P.SECTION());
+    
     public static P goto0 = P.PAT(P.GOTO(), P.ID());
     public static P label0 = P.PAT(P.LABEL(), P.ID());
     public static P procLabel0 = P.PAT(P.PROC(), P.LABEL(), P.ID());

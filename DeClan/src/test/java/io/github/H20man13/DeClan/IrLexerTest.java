@@ -40,7 +40,7 @@ public class IrLexerTest {
 
     @Test
     public void testKeywords(){
-        String keywords = "LABEL IF TRUE FALSE THEN ELSE GOTO CALL PROC IADD RADD ISUB RSUB BNOT IMUL RMUL IDIV RDIV IMOD LT GT GE LE NE EQ IASM IPARAM SECTION EXTERNAL INTERNAL CONST CODE DATA GLOBAL PARAM";
+        String keywords = "LABEL IF TRUE FALSE THEN ELSE GOTO CALL PROC IADD ISUB BNOT LT GT GE LE IEQ INE BEQ BNE IASM IPARAM SECTION EXTERNAL INTERNAL CONST CODE DATA GLOBAL PARAM";
         Source source = new ReaderSource(new StringReader(keywords));
         ErrorLog errLog = new ErrorLog();
         MyIrLexer lex = new MyIrLexer(source, errLog);
@@ -56,21 +56,16 @@ public class IrLexerTest {
         tokTypes.add(IrTokenType.CALL); 
         tokTypes.add(IrTokenType.PROC);
         tokTypes.add(IrTokenType.IADD);
-        tokTypes.add(IrTokenType.RADD);
         tokTypes.add(IrTokenType.ISUB);
-        tokTypes.add(IrTokenType.RSUB);
         tokTypes.add(IrTokenType.BNOT); 
-        tokTypes.add(IrTokenType.IMUL);
-        tokTypes.add(IrTokenType.RMUL);
-        tokTypes.add(IrTokenType.IDIV);
-        tokTypes.add(IrTokenType.RDIV);
-        tokTypes.add(IrTokenType.IMOD);
         tokTypes.add(IrTokenType.LT); 
         tokTypes.add(IrTokenType.GT);
         tokTypes.add(IrTokenType.GE);
         tokTypes.add(IrTokenType.LE);
-        tokTypes.add(IrTokenType.NE);
-        tokTypes.add(IrTokenType.EQ);
+        tokTypes.add(IrTokenType.IEQ);
+        tokTypes.add(IrTokenType.INE);
+        tokTypes.add(IrTokenType.BEQ);
+        tokTypes.add(IrTokenType.BNE);
         tokTypes.add(IrTokenType.IASM);
         tokTypes.add(IrTokenType.IPARAM);
         tokTypes.add(IrTokenType.SECTION);
