@@ -87,7 +87,7 @@ public class MyCodeGenerator {
 		if (codeGenFunctions.containsKey(possibleTwoStagePattern)) {
 			Callable<Void> codeGenFunction = codeGenFunctions.get(possibleTwoStagePattern);
 			codeGenFunction.call();
-			i++;
+			i+= 2;
 			return true;
 		}
 		return false;
@@ -98,8 +98,10 @@ public class MyCodeGenerator {
 
 		if (codeGenFunctions.containsKey(oneStagePattern)) {
 			codeGenFunctions.get(oneStagePattern).call();
+			i++;
 			return true;
 		} else {
+			i++;
 			errorLog.add("Pattern \n\n" + oneStagePattern.toString() + "\n\n" + "not found", new Position(i, 0));
 			return false;
 		}
@@ -120,7 +122,7 @@ public class MyCodeGenerator {
 
 			skipSymbolTable();
 			
-			for (; i < size; i++) {
+			while (i < size) {
 				ICode icode1 = intermediateCode.get(i);
 				if (i + 1 < size) {
 					ICode icode2 = intermediateCode.get(i + 1);
@@ -3185,6 +3187,7 @@ public class MyCodeGenerator {
 					} else if (instruction instanceof Return) {
 						break;
 					}
+					x++;
 				}
 
 				ProcLabel labelICode = (ProcLabel) icode;
@@ -3234,6 +3237,7 @@ public class MyCodeGenerator {
 					} else if (instruction instanceof BssSec) {
 						break;
 					}
+					x++;
 				}
 				
 				rGen.freeTempRegs();
@@ -3310,6 +3314,7 @@ public class MyCodeGenerator {
 					} else if (instruction instanceof End) {
 						break;
 					}
+					x++;
 				}
 				
 				rGen.freeTempRegs();
