@@ -358,15 +358,17 @@ public class MyIrParser {
         IdentExp left = parseIdentifier();
 
         IrToken op = null;
-        if(willMatch(IrTokenType.EQ) 
-        || willMatch(IrTokenType.NE)
+        if(willMatch(IrTokenType.BEQ) 
+        || willMatch(IrTokenType.BNE)
+        || willMatch(IrTokenType.INE)
+        || willMatch(IrTokenType.IEQ)
         || willMatch(IrTokenType.GT)
         || willMatch(IrTokenType.GE)
         || willMatch(IrTokenType.LT)
         || willMatch(IrTokenType.LE)){
             op = skip();
         } else {
-            op = match(IrTokenType.EQ);
+            op = match(IrTokenType.IEQ);
         }
 
         IdentExp right = parseIdentifier();
@@ -437,24 +439,20 @@ public class MyIrParser {
     }
 
     private Exp parseExpression(){
-        if(willMatch(IrTokenType.INEG) || willMatch(IrTokenType.RNEG) 
-        || willMatch(IrTokenType.BNOT) || willMatch(IrTokenType.INOT)) {
+        if(willMatch(IrTokenType.BNOT) || willMatch(IrTokenType.INOT)) {
             return parseUnaryExpression();
         } else if(willMatch(IrTokenType.ID) || willMatch(IrTokenType.LPAR)) {
             IdentExp exp1 = parseIdentifier();
 
             if(willMatch(IrTokenType.LT) || willMatch(IrTokenType.IADD) 
             || willMatch(IrTokenType.LE) || willMatch(IrTokenType.GT)
-            || willMatch(IrTokenType.NE) || willMatch(IrTokenType.GE)
-            || willMatch(IrTokenType.LOR) || willMatch(IrTokenType.ISUB)
-            || willMatch(IrTokenType.IMUL) || willMatch(IrTokenType.IDIV)
-            || willMatch(IrTokenType.IMOD) || willMatch(IrTokenType.LAND)
-            || willMatch(IrTokenType.IAND) || willMatch(IrTokenType.IOR)
-            || willMatch(IrTokenType.ILSHIFT) || willMatch(IrTokenType.IRSHIFT)
-            || willMatch(IrTokenType.EQ) || willMatch(IrTokenType.RADD)
-            || willMatch(IrTokenType.RSUB) || willMatch(IrTokenType.RMUL)
-            || willMatch(IrTokenType.RDIV) || willMatch(IrTokenType.RDIVIDE)
-            || willMatch(IrTokenType.IDIVIDE) || willMatch(IrTokenType.IXOR)) {
+            || willMatch(IrTokenType.INE) || willMatch(IrTokenType.BNE)
+            || willMatch(IrTokenType.GE) || willMatch(IrTokenType.LOR) 
+            || willMatch(IrTokenType.ISUB) || willMatch(IrTokenType.LAND) 
+            || willMatch(IrTokenType.IAND) || willMatch(IrTokenType.IOR) 
+            || willMatch(IrTokenType.ILSHIFT) || willMatch(IrTokenType.IRSHIFT) 
+            || willMatch(IrTokenType.BEQ) || willMatch(IrTokenType.IEQ) 
+            || willMatch(IrTokenType.IXOR)) {
                 IrToken op = skip();
 
                 IdentExp exp2 = parseIdentifier();

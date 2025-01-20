@@ -611,8 +611,10 @@ public class MyICodeMachine {
                 case IXOR: return OpUtil.bitwiseXor(left, right);
                 case ILSHIFT: return OpUtil.leftShift(left, right);
                 case IRSHIFT: return OpUtil.rightShift(left, right);
-                case EQ: return OpUtil.equal(left, right);
-                case NE: return OpUtil.notEqual(left, right);
+                case BEQ: return OpUtil.equal(left, right);
+                case BNE: return OpUtil.notEqual(left, right);
+                case IEQ: return OpUtil.equal(left, right);
+                case INE: return OpUtil.equal(left, right);
                 case GE: return OpUtil.greaterThanOrEqualTo(left, right);
                 case GT: return OpUtil.greaterThan(left, right);
                 case LE: return OpUtil.lessThanOrEqualTo(left, right);

@@ -247,7 +247,8 @@ public class MyICodeTypeChecker {
             throw new ICodeTypeCheckerException("typeCheckBinaryExpression", expression, instructionNumber, "Error the right hand side of the binary expression contains a String value");
         }
 	
-        if(expression.op == BinExp.Operator.EQ || expression.op == BinExp.Operator.NE 
+        if(expression.op == BinExp.Operator.IEQ || expression.op == BinExp.Operator.INE
+        || expression.op == BinExp.Operator.BEQ || expression.op == BinExp.Operator.BNE
         || expression.op == BinExp.Operator.LT || expression.op == BinExp.Operator.LE 
         || expression.op == BinExp.Operator.GT || expression.op == BinExp.Operator.GE
         || expression.op == BinExp.Operator.LAND || expression.op == BinExp.Operator.LOR){

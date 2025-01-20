@@ -109,11 +109,19 @@ public class DefinitionBuilder extends SymbolBuilder{
     }
     
     public IdentExp buildIntegerEqualToDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
-    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.EQ, right, ICode.Type.BOOL);
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.IEQ, right, ICode.Type.BOOL);
     }
     
     public IdentExp buildIntegerNotEqualToDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
-    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.NE, right, ICode.Type.BOOL);
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.INE, right, ICode.Type.BOOL);
+    }
+    
+    public IdentExp buildBooleanEqualToDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.IEQ, right, ICode.Type.BOOL);
+    }
+    
+    public IdentExp buildBooleanNotEqualToDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
+    	return this.buildBinaryDefinition(scope, left, BinExp.Operator.INE, right, ICode.Type.BOOL);
     }
     
     public IdentExp buildBooleanOrDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {

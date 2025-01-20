@@ -296,7 +296,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         BoolExp trueExp = new BoolExp(true);
         String place = gen.genNext();
         addInstruction(new Def(ICode.Scope.LOCAL, place, trueExp, ICode.Type.BOOL));
-        BinExp exp = new BinExp(exprResult, BinExp.Operator.EQ, new IdentExp(ICode.Scope.LOCAL, place));
+        BinExp exp = new BinExp(exprResult, BinExp.Operator.BEQ, new IdentExp(ICode.Scope.LOCAL, place));
         addInstruction(new StandardLabel("REPEATBEG_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
         addInstruction(new If(exp, "REPEATEND_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel, "REPEATLOOP_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
         addInstruction(new StandardLabel("REPEATLOOP_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
@@ -325,7 +325,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         BoolExp boolExp = new BoolExp(true);
         String place = gen.genNext();
         addInstruction(new Def(ICode.Scope.LOCAL, place, boolExp, ICode.Type.BOOL));
-        BinExp exp = new BinExp(test, BinExp.Operator.EQ, new IdentExp(ICode.Scope.LOCAL, place));
+        BinExp exp = new BinExp(test, BinExp.Operator.BEQ, new IdentExp(ICode.Scope.LOCAL, place));
         addInstruction(new If(exp, "IFSTAT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber + "_LEVEL_" + ifStatementLevel, "IFNEXT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber + "_LEVEL_" + ifStatementLevel));
         addInstruction(new StandardLabel("IFSTAT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber + "_LEVEL_" + ifStatementLevel));
     }
@@ -364,7 +364,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         BoolExp trueExp = new BoolExp(true);
         String place = gen.genNext();
         addInstruction(new Def(ICode.Scope.LOCAL, place, trueExp, ICode.Type.BOOL));
-        BinExp exp = new BinExp(test, BinExp.Operator.EQ, new IdentExp(ICode.Scope.LOCAL, place));
+        BinExp exp = new BinExp(test, BinExp.Operator.BEQ, new IdentExp(ICode.Scope.LOCAL, place));
         addInstruction(new If(exp, "WHILESTAT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel, "WHILENEXT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
         addInstruction(new StandardLabel("WHILECOND_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
         addInstruction(new If(exp, "WHILESTAT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel, "WHILEEND_" + whileLoopNumber + "_LEVEL_" + whileLoopLevel));

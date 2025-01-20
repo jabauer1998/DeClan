@@ -102,11 +102,19 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     }
     
     public void buildIntegerEqualToAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
-    	buildBinaryAssignment(scope, place, left, BinExp.Operator.EQ, right, ICode.Type.BOOL);
+    	buildBinaryAssignment(scope, place, left, BinExp.Operator.IEQ, right, ICode.Type.BOOL);
     }
     
     public void buildIntegerNotEqualToAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
-    	buildBinaryAssignment(scope, place, left, BinExp.Operator.NE, right, ICode.Type.BOOL);
+    	buildBinaryAssignment(scope, place, left, BinExp.Operator.INE, right, ICode.Type.BOOL);
+    }
+    
+    public void buildBooleanEqualToAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
+    	buildBinaryAssignment(scope, place, left, BinExp.Operator.BEQ, right, ICode.Type.BOOL);
+    }
+    
+    public void buildBooleanNotEqualToAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
+    	buildBinaryAssignment(scope, place, left, BinExp.Operator.BNE, right, ICode.Type.BOOL);
     }
     
     public void buildBooleanOrAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {

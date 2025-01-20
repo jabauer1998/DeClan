@@ -578,7 +578,7 @@ public class MyICodeGenerator{
               } else if(intActualIncriment > 0){
                 builder.buildForLoopBeginning(curValue, BinExp.Operator.LT, target);
               } else {
-                builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
+                builder.buildForLoopBeginning(curValue, BinExp.Operator.INE, target);
               }
             } else if(actualIncriment instanceof Float){
               Float floatActualIncriment = ConversionUtils.toReal(actualIncriment);
@@ -587,10 +587,10 @@ public class MyICodeGenerator{
               } else if(floatActualIncriment > 0){
                 builder.buildForLoopBeginning(curValue, BinExp.Operator.LT, target);
               } else {
-                builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
+                builder.buildForLoopBeginning(curValue, BinExp.Operator.INE, target);
               }
             } else {
-              builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
+              builder.buildForLoopBeginning(curValue, BinExp.Operator.INE, target);
             }
     	}
         
@@ -619,7 +619,7 @@ public class MyICodeGenerator{
       generateAssignmentIr(forbranch.getInitAssignment(), builder);
       IdentExp target = generateExpressionIr(forbranch.getTargetExpression(), builder);
       IdentExp curvalue = builder.getVariablePlace(forbranch.getInitAssignment().getVariableName().getLexeme(), SymEntry.INTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
-      builder.buildForLoopBeginning(curvalue, BinExp.Operator.NE, target);
+      builder.buildForLoopBeginning(curvalue, BinExp.Operator.INE, target);
       builder.incrimentForLoopLevel();
       for(int i = 0; i < toExec.size(); i++){
           generateStatementIr(toExec.get(i), builder);
@@ -653,7 +653,7 @@ public class MyICodeGenerator{
 	              } else if(intActualIncriment > 0){
 	                builder.buildForLoopBeginning(curValue, BinExp.Operator.LT, target);
 	              } else {
-	                builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
+	                builder.buildForLoopBeginning(curValue, BinExp.Operator.INE, target);
 	              }
 	            } else if(actualIncriment instanceof Float){
 	              Float floatActualIncriment = ConversionUtils.toReal(actualIncriment);
@@ -662,10 +662,10 @@ public class MyICodeGenerator{
 	              } else if(floatActualIncriment > 0){
 	                builder.buildForLoopBeginning(curValue, BinExp.Operator.LT, target);
 	              } else {
-	                builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
+	                builder.buildForLoopBeginning(curValue, BinExp.Operator.INE, target);
 	              }
 	            } else {
-	              builder.buildForLoopBeginning(curValue, BinExp.Operator.NE, target);
+	              builder.buildForLoopBeginning(curValue, BinExp.Operator.INE, target);
 	            }
 	    	}
 	        
@@ -694,7 +694,7 @@ public class MyICodeGenerator{
 	      generateAssignmentIr(forbranch.getInitAssignment(), callerFuncName, builder);
 	      IdentExp target = generateExpressionIr(forbranch.getTargetExpression(), callerFuncName, builder);
 	      IdentExp curvalue = builder.getVariablePlace(forbranch.getInitAssignment().getVariableName().getLexeme(), SymEntry.INTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
-	      builder.buildForLoopBeginning(curvalue, BinExp.Operator.NE, target);
+	      builder.buildForLoopBeginning(curvalue, BinExp.Operator.INE, target);
 	      builder.incrimentForLoopLevel();
 	      for(int i = 0; i < toExec.size(); i++){
 	          generateStatementIr(toExec.get(i), builder);

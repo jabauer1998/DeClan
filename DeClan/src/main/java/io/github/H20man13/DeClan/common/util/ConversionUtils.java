@@ -35,8 +35,10 @@ public class ConversionUtils {
             case IXOR: return BinExp.Operator.IXOR;
             case ILSHIFT: return BinExp.Operator.ILSHIFT;
             case IRSHIFT: return BinExp.Operator.IRSHIFT;
-            case EQ: return BinExp.Operator.EQ;
-            case NE: return BinExp.Operator.NE;
+            case BEQ: return BinExp.Operator.BEQ;
+            case BNE: return BinExp.Operator.BNE;
+            case INE: return BinExp.Operator.INE;
+            case IEQ: return BinExp.Operator.IEQ;
             case GE: return BinExp.Operator.GE;
             case GT: return BinExp.Operator.GT;
             case LE: return BinExp.Operator.LE;
@@ -96,8 +98,10 @@ public class ConversionUtils {
             case GE: return P.GE();
             case LT: return P.LT();
             case LE: return P.LE();
-            case EQ: return P.EQ();
-            case NE: return P.NE();
+            case BEQ: return P.BEQ();
+            case BNE: return P.BNE();
+            case IEQ: return P.IEQ();
+            case INE: return P.INE();
             default: throw new ConversionException("binOpToPattern", BinExp.Operator.class.getName(), P.class.getName());
         }
     }
@@ -160,8 +164,10 @@ public class ConversionUtils {
 
     public static BinExp.Operator toBinOp(IrTokenType type){
         switch(type){
-            case NE: return BinExp.Operator.NE;
-            case EQ: return BinExp.Operator.EQ;
+            case BNE: return BinExp.Operator.BNE;
+            case BEQ: return BinExp.Operator.BEQ;
+            case INE: return BinExp.Operator.INE;
+            case IEQ: return BinExp.Operator.IEQ;
             case GE: return BinExp.Operator.GE;
             case GT: return BinExp.Operator.GT;
             case LE: return BinExp.Operator.LE;

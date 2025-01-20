@@ -1171,18 +1171,32 @@ public class MyOptimizer {
 
                             if(leftExp.isConstant() && rightExp.isConstant()){
                                 switch(binExpVal.op){
-                                    case EQ:
+                                    case IEQ:
                                         Object leftValEq = ConversionUtils.getValue(leftExp);
                                         Object rightValEq = ConversionUtils.getValue(rightExp);
                                         Object resultEq = OpUtil.equal(leftValEq, rightValEq);
                                         varICode.value = ConversionUtils.valueToExp(resultEq);
                                         changes = true;
                                         break;
-                                    case NE:
+                                    case INE:
                                         Object leftValNe = ConversionUtils.getValue(leftExp);
                                         Object rightValNe = ConversionUtils.getValue(rightExp);
                                         Object resultNe = OpUtil.notEqual(leftValNe, rightValNe);
                                         varICode.value = ConversionUtils.valueToExp(resultNe);
+                                        changes = true;
+                                        break;
+                                    case BEQ:
+                                        Object leftValEq1 = ConversionUtils.getValue(leftExp);
+                                        Object rightValEq1 = ConversionUtils.getValue(rightExp);
+                                        Object resultEq1 = OpUtil.equal(leftValEq1, rightValEq1);
+                                        varICode.value = ConversionUtils.valueToExp(resultEq1);
+                                        changes = true;
+                                        break;
+                                    case BNE:
+                                        Object leftValNe1 = ConversionUtils.getValue(leftExp);
+                                        Object rightValNe1 = ConversionUtils.getValue(rightExp);
+                                        Object resultNe1 = OpUtil.notEqual(leftValNe1, rightValNe1);
+                                        varICode.value = ConversionUtils.valueToExp(resultNe1);
                                         changes = true;
                                         break;
                                     case IADD:
@@ -1365,18 +1379,32 @@ public class MyOptimizer {
 
                             if(leftExp.isConstant() && rightExp.isConstant()){
                                 switch(binExpVal.op){
-                                    case EQ:
+                                    case IEQ:
                                         Object leftValEq = ConversionUtils.getValue(leftExp);
                                         Object rightValEq = ConversionUtils.getValue(rightExp);
                                         Object resultEq = OpUtil.equal(leftValEq, rightValEq);
                                         varICode.val = ConversionUtils.valueToExp(resultEq);
                                         changes = true;
                                         break;
-                                    case NE:
+                                    case BEQ:
+                                        Object leftValEq1 = ConversionUtils.getValue(leftExp);
+                                        Object rightValEq1 = ConversionUtils.getValue(rightExp);
+                                        Object resultEq1 = OpUtil.equal(leftValEq1, rightValEq1);
+                                        varICode.val = ConversionUtils.valueToExp(resultEq1);
+                                        changes = true;
+                                        break;
+                                    case INE:
                                         Object leftValNe = ConversionUtils.getValue(leftExp);
                                         Object rightValNe = ConversionUtils.getValue(rightExp);
                                         Object resultNe = OpUtil.notEqual(leftValNe, rightValNe);
                                         varICode.val = ConversionUtils.valueToExp(resultNe);
+                                        changes = true;
+                                        break;
+                                    case BNE:
+                                        Object leftValNe1 = ConversionUtils.getValue(leftExp);
+                                        Object rightValNe1 = ConversionUtils.getValue(rightExp);
+                                        Object resultNe1 = OpUtil.notEqual(leftValNe1, rightValNe1);
+                                        varICode.val = ConversionUtils.valueToExp(resultNe1);
                                         changes = true;
                                         break;
                                     case IADD:

@@ -112,8 +112,10 @@ public class Utils {
             case GE: return factory.createGreaterThanOrEqualNode(isDefinition, scope, place, left, right);
             case LT: return factory.createLessThanNode(isDefinition, scope, place, left, right);
             case LE: return factory.createLessThanOrEqualNode(isDefinition, scope, place, left, right);
-            case EQ: return factory.createEqualsNode(isDefinition, scope, place, left, right);
-            case NE: return factory.createNotEqualsNode(isDefinition, scope, place, left, right);
+            case IEQ: return factory.createIntegerEqualsNode(isDefinition, scope, place, left, right);
+            case INE: return factory.createIntegerNotEqualsNode(isDefinition, scope, place, left, right);
+            case BEQ: return factory.createBooleanEqualsNode(isDefinition, scope, place, left, right);
+            case BNE: return factory.createBooleanNotEqualsNode(isDefinition, scope, place, left, right);
             default: throw new UtilityException("createBinaryNode", "Error cant create binary node with operator " + op);
         }
     }

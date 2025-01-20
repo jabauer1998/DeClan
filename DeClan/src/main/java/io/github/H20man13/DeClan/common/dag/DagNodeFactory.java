@@ -150,18 +150,32 @@ public class DagNodeFactory {
         return new DagOperationNode(isDefinition, scope, nodeName, DagOperationNode.Op.GT, childNodes, ValueType.BOOL);
     }
 
-    public DagNode createEqualsNode(boolean isDefinition, ScopeType scope, String nodeName, DagNode node1, DagNode node2){
+    public DagNode createBooleanEqualsNode(boolean isDefinition, ScopeType scope, String nodeName, DagNode node1, DagNode node2){
         LinkedList<DagNode> childNodes = new LinkedList<>();
         childNodes.add(node1);
         childNodes.add(node2);
-        return new DagOperationNode(isDefinition, scope, nodeName, DagOperationNode.Op.EQ, childNodes, ValueType.BOOL);
+        return new DagOperationNode(isDefinition, scope, nodeName, DagOperationNode.Op.BEQ, childNodes, ValueType.BOOL);
     }
 
-    public DagNode createNotEqualsNode(boolean isDefinition, ScopeType scope, String nodeName, DagNode node1, DagNode node2){
+    public DagNode createBooleanNotEqualsNode(boolean isDefinition, ScopeType scope, String nodeName, DagNode node1, DagNode node2){
         LinkedList<DagNode> childNodes = new LinkedList<>();
         childNodes.add(node1);
         childNodes.add(node2);
-        return new DagOperationNode(isDefinition, scope, nodeName, DagOperationNode.Op.NE, childNodes, ValueType.BOOL);
+        return new DagOperationNode(isDefinition, scope, nodeName, DagOperationNode.Op.BNE, childNodes, ValueType.BOOL);
+    }
+    
+    public DagNode createIntegerEqualsNode(boolean isDefinition, ScopeType scope, String nodeName, DagNode node1, DagNode node2){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(node1);
+        childNodes.add(node2);
+        return new DagOperationNode(isDefinition, scope, nodeName, DagOperationNode.Op.IEQ, childNodes, ValueType.BOOL);
+    }
+
+    public DagNode createIntegerNotEqualsNode(boolean isDefinition, ScopeType scope, String nodeName, DagNode node1, DagNode node2){
+        LinkedList<DagNode> childNodes = new LinkedList<>();
+        childNodes.add(node1);
+        childNodes.add(node2);
+        return new DagOperationNode(isDefinition, scope, nodeName, DagOperationNode.Op.INE, childNodes, ValueType.BOOL);
     }
 
     public DagNode createNotNode(boolean isDefinition, ScopeType scope, String nodeName, DagNode node1){

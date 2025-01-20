@@ -1,6 +1,7 @@
 package io.github.H20man13.DeClan.common.pat;
 
 import java.lang.reflect.InaccessibleObjectException;
+import java.util.Objects;
 
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -9,900 +10,343 @@ public abstract class P {
     private static class IADD extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof IADD){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString(){
-            return "IADD";
+            return obj instanceof IADD;
         }
     }
 
-    private static class RADD extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof RADD){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString(){
-            return "RADD";
-        }
-    }
     private static class ISUB extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof ISUB){
-                return true;
-            } else {
-                return false;
+            return obj instanceof ISUB;
+        }
+    }
+
+    private static class GE extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof GE;
+        }
+    }
+    private static class GT extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof GT;
+        }
+    }
+    private static class LT extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof LT;
+        }
+    }
+    private static class LE extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof LE;
+        }
+    }
+    private static class INE extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof INE;
+        }
+    }
+    private static class IEQ extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof IEQ;
+        }
+    }
+    private static class BNE extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof BNE;
+        }
+    }
+    private static class BEQ extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof BEQ;
+        }
+    }
+    private static class ASSIGN extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof ASSIGN;
+        }
+    }
+    private static class BNOT extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof BNOT;
+        }
+    }
+    private static class BAND extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof BAND;
+        }
+    }
+    private static class BOR extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof BOR;
+        }
+    }
+
+    private static class IAND extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof IAND;
+        }
+    }
+
+    private static class IOR extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof IOR;
+        }
+    }
+
+    private static class IXOR extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof IXOR;
+        }
+    }
+
+    private static class LSHIFT extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof LSHIFT;
+        }
+    }
+
+    private static class RSHIFT extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof RSHIFT;
+        }
+    }
+
+    private static class INOT extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof INOT;
+        }
+    }
+    private static class IF extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof IF;
+        }
+    }
+    private static class BOOL extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof BOOL;
+        }
+    }
+    private static class INT extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof INT;
+        }
+    }
+    private static class REAL extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof REAL;
+        }
+    }
+    private static class STR extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof STR;
+        }
+    }
+    private static class ID extends P{
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof PAT) {
+            	PAT objPattern = (PAT)obj;
+            	P[] innerPattern = objPattern.pattern;
+            	if(innerPattern.length == 2) {
+            		P first = innerPattern[0];
+            		if(first instanceof GLOBAL || 
+            		   first instanceof RETURN || 
+            		   first instanceof PARAM) {
+            			return this.equals(innerPattern[1]);
+            		}
+            	}
             }
+            return obj instanceof ID;
         }
-
-        @Override
-        public String toString() {
-            return "ISUB";
-        }
-        
     }
-
-    private static class RSUB extends P{
+    private static class THEN extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof RSUB){
-                return true;
-            } else {
-                return false;
-            }
+            return obj instanceof THEN;
         }
-
-        @Override
-        public String toString() {
-            return "RSUB";
-        }
-        
     }
-    private static class IMUL extends P{
+    private static class ELSE extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof IMUL){
-                return true;
-            } else {
-                return false;
-            }
+            return obj instanceof ELSE;
         }
-
-        @Override
-        public String toString() {
-            return "IMUL";
-        }
-        
     }
-
-    private static class RMUL extends P{
+    private static class END extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof RMUL){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "RMUL";
+            return obj instanceof END;
         }
     }
-
-    private static class IDIV extends P{
+    private static class LABEL extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof IDIV){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "IDIV";
+            return obj instanceof LABEL;
         }
     }
-
-    private static class RDIVIDE extends P{
+    private static class GOTO extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof RDIVIDE){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "RDIVIDE";
+            return obj instanceof GOTO;
         }
     }
-    private static class IMOD extends P{
+    private static class RETURN extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof IMOD){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "IMOD";
-        }
+            return obj instanceof RETURN;
+        }   
     }
-    public static class GE extends P{
+    private static class PROC extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof GE){
-                return true;
-            } else {
-                return false;
-            }
-        }
-        @Override
-        public String toString(){
-            return "GE";
+            return obj instanceof PROC;
         }
     }
-    public static class GT extends P{
+    private static class CALL extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof GT){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString(){
-            return "GT";
+            return obj instanceof CALL;
         }
     }
-    public static class LT extends P{
+
+    private static class INLINE extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof LT){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "LT";
-        }
-    }
-    public static class LE extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof LE){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "LE";
-        }
-    }
-    public static class NE extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof NE){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString(){
-            return "NE";
-        }
-    }
-    public static class EQ extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof EQ){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString(){
-            return "EQ";
-        }
-    }
-    public static class ASSIGN extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof ASSIGN){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString(){
-            return "ASSIGN";
-        }  
-    }
-    public static class INEG extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof INEG){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "INEG";
+            return obj instanceof INLINE;
         }
     }
 
-    public static class RNEG extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof RNEG){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "RNEG";
-        }
-    }
-    public static class BNOT extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof BNOT){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString(){
-            return "BNOT";
-        }
-    }
-    public static class BAND extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof BAND){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "BAND";
-        }
-    }
-    public static class BOR extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof BOR){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "BOR";
-        }
-    }
-
-    public static class IAND extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof IAND){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "IAND";
-        }
-    }
-
-    public static class IOR extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof IOR){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "IOR";
-        }
-    }
-
-    public static class IXOR extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof IXOR){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "IXOR";
-        }
-    }
-
-    public static class LSHIFT extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof LSHIFT){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "LSHIFT";
-        }
-        
-    }
-
-    public static class RSHIFT extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof RSHIFT){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "RSHIFT";
-        }
-        
-    }
-
-    public static class INOT extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof INOT){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "INOT";
-        }
-    }
-    public static class IF extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof IF){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString(){
-            return "IF";
-        }
-        
-    }
-    public static class BOOL extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof BOOL){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "BOOL";
-        }
-    }
-    public static class INT extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof INT){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "INT";
-        }
-        
-    }
-    public static class REAL extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof REAL){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "REAL";
-        }
-        
-    }
-    public static class STR extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof STR){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "STR";
-        }
-    }
-    public static class ID extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof ID){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "ID";
-        } 
-    }
-    public static class THEN extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof THEN){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString(){
-            return "THEN";
-        }
-        
-    }
-    public static class ELSE extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof ELSE){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "ELSE";
-        }  
-    }
-    public static class END extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof END){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "END";
-        }
-    }
-    public static class LABEL extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof LABEL){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "LABEL";
-        } 
-    }
-    public static class GOTO extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof GOTO){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString(){
-            return "GOTO";
-        }
-    }
-    public static class RETURN extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof RETURN){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "RETURN";
-        }
-        
-    }
-    public static class PROC extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof PROC){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "PROC";
-        }
-        
-    }
-    public static class CALL extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof CALL){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString(){
-            return "CALL";
-        }
-    }
-
-    public static class INLINE extends P{
+    private static class PARAM extends P{
 
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof INLINE){
-                return true;
-            } else {
-                return false;
-            }
+            return obj instanceof PARAM;
         }
-
-        @Override
-        public String toString() {
-            return "INLINE";
-        }
-        
     }
 
-    public static class PARAM extends P{
+    private static class INTERNAL extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof INTERNAL;
+        }
+    }
+
+    private static class EXTERNAL extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof EXTERNAL;
+        }
+    }
+
+    private static class PLACE extends P{
 
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof PARAM){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "PARAM";
+            return obj instanceof PLACE;
         }
     }
 
-    public static class INTERNAL extends P{
+    private static class PUBLIC extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof INTERNAL){
-                return true;
-            } else {
-                return false;
-            }
+            return obj instanceof PUBLIC;
         }
-
-        @Override
-        public String toString(){
-            return "INTERNAL";
-        }
-        
     }
 
-    public static class EXTERNAL extends P{
+    private static class PRIVATE extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof EXTERNAL){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString(){
-            return "EXTERNAL";
+            return obj instanceof PRIVATE;
         }
     }
 
-    public static class PLACE extends P{
-
+    private static class CONST extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof PLACE){
-                return true;
-            } else {
-                return false;
-            }
+            return obj instanceof CONST;
         }
-
-        @Override
-        public String toString() {
-            return "PLACE";
-        }
-        
     }
 
-    public static class PUBLIC extends P{
+    private static class DEF extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof PUBLIC){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "PUBLIC";
+            return obj instanceof DEF;
         }
     }
 
-    public static class PRIVATE extends P{
+    private static class GLOBAL extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof PRIVATE){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "PRIVATE";
+            return obj instanceof GLOBAL;
         }
     }
 
-    public static class CONST extends P{
+    private static class ARGUMENT extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof CONST){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "CONST";
+            return obj instanceof ARGUMENT;
         }
     }
 
-    public static class DEF extends P{
+    private static class SECTION extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof DEF){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "DEF";
+            return obj instanceof SECTION;
         }
     }
 
-    public static class GLOBAL extends P{
-
+    private static class BSS extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof GLOBAL)
-                return true;
-            else
-                return false;
+            return obj instanceof BSS;
         }
-
-        @Override
-        public String toString() {
-            return "GLOBAL";
-        }
-        
     }
 
-    public static class ARGUMENT extends P{
-
+    private static class DATA extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof ARGUMENT)
-                return true;
-            else
-                return false;
-        }
-
-        @Override
-        public String toString() {
-            return "ARGUMENT";
+            return obj instanceof DATA;
         }
     }
 
-    public static class SECTION extends P{
+    private static class CODE extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof SECTION)
-                return true;
-            else
-                return false;
-        }
-
-        @Override
-        public String toString() {
-            return "SECTION";
+            return obj instanceof CODE;
         }
     }
 
-    public static class BSS extends P{
+    private static class SYMBOL extends P{
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof BSS)
-                return true;
-            else
-                return false;
-        }
-
-        @Override
-        public String toString() {
-            return "BSS";
+            return obj instanceof SYMBOL;
         }
     }
 
-    public static class DATA extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof DATA)
-                return true;
-            else
-                return false;
-        }
-
-        @Override
-        public String toString() {
-            return "DATA";
-        }
-    }
-
-    public static class CODE extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof CODE)
-                return true;
-            else
-                return false;
-        }
-
-        @Override
-        public String toString() {
-            return "CODE";
-        }
-    }
-
-    public static class SYMBOL extends P{
-        @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof SYMBOL)
-                return true;
-            else
-                return false;
-        }
-
-        @Override
-        public String toString() {
-            return "SYMBOL";
-        }
-    }
-
-    public static class PAT extends P{
+    private static class PAT extends P{
         private P[] pattern;
 
         private PAT(P... pattern){
@@ -925,20 +369,20 @@ public abstract class P {
                 } else {
                     return false;
                 }
-            } else {
-                return false;
+            } else if(obj instanceof ID) {
+                if(this.pattern.length == 2) {
+                	P first = this.pattern[0];
+                	if(first instanceof GLOBAL || first instanceof RETURN || first instanceof PARAM){
+                		return this.pattern[1].equals(obj);
+                	}
+                }
             }
+            return false;
         }
 
         @Override
         public int hashCode(){
-            int hashCode = 0;
-            
-            for(P pat : pattern){
-                hashCode += pat.hashCode();
-            }
-
-            return hashCode;
+            return Objects.hash((Object[])pattern);
         }
 
         @Override
@@ -962,37 +406,8 @@ public abstract class P {
     public static IADD IADD(){
         return new IADD();
     }
-
-    public static RADD RADD(){
-        return new RADD();
-    }
-
-    public static ISUB ISUB(){
-        return new ISUB();
-    }
-
-    public static RSUB RSUB(){
-        return new RSUB();
-    }
-
-    public static IMUL IMUL(){
-        return new IMUL();
-    }
-
-    public static RMUL RMUL(){
-        return new RMUL();
-    }
-
-    public static IDIV IDIV(){
-        return new IDIV();
-    }
-
-    public static RDIVIDE RDIVIDE(){
-        return new RDIVIDE();
-    }
-    
-    public static IMOD IMOD(){
-        return new IMOD();
+    public static ISUB ISUB() {
+    	return new ISUB();
     }
     public static GE GE(){
         return new GE();
@@ -1006,22 +421,21 @@ public abstract class P {
     public static LE LE(){
         return new LE();
     }
-    public static NE NE(){
-        return new NE();
+    public static INE INE(){
+        return new INE();
     }
-    public static EQ EQ(){
-        return new EQ();
+    public static IEQ IEQ(){
+        return new IEQ();
+    }
+    public static BNE BNE(){
+        return new BNE();
+    }
+    public static BEQ BEQ(){
+        return new BEQ();
     }
     public static ASSIGN ASSIGN(){
         return new ASSIGN();
     }
-    public static INEG INEG(){
-        return new INEG();
-    }
-    public static RNEG RNEG(){
-        return new RNEG();
-    }
-    
     public static BNOT BNOT(){
         return new BNOT();
     }
@@ -1147,10 +561,12 @@ public abstract class P {
     public abstract boolean equals(Object obj);
 
     @Override
-    public abstract String toString();
+    public String toString() {
+    	return this.getClass().getSimpleName();
+    }
 
     @Override
     public int hashCode(){
-        return 1;
+        return Objects.hashCode(this);
     }
 }

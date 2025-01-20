@@ -30,8 +30,10 @@ public class BinExp implements Exp {
         GT,
         LT,
         LE,
-        EQ,
-        NE
+        IEQ,
+        INE,
+        BEQ,
+        BNE
     }
     
     @Override

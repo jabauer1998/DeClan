@@ -19,15 +19,6 @@ public enum IrTokenType {
     PROC,
     IADD,
     ISUB,
-    IMUL,
-    IDIV,
-    IDIVIDE,
-    IMOD,
-    RADD,
-    RSUB,
-    RMUL,
-    RDIV,
-    RDIVIDE,
     LOR,
     LAND,
     IAND,
@@ -37,15 +28,15 @@ public enum IrTokenType {
     IRSHIFT,
     ILSHIFT,
     IPARAM,
-    INEG,
-    RNEG,
     BNOT,
     LT,
     GT,
     GE,
     LE,
-    NE,
-    EQ,
+    BNE,
+    INE,
+    BEQ,
+    IEQ,
     END,
     RETURN,
     IASM,
@@ -123,20 +114,9 @@ public enum IrTokenType {
         addKeyword(GOTO);
         addKeyword(CALL);
         addKeyword(PROC);
-        addKeyword(INEG);
-        addKeyword(RNEG);
         addKeyword(BNOT);
         addKeyword(ISUB);
-        addKeyword(IMUL);
-        addKeyword(IDIV);
-        addKeyword(IDIVIDE);
-        addKeyword(IMOD);
         addKeyword(IADD);
-        addKeyword(RSUB);
-        addKeyword(RMUL);
-        addKeyword(RDIV);
-        addKeyword(RDIVIDE);
-        addKeyword(RADD);
         addKeyword(LAND);
         addKeyword(LOR);
         addKeyword(IAND);
@@ -149,8 +129,10 @@ public enum IrTokenType {
         addKeyword(GT);
         addKeyword(GE);
         addKeyword(LE);
-        addKeyword(NE);
-        addKeyword(EQ);
+        addKeyword(INE);
+        addKeyword(BNE);
+        addKeyword(BEQ);
+        addKeyword(IEQ);
         addKeyword(END);
         addKeyword(RETURN);
         addKeyword(IASM);
