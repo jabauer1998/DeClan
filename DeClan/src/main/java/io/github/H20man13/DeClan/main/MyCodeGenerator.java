@@ -63,23 +63,19 @@ public class MyCodeGenerator {
 
 	private int i;
 
-	public MyCodeGenerator(String outputFile, LiveVariableAnalysis analysis, Prog program, ErrorLog errorLog) {
-		try {
-			this.intermediateCode = program.getICode();
-			this.cGen = new ArmCodeGenerator(outputFile);
-			this.rGen = new ArmRegisterGenerator(cGen, analysis);
-			this.iGen = new IrRegisterGenerator();
-			String place;
-			do {
-				place = iGen.genNext();
-			} while (program.containsPlace(place));
-			this.errorLog = errorLog;
-			this.codeGenFunctions = new HashMap<>();
-			this.i = 0;
-			initCodeGenFunctions();
-		} catch (Exception exp) {
-			errorLog.add(exp.toString(), new Position(i, 0));
-		}
+	public MyCodeGenerator(String outputFile, LiveVariableAnalysis analysis, Prog program, ErrorLog errLog) throws IOException {
+		this.intermediateCode = program.getICode();
+		this.cGen = new ArmCodeGenerator(outputFile);
+		this.rGen = new ArmRegisterGenerator(cGen, analysis);
+		this.iGen = new IrRegisterGenerator();
+		String place;
+		do {
+			place = iGen.genNext();
+		} while (program.containsPlace(place));
+		this.errorLog = errLog;
+		this.codeGenFunctions = new HashMap<>();
+		this.i = 0;
+		initCodeGenFunctions();
 	}
 
 	private boolean genICode(ICode icode1, ICode icode2) throws Exception {
@@ -198,8 +194,8 @@ public class MyCodeGenerator {
 		initIEq1();
 
 		// Initialize the ine Patterns
-		initIEq0();
-		initIEq1();
+		initINe0();
+		initINe1();
 		
 		//Init boolean eq patterns
 		initBEq0();
@@ -238,8 +234,18 @@ public class MyCodeGenerator {
 		initInt0();
 		initInt1();
 		
+		// Initialize String Constant Patterns
+		initStr0();
+		initStr1();
+		
 		// Initialize Id Patterns
 		initId0();
+		initId1();
+		initId2();
+		initId4();
+		initId5();
+		initId6();
+		initId7();
 
 		// Initialize If Statement Patterns
 		initIf0();
@@ -248,6 +254,8 @@ public class MyCodeGenerator {
 		initIf3();
 		initIf4();
 		initIf5();
+		initIf6();
+		initIf7();
 
 		// Init Goto Pattern
 		initGoto0();
@@ -497,11 +505,12 @@ public class MyCodeGenerator {
 			for (int i = 0; i < exp.value.length(); i++) {
 				char letter = exp.value.charAt(i);
 				if (i == 0)
-					cGen.addVariable(newPlace, VariableLength.BYTE, (int) letter);
+					cGen.addVariable(newPlace + "_value", VariableLength.BYTE, (int) letter);
 				else
 					cGen.addVariable(VariableLength.BYTE, (int) letter);
 			}
 			cGen.addVariable(VariableLength.BYTE, (int) '\0');
+			cGen.addVariable(newPlace, VariableLength.WORD, newPlace + "_value");
 			String newReg = rGen.getReg(newPlace, icode);
 			cGen.addInstruction("LDR " + newReg + ", " + newPlace);
 			return newReg;
@@ -2727,6 +2736,232 @@ public class MyCodeGenerator {
 			}
 		});
 	}
+	
+	private void initStr0() {
+		codeGenFunctions.put(Pattern.str0, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				ICode icode = intermediateCode.get(i);
+				Def assignICode = (Def)icode;
+				StrExp assignExp = (StrExp)assignICode.val;
+
+				if (assignICode.scope == ICode.Scope.GLOBAL) {
+					String strToMem = assignExp.value;
+					for(int i = 0; i < strToMem.length(); i++) {
+						char letter = strToMem.charAt(i);
+						if(i == 0) {
+							cGen.addVariable(assignICode.label + "_value", VariableLength.BYTE, (int)letter);
+						} else {
+							cGen.addVariable(VariableLength.BYTE, (int)letter);
+						}
+					}
+					
+					if(strToMem.length() > 0) {
+						cGen.addVariable(VariableLength.BYTE, (int)'\0');
+					} else {
+						cGen.addVariable(assignICode.label + "_value", VariableLength.BYTE, (int)'\0');
+					}
+					
+					cGen.addVariable(assignICode.label, VariableLength.WORD, assignICode.label + "_value");
+				} else if (assignICode.scope == ICode.Scope.PARAM) {
+					String strToMem = assignExp.value;
+					for(int i = 0; i < strToMem.length(); i++) {
+						char letter = strToMem.charAt(i);
+						if(i == 0) {
+							cGen.addVariable(assignICode.label + "_const_value", VariableLength.BYTE, (int)letter);
+						} else {
+							cGen.addVariable(VariableLength.BYTE, (int)letter);
+						}
+					}
+					
+					if(strToMem.length() > 0) {
+						cGen.addVariable(VariableLength.BYTE, (int)'\0');
+					} else {
+						cGen.addVariable(assignICode.label + "_const_value", VariableLength.BYTE, (int)'\0');
+					}
+					
+					
+					cGen.addVariable(assignICode.label + "_value", VariableLength.WORD, assignICode.label + "_const_value");
+					
+					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
+					String tempValue = rGen.getTempReg(assignICode.label + "_value", assignICode);
+					
+					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label + "_value");
+					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
+					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+				} else if (assignICode.scope == ICode.Scope.RETURN) {				
+					String strToMem = assignExp.value;
+					for(int i = 0; i < strToMem.length(); i++) {
+						char letter = strToMem.charAt(i);
+						if(i == 0) {
+							cGen.addVariable(assignICode.label + "_const_value", VariableLength.BYTE, (int)letter);
+						} else {
+							cGen.addVariable(VariableLength.BYTE, (int)letter);
+						}
+					}
+					
+					if(strToMem.length() > 0) {
+						cGen.addVariable(VariableLength.BYTE, (int)'\0');
+					} else {
+						cGen.addVariable(assignICode.label + "_const_value", VariableLength.BYTE, (int)'\0');
+					}
+					
+					
+					cGen.addVariable(assignICode.label + "_value", VariableLength.WORD, assignICode.label + "_const_value");
+					
+					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
+					String tempValue = rGen.getTempReg(assignICode.label + "_value", assignICode);
+					
+					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label + "_value");
+					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
+					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+				} else {
+					String strToMem = assignExp.value;
+					for(int i = 0; i < strToMem.length(); i++) {
+						char letter = strToMem.charAt(i);
+						if(i == 0) {
+							cGen.addVariable(assignICode.label + "_const_value", VariableLength.BYTE, (int)letter);
+						} else {
+							cGen.addVariable(VariableLength.BYTE, (int)letter);
+						}
+					}
+					
+					if(strToMem.length() > 0) {
+						cGen.addVariable(VariableLength.BYTE, (int)'\0');
+					} else {
+						cGen.addVariable(assignICode.label + "_value", VariableLength.BYTE, (int)'\0');
+					}
+					
+					
+					cGen.addVariable(assignICode.label + "_value", VariableLength.WORD, assignICode.label + "_const_value");
+					
+					String tempOffset = rGen.getReg(assignICode.label, assignICode);
+					String tempValue = rGen.getTempReg(assignICode.label + "_value", assignICode);
+					
+					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label + "_value");
+					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
+					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+				}
+				
+				rGen.freeTempRegs();
+				return null;
+			}
+		});
+	}
+	
+	private void initStr1() {
+		codeGenFunctions.put(Pattern.str1, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				ICode icode = intermediateCode.get(i);
+				Assign assignICode = (Assign)icode;
+				StrExp assignExp = (StrExp)assignICode.value;
+
+				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
+					String strToMem = assignExp.value;
+					for(int i = 0; i < strToMem.length(); i++) {
+						char letter = strToMem.charAt(i);
+						if(i == 0) {
+							cGen.addVariable(assignICode.place + "_value", VariableLength.BYTE, (int)letter);
+						} else {
+							cGen.addVariable(VariableLength.BYTE, (int)letter);
+						}
+					}
+					
+					if(strToMem.length() > 0) {
+						cGen.addVariable(VariableLength.BYTE, (int)'\0');
+					} else {
+						cGen.addVariable(assignICode.place + "_value", VariableLength.BYTE, (int)'\0');
+					}
+					
+					String reg = rGen.getReg(assignICode.place, assignICode);
+					cGen.addInstruction("LDR " + reg + ", " + assignICode.place + "_value");
+					cGen.addInstruction("STR " + reg + ", " + assignICode.place);
+				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
+					String strToMem = assignExp.value;
+					for(int i = 0; i < strToMem.length(); i++) {
+						char letter = strToMem.charAt(i);
+						if(i == 0) {
+							cGen.addVariable(assignICode.place + "_const_value", VariableLength.BYTE, (int)letter);
+						} else {
+							cGen.addVariable(VariableLength.BYTE, (int)letter);
+						}
+					}
+					
+					if(strToMem.length() > 0) {
+						cGen.addVariable(VariableLength.BYTE, (int)'\0');
+					} else {
+						cGen.addVariable(assignICode.place + "_const_value", VariableLength.BYTE, (int)'\0');
+					}
+					
+					
+					cGen.addVariable(assignICode.place + "_value", VariableLength.WORD, assignICode.place + "_const_value");
+					
+					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
+					String tempValue = rGen.getTempReg(assignICode.place + "_value", assignICode);
+					
+					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place + "_value");
+					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
+					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
+					String strToMem = assignExp.value;
+					for(int i = 0; i < strToMem.length(); i++) {
+						char letter = strToMem.charAt(i);
+						if(i == 0) {
+							cGen.addVariable(assignICode.place + "_const_value", VariableLength.BYTE, (int)letter);
+						} else {
+							cGen.addVariable(VariableLength.BYTE, (int)letter);
+						}
+					}
+					
+					if(strToMem.length() > 0) {
+						cGen.addVariable(VariableLength.BYTE, (int)'\0');
+					} else {
+						cGen.addVariable(assignICode.place + "_const_value", VariableLength.BYTE, (int)'\0');
+					}
+					
+					
+					cGen.addVariable(assignICode.place + "_value", VariableLength.WORD, assignICode.place + "_const_value");
+					
+					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
+					String tempValue = rGen.getTempReg(assignICode.place + "_value", assignICode);
+					
+					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place + "_value");
+					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
+					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+				} else {
+					String strToMem = assignExp.value;
+					for(int i = 0; i < strToMem.length(); i++) {
+						char letter = strToMem.charAt(i);
+						if(i == 0) {
+							cGen.addVariable(assignICode.place + "_const_value", VariableLength.BYTE, (int)letter);
+						} else {
+							cGen.addVariable(VariableLength.BYTE, (int)letter);
+						}
+					}
+					
+					if(strToMem.length() > 0) {
+						cGen.addVariable(VariableLength.BYTE, (int)'\0');
+					} else {
+						cGen.addVariable(assignICode.place + "_value", VariableLength.BYTE, (int)'\0');
+					}
+					
+					
+					cGen.addVariable(assignICode.place + "_value", VariableLength.WORD, assignICode.place + "_const_value");
+					
+					String tempOffset = rGen.getReg(assignICode.place, assignICode);
+					String tempValue = rGen.getTempReg(assignICode.place + "_value", assignICode);
+					
+					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place + "_value");
+					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
+					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+				}
+				
+				rGen.freeTempRegs();
+				return null;
+			}
+		});
+	}
 
 	private void initId0() {
 		codeGenFunctions.put(Pattern.id0, new Callable<Void>() {
@@ -2835,6 +3070,40 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.get(i);
+				Def assignICode = (Def) icode;
+				IdentExp exp = (IdentExp) assignICode.val;
+
+				String tempReg = loadVariableToReg(exp, ICode.Type.STRING, assignICode);
+				
+				if (assignICode.scope == ICode.Scope.GLOBAL) {
+					cGen.addVariable(assignICode.label, VariableLength.WORD);
+					cGen.addInstruction("STR " + tempReg + ", " + assignICode.label);
+				} else if (assignICode.scope == ICode.Scope.PARAM) {
+					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
+					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
+					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+				} else if (assignICode.scope == ICode.Scope.RETURN) {				
+					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
+					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
+					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+				} else {
+					String tempOffset = rGen.getReg(assignICode.label, assignICode);
+					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
+					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+				}
+				
+				rGen.freeTempRegs();
+
+				return null;
+			}
+		});
+	}
+	
+	private void initId4() {
+		codeGenFunctions.put(Pattern.id4, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				ICode icode = intermediateCode.get(i);
 				Assign assignICode = (Assign)icode;
 				IdentExp exp = (IdentExp) assignICode.value;
 
@@ -2863,8 +3132,8 @@ public class MyCodeGenerator {
 		});
 	}
 	
-	private void initId4() {
-		codeGenFunctions.put(Pattern.id4, new Callable<Void>() {
+	private void initId5() {
+		codeGenFunctions.put(Pattern.id5, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.get(i);
@@ -2896,8 +3165,8 @@ public class MyCodeGenerator {
 		});
 	}
 	
-	private void initId5() {
-		codeGenFunctions.put(Pattern.id5, new Callable<Void>() {
+	private void initId6() {
+		codeGenFunctions.put(Pattern.id6, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.get(i);
@@ -2905,6 +3174,39 @@ public class MyCodeGenerator {
 				IdentExp exp = (IdentExp) assignICode.value;
 
 				String tempReg = loadVariableToReg(exp, ICode.Type.INT, assignICode);
+				
+				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
+					cGen.addInstruction("STR " + tempReg + ", " + assignICode.place);
+				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
+					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
+					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
+					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
+					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
+					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
+					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+				} else {
+					String tempOffset = rGen.getReg(assignICode.place, assignICode);
+					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
+					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+				}
+				
+				rGen.freeTempRegs();
+
+				return null;
+			}
+		});
+	}
+	
+	private void initId7() {
+		codeGenFunctions.put(Pattern.id7, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				ICode icode = intermediateCode.get(i);
+				Assign assignICode = (Assign)icode;
+				IdentExp exp = (IdentExp) assignICode.value;
+
+				String tempReg = loadVariableToReg(exp, ICode.Type.STRING, assignICode);
 				
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + tempReg + ", " + assignICode.place);

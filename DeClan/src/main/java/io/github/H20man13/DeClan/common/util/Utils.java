@@ -1,6 +1,7 @@
 package io.github.H20man13.DeClan.common.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
@@ -321,6 +322,12 @@ public class Utils {
     if(file.exists()){
         file.delete();
     }
+  }
+  
+  public static void createFile(String fileName) throws IOException {
+	  Utils.deleteFile(fileName);
+	  File file = new File(fileName);
+	  file.createNewFile();
   }
   
   public static int getLengthOfUnsignedNumber(int number) {

@@ -5,6 +5,7 @@ import java.util.Objects;
 import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.pat.P;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
 public class Def implements ICode {
     public String label;
@@ -74,12 +75,8 @@ public class Def implements ICode {
     @Override
     public P asPattern() {
         P expPattern = val.asPattern(true);
-        if(this.scope == Scope.GLOBAL) return  P.PAT(P.GLOBAL(), P.DEF(), P.ID(), P.ASSIGN(), expPattern);
-        else if(this.scope == Scope.PARAM) return P.PAT(P.PARAM(), P.DEF(), P.ID(), P.ASSIGN(), expPattern);
-        else if(this.scope == Scope.GLOBAL) return P.PAT(P.GLOBAL(), P.DEF(), P.ID(), P.ASSIGN(), expPattern);
-        else if(this.scope == Scope.LOCAL) return P.PAT(P.DEF(), P.ID(), P.ASSIGN(), expPattern);
-        else if(this.scope == Scope.RETURN) return P.PAT(P.RETURN(), P.DEF(), P.ID(), P.ASSIGN(), expPattern);
-        else throw new ICodeFormatException(this, "Invalid scope type found when generating pattern: " + this.scope);
+        P typePattern = ConversionUtils.typeToPattern(type);
+        return P.PAT(P.DEF(), P.ID(), P.ASSIGN(), expPattern, typePattern);
     }
 
     @Override

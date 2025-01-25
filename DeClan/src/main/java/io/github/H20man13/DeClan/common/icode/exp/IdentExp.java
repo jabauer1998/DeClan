@@ -54,12 +54,19 @@ public class IdentExp implements Exp, Copyable<IdentExp>{
 
     @Override
     public P asPattern(boolean hasContainer) {
-        if(this.scope == ICode.Scope.GLOBAL) return P.PAT(P.GLOBAL(), P.ID());
-        else if(this.scope == ICode.Scope.RETURN) return P.PAT(P.RETURN(), P.ID());
-        else if(this.scope == ICode.Scope.PARAM) return P.PAT(P.PARAM(), P.ID());
-        else if(this.scope == ICode.Scope.LOCAL && hasContainer) return P.PAT(P.ID());
-        else if(this.scope == ICode.Scope.LOCAL) return P.ID();
-        else throw new ICodeFormatException(this, "Error cant produce pattern for IdentExp because the scope is " + scope);
+    	if(hasContainer) {
+    		if(this.scope == ICode.Scope.GLOBAL) return P.PAT(P.PAT(P.GLOBAL(), P.ID()));
+            else if(this.scope == ICode.Scope.RETURN) return P.PAT(P.PAT(P.RETURN(), P.ID()));
+            else if(this.scope == ICode.Scope.PARAM) return P.PAT(P.PAT(P.PARAM(), P.ID()));
+            else if(this.scope == ICode.Scope.LOCAL) return P.PAT(P.ID());
+            else throw new ICodeFormatException(this, "Error cant produce pattern for IdentExp because the scope is " + scope);
+    	} else {
+    		if(this.scope == ICode.Scope.GLOBAL) return P.PAT(P.GLOBAL(), P.ID());
+            else if(this.scope == ICode.Scope.RETURN) return P.PAT(P.RETURN(), P.ID());
+            else if(this.scope == ICode.Scope.PARAM) return P.PAT(P.PARAM(), P.ID());
+            else if(this.scope == ICode.Scope.LOCAL) return P.ID();
+            else throw new ICodeFormatException(this, "Error cant produce pattern for IdentExp because the scope is " + scope);
+    	}
     }
 
     @Override

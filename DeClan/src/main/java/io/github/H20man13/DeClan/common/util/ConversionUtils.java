@@ -11,6 +11,7 @@ import io.github.H20man13.DeClan.common.analysis.region.expr.RefVar;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.exception.ConversionException;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.ICode.Type;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -270,4 +271,14 @@ public class ConversionUtils {
     	}
     	return toRet;
     }
+
+	public static P typeToPattern(ICode.Type type) {
+		switch(type) {
+		case INT: return P.INT();
+		case REAL: return P.REAL();
+		case BOOL: return P.BOOL();
+		case STRING: return P.STR();
+		default: throw new ConversionException("typeToPattern", type.toString(), P.class.getSimpleName());
+		}
+	}
 }

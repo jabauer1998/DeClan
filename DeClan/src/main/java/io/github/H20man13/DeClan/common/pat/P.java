@@ -176,7 +176,7 @@ public abstract class P {
             		if(first instanceof GLOBAL || 
             		   first instanceof RETURN || 
             		   first instanceof PARAM) {
-            			return this.equals(innerPattern[1]);
+            		   return this.equals(innerPattern[1]);
             		}
             	}
             }
@@ -382,6 +382,11 @@ public abstract class P {
 
         @Override
         public int hashCode(){
+        	if(this.pattern.length == 2) {
+        		P first = this.pattern[0];
+        		if(first instanceof GLOBAL || first instanceof RETURN || first instanceof PARAM)
+        			return this.pattern[1].hashCode();
+        	}
             return Objects.hash((Object[])pattern);
         }
 

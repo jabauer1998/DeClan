@@ -33,10 +33,13 @@ public class ArmCodeGenerator {
         this.totalBytes = 0;
         this.first = true;
         this.variableFile = fileName + ".var";
+        Utils.createFile(this.variableFile);
         this.variableWriter = new FileWriter(this.variableFile);
         this.instructionFile = fileName + ".instr";
+        Utils.createFile(this.instructionFile);
         this.instructionWriter = new FileWriter(this.instructionFile);
         this.finalFile = fileName;
+        Utils.createFile(this.finalFile);
         this.finalOutputWriter = new FileWriter(this.finalFile);
         this.codeWritten = false;
     }
@@ -83,6 +86,16 @@ public class ArmCodeGenerator {
             }
         }
     }
+    
+    public void addVariable(String place, VariableLength word, String string) throws IOException {
+    	if(word == VariableLength.BYTE){
+            this.variableWriter.append(place + ": .BYTE "+ string + "\r\n");
+            totalBytes += 1;
+        } else {
+            this.variableWriter.append(place + ": .WORD " + string + "\r\n");
+            totalBytes += 4;
+        }
+	}
 
     public void addInstruction(String instr) throws IOException{
         if(!codeWritten){

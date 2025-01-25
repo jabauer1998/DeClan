@@ -9,6 +9,7 @@ import java.util.Set;
 import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.pat.P;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
 public class Assign implements ICode{
     public String place;
@@ -80,7 +81,7 @@ public class Assign implements ICode{
 
     @Override
     public P asPattern() {
-        return P.PAT(P.ID(), P.ASSIGN(), value.asPattern(true));
+        return P.PAT(P.ID(), P.ASSIGN(), value.asPattern(true), ConversionUtils.typeToPattern(type));
     }
 
     @Override

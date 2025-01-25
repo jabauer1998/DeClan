@@ -4,21 +4,21 @@ public class Pattern {
     //The Next pattern we will initialize is a Function call followed by a return Placement
     //There will be a pattern for just standard function Calls without a return as well
     public static P callWithReturn0 = P.PAT(P.PAT(P.CALL(), P.ID()),
-                                            P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID(), P.BOOL())));
+                                            P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.BOOL()));
     public static P callWithReturn1 = P.PAT(P.PAT(P.CALL(), P.ID()),
-            								P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID(), P.BOOL())));
+            								P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.BOOL()));
     public static P callWithReturn2 = P.PAT(P.PAT(P.CALL(), P.ID()),
-            								P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID(), P.INT())));
+            								P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.INT()));
     public static P callWithReturn3 = P.PAT(P.PAT(P.CALL(), P.ID()),
-											P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID(), P.INT())));
+											P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.INT()));
     public static P callWithReturn4 = P.PAT(P.PAT(P.CALL(), P.ID()),
-            								P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID(), P.REAL())));
+            								P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.REAL()));
     public static P callWithReturn5 = P.PAT(P.PAT(P.CALL(), P.ID()),
-											P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID(), P.REAL())));
+											P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.REAL()));
     public static P callWithReturn6 = P.PAT(P.PAT(P.CALL(), P.ID()),
-									  P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID(), P.STR())));
+									  P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.STR()));
     public static P callWithReturn7 = P.PAT(P.PAT(P.CALL(), P.ID()),
-											P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID(), P.STR())));
+											P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.STR()));
     
 
     //Addition Patterns
@@ -109,13 +109,20 @@ public class Pattern {
     public static P int0 = P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.INT()), P.INT());
     public static P int1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT()), P.INT());
     
+    //String Init/Assign Patterns
+    public static P str0 = P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.STR()), P.STR());
+    public static P str1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.STR()), P.STR());
+    
     //Identifier Assignments Patterns
     public static P id0 = P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.ID()), P.BOOL());
     public static P id1 = P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.ID()), P.REAL());
     public static P id2 = P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.ID()), P.INT());
-    public static P id3 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID()), P.BOOL());
-    public static P id4 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID()), P.REAL());
-    public static P id5 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID()), P.INT());
+    public static P id3 = P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.ID()), P.STR());
+    public static P id4 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID()), P.BOOL());
+    public static P id5 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID()), P.REAL());
+    public static P id6 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID()), P.INT());
+    public static P id7 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.ID()), P.STR());
+    
 
     public static P if0 = P.PAT(P.IF(), P.PAT(P.ID(), P.LT(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());
     public static P if1 = P.PAT(P.IF(), P.PAT(P.ID(), P.GT(), P.ID()), P.THEN(), P.ID(), P.ELSE(), P.ID());

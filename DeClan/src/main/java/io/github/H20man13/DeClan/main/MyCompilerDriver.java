@@ -553,6 +553,20 @@ public class MyCompilerDriver {
                     String outputDestination = cfg.getValueFromFlag("output");
                     MyIrLinker linker = new MyIrLinker(errLog);
                     Prog myProg = generateProgram(program, errLog);
+                    
+                    if(cfg.containsFlag("std")){
+                        String isStd = cfg.getValueFromFlag("std");
+                        if(isStd.equals("TRUE")){
+                            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
+                            libs.add(stdLib.irIoLibrary());
+                            libs.add(stdLib.irIntLibrary());
+                            libs.add(stdLib.irRealLibrary());
+                            libs.add(stdLib.irConversionsLibrary());
+                            libs.add(stdLib.irMathLibrary());
+                            libs.add(stdLib.irUtilsLibrary());
+                        }
+                    }
+                    
                     Lib[] newLibs = listAsArray(libs);
                     Prog prog = linker.performLinkage(myProg, newLibs);
 
@@ -637,7 +651,6 @@ public class MyCompilerDriver {
             }
 
             boolean emitIr = cfg.getValueFromFlag("ir").equals("TRUE");
-            boolean emitAssembly = cfg.getValueFromFlag("assemble").equals("TRUE");
 
             if(emitIr){
                 if(cfg.containsFlag("output")){
@@ -648,7 +661,6 @@ public class MyCompilerDriver {
                     }
                     if(noLink){
                         MyICodeGenerator iCodeGenerator = new MyICodeGenerator(errLog);
-                        Lib resultLib = libs.remove(0);
 
                         File outputFile = new File(outputDestination);
                         if(outputFile.exists()){
@@ -658,10 +670,8 @@ public class MyCompilerDriver {
                         System.out.println(outputFile.getAbsolutePath());
                         outputFile.createNewFile();
                         FileWriter writer = new FileWriter(outputFile);
-                        writer.write(resultLib.toString());
                         writer.close();
                     } else {
-
                         if(cfg.containsFlag("std")){
                             String isStd = cfg.getValueFromFlag("std");
                             if(isStd.equals("TRUE")){
@@ -680,104 +690,10 @@ public class MyCompilerDriver {
                         Lib[] libsAsArray = listAsArray(libs);
                         Lib library = linker.performLinkage(startingLibrary, libsAsArray);
 
-                        if(cfg.containsFlag("optimize")){
-                            boolean shouldOptimize = cfg.getValueFromFlag("optimize").equals("TRUE");
-                            /* 
-                            if(shouldOptimize){
-                                MyOptimizer optimizer = new MyOptimizer(library);
-                                optimizer.eliminateCommonSubExpressions();
-                                optimizer.runDataFlowAnalysis();
-                                optimizer.performConstantPropogation();
-                                optimizer.performDeadCodeElimination();
-                                library = optimizer.getICode();
-                            }
-                            */
-                        }
-
                         FileWriter writer = new FileWriter(outputDestination);
                         writer.write(library.toString());
                         writer.close();
                     }
-                }
-            } else if(emitAssembly){
-                if(cfg.containsFlag("output")){
-                    String outputDestination = cfg.getValueFromFlag("output");
-                    MyIrLinker linker = new MyIrLinker(errLog);
-                    
-                    Lib startingLibrary = libs.remove(0);
-                    Lib[] libsAsArray = listAsArray(libs);
-                    Lib lib = linker.performLinkage(startingLibrary, libsAsArray);
-
-                    /*
-                    MyOptimizer optimizer = new MyOptimizer(prog);
-                    if(cfg.containsFlag("optimize")){
-                        boolean shouldOptimize = cfg.getValueFromFlag("optimize").equals("TRUE");
-                        if(shouldOptimize){
-                            optimizer.eliminateCommonSubExpressions();
-                            optimizer.runDataFlowAnalysis();
-                            optimizer.performConstantPropogation();
-                            optimizer.performDeadCodeElimination();
-                            prog = optimizer.getICode();
-                        } else {
-                            optimizer.runDataFlowAnalysis();
-                        }
-                    }
-                    */
-
-                    //FileWriter outputWriter = new FileWriter(outputDestination);
-                    //MyCodeGenerator cGen = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), prog, iGen, errLog);
-                    //cGen.codeGen(outputWriter);
-                }
-            } else {
-                if(cfg.containsFlag("output")){
-                    String outputDestination = cfg.getValueFromFlag("output");
-                    MyIrLinker linker = new MyIrLinker(errLog);
-                    
-                    Lib startingLibrary = libs.remove(0);
-                    Lib[] libsAsArray = listAsArray(libs);
-                    Lib library = linker.performLinkage(startingLibrary, libsAsArray);
-
-                    /*
-                    MyOptimizer optimizer = new MyOptimizer(prog);
-                    if(cfg.containsFlag("optimize")){
-                        boolean shouldOptimize = cfg.getValueFromFlag("optimize").equals("TRUE");
-                        if(shouldOptimize){
-                            optimizer.eliminateCommonSubExpressions();
-                            optimizer.runDataFlowAnalysis();
-                            optimizer.performConstantPropogation();
-                            optimizer.performDeadCodeElimination();
-                            prog = optimizer.getICode();
-                        } else {
-                            optimizer.runDataFlowAnalysis();
-                        }
-                    }
-
-                    */
-
-                    String tempOutput = outputDestination.replace(".bin", ".a.temp");
-                    //FileWriter outputWriter = new FileWriter(tempOutput);
-                    //MyCodeGenerator cGen = new MyCodeGenerator(optimizer.getLiveVariableAnalysis(), prog, iGen, errLog);
-                    //cGen.codeGen(outputWriter);
-                    //outputWriter.close();
-
-                    /* 
-                    ANTLRInputStream inputStream = new ANTLRInputStream(tempOutput);
-                    ArmAssemblerLexer lexer = new ArmAssemblerLexer(inputStream);
-                    CommonTokenStream stream = new CommonTokenStream(lexer);
-                    ArmAssemblerParser parser = new ArmAssemblerParser(stream);
-                    ProgramContext armProgram = parser.program();
-                    AssemblerVisitor assembler = new AssemblerVisitor();
-                    List<Integer> assembledCode = assembler.assembleCode(armProgram);
-
-                    FileWriter binaryWriter = new FileWriter(outputDestination);
-                    for(Integer binaryLine : assembledCode){
-                        String lineText = Utils.to32BitBinary(binaryLine);
-                        binaryWriter.append(lineText);
-                        binaryWriter.append("\r\n");
-                    }
-
-                    binaryWriter.close();
-                    */
                 }
             }
         }
