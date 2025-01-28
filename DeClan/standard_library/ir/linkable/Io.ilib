@@ -1,28 +1,28 @@
 SYMBOL SECTION
- ENTRY a INTERNAL PARAM s WriteString 0
- ENTRY b INTERNAL PARAM i WriteInt 0
- ENTRY c INTERNAL PARAM r WriteReal 0
- ENTRY d INTERNAL PARAM b WriteBool 0
- ENTRY e INTERNAL RETURN ReadInt
- ENTRY f INTERNAL RETURN ReadReal
- ENTRY g INTERNAL RETURN ReadBool
- ENTRY h INTERNAL addressHolder WriteString
- ENTRY i INTERNAL offsetHolder WriteString
- ENTRY j INTERNAL valueHolder WriteString
- ENTRY k INTERNAL tempHolder WriteString
- ENTRY l EXTERNAL PARAM StringAsAddress 0
- ENTRY m EXTERNAL RETURN StringAsAddress
- ENTRY p EXTERNAL PARAM IntIsZero 0
- ENTRY q EXTERNAL RETURN IntIsZero
- ENTRY y INTERNAL tempReg WriteInt
- ENTRY z INTERNAL tempReg WriteReal
- ENTRY A INTERNAL tempReg WriteBool
- ENTRY B INTERNAL result ReadInt
- ENTRY C INTERNAL tempReg ReadInt
- ENTRY D INTERNAL result ReadReal
- ENTRY E INTERNAL tempReg ReadReal
- ENTRY F INTERNAL result ReadBool
- ENTRY G INTERNAL tempReg ReadBool
+ ENTRY a INTERNAL PARAM s WriteString 0 <STRING>
+ ENTRY b INTERNAL PARAM i WriteInt 0 <INT>
+ ENTRY c INTERNAL PARAM r WriteReal 0 <REAL>
+ ENTRY d INTERNAL PARAM b WriteBool 0 <BOOL>
+ ENTRY e INTERNAL RETURN ReadInt <INT>
+ ENTRY f INTERNAL RETURN ReadReal <REAL>
+ ENTRY g INTERNAL RETURN ReadBool <BOOL>
+ ENTRY h INTERNAL addressHolder WriteString <INT>
+ ENTRY i INTERNAL offsetHolder WriteString <INT>
+ ENTRY j INTERNAL valueHolder WriteString <INT>
+ ENTRY k INTERNAL tempHolder WriteString <INT>
+ ENTRY l EXTERNAL PARAM StringAsAddress 0 <STRING>
+ ENTRY m EXTERNAL RETURN StringAsAddress <INT>
+ ENTRY p EXTERNAL PARAM IntIsZero 0 <INT>
+ ENTRY q EXTERNAL RETURN IntIsZero <BOOL>
+ ENTRY y INTERNAL tempReg WriteInt <INT>
+ ENTRY z INTERNAL tempReg WriteReal <INT>
+ ENTRY A INTERNAL tempReg WriteBool <INT>
+ ENTRY B INTERNAL result ReadInt <INT>
+ ENTRY C INTERNAL tempReg ReadInt <INT>
+ ENTRY D INTERNAL result ReadReal <REAL>
+ ENTRY E INTERNAL tempReg ReadReal <INT>
+ ENTRY F INTERNAL result ReadBool <BOOL>
+ ENTRY G INTERNAL tempReg ReadBool <INT>
 DATA SECTION
 PROC SECTION
  PROC LABEL WriteLn

@@ -1,99 +1,99 @@
 SYMBOL SECTION
- ENTRY f25 CONST INTERNAL GLOBAL a 
- ENTRY f27 CONST INTERNAL GLOBAL e 
- ENTRY f29 CONST INTERNAL GLOBAL x 
- ENTRY f30 INTERNAL GLOBAL result 
- ENTRY f32 INTERNAL addressHolder WriteString
- ENTRY f33 INTERNAL offsetHolder WriteString
- ENTRY f34 INTERNAL valueHolder WriteString
- ENTRY f35 INTERNAL tempHolder WriteString
- ENTRY f36 INTERNAL result StringAsAddress
- ENTRY f37 INTERNAL temp StringAsAddress
- ENTRY f38 INTERNAL PARAM s StringAsAddress 0
- ENTRY f39 INTERNAL RETURN StringAsAddress
- ENTRY f57 INTERNAL PARAM s WriteString 0
- ENTRY f42 INTERNAL result IntIsZero
- ENTRY f45 INTERNAL PARAM n IntIsZero 0
- ENTRY f49 INTERNAL RETURN IntIsZero
- ENTRY f58 INTERNAL tempReg WriteBool
- ENTRY f59 INTERNAL PARAM b WriteBool 0
- ENTRY f61 INTERNAL result IntToReal
- ENTRY f62 INTERNAL absN IntToReal
- ENTRY f63 INTERNAL isNeg IntToReal
- ENTRY f64 INTERNAL intResult IntToReal
- ENTRY f65 INTERNAL furthestOne IntToReal
- ENTRY f66 INTERNAL count IntToReal
- ENTRY f67 INTERNAL tempN IntToReal
- ENTRY f68 INTERNAL lastBit IntToReal
- ENTRY f69 INTERNAL fullExponent IntToReal
- ENTRY f70 INTERNAL exponent IntToReal
- ENTRY f71 INTERNAL mantissa IntToReal
- ENTRY f72 INTERNAL mantissaMask IntToReal
- ENTRY f73 INTERNAL toShiftOver IntToReal
- ENTRY f74 INTERNAL result Abs
- ENTRY f77 INTERNAL PARAM n Abs 0
- ENTRY f79 INTERNAL result INeg
- ENTRY f81 INTERNAL PARAM n INeg 0
- ENTRY f84 INTERNAL RETURN INeg
- ENTRY f86 INTERNAL RETURN Abs
- ENTRY g62 INTERNAL PARAM n IntToReal 0
- ENTRY f89 INTERNAL result IntIsNegative
- ENTRY f90 INTERNAL thirtyFirstBit IntIsNegative
- ENTRY f93 INTERNAL PARAM n IntIsNegative 0
- ENTRY g11 INTERNAL RETURN IntIsNegative
- ENTRY h44 CONST INTERNAL GLOBAL realBias 
- ENTRY g56 INTERNAL result IntBinaryAsReal
- ENTRY g57 INTERNAL temp IntBinaryAsReal
- ENTRY g58 INTERNAL RETURN IntBinaryAsReal
- ENTRY g61 INTERNAL RETURN IntToReal
- ENTRY d96 INTERNAL result RGreaterThanOrEqualTo
- ENTRY d97 INTERNAL n1IsZero RGreaterThanOrEqualTo
- ENTRY d98 INTERNAL n2IsZero RGreaterThanOrEqualTo
- ENTRY d99 INTERNAL n1IsNegative RGreaterThanOrEqualTo
- ENTRY e10 INTERNAL n2IsNegative RGreaterThanOrEqualTo
- ENTRY e11 INTERNAL n1IsPositive RGreaterThanOrEqualTo
- ENTRY e12 INTERNAL n2IsPositive RGreaterThanOrEqualTo
- ENTRY e13 INTERNAL n1Exp RGreaterThanOrEqualTo
- ENTRY e14 INTERNAL n2Exp RGreaterThanOrEqualTo
- ENTRY e15 INTERNAL n1Value RGreaterThanOrEqualTo
- ENTRY e16 INTERNAL n2Value RGreaterThanOrEqualTo
- ENTRY g64 INTERNAL result RealIsZero
- ENTRY g65 INTERNAL val RealIsZero
- ENTRY g66 INTERNAL exp RealIsZero
- ENTRY g67 INTERNAL result RealBinaryAsInt
- ENTRY g68 INTERNAL temp RealBinaryAsInt
- ENTRY g69 INTERNAL PARAM r RealBinaryAsInt 0
- ENTRY g70 INTERNAL RETURN RealBinaryAsInt
- ENTRY g80 INTERNAL PARAM r RealIsZero 0
- ENTRY g79 INTERNAL RETURN RealIsZero
- ENTRY h61 INTERNAL PARAM n1 RGreaterThanOrEqualTo 0
- ENTRY h62 INTERNAL PARAM n2 RGreaterThanOrEqualTo 1
- ENTRY g81 INTERNAL result RealIsNegative
- ENTRY g82 INTERNAL rest RealIsNegative
- ENTRY g83 INTERNAL thirtyFirstBit RealIsNegative
- ENTRY g84 INTERNAL result RealSign
- ENTRY g85 INTERNAL realAsInteger RealSign
- ENTRY g92 INTERNAL PARAM r RealSign 0
- ENTRY g91 INTERNAL RETURN RealSign
- ENTRY h16 INTERNAL PARAM r RealIsNegative 0
- ENTRY h15 INTERNAL RETURN RealIsNegative
- ENTRY h17 INTERNAL result RealIsPositive
- ENTRY h18 INTERNAL realAsInteger RealIsPositive
- ENTRY h19 INTERNAL thirtyFirstBit RealIsPositive
- ENTRY h33 INTERNAL PARAM r RealIsPositive 0
- ENTRY h32 INTERNAL RETURN RealIsPositive
- ENTRY h34 INTERNAL result RealExponent
- ENTRY h35 INTERNAL realAsInteger RealExponent
- ENTRY h36 INTERNAL exponent RealExponent
- ENTRY h46 INTERNAL PARAM r RealExponent 0
- ENTRY h45 INTERNAL RETURN RealExponent
- ENTRY h47 INTERNAL result RealMantissa
- ENTRY h48 INTERNAL realAsInt RealMantissa
- ENTRY h49 INTERNAL significand RealMantissa
- ENTRY h50 INTERNAL exp RealMantissa
- ENTRY h59 INTERNAL PARAM r RealMantissa 0
- ENTRY h58 INTERNAL RETURN RealMantissa
- ENTRY h60 INTERNAL RETURN RGreaterThanOrEqualTo
+ ENTRY f25 CONST INTERNAL GLOBAL a  <INT>
+ ENTRY f27 CONST INTERNAL GLOBAL e  <BOOL>
+ ENTRY f29 CONST INTERNAL GLOBAL x  <REAL>
+ ENTRY f30 INTERNAL GLOBAL result  <BOOL>
+ ENTRY f32 INTERNAL addressHolder WriteString <INT>
+ ENTRY f33 INTERNAL offsetHolder WriteString <INT>
+ ENTRY f34 INTERNAL valueHolder WriteString <INT>
+ ENTRY f35 INTERNAL tempHolder WriteString <INT>
+ ENTRY f36 INTERNAL result StringAsAddress <INT>
+ ENTRY f37 INTERNAL temp StringAsAddress <INT>
+ ENTRY f38 INTERNAL PARAM s StringAsAddress 0 <STRING>
+ ENTRY f39 INTERNAL RETURN StringAsAddress <INT>
+ ENTRY f57 INTERNAL PARAM s WriteString 0 <STRING>
+ ENTRY f42 INTERNAL result IntIsZero <BOOL>
+ ENTRY f45 INTERNAL PARAM n IntIsZero 0 <INT>
+ ENTRY f49 INTERNAL RETURN IntIsZero <BOOL>
+ ENTRY f58 INTERNAL tempReg WriteBool <INT>
+ ENTRY f59 INTERNAL PARAM b WriteBool 0 <BOOL>
+ ENTRY f61 INTERNAL result IntToReal <REAL>
+ ENTRY f62 INTERNAL absN IntToReal <INT>
+ ENTRY f63 INTERNAL isNeg IntToReal <BOOL>
+ ENTRY f64 INTERNAL intResult IntToReal <INT>
+ ENTRY f65 INTERNAL furthestOne IntToReal <INT>
+ ENTRY f66 INTERNAL count IntToReal <INT>
+ ENTRY f67 INTERNAL tempN IntToReal <INT>
+ ENTRY f68 INTERNAL lastBit IntToReal <INT>
+ ENTRY f69 INTERNAL fullExponent IntToReal <INT>
+ ENTRY f70 INTERNAL exponent IntToReal <INT>
+ ENTRY f71 INTERNAL mantissa IntToReal <INT>
+ ENTRY f72 INTERNAL mantissaMask IntToReal <INT>
+ ENTRY f73 INTERNAL toShiftOver IntToReal <INT>
+ ENTRY f74 INTERNAL result Abs <INT>
+ ENTRY f77 INTERNAL PARAM n Abs 0 <INT>
+ ENTRY f79 INTERNAL result INeg <INT>
+ ENTRY f81 INTERNAL PARAM n INeg 0 <INT>
+ ENTRY f84 INTERNAL RETURN INeg <INT>
+ ENTRY f86 INTERNAL RETURN Abs <INT>
+ ENTRY g62 INTERNAL PARAM n IntToReal 0 <INT>
+ ENTRY f89 INTERNAL result IntIsNegative <BOOL>
+ ENTRY f90 INTERNAL thirtyFirstBit IntIsNegative <INT>
+ ENTRY f93 INTERNAL PARAM n IntIsNegative 0 <INT>
+ ENTRY g11 INTERNAL RETURN IntIsNegative <BOOL>
+ ENTRY h44 CONST INTERNAL GLOBAL realBias  <INT>
+ ENTRY g56 INTERNAL result IntBinaryAsReal <REAL>
+ ENTRY g57 INTERNAL temp IntBinaryAsReal <INT>
+ ENTRY g58 INTERNAL RETURN IntBinaryAsReal <REAL>
+ ENTRY g61 INTERNAL RETURN IntToReal <REAL>
+ ENTRY d96 INTERNAL result RGreaterThanOrEqualTo <BOOL>
+ ENTRY d97 INTERNAL n1IsZero RGreaterThanOrEqualTo <BOOL>
+ ENTRY d98 INTERNAL n2IsZero RGreaterThanOrEqualTo <BOOL>
+ ENTRY d99 INTERNAL n1IsNegative RGreaterThanOrEqualTo <BOOL>
+ ENTRY e10 INTERNAL n2IsNegative RGreaterThanOrEqualTo <BOOL>
+ ENTRY e11 INTERNAL n1IsPositive RGreaterThanOrEqualTo <BOOL>
+ ENTRY e12 INTERNAL n2IsPositive RGreaterThanOrEqualTo <BOOL>
+ ENTRY e13 INTERNAL n1Exp RGreaterThanOrEqualTo <INT>
+ ENTRY e14 INTERNAL n2Exp RGreaterThanOrEqualTo <INT>
+ ENTRY e15 INTERNAL n1Value RGreaterThanOrEqualTo <INT>
+ ENTRY e16 INTERNAL n2Value RGreaterThanOrEqualTo <INT>
+ ENTRY g64 INTERNAL result RealIsZero <BOOL>
+ ENTRY g65 INTERNAL val RealIsZero <INT>
+ ENTRY g66 INTERNAL exp RealIsZero <INT>
+ ENTRY g67 INTERNAL result RealBinaryAsInt <INT>
+ ENTRY g68 INTERNAL temp RealBinaryAsInt <REAL>
+ ENTRY g69 INTERNAL PARAM r RealBinaryAsInt 0 <REAL>
+ ENTRY g70 INTERNAL RETURN RealBinaryAsInt <INT>
+ ENTRY g80 INTERNAL PARAM r RealIsZero 0 <REAL>
+ ENTRY g79 INTERNAL RETURN RealIsZero <BOOL>
+ ENTRY h61 INTERNAL PARAM n1 RGreaterThanOrEqualTo 0 <REAL>
+ ENTRY h62 INTERNAL PARAM n2 RGreaterThanOrEqualTo 1 <REAL>
+ ENTRY g81 INTERNAL result RealIsNegative <BOOL>
+ ENTRY g82 INTERNAL rest RealIsNegative <INT>
+ ENTRY g83 INTERNAL thirtyFirstBit RealIsNegative <INT>
+ ENTRY g84 INTERNAL result RealSign <INT>
+ ENTRY g85 INTERNAL realAsInteger RealSign <INT>
+ ENTRY g92 INTERNAL PARAM r RealSign 0 <REAL>
+ ENTRY g91 INTERNAL RETURN RealSign <INT>
+ ENTRY h16 INTERNAL PARAM r RealIsNegative 0 <REAL>
+ ENTRY h15 INTERNAL RETURN RealIsNegative <BOOL>
+ ENTRY h17 INTERNAL result RealIsPositive <BOOL>
+ ENTRY h18 INTERNAL realAsInteger RealIsPositive <INT>
+ ENTRY h19 INTERNAL thirtyFirstBit RealIsPositive <INT>
+ ENTRY h33 INTERNAL PARAM r RealIsPositive 0 <REAL>
+ ENTRY h32 INTERNAL RETURN RealIsPositive <BOOL>
+ ENTRY h34 INTERNAL result RealExponent <INT>
+ ENTRY h35 INTERNAL realAsInteger RealExponent <INT>
+ ENTRY h36 INTERNAL exponent RealExponent <INT>
+ ENTRY h46 INTERNAL PARAM r RealExponent 0 <REAL>
+ ENTRY h45 INTERNAL RETURN RealExponent <INT>
+ ENTRY h47 INTERNAL result RealMantissa <INT>
+ ENTRY h48 INTERNAL realAsInt RealMantissa <INT>
+ ENTRY h49 INTERNAL significand RealMantissa <INT>
+ ENTRY h50 INTERNAL exp RealMantissa <INT>
+ ENTRY h59 INTERNAL PARAM r RealMantissa 0 <REAL>
+ ENTRY h58 INTERNAL RETURN RealMantissa <INT>
+ ENTRY h60 INTERNAL RETURN RGreaterThanOrEqualTo <BOOL>
 DATA SECTION
  DEF f24 := 0 <INT>
  DEF GLOBAL f25 := f24 <INT>
