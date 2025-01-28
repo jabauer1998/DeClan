@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.icode.symbols;
 
+import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.pat.P;
 
@@ -7,10 +8,12 @@ public class VarSymEntry extends SymEntry {
     public String declanIdent;
     public String funcName;
     public int paramNumber;
+    public ICode.Type codeType;
     
-    public VarSymEntry(String icodePlace, int type, String identOrFunctionName, boolean isReturn){
+    public VarSymEntry(String icodePlace, int type, String identOrFunctionName, ICode.Type icodeType, boolean isReturn){
         super(type, icodePlace);
         
+        this.codeType = icodeType;
         if(isReturn) {
         	this.funcName = identOrFunctionName;
         	this.declanIdent = null;
@@ -22,24 +25,27 @@ public class VarSymEntry extends SymEntry {
         this.paramNumber = -1;
     }
     
-    public VarSymEntry(String icodePlace, int type, String declanIdent, String funcName){
+    public VarSymEntry(String icodePlace, int type, String declanIdent, String funcName, ICode.Type icodeType){
         super(type, icodePlace);
         this.declanIdent = declanIdent;
         this.funcName = funcName;
         this.paramNumber = -1;
+        this.codeType = icodeType;
     }
     
-    public VarSymEntry(String icodePlace, int type, String funcName, int paramNumber){
+    public VarSymEntry(String icodePlace, int type, String funcName, int paramNumber, ICode.Type icodeType){
         super(type, icodePlace);
         this.funcName = funcName;
         this.paramNumber = paramNumber;
+        this.codeType = icodeType;
     }
     
-    public VarSymEntry(String icodePlace, int type, String declanIdent, String funcName, int paramNumber){
+    public VarSymEntry(String icodePlace, int type, String declanIdent, String funcName, int paramNumber, ICode.Type icodeType){
         super(type, icodePlace);
         this.declanIdent = declanIdent;
         this.funcName = funcName;
         this.paramNumber = paramNumber;
+        this.codeType = icodeType;
     }
     
     private VarSymEntry(VarSymEntry toCopy) {
@@ -47,6 +53,7 @@ public class VarSymEntry extends SymEntry {
     	this.declanIdent = toCopy.declanIdent;
     	this.funcName = toCopy.funcName;
     	this.paramNumber = toCopy.paramNumber;
+    	this.codeType = toCopy.codeType;
     }
 
     @Override
@@ -108,6 +115,10 @@ public class VarSymEntry extends SymEntry {
         		sb.append(this.paramNumber);
         	}
         }
+        
+        sb.append(" <");
+        sb.append(codeType.toString());
+        sb.append('>');
 
         return sb.toString();
     }
@@ -117,20 +128,21 @@ public class VarSymEntry extends SymEntry {
         if(obj instanceof VarSymEntry){
             VarSymEntry otherEntry = (VarSymEntry)obj;
             if(otherEntry.paramNumber == this.paramNumber)
-            	if((otherEntry.declanIdent != null && declanIdent != null)) {
-		            if(otherEntry.declanIdent.equals(declanIdent))
-		            	if(otherEntry.funcName != null && this.funcName != null) {
+            	if(otherEntry.codeType == this.codeType)
+	            	if((otherEntry.declanIdent != null && declanIdent != null)) {
+			            if(otherEntry.declanIdent.equals(declanIdent))
+			            	if(otherEntry.funcName != null && this.funcName != null) {
+			            		if(otherEntry.funcName.equals(funcName))
+			            			return super.equals(obj);
+			            	} else if(otherEntry.funcName == null && funcName == null)
+			            		return super.equals(obj);
+	            	} else if(otherEntry.declanIdent == null && this.declanIdent == null) {
+	            		if(otherEntry.funcName != null && this.funcName != null) {
 		            		if(otherEntry.funcName.equals(funcName))
 		            			return super.equals(obj);
 		            	} else if(otherEntry.funcName == null && funcName == null)
 		            		return super.equals(obj);
-            	} else if(otherEntry.declanIdent == null && this.declanIdent == null) {
-            		if(otherEntry.funcName != null && this.funcName != null) {
-	            		if(otherEntry.funcName.equals(funcName))
-	            			return super.equals(obj);
-	            	} else if(otherEntry.funcName == null && funcName == null)
-	            		return super.equals(obj);
-            	}
+	            	}
             
         }
         return false;

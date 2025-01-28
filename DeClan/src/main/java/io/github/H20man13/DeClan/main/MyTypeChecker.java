@@ -140,6 +140,16 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 	public TypeCheckerQualities getVarType(String var){
 		return varEnvironment.getEntry(var);
 	}
+	
+	public TypeCheckerQualities getParamType(String funcName, int paramNumber) {
+		ProcedureTypeEntry entry = procEnvironment.getEntry(funcName);
+		return entry.getArgumentTypes().get(paramNumber);
+	}
+	
+	public TypeCheckerQualities getReturnType(String funcName) {
+		ProcedureTypeEntry entry = procEnvironment.getEntry(funcName);
+		return entry.getReturnType();
+	}
     
     @Override
     public void visit(Program program) {

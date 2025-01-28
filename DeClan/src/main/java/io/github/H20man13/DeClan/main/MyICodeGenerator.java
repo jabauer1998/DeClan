@@ -120,7 +120,6 @@ public class MyICodeGenerator{
     }
 
     loadFunctions(lib.getProcDecls(), builder);
-    typeChecker.loadFunctions(lib.getProcDecls());
 
     builder.buildProcedureSectionHeader();
     for(ProcedureDeclaration decl : lib.getProcDecls()){
@@ -151,7 +150,6 @@ public class MyICodeGenerator{
     }
 
     loadFunctions(program.getProcDecls(), builder);
-    typeChecker.loadFunctions(program.getProcDecls());
 
     builder.buildCodeSectionHeader();
     for (Statement statement : program.getStatements()) {
@@ -178,7 +176,7 @@ public class MyICodeGenerator{
     ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
     IdentExp place = builder.buildDefinition(scope, value, type);
     if(scope == ICode.Scope.GLOBAL)
-      builder.addVariableEntry(place.ident, SymEntry.CONST | SymEntry.GLOBAL | SymEntry.INTERNAL, id.getLexeme(), false);
+      builder.addVariableEntry(place.ident, SymEntry.CONST | SymEntry.GLOBAL | SymEntry.INTERNAL, id.getLexeme(), type, false);
   }
   
   public void generateLocalConstantIr(String funcName, ConstDeclaration constDecl, DefinitionBuilder builder) {
@@ -188,7 +186,7 @@ public class MyICodeGenerator{
 	    TypeCheckerQualities qual = valueExpr.acceptResult(typeChecker);
 	    ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
 	    IdentExp place = builder.buildDefinition(Scope.LOCAL, value, type);
-	    builder.addVariableEntry(place.ident, SymEntry.CONST | SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName);
+	    builder.addVariableEntry(place.ident, SymEntry.CONST | SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName, type);
   }
 
   public void generateVariableIr(Scope scope, VariableDeclaration varDecl, DefinitionBuilder builder) {
@@ -197,15 +195,21 @@ public class MyICodeGenerator{
     IdentExp place = null;
     if(type.getLexeme().equals("STRING")){
       place = builder.buildDefinition(scope, new StrExp("\0"), ICode.Type.STRING);
+      if(scope == ICode.Scope.GLOBAL)
+          builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id.getLexeme(), ICode.Type.STRING, false);
     } else if(type.getLexeme().equals("REAL")) {
       place = builder.buildDefinition(scope, new RealExp(0), ICode.Type.REAL);
+      if(scope == ICode.Scope.GLOBAL)
+          builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id.getLexeme(), ICode.Type.REAL, false);
     } else if(type.getLexeme().equals("BOOLEAN")){
       place = builder.buildDefinition(scope, new BoolExp(false), ICode.Type.BOOL);
+      if(scope == ICode.Scope.GLOBAL)
+          builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id.getLexeme(), ICode.Type.BOOL, false);
     } else {
       place = builder.buildDefinition(scope, new IntExp(0), ICode.Type.INT);
+      if(scope == ICode.Scope.GLOBAL)
+          builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id.getLexeme(), ICode.Type.INT, false);
     }
-    if(scope == ICode.Scope.GLOBAL)
-      builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id.getLexeme(), false);
   }
   
   public void generateLocalVariableIr(String funcName, VariableDeclaration varDecl, DefinitionBuilder builder) {
@@ -214,17 +218,21 @@ public class MyICodeGenerator{
     IdentExp place = null;
     if(type.getLexeme().equals("STRING")){
       place = builder.buildDefinition(Scope.LOCAL, new StrExp("\0"), ICode.Type.STRING);
+      builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName, ICode.Type.STRING);
     } else if(type.getLexeme().equals("REAL")) {
       place = builder.buildDefinition(Scope.LOCAL, new RealExp(0), ICode.Type.REAL);
+      builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName, ICode.Type.REAL);
     } else if(type.getLexeme().equals("BOOLEAN")){
       place = builder.buildDefinition(Scope.LOCAL, new BoolExp(false), ICode.Type.BOOL);
+      builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName, ICode.Type.BOOL);
     } else {
       place = builder.buildDefinition(Scope.LOCAL, new IntExp(0), ICode.Type.INT);
+      builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName, ICode.Type.INT);
     }
-    builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName);
   }
 
   private void loadFunctions(List<ProcedureDeclaration> decls, SymbolBuilder builder){
+	typeChecker.loadFunctions(decls);
     for(ProcedureDeclaration decl : decls){
       loadFunction(decl, builder);
     }
@@ -234,15 +242,21 @@ public class MyICodeGenerator{
     String procedureName = procDecl.getProcedureName().getLexeme();
     List <ParamaterDeclaration> args = procDecl.getArguments();
     
+    
     for(int i = 0; i < args.size(); i++){
 	    String argAlias = gen.genNext();
-        builder.addVariableEntry(argAlias, SymEntry.PARAM | SymEntry.INTERNAL, args.get(i).getIdentifier().getLexeme(), procedureName, i);
+	    Identifier ident = args.get(i).getIdentifier();
+	    TypeCheckerQualities qual = typeChecker.getParamType(procedureName, i);
+	    ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+        builder.addVariableEntry(argAlias, SymEntry.PARAM | SymEntry.INTERNAL, ident.getLexeme(), procedureName, i, type);
     }
   
     Expression retExp = procDecl.getReturnStatement();
     if(retExp != null){
       String returnPlace = gen.genNext();
-      builder.addVariableEntry(returnPlace, SymEntry.RETURN | SymEntry.INTERNAL, procedureName, true);
+      TypeCheckerQualities qual = typeChecker.getReturnType(procedureName);
+      ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+      builder.addVariableEntry(returnPlace, SymEntry.RETURN | SymEntry.INTERNAL, procedureName, type, true);
     }
   } 
 
@@ -1130,7 +1144,9 @@ public class MyICodeGenerator{
       return builder.getVariablePlace(identifier.getLexeme(), SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
     } else {
         String place = gen.genNext();
-        builder.addVariableEntry(place, SymEntry.GLOBAL | SymEntry.EXTERNAL, identifier.getLexeme(), false);
+        TypeCheckerQualities qual = identifier.acceptResult(typeChecker);
+        ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+        builder.addVariableEntry(place, SymEntry.GLOBAL | SymEntry.EXTERNAL, identifier.getLexeme(), type, false);
         IdentExp ident = new IdentExp(Scope.GLOBAL, place);
         return ident;
     }
@@ -1143,7 +1159,9 @@ public class MyICodeGenerator{
       return builder.getVariablePlace(identifier.getLexeme(), SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
     } else {
         String place = gen.genNext();
-        builder.addVariableEntry(place, SymEntry.GLOBAL | SymEntry.EXTERNAL, identifier.getLexeme(), false);
+        TypeCheckerQualities qual = identifier.acceptResult(typeChecker);
+        ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+        builder.addVariableEntry(place, SymEntry.GLOBAL | SymEntry.EXTERNAL, identifier.getLexeme(), type, false);
         IdentExp ident = new IdentExp(Scope.GLOBAL, place);
         return ident;
     }

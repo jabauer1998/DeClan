@@ -643,35 +643,38 @@ public class MyCompilerDriver {
             //We need to compile a Program into an executable
             List<Lib> libs = new LinkedList<Lib>();
             String libString = cfg.getValueFromFlag("library");
-            String[] libraries = libString.split("#");
-            for(String libPath: libraries){
-                Library lib = parseLibrary(libPath, errLog);
-                Lib lib2 = generateLibrary(lib, errLog);
-                libs.add(lib2);
-            }
-
             boolean emitIr = cfg.getValueFromFlag("ir").equals("TRUE");
+            boolean noLink = false;
+            if(cfg.containsFlag("nolink")){
+                noLink = cfg.getValueFromFlag("nolink").equals("TRUE");
+            }
+            
 
             if(emitIr){
                 if(cfg.containsFlag("output")){
                     String outputDestination = cfg.getValueFromFlag("output");
-                    boolean noLink = false;
-                    if(cfg.containsFlag("nolink")){
-                        noLink = cfg.getValueFromFlag("nolink").equals("TRUE");
-                    }
                     if(noLink){
+                        String library = libString;
+                        Library lib = parseLibrary(library, errLog);
+                        	
                         MyICodeGenerator iCodeGenerator = new MyICodeGenerator(errLog);
-
+                        Lib genedLib = iCodeGenerator.generateLibraryIr(lib);
                         File outputFile = new File(outputDestination);
                         if(outputFile.exists()){
                             outputFile.delete();
                         }
-                        System.out.print("The full path is ");
-                        System.out.println(outputFile.getAbsolutePath());
                         outputFile.createNewFile();
                         FileWriter writer = new FileWriter(outputFile);
+                        writer.append(genedLib.toString());
                         writer.close();
                     } else {
+                    	String[] libraries = libString.split("#");
+                        for(String libPath: libraries){
+                            Library lib = parseLibrary(libPath, errLog);
+                            Lib lib2 = generateLibrary(lib, errLog);
+                            libs.add(lib2);
+                        }
+                        
                         if(cfg.containsFlag("std")){
                             String isStd = cfg.getValueFromFlag("std");
                             if(isStd.equals("TRUE")){

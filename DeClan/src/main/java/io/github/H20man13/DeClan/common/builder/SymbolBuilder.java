@@ -159,23 +159,23 @@ public class SymbolBuilder extends BaseBuilder {
         throw new RuntimeException("Could not find symbol with identifier ");
     }
     
-    public void addVariableEntry(String name, int mask, String declanName, String functionName, int paramNumber){
+    public void addVariableEntry(String name, int mask, String declanName, String functionName, int paramNumber, ICode.Type type){
         int end = this.endOfSymbolTable() + 1;
-        addInstruction(end, new VarSymEntry(name, mask, declanName, functionName, paramNumber));
+        addInstruction(end, new VarSymEntry(name, mask, declanName, functionName, paramNumber, type));
     }
     
-    public void addVariableEntry(String name, int mask, String functionName, int paramNumber){
+    public void addVariableEntry(String name, int mask, String functionName, int paramNumber, ICode.Type type){
         int end = this.endOfSymbolTable() + 1;
-        addInstruction(end, new VarSymEntry(name, mask, functionName, paramNumber));
+        addInstruction(end, new VarSymEntry(name, mask, functionName, paramNumber, type));
     }
 
-    public void addVariableEntry(String name, int mask, String declanName, String funcName){
+    public void addVariableEntry(String name, int mask, String declanName, String funcName, ICode.Type type){
         int end = this.endOfSymbolTable() + 1;
-        addInstruction(end, new VarSymEntry(name, mask, declanName, funcName));
+        addInstruction(end, new VarSymEntry(name, mask, declanName, funcName, type));
     }
     
-    public void addVariableEntry(String name, int mask, String declanNameOrFunctionName, boolean isReturn){
+    public void addVariableEntry(String name, int mask, String declanNameOrFunctionName, ICode.Type type, boolean isReturn){
         int end = this.endOfSymbolTable() + 1;
-        addInstruction(end, new VarSymEntry(name, mask, declanNameOrFunctionName, isReturn));
+        addInstruction(end, new VarSymEntry(name, mask, declanNameOrFunctionName, type, isReturn));
     }
 }

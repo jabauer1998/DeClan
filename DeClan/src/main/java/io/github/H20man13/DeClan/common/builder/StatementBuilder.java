@@ -422,7 +422,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
                 newPlace = getVariablePlace(funcName, i, SymEntry.EXTERNAL | SymEntry.PARAM).ident;
             } else {
                 newPlace = gen.genNext();
-                addVariableEntry(newPlace, SymEntry.EXTERNAL | SymEntry.PARAM, funcName, i);
+                addVariableEntry(newPlace, SymEntry.EXTERNAL | SymEntry.PARAM, funcName, i, arg.dest);
             }
             newDefs.add(new Def(Scope.PARAM, newPlace, arg.source, arg.dest));
         }

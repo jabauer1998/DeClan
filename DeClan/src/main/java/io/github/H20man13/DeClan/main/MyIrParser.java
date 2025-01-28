@@ -245,31 +245,37 @@ public class MyIrParser {
             if(willMatch(IrTokenType.NUMBER)) {
             	IrToken funcParamNumberTok = skip();
                 Integer funcParamNumber = Integer.parseInt(funcParamNumberTok.getLexeme());
-                return new VarSymEntry(irPlace.getLexeme(), resultMask, null, paramNameOrFunctionName.getLexeme(), funcParamNumber);
+                ICode.Type type = parseType();
+                return new VarSymEntry(irPlace.getLexeme(), resultMask, null, paramNameOrFunctionName.getLexeme(), funcParamNumber, type);
             } else {
             	 IrToken funcNameTok = match(IrTokenType.ID);
             	 IrToken funcParamNumberTok = skip();
                  Integer funcParamNumber = Integer.parseInt(funcParamNumberTok.getLexeme());
-                 return new VarSymEntry(irPlace.getLexeme(), resultMask, paramNameOrFunctionName.getLexeme(), funcNameTok.getLexeme(), funcParamNumber);
+                 ICode.Type type = parseType();
+                 return new VarSymEntry(irPlace.getLexeme(), resultMask, paramNameOrFunctionName.getLexeme(), funcNameTok.getLexeme(), funcParamNumber, type);
             }
         } else if(willMatch(IrTokenType.RETURN)){
             skip();
             resultMask |= SymEntry.RETURN;
             IrToken funcNameTok = match(IrTokenType.ID);
-            return new VarSymEntry(irPlace.getLexeme(), resultMask, funcNameTok.getLexeme(), true);
+            ICode.Type type = parseType();
+            return new VarSymEntry(irPlace.getLexeme(), resultMask, funcNameTok.getLexeme(), type, true);
         } else if(willMatch(IrTokenType.GLOBAL)) {
         	skip();
         	IrToken declanIdent = match(IrTokenType.ID);
         	resultMask |= SymEntry.GLOBAL;
-            return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme(), false);
+        	ICode.Type type = parseType();
+            return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme(), type, false);
         } else {
         	IrToken declanIdent = skip();
         	resultMask |= SymEntry.LOCAL;
         	if(willMatch(IrTokenType.ID)) {
         		IrToken funcName = skip();
-            	return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme(), funcName.getLexeme());
+        		ICode.Type type = parseType();
+            	return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme(), funcName.getLexeme(), type);
         	} else {
-            	return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme(), false);
+        		ICode.Type type = parseType();
+            	return new VarSymEntry(irPlace.getLexeme(), resultMask, declanIdent.getLexeme(), type, false);
         	}
         }
     }

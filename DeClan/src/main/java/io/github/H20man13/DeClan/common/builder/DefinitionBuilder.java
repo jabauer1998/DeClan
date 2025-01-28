@@ -332,7 +332,7 @@ public class DefinitionBuilder extends SymbolBuilder{
                 next = getVariablePlace(funcName, i, SymEntry.EXTERNAL | SymEntry.PARAM).ident;
             else {
                 next = gen.genNext();
-                addVariableEntry(next, SymEntry.EXTERNAL | SymEntry.PARAM, funcName, i);
+                addVariableEntry(next, SymEntry.EXTERNAL | SymEntry.PARAM, funcName, i, arg.dest);
             }
             newDefs.add(new Def(Scope.PARAM, next, arg.source, arg.dest));
         }
@@ -342,7 +342,7 @@ public class DefinitionBuilder extends SymbolBuilder{
             oldPlace = getVariablePlace(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME).ident;
         else {
             oldPlace = gen.genNext();
-            addVariableEntry(oldPlace, SymEntry.EXTERNAL | SymEntry.RETURN, funcName, true);
+            addVariableEntry(oldPlace, SymEntry.EXTERNAL | SymEntry.RETURN, funcName, type, true);
         }
         String place = gen.genNext();
         addInstruction(new Def(Scope.LOCAL, place, new IdentExp(ICode.Scope.RETURN, oldPlace), type));
