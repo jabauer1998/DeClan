@@ -127,6 +127,8 @@ STR R2, f24
 B FORBEG_0_LEVEL_0
 FOREND_0_LEVEL_0: SUB R13, R13, #44
 STP
+LDR R2, local_allocate_WriteInt
+ADD R13, R13, R2
 WriteInt: LDR R2, f30_value
 LDR R2, f30
 STR R2[R13, -R2]
@@ -136,9 +138,13 @@ SWI 1
 MOV R0, R2
 SUB R13, R13, #4
 MOV R15, R14
+LDR R2, local_allocate_WriteLn
+ADD R13, R13, R2
 WriteLn: SWI 4
 SUB R13, R13, #0
 MOV R15, R14
+LDR R2, local_allocate_INeg
+ADD R13, R13, R2
 INeg: LDR R2, f36_value
 LDR R2, f36
 STR R2[R13, -R2]
@@ -197,12 +203,21 @@ INeg_return_address_outer: .WORD 8
 f38_outer: .WORD 4
 WriteLn_return_address_outer: .WORD 4
 f43_valueWORD: .WORD 1.0
-f30_inner: .WORD 4
+local_allocate_WriteInt: .WORD 4
+WriteInt_return_address_inner: .WORD 12
+f31_inner: .WORD 8
+f30: .WORD 4
 f30_valueWORD: .WORD 0.0
-f36_inner: .WORD 16
-f37_inner: .WORD 12
-f39_inner: .WORD 8
-f40_inner: .WORD 4
+local_allocate_WriteLn: .WORD 0
+WriteLn_return_address_inner: .WORD 4
+local_allocate_INeg: .WORD 16
+INeg_return_address_inner: .WORD 28
+f41_inner: .WORD 24
+f38_inner: .WORD 20
+f36: .WORD 16
+f37: .WORD 12
+f39: .WORD 8
+f40: .WORD 4
 f36_valueWORD: .WORD 0.0
 f39_valueWORD: .WORD 1.0
-totalBytes: .WORD 836
+totalBytes: .WORD 896

@@ -106,6 +106,8 @@ IFEND_3_LEVEL_1_0: B IFEND_0_LEVEL_0_0
 IFNEXT_0_SEQ_1_LEVEL_0_0: MOV R0, R0
 IFEND_0_LEVEL_0_0: SUB R13, R13, #19
 STP
+LDR R2, local_allocate_WriteInt
+ADD R13, R13, R2
 WriteInt: LDR R2, f31_value
 LDR R2, f31
 STR R2[R13, -R2]
@@ -138,6 +140,9 @@ f32_outer: .WORD 4
 f36_valueWORD: .WORD 8.0
 WriteInt_return_address_outer: .WORD 8
 f32_outer: .WORD 4
-f31_inner: .WORD 4
+local_allocate_WriteInt: .WORD 4
+WriteInt_return_address_inner: .WORD 12
+f32_inner: .WORD 8
+f31: .WORD 4
 f31_valueWORD: .WORD 0.0
-totalBytes: .WORD 570
+totalBytes: .WORD 590
