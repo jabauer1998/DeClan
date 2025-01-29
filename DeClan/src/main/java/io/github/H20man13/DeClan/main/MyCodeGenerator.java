@@ -36,6 +36,7 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.ICode.Scope;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
+import io.github.H20man13.DeClan.common.icode.Lib.SymbolSearchStrategy;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -52,9 +53,11 @@ import io.github.H20man13.DeClan.common.icode.section.BssSec;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
+import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
+import io.github.H20man13.DeClan.common.icode.symbols.VarSymEntry;
 
 public class MyCodeGenerator {
-	private List<ICode> intermediateCode;
+	private Prog intermediateCode;
 	private ArmRegisterGenerator rGen;
 	private ArmCodeGenerator cGen;
 	private IrRegisterGenerator iGen;
@@ -64,7 +67,7 @@ public class MyCodeGenerator {
 	private int i;
 
 	public MyCodeGenerator(String outputFile, LiveVariableAnalysis analysis, Prog program, ErrorLog errLog) throws IOException {
-		this.intermediateCode = program.getICode();
+		this.intermediateCode = program;
 		this.cGen = new ArmCodeGenerator(outputFile);
 		this.rGen = new ArmRegisterGenerator(cGen, analysis);
 		this.iGen = new IrRegisterGenerator();
@@ -105,23 +108,23 @@ public class MyCodeGenerator {
 	
 	private void skipSymbolTable() {
 		i = 0;
-		ICode instruction = intermediateCode.get(i);
+		ICode instruction = intermediateCode.getInstruction(i);
 		while(!(instruction instanceof DataSec)) {
 			i++;
-			instruction = intermediateCode.get(i);
+			instruction = intermediateCode.getInstruction(i);
 		}
 	}
 
 	public void codeGen() {
 		try {
-			int size = intermediateCode.size();
+			int size = intermediateCode.getSize();
 
 			skipSymbolTable();
 			
 			while (i < size) {
-				ICode icode1 = intermediateCode.get(i);
+				ICode icode1 = intermediateCode.getInstruction(i);
 				if (i + 1 < size) {
-					ICode icode2 = intermediateCode.get(i + 1);
+					ICode icode2 = intermediateCode.getInstruction(i + 1);
 					if (!genICode(icode1, icode2) && !genICode(icode1)) {
 						errorLog.add("Error cannot generate icode " + icode1, new Position(i, 0));
 					}
@@ -561,10 +564,10 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.callWithReturn0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Call procICode = (Call) icode;
 				int totalLength = procICode.params.size();
-				ICode retICode = intermediateCode.get(i + 1);
+				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Def returnPlacement = (Def) retICode;
 
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
@@ -604,6 +607,7 @@ public class MyCodeGenerator {
 					} else {
 						cGen.addInstruction("STR " + oldReg + ", [R13, -" + tempReg + "]");
 					}
+					rGen.freeTempRegs();
 				}
 				cGen.addInstruction("BL " + procICode.pname);
 
@@ -627,10 +631,10 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.callWithReturn1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Call procICode = (Call) icode;
 				int totalLength = procICode.params.size();
-				ICode retICode = intermediateCode.get(i + 1);
+				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Assign returnPlacement = (Assign)retICode;
 
 				int totalStackFrameLength = getStackFrameLength(procICode);
@@ -670,6 +674,7 @@ public class MyCodeGenerator {
 					} else {
 						cGen.addInstruction("STR " + oldReg + ", [R13, -" + tempReg + "]");
 					}
+					rGen.freeTempRegs();
 				}
 				cGen.addInstruction("BL " + procICode.pname);
 
@@ -693,10 +698,10 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.callWithReturn2, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Call procICode = (Call) icode;
 				int totalLength = procICode.params.size();
-				ICode retICode = intermediateCode.get(i + 1);
+				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Def returnPlacement = (Def) retICode;
 
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
@@ -736,6 +741,7 @@ public class MyCodeGenerator {
 					} else {
 						cGen.addInstruction("STR " + oldReg + ", [R13, -" + tempReg + "]");
 					}
+					rGen.freeTempRegs();
 				}
 
 				cGen.addInstruction("BL " + procICode.pname);
@@ -759,10 +765,10 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.callWithReturn3, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Call procICode = (Call) icode;
 				int totalLength = procICode.params.size();
-				ICode retICode = intermediateCode.get(i + 1);
+				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Assign returnPlacement = (Assign)retICode;
 
 				int totalStackFrameLength = getStackFrameLength(procICode);
@@ -802,6 +808,7 @@ public class MyCodeGenerator {
 					} else {
 						cGen.addInstruction("STR " + oldReg + ", [R13, -" + tempReg + "]");
 					}
+					rGen.freeTempRegs();
 				}
 
 				cGen.addInstruction("BL " + procICode.pname);
@@ -824,10 +831,10 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.callWithReturn4, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Call procICode = (Call) icode;
 				int totalLength = procICode.params.size();
-				ICode retICode = intermediateCode.get(i + 1);
+				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Def returnPlacement = (Def) retICode;
 
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
@@ -867,6 +874,7 @@ public class MyCodeGenerator {
 					} else {
 						cGen.addInstruction("STR " + oldReg + ", [R13, -" + tempReg + "]");
 					}
+					rGen.freeTempRegs();
 				}
 				cGen.addInstruction("BL " + procICode.pname);
 
@@ -890,10 +898,10 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.callWithReturn5, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Call procICode = (Call) icode;
 				int totalLength = procICode.params.size();
-				ICode retICode = intermediateCode.get(i + 1);
+				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Assign returnPlacement = (Assign) retICode;
 
 				int totalStackFrameLength = getStackFrameLength(procICode);
@@ -933,6 +941,7 @@ public class MyCodeGenerator {
 					} else {
 						cGen.addInstruction("STR " + oldReg + ", [R13, -" + tempReg + "]");
 					}
+					rGen.freeTempRegs();
 				}
 				cGen.addInstruction("BL " + procICode.pname);
 
@@ -956,7 +965,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.add0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -996,7 +1005,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.add1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1035,7 +1044,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.sub0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1075,7 +1084,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.sub1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1114,7 +1123,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bitwiseAnd0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1154,7 +1163,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bitwiseAnd1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1193,7 +1202,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bitwiseOr0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1233,7 +1242,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bitwiseOr1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1272,7 +1281,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bitwiseExclusiveOr0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1312,7 +1321,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bitwiseExclusiveOr1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1351,7 +1360,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.leftShift0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1391,7 +1400,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.leftShift1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1430,7 +1439,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.rightShift0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1470,7 +1479,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.rightShift1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1509,7 +1518,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.gt0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1551,7 +1560,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.gt1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1592,7 +1601,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.ge0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1634,7 +1643,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.ge1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1675,7 +1684,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.lt0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1717,7 +1726,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.lt1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1758,7 +1767,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.le0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1800,7 +1809,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.le1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1841,7 +1850,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.iEq0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1883,7 +1892,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.iEq1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1924,7 +1933,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.iNe0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1966,7 +1975,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.iNe1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -2007,7 +2016,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bEq0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -2049,7 +2058,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bEq1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -2090,7 +2099,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bNe0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -2132,7 +2141,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bNe1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -2173,7 +2182,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.and0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -2213,7 +2222,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.and1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -2252,7 +2261,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.or0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -2292,7 +2301,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.or1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -2331,7 +2340,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bnot0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				UnExp assignExp = (UnExp) assignICode.val;
 
@@ -2371,7 +2380,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bnot1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign)icode;
 				UnExp assignExp = (UnExp) assignICode.value;
 
@@ -2411,7 +2420,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bitwiseNot0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				UnExp assignExp = (UnExp) assignICode.val;
 
@@ -2448,7 +2457,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bitwiseNot1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign) icode;
 				UnExp assignExp = (UnExp) assignICode.value;
 
@@ -2485,7 +2494,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bool0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def)icode;
 				BoolExp assignExp = (BoolExp) assignICode.val;
 
@@ -2524,7 +2533,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.bool1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign)icode;
 				BoolExp assignExp = (BoolExp) assignICode.value;
 
@@ -2565,7 +2574,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.int0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def)icode;
 				IntExp assignExp = (IntExp) assignICode.val;
 
@@ -2607,7 +2616,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.int1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign)icode;
 				IntExp assignExp = (IntExp) assignICode.value;
 
@@ -2653,7 +2662,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.real0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def)icode;
 				RealExp assignExp = (RealExp) assignICode.val;
 
@@ -2695,7 +2704,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.real1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign)icode;
 				RealExp assignExp = (RealExp) assignICode.value;
 
@@ -2741,7 +2750,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.str0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def)icode;
 				StrExp assignExp = (StrExp)assignICode.val;
 
@@ -2853,7 +2862,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.str1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign)icode;
 				StrExp assignExp = (StrExp)assignICode.value;
 
@@ -2967,7 +2976,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.id0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				IdentExp exp = (IdentExp) assignICode.val;
 
@@ -3001,7 +3010,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.id1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				IdentExp exp = (IdentExp) assignICode.val;
 
@@ -3035,7 +3044,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.id2, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				IdentExp exp = (IdentExp) assignICode.val;
 
@@ -3069,7 +3078,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.id3, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
 				IdentExp exp = (IdentExp) assignICode.val;
 
@@ -3103,7 +3112,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.id4, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign)icode;
 				IdentExp exp = (IdentExp) assignICode.value;
 
@@ -3136,7 +3145,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.id5, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign)icode;
 				IdentExp exp = (IdentExp) assignICode.value;
 
@@ -3169,7 +3178,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.id6, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign)icode;
 				IdentExp exp = (IdentExp) assignICode.value;
 
@@ -3202,7 +3211,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.id7, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Assign assignICode = (Assign)icode;
 				IdentExp exp = (IdentExp) assignICode.value;
 
@@ -3235,7 +3244,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.if0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3259,7 +3268,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.if1, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3283,7 +3292,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.if2, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3307,7 +3316,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.if3, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3331,7 +3340,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.if4, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3355,7 +3364,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.if5, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3379,7 +3388,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.if6, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3403,7 +3412,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.if7, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3427,7 +3436,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.goto0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Goto gotoICode = (Goto) icode;
 				cGen.addInstruction("B " + gotoICode.label);
 				rGen.freeTempRegs();
@@ -3440,7 +3449,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.label0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Label labelICode = (Label) icode;
 				cGen.setLabel(labelICode.label);
 				rGen.freeTempRegs();
@@ -3453,12 +3462,14 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.procLabel0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
+				ProcLabel labelICode = (ProcLabel) icode;
+				
 				int x = i + 1;
 				int toAllocate = 0;
 				ICode instruction = null;
 				do {
-					instruction = intermediateCode.get(x);
+					instruction = intermediateCode.getInstruction(x);
 					if (instruction instanceof Def) {
 						Def definition = (Def) instruction;
 						if (definition.scope == ICode.Scope.LOCAL) {
@@ -3471,15 +3482,70 @@ public class MyCodeGenerator {
 					}
 					x++;
 				} while (!(instruction instanceof Return));
+				
+				cGen.addVariable("local_allocate_" + labelICode.label, VariableLength.WORD, toAllocate);
+				String tempReg = rGen.getTempReg("local_allocate_" + labelICode.label, icode);
+				cGen.addInstruction("LDR " + tempReg + ", " + "local_allocate_" + labelICode.label);
+				cGen.addInstruction("ADD R13, R13, " + tempReg);
+				rGen.freeTempRegs();
 
 				int offSet = toAllocate;
+				
+				offSet += 4; //One word for the return address
+				
+				if(intermediateCode.containsEntry(labelICode.label, SymEntry.RETURN | SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME)) {
+					VarSymEntry entry = intermediateCode.getVariableData(labelICode.label, SymEntry.RETURN | SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME);
+					if(entry.codeType == ICode.Type.BOOL) //One word or byte for the return value
+						offSet += 1;
+					else
+						offSet += 4;
+				}
+				
+				int paramNumber = 0;
+				while(intermediateCode.containsEntry(labelICode.label, paramNumber, SymEntry.INTERNAL | SymEntry.PARAM)) {
+					VarSymEntry entry = intermediateCode.getVariableData(labelICode.label, paramNumber, SymEntry.INTERNAL | SymEntry.PARAM);
+					if(entry.codeType == ICode.Type.BOOL)
+						offSet += 1;
+					else
+						offSet += 4;
+					paramNumber++;
+				};
+				
+				
+				cGen.addVariable(labelICode.label + "_return_address_inner", VariableLength.WORD, offSet);
+				offSet -= 4;
+				
+				if(intermediateCode.containsEntry(labelICode.label, SymEntry.RETURN | SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME)) {
+					VarSymEntry entry = intermediateCode.getVariableData(labelICode.label, SymEntry.RETURN | SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME);
+					if(entry.codeType == ICode.Type.BOOL) { //One word or byte for the return value
+						cGen.addVariable(entry.icodePlace + "_inner", VariableLength.WORD, offSet);
+						offSet -= 1;
+					} else {
+						cGen.addVariable(entry.icodePlace + "_inner", VariableLength.WORD, offSet);
+						offSet -= 4;
+					}
+				}
+				
+				paramNumber = 0;
+				while(intermediateCode.containsEntry(labelICode.label, paramNumber, SymEntry.INTERNAL | SymEntry.PARAM)) {
+					VarSymEntry entry = intermediateCode.getVariableData(labelICode.label, paramNumber, SymEntry.INTERNAL | SymEntry.PARAM);
+					if(entry.codeType == ICode.Type.BOOL) {
+						cGen.addVariable(entry.icodePlace + "_inner", VariableLength.WORD, offSet);
+						offSet -= 1;
+					} else {
+						cGen.addVariable(entry.icodePlace + "_inner", VariableLength.WORD, offSet);
+						offSet -= 4;
+					}
+					paramNumber++;
+				}
+				
 				x = i + 1;
 				while (offSet > 0) {
-					instruction = intermediateCode.get(x);
+					instruction = intermediateCode.getInstruction(x);
 					if (instruction instanceof Def) {
 						Def definition = (Def) instruction;
 						if (definition.scope == ICode.Scope.LOCAL) {
-							cGen.addVariable(definition.label + "_inner", VariableLength.WORD, offSet);
+							cGen.addVariable(definition.label, VariableLength.WORD, offSet);
 							if (definition.type == ICode.Type.BOOL) {
 								offSet -= 1;
 							} else {
@@ -3492,7 +3558,7 @@ public class MyCodeGenerator {
 					x++;
 				}
 
-				ProcLabel labelICode = (ProcLabel) icode;
+				
 				cGen.setLabel(labelICode.label);
 				rGen.freeTempRegs();
 				return null;
@@ -3508,7 +3574,7 @@ public class MyCodeGenerator {
 				int toAllocate = 0;
 				ICode instruction = null;
 				do {
-					instruction = intermediateCode.get(x);
+					instruction = intermediateCode.getInstruction(x);
 					if (instruction instanceof Def) {
 						Def definition = (Def) instruction;
 						if (definition.scope == ICode.Scope.LOCAL) {
@@ -3525,7 +3591,7 @@ public class MyCodeGenerator {
 				int offSet = toAllocate;
 				x = i + 1;
 				while (offSet > 0) {
-					instruction = intermediateCode.get(x);
+					instruction = intermediateCode.getInstruction(x);
 					if (instruction instanceof Def) {
 						Def definition = (Def) instruction;
 						if (definition.scope == ICode.Scope.LOCAL) {
@@ -3557,7 +3623,7 @@ public class MyCodeGenerator {
 				ICode instruction = null;
 				int localStack = 0;
 				do {
-					instruction = intermediateCode.get(x);
+					instruction = intermediateCode.getInstruction(x);
 					if(instruction instanceof Def) {
 						Def definition = (Def)instruction;
 						if(definition.scope == ICode.Scope.LOCAL) {
@@ -3585,7 +3651,7 @@ public class MyCodeGenerator {
 				int toAllocate = 0;
 				ICode instruction = null;
 				do {
-					instruction = intermediateCode.get(x);
+					instruction = intermediateCode.getInstruction(x);
 					if (instruction instanceof Def) {
 						Def definition = (Def) instruction;
 						if (definition.scope == ICode.Scope.LOCAL) {
@@ -3602,7 +3668,7 @@ public class MyCodeGenerator {
 				int offSet = toAllocate;
 				x = i + 1;
 				while (offSet > 0) {
-					instruction = intermediateCode.get(x);
+					instruction = intermediateCode.getInstruction(x);
 					if (instruction instanceof Def) {
 						Def definition = (Def) instruction;
 						if (definition.scope == ICode.Scope.LOCAL) {
@@ -3633,7 +3699,7 @@ public class MyCodeGenerator {
 				ICode instruction = null;
 				int localStack = 0;
 				do {
-					instruction = intermediateCode.get(x);
+					instruction = intermediateCode.getInstruction(x);
 					if(instruction instanceof Def) {
 						Def definition = (Def)instruction;
 						if(definition.scope == ICode.Scope.LOCAL) {
@@ -3672,7 +3738,7 @@ public class MyCodeGenerator {
 				ICode instruction = null;
 				int localStack = 0;
 				do {
-					instruction = intermediateCode.get(x);
+					instruction = intermediateCode.getInstruction(x);
 					if(instruction instanceof Def) {
 						Def definition = (Def)instruction;
 						if(definition.scope == ICode.Scope.LOCAL) {
@@ -3697,7 +3763,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.call0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Call procICode = (Call) icode;
 				int totalLength = procICode.params.size();
 
@@ -3752,7 +3818,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.inline0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				ICode icode = intermediateCode.get(i);
+				ICode icode = intermediateCode.getInstruction(i);
 				Inline inline = (Inline) icode;
 
 				String instruction = inline.inlineAssembly;
