@@ -245,6 +245,7 @@ public class MyCodeGenerator {
 		initId0();
 		initId1();
 		initId2();
+		initId3();
 		initId4();
 		initId5();
 		initId6();
@@ -3485,6 +3486,7 @@ public class MyCodeGenerator {
 				
 				cGen.addVariable("local_allocate_" + labelICode.label, VariableLength.WORD, toAllocate);
 				String tempReg = rGen.getTempReg("local_allocate_" + labelICode.label, icode);
+				cGen.setLabel(labelICode.label);
 				cGen.addInstruction("LDR " + tempReg + ", " + "local_allocate_" + labelICode.label);
 				cGen.addInstruction("ADD R13, R13, " + tempReg);
 				rGen.freeTempRegs();
@@ -3559,7 +3561,6 @@ public class MyCodeGenerator {
 				}
 
 				
-				cGen.setLabel(labelICode.label);
 				rGen.freeTempRegs();
 				return null;
 			}
@@ -3801,6 +3802,7 @@ public class MyCodeGenerator {
 					} else {
 						cGen.addInstruction("STR " + oldReg + ", [R13, -" + tempReg + "]");
 					}
+					rGen.freeTempRegs();
 				}
 				cGen.addInstruction("BL " + procICode.pname);
 
