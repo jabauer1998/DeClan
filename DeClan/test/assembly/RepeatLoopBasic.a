@@ -74,7 +74,9 @@ LDR R14, [R13, -R14]
 SUB R13, R13, #4
 SUB R13, R13, #23
 STP
-WriteInt: LDR R2, f29_value
+WriteInt: LDR R2, local_allocate_WriteInt
+ADD R13, R13, R2
+LDR R2, f29_value
 LDR R2, f29
 STR R2[R13, -R2]
 MOV R2, R0
@@ -83,7 +85,9 @@ SWI 1
 MOV R0, R2
 SUB R13, R13, #4
 MOV R15, R14
-WriteLn: SWI 4
+WriteLn: LDR R2, local_allocate_WriteLn
+ADD R13, R13, R2
+SWI 4
 SUB R13, R13, #0
 MOV R15, R14
 f24: .WORD 0
@@ -102,6 +106,11 @@ f30_outer: .WORD 4
 f31_valueWORD: .WORD 1.0
 f33_valueWORD: .WORD 10.0
 WriteLn_return_address_outer: .WORD 4
-f29_inner: .WORD 4
+local_allocate_WriteInt: .WORD 4
+WriteInt_return_address_inner: .WORD 12
+f30_inner: .WORD 8
+f29: .WORD 4
 f29_valueWORD: .WORD 0.0
-totalBytes: .WORD 432
+local_allocate_WriteLn: .WORD 0
+WriteLn_return_address_inner: .WORD 4
+totalBytes: .WORD 468

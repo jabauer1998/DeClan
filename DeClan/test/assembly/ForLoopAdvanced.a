@@ -127,9 +127,9 @@ STR R2, f24
 B FORBEG_0_LEVEL_0
 FOREND_0_LEVEL_0: SUB R13, R13, #44
 STP
-LDR R2, local_allocate_WriteInt
+WriteInt: LDR R2, local_allocate_WriteInt
 ADD R13, R13, R2
-WriteInt: LDR R2, f30_value
+LDR R2, f30_value
 LDR R2, f30
 STR R2[R13, -R2]
 MOV R2, R0
@@ -138,14 +138,14 @@ SWI 1
 MOV R0, R2
 SUB R13, R13, #4
 MOV R15, R14
-LDR R2, local_allocate_WriteLn
+WriteLn: LDR R2, local_allocate_WriteLn
 ADD R13, R13, R2
-WriteLn: SWI 4
+SWI 4
 SUB R13, R13, #0
 MOV R15, R14
-LDR R2, local_allocate_INeg
+INeg: LDR R2, local_allocate_INeg
 ADD R13, R13, R2
-INeg: LDR R2, f36_value
+LDR R2, f36_value
 LDR R2, f36
 STR R2[R13, -R2]
 LDR R2, f38_inner

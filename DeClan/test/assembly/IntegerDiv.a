@@ -18,9 +18,9 @@ STR R14, [R13, -R2]
 LDR R2, f25
 LDR R3, f38_outer
 STR R2, [R13, -R3]
-LDR R4, f27
-LDR R5, f75_outer
-STR R4, [R13, -R5]
+LDR R3, f27
+LDR R4, f75_outer
+STR R3, [R13, -R4]
 BL Div
 LDR R14, Div_return_address_outer
 LDR R14, [R13, -R14]
@@ -44,9 +44,9 @@ LDR R14, [R13, -R14]
 SUB R13, R13, #8
 SUB R13, R13, #4
 STP
-LDR R2, local_allocate_Div
+Div: LDR R2, local_allocate_Div
 ADD R13, R13, R2
-Div: LDR R2, f29_value
+LDR R2, f29_value
 LDR R2, f29
 STR R2[R13, -R2]
 LDR R2, f30_value
@@ -412,9 +412,9 @@ LDR R3, f85_inner
 STR R5[R13, -R3]
 SUB R13, R13, #148
 MOV R15, R14
-LDR R3, local_allocate_IntIsZero
+IntIsZero: LDR R3, local_allocate_IntIsZero
 ADD R13, R13, R3
-IntIsZero: MOV R3, #0
+MOV R3, #0
 LDR R3, f41
 STRB R3[R13, -R3]
 LDR R3, f42_value
@@ -462,9 +462,9 @@ LDR R3, f48_inner
 STRB R4[R13, -R3]
 SUB R13, R13, #9
 MOV R15, R14
-LDR R2, local_allocate_WriteInt
+WriteInt: LDR R2, local_allocate_WriteInt
 ADD R13, R13, R2
-WriteInt: LDR R2, f87_value
+LDR R2, f87_value
 LDR R2, f87
 STR R2[R13, -R2]
 MOV R2, R0

@@ -43,9 +43,9 @@ LDR R14, [R13, -R14]
 SUB R13, R13, #4
 SUB R13, R13, #12
 STP
-LDR R2, local_allocate_WriteInt
+WriteInt: LDR R2, local_allocate_WriteInt
 ADD R13, R13, R2
-WriteInt: LDR R2, f27_value
+LDR R2, f27_value
 LDR R2, f27
 STR R2[R13, -R2]
 MOV R2, R0
@@ -54,9 +54,9 @@ SWI 1
 MOV R0, R2
 SUB R13, R13, #4
 MOV R15, R14
-LDR R2, local_allocate_WriteLn
+WriteLn: LDR R2, local_allocate_WriteLn
 ADD R13, R13, R2
-WriteLn: SWI 4
+SWI 4
 SUB R13, R13, #0
 MOV R15, R14
 f24: .WORD 0

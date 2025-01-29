@@ -300,10 +300,10 @@ STR R14, [R13, -R7]
 LDR R2, f24
 LDR R7, f61_outer
 STR R2, [R13, -R7]
-LDR R9, f58
-LDR R9, [R13, -R9]
-LDR R10, f63_outer
-STR R9, [R13, -R10]
+LDR R7, f58
+LDR R7, [R13, -R7]
+LDR R9, f63_outer
+STR R7, [R13, -R9]
 BL Mod
 LDR R14, Mod_return_address_outer
 LDR R14, [R13, -R14]
@@ -390,10 +390,10 @@ STR R14, [R13, -R9]
 LDR R2, f24
 LDR R9, f61_outer
 STR R2, [R13, -R9]
-LDR R12, f81
-LDR R12, [R13, -R12]
-LDR R11, f63_outer
-STR R12, [R13, -R11]
+LDR R9, f81
+LDR R9, [R13, -R9]
+LDR R12, f63_outer
+STR R9, [R13, -R12]
 BL Mod
 LDR R14, Mod_return_address_outer
 LDR R14, [R13, -R14]
@@ -636,7 +636,9 @@ LDR R14, [R13, -R14]
 SUB R13, R13, #4
 SUB R13, R13, #195
 STP
-WriteInt: LDR R12, f27_value
+WriteInt: LDR R12, local_allocate_WriteInt
+ADD R13, R13, R12
+LDR R12, f27_value
 LDR R12, f27
 STR R12[R13, -R12]
 MOV R12, R0
@@ -645,10 +647,14 @@ SWI 1
 MOV R0, R12
 SUB R13, R13, #4
 MOV R15, R14
-WriteLn: SWI 4
+WriteLn: LDR R12, local_allocate_WriteLn
+ADD R13, R13, R12
+SWI 4
 SUB R13, R13, #0
 MOV R15, R14
-INeg: LDR R12, f36_value
+INeg: LDR R12, local_allocate_INeg
+ADD R13, R13, R12
+LDR R12, f36_value
 LDR R12, f36
 STR R12[R13, -R12]
 LDR R12, f38_inner
@@ -676,7 +682,9 @@ LDR R12, f41_inner
 STR R15[R13, -R12]
 SUB R13, R13, #16
 MOV R15, R14
-Mod: LDR R12, f59_value
+Mod: LDR R12, local_allocate_Mod
+ADD R13, R13, R12
+LDR R12, f59_value
 LDR R12, f59
 STR R12[R13, -R12]
 LDR R12, f60_value
@@ -899,28 +907,42 @@ f28_outer: .WORD 4
 g15_valueWORD: .WORD 1.0
 g17_valueWORD: .WORD 1.0
 WriteLn_return_address_outer: .WORD 4
-f27_inner: .WORD 4
+local_allocate_WriteInt: .WORD 4
+WriteInt_return_address_inner: .WORD 12
+f28_inner: .WORD 8
+f27: .WORD 4
 f27_valueWORD: .WORD 0.0
-f36_inner: .WORD 16
-f37_inner: .WORD 12
-f39_inner: .WORD 8
-f40_inner: .WORD 4
+local_allocate_WriteLn: .WORD 0
+WriteLn_return_address_inner: .WORD 4
+local_allocate_INeg: .WORD 16
+INeg_return_address_inner: .WORD 28
+f41_inner: .WORD 24
+f38_inner: .WORD 20
+f36: .WORD 16
+f37: .WORD 12
+f39: .WORD 8
+f40: .WORD 4
 f36_valueWORD: .WORD 0.0
 f39_valueWORD: .WORD 1.0
-f59_inner: .WORD 31
-f60_inner: .WORD 27
-f62_inner: .WORD 23
-f64_inner: .WORD 19
-f65_inner: .WORD 15
-f66_inner: .WORD 14
-f67_inner: .WORD 13
-f68_inner: .WORD 9
-f69_inner: .WORD 5
-f70_inner: .WORD 1
+local_allocate_Mod: .WORD 31
+Mod_return_address_inner: .WORD 47
+f71_inner: .WORD 43
+f61_inner: .WORD 39
+f63_inner: .WORD 35
+f59: .WORD 31
+f60: .WORD 27
+f62: .WORD 23
+f64: .WORD 19
+f65: .WORD 15
+f66: .WORD 14
+f67: .WORD 13
+f68: .WORD 9
+f69: .WORD 5
+f70: .WORD 1
 f59_valueWORD: .WORD 0.0
 f60_valueWORD: .WORD 0.0
 f64_valueWORD: .WORD 0.0
 f69_valueWORD: .WORD 0.0
 spill0: .WORD 0
 spill1: .WORD 0
-totalBytes: .WORD 3708
+totalBytes: .WORD 3796

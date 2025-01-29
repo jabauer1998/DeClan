@@ -66,9 +66,9 @@ LDR R3, g50
 LDR R3, [R13, -R3]
 LDR R4, h11_outer
 STR R3, [R13, -R4]
-LDR R5, f27
-LDR R6, h12_outer
-STR R5, [R13, -R6]
+LDR R4, f27
+LDR R5, h12_outer
+STR R4, [R13, -R5]
 BL RMul
 LDR R14, RMul_return_address_outer
 LDR R14, [R13, -R14]
@@ -78,11 +78,11 @@ LDR R3, [R13, -R3]
 LDR R3, h13_inner
 STR R3[R13, -R3]
 ADD R13, R13, #8
-LDR R4, IntToReal_return_address_outer
-STR R14, [R13, -R4]
-LDR R4, f42
+LDR R5, IntToReal_return_address_outer
+STR R14, [R13, -R5]
+LDR R5, f42
 LDR R6, g49_outer
-STR R4, [R13, -R6]
+STR R5, [R13, -R6]
 BL IntToReal
 LDR R14, IntToReal_return_address_outer
 LDR R14, [R13, -R14]
@@ -99,8 +99,8 @@ LDR R8, h66_outer
 STR R7, [R13, -R8]
 LDR R6, h14
 LDR R6, [R13, -R6]
-LDR R9, h67_outer
-STR R6, [R13, -R9]
+LDR R8, h67_outer
+STR R6, [R13, -R8]
 BL RDivide
 LDR R14, RDivide_return_address_outer
 LDR R14, [R13, -R14]
@@ -118,8 +118,8 @@ LDR R8, h70_outer
 STR R3, [R13, -R8]
 LDR R6, h68
 LDR R6, [R13, -R6]
-LDR R9, h71_outer
-STR R6, [R13, -R9]
+LDR R8, h71_outer
+STR R6, [R13, -R8]
 BL RNotEqualTo
 LDR R14, RNotEqualTo_return_address_outer
 LDR R14, [R13, -R14]
@@ -143,9 +143,9 @@ LDR R14, [R13, -R14]
 SUB R13, R13, #5
 SUB R13, R13, #17
 STP
-LDR R2, local_allocate_RNeg
+RNeg: LDR R2, local_allocate_RNeg
 ADD R13, R13, R2
-RNeg: LDR R2, b48_value
+LDR R2, b48_value
 LDR R2, b48
 STR R2[R13, -R2]
 LDR R2, b49_value
@@ -229,9 +229,9 @@ LDR R2, f37_inner
 STR R4[R13, -R2]
 SUB R13, R13, #40
 MOV R15, R14
-LDR R2, local_allocate_RealBinaryAsInt
+RealBinaryAsInt: LDR R2, local_allocate_RealBinaryAsInt
 ADD R13, R13, R2
-RealBinaryAsInt: LDR R2, f29_value
+LDR R2, f29_value
 LDR R2, f29
 STR R2[R13, -R2]
 LDR R2, f30_value
@@ -245,9 +245,9 @@ LDR R4, f32_inner
 STR R2[R13, -R4]
 SUB R13, R13, #8
 MOV R15, R14
-LDR R2, local_allocate_IntBinaryAsReal
+IntBinaryAsReal: LDR R2, local_allocate_IntBinaryAsReal
 ADD R13, R13, R2
-IntBinaryAsReal: LDR R2, f33_value
+LDR R2, f33_value
 LDR R2, f33
 STR R2[R13, -R2]
 LDR R2, f34_value
@@ -261,9 +261,9 @@ LDR R4, f36_inner
 STR R2[R13, -R4]
 SUB R13, R13, #8
 MOV R15, R14
-LDR R2, local_allocate_IntToReal
+IntToReal: LDR R2, local_allocate_IntToReal
 ADD R13, R13, R2
-IntToReal: LDR R2, f44_value
+LDR R2, f44_value
 LDR R2, f44
 STR R2[R13, -R2]
 LDR R2, f45_value
@@ -726,9 +726,9 @@ LDR R10, g48_inner
 STR R12[R13, -R10]
 SUB R13, R13, #180
 MOV R15, R14
-LDR R10, local_allocate_Abs
+Abs: LDR R10, local_allocate_Abs
 ADD R13, R13, R10
-Abs: LDR R10, f57_value
+LDR R10, f57_value
 LDR R10, f57
 STR R10[R13, -R10]
 LDR R10, f58_value
@@ -785,9 +785,9 @@ LDR R10, f69_inner
 STR R12[R13, -R10]
 SUB R13, R13, #14
 MOV R15, R14
-LDR R10, local_allocate_INeg
+INeg: LDR R10, local_allocate_INeg
 ADD R13, R13, R10
-INeg: LDR R10, f62_value
+LDR R10, f62_value
 LDR R10, f62
 STR R10[R13, -R10]
 LDR R10, f64_inner
@@ -815,9 +815,9 @@ LDR R10, f67_inner
 STR R12[R13, -R10]
 SUB R13, R13, #16
 MOV R15, R14
-LDR R10, local_allocate_IntIsNegative
+IntIsNegative: LDR R10, local_allocate_IntIsNegative
 ADD R13, R13, R10
-IntIsNegative: MOV R10, #0
+MOV R10, #0
 LDR R10, f72
 STRB R10[R13, -R10]
 LDR R10, f73_value
@@ -892,9 +892,9 @@ LDR R10, f84_inner
 STRB R12[R13, -R10]
 SUB R13, R13, #29
 MOV R15, R14
-LDR R10, local_allocate_IntIsZero
+IntIsZero: LDR R10, local_allocate_IntIsZero
 ADD R13, R13, R10
-IntIsZero: MOV R10, #0
+MOV R10, #0
 LDR R10, f86
 STRB R10[R13, -R10]
 LDR R10, f87_value
@@ -942,9 +942,9 @@ LDR R10, f93_inner
 STRB R12[R13, -R10]
 SUB R13, R13, #9
 MOV R15, R14
-LDR R10, local_allocate_RMul
+RMul: LDR R10, local_allocate_RMul
 ADD R13, R13, R10
-RMul: LDR R10, k8_value
+LDR R10, k8_value
 LDR R10, k8
 STR R10[R13, -R10]
 LDR R10, k9_value
@@ -4778,9 +4778,9 @@ STR R0[R13, -R0]
 SUB R13, R13, #1122
 MOV R15, R14
 STR R0, spill1168
-LDR R0, local_allocate_RealSign
+RealSign: LDR R0, local_allocate_RealSign
 ADD R13, R13, R0
-RealSign: STR R0, spill1169
+STR R0, spill1169
 STR R0, spill1170
 LDR R0, g51_value
 LDR R0, g51
@@ -4863,9 +4863,9 @@ STR R0[R13, -R0]
 SUB R13, R13, #28
 MOV R15, R14
 STR R0, spill1196
-LDR R0, local_allocate_RealExponent
+RealExponent: LDR R0, local_allocate_RealExponent
 ADD R13, R13, R0
-RealExponent: STR R0, spill1197
+STR R0, spill1197
 STR R0, spill1198
 LDR R0, g60_value
 LDR R0, g60
@@ -4968,9 +4968,9 @@ STR R0[R13, -R0]
 SUB R13, R13, #36
 MOV R15, R14
 STR R0, spill1231
-LDR R0, local_allocate_RealMantissa
+RealMantissa: LDR R0, local_allocate_RealMantissa
 ADD R13, R13, R0
-RealMantissa: STR R0, spill1232
+STR R0, spill1232
 STR R0, spill1233
 LDR R0, g73_value
 LDR R0, g73
@@ -5112,9 +5112,9 @@ STR R0[R13, -R0]
 SUB R13, R13, #38
 MOV R15, R14
 STR R0, spill1276
-LDR R0, local_allocate_RealIsZero
+RealIsZero: LDR R0, local_allocate_RealIsZero
 ADD R13, R13, R0
-RealIsZero: STR R0, spill1277
+STR R0, spill1277
 STR R0, spill1278
 MOV R0, #0
 LDR R0, g80
@@ -5243,9 +5243,9 @@ STRB R0[R13, -R0]
 SUB R13, R13, #29
 MOV R15, R14
 STR R0, spill1318
-LDR R0, local_allocate_RDivide
+RDivide: LDR R0, local_allocate_RDivide
 ADD R13, R13, R0
-RDivide: STR R0, spill1319
+STR R0, spill1319
 STR R0, spill1320
 LDR R0, T3_value
 LDR R0, T3
@@ -7436,9 +7436,9 @@ STR R0[R13, -R0]
 SUB R13, R13, #577
 MOV R15, R14
 STR R0, spill2032
-LDR R0, local_allocate_Div
+Div: LDR R0, local_allocate_Div
 ADD R13, R13, R0
-Div: STR R0, spill2033
+STR R0, spill2033
 STR R0, spill2034
 LDR R0, h15_value
 LDR R0, h15
@@ -7985,9 +7985,9 @@ STR R0[R13, -R0]
 SUB R13, R13, #148
 MOV R15, R14
 STR R0, spill2213
-LDR R0, local_allocate_RNotEqualTo
+RNotEqualTo: LDR R0, local_allocate_RNotEqualTo
 ADD R13, R13, R0
-RNotEqualTo: STR R0, spill2214
+STR R0, spill2214
 STR R0, spill2215
 MOV R0, #0
 LDR R0, e95
@@ -8198,9 +8198,9 @@ LDR R2, h69_inner
 STRB R3[R13, -R2]
 SUB R13, R13, #40
 MOV R15, R14
-LDR R2, local_allocate_WriteBool
+WriteBool: LDR R2, local_allocate_WriteBool
 ADD R13, R13, R2
-WriteBool: LDR R2, h73_value
+LDR R2, h73_value
 LDR R2, h73
 STR R2[R13, -R2]
 MOV R2, R0

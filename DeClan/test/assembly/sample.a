@@ -24,40 +24,40 @@ STR R14, [R13, -R2]
 LDR R2, f25
 LDR R3, f30_outer
 STR R2, [R13, -R3]
-LDR R4, f27
-LDR R5, f31_outer
-STR R4, [R13, -R5]
+LDR R3, f27
+LDR R4, f31_outer
+STR R3, [R13, -R4]
 BL gcd
 LDR R14, gcd_return_address_outer
 LDR R14, [R13, -R14]
 SUB R13, R13, #12
-LDR R3, f38_outer
-LDR R3, [R13, -R3]
-LDR R3, f39_inner
-STR R3[R13, -R3]
-LDR R3, f39
-LDR R3, [R13, -R3]
-STR R3, f28
-LDR R3, f40_value
-LDR R3, f40
-STR R3[R13, -R3]
+LDR R4, f38_outer
+LDR R4, [R13, -R4]
+LDR R4, f39_inner
+STR R4[R13, -R4]
+LDR R4, f39
+LDR R4, [R13, -R4]
+STR R4, f28
+LDR R4, f40_value
+LDR R4, f40
+STR R4[R13, -R4]
 ADD R13, R13, #8
-LDR R3, WriteString_return_address_outer
-STR R14, [R13, -R3]
-LDR R3, f40
-LDR R3, [R13, -R3]
+LDR R4, WriteString_return_address_outer
+STR R14, [R13, -R4]
+LDR R4, f40
+LDR R4, [R13, -R4]
 LDR R5, f66_outer
-STR R3, [R13, -R5]
+STR R4, [R13, -R5]
 BL WriteString
 LDR R14, WriteString_return_address_outer
 LDR R14, [R13, -R14]
 SUB R13, R13, #8
 ADD R13, R13, #8
-LDR R3, WriteInt_return_address_outer
-STR R14, [R13, -R3]
-LDR R3, f28
+LDR R4, WriteInt_return_address_outer
+STR R14, [R13, -R4]
+LDR R4, f28
 LDR R5, f68_outer
-STR R3, [R13, -R5]
+STR R4, [R13, -R5]
 BL WriteInt
 LDR R14, WriteInt_return_address_outer
 LDR R14, [R13, -R14]
@@ -82,9 +82,9 @@ SUB R13, R13, #8
 ADD R13, R13, #8
 LDR R5, WriteInt_return_address_outer
 STR R14, [R13, -R5]
-LDR R4, f27
+LDR R3, f27
 LDR R5, f68_outer
-STR R4, [R13, -R5]
+STR R3, [R13, -R5]
 BL WriteInt
 LDR R14, WriteInt_return_address_outer
 LDR R14, [R13, -R14]
@@ -92,9 +92,9 @@ SUB R13, R13, #8
 ADD R13, R13, #8
 LDR R5, WriteInt_return_address_outer
 STR R14, [R13, -R5]
-LDR R3, f28
+LDR R4, f28
 LDR R5, f68_outer
-STR R3, [R13, -R5]
+STR R4, [R13, -R5]
 BL WriteInt
 LDR R14, WriteInt_return_address_outer
 LDR R14, [R13, -R14]
@@ -105,9 +105,9 @@ STR R14, [R13, -R5]
 LDR R2, f25
 LDR R5, f71_outer
 STR R2, [R13, -R5]
-LDR R4, f27
-LDR R6, f72_outer
-STR R4, [R13, -R6]
+LDR R3, f27
+LDR R5, f72_outer
+STR R3, [R13, -R5]
 BL Multiply
 LDR R14, Multiply_return_address_outer
 LDR R14, [R13, -R14]
@@ -123,40 +123,40 @@ LDR R5, f74
 LDR R5, [R13, -R5]
 LDR R6, f71_outer
 STR R5, [R13, -R6]
-LDR R3, f28
-LDR R7, f72_outer
-STR R3, [R13, -R7]
+LDR R4, f28
+LDR R6, f72_outer
+STR R4, [R13, -R6]
 BL Multiply
 LDR R14, Multiply_return_address_outer
 LDR R14, [R13, -R14]
 SUB R13, R13, #12
-LDR R3, f73_outer
-LDR R3, [R13, -R3]
-LDR R3, f75_inner
-STR R3[R13, -R3]
-LDR R3, f75
-LDR R3, [R13, -R3]
-STR R3, f28
-LDR R3, f76_value
-LDR R3, f76
-STR R3[R13, -R3]
+LDR R4, f73_outer
+LDR R4, [R13, -R4]
+LDR R4, f75_inner
+STR R4[R13, -R4]
+LDR R4, f75
+LDR R4, [R13, -R4]
+STR R4, f28
+LDR R4, f76_value
+LDR R4, f76
+STR R4[R13, -R4]
 ADD R13, R13, #8
-LDR R3, WriteString_return_address_outer
-STR R14, [R13, -R3]
-LDR R3, f76
-LDR R3, [R13, -R3]
+LDR R4, WriteString_return_address_outer
+STR R14, [R13, -R4]
+LDR R4, f76
+LDR R4, [R13, -R4]
 LDR R5, f66_outer
-STR R3, [R13, -R5]
+STR R4, [R13, -R5]
 BL WriteString
 LDR R14, WriteString_return_address_outer
 LDR R14, [R13, -R14]
 SUB R13, R13, #8
 ADD R13, R13, #8
-LDR R3, WriteInt_return_address_outer
-STR R14, [R13, -R3]
-LDR R3, f28
+LDR R4, WriteInt_return_address_outer
+STR R14, [R13, -R4]
+LDR R4, f28
 LDR R5, f68_outer
-STR R3, [R13, -R5]
+STR R4, [R13, -R5]
 BL WriteInt
 LDR R14, WriteInt_return_address_outer
 LDR R14, [R13, -R14]
@@ -167,9 +167,9 @@ STR R5[R13, -R5]
 ADD R13, R13, #8
 LDR R5, IntToReal_return_address_outer
 STR R14, [R13, -R5]
-LDR R3, f28
+LDR R4, f28
 LDR R5, g79_outer
-STR R3, [R13, -R5]
+STR R4, [R13, -R5]
 BL IntToReal
 LDR R14, IntToReal_return_address_outer
 LDR R14, [R13, -R14]
@@ -185,10 +185,10 @@ LDR R5, g80
 LDR R5, [R13, -R5]
 LDR R6, h45_outer
 STR R5, [R13, -R6]
-LDR R7, f77
-LDR R7, [R13, -R7]
-LDR R8, h46_outer
-STR R7, [R13, -R8]
+LDR R6, f77
+LDR R6, [R13, -R6]
+LDR R7, h46_outer
+STR R6, [R13, -R7]
 BL RMul
 LDR R14, RMul_return_address_outer
 LDR R14, [R13, -R14]
@@ -198,12 +198,12 @@ LDR R5, [R13, -R5]
 LDR R5, h47_inner
 STR R5[R13, -R5]
 ADD R13, R13, #8
-LDR R6, WriteReal_return_address_outer
-STR R14, [R13, -R6]
+LDR R7, WriteReal_return_address_outer
+STR R14, [R13, -R7]
 LDR R5, h47
 LDR R5, [R13, -R5]
-LDR R6, h49_outer
-STR R5, [R13, -R6]
+LDR R7, h49_outer
+STR R5, [R13, -R7]
 BL WriteReal
 LDR R14, WriteReal_return_address_outer
 LDR R14, [R13, -R14]
@@ -217,7 +217,9 @@ LDR R14, [R13, -R14]
 SUB R13, R13, #4
 SUB R13, R13, #32
 STP
-gcd: LDR R5, f30_inner
+gcd: LDR R5, local_allocate_gcd
+ADD R13, R13, R5
+LDR R5, f30_inner
 LDR R5, [R13, -R5]
 LDR R5, f31_inner
 LDR R5, [R13, -R5]
@@ -231,16 +233,16 @@ LDR R5, f32
 STRB R5[R13, -R5]
 LDR R5, f29
 LDRB R5, [R13, -R5]
-LDR R6, f32
-LDRB R6, [R13, -R6]
-TEQB R5, R6
+LDR R7, f32
+LDRB R7, [R13, -R7]
+TEQB R5, R7
 BEQ WHILESTAT_0_SEQ_0_LEVEL_0_0
 BNE WHILENEXT_0_SEQ_0_LEVEL_0_0
 WHILECOND_0_SEQ_0_LEVEL_0_0: LDR R5, f29
 LDRB R5, [R13, -R5]
-LDR R6, f32
-LDRB R6, [R13, -R6]
-TEQB R5, R6
+LDR R7, f32
+LDRB R7, [R13, -R7]
+TEQB R5, R7
 BEQ WHILESTAT_0_SEQ_0_LEVEL_0_0
 BNE WHILEEND_0_LEVEL_0_0
 WHILESTAT_0_SEQ_0_LEVEL_0_0: LDR R5, f30_inner
@@ -308,7 +310,9 @@ LDR R5, f38_inner
 STR R5[R13, -R5]
 SUB R13, R13, #13
 MOV R15, R14
-WriteString: LDR R5, f41_value
+WriteString: LDR R5, local_allocate_WriteString
+ADD R13, R13, R5
+LDR R5, f41_value
 LDR R5, f41
 STR R5[R13, -R5]
 LDR R5, f42_value
@@ -337,16 +341,16 @@ LDR R5, f49_inner
 STR R5[R13, -R5]
 LDR R5, f49
 LDR R5, [R13, -R5]
-LDR R6, f41_inner
-STR R5[R13, -R6]
+LDR R7, f41_inner
+STR R5[R13, -R7]
 LDR R5, f50_value
 LDR R5, f50
 STR R5[R13, -R5]
 LDR R5, f50
 LDR R5, [R13, -R5]
-LDR R6, f42_inner
-STR R5[R13, -R6]
-LDRB R5, [R8, +R6]
+LDR R7, f42_inner
+STR R5[R13, -R7]
+LDRB R5, [R8, +R7]
 STR R5, f43
 ADD R13, R13, #8
 LDR R8, IntIsZero_return_address_outer
@@ -393,199 +397,211 @@ SWI 6
 LDR R8, f62_value
 LDR R8, f62
 STR R8[R13, -R8]
-LDR R6, f42
-LDR R6, [R13, -R6]
+LDR R7, f42
+LDR R7, [R13, -R7]
 LDR R8, f62
 LDR R8, [R13, -R8]
-ADD R10, R6, R8
+ADD R10, R7, R8
 LDR R10, f63
 STR R10[R13, -R10]
-LDR R6, f63
-LDR R6, [R13, -R6]
+LDR R7, f63
+LDR R7, [R13, -R7]
 LDR R8, f42_inner
-STR R6[R13, -R8]
-LDRB R5, [R6, +R8]
+STR R7[R13, -R8]
+LDRB R5, [R7, +R8]
 STR R5, f43
-MOV R0, R6
+MOV R0, R7
 ADD R13, R13, #8
-LDR R6, IntIsZero_return_address_outer
-STR R14, [R13, -R6]
+LDR R7, IntIsZero_return_address_outer
+STR R14, [R13, -R7]
 LDR R5, f43
 LDR R5, [R13, -R5]
-LDR R6, f54_outer
-STR R5, [R13, -R6]
+LDR R7, f54_outer
+STR R5, [R13, -R7]
 BL IntIsZero
 LDR R14, IntIsZero_return_address_outer
 LDR R14, [R13, -R14]
 SUB R13, R13, #8
-LDR R6, f58_outer
-LDRB R6, [R13, -R6]
-LDR R6, f64_inner
-STRB R6[R13, -R6]
-LDR R6, f64
-LDRB R6, [R13, -R6]
-TEQ R6, #0
+LDR R7, f58_outer
+LDRB R7, [R13, -R7]
+LDR R7, f64_inner
+STRB R7[R13, -R7]
+LDR R7, f64
+LDRB R7, [R13, -R7]
+TEQ R7, #0
 MOVEQ R10, #1
 MOVNE R10, #0
 LDR R10, f65
 STRB R10[R13, -R10]
-LDR R6, f65
-LDRB R6, [R13, -R6]
+LDR R7, f65
+LDRB R7, [R13, -R7]
 LDR R10, f60_inner
-STRB R6[R13, -R10]
+STRB R7[R13, -R10]
 B WHILECOND_0_SEQ_0_LEVEL_0_1
 WHILENEXT_0_SEQ_0_LEVEL_0_1: MOV R0, R0
 WHILEEND_0_LEVEL_0_1: SUB R13, R13, #37
 MOV R15, R14
-StringAsAddress: LDR R6, f45_value
-LDR R6, f45
-STR R6[R13, -R6]
-LDR R6, f46_value
-LDR R6, f46
-STR R6[R13, -R6]
-LDR R6, f47
-STR R6, f45
-LDR R6, f45
-LDR R6, [R13, -R6]
+StringAsAddress: LDR R7, local_allocate_StringAsAddress
+ADD R13, R13, R7
+LDR R7, f45_value
+LDR R7, f45
+STR R7[R13, -R7]
+LDR R7, f46_value
+LDR R7, f46
+STR R7[R13, -R7]
+LDR R7, f47
+STR R7, f45
+LDR R7, f45
+LDR R7, [R13, -R7]
 LDR R10, f48_inner
-STR R6[R13, -R10]
+STR R7[R13, -R10]
 SUB R13, R13, #8
 MOV R15, R14
-IntIsZero: MOV R6, #0
-LDR R6, f51
-STRB R6[R13, -R6]
-LDR R6, f52_value
-LDR R6, f52
-STR R6[R13, -R6]
-LDR R6, f54_inner
-LDR R6, [R13, -R6]
-LDR R6, f52
-LDR R6, [R13, -R6]
-TEQ R6, R6
+IntIsZero: LDR R7, local_allocate_IntIsZero
+ADD R13, R13, R7
+MOV R7, #0
+LDR R7, f51
+STRB R7[R13, -R7]
+LDR R7, f52_value
+LDR R7, f52
+STR R7[R13, -R7]
+LDR R7, f54_inner
+LDR R7, [R13, -R7]
+LDR R7, f52
+LDR R7, [R13, -R7]
+TEQ R7, R7
 MOVEQ R10, #1
 MOVNE R10, #0
 LDR R10, f53
 STRB R10[R13, -R10]
-MOV R6, #1
-LDR R6, f55
-STRB R6[R13, -R6]
-LDR R6, f53
-LDRB R6, [R13, -R6]
+MOV R7, #1
+LDR R7, f55
+STRB R7[R13, -R7]
+LDR R7, f53
+LDRB R7, [R13, -R7]
 LDR R10, f55
 LDRB R10, [R13, -R10]
-TEQB R6, R10
+TEQB R7, R10
 BEQ IFSTAT_1_SEQ_0_LEVEL_0_0
 BNE IFNEXT_1_SEQ_0_LEVEL_0_0
-IFSTAT_1_SEQ_0_LEVEL_0_0: MOV R6, #1
-LDR R6, f56
-STRB R6[R13, -R6]
-LDR R6, f56
-LDRB R6, [R13, -R6]
+IFSTAT_1_SEQ_0_LEVEL_0_0: MOV R7, #1
+LDR R7, f56
+STRB R7[R13, -R7]
+LDR R7, f56
+LDRB R7, [R13, -R7]
 LDR R10, f51_inner
-STRB R6[R13, -R10]
+STRB R7[R13, -R10]
 B IFEND_1_LEVEL_0_0
-IFNEXT_1_SEQ_0_LEVEL_0_0: MOV R6, #0
-LDR R6, f57
-STRB R6[R13, -R6]
-LDR R6, f57
-LDRB R6, [R13, -R6]
+IFNEXT_1_SEQ_0_LEVEL_0_0: MOV R7, #0
+LDR R7, f57
+STRB R7[R13, -R7]
+LDR R7, f57
+LDRB R7, [R13, -R7]
 LDR R10, f51_inner
-STRB R6[R13, -R10]
+STRB R7[R13, -R10]
 B IFEND_1_LEVEL_0_0
 IFNEXT_1_SEQ_1_LEVEL_0_0: MOV R0, R0
 IFEND_1_LEVEL_0_0: LDR R10, f51
 LDRB R10, [R13, -R10]
-LDR R6, f58_inner
-STRB R10[R13, -R6]
+LDR R7, f58_inner
+STRB R10[R13, -R7]
 SUB R13, R13, #9
 MOV R15, R14
-WriteInt: LDR R6, f67_value
-LDR R6, f67
-STR R6[R13, -R6]
-MOV R6, R0
+WriteInt: LDR R7, local_allocate_WriteInt
+ADD R13, R13, R7
+LDR R7, f67_value
+LDR R7, f67
+STR R7[R13, -R7]
+MOV R7, R0
 LDR R0, f68
 SWI 1
-MOV R0, R6
+MOV R0, R7
 SUB R13, R13, #4
 MOV R15, R14
-WriteLn: SWI 4
+WriteLn: LDR R7, local_allocate_WriteLn
+ADD R13, R13, R7
+SWI 4
 SUB R13, R13, #0
 MOV R15, R14
-Multiply: LDR R6, f69_value
-LDR R6, f69
-STR R6[R13, -R6]
-LDR R6, f70_value
-LDR R6, f70
-STR R6[R13, -R6]
-MULL R6, R10, R10, R10
-LDR R6, f69
-LDR R6, [R13, -R6]
+Multiply: LDR R7, local_allocate_Multiply
+ADD R13, R13, R7
+LDR R7, f69_value
+LDR R7, f69
+STR R7[R13, -R7]
+LDR R7, f70_value
+LDR R7, f70
+STR R7[R13, -R7]
+MULL R7, R10, R10, R10
+LDR R7, f69
+LDR R7, [R13, -R7]
 LDR R10, f73_inner
-STR R6[R13, -R10]
+STR R7[R13, -R10]
 SUB R13, R13, #8
 MOV R15, R14
-IntToReal: LDR R6, f78_value
-LDR R6, f78
-STR R6[R13, -R6]
-LDR R6, f79_value
-LDR R6, f79
-STR R6[R13, -R6]
-MOV R6, #0
-LDR R6, f80
-STRB R6[R13, -R6]
-LDR R6, f81_value
-LDR R6, f81
-STR R6[R13, -R6]
-LDR R6, f82_value
-LDR R6, f82
-STR R6[R13, -R6]
-LDR R6, f83_value
-LDR R6, f83
-STR R6[R13, -R6]
-LDR R6, f84_value
-LDR R6, f84
-STR R6[R13, -R6]
-LDR R6, f85_value
-LDR R6, f85
-STR R6[R13, -R6]
-LDR R6, f86_value
-LDR R6, f86
-STR R6[R13, -R6]
-LDR R6, f87_value
-LDR R6, f87
-STR R6[R13, -R6]
-LDR R6, f88_value
-LDR R6, f88
-STR R6[R13, -R6]
-LDR R6, f89_value
-LDR R6, f89
-STR R6[R13, -R6]
-LDR R6, f90_value
-LDR R6, f90
-STR R6[R13, -R6]
+IntToReal: LDR R7, local_allocate_IntToReal
+ADD R13, R13, R7
+LDR R7, f78_value
+LDR R7, f78
+STR R7[R13, -R7]
+LDR R7, f79_value
+LDR R7, f79
+STR R7[R13, -R7]
+MOV R7, #0
+LDR R7, f80
+STRB R7[R13, -R7]
+LDR R7, f81_value
+LDR R7, f81
+STR R7[R13, -R7]
+LDR R7, f82_value
+LDR R7, f82
+STR R7[R13, -R7]
+LDR R7, f83_value
+LDR R7, f83
+STR R7[R13, -R7]
+LDR R7, f84_value
+LDR R7, f84
+STR R7[R13, -R7]
+LDR R7, f85_value
+LDR R7, f85
+STR R7[R13, -R7]
+LDR R7, f86_value
+LDR R7, f86
+STR R7[R13, -R7]
+LDR R7, f87_value
+LDR R7, f87
+STR R7[R13, -R7]
+LDR R7, f88_value
+LDR R7, f88
+STR R7[R13, -R7]
+LDR R7, f89_value
+LDR R7, f89
+STR R7[R13, -R7]
+LDR R7, f90_value
+LDR R7, f90
+STR R7[R13, -R7]
 ADD R13, R13, #8
-LDR R6, Abs_return_address_outer
-STR R14, [R13, -R6]
-LDR R6, g79_inner
-LDR R6, [R13, -R6]
-LDR R6, f94_outer
-STR R6, [R13, -R6]
+LDR R7, Abs_return_address_outer
+STR R14, [R13, -R7]
+LDR R7, g79_inner
+LDR R7, [R13, -R7]
+LDR R7, f94_outer
+STR R7, [R13, -R7]
 BL Abs
 LDR R14, Abs_return_address_outer
 LDR R14, [R13, -R14]
 SUB R13, R13, #8
-LDR R6, g13_outer
-LDR R6, [R13, -R6]
-LDR R6, g14_inner
-STR R6[R13, -R6]
-LDR R6, g14
-LDR R6, [R13, -R6]
+LDR R7, g13_outer
+LDR R7, [R13, -R7]
+LDR R7, g14_inner
+STR R7[R13, -R7]
+LDR R7, g14
+LDR R7, [R13, -R7]
 LDR R10, f79_inner
-STR R6[R13, -R10]
+STR R7[R13, -R10]
 LDR R10, f79
 LDR R10, [R13, -R10]
-LDR R6, f84_inner
-STR R10[R13, -R6]
+LDR R7, f84_inner
+STR R10[R13, -R7]
 LDR R12, g15_value
 LDR R12, g15
 STR R12[R13, -R12]
@@ -615,10 +631,10 @@ STRB R12[R13, -R13]
 ADD R13, R13, #8
 LDR R12, IntIsZero_return_address_outer
 STR R14, [R13, -R12]
-LDR R6, f84
-LDR R6, [R13, -R6]
+LDR R7, f84
+LDR R7, [R13, -R7]
 LDR R12, f54_outer
-STR R6, [R13, -R12]
+STR R7, [R13, -R12]
 BL IntIsZero
 LDR R14, IntIsZero_return_address_outer
 LDR R14, [R13, -R14]
@@ -648,10 +664,10 @@ B IFEND_0_LEVEL_0_2
 IFNEXT_0_SEQ_0_LEVEL_0_2: ADD R13, R13, #8
 LDR R12, IntIsZero_return_address_outer
 STR R14, [R13, -R12]
-LDR R6, f84
-LDR R6, [R13, -R6]
+LDR R7, f84
+LDR R7, [R13, -R7]
 LDR R12, f54_outer
-STR R6, [R13, -R12]
+STR R7, [R13, -R12]
 BL IntIsZero
 LDR R14, IntIsZero_return_address_outer
 LDR R14, [R13, -R14]
@@ -687,11 +703,11 @@ BNE WHILEEND_0_LEVEL_0_2
 WHILESTAT_0_SEQ_0_LEVEL_0_2: LDR R12, g36_value
 LDR R12, g36
 STR R12[R13, -R12]
-LDR R6, f84
-LDR R6, [R13, -R6]
+LDR R7, f84
+LDR R7, [R13, -R7]
 LDR R12, g36
 LDR R12, [R13, -R12]
-AND R0, R6, R12
+AND R0, R7, R12
 LDR R0, g37
 STR R0[R13, -R0]
 LDR R12, g37
@@ -743,138 +759,138 @@ STR R11[R13, -R0]
 LDR R11, g43_value
 LDR R11, g43
 STR R11[R13, -R11]
-LDR R6, f84
-LDR R6, [R13, -R6]
+LDR R7, f84
+LDR R7, [R13, -R7]
 LDR R11, g43
 LDR R11, [R13, -R11]
-MOV R1, R6, ASR R11
+MOV R1, R7, ASR R11
 LDR R1, g44
 STR R1[R13, -R1]
-LDR R6, g44
-LDR R6, [R13, -R6]
+LDR R7, g44
+LDR R7, [R13, -R7]
 LDR R11, f84_inner
-STR R6[R13, -R11]
+STR R7[R13, -R11]
 ADD R13, R13, #8
-LDR R6, IntIsZero_return_address_outer
-STR R14, [R13, -R6]
+LDR R7, IntIsZero_return_address_outer
+STR R14, [R13, -R7]
 LDR R11, f84
 LDR R11, [R13, -R11]
-LDR R6, f54_outer
-STR R11, [R13, -R6]
+LDR R7, f54_outer
+STR R11, [R13, -R7]
 BL IntIsZero
 LDR R14, IntIsZero_return_address_outer
 LDR R14, [R13, -R14]
 SUB R13, R13, #8
-LDR R6, f58_outer
-LDRB R6, [R13, -R6]
-LDR R6, g45_inner
-STRB R6[R13, -R6]
-LDR R6, g45
-LDRB R6, [R13, -R6]
-TEQ R6, #0
+LDR R7, f58_outer
+LDRB R7, [R13, -R7]
+LDR R7, g45_inner
+STRB R7[R13, -R7]
+LDR R7, g45
+LDRB R7, [R13, -R7]
+TEQ R7, #0
 MOVEQ R1, #1
 MOVNE R1, #0
 LDR R1, g46
 STRB R1[R13, -R1]
-LDR R6, g46
-LDRB R6, [R13, -R6]
+LDR R7, g46
+LDRB R7, [R13, -R7]
 LDR R1, g34_inner
-STRB R6[R13, -R1]
+STRB R7[R13, -R1]
 B WHILECOND_0_SEQ_0_LEVEL_0_2
 WHILENEXT_0_SEQ_0_LEVEL_0_2: MOV R0, R0
-WHILEEND_0_LEVEL_0_2: LDR R6, g47_value
-LDR R6, g47
-STR R6[R13, -R6]
+WHILEEND_0_LEVEL_0_2: LDR R7, g47_value
+LDR R7, g47
+STR R7[R13, -R7]
 LDR R12, f82
 LDR R12, [R13, -R12]
-LDR R6, g47
-LDR R6, [R13, -R6]
-CMP R12, R6
+LDR R7, g47
+LDR R7, [R13, -R7]
+CMP R12, R7
 MOVGT R1, #1
 MOVLE R1, #0
 LDR R1, g48
 STRB R1[R13, -R1]
-MOV R6, #1
-LDR R6, g49
-STRB R6[R13, -R6]
-LDR R6, g48
-LDRB R6, [R13, -R6]
+MOV R7, #1
+LDR R7, g49
+STRB R7[R13, -R7]
+LDR R7, g48
+LDRB R7, [R13, -R7]
 LDR R1, g49
 LDRB R1, [R13, -R1]
-TEQB R6, R1
+TEQB R7, R1
 BEQ IFSTAT_2_SEQ_0_LEVEL_1_0
 BNE IFNEXT_2_SEQ_0_LEVEL_1_0
-IFSTAT_2_SEQ_0_LEVEL_1_0: LDR R6, g50_value
-LDR R6, g50
-STR R6[R13, -R6]
+IFSTAT_2_SEQ_0_LEVEL_1_0: LDR R7, g50_value
+LDR R7, g50
+STR R7[R13, -R7]
 LDR R12, f82
 LDR R12, [R13, -R12]
-LDR R6, g50
-LDR R6, [R13, -R6]
-SUB R1, R12, R6
+LDR R7, g50
+LDR R7, [R13, -R7]
+SUB R1, R12, R7
 LDR R1, g51
 STR R1[R13, -R1]
 LDR R10, f79
 LDR R10, [R13, -R10]
-LDR R6, g51
-LDR R6, [R13, -R6]
-MOV R1, R10, ASR R6
+LDR R7, g51
+LDR R7, [R13, -R7]
+MOV R1, R10, ASR R7
 LDR R1, g52
 STR R1[R13, -R1]
-LDR R6, g52
-LDR R6, [R13, -R6]
+LDR R7, g52
+LDR R7, [R13, -R7]
 LDR R10, f79_inner
-STR R6[R13, -R10]
+STR R7[R13, -R10]
 B IFEND_2_LEVEL_1_0
-IFNEXT_2_SEQ_0_LEVEL_1_0: LDR R6, g53_value
-LDR R6, g53
-STR R6[R13, -R6]
+IFNEXT_2_SEQ_0_LEVEL_1_0: LDR R7, g53_value
+LDR R7, g53
+STR R7[R13, -R7]
 LDR R12, f82
 LDR R12, [R13, -R12]
-LDR R6, g53
-LDR R6, [R13, -R6]
-CMP R12, R6
+LDR R7, g53
+LDR R7, [R13, -R7]
+CMP R12, R7
 MOVLT R1, #1
 MOVGE R1, #0
 LDR R1, g54
 STRB R1[R13, -R1]
-MOV R6, #1
-LDR R6, g55
-STRB R6[R13, -R6]
-LDR R6, g54
-LDRB R6, [R13, -R6]
+MOV R7, #1
+LDR R7, g55
+STRB R7[R13, -R7]
+LDR R7, g54
+LDRB R7, [R13, -R7]
 LDR R1, g55
 LDRB R1, [R13, -R1]
-TEQB R6, R1
+TEQB R7, R1
 BEQ IFSTAT_2_SEQ_1_LEVEL_1_0
 BNE IFNEXT_2_SEQ_1_LEVEL_1_0
-IFSTAT_2_SEQ_1_LEVEL_1_0: LDR R6, g56_value
-LDR R6, g56
-STR R6[R13, -R6]
-LDR R6, g56
-LDR R6, [R13, -R6]
+IFSTAT_2_SEQ_1_LEVEL_1_0: LDR R7, g56_value
+LDR R7, g56
+STR R7[R13, -R7]
+LDR R7, g56
+LDR R7, [R13, -R7]
 LDR R12, f82
 LDR R12, [R13, -R12]
-SUB R1, R6, R12
+SUB R1, R7, R12
 LDR R1, g57
 STR R1[R13, -R1]
 LDR R10, f79
 LDR R10, [R13, -R10]
-LDR R6, g57
-LDR R6, [R13, -R6]
-MOV R1, R10, LSL R6
+LDR R7, g57
+LDR R7, [R13, -R7]
+MOV R1, R10, LSL R7
 LDR R1, g58
 STR R1[R13, -R1]
-LDR R6, g58
-LDR R6, [R13, -R6]
+LDR R7, g58
+LDR R7, [R13, -R7]
 LDR R10, f79_inner
-STR R6[R13, -R10]
+STR R7[R13, -R10]
 B IFEND_2_LEVEL_1_0
 IFNEXT_2_SEQ_1_LEVEL_1_0: MOV R0, R0
 IFEND_2_LEVEL_1_0: LDR R12, f82
 LDR R12, [R13, -R12]
-LDR R6, h43
-ADD R1, R12, R6
+LDR R7, h43
+ADD R1, R12, R7
 LDR R1, g59
 STR R1[R13, -R1]
 LDR R1, g59
@@ -1010,7 +1026,9 @@ LDR R0, g78_inner
 STR R1[R13, -R0]
 SUB R13, R13, #180
 MOV R15, R14
-Abs: LDR R1, f91_value
+Abs: LDR R1, local_allocate_Abs
+ADD R13, R13, R1
+LDR R1, f91_value
 LDR R1, f91
 STR R1[R13, -R1]
 LDR R1, f92_value
@@ -1072,7 +1090,9 @@ LDR R0, g13_inner
 STR R1[R13, -R0]
 SUB R13, R13, #14
 MOV R15, R14
-INeg: LDR R1, f96_value
+INeg: LDR R1, local_allocate_INeg
+ADD R13, R13, R1
+LDR R1, f96_value
 LDR R1, f96
 STR R1[R13, -R1]
 LDR R1, f98_inner
@@ -1105,7 +1125,9 @@ LDR R0, g11_inner
 STR R1[R13, -R0]
 SUB R13, R13, #16
 MOV R15, R14
-IntIsNegative: MOV R1, #0
+IntIsNegative: LDR R1, local_allocate_IntIsNegative
+ADD R13, R13, R1
+MOV R1, #0
 LDR R1, g16
 STRB R1[R13, -R1]
 LDR R1, g17_value
@@ -1193,7 +1215,9 @@ LDR R0, g28_inner
 STRB R1[R13, -R0]
 SUB R13, R13, #29
 MOV R15, R14
-IntBinaryAsReal: LDR R1, g73_value
+IntBinaryAsReal: LDR R1, local_allocate_IntBinaryAsReal
+ADD R13, R13, R1
+LDR R1, g73_value
 LDR R1, g73
 STR R1[R13, -R1]
 LDR R1, g74_value
@@ -1208,7 +1232,9 @@ LDR R0, g75_inner
 STR R1[R13, -R0]
 SUB R13, R13, #8
 MOV R15, R14
-RMul: LDR R1, k8_value
+RMul: LDR R1, local_allocate_RMul
+ADD R13, R13, R1
+LDR R1, k8_value
 LDR R1, k8
 STR R1[R13, -R1]
 LDR R1, k9_value
@@ -4902,9 +4928,9 @@ IFNEXT_28_SEQ_3_LEVEL_1: MOV R0, R0
 IFEND_28_LEVEL_1: STR R0, spill1186
 LDR R0, l8
 LDR R0, [R13, -R0]
-LDR R6, h43
+LDR R7, h43
 STR R0, spill1187
-ADD R0, R0, R6
+ADD R0, R0, R7
 STR R0, spill1188
 LDR R0, R9
 STR R0[R13, -R0]
@@ -5070,491 +5096,509 @@ LDR R0, h44_inner
 STR R0[R13, -R0]
 SUB R13, R13, #1122
 MOV R15, R14
-RealSign: STR R0, spill1244
+STR R0, spill1244
+RealSign: LDR R0, local_allocate_RealSign
+ADD R13, R13, R0
 STR R0, spill1245
+STR R0, spill1246
 LDR R0, g81_value
 LDR R0, g81
 STR R0[R13, -R0]
-STR R0, spill1246
 STR R0, spill1247
+STR R0, spill1248
 LDR R0, g82_value
 LDR R0, g82
 STR R0[R13, -R0]
 ADD R13, R13, #8
-STR R0, spill1248
+STR R0, spill1249
 LDR R0, RealBinaryAsInt_return_address_outer
 STR R14, [R13, -R0]
-STR R0, spill1249
+STR R0, spill1250
 LDR R0, g93_inner
 LDR R0, [R13, -R0]
-STR R0, spill1250
+STR R0, spill1251
 LDR R0, g85_outer
 STR R0, [R13, -R0]
 BL RealBinaryAsInt
 LDR R14, RealBinaryAsInt_return_address_outer
 LDR R14, [R13, -R14]
 SUB R13, R13, #8
-STR R0, spill1251
+STR R0, spill1252
 LDR R0, g86_outer
 LDR R0, [R13, -R0]
-STR R0, spill1252
+STR R0, spill1253
 LDR R0, g87_inner
 STR R0[R13, -R0]
-STR R0, spill1253
+STR R0, spill1254
 LDR R0, g87
 LDR R0, [R13, -R0]
-STR R0, spill1254
+STR R0, spill1255
 LDR R0, g82_inner
 STR R0[R13, -R0]
-STR R0, spill1255
 STR R0, spill1256
+STR R0, spill1257
 LDR R0, g88_value
 LDR R0, g88
 STR R0[R13, -R0]
-STR R0, spill1257
+STR R0, spill1258
 LDR R0, g82
 LDR R0, [R13, -R0]
-STR R0, spill1258
+STR R0, spill1259
 LDR R0, g88
 LDR R0, [R13, -R0]
-STR R0, spill1259
-MOV R0, R0, ASR R0
 STR R0, spill1260
+MOV R0, R0, ASR R0
+STR R0, spill1261
 LDR R0, g89
 STR R0[R13, -R0]
-STR R0, spill1261
 STR R0, spill1262
+STR R0, spill1263
 LDR R0, g90_value
 LDR R0, g90
 STR R0[R13, -R0]
-STR R0, spill1263
+STR R0, spill1264
 LDR R0, g89
 LDR R0, [R13, -R0]
-STR R0, spill1264
+STR R0, spill1265
 LDR R0, g90
 LDR R0, [R13, -R0]
-STR R0, spill1265
-AND R0, R0, R0
 STR R0, spill1266
-LDR R0, g91
-STR R0[R13, -R0]
+AND R0, R0, R0
 STR R0, spill1267
 LDR R0, g91
-LDR R0, [R13, -R0]
+STR R0[R13, -R0]
 STR R0, spill1268
+LDR R0, g91
+LDR R0, [R13, -R0]
+STR R0, spill1269
 LDR R0, g81_inner
 STR R0[R13, -R0]
-STR R0, spill1269
+STR R0, spill1270
 LDR R0, g81
 LDR R0, [R13, -R0]
-STR R0, spill1270
+STR R0, spill1271
 LDR R0, g92_inner
 STR R0[R13, -R0]
 SUB R13, R13, #28
 MOV R15, R14
-RealBinaryAsInt: STR R0, spill1271
 STR R0, spill1272
+RealBinaryAsInt: LDR R0, local_allocate_RealBinaryAsInt
+ADD R13, R13, R0
+STR R0, spill1273
+STR R0, spill1274
 LDR R0, g83_value
 LDR R0, g83
 STR R0[R13, -R0]
-STR R0, spill1273
-STR R0, spill1274
+STR R0, spill1275
+STR R0, spill1276
 LDR R0, g84_value
 LDR R0, g84
 STR R0[R13, -R0]
-STR R0, spill1275
-LDR R0, g85
-STR R0, spill1276
-STR R0, g83
 STR R0, spill1277
+LDR R0, g85
+STR R0, spill1278
+STR R0, g83
+STR R0, spill1279
 LDR R0, g83
 LDR R0, [R13, -R0]
-STR R0, spill1278
+STR R0, spill1280
 LDR R0, g86_inner
 STR R0[R13, -R0]
 SUB R13, R13, #8
 MOV R15, R14
-RealExponent: STR R0, spill1279
-STR R0, spill1280
+STR R0, spill1281
+RealExponent: LDR R0, local_allocate_RealExponent
+ADD R13, R13, R0
+STR R0, spill1282
+STR R0, spill1283
 LDR R0, g94_value
 LDR R0, g94
 STR R0[R13, -R0]
-STR R0, spill1281
-STR R0, spill1282
+STR R0, spill1284
+STR R0, spill1285
 LDR R0, g95_value
 LDR R0, g95
 STR R0[R13, -R0]
-STR R0, spill1283
-STR R0, spill1284
+STR R0, spill1286
+STR R0, spill1287
 LDR R0, g96_value
 LDR R0, g96
 STR R0[R13, -R0]
 ADD R13, R13, #8
-STR R0, spill1285
+STR R0, spill1288
 LDR R0, RealBinaryAsInt_return_address_outer
 STR R14, [R13, -R0]
-STR R0, spill1286
+STR R0, spill1289
 LDR R0, h16_inner
 LDR R0, [R13, -R0]
-STR R0, spill1287
+STR R0, spill1290
 LDR R0, g85_outer
 STR R0, [R13, -R0]
 BL RealBinaryAsInt
 LDR R14, RealBinaryAsInt_return_address_outer
 LDR R14, [R13, -R14]
 SUB R13, R13, #8
-STR R0, spill1288
+STR R0, spill1291
 LDR R0, g86_outer
 LDR R0, [R13, -R0]
-STR R0, spill1289
+STR R0, spill1292
 LDR R0, g97_inner
 STR R0[R13, -R0]
-STR R0, spill1290
+STR R0, spill1293
 LDR R0, g97
 LDR R0, [R13, -R0]
-STR R0, spill1291
+STR R0, spill1294
 LDR R0, g95_inner
 STR R0[R13, -R0]
-STR R0, spill1292
-STR R0, spill1293
+STR R0, spill1295
+STR R0, spill1296
 LDR R0, g98_value
 LDR R0, g98
 STR R0[R13, -R0]
-STR R0, spill1294
+STR R0, spill1297
 LDR R0, g95
 LDR R0, [R13, -R0]
-STR R0, spill1295
+STR R0, spill1298
 LDR R0, g98
 LDR R0, [R13, -R0]
-STR R0, spill1296
+STR R0, spill1299
 MOV R0, R0, ASR R0
-STR R0, spill1297
+STR R0, spill1300
 LDR R0, g99
 STR R0[R13, -R0]
-STR R0, spill1298
-STR R0, spill1299
+STR R0, spill1301
+STR R0, spill1302
 LDR R0, h10_value
 LDR R0, h10
 STR R0[R13, -R0]
-STR R0, spill1300
+STR R0, spill1303
 LDR R0, g99
 LDR R0, [R13, -R0]
-STR R0, spill1301
+STR R0, spill1304
 LDR R0, h10
 LDR R0, [R13, -R0]
-STR R0, spill1302
+STR R0, spill1305
 AND R0, R0, R0
-STR R0, spill1303
+STR R0, spill1306
 LDR R0, h11
 STR R0[R13, -R0]
-STR R0, spill1304
+STR R0, spill1307
 LDR R0, h11
 LDR R0, [R13, -R0]
-STR R0, spill1305
+STR R0, spill1308
 LDR R0, g96_inner
 STR R0[R13, -R0]
-STR R0, spill1306
+STR R0, spill1309
 LDR R0, g96
 LDR R0, [R13, -R0]
-LDR R6, h43
-STR R0, spill1307
-SUB R0, R0, R6
-STR R0, spill1308
+LDR R7, h43
+STR R0, spill1310
+SUB R0, R0, R7
+STR R0, spill1311
 LDR R0, h12
 STR R0[R13, -R0]
-STR R0, spill1309
+STR R0, spill1312
 LDR R0, h12
 LDR R0, [R13, -R0]
-STR R0, spill1310
+STR R0, spill1313
 LDR R0, g94_inner
 STR R0[R13, -R0]
-STR R0, spill1311
+STR R0, spill1314
 LDR R0, g94
 LDR R0, [R13, -R0]
-STR R0, spill1312
+STR R0, spill1315
 LDR R0, h15_inner
 STR R0[R13, -R0]
 SUB R13, R13, #36
 MOV R15, R14
-RealMantissa: STR R0, spill1313
-STR R0, spill1314
+STR R0, spill1316
+RealMantissa: LDR R0, local_allocate_RealMantissa
+ADD R13, R13, R0
+STR R0, spill1317
+STR R0, spill1318
 LDR R0, h17_value
 LDR R0, h17
 STR R0[R13, -R0]
-STR R0, spill1315
-STR R0, spill1316
+STR R0, spill1319
+STR R0, spill1320
 LDR R0, h18_value
 LDR R0, h18
 STR R0[R13, -R0]
-STR R0, spill1317
-STR R0, spill1318
+STR R0, spill1321
+STR R0, spill1322
 LDR R0, h19_value
 LDR R0, h19
 STR R0[R13, -R0]
-STR R0, spill1319
-STR R0, spill1320
+STR R0, spill1323
+STR R0, spill1324
 LDR R0, h20_value
 LDR R0, h20
 STR R0[R13, -R0]
 ADD R13, R13, #8
-STR R0, spill1321
+STR R0, spill1325
 LDR R0, RealBinaryAsInt_return_address_outer
 STR R14, [R13, -R0]
-STR R0, spill1322
+STR R0, spill1326
 LDR R0, h42_inner
 LDR R0, [R13, -R0]
-STR R0, spill1323
+STR R0, spill1327
 LDR R0, g85_outer
 STR R0, [R13, -R0]
 BL RealBinaryAsInt
 LDR R14, RealBinaryAsInt_return_address_outer
 LDR R14, [R13, -R14]
 SUB R13, R13, #8
-STR R0, spill1324
+STR R0, spill1328
 LDR R0, g86_outer
 LDR R0, [R13, -R0]
-STR R0, spill1325
+STR R0, spill1329
 LDR R0, h21_inner
 STR R0[R13, -R0]
-STR R0, spill1326
+STR R0, spill1330
 LDR R0, h21
 LDR R0, [R13, -R0]
-STR R0, spill1327
+STR R0, spill1331
 LDR R0, h18_inner
 STR R0[R13, -R0]
-STR R0, spill1328
-STR R0, spill1329
+STR R0, spill1332
+STR R0, spill1333
 LDR R0, h22_value
 LDR R0, h22
 STR R0[R13, -R0]
-STR R0, spill1330
+STR R0, spill1334
 LDR R0, h18
 LDR R0, [R13, -R0]
-STR R0, spill1331
+STR R0, spill1335
 LDR R0, h22
 LDR R0, [R13, -R0]
-STR R0, spill1332
+STR R0, spill1336
 AND R0, R0, R0
-STR R0, spill1333
+STR R0, spill1337
 LDR R0, h23
 STR R0[R13, -R0]
-STR R0, spill1334
+STR R0, spill1338
 LDR R0, h23
 LDR R0, [R13, -R0]
-STR R0, spill1335
+STR R0, spill1339
 LDR R0, h19_inner
 STR R0[R13, -R0]
 ADD R13, R13, #8
-STR R0, spill1336
+STR R0, spill1340
 LDR R0, RealIsZero_return_address_outer
 STR R14, [R13, -R0]
-STR R0, spill1337
+STR R0, spill1341
 LDR R0, h42_inner
 LDR R0, [R13, -R0]
-STR R0, spill1338
+STR R0, spill1342
 LDR R0, h36_outer
 STR R0, [R13, -R0]
 BL RealIsZero
 LDR R14, RealIsZero_return_address_outer
 LDR R14, [R13, -R14]
 SUB R13, R13, #8
-STR R0, spill1339
+STR R0, spill1343
 LDR R0, h35_outer
 LDRB R0, [R13, -R0]
-STR R0, spill1340
+STR R0, spill1344
 LDR R0, h37_inner
 STRB R0[R13, -R0]
-STR R0, spill1341
-STR R0, spill1342
+STR R0, spill1345
+STR R0, spill1346
 MOV R0, #1
 LDR R0, h38
 STRB R0[R13, -R0]
-STR R0, spill1343
+STR R0, spill1347
 LDR R0, h37
 LDRB R0, [R13, -R0]
-STR R0, spill1344
+STR R0, spill1348
 LDR R0, h38
 LDRB R0, [R13, -R0]
 TEQB R0, R0
 BEQ IFSTAT_6_SEQ_0_LEVEL_0_0
 BNE IFNEXT_6_SEQ_0_LEVEL_0_0
-IFSTAT_6_SEQ_0_LEVEL_0_0: STR R0, spill1345
-LDR R0, h19
-LDR R0, [R13, -R0]
-STR R0, spill1346
-LDR R0, h17_inner
-STR R0[R13, -R0]
-B IFEND_6_LEVEL_0_0
-IFNEXT_6_SEQ_0_LEVEL_0_0: STR R0, spill1347
-STR R0, spill1348
-LDR R0, h39_value
-LDR R0, h39
-STR R0[R13, -R0]
-STR R0, spill1349
+IFSTAT_6_SEQ_0_LEVEL_0_0: STR R0, spill1349
 LDR R0, h19
 LDR R0, [R13, -R0]
 STR R0, spill1350
-LDR R0, h39
-LDR R0, [R13, -R0]
-STR R0, spill1351
-ORR R0, R0, R0
+LDR R0, h17_inner
+STR R0[R13, -R0]
+B IFEND_6_LEVEL_0_0
+IFNEXT_6_SEQ_0_LEVEL_0_0: STR R0, spill1351
 STR R0, spill1352
-LDR R0, h40
+LDR R0, h39_value
+LDR R0, h39
 STR R0[R13, -R0]
 STR R0, spill1353
-LDR R0, h40
+LDR R0, h19
 LDR R0, [R13, -R0]
 STR R0, spill1354
+LDR R0, h39
+LDR R0, [R13, -R0]
+STR R0, spill1355
+ORR R0, R0, R0
+STR R0, spill1356
+LDR R0, h40
+STR R0[R13, -R0]
+STR R0, spill1357
+LDR R0, h40
+LDR R0, [R13, -R0]
+STR R0, spill1358
 LDR R0, h17_inner
 STR R0[R13, -R0]
 B IFEND_6_LEVEL_0_0
 IFNEXT_6_SEQ_1_LEVEL_0: MOV R0, R0
-IFEND_6_LEVEL_0_0: STR R0, spill1355
+IFEND_6_LEVEL_0_0: STR R0, spill1359
 LDR R0, h17
 LDR R0, [R13, -R0]
-STR R0, spill1356
+STR R0, spill1360
 LDR R0, h41_inner
 STR R0[R13, -R0]
 SUB R13, R13, #38
 MOV R15, R14
-RealIsZero: STR R0, spill1357
-STR R0, spill1358
+STR R0, spill1361
+RealIsZero: LDR R0, local_allocate_RealIsZero
+ADD R13, R13, R0
+STR R0, spill1362
+STR R0, spill1363
 MOV R0, #0
 LDR R0, h24
 STRB R0[R13, -R0]
-STR R0, spill1359
-STR R0, spill1360
+STR R0, spill1364
+STR R0, spill1365
 LDR R0, h25_value
 LDR R0, h25
 STR R0[R13, -R0]
-STR R0, spill1361
-STR R0, spill1362
+STR R0, spill1366
+STR R0, spill1367
 LDR R0, h26_value
 LDR R0, h26
 STR R0[R13, -R0]
 ADD R13, R13, #8
-STR R0, spill1363
+STR R0, spill1368
 LDR R0, RealBinaryAsInt_return_address_outer
 STR R14, [R13, -R0]
-STR R0, spill1364
+STR R0, spill1369
 LDR R0, h36_inner
 LDR R0, [R13, -R0]
-STR R0, spill1365
+STR R0, spill1370
 LDR R0, g85_outer
 STR R0, [R13, -R0]
 BL RealBinaryAsInt
 LDR R14, RealBinaryAsInt_return_address_outer
 LDR R14, [R13, -R14]
 SUB R13, R13, #8
-STR R0, spill1366
+STR R0, spill1371
 LDR R0, g86_outer
 LDR R0, [R13, -R0]
-STR R0, spill1367
+STR R0, spill1372
 LDR R0, h27_inner
 STR R0[R13, -R0]
-STR R0, spill1368
+STR R0, spill1373
 LDR R0, h27
 LDR R0, [R13, -R0]
-STR R0, spill1369
+STR R0, spill1374
 LDR R0, h26_inner
 STR R0[R13, -R0]
-STR R0, spill1370
-STR R0, spill1371
+STR R0, spill1375
+STR R0, spill1376
 LDR R0, h28_value
 LDR R0, h28
 STR R0[R13, -R0]
-STR R0, spill1372
+STR R0, spill1377
 LDR R0, h26
 LDR R0, [R13, -R0]
-STR R0, spill1373
+STR R0, spill1378
 LDR R0, h28
 LDR R0, [R13, -R0]
-STR R0, spill1374
+STR R0, spill1379
 AND R0, R0, R0
-STR R0, spill1375
+STR R0, spill1380
 LDR R0, h29
 STR R0[R13, -R0]
-STR R0, spill1376
+STR R0, spill1381
 LDR R0, h29
 LDR R0, [R13, -R0]
-STR R0, spill1377
+STR R0, spill1382
 LDR R0, h25_inner
 STR R0[R13, -R0]
-STR R0, spill1378
-STR R0, spill1379
+STR R0, spill1383
+STR R0, spill1384
 LDR R0, h30_value
 LDR R0, h30
 STR R0[R13, -R0]
-STR R0, spill1380
+STR R0, spill1385
 LDR R0, h25
 LDR R0, [R13, -R0]
-STR R0, spill1381
+STR R0, spill1386
 LDR R0, h30
 LDR R0, [R13, -R0]
-STR R0, spill1382
+STR R0, spill1387
 TEQ R0, R0
 MOVEQ R0, #1
 MOVNE R0, #0
-STR R0, spill1383
+STR R0, spill1388
 LDR R0, h31
 STRB R0[R13, -R0]
-STR R0, spill1384
-STR R0, spill1385
+STR R0, spill1389
+STR R0, spill1390
 MOV R0, #1
 LDR R0, h32
 STRB R0[R13, -R0]
-STR R0, spill1386
+STR R0, spill1391
 LDR R0, h31
 LDRB R0, [R13, -R0]
-STR R0, spill1387
+STR R0, spill1392
 LDR R0, h32
 LDRB R0, [R13, -R0]
 TEQB R0, R0
 BEQ IFSTAT_0_SEQ_0_LEVEL_0_3
 BNE IFNEXT_0_SEQ_0_LEVEL_0_3
-IFSTAT_0_SEQ_0_LEVEL_0_3: STR R0, spill1388
-STR R0, spill1389
+IFSTAT_0_SEQ_0_LEVEL_0_3: STR R0, spill1393
+STR R0, spill1394
 MOV R0, #1
 LDR R0, h33
 STRB R0[R13, -R0]
-STR R0, spill1390
+STR R0, spill1395
 LDR R0, h33
 LDRB R0, [R13, -R0]
-STR R0, spill1391
+STR R0, spill1396
 LDR R0, h24_inner
 STRB R0[R13, -R0]
 B IFEND_0_LEVEL_0_3
-IFNEXT_0_SEQ_0_LEVEL_0_3: STR R0, spill1392
-STR R0, spill1393
+IFNEXT_0_SEQ_0_LEVEL_0_3: STR R0, spill1397
+STR R0, spill1398
 MOV R0, #0
 LDR R0, h34
 STRB R0[R13, -R0]
-STR R0, spill1394
+STR R0, spill1399
 LDR R0, h34
 LDRB R0, [R13, -R0]
-STR R0, spill1395
+STR R0, spill1400
 LDR R0, h24_inner
 STRB R0[R13, -R0]
 B IFEND_0_LEVEL_0_3
 IFNEXT_0_SEQ_1_LEVEL_0_3: MOV R0, R0
-IFEND_0_LEVEL_0_3: STR R0, spill1396
+IFEND_0_LEVEL_0_3: STR R0, spill1401
 LDR R0, h24
 LDRB R0, [R13, -R0]
-STR R0, spill1397
+STR R0, spill1402
 LDR R0, h35_inner
 STRB R0[R13, -R0]
 SUB R13, R13, #29
 MOV R15, R14
-WriteReal: STR R0, spill1398
-STR R0, spill1399
+STR R0, spill1403
+WriteReal: LDR R0, local_allocate_WriteReal
+ADD R13, R13, R0
+STR R0, spill1404
+STR R0, spill1405
 LDR R0, h48_value
 LDR R0, h48
 STR R0[R13, -R0]
-STR R0, spill1400
+STR R0, spill1406
 MOV R0, R0
 LDR R0, h49
 SWI 2
-STR R0, spill1401
+STR R0, spill1407
 MOV R0, R0
 SUB R13, R13, #4
 MOV R15, R14
@@ -5633,26 +5677,31 @@ h46_outer: .WORD 4
 WriteReal_return_address_outer: .WORD 8
 h49_outer: .WORD 4
 WriteLn_return_address_outer: .WORD 4
-f29_inner: .WORD 13
-f32_inner: .WORD 12
-f33_inner: .WORD 11
-f34_inner: .WORD 10
-f35_inner: .WORD 9
-f36_inner: .WORD 5
-f37_inner: .WORD 1
-f41_inner: .WORD 37
-f42_inner: .WORD 33
-f43_inner: .WORD 29
-f44_inner: .WORD 25
-f49_inner: .WORD 21
-f50_inner: .WORD 17
-f59_inner: .WORD 13
-f60_inner: .WORD 12
-f61_inner: .WORD 11
-f62_inner: .WORD 10
-f63_inner: .WORD 6
-f64_inner: .WORD 2
-f65_inner: .WORD 1
+local_allocate_gcd: .WORD 13
+gcd_return_address_inner: .WORD 17
+f29: .WORD 13
+f32: .WORD 12
+f33: .WORD 11
+f34: .WORD 10
+f35: .WORD 9
+f36: .WORD 5
+f37: .WORD 1
+local_allocate_WriteString: .WORD 37
+WriteString_return_address_inner: .WORD 45
+f66_inner: .WORD 41
+f41: .WORD 37
+f42: .WORD 33
+f43: .WORD 29
+f44: .WORD 25
+f49: .WORD 21
+f50: .WORD 17
+f59: .WORD 13
+f60: .WORD 12
+f61: .WORD 11
+f62: .WORD 10
+f63: .WORD 6
+f64: .WORD 2
+f65: .WORD 1
 f41_valueWORD: .WORD 0.0
 f42_valueWORD: .WORD 0.0
 f43_valueWORD: .WORD 0.0
@@ -5665,80 +5714,102 @@ f54_outer: .WORD 4
 f62_valueWORD: .WORD 1.0
 IntIsZero_return_address_outer: .WORD 8
 f54_outer: .WORD 4
-f45_inner: .WORD 8
-f46_inner: .WORD 4
+local_allocate_StringAsAddress: .WORD 8
+StringAsAddress_return_address_inner: .WORD 20
+f48_inner: .WORD 16
+f47_inner: .WORD 12
+f45: .WORD 8
+f46: .WORD 4
 f45_valueWORD: .WORD 0.0
 f46_valueWORD: .WORD 0.0
-f51_inner: .WORD 9
-f52_inner: .WORD 8
-f53_inner: .WORD 4
-f55_inner: .WORD 3
-f56_inner: .WORD 2
-f57_inner: .WORD 1
+local_allocate_IntIsZero: .WORD 9
+IntIsZero_return_address_inner: .WORD 18
+f58_inner: .WORD 14
+f54_inner: .WORD 13
+f51: .WORD 9
+f52: .WORD 8
+f53: .WORD 4
+f55: .WORD 3
+f56: .WORD 2
+f57: .WORD 1
 f52_valueWORD: .WORD 0.0
-f67_inner: .WORD 4
+local_allocate_WriteInt: .WORD 4
+WriteInt_return_address_inner: .WORD 12
+f68_inner: .WORD 8
+f67: .WORD 4
 f67_valueWORD: .WORD 0.0
-f69_inner: .WORD 8
-f70_inner: .WORD 4
+local_allocate_WriteLn: .WORD 0
+WriteLn_return_address_inner: .WORD 4
+local_allocate_Multiply: .WORD 8
+Multiply_return_address_inner: .WORD 24
+f73_inner: .WORD 20
+f71_inner: .WORD 16
+f72_inner: .WORD 12
+f69: .WORD 8
+f70: .WORD 4
 f69_valueWORD: .WORD 0.0
 f70_valueWORD: .WORD 0.0
-f78_inner: .WORD 180
-f79_inner: .WORD 176
-f80_inner: .WORD 172
-f81_inner: .WORD 171
-f82_inner: .WORD 167
-f83_inner: .WORD 163
-f84_inner: .WORD 159
-f85_inner: .WORD 155
-f86_inner: .WORD 151
-f87_inner: .WORD 147
-f88_inner: .WORD 143
-f89_inner: .WORD 139
-f90_inner: .WORD 135
-g14_inner: .WORD 131
-g15_inner: .WORD 127
-g29_inner: .WORD 123
-g30_inner: .WORD 122
-g31_inner: .WORD 121
-g32_inner: .WORD 120
-g33_inner: .WORD 116
-g34_inner: .WORD 115
-g35_inner: .WORD 114
-g36_inner: .WORD 113
-g37_inner: .WORD 109
-g38_inner: .WORD 105
-g39_inner: .WORD 101
-g40_inner: .WORD 100
-g41_inner: .WORD 99
-g42_inner: .WORD 95
-g43_inner: .WORD 91
-g44_inner: .WORD 87
-g45_inner: .WORD 83
-g46_inner: .WORD 82
-g47_inner: .WORD 81
-g48_inner: .WORD 77
-g49_inner: .WORD 76
-g50_inner: .WORD 75
-g51_inner: .WORD 71
-g52_inner: .WORD 67
-g53_inner: .WORD 63
-g54_inner: .WORD 59
-g55_inner: .WORD 58
-g56_inner: .WORD 57
-g57_inner: .WORD 53
-g58_inner: .WORD 49
-g59_inner: .WORD 45
-g63_inner: .WORD 41
-g64_inner: .WORD 37
-g65_inner: .WORD 33
-g66_inner: .WORD 29
-g67_inner: .WORD 25
-g68_inner: .WORD 21
-g69_inner: .WORD 20
-g70_inner: .WORD 16
-g71_inner: .WORD 12
-g72_inner: .WORD 8
-g77_inner: .WORD 4
+local_allocate_IntToReal: .WORD 180
+IntToReal_return_address_inner: .WORD 192
+g78_inner: .WORD 188
+g79_inner: .WORD 184
+f78: .WORD 180
+f79: .WORD 176
+f80: .WORD 172
+f81: .WORD 171
+f82: .WORD 167
+f83: .WORD 163
+f84: .WORD 159
+f85: .WORD 155
+f86: .WORD 151
+f87: .WORD 147
+f88: .WORD 143
+f89: .WORD 139
+f90: .WORD 135
+g14: .WORD 131
+g15: .WORD 127
+g29: .WORD 123
+g30: .WORD 122
+g31: .WORD 121
+g32: .WORD 120
+g33: .WORD 116
+g34: .WORD 115
+g35: .WORD 114
+g36: .WORD 113
+g37: .WORD 109
+g38: .WORD 105
+g39: .WORD 101
+g40: .WORD 100
+g41: .WORD 99
+g42: .WORD 95
+g43: .WORD 91
+g44: .WORD 87
+g45: .WORD 83
+g46: .WORD 82
+g47: .WORD 81
+g48: .WORD 77
+g49: .WORD 76
+g50: .WORD 75
+g51: .WORD 71
+g52: .WORD 67
+g53: .WORD 63
+g54: .WORD 59
+g55: .WORD 58
+g56: .WORD 57
+g57: .WORD 53
+g58: .WORD 49
+g59: .WORD 45
+g63: .WORD 41
+g64: .WORD 37
+g65: .WORD 33
+g66: .WORD 29
+g67: .WORD 25
+g68: .WORD 21
+g69: .WORD 20
+g70: .WORD 16
+g71: .WORD 12
+g72: .WORD 8
+g77: .WORD 4
 f78_value: .WORD 0.0
 f79_valueWORD: .WORD 0.0
 f81_valueWORD: .WORD 0.0
@@ -5800,11 +5871,15 @@ g76_outer: .WORD 4
 spill20: .WORD 0
 spill21: .WORD 0
 spill22: .WORD 0
-f91_inner: .WORD 14
-f92_inner: .WORD 10
-f93_inner: .WORD 6
-f95_inner: .WORD 5
-g12_inner: .WORD 4
+local_allocate_Abs: .WORD 14
+Abs_return_address_inner: .WORD 26
+g13_inner: .WORD 22
+f94_inner: .WORD 18
+f91: .WORD 14
+f92: .WORD 10
+f93: .WORD 6
+f95: .WORD 5
+g12: .WORD 4
 f91_valueWORD: .WORD 0.0
 f92_valueWORD: .WORD 0.0
 spill23: .WORD 0
@@ -5814,10 +5889,14 @@ INeg_return_address_outer: .WORD 8
 f98_outer: .WORD 4
 spill26: .WORD 0
 spill27: .WORD 0
-f96_inner: .WORD 16
-f97_inner: .WORD 12
-f99_inner: .WORD 8
-g10_inner: .WORD 4
+local_allocate_INeg: .WORD 16
+INeg_return_address_inner: .WORD 28
+g11_inner: .WORD 24
+f98_inner: .WORD 20
+f96: .WORD 16
+f97: .WORD 12
+f99: .WORD 8
+g10: .WORD 4
 f96_valueWORD: .WORD 0.0
 f99_valueWORD: .WORD 1.0
 spill28: .WORD 0
@@ -5825,17 +5904,21 @@ spill29: .WORD 0
 spill30: .WORD 0
 spill31: .WORD 0
 spill32: .WORD 0
-g16_inner: .WORD 29
-g17_inner: .WORD 28
-g18_inner: .WORD 24
-g19_inner: .WORD 20
-g21_inner: .WORD 16
-g22_inner: .WORD 12
-g23_inner: .WORD 8
-g24_inner: .WORD 4
-g25_inner: .WORD 3
-g26_inner: .WORD 2
-g27_inner: .WORD 1
+local_allocate_IntIsNegative: .WORD 29
+IntIsNegative_return_address_inner: .WORD 38
+g28_inner: .WORD 34
+g20_inner: .WORD 33
+g16: .WORD 29
+g17: .WORD 28
+g18: .WORD 24
+g19: .WORD 20
+g21: .WORD 16
+g22: .WORD 12
+g23: .WORD 8
+g24: .WORD 4
+g25: .WORD 3
+g26: .WORD 2
+g27: .WORD 1
 g17_valueWORD: .WORD 0.0
 g18_valueWORD: .WORD 31.0
 spill33: .WORD 0
@@ -5853,356 +5936,364 @@ spill42: .WORD 0
 spill43: .WORD 0
 spill44: .WORD 0
 spill45: .WORD 0
-g73_inner: .WORD 8
-g74_inner: .WORD 4
+local_allocate_IntBinaryAsReal: .WORD 8
+IntBinaryAsReal_return_address_inner: .WORD 16
+g75_inner: .WORD 12
+g73: .WORD 8
+g74: .WORD 4
 g73_value: .WORD 0.0
 g74_valueWORD: .WORD 0.0
 spill46: .WORD 0
-k8_inner: .WORD 1122
-k9_inner: .WORD 1118
-l0_inner: .WORD 1114
-l1_inner: .WORD 1110
-l2_inner: .WORD 1106
-l3_inner: .WORD 1102
-l4_inner: .WORD 1098
-l5_inner: .WORD 1094
-l6_inner: .WORD 1090
-l7_inner: .WORD 1086
-l8_inner: .WORD 1082
-l9_inner: .WORD 1078
-m0_inner: .WORD 1074
-m1_inner: .WORD 1070
-m2_inner: .WORD 1066
-m3_inner: .WORD 1062
-m4_inner: .WORD 1058
-m5_inner: .WORD 1054
-m6_inner: .WORD 1050
-m7_inner: .WORD 1046
-m8_inner: .WORD 1042
-m9_inner: .WORD 1038
-n0_inner: .WORD 1034
-n1_inner: .WORD 1030
-n2_inner: .WORD 1026
-n3_inner: .WORD 1022
-n4_inner: .WORD 1018
-n5_inner: .WORD 1014
-n6_inner: .WORD 1010
-n7_inner: .WORD 1006
-n8_inner: .WORD 1002
-n9_inner: .WORD 998
-o0_inner: .WORD 994
-o1_inner: .WORD 990
-o2_inner: .WORD 986
-o3_inner: .WORD 982
-o4_inner: .WORD 978
-o5_inner: .WORD 974
-o6_inner: .WORD 970
-o7_inner: .WORD 966
-o8_inner: .WORD 962
-o9_inner: .WORD 958
-p0_inner: .WORD 954
-p1_inner: .WORD 950
-p2_inner: .WORD 946
-p3_inner: .WORD 942
-p4_inner: .WORD 941
-p5_inner: .WORD 940
-p6_inner: .WORD 939
-p7_inner: .WORD 938
-p8_inner: .WORD 937
-p9_inner: .WORD 936
-q0_inner: .WORD 932
-q1_inner: .WORD 928
-q2_inner: .WORD 924
-q3_inner: .WORD 923
-q4_inner: .WORD 922
-q5_inner: .WORD 918
-q6_inner: .WORD 914
-q7_inner: .WORD 910
-q8_inner: .WORD 906
-q9_inner: .WORD 902
-r0_inner: .WORD 901
-r1_inner: .WORD 897
-r2_inner: .WORD 896
-r3_inner: .WORD 895
-r4_inner: .WORD 894
-r5_inner: .WORD 890
-r6_inner: .WORD 886
-r7_inner: .WORD 882
-r8_inner: .WORD 881
-r9_inner: .WORD 880
-s0_inner: .WORD 876
-s1_inner: .WORD 872
-s2_inner: .WORD 868
-s3_inner: .WORD 864
-s4_inner: .WORD 863
-s5_inner: .WORD 862
-s6_inner: .WORD 858
-s7_inner: .WORD 854
-s8_inner: .WORD 850
-s9_inner: .WORD 849
-t0_inner: .WORD 848
-t1_inner: .WORD 844
-t2_inner: .WORD 840
-t3_inner: .WORD 836
-t4_inner: .WORD 832
-t5_inner: .WORD 828
-t6_inner: .WORD 827
-t7_inner: .WORD 823
-t8_inner: .WORD 822
-t9_inner: .WORD 821
-u0_inner: .WORD 820
-u1_inner: .WORD 816
-u2_inner: .WORD 812
-u3_inner: .WORD 808
-u4_inner: .WORD 807
-u5_inner: .WORD 806
-u6_inner: .WORD 802
-u7_inner: .WORD 798
-u8_inner: .WORD 794
-u9_inner: .WORD 790
-v0_inner: .WORD 789
-v1_inner: .WORD 788
-v2_inner: .WORD 784
-v3_inner: .WORD 783
-v4_inner: .WORD 782
-v5_inner: .WORD 778
-v6_inner: .WORD 774
-v7_inner: .WORD 770
-v8_inner: .WORD 766
-v9_inner: .WORD 765
-w0_inner: .WORD 764
-w1_inner: .WORD 763
-w2_inner: .WORD 759
-w3_inner: .WORD 755
-w4_inner: .WORD 751
-w5_inner: .WORD 750
-w6_inner: .WORD 749
-w7_inner: .WORD 745
-w8_inner: .WORD 741
-w9_inner: .WORD 737
-x0_inner: .WORD 733
-x1_inner: .WORD 729
-x2_inner: .WORD 725
-x3_inner: .WORD 721
-x4_inner: .WORD 717
-x5_inner: .WORD 713
-x6_inner: .WORD 709
-x7_inner: .WORD 705
-x8_inner: .WORD 704
-x9_inner: .WORD 703
-y0_inner: .WORD 702
-y1_inner: .WORD 701
-y2_inner: .WORD 700
-y3_inner: .WORD 696
-y4_inner: .WORD 692
-y5_inner: .WORD 688
-y6_inner: .WORD 687
-y7_inner: .WORD 686
-y8_inner: .WORD 682
-y9_inner: .WORD 678
-z0_inner: .WORD 674
-z1_inner: .WORD 670
-z2_inner: .WORD 669
-z3_inner: .WORD 668
-z4_inner: .WORD 664
-z5_inner: .WORD 660
-z6_inner: .WORD 656
-z7_inner: .WORD 655
-z8_inner: .WORD 651
-z9_inner: .WORD 650
-A0_inner: .WORD 649
-A1_inner: .WORD 648
-A2_inner: .WORD 644
-A3_inner: .WORD 640
-A4_inner: .WORD 636
-A5_inner: .WORD 632
-A6_inner: .WORD 628
-A7_inner: .WORD 624
-A8_inner: .WORD 620
-A9_inner: .WORD 616
-B0_inner: .WORD 612
-B1_inner: .WORD 608
-B2_inner: .WORD 604
-B3_inner: .WORD 600
-B4_inner: .WORD 599
-B5_inner: .WORD 598
-B6_inner: .WORD 594
-B7_inner: .WORD 590
-B8_inner: .WORD 586
-B9_inner: .WORD 582
-C0_inner: .WORD 578
-C1_inner: .WORD 574
-C2_inner: .WORD 570
-C3_inner: .WORD 566
-C4_inner: .WORD 565
-C5_inner: .WORD 564
-C6_inner: .WORD 560
-C7_inner: .WORD 556
-C8_inner: .WORD 552
-C9_inner: .WORD 548
-D0_inner: .WORD 544
-D1_inner: .WORD 540
-D2_inner: .WORD 536
-D3_inner: .WORD 532
-D4_inner: .WORD 531
-D5_inner: .WORD 530
-D6_inner: .WORD 526
-D7_inner: .WORD 522
-D8_inner: .WORD 518
-D9_inner: .WORD 514
-E0_inner: .WORD 510
-E1_inner: .WORD 506
-E2_inner: .WORD 505
-E3_inner: .WORD 504
-E4_inner: .WORD 500
-E5_inner: .WORD 496
-E6_inner: .WORD 492
-E7_inner: .WORD 491
-E8_inner: .WORD 490
-E9_inner: .WORD 486
-F0_inner: .WORD 482
-F1_inner: .WORD 478
-F2_inner: .WORD 474
-F3_inner: .WORD 470
-F4_inner: .WORD 466
-F5_inner: .WORD 462
-F6_inner: .WORD 458
-F7_inner: .WORD 454
-F8_inner: .WORD 450
-F9_inner: .WORD 446
-G0_inner: .WORD 442
-G1_inner: .WORD 438
-G2_inner: .WORD 434
-G3_inner: .WORD 430
-G4_inner: .WORD 429
-G5_inner: .WORD 428
-G6_inner: .WORD 424
-G7_inner: .WORD 420
-G8_inner: .WORD 416
-G9_inner: .WORD 412
-H0_inner: .WORD 408
-H1_inner: .WORD 404
-H2_inner: .WORD 403
-H3_inner: .WORD 402
-H4_inner: .WORD 398
-H5_inner: .WORD 394
-H6_inner: .WORD 390
-H7_inner: .WORD 386
-H8_inner: .WORD 385
-H9_inner: .WORD 384
-I0_inner: .WORD 380
-I1_inner: .WORD 376
-I2_inner: .WORD 372
-I3_inner: .WORD 368
-I4_inner: .WORD 364
-I5_inner: .WORD 360
-I6_inner: .WORD 356
-I7_inner: .WORD 352
-I8_inner: .WORD 348
-I9_inner: .WORD 344
-J0_inner: .WORD 340
-J1_inner: .WORD 336
-J2_inner: .WORD 332
-J3_inner: .WORD 328
-J4_inner: .WORD 324
-J5_inner: .WORD 320
-J6_inner: .WORD 319
-J7_inner: .WORD 318
-J8_inner: .WORD 314
-J9_inner: .WORD 310
-K0_inner: .WORD 306
-K1_inner: .WORD 302
-K2_inner: .WORD 301
-K3_inner: .WORD 300
-K4_inner: .WORD 299
-K5_inner: .WORD 295
-K6_inner: .WORD 291
-K7_inner: .WORD 287
-K8_inner: .WORD 286
-K9_inner: .WORD 285
-L0_inner: .WORD 281
-L1_inner: .WORD 277
-L2_inner: .WORD 273
-L3_inner: .WORD 269
-L4_inner: .WORD 265
-L5_inner: .WORD 261
-L6_inner: .WORD 257
-L7_inner: .WORD 253
-L8_inner: .WORD 249
-L9_inner: .WORD 245
-M0_inner: .WORD 241
-M1_inner: .WORD 240
-M2_inner: .WORD 239
-M3_inner: .WORD 238
-M4_inner: .WORD 237
-M5_inner: .WORD 236
-M6_inner: .WORD 232
-M7_inner: .WORD 228
-M8_inner: .WORD 224
-M9_inner: .WORD 223
-N0_inner: .WORD 222
-N1_inner: .WORD 218
-N2_inner: .WORD 214
-N3_inner: .WORD 210
-N4_inner: .WORD 206
-N5_inner: .WORD 205
-N6_inner: .WORD 204
-N7_inner: .WORD 200
-N8_inner: .WORD 199
-N9_inner: .WORD 198
-O0_inner: .WORD 194
-O1_inner: .WORD 190
-O2_inner: .WORD 186
-O3_inner: .WORD 182
-O4_inner: .WORD 178
-O5_inner: .WORD 174
-O6_inner: .WORD 170
-O7_inner: .WORD 166
-O8_inner: .WORD 162
-O9_inner: .WORD 158
-P0_inner: .WORD 154
-P1_inner: .WORD 150
-P2_inner: .WORD 146
-P3_inner: .WORD 142
-P4_inner: .WORD 138
-P5_inner: .WORD 134
-P6_inner: .WORD 130
-P7_inner: .WORD 126
-P8_inner: .WORD 122
-P9_inner: .WORD 118
-Q0_inner: .WORD 114
-Q1_inner: .WORD 110
-Q2_inner: .WORD 106
-Q3_inner: .WORD 102
-Q4_inner: .WORD 101
-Q5_inner: .WORD 100
-Q6_inner: .WORD 96
-Q7_inner: .WORD 92
-Q8_inner: .WORD 88
-Q9_inner: .WORD 84
-R0_inner: .WORD 80
-R1_inner: .WORD 79
-R2_inner: .WORD 78
-R3_inner: .WORD 74
-R4_inner: .WORD 70
-R5_inner: .WORD 66
-R6_inner: .WORD 62
-R7_inner: .WORD 58
-R8_inner: .WORD 57
-R9_inner: .WORD 56
-S0_inner: .WORD 52
-S1_inner: .WORD 48
-S2_inner: .WORD 44
-S3_inner: .WORD 40
-S4_inner: .WORD 36
-S5_inner: .WORD 32
-S6_inner: .WORD 28
-S7_inner: .WORD 24
-S8_inner: .WORD 20
-S9_inner: .WORD 16
-T0_inner: .WORD 12
-T1_inner: .WORD 8
-T2_inner: .WORD 4
+local_allocate_RMul: .WORD 1122
+RMul_return_address_inner: .WORD 1138
+h44_inner: .WORD 1134
+h45_inner: .WORD 1130
+h46_inner: .WORD 1126
+k8: .WORD 1122
+k9: .WORD 1118
+l0: .WORD 1114
+l1: .WORD 1110
+l2: .WORD 1106
+l3: .WORD 1102
+l4: .WORD 1098
+l5: .WORD 1094
+l6: .WORD 1090
+l7: .WORD 1086
+l8: .WORD 1082
+l9: .WORD 1078
+m0: .WORD 1074
+m1: .WORD 1070
+m2: .WORD 1066
+m3: .WORD 1062
+m4: .WORD 1058
+m5: .WORD 1054
+m6: .WORD 1050
+m7: .WORD 1046
+m8: .WORD 1042
+m9: .WORD 1038
+n0: .WORD 1034
+n1: .WORD 1030
+n2: .WORD 1026
+n3: .WORD 1022
+n4: .WORD 1018
+n5: .WORD 1014
+n6: .WORD 1010
+n7: .WORD 1006
+n8: .WORD 1002
+n9: .WORD 998
+o0: .WORD 994
+o1: .WORD 990
+o2: .WORD 986
+o3: .WORD 982
+o4: .WORD 978
+o5: .WORD 974
+o6: .WORD 970
+o7: .WORD 966
+o8: .WORD 962
+o9: .WORD 958
+p0: .WORD 954
+p1: .WORD 950
+p2: .WORD 946
+p3: .WORD 942
+p4: .WORD 941
+p5: .WORD 940
+p6: .WORD 939
+p7: .WORD 938
+p8: .WORD 937
+p9: .WORD 936
+q0: .WORD 932
+q1: .WORD 928
+q2: .WORD 924
+q3: .WORD 923
+q4: .WORD 922
+q5: .WORD 918
+q6: .WORD 914
+q7: .WORD 910
+q8: .WORD 906
+q9: .WORD 902
+r0: .WORD 901
+r1: .WORD 897
+r2: .WORD 896
+r3: .WORD 895
+r4: .WORD 894
+r5: .WORD 890
+r6: .WORD 886
+r7: .WORD 882
+r8: .WORD 881
+r9: .WORD 880
+s0: .WORD 876
+s1: .WORD 872
+s2: .WORD 868
+s3: .WORD 864
+s4: .WORD 863
+s5: .WORD 862
+s6: .WORD 858
+s7: .WORD 854
+s8: .WORD 850
+s9: .WORD 849
+t0: .WORD 848
+t1: .WORD 844
+t2: .WORD 840
+t3: .WORD 836
+t4: .WORD 832
+t5: .WORD 828
+t6: .WORD 827
+t7: .WORD 823
+t8: .WORD 822
+t9: .WORD 821
+u0: .WORD 820
+u1: .WORD 816
+u2: .WORD 812
+u3: .WORD 808
+u4: .WORD 807
+u5: .WORD 806
+u6: .WORD 802
+u7: .WORD 798
+u8: .WORD 794
+u9: .WORD 790
+v0: .WORD 789
+v1: .WORD 788
+v2: .WORD 784
+v3: .WORD 783
+v4: .WORD 782
+v5: .WORD 778
+v6: .WORD 774
+v7: .WORD 770
+v8: .WORD 766
+v9: .WORD 765
+w0: .WORD 764
+w1: .WORD 763
+w2: .WORD 759
+w3: .WORD 755
+w4: .WORD 751
+w5: .WORD 750
+w6: .WORD 749
+w7: .WORD 745
+w8: .WORD 741
+w9: .WORD 737
+x0: .WORD 733
+x1: .WORD 729
+x2: .WORD 725
+x3: .WORD 721
+x4: .WORD 717
+x5: .WORD 713
+x6: .WORD 709
+x7: .WORD 705
+x8: .WORD 704
+x9: .WORD 703
+y0: .WORD 702
+y1: .WORD 701
+y2: .WORD 700
+y3: .WORD 696
+y4: .WORD 692
+y5: .WORD 688
+y6: .WORD 687
+y7: .WORD 686
+y8: .WORD 682
+y9: .WORD 678
+z0: .WORD 674
+z1: .WORD 670
+z2: .WORD 669
+z3: .WORD 668
+z4: .WORD 664
+z5: .WORD 660
+z6: .WORD 656
+z7: .WORD 655
+z8: .WORD 651
+z9: .WORD 650
+A0: .WORD 649
+A1: .WORD 648
+A2: .WORD 644
+A3: .WORD 640
+A4: .WORD 636
+A5: .WORD 632
+A6: .WORD 628
+A7: .WORD 624
+A8: .WORD 620
+A9: .WORD 616
+B0: .WORD 612
+B1: .WORD 608
+B2: .WORD 604
+B3: .WORD 600
+B4: .WORD 599
+B5: .WORD 598
+B6: .WORD 594
+B7: .WORD 590
+B8: .WORD 586
+B9: .WORD 582
+C0: .WORD 578
+C1: .WORD 574
+C2: .WORD 570
+C3: .WORD 566
+C4: .WORD 565
+C5: .WORD 564
+C6: .WORD 560
+C7: .WORD 556
+C8: .WORD 552
+C9: .WORD 548
+D0: .WORD 544
+D1: .WORD 540
+D2: .WORD 536
+D3: .WORD 532
+D4: .WORD 531
+D5: .WORD 530
+D6: .WORD 526
+D7: .WORD 522
+D8: .WORD 518
+D9: .WORD 514
+E0: .WORD 510
+E1: .WORD 506
+E2: .WORD 505
+E3: .WORD 504
+E4: .WORD 500
+E5: .WORD 496
+E6: .WORD 492
+E7: .WORD 491
+E8: .WORD 490
+E9: .WORD 486
+F0: .WORD 482
+F1: .WORD 478
+F2: .WORD 474
+F3: .WORD 470
+F4: .WORD 466
+F5: .WORD 462
+F6: .WORD 458
+F7: .WORD 454
+F8: .WORD 450
+F9: .WORD 446
+G0: .WORD 442
+G1: .WORD 438
+G2: .WORD 434
+G3: .WORD 430
+G4: .WORD 429
+G5: .WORD 428
+G6: .WORD 424
+G7: .WORD 420
+G8: .WORD 416
+G9: .WORD 412
+H0: .WORD 408
+H1: .WORD 404
+H2: .WORD 403
+H3: .WORD 402
+H4: .WORD 398
+H5: .WORD 394
+H6: .WORD 390
+H7: .WORD 386
+H8: .WORD 385
+H9: .WORD 384
+I0: .WORD 380
+I1: .WORD 376
+I2: .WORD 372
+I3: .WORD 368
+I4: .WORD 364
+I5: .WORD 360
+I6: .WORD 356
+I7: .WORD 352
+I8: .WORD 348
+I9: .WORD 344
+J0: .WORD 340
+J1: .WORD 336
+J2: .WORD 332
+J3: .WORD 328
+J4: .WORD 324
+J5: .WORD 320
+J6: .WORD 319
+J7: .WORD 318
+J8: .WORD 314
+J9: .WORD 310
+K0: .WORD 306
+K1: .WORD 302
+K2: .WORD 301
+K3: .WORD 300
+K4: .WORD 299
+K5: .WORD 295
+K6: .WORD 291
+K7: .WORD 287
+K8: .WORD 286
+K9: .WORD 285
+L0: .WORD 281
+L1: .WORD 277
+L2: .WORD 273
+L3: .WORD 269
+L4: .WORD 265
+L5: .WORD 261
+L6: .WORD 257
+L7: .WORD 253
+L8: .WORD 249
+L9: .WORD 245
+M0: .WORD 241
+M1: .WORD 240
+M2: .WORD 239
+M3: .WORD 238
+M4: .WORD 237
+M5: .WORD 236
+M6: .WORD 232
+M7: .WORD 228
+M8: .WORD 224
+M9: .WORD 223
+N0: .WORD 222
+N1: .WORD 218
+N2: .WORD 214
+N3: .WORD 210
+N4: .WORD 206
+N5: .WORD 205
+N6: .WORD 204
+N7: .WORD 200
+N8: .WORD 199
+N9: .WORD 198
+O0: .WORD 194
+O1: .WORD 190
+O2: .WORD 186
+O3: .WORD 182
+O4: .WORD 178
+O5: .WORD 174
+O6: .WORD 170
+O7: .WORD 166
+O8: .WORD 162
+O9: .WORD 158
+P0: .WORD 154
+P1: .WORD 150
+P2: .WORD 146
+P3: .WORD 142
+P4: .WORD 138
+P5: .WORD 134
+P6: .WORD 130
+P7: .WORD 126
+P8: .WORD 122
+P9: .WORD 118
+Q0: .WORD 114
+Q1: .WORD 110
+Q2: .WORD 106
+Q3: .WORD 102
+Q4: .WORD 101
+Q5: .WORD 100
+Q6: .WORD 96
+Q7: .WORD 92
+Q8: .WORD 88
+Q9: .WORD 84
+R0: .WORD 80
+R1: .WORD 79
+R2: .WORD 78
+R3: .WORD 74
+R4: .WORD 70
+R5: .WORD 66
+R6: .WORD 62
+R7: .WORD 58
+R8: .WORD 57
+R9: .WORD 56
+S0: .WORD 52
+S1: .WORD 48
+S2: .WORD 44
+S3: .WORD 40
+S4: .WORD 36
+S5: .WORD 32
+S6: .WORD 28
+S7: .WORD 24
+S8: .WORD 20
+S9: .WORD 16
+T0: .WORD 12
+T1: .WORD 8
+T2: .WORD 4
 k8_value: .WORD 0.0
 k9_valueWORD: .WORD 0.0
 l0_valueWORD: .WORD 0.0
@@ -7588,37 +7679,41 @@ spill1240: .WORD 0
 spill1241: .WORD 0
 spill1242: .WORD 0
 spill1243: .WORD 0
-g81_inner: .WORD 28
-g82_inner: .WORD 24
-g87_inner: .WORD 20
-g88_inner: .WORD 16
-g89_inner: .WORD 12
-g90_inner: .WORD 8
-g91_inner: .WORD 4
-g81_valueWORD: .WORD 0.0
+local_allocate_RealSign: .WORD 28
 spill1244: .WORD 0
+RealSign_return_address_inner: .WORD 40
+g92_inner: .WORD 36
+g93_inner: .WORD 32
+g81: .WORD 28
+g82: .WORD 24
+g87: .WORD 20
+g88: .WORD 16
+g89: .WORD 12
+g90: .WORD 8
+g91: .WORD 4
+g81_valueWORD: .WORD 0.0
 spill1245: .WORD 0
-g82_valueWORD: .WORD 0.0
 spill1246: .WORD 0
+g82_valueWORD: .WORD 0.0
 spill1247: .WORD 0
+spill1248: .WORD 0
 RealBinaryAsInt_return_address_outer: .WORD 8
 g85_outer: .WORD 4
-spill1248: .WORD 0
 spill1249: .WORD 0
 spill1250: .WORD 0
 spill1251: .WORD 0
 spill1252: .WORD 0
 spill1253: .WORD 0
 spill1254: .WORD 0
-g88_valueWORD: .WORD 31.0
 spill1255: .WORD 0
+g88_valueWORD: .WORD 31.0
 spill1256: .WORD 0
 spill1257: .WORD 0
 spill1258: .WORD 0
 spill1259: .WORD 0
 spill1260: .WORD 0
-g90_valueWORD: .WORD 1.0
 spill1261: .WORD 0
+g90_valueWORD: .WORD 1.0
 spill1262: .WORD 0
 spill1263: .WORD 0
 spill1264: .WORD 0
@@ -7628,56 +7723,64 @@ spill1267: .WORD 0
 spill1268: .WORD 0
 spill1269: .WORD 0
 spill1270: .WORD 0
-g83_inner: .WORD 8
-g84_inner: .WORD 4
-g83_valueWORD: .WORD 0.0
 spill1271: .WORD 0
+local_allocate_RealBinaryAsInt: .WORD 8
 spill1272: .WORD 0
-g84_value: .WORD 0.0
+RealBinaryAsInt_return_address_inner: .WORD 20
+g86_inner: .WORD 16
+g85_inner: .WORD 12
+g83: .WORD 8
+g84: .WORD 4
+g83_valueWORD: .WORD 0.0
 spill1273: .WORD 0
 spill1274: .WORD 0
+g84_value: .WORD 0.0
 spill1275: .WORD 0
 spill1276: .WORD 0
 spill1277: .WORD 0
 spill1278: .WORD 0
-g94_inner: .WORD 36
-g95_inner: .WORD 32
-g96_inner: .WORD 28
-g97_inner: .WORD 24
-g98_inner: .WORD 20
-g99_inner: .WORD 16
-h10_inner: .WORD 12
-h11_inner: .WORD 8
-h12_inner: .WORD 4
-g94_valueWORD: .WORD 0.0
 spill1279: .WORD 0
 spill1280: .WORD 0
-g95_valueWORD: .WORD 0.0
+local_allocate_RealExponent: .WORD 36
 spill1281: .WORD 0
+RealExponent_return_address_inner: .WORD 48
+h15_inner: .WORD 44
+h16_inner: .WORD 40
+g94: .WORD 36
+g95: .WORD 32
+g96: .WORD 28
+g97: .WORD 24
+g98: .WORD 20
+g99: .WORD 16
+h10: .WORD 12
+h11: .WORD 8
+h12: .WORD 4
+g94_valueWORD: .WORD 0.0
 spill1282: .WORD 0
-g96_valueWORD: .WORD 0.0
 spill1283: .WORD 0
+g95_valueWORD: .WORD 0.0
 spill1284: .WORD 0
-RealBinaryAsInt_return_address_outer: .WORD 8
-g85_outer: .WORD 4
 spill1285: .WORD 0
+g96_valueWORD: .WORD 0.0
 spill1286: .WORD 0
 spill1287: .WORD 0
+RealBinaryAsInt_return_address_outer: .WORD 8
+g85_outer: .WORD 4
 spill1288: .WORD 0
 spill1289: .WORD 0
 spill1290: .WORD 0
 spill1291: .WORD 0
-g98_valueWORD: .WORD 23.0
 spill1292: .WORD 0
 spill1293: .WORD 0
 spill1294: .WORD 0
+g98_valueWORD: .WORD 23.0
 spill1295: .WORD 0
 spill1296: .WORD 0
 spill1297: .WORD 0
-h10_valueWORD: .WORD 255.0
 spill1298: .WORD 0
 spill1299: .WORD 0
 spill1300: .WORD 0
+h10_valueWORD: .WORD 255.0
 spill1301: .WORD 0
 spill1302: .WORD 0
 spill1303: .WORD 0
@@ -7690,53 +7793,57 @@ spill1309: .WORD 0
 spill1310: .WORD 0
 spill1311: .WORD 0
 spill1312: .WORD 0
-h17_inner: .WORD 38
-h18_inner: .WORD 34
-h19_inner: .WORD 30
-h20_inner: .WORD 26
-h21_inner: .WORD 22
-h22_inner: .WORD 18
-h23_inner: .WORD 14
-h37_inner: .WORD 10
-h38_inner: .WORD 9
-h39_inner: .WORD 8
-h40_inner: .WORD 4
-h17_valueWORD: .WORD 0.0
 spill1313: .WORD 0
 spill1314: .WORD 0
-h18_valueWORD: .WORD 0.0
 spill1315: .WORD 0
+local_allocate_RealMantissa: .WORD 38
 spill1316: .WORD 0
-h19_valueWORD: .WORD 0.0
+RealMantissa_return_address_inner: .WORD 50
+h41_inner: .WORD 46
+h42_inner: .WORD 42
+h17: .WORD 38
+h18: .WORD 34
+h19: .WORD 30
+h20: .WORD 26
+h21: .WORD 22
+h22: .WORD 18
+h23: .WORD 14
+h37: .WORD 10
+h38: .WORD 9
+h39: .WORD 8
+h40: .WORD 4
+h17_valueWORD: .WORD 0.0
 spill1317: .WORD 0
 spill1318: .WORD 0
-h20_valueWORD: .WORD 0.0
+h18_valueWORD: .WORD 0.0
 spill1319: .WORD 0
 spill1320: .WORD 0
-RealBinaryAsInt_return_address_outer: .WORD 8
-g85_outer: .WORD 4
+h19_valueWORD: .WORD 0.0
 spill1321: .WORD 0
 spill1322: .WORD 0
+h20_valueWORD: .WORD 0.0
 spill1323: .WORD 0
 spill1324: .WORD 0
+RealBinaryAsInt_return_address_outer: .WORD 8
+g85_outer: .WORD 4
 spill1325: .WORD 0
 spill1326: .WORD 0
 spill1327: .WORD 0
-h22_valueWORD: .WORD 8388607.0
 spill1328: .WORD 0
 spill1329: .WORD 0
 spill1330: .WORD 0
 spill1331: .WORD 0
+h22_valueWORD: .WORD 8388607.0
 spill1332: .WORD 0
 spill1333: .WORD 0
 spill1334: .WORD 0
 spill1335: .WORD 0
-RealIsZero_return_address_outer: .WORD 8
-h36_outer: .WORD 4
 spill1336: .WORD 0
 spill1337: .WORD 0
 spill1338: .WORD 0
 spill1339: .WORD 0
+RealIsZero_return_address_outer: .WORD 8
+h36_outer: .WORD 4
 spill1340: .WORD 0
 spill1341: .WORD 0
 spill1342: .WORD 0
@@ -7744,60 +7851,64 @@ spill1343: .WORD 0
 spill1344: .WORD 0
 spill1345: .WORD 0
 spill1346: .WORD 0
-h39_valueWORD: .WORD 8388608.0
 spill1347: .WORD 0
 spill1348: .WORD 0
 spill1349: .WORD 0
 spill1350: .WORD 0
+h39_valueWORD: .WORD 8388608.0
 spill1351: .WORD 0
 spill1352: .WORD 0
 spill1353: .WORD 0
 spill1354: .WORD 0
 spill1355: .WORD 0
 spill1356: .WORD 0
-h24_inner: .WORD 29
-h25_inner: .WORD 28
-h26_inner: .WORD 24
-h27_inner: .WORD 20
-h28_inner: .WORD 16
-h29_inner: .WORD 12
-h30_inner: .WORD 8
-h31_inner: .WORD 4
-h32_inner: .WORD 3
-h33_inner: .WORD 2
-h34_inner: .WORD 1
 spill1357: .WORD 0
 spill1358: .WORD 0
-h25_valueWORD: .WORD 0.0
 spill1359: .WORD 0
 spill1360: .WORD 0
-h26_valueWORD: .WORD 0.0
+local_allocate_RealIsZero: .WORD 29
 spill1361: .WORD 0
+RealIsZero_return_address_inner: .WORD 38
+h35_inner: .WORD 34
+h36_inner: .WORD 33
+h24: .WORD 29
+h25: .WORD 28
+h26: .WORD 24
+h27: .WORD 20
+h28: .WORD 16
+h29: .WORD 12
+h30: .WORD 8
+h31: .WORD 4
+h32: .WORD 3
+h33: .WORD 2
+h34: .WORD 1
 spill1362: .WORD 0
-RealBinaryAsInt_return_address_outer: .WORD 8
-g85_outer: .WORD 4
 spill1363: .WORD 0
+h25_valueWORD: .WORD 0.0
 spill1364: .WORD 0
 spill1365: .WORD 0
+h26_valueWORD: .WORD 0.0
 spill1366: .WORD 0
 spill1367: .WORD 0
+RealBinaryAsInt_return_address_outer: .WORD 8
+g85_outer: .WORD 4
 spill1368: .WORD 0
 spill1369: .WORD 0
-h28_valueWORD: .WORD 2.1474836E9
 spill1370: .WORD 0
 spill1371: .WORD 0
 spill1372: .WORD 0
 spill1373: .WORD 0
 spill1374: .WORD 0
+h28_valueWORD: .WORD 2.1474836E9
 spill1375: .WORD 0
 spill1376: .WORD 0
 spill1377: .WORD 0
-h30_valueWORD: .WORD 0.0
 spill1378: .WORD 0
 spill1379: .WORD 0
 spill1380: .WORD 0
 spill1381: .WORD 0
 spill1382: .WORD 0
+h30_valueWORD: .WORD 0.0
 spill1383: .WORD 0
 spill1384: .WORD 0
 spill1385: .WORD 0
@@ -7813,10 +7924,19 @@ spill1394: .WORD 0
 spill1395: .WORD 0
 spill1396: .WORD 0
 spill1397: .WORD 0
-h48_inner: .WORD 4
-h48_valueWORD: .WORD 0.0
 spill1398: .WORD 0
 spill1399: .WORD 0
 spill1400: .WORD 0
 spill1401: .WORD 0
-totalBytes: .WORD 31226
+spill1402: .WORD 0
+local_allocate_WriteReal: .WORD 4
+spill1403: .WORD 0
+WriteReal_return_address_inner: .WORD 12
+h49_inner: .WORD 8
+h48: .WORD 4
+h48_valueWORD: .WORD 0.0
+spill1404: .WORD 0
+spill1405: .WORD 0
+spill1406: .WORD 0
+spill1407: .WORD 0
+totalBytes: .WORD 31706

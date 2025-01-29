@@ -106,9 +106,9 @@ IFEND_3_LEVEL_1_0: B IFEND_0_LEVEL_0_0
 IFNEXT_0_SEQ_1_LEVEL_0_0: MOV R0, R0
 IFEND_0_LEVEL_0_0: SUB R13, R13, #19
 STP
-LDR R2, local_allocate_WriteInt
+WriteInt: LDR R2, local_allocate_WriteInt
 ADD R13, R13, R2
-WriteInt: LDR R2, f31_value
+LDR R2, f31_value
 LDR R2, f31
 STR R2[R13, -R2]
 MOV R2, R0
