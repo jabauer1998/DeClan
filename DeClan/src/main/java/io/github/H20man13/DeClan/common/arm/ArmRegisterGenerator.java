@@ -106,9 +106,9 @@ public class ArmRegisterGenerator {
         }
         return var;
     }
-
-    public String getTempReg(String place, ICode icode) throws Exception{
-        Set<String> vars = liveAnal.getInputSet(icode);
+    
+    public void freeNonInputRegs(ICode icode) {
+    	Set<String> vars = liveAnal.getInputSet(icode);
         for(String key : getVars()){
             if(!vars.contains(key)){
                 Set<String> value = removeRegs(key);
@@ -117,7 +117,9 @@ public class ArmRegisterGenerator {
                 }
             }
         }
+    }
 
+    public String getTempReg(String place, ICode icode) throws Exception{
         if(containsReg(place)){
             Set<String> regs = getRegs(place);
             for(String reg : regs){
@@ -139,17 +141,6 @@ public class ArmRegisterGenerator {
     }
 
     public String getReg(String place, ICode icode) throws Exception{
-        //Prior to any instruction we need to de allocate any dead variables
-        Set<String> vars = liveAnal.getInputSet(icode);
-        for(String key : getVars()){
-            if(!vars.contains(key)){
-                Set<String> value = removeRegs(key);
-                for(String regVal : value){
-                    availableRegisters.add(regVal);
-                }
-            }
-        }
-
         if(containsReg(place)){
             Set<String> regs = getRegs(place);
             for(String reg : regs){

@@ -301,7 +301,7 @@ public class MyCodeGenerator {
 			}
 			return newReg;
 		} else if (exp.scope == Scope.PARAM) {
-			String offset = rGen.getReg(exp.ident + "_inner", icode);
+			String offset = rGen.getTempReg(exp.ident + "_inner", icode);
 			cGen.addInstruction("LDR " + offset + ", " + exp.ident + "_inner");
 			String newReg = offset;
 			if (type == ICode.Type.BOOL) {
@@ -311,7 +311,7 @@ public class MyCodeGenerator {
 			}
 			return newReg;
 		} else if (exp.scope == Scope.RETURN) {
-			String offset = rGen.getReg(exp.ident + "_outer", icode);
+			String offset = rGen.getTempReg(exp.ident + "_outer", icode);
 			cGen.addInstruction("LDR " + offset + ", " + exp.ident + "_outer");
 			String newReg = offset;
 			if (type == ICode.Type.BOOL) {
@@ -567,6 +567,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				Call procICode = (Call) icode;
+				rGen.freeNonInputRegs(icode);
 				int totalLength = procICode.params.size();
 				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Def returnPlacement = (Def) retICode;
@@ -634,6 +635,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				Call procICode = (Call) icode;
+				rGen.freeNonInputRegs(icode);
 				int totalLength = procICode.params.size();
 				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Assign returnPlacement = (Assign)retICode;
@@ -701,6 +703,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				Call procICode = (Call) icode;
+				rGen.freeNonInputRegs(icode);
 				int totalLength = procICode.params.size();
 				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Def returnPlacement = (Def) retICode;
@@ -768,6 +771,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				Call procICode = (Call) icode;
+				rGen.freeNonInputRegs(icode);
 				int totalLength = procICode.params.size();
 				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Assign returnPlacement = (Assign)retICode;
@@ -834,6 +838,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				Call procICode = (Call) icode;
+				rGen.freeNonInputRegs(icode);
 				int totalLength = procICode.params.size();
 				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Def returnPlacement = (Def) retICode;
@@ -901,6 +906,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				Call procICode = (Call) icode;
+				rGen.freeNonInputRegs(icode);
 				int totalLength = procICode.params.size();
 				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Assign returnPlacement = (Assign) retICode;
@@ -968,6 +974,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				Def assignICode = (Def) icode;
+				rGen.freeNonInputRegs(icode);
 				BinExp assignExp = (BinExp) assignICode.val;
 
 				IdentExp leftIdent = (IdentExp) assignExp.left;
@@ -985,15 +992,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1007,6 +1014,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1024,15 +1032,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1046,6 +1054,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1064,15 +1073,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1086,6 +1095,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1103,15 +1113,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1125,6 +1135,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1143,15 +1154,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1165,6 +1176,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1182,15 +1194,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1204,6 +1216,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1222,15 +1235,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1244,6 +1257,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1261,15 +1275,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1283,6 +1297,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1301,15 +1316,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1323,6 +1338,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1340,15 +1356,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1362,6 +1378,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1380,15 +1397,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1402,6 +1419,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1419,15 +1437,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1441,6 +1459,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1459,15 +1478,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1481,6 +1500,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1498,15 +1518,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1520,6 +1540,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1540,15 +1561,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1562,6 +1583,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1581,15 +1603,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1603,6 +1625,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1623,15 +1646,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1645,6 +1668,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1664,15 +1688,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1686,6 +1710,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1706,15 +1731,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1728,6 +1753,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1747,15 +1773,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1769,6 +1795,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1789,15 +1816,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1811,6 +1838,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1830,15 +1858,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1852,6 +1880,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1872,15 +1901,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1894,6 +1923,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1913,15 +1943,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1935,6 +1965,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -1955,15 +1986,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -1977,6 +2008,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -1996,15 +2028,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -2018,6 +2050,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -2038,15 +2071,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -2060,6 +2093,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -2079,15 +2113,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -2101,6 +2135,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -2121,15 +2156,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -2143,6 +2178,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -2162,15 +2198,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -2184,6 +2220,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -2202,15 +2239,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -2224,6 +2261,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -2241,15 +2279,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -2263,6 +2301,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
 
@@ -2281,15 +2320,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -2303,6 +2342,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				BinExp assignExp = (BinExp) assignICode.value;
 
@@ -2320,15 +2360,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -2342,6 +2382,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				UnExp assignExp = (UnExp) assignICode.val;
 
@@ -2359,15 +2400,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -2382,6 +2423,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign)icode;
 				UnExp assignExp = (UnExp) assignICode.value;
 
@@ -2399,15 +2441,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STRB " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -2422,6 +2464,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				UnExp assignExp = (UnExp) assignICode.val;
 
@@ -2437,15 +2480,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -2459,6 +2502,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign) icode;
 				UnExp assignExp = (UnExp) assignICode.value;
 
@@ -2474,15 +2518,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_offset", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STR " + finalPlace + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + finalPlace + ", [R13, -" + tempOffset + ']');
 				}
 
 				rGen.freeTempRegs();
@@ -2496,6 +2540,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def)icode;
 				BoolExp assignExp = (BoolExp) assignICode.val;
 
@@ -2507,21 +2552,21 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("MOV " + tempValue + ", #" + (assignExp.trueFalse ? 1 : 0));
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					String tempValue = rGen.getTempReg(assignICode.label + "_value", assignICode);
 					
 					cGen.addInstruction("MOV " + tempValue + ", #" + (assignExp.trueFalse ? 1 : 0));
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getReg(assignICode.label, assignICode);
 					String tempValue = rGen.getTempReg(assignICode.label + "_value", assignICode);
 					
 					cGen.addInstruction("MOV " + tempValue + ", #" + (assignExp.trueFalse ? 1 : 0));
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STRB " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + tempValue + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -2535,6 +2580,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign)icode;
 				BoolExp assignExp = (BoolExp) assignICode.value;
 
@@ -2548,21 +2594,21 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("MOV " + tempValue + ", #" + (assignExp.trueFalse ? 1 : 0));
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					String tempValue = rGen.getTempReg(assignICode.place + "_value", assignICode);
 					
 					cGen.addInstruction("MOV " + tempValue + ", #" + (assignExp.trueFalse ? 1 : 0));
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getReg(assignICode.place, assignICode);
 					String tempValue = rGen.getTempReg(assignICode.place + "_value", assignICode);
 					
 					cGen.addInstruction("MOV " + tempValue + ", #" + (assignExp.trueFalse ? 1 : 0));
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STRB " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + tempValue + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -2576,6 +2622,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def)icode;
 				IntExp assignExp = (IntExp) assignICode.val;
 
@@ -2588,7 +2635,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {				
 					cGen.addVariable(assignICode.label + "_value" + VariableLength.WORD, assignExp.value);
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
@@ -2596,15 +2643,15 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else {
 					cGen.addVariable(assignICode.label + "_value" + VariableLength.WORD, assignExp.value);
-					String tempOffset = rGen.getReg(assignICode.label, assignICode);
 					String tempValue = rGen.getTempReg(assignICode.label + "_value", assignICode);
+					String tempOffset = rGen.getReg(assignICode.label, assignICode);
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -2618,6 +2665,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign)icode;
 				IntExp assignExp = (IntExp) assignICode.value;
 
@@ -2634,7 +2682,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
 					cGen.addVariable(assignICode.place + "_value" + VariableLength.WORD, assignExp.value);
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
@@ -2642,7 +2690,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else {
 					cGen.addVariable(assignICode.place + "_value" + VariableLength.WORD, assignExp.value);
 					String tempOffset = rGen.getReg(assignICode.place, assignICode);
@@ -2650,7 +2698,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -2664,6 +2712,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def)icode;
 				RealExp assignExp = (RealExp) assignICode.val;
 
@@ -2676,7 +2725,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {				
 					cGen.addVariable(assignICode.label + "_value", assignExp.realValue);
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
@@ -2684,7 +2733,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else {
 					cGen.addVariable(assignICode.label + "_value", assignExp.realValue);
 					String tempOffset = rGen.getReg(assignICode.label, assignICode);
@@ -2692,7 +2741,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -2706,6 +2755,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign)icode;
 				RealExp assignExp = (RealExp) assignICode.value;
 
@@ -2722,7 +2772,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
 					cGen.addVariable(assignICode.place + "_value", assignExp.realValue);
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
@@ -2730,7 +2780,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else {
 					cGen.addVariable(assignICode.place + "_value", assignExp.realValue);
 					String tempOffset = rGen.getReg(assignICode.place, assignICode);
@@ -2738,7 +2788,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -2752,6 +2802,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def)icode;
 				StrExp assignExp = (StrExp)assignICode.val;
 
@@ -2798,7 +2849,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {				
 					String strToMem = assignExp.value;
 					for(int i = 0; i < strToMem.length(); i++) {
@@ -2824,7 +2875,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else {
 					String strToMem = assignExp.value;
 					for(int i = 0; i < strToMem.length(); i++) {
@@ -2850,7 +2901,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label);
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -2864,6 +2915,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign)icode;
 				StrExp assignExp = (StrExp)assignICode.value;
 
@@ -2912,7 +2964,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
 					String strToMem = assignExp.value;
 					for(int i = 0; i < strToMem.length(); i++) {
@@ -2938,7 +2990,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else {
 					String strToMem = assignExp.value;
 					for(int i = 0; i < strToMem.length(); i++) {
@@ -2964,7 +3016,7 @@ public class MyCodeGenerator {
 					
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place + "_value");
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place);
-					cGen.addInstruction("STR " + tempValue + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -2978,6 +3030,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				IdentExp exp = (IdentExp) assignICode.val;
 
@@ -2989,15 +3042,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {				
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getReg(assignICode.label, assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STRB " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + tempReg + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -3012,6 +3065,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def) icode;
 				IdentExp exp = (IdentExp) assignICode.val;
 
@@ -3023,15 +3077,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {				
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getReg(assignICode.label, assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -3046,6 +3100,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
+				
 				Def assignICode = (Def) icode;
 				IdentExp exp = (IdentExp) assignICode.val;
 
@@ -3057,15 +3113,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {				
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getReg(assignICode.label, assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -3080,6 +3136,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
+				
 				Def assignICode = (Def) icode;
 				IdentExp exp = (IdentExp) assignICode.val;
 
@@ -3091,15 +3149,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {				
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getReg(assignICode.label, assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -3114,6 +3172,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign)icode;
 				IdentExp exp = (IdentExp) assignICode.value;
 
@@ -3124,15 +3183,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getReg(assignICode.place, assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STRB " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STRB " + tempReg + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -3147,6 +3206,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
+				
 				Assign assignICode = (Assign)icode;
 				IdentExp exp = (IdentExp) assignICode.value;
 
@@ -3157,15 +3218,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getReg(assignICode.place, assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -3180,6 +3241,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign)icode;
 				IdentExp exp = (IdentExp) assignICode.value;
 
@@ -3190,15 +3252,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getReg(assignICode.place, assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -3213,6 +3275,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Assign assignICode = (Assign)icode;
 				IdentExp exp = (IdentExp) assignICode.value;
 
@@ -3223,15 +3286,15 @@ public class MyCodeGenerator {
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				} else {
 					String tempOffset = rGen.getReg(assignICode.place, assignICode);
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
-					cGen.addInstruction("STR " + tempReg + "[R13, -" + tempOffset + ']');
+					cGen.addInstruction("STR " + tempReg + ", [R13, -" + tempOffset + ']');
 				}
 				
 				rGen.freeTempRegs();
@@ -3246,6 +3309,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3270,6 +3334,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3294,6 +3359,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3318,6 +3384,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3342,6 +3409,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3366,6 +3434,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3390,6 +3459,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3414,6 +3484,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
 
@@ -3766,6 +3837,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				Call procICode = (Call) icode;
+				rGen.freeNonInputRegs(icode);
 				int totalLength = procICode.params.size();
 
 				int totalStackFrameLength = getStackFrameLength(procICode);
@@ -3821,6 +3893,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
+				rGen.freeNonInputRegs(icode);
 				Inline inline = (Inline) icode;
 
 				String instruction = inline.inlineAssembly;
