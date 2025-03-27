@@ -1,0 +1,282 @@
+LDR R3, f24_value
+LDR R2, f24
+STR R3, [R13, -R2]
+LDR R2, f24
+LDR R2, [R13, -R2]
+STR R2, f25
+LDR R3, f26_value
+LDR R2, f26
+STR R3, [R13, -R2]
+LDR R2, f26
+LDR R2, [R13, -R2]
+STR R2, f27
+LDR R2, f52_value
+LDR R3, f52
+STR R2, [R13, -R3]
+LDR R3, f52
+LDR R3, [R13, -R3]
+STR R3, f91
+SUB R13, R13, #12
+LDR R2, RMul_param_frame_size
+ADD R13, R13, R2
+LDR R2, RMul_return_address_outer
+STR R14, [R13, -R2]
+LDR R2, f25
+LDR R3, f97_outer
+STR R2, [R13, -R3]
+LDR R3, f27
+LDR R4, f98_outer
+STR R3, [R13, -R4]
+BL RMul
+LDR R14, RMul_return_address_outer
+LDR R14, [R13, -R14]
+LDR R4, RMul_param_frame_size
+SUB R13, R13, R4
+LDR R2, f96_outer
+LDR R2, [R13, -R2]
+LDR R3, f99_inner
+STR R2, [R13, -R3]
+LDR R3, f99
+LDR R3, [R13, -R3]
+STR R3, f28
+LDR R2, WriteReal_param_frame_size
+ADD R13, R13, R2
+LDR R2, WriteReal_return_address_outer
+STR R14, [R13, -R2]
+LDR R2, f28
+LDR R3, g11_outer
+STR R2, [R13, -R3]
+BL WriteReal
+LDR R14, WriteReal_return_address_outer
+LDR R14, [R13, -R14]
+LDR R3, WriteReal_param_frame_size
+SUB R13, R13, R3
+SUB R13, R13, #4
+STP
+RMul: LDR R3, local_allocate_RMul
+ADD R13, R13, R3
+LDR R3, k8_value
+LDR R2, k8
+STR R3, [R13, -R2]
+LDR R2, k9_value
+LDR R3, k9
+STR R2, [R13, -R3]
+LDR R2, l0_value
+LDR R4, l0
+STR R2, [R13, -R4]
+LDR R2, l1_value
+LDR R4, l1
+STR R2, [R13, -R4]
+LDR R2, l2_value
+LDR R4, l2
+STR R2, [R13, -R4]
+LDR R2, l3_value
+LDR R4, l3
+STR R2, [R13, -R4]
+LDR R2, l4_value
+LDR R4, l4
+STR R2, [R13, -R4]
+LDR R2, l5_value
+LDR R4, l5
+STR R2, [R13, -R4]
+LDR R2, l6_value
+LDR R4, l6
+STR R2, [R13, -R4]
+LDR R2, l7_value
+LDR R4, l7
+STR R2, [R13, -R4]
+LDR R2, l8_value
+LDR R5, l8
+STR R2, [R13, -R5]
+LDR R2, l9_value
+LDR R5, l9
+STR R2, [R13, -R5]
+LDR R2, m0_value
+LDR R5, m0
+STR R2, [R13, -R5]
+LDR R2, m1_value
+LDR R6, m1
+STR R2, [R13, -R6]
+LDR R2, m2_value
+LDR R6, m2
+STR R2, [R13, -R6]
+LDR R2, m3_value
+LDR R6, m3
+STR R2, [R13, -R6]
+LDR R2, m4_value
+LDR R7, m4
+STR R2, [R13, -R7]
+LDR R2, m5_value
+LDR R8, m5
+STR R2, [R13, -R8]
+LDR R2, m6_value
+LDR R8, m6
+STR R2, [R13, -R8]
+LDR R2, m7_value
+LDR R9, m7
+STR R2, [R13, -R9]
+LDR R2, m8_value
+LDR R9, m8
+STR R2, [R13, -R9]
+LDR R2, m9_value
+LDR R9, m9
+STR R2, [R13, -R9]
+LDR R2, n0_value
+LDR R9, n0
+STR R2, [R13, -R9]
+LDR R2, n1_value
+LDR R9, n1
+STR R2, [R13, -R9]
+LDR R2, n2_value
+LDR R9, n2
+STR R2, [R13, -R9]
+LDR R2, n3_value
+LDR R9, n3
+STR R2, [R13, -R9]
+LDR R2, n4_value
+LDR R10, n4
+STR R2, [R13, -R10]
+LDR R2, n5_value
+LDR R12, n5
+STR R2, [R13, -R12]
+LDR R2, n6_value
+LDR R12, n6
+STR R2, [R13, -R12]
+LDR R2, n7_value
+LDR R12, n7
+STR R2, [R13, -R12]
+LDR R2, n8_value
+LDR R12, n8
+STR R2, [R13, -R12]
+LDR R2, n9_value
+LDR R12, n9
+STR R2, [R13, -R12]
+LDR R2, o0_value
+LDR R12, o0
+STR R2, [R13, -R12]
+LDR R2, o1_value
+LDR R12, o1
+STR R2, [R13, -R12]
+LDR R2, o2_value
+LDR R12, o2
+STR R2, [R13, -R12]
+LDR R2, o3_value
+LDR R12, o3
+STR R2, [R13, -R12]
+LDR R2, o4_value
+LDR R12, o4
+STR R2, [R13, -R12]
+LDR R2, o5_value
+LDR R12, o5
+STR R2, [R13, -R12]
+LDR R2, o6_value
+LDR R12, o6
+STR R2, [R13, -R12]
+LDR R2, RealSign_param_frame_size
+ADD R13, R13, R2
+LDR R2, RealSign_return_address_outer
+STR R14, [R13, -R2]
+LDR R2, f97_inner
+LDR R2, [R13, -R2]
+LDR R12, f41_outer
+STR R2, [R13, -R12]
+BL RealSign
+LDR R14, RealSign_return_address_outer
+LDR R14, [R13, -R14]
+LDR R2, RealSign_param_frame_size
+SUB R13, R13, R2
+LDR R2, f40_outer
+LDR R2, [R13, -R2]
+LDR R12, o7_inner
+STR R2, [R13, -R12]
+LDR R12, o7
+LDR R12, [R13, -R12]
+LDR R2, l0_inner
+STR R12, [R13, -R2]
+LDR R12, RealSign_param_frame_size
+ADD R13, R13, R12
+LDR R12, RealSign_return_address_outer
+STR R14, [R13, -R12]
+LDR R12, f98_inner
+LDR R12, [R13, -R12]
+LDR R11, f41_outer
+STR R12, [R13, -R11]
+BL RealSign
+LDR R14, RealSign_return_address_outer
+LDR R14, [R13, -R14]
+LDR R12, RealSign_param_frame_size
+SUB R13, R13, R12
+LDR R12, f40_outer
+LDR R12, [R13, -R12]
+LDR R11, o8_inner
+STR R12, [R13, -R11]
+LDR R11, o8
+LDR R11, [R13, -R11]
+LDR R12, l1_inner
+STR R11, [R13, -R12]
+LDR R11, RealExponent_param_frame_size
+ADD R13, R13, R11
+LDR R11, RealExponent_return_address_outer
+STR R14, [R13, -R11]
+LDR R11, f97_inner
+LDR R11, [R13, -R11]
+LDR R15, f55_outer
+STR R11, [R13, -R15]
+BL RealExponent
+LDR R14, RealExponent_return_address_outer
+LDR R14, [R13, -R14]
+LDR R11, RealExponent_param_frame_size
+SUB R13, R13, R11
+LDR R11, f54_outer
+LDR R11, [R13, -R11]
+LDR R15, o9_inner
+STR R11, [R13, -R15]
+LDR R15, o9
+LDR R15, [R13, -R15]
+LDR R11, l2_inner
+STR R15, [R13, -R11]
+LDR R15, RealExponent_param_frame_size
+ADD R13, R13, R15
+LDR R15, RealExponent_return_address_outer
+STR R14, [R13, -R15]
+LDR R15, f98_inner
+LDR R15, [R13, -R15]
+LDR R0, f55_outer
+STR R15, [R13, -R0]
+BL RealExponent
+LDR R14, RealExponent_return_address_outer
+LDR R14, [R13, -R14]
+LDR R15, RealExponent_param_frame_size
+SUB R13, R13, R15
+LDR R15, f54_outer
+LDR R15, [R13, -R15]
+LDR R0, p0_inner
+STR R15, [R13, -R0]
+LDR R0, p0
+LDR R0, [R13, -R0]
+LDR R15, l3_inner
+STR R0, [R13, -R15]
+LDR R0, RealMantissa_param_frame_size
+ADD R13, R13, R0
+LDR R0, RealMantissa_return_address_outer
+STR R14, [R13, -R0]
+LDR R0, f97_inner
+LDR R0, [R13, -R0]
+LDR R1, f81_outer
+STR R0, [R13, -R1]
+BL RealMantissa
+LDR R14, RealMantissa_return_address_outer
+LDR R14, [R13, -R14]
+LDR R0, RealMantissa_param_frame_size
+SUB R13, R13, R0
+LDR R0, f80_outer
+LDR R0, [R13, -R0]
+LDR R1, p1_inner
+STR R0, [R13, -R1]
+LDR R1, p1
+LDR R1, [R13, -R1]
+LDR R0, l4_inner
+STR R1, [R13, -R0]
+LDR R1, RealMantissa_param_frame_size
+ADD R13, R13, R1
+L

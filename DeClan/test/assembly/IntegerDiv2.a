@@ -1,18 +1,19 @@
 LDR R13, totalBytes
 LDR R2, f24_value
-LDR R2, f24
-STR R2[R13, -R2]
-LDR R2, f24
-LDR R2, [R13, -R2]
-STR R2, f25
+LDR R3, f24
+STR R2, [R13, -R3]
+LDR R3, f24
+LDR R3, [R13, -R3]
+STR R3, f25
 LDR R2, f26_value
-LDR R2, f26
-STR R2[R13, -R2]
-LDR R2, f26
-LDR R2, [R13, -R2]
-STR R2, f27
+LDR R3, f26
+STR R2, [R13, -R3]
+LDR R3, f26
+LDR R3, [R13, -R3]
+STR R3, f27
 SUB R13, R13, #8
-ADD R13, R13, #12
+LDR R2, Div_param_frame_size
+ADD R13, R13, R2
 LDR R2, Div_return_address_outer
 STR R14, [R13, -R2]
 LDR R2, f25
@@ -24,15 +25,17 @@ STR R3, [R13, -R4]
 BL Div
 LDR R14, Div_return_address_outer
 LDR R14, [R13, -R14]
-SUB R13, R13, #12
+LDR R4, Div_param_frame_size
+SUB R13, R13, R4
 LDR R2, f85_outer
 LDR R2, [R13, -R2]
-LDR R2, f86_inner
-STR R2[R13, -R2]
-LDR R2, f86
-LDR R2, [R13, -R2]
-STR R2, f28
-ADD R13, R13, #8
+LDR R3, f86_inner
+STR R2, [R13, -R3]
+LDR R3, f86
+LDR R3, [R13, -R3]
+STR R3, f28
+LDR R2, WriteInt_param_frame_size
+ADD R13, R13, R2
 LDR R2, WriteInt_return_address_outer
 STR R14, [R13, -R2]
 LDR R2, f28
@@ -41,432 +44,437 @@ STR R2, [R13, -R3]
 BL WriteInt
 LDR R14, WriteInt_return_address_outer
 LDR R14, [R13, -R14]
-SUB R13, R13, #8
+LDR R3, WriteInt_param_frame_size
+SUB R13, R13, R3
 SUB R13, R13, #4
 STP
-Div: LDR R2, local_allocate_Div
-ADD R13, R13, R2
+Div: LDR R3, local_allocate_Div
+ADD R13, R13, R3
 LDR R2, f29_value
-LDR R2, f29
-STR R2[R13, -R2]
+LDR R3, f29
+STR R2, [R13, -R3]
 LDR R2, f30_value
-LDR R2, f30
-STR R2[R13, -R2]
+LDR R3, f30
+STR R2, [R13, -R3]
 LDR R2, f31_value
-LDR R2, f31
-STR R2[R13, -R2]
+LDR R3, f31
+STR R2, [R13, -R3]
 LDR R2, f32_value
-LDR R2, f32
-STR R2[R13, -R2]
+LDR R3, f32
+STR R2, [R13, -R3]
 LDR R2, f33_value
-LDR R2, f33
-STR R2[R13, -R2]
+LDR R3, f33
+STR R2, [R13, -R3]
 LDR R2, f34_value
-LDR R2, f34
-STR R2[R13, -R2]
+LDR R3, f34
+STR R2, [R13, -R3]
 LDR R2, f35_value
-LDR R2, f35
-STR R2[R13, -R2]
+LDR R3, f35
+STR R2, [R13, -R3]
 LDR R2, f36_value
-LDR R2, f36
-STR R2[R13, -R2]
+LDR R3, f36
+STR R2, [R13, -R3]
 LDR R2, f37_value
-LDR R2, f37
-STR R2[R13, -R2]
+LDR R3, f37
+STR R2, [R13, -R3]
 LDR R2, f38_inner
 LDR R2, [R13, -R2]
-LDR R2, f31_inner
-STR R2[R13, -R2]
-LDR R3, f39_value
-LDR R3, f39
-STR R3[R13, -R3]
-LDR R3, f39
-LDR R3, [R13, -R3]
-LDR R4, f34_inner
-STR R3[R13, -R4]
-LDR R3, f40_value
-LDR R3, f40
-STR R3[R13, -R3]
-LDR R3, f40
-LDR R3, [R13, -R3]
-LDR R5, f32_inner
-STR R3[R13, -R5]
-ADD R13, R13, #8
-LDR R3, IntIsZero_return_address_outer
-STR R14, [R13, -R3]
-LDR R2, f31
-LDR R2, [R13, -R2]
-LDR R3, f44_outer
+LDR R3, f31_inner
 STR R2, [R13, -R3]
+LDR R2, f39_value
+LDR R4, f39
+STR R2, [R13, -R4]
+LDR R4, f39
+LDR R4, [R13, -R4]
+LDR R2, f34_inner
+STR R4, [R13, -R2]
+LDR R4, f40_value
+LDR R5, f40
+STR R4, [R13, -R5]
+LDR R5, f40
+LDR R5, [R13, -R5]
+LDR R4, f32_inner
+STR R5, [R13, -R4]
+LDR R5, IntIsZero_param_frame_size
+ADD R13, R13, R5
+LDR R5, IntIsZero_return_address_outer
+STR R14, [R13, -R5]
+LDR R3, f31
+LDR R3, [R13, -R3]
+LDR R5, f44_outer
+STR R3, [R13, -R5]
 BL IntIsZero
 LDR R14, IntIsZero_return_address_outer
 LDR R14, [R13, -R14]
-SUB R13, R13, #8
-LDR R3, f48_outer
-LDRB R3, [R13, -R3]
-LDR R3, f49_inner
-STRB R3[R13, -R3]
-LDR R3, f49
-LDRB R3, [R13, -R3]
-TEQ R3, #0
-MOVEQ R6, #1
-MOVNE R6, #0
-LDR R6, f50
-STRB R6[R13, -R6]
-MOV R3, #1
-LDR R3, f51
-STRB R3[R13, -R3]
-LDR R3, f50
-LDRB R3, [R13, -R3]
+LDR R5, IntIsZero_param_frame_size
+SUB R13, R13, R5
+LDR R5, f48_outer
+LDRB R5, [R13, -R5]
+LDR R6, f49_inner
+STRB R5, [R13, -R6]
+LDR R6, f49
+LDRB R6, [R13, -R6]
+TEQ R6, #0
+MOVEQ R5, #1
+MOVNE R5, #0
+LDR R7, f50
+STRB R5, [R13, -R7]
+MOV R7, #1
+LDR R6, f51
+STRB R7, [R13, -R6]
+LDR R5, f50
+LDRB R5, [R13, -R5]
 LDR R6, f51
 LDRB R6, [R13, -R6]
-TEQB R3, R6
+TEQB R5, R6
 BEQ WHILESTAT_0_SEQ_0_LEVEL_0_0
 BNE WHILENEXT_0_SEQ_0_LEVEL_0_0
-WHILECOND_0_SEQ_0_LEVEL_0_0: LDR R3, f50
-LDRB R3, [R13, -R3]
+WHILECOND_0_SEQ_0_LEVEL_0_0: LDR R5, f50
+LDRB R5, [R13, -R5]
 LDR R6, f51
 LDRB R6, [R13, -R6]
-TEQB R3, R6
+TEQB R5, R6
 BEQ WHILESTAT_0_SEQ_0_LEVEL_0_0
 BNE WHILEEND_0_LEVEL_0_0
-WHILESTAT_0_SEQ_0_LEVEL_0_0: LDR R3, f52_value
-LDR R3, f52
-STR R3[R13, -R3]
-LDR R2, f31
-LDR R2, [R13, -R2]
-LDR R3, f52
+WHILESTAT_0_SEQ_0_LEVEL_0_0: LDR R5, f52_value
+LDR R7, f52
+STR R5, [R13, -R7]
+LDR R3, f31
 LDR R3, [R13, -R3]
-AND R7, R2, R3
-LDR R7, f53
-STR R7[R13, -R7]
-LDR R3, f53
-LDR R3, [R13, -R3]
+LDR R7, f52
+LDR R7, [R13, -R7]
+AND R5, R3, R7
+LDR R8, f53
+STR R5, [R13, -R8]
+LDR R5, f53
+LDR R5, [R13, -R5]
 LDR R7, f33_inner
-STR R3[R13, -R7]
-LDR R3, f54_value
-LDR R3, f54
-STR R3[R13, -R3]
+STR R5, [R13, -R7]
+LDR R5, f54_value
+LDR R8, f54
+STR R5, [R13, -R8]
 LDR R7, f33
 LDR R7, [R13, -R7]
-LDR R3, f54
-LDR R3, [R13, -R3]
-TEQ R7, R3
-MOVEQ R8, #1
-MOVNE R8, #0
-LDR R8, f55
-STRB R8[R13, -R8]
-MOV R3, #1
-LDR R3, f56
-STRB R3[R13, -R3]
-LDR R3, f55
-LDRB R3, [R13, -R3]
+LDR R8, f54
+LDR R8, [R13, -R8]
+TEQ R7, R8
+MOVEQ R5, #1
+MOVNE R5, #0
+LDR R9, f55
+STRB R5, [R13, -R9]
+MOV R8, #1
+LDR R7, f56
+STRB R8, [R13, -R7]
+LDR R5, f55
+LDRB R5, [R13, -R5]
 LDR R7, f56
 LDRB R7, [R13, -R7]
-TEQB R3, R7
+TEQB R5, R7
 BEQ IFSTAT_0_SEQ_0_LEVEL_0_0
 BNE IFNEXT_0_SEQ_0_LEVEL_0_0
-IFSTAT_0_SEQ_0_LEVEL_0_0: LDR R4, f34
-LDR R4, [R13, -R4]
-LDR R3, f32_inner
-STR R4[R13, -R3]
+IFSTAT_0_SEQ_0_LEVEL_0_0: LDR R2, f34
+LDR R2, [R13, -R2]
+LDR R4, f32_inner
+STR R2, [R13, -R4]
 B IFEND_0_LEVEL_0_0
 IFNEXT_0_SEQ_0_LEVEL_0_0: MOV R0, R0
 IFEND_0_LEVEL_0_0: LDR R5, f57_value
-LDR R5, f57
-STR R5[R13, -R5]
-LDR R4, f34
-LDR R4, [R13, -R4]
-LDR R5, f57
+LDR R7, f57
+STR R5, [R13, -R7]
+LDR R2, f34
+LDR R2, [R13, -R2]
+LDR R7, f57
+LDR R7, [R13, -R7]
+ADD R5, R2, R7
+LDR R8, f58
+STR R5, [R13, -R8]
+LDR R5, f58
 LDR R5, [R13, -R5]
-ADD R7, R4, R5
-LDR R7, f58
-STR R7[R13, -R7]
-LDR R4, f58
-LDR R4, [R13, -R4]
-LDR R5, f34_inner
-STR R4[R13, -R5]
-LDR R4, f59_value
-LDR R4, f59
-STR R4[R13, -R4]
-LDR R2, f31
-LDR R2, [R13, -R2]
-LDR R4, f59
-LDR R4, [R13, -R4]
-MOV R7, R2, ASR R4
-LDR R7, f60
-STR R7[R13, -R7]
-LDR R2, f60
-LDR R2, [R13, -R2]
-LDR R4, f31_inner
-STR R2[R13, -R4]
-ADD R13, R13, #8
-LDR R2, IntIsZero_return_address_outer
-STR R14, [R13, -R2]
-LDR R4, f31
-LDR R4, [R13, -R4]
-LDR R2, f44_outer
-STR R4, [R13, -R2]
+LDR R2, f34_inner
+STR R5, [R13, -R2]
+LDR R5, f59_value
+LDR R7, f59
+STR R5, [R13, -R7]
+LDR R3, f31
+LDR R3, [R13, -R3]
+LDR R7, f59
+LDR R7, [R13, -R7]
+MOV R5, R3, ASR R7
+LDR R8, f60
+STR R5, [R13, -R8]
+LDR R5, f60
+LDR R5, [R13, -R5]
+LDR R3, f31_inner
+STR R5, [R13, -R3]
+LDR R5, IntIsZero_param_frame_size
+ADD R13, R13, R5
+LDR R5, IntIsZero_return_address_outer
+STR R14, [R13, -R5]
+LDR R3, f31
+LDR R3, [R13, -R3]
+LDR R5, f44_outer
+STR R3, [R13, -R5]
 BL IntIsZero
 LDR R14, IntIsZero_return_address_outer
 LDR R14, [R13, -R14]
-SUB R13, R13, #8
-LDR R2, f48_outer
-LDRB R2, [R13, -R2]
-LDR R2, f61_inner
-STRB R2[R13, -R2]
-LDR R2, f61
-LDRB R2, [R13, -R2]
-TEQ R2, #0
-MOVEQ R7, #1
-MOVNE R7, #0
+LDR R5, IntIsZero_param_frame_size
+SUB R13, R13, R5
+LDR R5, f48_outer
+LDRB R5, [R13, -R5]
+LDR R6, f61_inner
+STRB R5, [R13, -R6]
+LDR R6, f61
+LDRB R6, [R13, -R6]
+TEQ R6, #0
+MOVEQ R5, #1
+MOVNE R5, #0
 LDR R7, f62
-STRB R7[R13, -R7]
-LDR R2, f62
-LDRB R2, [R13, -R2]
-LDR R7, f50_inner
-STRB R2[R13, -R7]
+STRB R5, [R13, -R7]
+LDR R5, f62
+LDRB R5, [R13, -R5]
+LDR R6, f50_inner
+STRB R5, [R13, -R6]
 B WHILECOND_0_SEQ_0_LEVEL_0_0
 WHILENEXT_0_SEQ_0_LEVEL_0_0: MOV R0, R0
-WHILEEND_0_LEVEL_0_0: LDR R3, f32
-LDR R3, [R13, -R3]
+WHILEEND_0_LEVEL_0_0: LDR R4, f32
+LDR R4, [R13, -R4]
 LDR R2, f35_inner
-STR R3[R13, -R2]
+STR R4, [R13, -R2]
 LDR R2, f38_inner
 LDR R2, [R13, -R2]
-LDR R2, f31_inner
-STR R2[R13, -R2]
-LDR R3, f63_value
-LDR R3, f63
-STR R3[R13, -R3]
-LDR R3, f63
-LDR R3, [R13, -R3]
-LDR R4, f37_inner
-STR R3[R13, -R4]
-LDR R3, f64_value
-LDR R3, f64
-STR R3[R13, -R3]
-LDR R3, f64
-LDR R3, [R13, -R3]
-LDR R5, f30_inner
-STR R3[R13, -R5]
-LDR R3, f65_value
-LDR R3, f65
-STR R3[R13, -R3]
-LDR R3, f35
-LDR R3, [R13, -R3]
-LDR R7, f65
-LDR R7, [R13, -R7]
-CMP R3, R7
-MOVGE R8, #1
-MOVLT R8, #0
+LDR R3, f31_inner
+STR R2, [R13, -R3]
+LDR R2, f63_value
+LDR R4, f63
+STR R2, [R13, -R4]
+LDR R4, f63
+LDR R4, [R13, -R4]
+LDR R2, f37_inner
+STR R4, [R13, -R2]
+LDR R4, f64_value
+LDR R5, f64
+STR R4, [R13, -R5]
+LDR R5, f64
+LDR R5, [R13, -R5]
+LDR R4, f30_inner
+STR R5, [R13, -R4]
+LDR R5, f65_value
+LDR R6, f65
+STR R5, [R13, -R6]
+LDR R5, f35
+LDR R5, [R13, -R5]
+LDR R6, f65
+LDR R6, [R13, -R6]
+CMP R5, R6
+MOVGE R7, #1
+MOVLT R7, #0
 LDR R8, f66
-STRB R8[R13, -R8]
-MOV R7, #1
-LDR R7, f67
-STRB R7[R13, -R7]
+STRB R7, [R13, -R8]
+MOV R8, #1
+LDR R6, f67
+STRB R8, [R13, -R6]
 LDR R7, f66
 LDRB R7, [R13, -R7]
-LDR R8, f67
-LDRB R8, [R13, -R8]
-TEQB R7, R8
+LDR R6, f67
+LDRB R6, [R13, -R6]
+TEQB R7, R6
 BEQ WHILESTAT_2_SEQ_0_LEVEL_0_0
 BNE WHILENEXT_2_SEQ_0_LEVEL_0_0
 WHILECOND_2_SEQ_0_LEVEL_0_0: LDR R7, f66
 LDRB R7, [R13, -R7]
-LDR R8, f67
-LDRB R8, [R13, -R8]
-TEQB R7, R8
+LDR R6, f67
+LDRB R6, [R13, -R6]
+TEQB R7, R6
 BEQ WHILESTAT_2_SEQ_0_LEVEL_0_0
 BNE WHILEEND_2_LEVEL_0_0
-WHILESTAT_2_SEQ_0_LEVEL_0_0: LDR R2, f31
-LDR R2, [R13, -R2]
-LDR R3, f35
+WHILESTAT_2_SEQ_0_LEVEL_0_0: LDR R3, f31
 LDR R3, [R13, -R3]
-MOV R7, R2, ASR R3
-LDR R7, f68
-STR R7[R13, -R7]
-LDR R7, f69_value
-LDR R7, f69
-STR R7[R13, -R7]
+LDR R5, f35
+LDR R5, [R13, -R5]
+MOV R7, R3, ASR R5
+LDR R8, f68
+STR R7, [R13, -R8]
+LDR R8, f69_value
+LDR R9, f69
+STR R8, [R13, -R9]
 LDR R7, f68
 LDR R7, [R13, -R7]
 LDR R9, f69
 LDR R9, [R13, -R9]
-AND R10, R7, R9
+AND R8, R7, R9
 LDR R10, f70
-STR R10[R13, -R10]
-LDR R7, f70
-LDR R7, [R13, -R7]
-LDR R9, f36_inner
-STR R7[R13, -R9]
-LDR R7, f71_value
-LDR R7, f71
-STR R7[R13, -R7]
-LDR R4, f37
-LDR R4, [R13, -R4]
-LDR R7, f71
-LDR R7, [R13, -R7]
-MOV R10, R4, LSL R7
-LDR R10, f72
-STR R10[R13, -R10]
-LDR R4, f72
-LDR R4, [R13, -R4]
-LDR R9, f36
+STR R8, [R13, -R10]
+LDR R8, f70
+LDR R8, [R13, -R8]
+LDR R7, f36_inner
+STR R8, [R13, -R7]
+LDR R8, f71_value
+LDR R9, f71
+STR R8, [R13, -R9]
+LDR R2, f37
+LDR R2, [R13, -R2]
+LDR R9, f71
 LDR R9, [R13, -R9]
-ORR R7, R4, R9
-LDR R7, f73
-STR R7[R13, -R7]
-LDR R4, f73
-LDR R4, [R13, -R4]
+MOV R8, R2, LSL R9
+LDR R10, f72
+STR R8, [R13, -R10]
+LDR R8, f72
+LDR R8, [R13, -R8]
+LDR R7, f36
+LDR R7, [R13, -R7]
+ORR R2, R8, R7
+LDR R9, f73
+STR R2, [R13, -R9]
+LDR R2, f73
+LDR R2, [R13, -R2]
 LDR R7, f37_inner
-STR R4[R13, -R7]
+STR R2, [R13, -R7]
 LDR R7, f37
 LDR R7, [R13, -R7]
-LDR R4, f75_inner
-LDR R4, [R13, -R4]
-CMP R7, R4
-MOVGE R4, #1
-MOVLT R4, #0
-LDR R4, f74
-STRB R4[R13, -R4]
-MOV R4, #1
-LDR R4, f76
-STRB R4[R13, -R4]
-LDR R4, f74
-LDRB R4, [R13, -R4]
-LDR R9, f76
-LDRB R9, [R13, -R9]
-TEQB R4, R9
+LDR R2, f75_inner
+LDR R2, [R13, -R2]
+CMP R7, R2
+MOVGE R8, #1
+MOVLT R8, #0
+LDR R9, f74
+STRB R8, [R13, -R9]
+MOV R9, #1
+LDR R2, f76
+STRB R9, [R13, -R2]
+LDR R8, f74
+LDRB R8, [R13, -R8]
+LDR R2, f76
+LDRB R2, [R13, -R2]
+TEQB R8, R2
 BEQ IFSTAT_1_SEQ_0_LEVEL_0_1
 BNE IFNEXT_1_SEQ_0_LEVEL_0_1
-IFSTAT_1_SEQ_0_LEVEL_0_1: LDR R4, f77_value
-LDR R4, f77
-STR R4[R13, -R4]
-LDR R4, f77
-LDR R4, [R13, -R4]
-LDR R3, f35
-LDR R3, [R13, -R3]
-MOV R9, R4, LSL R3
-LDR R9, f78
-STR R9[R13, -R9]
-LDR R5, f30
+IFSTAT_1_SEQ_0_LEVEL_0_1: LDR R2, f77_value
+LDR R8, f77
+STR R2, [R13, -R8]
+LDR R8, f77
+LDR R8, [R13, -R8]
+LDR R5, f35
 LDR R5, [R13, -R5]
-LDR R4, f78
+MOV R2, R8, LSL R5
+LDR R9, f78
+STR R2, [R13, -R9]
+LDR R4, f30
 LDR R4, [R13, -R4]
-ORR R9, R5, R4
+LDR R2, f78
+LDR R2, [R13, -R2]
+ORR R8, R4, R2
 LDR R9, f79
-STR R9[R13, -R9]
-LDR R4, f79
-LDR R4, [R13, -R4]
-LDR R5, f30_inner
-STR R4[R13, -R5]
+STR R8, [R13, -R9]
+LDR R8, f79
+LDR R8, [R13, -R8]
+LDR R2, f30_inner
+STR R8, [R13, -R2]
 LDR R7, f37
 LDR R7, [R13, -R7]
 LDR R4, f75_inner
 LDR R4, [R13, -R4]
-SUB R4, R7, R4
-LDR R4, f80
-STR R4[R13, -R4]
-LDR R4, f80
-LDR R4, [R13, -R4]
-LDR R7, f37_inner
-STR R4[R13, -R7]
+SUB R8, R7, R4
+LDR R9, f80
+STR R8, [R13, -R9]
+LDR R8, f80
+LDR R8, [R13, -R8]
+LDR R4, f37_inner
+STR R8, [R13, -R4]
 B IFEND_1_LEVEL_0_1
 IFNEXT_1_SEQ_0_LEVEL_0_1: MOV R0, R0
-IFEND_1_LEVEL_0_1: LDR R4, f81_value
-LDR R4, f81
-STR R4[R13, -R4]
-LDR R3, f35
-LDR R3, [R13, -R3]
-LDR R4, f81
-LDR R4, [R13, -R4]
-SUB R9, R3, R4
+IFEND_1_LEVEL_0_1: LDR R7, f81_value
+LDR R8, f81
+STR R7, [R13, -R8]
+LDR R5, f35
+LDR R5, [R13, -R5]
+LDR R8, f81
+LDR R8, [R13, -R8]
+SUB R7, R5, R8
 LDR R9, f82
-STR R9[R13, -R9]
-LDR R3, f82
-LDR R3, [R13, -R3]
-LDR R4, f35_inner
-STR R3[R13, -R4]
-LDR R3, f83_value
-LDR R3, f83
-STR R3[R13, -R3]
-LDR R4, f35
-LDR R4, [R13, -R4]
-LDR R3, f83
-LDR R3, [R13, -R3]
-CMP R4, R3
-MOVGE R9, #1
-MOVLT R9, #0
+STR R7, [R13, -R9]
+LDR R7, f82
+LDR R7, [R13, -R7]
+LDR R5, f35_inner
+STR R7, [R13, -R5]
+LDR R7, f83_value
+LDR R8, f83
+STR R7, [R13, -R8]
+LDR R5, f35
+LDR R5, [R13, -R5]
+LDR R8, f83
+LDR R8, [R13, -R8]
+CMP R5, R8
+MOVGE R7, #1
+MOVLT R7, #0
 LDR R9, f84
-STRB R9[R13, -R9]
-LDR R3, f84
-LDRB R3, [R13, -R3]
-LDR R9, f66_inner
-STRB R3[R13, -R9]
+STRB R7, [R13, -R9]
+LDR R7, f84
+LDRB R7, [R13, -R7]
+LDR R8, f66_inner
+STRB R7, [R13, -R8]
 B WHILECOND_2_SEQ_0_LEVEL_0_0
 WHILENEXT_2_SEQ_0_LEVEL_0_0: MOV R0, R0
-WHILEEND_2_LEVEL_0_0: LDR R5, f30
-LDR R5, [R13, -R5]
+WHILEEND_2_LEVEL_0_0: LDR R2, f30
+LDR R2, [R13, -R2]
 LDR R3, f85_inner
-STR R5[R13, -R3]
+STR R2, [R13, -R3]
 SUB R13, R13, #148
 MOV R15, R14
 IntIsZero: LDR R3, local_allocate_IntIsZero
 ADD R13, R13, R3
 MOV R3, #0
-LDR R3, f41
-STRB R3[R13, -R3]
-LDR R3, f42_value
+LDR R2, f41
+STRB R3, [R13, -R2]
+LDR R2, f42_value
 LDR R3, f42
-STR R3[R13, -R3]
-LDR R3, f44_inner
-LDR R3, [R13, -R3]
+STR R2, [R13, -R3]
+LDR R2, f44_inner
+LDR R2, [R13, -R2]
 LDR R3, f42
 LDR R3, [R13, -R3]
-TEQ R3, R3
+TEQ R2, R3
 MOVEQ R4, #1
 MOVNE R4, #0
-LDR R4, f43
-STRB R4[R13, -R4]
+LDR R5, f43
+STRB R4, [R13, -R5]
 MOV R3, #1
-LDR R3, f45
-STRB R3[R13, -R3]
-LDR R3, f43
-LDRB R3, [R13, -R3]
-LDR R4, f45
+LDR R2, f45
+STRB R3, [R13, -R2]
+LDR R4, f43
 LDRB R4, [R13, -R4]
-TEQB R3, R4
+LDR R2, f45
+LDRB R2, [R13, -R2]
+TEQB R4, R2
 BEQ IFSTAT_1_SEQ_0_LEVEL_0_0
 BNE IFNEXT_1_SEQ_0_LEVEL_0_0
 IFSTAT_1_SEQ_0_LEVEL_0_0: MOV R3, #1
-LDR R3, f46
-STRB R3[R13, -R3]
-LDR R3, f46
-LDRB R3, [R13, -R3]
-LDR R4, f41_inner
-STRB R3[R13, -R4]
+LDR R2, f46
+STRB R3, [R13, -R2]
+LDR R2, f46
+LDRB R2, [R13, -R2]
+LDR R3, f41_inner
+STRB R2, [R13, -R3]
 B IFEND_1_LEVEL_0_0
 IFNEXT_1_SEQ_0_LEVEL_0_0: MOV R3, #0
-LDR R3, f47
-STRB R3[R13, -R3]
-LDR R3, f47
-LDRB R3, [R13, -R3]
-LDR R4, f41_inner
-STRB R3[R13, -R4]
+LDR R2, f47
+STRB R3, [R13, -R2]
+LDR R2, f47
+LDRB R2, [R13, -R2]
+LDR R3, f41_inner
+STRB R2, [R13, -R3]
 B IFEND_1_LEVEL_0_0
 IFNEXT_1_SEQ_1_LEVEL_0_0: MOV R0, R0
-IFEND_1_LEVEL_0_0: LDR R4, f41
-LDRB R4, [R13, -R4]
-LDR R3, f48_inner
-STRB R4[R13, -R3]
+IFEND_1_LEVEL_0_0: LDR R3, f41
+LDRB R3, [R13, -R3]
+LDR R2, f48_inner
+STRB R3, [R13, -R2]
 SUB R13, R13, #9
 MOV R15, R14
 WriteInt: LDR R2, local_allocate_WriteInt
 ADD R13, R13, R2
 LDR R2, f87_value
-LDR R2, f87
-STR R2[R13, -R2]
+LDR R3, f87
+STR R2, [R13, -R3]
 MOV R2, R0
 LDR R0, f88
 SWI 1
@@ -475,17 +483,19 @@ SUB R13, R13, #4
 MOV R15, R14
 f24: .WORD 8
 f26: .WORD 4
-f24_valueWORD: .WORD 30.0
+f24_value: .WORD 30
 f25: .WORD 0
-f26_valueWORD: .WORD 8.0
+f26_value: .WORD 8
 f27: .WORD 0
 f28: .WORD 0
 f86: .WORD 4
 Div_return_address_outer: .WORD 12
 f38_outer: .WORD 8
 f75_outer: .WORD 4
+Div_param_frame_size: .WORD 12
 WriteInt_return_address_outer: .WORD 8
 f88_outer: .WORD 4
+WriteInt_param_frame_size: .WORD 8
 local_allocate_Div: .WORD 148
 Div_return_address_inner: .WORD 164
 f85_inner: .WORD 160
@@ -537,33 +547,35 @@ f81: .WORD 13
 f82: .WORD 9
 f83: .WORD 5
 f84: .WORD 1
-f29_valueWORD: .WORD 0.0
-f30_valueWORD: .WORD 0.0
-f31_valueWORD: .WORD 0.0
-f32_valueWORD: .WORD 0.0
-f33_valueWORD: .WORD 0.0
-f34_valueWORD: .WORD 0.0
-f35_valueWORD: .WORD 0.0
-f36_valueWORD: .WORD 0.0
-f37_valueWORD: .WORD 0.0
-f39_valueWORD: .WORD 0.0
-f40_valueWORD: .WORD 0.0
+f29_value: .WORD 0
+f30_value: .WORD 0
+f31_value: .WORD 0
+f32_value: .WORD 0
+f33_value: .WORD 0
+f34_value: .WORD 0
+f35_value: .WORD 0
+f36_value: .WORD 0
+f37_value: .WORD 0
+f39_value: .WORD 0
+f40_value: .WORD 0
 IntIsZero_return_address_outer: .WORD 8
 f44_outer: .WORD 4
-f52_valueWORD: .WORD 1.0
-f54_valueWORD: .WORD 1.0
-f57_valueWORD: .WORD 1.0
-f59_valueWORD: .WORD 1.0
+IntIsZero_param_frame_size: .WORD 8
+f52_value: .WORD 1
+f54_value: .WORD 1
+f57_value: .WORD 1
+f59_value: .WORD 1
 IntIsZero_return_address_outer: .WORD 8
 f44_outer: .WORD 4
-f63_valueWORD: .WORD 0.0
-f64_valueWORD: .WORD 0.0
-f65_valueWORD: .WORD 0.0
-f69_valueWORD: .WORD 1.0
-f71_valueWORD: .WORD 1.0
-f77_valueWORD: .WORD 1.0
-f81_valueWORD: .WORD 1.0
-f83_valueWORD: .WORD 0.0
+IntIsZero_param_frame_size: .WORD 8
+f63_value: .WORD 0
+f64_value: .WORD 0
+f65_value: .WORD 0
+f69_value: .WORD 1
+f71_value: .WORD 1
+f77_value: .WORD 1
+f81_value: .WORD 1
+f83_value: .WORD 0
 local_allocate_IntIsZero: .WORD 9
 IntIsZero_return_address_inner: .WORD 18
 f48_inner: .WORD 14
@@ -574,10 +586,10 @@ f43: .WORD 4
 f45: .WORD 3
 f46: .WORD 2
 f47: .WORD 1
-f42_valueWORD: .WORD 0.0
+f42_value: .WORD 0
 local_allocate_WriteInt: .WORD 4
 WriteInt_return_address_inner: .WORD 12
 f88_inner: .WORD 8
 f87: .WORD 4
-f87_valueWORD: .WORD 0.0
-totalBytes: .WORD 2336
+f87_value: .WORD 0
+totalBytes: .WORD 2384

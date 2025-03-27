@@ -3,6 +3,8 @@ package io.github.H20man13.DeClan.common.util;
 import java.math.BigInteger;
 import java.util.List;
 
+import javax.naming.spi.DirStateFactory.Result;
+
 import io.github.H20man13.DeClan.common.dag.DagNode.ScopeType;
 import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
 import io.github.H20man13.DeClan.common.analysis.region.expr.Expr;
@@ -65,8 +67,10 @@ public class ConversionUtils {
             return new StrExp((String)result);
         } else if(result instanceof Float){
             return new RealExp((float)result);
+        } else if(result instanceof Double){
+        	return new RealExp((float)result);
         } else {
-            throw new ConversionException("valueToExp", Exp.class.getName(), Object.class.getName());
+            throw new ConversionException("valueToExp", result.getClass().getName(), Exp.class.getName());
         }
     }
 
@@ -152,7 +156,7 @@ public class ConversionUtils {
         else if(scope == ScopeType.PARAM) return ICode.Scope.PARAM;
         else if(scope == ScopeType.RETURN) return ICode.Scope.RETURN;
         else if(scope == ScopeType.LOCAL) return ICode.Scope.LOCAL;
-        else throw new ConversionException("dagScopeToAssignScope", ScopeType.class.getName(), ICode.Scope.class.getName());
+        else throw new ConversionException("dagScopeToAssignScope", scope.toString(), ICode.Scope.class.getName());
     }
 
     public static ICode.Type dagValueTypeToAssignType(ValueType type){

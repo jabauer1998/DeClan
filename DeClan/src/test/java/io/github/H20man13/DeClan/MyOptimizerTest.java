@@ -74,7 +74,7 @@ public class MyOptimizerTest {
                            + " DEF z := a IADD b <INT>\n"
                            + " DEF f := z IADD i <INT>\n"
                            + " LABEL block2\n"
-                           + " IF z EQ t "
+                           + " IF z IEQ t "
                            + " THEN block1 "
                            + " ELSE block2\n"
                            + "END\n"
@@ -92,7 +92,7 @@ public class MyOptimizerTest {
 	                          " DEF z := i <INT>\r\n" + //
 	                          " DEF f := i IADD i <INT>\r\n" + //
 	                          " LABEL block2\r\n" + //
-	                          " IF z EQ t\r\n" + //
+	                          " IF z IEQ t\r\n" + //
 	                          " THEN block1\r\n" + //
 	                          " ELSE block2\r\n" + //
 	                          "END\r\n" + //
@@ -126,7 +126,7 @@ public class MyOptimizerTest {
                            + "DEF h := i IADD a <INT>\n"
                            + "CALL func ([i -> x]<INT>)\n"
                            + "DEF f := (RETURN z) <INT>\n"
-                           + "IF f EQ (GLOBAL g) THEN block1 ELSE block1\n"
+                           + "IF f IEQ (GLOBAL g) THEN block1 ELSE block1\n"
                            + "END\n"
                            + "PROC SECTION\n";
 
@@ -140,7 +140,7 @@ public class MyOptimizerTest {
                                 " DEF i := a IADD a <INT>\r\n" + //
                                 " CALL func([i -> x]<INT>)\r\n" + //
                                 " DEF f := (RETURN z) <INT>\r\n" + //
-                                " IF f EQ (GLOBAL g)\r\n" + //
+                                " IF f IEQ (GLOBAL g)\r\n" + //
                                 " THEN block1\r\n" + //
                                 " ELSE block1\r\n" + //
                                 "END\r\n" + //
@@ -175,7 +175,7 @@ public class MyOptimizerTest {
                            + "DEF h := i IADD a <INT>\n"
                            + "CALL func ([i -> x]<INT>)\n"
                            + "DEF f := (RETURN z) <INT>\n"
-                           + "IF f EQ (GLOBAL g) THEN block1 ELSE block1\n"
+                           + "IF f IEQ (GLOBAL g) THEN block1 ELSE block1\n"
                            + "END\n"
                            + "PROC SECTION\n";
 
@@ -190,7 +190,7 @@ public class MyOptimizerTest {
                                 " DEF i := (GLOBAL b) IADD a <INT>\r\n" + //
                                 " CALL func([i -> x]<INT>)\r\n" + //
                                 " DEF f := (RETURN z) <INT>\r\n" + //
-                                " IF f EQ (GLOBAL g)\r\n" + //
+                                " IF f IEQ (GLOBAL g)\r\n" + //
                                 " THEN block1\r\n" + //
                                 " ELSE block1\r\n" + //
                                 "END\r\n" + //

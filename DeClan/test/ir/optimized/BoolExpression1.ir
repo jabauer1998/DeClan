@@ -1,0 +1,30 @@
+SYMBOL SECTION
+ ENTRY b CONST INTERNAL GLOBAL a  <INT>
+ ENTRY d CONST INTERNAL GLOBAL b  <REAL>
+ ENTRY i CONST INTERNAL GLOBAL c  <REAL>
+ ENTRY k CONST INTERNAL GLOBAL d  <INT>
+ ENTRY l INTERNAL GLOBAL result  <BOOL>
+DATA SECTION
+ DEF b := 0 <INT>
+ DEF d := 1.2 <REAL>
+ DEF e := 3.14 <REAL>
+ CALL RNeg([e -> D]<REAL>)
+ DEF h := (RETURN E) <REAL>
+ DEF i := h <REAL>
+ DEF k := 42 <INT>
+BSS SECTION
+CODE SECTION
+ CALL IntToReal([(GLOBAL b) -> K]<INT>)
+ DEF o := (RETURN L) <REAL>
+ CALL RMul([o -> H]<REAL>, [(GLOBAL d) -> I]<REAL>)
+ DEF s := (RETURN J) <REAL>
+ CALL IntToReal([(GLOBAL k) -> K]<INT>)
+ DEF t := (RETURN L) <REAL>
+ CALL RDivide([(GLOBAL i) -> M]<REAL>, [t -> N]<REAL>)
+ DEF x := (RETURN O) <REAL>
+ CALL RNotEqualTo([s -> P]<REAL>, [x -> Q]<REAL>)
+ DEF B := (RETURN R) <BOOL>
+ DEF l := B <BOOL>
+ CALL WriteBool([(GLOBAL l) -> S]<BOOL>)
+END
+PROC SECTION

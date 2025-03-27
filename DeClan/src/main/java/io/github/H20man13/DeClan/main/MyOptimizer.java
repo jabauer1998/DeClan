@@ -253,6 +253,10 @@ public class MyOptimizer {
     			BlockNode nextNode = nodes.get(i + 1);
     			nextNode.addPredecessor(current);
     			current.addSuccessor(nextNode);
+    		} else if(Utils.endOfBlockIsProcedureCall(currentBlock)) {
+    			BlockNode nextNode = nodes.get(i + 1);
+    			nextNode.addPredecessor(current);
+    			current.addSuccessor(nextNode);
     		}
     	}
     }
@@ -295,14 +299,18 @@ public class MyOptimizer {
     private void buildFlowGraph() {
         List<BlockNode> nodeList = buildBlockNodes();
         
+        /*
         Map<String, BlockNode> procedureEntryNodes = findProcedureEntryPoints(nodeList);
         linkUpFunctionCalls(nodeList, procedureEntryNodes);
+        */
 
         Map<String, BlockNode> codeLabeledNodes = findBranchEntryPoints(nodeList);
         linkUpJumps(nodeList, codeLabeledNodes);
 
+        /*
         Map<String, BlockNode> procedureExitNodes = findProcedureExitPoints(nodeList);
         linkUpReturns(nodeList, procedureExitNodes);
+        */
         
         linkUpFollowThrough(nodeList);
 
@@ -609,12 +617,14 @@ public class MyOptimizer {
         ScopeType scope = node.getScopeType();
         for(String identifier : identifiers){
             if(table.contains(identifier)){
-            	return new IdentExp(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier);
+            	ICode.Scope convScope = ConversionUtils.dagScopeTypeToAssignScope(scope);
+            	return new IdentExp(convScope, identifier);
             }
         }
 
         if(identifiers.size() > 0){
-            return new IdentExp(ConversionUtils.dagScopeTypeToAssignScope(scope), identifiers.get(0));
+        	ICode.Scope convScope = ConversionUtils.dagScopeTypeToAssignScope(scope);
+            return new IdentExp(convScope, identifiers.get(0));
         } else {
             return null;
         }
@@ -635,12 +645,12 @@ public class MyOptimizer {
                     DagNode right = dag.searchForLatestChild(exp.right);
 
                     if(left == null){
-                        left = factory.createNullNode(exp.left.toString());
+                        left = factory.createNullNode(exp.left);
                         dag.addDagNode(left);
                     }
     
                     if(right == null){
-                        right = factory.createNullNode(exp.right.toString());
+                        right = factory.createNullNode(exp.right);
                         dag.addDagNode(right);
                     }
 
@@ -658,7 +668,7 @@ public class MyOptimizer {
                     DagNode right = dag.searchForLatestChild(exp.right);
 
                     if(right == null){
-                        right = factory.createNullNode(exp.right.toString());
+                        right = factory.createNullNode(exp.right);
                         dag.addDagNode(right);
                     }
 
@@ -676,7 +686,7 @@ public class MyOptimizer {
                     DagNode right = dag.searchForLatestChild(exp);
 
                     if(right == null){
-                        right = factory.createNullNode(exp.ident.toString());
+                        right = factory.createNullNode(exp);
                         dag.addDagNode(right);
                     }
 
@@ -715,12 +725,12 @@ public class MyOptimizer {
                     DagNode right = dag.searchForLatestChild(exp.right);
 
                     if(left == null){
-                        left = factory.createNullNode(exp.left.toString());
+                        left = factory.createNullNode(exp.left);
                         dag.addDagNode(left);
                     }
     
                     if(right == null){
-                        right = factory.createNullNode(exp.right.toString());
+                        right = factory.createNullNode(exp.right);
                         dag.addDagNode(right);
                     }
 
@@ -738,7 +748,7 @@ public class MyOptimizer {
                     DagNode right = dag.searchForLatestChild(exp.right);
 
                     if(right == null){
-                        right = factory.createNullNode(exp.right.toString());
+                        right = factory.createNullNode(exp.right);
                         dag.addDagNode(right);
                     }
 
@@ -756,7 +766,7 @@ public class MyOptimizer {
                     DagNode right = dag.searchForLatestChild(exp);
 
                     if(right == null){
-                        right = factory.createNullNode(exp.ident.toString());
+                        right = factory.createNullNode(exp);
                         dag.addDagNode(right);
                     }
 
@@ -791,7 +801,7 @@ public class MyOptimizer {
                 for(IdentExp param : inline.params){
                     DagNode child = dag.searchForLatestChild(param);
                     if(child == null){
-                        child = factory.createNullNode(param.ident);
+                        child = factory.createNullNode(param);
                         dag.addDagNode(child);
                     }
 

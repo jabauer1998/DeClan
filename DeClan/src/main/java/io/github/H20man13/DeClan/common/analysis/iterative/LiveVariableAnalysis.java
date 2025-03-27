@@ -101,7 +101,10 @@ public class LiveVariableAnalysis extends InstructionAnalysis<String> {
         Set<String> resultSet = new HashSet<String>();
 
         resultSet.addAll(inputSet);
-        resultSet.removeAll(defSets.get(instruction));
+        Set<String> useSet = useSets.get(instruction);
+        Set<String> defSet = defSets.get(instruction);
+        resultSet.addAll(useSet);
+        resultSet.removeAll(defSet);
         resultSet.addAll(useSets.get(instruction));
 
         return resultSet;

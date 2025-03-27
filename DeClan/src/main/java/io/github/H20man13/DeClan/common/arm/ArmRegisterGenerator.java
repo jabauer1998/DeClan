@@ -8,6 +8,7 @@ import java.util.Set;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.iterative.LiveVariableAnalysis;
 import io.github.H20man13.DeClan.common.arm.ArmCodeGenerator.VariableLength;
+import io.github.H20man13.DeClan.common.exception.RegisterAllocatorException;
 import io.github.H20man13.DeClan.common.icode.ICode;
 
 public class ArmRegisterGenerator {
@@ -16,11 +17,8 @@ public class ArmRegisterGenerator {
     private Set<Tuple<String, String>> variablesToRegister;
     private Set<Tuple<String, String>> variablesToTempRegisters;
     private LiveVariableAnalysis liveAnal;
-    private ArmCodeGenerator generator;
-    private int spillNumber;
 
-    public ArmRegisterGenerator(ArmCodeGenerator generator, LiveVariableAnalysis liveAnal){
-        this.generator = generator;
+    public ArmRegisterGenerator(LiveVariableAnalysis liveAnal){
         this.registers = new HashSet<String>();
         this.registers.add("R0");
         this.registers.add("R1");
@@ -35,12 +33,10 @@ public class ArmRegisterGenerator {
         this.registers.add("R10");
         this.registers.add("R11");
         this.registers.add("R12");
-        this.registers.add("R13");
         this.registers.add("R15");
         this.availableRegisters = new HashSet<String>();
         this.availableRegisters.addAll(this.registers);
         this.liveAnal = liveAnal;
-        this.spillNumber = 0;
         this.variablesToRegister = new HashSet<Tuple<String, String>>();
         this.variablesToTempRegisters = new HashSet<Tuple<String, String>>();
     }
@@ -109,7 +105,8 @@ public class ArmRegisterGenerator {
     
     public void freeNonInputRegs(ICode icode) {
     	Set<String> vars = liveAnal.getInputSet(icode);
-        for(String key : getVars()){
+    	Set<String> myVars = getVars();
+        for(String key : myVars){
             if(!vars.contains(key)){
                 Set<String> value = removeRegs(key);
                 for(String regVal : value){
@@ -132,11 +129,7 @@ public class ArmRegisterGenerator {
             addTempReg(place, firstAvailable);
             return firstAvailable;
         } else {
-            String spillLabel = "spill" + spillNumber;
-            generator.addVariable(spillLabel, VariableLength.WORD);
-            generator.addInstruction("STR R0, " + spillLabel);
-            spillNumber++;
-            return "R0";
+        	throw new RegisterAllocatorException("getReg", icode, this.variablesToRegister, this.variablesToTempRegisters, "Cant generate temp register for "+ place + " because there are no registers available to choose from");
         }
     }
 
@@ -153,11 +146,7 @@ public class ArmRegisterGenerator {
             addReg(place, firstAvailable);
             return firstAvailable;
         } else {
-            String spillLabel = "spill" + spillNumber;
-            generator.addVariable(spillLabel, VariableLength.WORD);
-            generator.addInstruction("STR R0, " + spillLabel);
-            spillNumber++;
-            return "R0";
+            throw new RegisterAllocatorException("getReg", icode, this.variablesToRegister, this.variablesToTempRegisters, "Cant generate register for "+ place + " because there are no registers available to choose from");
         }
     }
 

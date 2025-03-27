@@ -585,6 +585,10 @@ public class MyCompilerDriver {
 
                     MyCodeGenerator cGen = new MyCodeGenerator(outputDestination, optimizer.getLiveVariableAnalysis(), prog, errLog);
                     cGen.codeGen();
+                    
+                	for(LogItem item: errLog) {
+                    	System.err.println(item);
+                    }
                 }
             } else {
                 if(cfg.containsFlag("output")){

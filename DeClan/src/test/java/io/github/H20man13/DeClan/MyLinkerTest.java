@@ -153,7 +153,7 @@ public class MyLinkerTest {
     @Test
     public void linkExternalVariable(){
         String prog1 = "SYMBOL SECTION\n"
-                     + "ENTRY a EXTERNAL lib1VariableName\n"
+                     + "ENTRY a EXTERNAL lib1VariableName <INT>\n"
                      + "DATA SECTION\n"
                      + " DEF GLOBAL v := 30 <INT>\n"
                      + "BSS SECTION\n"
@@ -163,7 +163,7 @@ public class MyLinkerTest {
                      + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
-                    + " ENTRY a INTERNAL lib1VariableName\n"
+                    + " ENTRY a INTERNAL lib1VariableName <INT>\n"
                     + "DATA SECTION\n"
                     + " DEF GLOBAL a := 3 <INT>\n"
                     + "PROC SECTION\n";
@@ -177,7 +177,7 @@ public class MyLinkerTest {
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
-                     " ENTRY c INTERNAL lib1VariableName\r\n" + //
+                     " ENTRY c INTERNAL lib1VariableName <INT>\r\n" + //
                      "DATA SECTION\r\n" + //
                      " DEF GLOBAL v := 30 <INT>\r\n" + //
                      " DEF GLOBAL c := 3 <INT>\r\n" + //
@@ -193,7 +193,7 @@ public class MyLinkerTest {
     @Test
     public void checkVariableRename(){
         String prog1 = "SYMBOL SECTION\n"
-                     + "ENTRY b EXTERNAL lib1VariableName\n"
+                     + "ENTRY b EXTERNAL lib1VariableName <INT>\n"
                      + "DATA SECTION\n"
                      + " DEF GLOBAL v := 30 <INT>\n"
                      + " DEF GLOBAL a := 20 <INT>\n"
@@ -205,7 +205,7 @@ public class MyLinkerTest {
                      + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
-                    + "ENTRY a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
+                    + "ENTRY a INTERNAL lib1VariableName <INT>\n" //The internal Declaration will start out as an A
                     + "DATA SECTION\n"
                     + " DEF GLOBAL a := 3 <INT>\n"
                     + "PROC SECTION\n";
@@ -219,7 +219,7 @@ public class MyLinkerTest {
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
-                     " ENTRY c INTERNAL lib1VariableName\r\n" + //
+                     " ENTRY c INTERNAL lib1VariableName <INT>\r\n" + //
                      "DATA SECTION\r\n" + //
                      " DEF GLOBAL v := 30 <INT>\r\n" + //
                      " DEF GLOBAL a := 20 <INT>\r\n" + //
@@ -237,8 +237,8 @@ public class MyLinkerTest {
     @Test
     public void linkExternalCall1(){
         String prog1 = "SYMBOL SECTION\n"
-                     + " ENTRY v EXTERNAL lib1VariableName\n"
-                     + " ENTRY s EXTERNAL RETURN func\n"
+                     + " ENTRY v EXTERNAL lib1VariableName <INT>\n"
+                     + " ENTRY s EXTERNAL RETURN func <INT>\n"
                      + "DATA SECTION\n"
                      + " DEF GLOBAL a := 20 <INT>\n"
                      + " DEF GLOBAL b := 500 <INT>\n"
@@ -251,7 +251,7 @@ public class MyLinkerTest {
                      + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
-                    + " ENTRY a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
+                    + " ENTRY a INTERNAL lib1VariableName <INT>\n" //The internal Declaration will start out as an A
                     + "DATA SECTION\n"
                     + " DEF GLOBAL a := 3 <INT>\n"
                     + "PROC SECTION\n";
@@ -265,7 +265,7 @@ public class MyLinkerTest {
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
-                     " ENTRY f INTERNAL lib1VariableName\r\n" + //
+                     " ENTRY f INTERNAL lib1VariableName <INT>\r\n" + //
                      "DATA SECTION\r\n" + //
                      " DEF GLOBAL a := 20 <INT>\r\n" + //
                      " DEF GLOBAL b := 500 <INT>\r\n" + //
@@ -290,8 +290,8 @@ public class MyLinkerTest {
     @Test
     public void linkExternalCall2(){
         String prog1 = "SYMBOL SECTION\n"
-                     + " ENTRY v EXTERNAL lib1VariableName\n"
-                     + " ENTRY s EXTERNAL RETURN func2\n"
+                     + " ENTRY v EXTERNAL lib1VariableName <INT>\n"
+                     + " ENTRY s EXTERNAL RETURN func2 <INT>\n"
                      + "DATA SECTION\n"
                      + " DEF GLOBAL a := 20 <INT>\n"
                      + " DEF GLOBAL b := 500 <INT>\n"
@@ -304,8 +304,8 @@ public class MyLinkerTest {
                      + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
-                    + " ENTRY a INTERNAL lib1VariableName\n" //The internal Declaration will start out as an A
-                    + " ENTRY g EXTERNAL RETURN func2\n"
+                    + " ENTRY a INTERNAL lib1VariableName <INT>\n" //The internal Declaration will start out as an A
+                    + " ENTRY g EXTERNAL RETURN func2 <INT>\n"
                     + "DATA SECTION\n"
                     + " DEF GLOBAL a := 3 <INT>\n"
                     + "PROC SECTION\n"
@@ -325,7 +325,7 @@ public class MyLinkerTest {
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
-                     " ENTRY j INTERNAL lib1VariableName\r\n" + //
+                     " ENTRY j INTERNAL lib1VariableName <INT>\r\n" + //
                      "DATA SECTION\r\n" + //
                      " DEF GLOBAL a := 20 <INT>\r\n" + //
                      " DEF GLOBAL b := 500 <INT>\r\n" + //
@@ -354,8 +354,8 @@ public class MyLinkerTest {
     @Test
     public void linkDuplicateLabels(){
         String prog1 = "SYMBOL SECTION\n"
-                     + " ENTRY v EXTERNAL lib1VariableName\n"
-                     + " ENTRY s EXTERNAL RETURN func2\n"
+                     + " ENTRY v EXTERNAL lib1VariableName <INT>\n"
+                     + " ENTRY s EXTERNAL RETURN func2 <INT>\n"
                      + "DATA SECTION\n"
                      + " DEF GLOBAL a := 20 <INT>\n"
                      + " DEF GLOBAL b := 500 <INT>\n"
@@ -365,7 +365,7 @@ public class MyLinkerTest {
                      + " DEF d := (RETURN s) <INT>\n"
                      + " DEF g := d IADD (GLOBAL v) <INT>\n"
                      + "LABEL begin2\n"
-                     + "IF g EQ v THEN begin ELSE end\n"
+                     + "IF g IEQ v THEN begin ELSE end\n"
                      + "LABEL begin\n"
                      + "DEF g := d IADD (GLOBAL v) <INT>\n"
                      + "GOTO begin2\n"
@@ -374,8 +374,8 @@ public class MyLinkerTest {
                      + "PROC SECTION\n";
 
         String lib1 = "SYMBOL SECTION\n"
-                    + " ENTRY a INTERNAL lib1VariableName\n"
-                    + " ENTRY h INTERNAL RETURN func2\n"
+                    + " ENTRY a INTERNAL lib1VariableName <INT>\n"
+                    + " ENTRY h INTERNAL RETURN func2 <INT>\n"
                     + "DATA SECTION\n"
                     + " DEF GLOBAL a := 3 <INT>\n"
                     + "PROC SECTION\n"
@@ -384,7 +384,7 @@ public class MyLinkerTest {
                     + "  DEF b := (RETURN h) <INT>\n"
                     + "  DEF c := b ISUB (GLOBAL a) <INT>\n"
                     + "  LABEL begin2\n"
-                    + "  IF c EQ b THEN begin ELSE end\n"
+                    + "  IF c IEQ b THEN begin ELSE end\n"
                     + "  LABEL begin\n"
                     + "  DEF e := c IADD b <INT>\n"
                     + "  GOTO begin2\n"
@@ -398,7 +398,7 @@ public class MyLinkerTest {
                     + "PROC LABEL func1\n"
                     + "  DEF a := 3 <INT>\n"
                     + "  LABEL begin2\n"
-                    + "  IF a EQ a THEN begin ELSE end\n"
+                    + "  IF a IEQ a THEN begin ELSE end\n"
                     + "  LABEL begin\n"
                     + "  DEF e := a IADD a <INT>\n"
                     + "  GOTO begin2\n"
@@ -407,7 +407,7 @@ public class MyLinkerTest {
                     + "RETURN\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
-                     " ENTRY l INTERNAL lib1VariableName\r\n" + //
+                     " ENTRY l INTERNAL lib1VariableName <INT>\r\n" + //
                      "DATA SECTION\r\n" + //
                      " DEF GLOBAL a := 20 <INT>\r\n" + //
                      " DEF GLOBAL b := 500 <INT>\r\n" + //
@@ -430,7 +430,7 @@ public class MyLinkerTest {
                      "  DEF i := (RETURN j) <INT>\r\n" + //
                      "  DEF c := i ISUB (GLOBAL l) <INT>\r\n" + //
                      "  LABEL begin2_1\r\n" + //
-                     "  IF c EQ i THEN begin_1 ELSE end_1\r\n" + //
+                     "  IF c IEQ i THEN begin_1 ELSE end_1\r\n" + //
                      "  LABEL begin_1\r\n" + //
                      "  DEF h := c IADD i <INT>\r\n" + //
                      "  GOTO begin2_1\r\n" + //

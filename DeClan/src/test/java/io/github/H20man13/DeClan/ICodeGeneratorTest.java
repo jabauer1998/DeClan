@@ -124,8 +124,10 @@ public class ICodeGeneratorTest {
                        + " e := i GT g <BOOL>\r\n"
                        + " f := u LE j <BOOL>\r\n"
                        + " h := y GE o <BOOL>\r\n"
-                       + " j := h NE u <BOOL>\r\n"
-                       + " y := y EQ u <BOOL>\r\n"
+                       + " j := h INE u <BOOL>\r\n"
+                       + " y := y IEQ u <BOOL>\r\n"
+                       + " j := h BNE u <BOOL>\r\n"
+                       + " y := y BEQ u <BOOL>\r\n"
                        + "END\r\n"
                        + "PROC SECTION\r\n";
 
@@ -272,7 +274,7 @@ public class ICodeGeneratorTest {
                        + "BSS SECTION\r\n"
                        + "CODE SECTION\n"
                        + " LABEL y\r\n"
-                       + " IF x EQ trueVal\r\n"
+                       + " IF x BEQ trueVal\r\n"
                        + " THEN z\r\n"
                        + " ELSE y\r\n"
                        + " LABEL z\r\n"

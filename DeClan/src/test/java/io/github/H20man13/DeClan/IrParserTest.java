@@ -34,8 +34,10 @@ public class IrParserTest {
                        + "e := i GT g <BOOL>\n"
                        + "f := u LE j <BOOL>\n"
                        + "h := y GE o <BOOL>\n"
-                       + "j := h NE u <BOOL>\n"
-                       + "y := y EQ u <BOOL>\n"
+                       + "j := h INE u <BOOL>\n"
+                       + "y := y IEQ u <BOOL>\n"
+                       + "F := y BNE g <BOOL>\n"
+                       + "H := y BEQ u <BOOL>\n"
                        + "END\n"
                        + "PROC SECTION\n";
 
@@ -194,7 +196,7 @@ public class IrParserTest {
                        + "BSS SECTION\n"
                        + "CODE SECTION\n"
                        + "LABEL y\n"
-                       + "IF x EQ trueVal THEN z ELSE y\n"
+                       + "IF x BEQ trueVal THEN z ELSE y\n"
                        + "LABEL z\n"
                        + "END\n"
                        + "PROC SECTION\n";

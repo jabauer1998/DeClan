@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import io.github.H20man13.DeClan.common.dag.DagNode.ScopeType;
 import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
 public class DagNodeFactory {
@@ -202,8 +203,8 @@ public class DagNodeFactory {
         return new DagOperationNode(isDefinition, scope, nodeName, DagOperationNode.Op.RNEG, childNodes, ValueType.REAL);
     }
 
-    public DagNode createNullNode(String nodeName){
-        return new DagNullNode(nodeName);
+    public DagNode createNullNode(IdentExp nodeName){
+        return new DagNullNode(ConversionUtils.assignScopeToDagScopeType(nodeName.scope), nodeName.ident);
     }
 
     public DagNode createBooleanNode(boolean isDefinition, Assign.Scope origScope, String nodeName, boolean value){
@@ -216,7 +217,7 @@ public class DagNodeFactory {
         return new DagValueNode(isDefinition, scope, nodeName, value, ValueType.INT);
     }
 
-    public DagNode createRealNode(boolean isDefinition, Assign.Scope origScope, String nodeName, double value){
+    public DagNode createRealNode(boolean isDefinition, Assign.Scope origScope, String nodeName, float value){
         ScopeType scope = ConversionUtils.assignScopeToDagScopeType(origScope);
         return new DagValueNode(isDefinition, scope, nodeName, value, ValueType.REAL);
     }

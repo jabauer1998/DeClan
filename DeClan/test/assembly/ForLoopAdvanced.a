@@ -1,14 +1,14 @@
 LDR R13, totalBytes
 SUB R13, R13, #0
 LDR R2, f26_value
-LDR R2, f26
-STR R2[R13, -R2]
-LDR R2, f26
-LDR R2, [R13, -R2]
-STR R2, f24
+LDR R3, f26
+STR R2, [R13, -R3]
+LDR R3, f26
+LDR R3, [R13, -R3]
+STR R3, f24
 LDR R2, f27_value
-LDR R2, f27
-STR R2[R13, -R2]
+LDR R3, f27
+STR R2, [R13, -R3]
 FORBEG_0_LEVEL_0: LDR R2, f24
 LDR R3, f27
 LDR R3, [R13, -R3]
@@ -16,21 +16,22 @@ TEQ R2, R3
 BNE FORLOOP_0_LEVEL_0
 BEQ FOREND_0_LEVEL_0
 FORLOOP_0_LEVEL_0: LDR R4, f28_value
-LDR R4, f28
-STR R4[R13, -R4]
-LDR R4, f28
-LDR R4, [R13, -R4]
-STR R4, f25
+LDR R5, f28
+STR R4, [R13, -R5]
+LDR R5, f28
+LDR R5, [R13, -R5]
+STR R5, f25
 LDR R4, f29_value
-LDR R4, f29
-STR R4[R13, -R4]
+LDR R5, f29
+STR R4, [R13, -R5]
 FORBEG_1_LEVEL_1: LDR R4, f25
 LDR R5, f29
 LDR R5, [R13, -R5]
 CMP R4, R5
 BLT FORLOOP_1_LEVEL_1
 BGE FOREND_1_LEVEL_1
-FORLOOP_1_LEVEL_1: ADD R13, R13, #8
+FORLOOP_1_LEVEL_1: LDR R6, WriteInt_param_frame_size
+ADD R13, R13, R6
 LDR R6, WriteInt_return_address_outer
 STR R14, [R13, -R6]
 LDR R4, f25
@@ -39,138 +40,147 @@ STR R4, [R13, -R6]
 BL WriteInt
 LDR R14, WriteInt_return_address_outer
 LDR R14, [R13, -R14]
-SUB R13, R13, #8
+LDR R6, WriteInt_param_frame_size
+SUB R13, R13, R6
 LDR R6, f32_value
-LDR R6, f32
-STR R6[R13, -R6]
+LDR R7, f32
+STR R6, [R13, -R7]
 LDR R4, f25
-LDR R6, f32
-LDR R6, [R13, -R6]
-ADD R4, R4, R6
-STR R4, f25
-B FORBEG_1_LEVEL_1
-FOREND_1_LEVEL_1: ADD R13, R13, #4
-LDR R6, WriteLn_return_address_outer
-STR R14, [R13, -R6]
-BL WriteLn
-LDR R14, WriteLn_return_address_outer
-LDR R14, [R13, -R14]
-SUB R13, R13, #4
-LDR R4, f33_value
-LDR R4, f33
-STR R4[R13, -R4]
-LDR R4, f33
-LDR R4, [R13, -R4]
-STR R4, f25
-LDR R4, f34_value
-LDR R4, f34
-STR R4[R13, -R4]
-FORBEG_2_LEVEL_1: LDR R4, f25
-LDR R6, f34
-LDR R6, [R13, -R6]
-CMP R4, R6
-BGT FORLOOP_2_LEVEL_1
-BLE FOREND_2_LEVEL_1
-FORLOOP_2_LEVEL_1: ADD R13, R13, #8
-LDR R7, WriteInt_return_address_outer
-STR R14, [R13, -R7]
-LDR R4, f25
-LDR R7, f31_outer
-STR R4, [R13, -R7]
-BL WriteInt
-LDR R14, WriteInt_return_address_outer
-LDR R14, [R13, -R14]
-SUB R13, R13, #8
-LDR R7, f35_value
-LDR R7, f35
-STR R7[R13, -R7]
-ADD R13, R13, #8
-LDR R7, INeg_return_address_outer
-STR R14, [R13, -R7]
-LDR R7, f35
-LDR R7, [R13, -R7]
-LDR R8, f38_outer
-STR R7, [R13, -R8]
-BL INeg
-LDR R14, INeg_return_address_outer
-LDR R14, [R13, -R14]
-SUB R13, R13, #8
-LDR R7, f41_outer
-LDR R7, [R13, -R7]
-LDR R7, f42_inner
-STR R7[R13, -R7]
-LDR R4, f25
-LDR R7, f42
+LDR R7, f32
 LDR R7, [R13, -R7]
 ADD R4, R4, R7
 STR R4, f25
-B FORBEG_2_LEVEL_1
-FOREND_2_LEVEL_1: ADD R13, R13, #4
-LDR R7, WriteLn_return_address_outer
-STR R14, [R13, -R7]
+B FORBEG_1_LEVEL_1
+FOREND_1_LEVEL_1: LDR R4, WriteLn_param_frame_size
+ADD R13, R13, R4
+LDR R4, WriteLn_return_address_outer
+STR R14, [R13, -R4]
 BL WriteLn
 LDR R14, WriteLn_return_address_outer
 LDR R14, [R13, -R14]
-SUB R13, R13, #4
+LDR R4, WriteLn_param_frame_size
+SUB R13, R13, R4
+LDR R4, f33_value
+LDR R5, f33
+STR R4, [R13, -R5]
+LDR R5, f33
+LDR R5, [R13, -R5]
+STR R5, f25
+LDR R4, f34_value
+LDR R5, f34
+STR R4, [R13, -R5]
+FORBEG_2_LEVEL_1: LDR R4, f25
+LDR R5, f34
+LDR R5, [R13, -R5]
+CMP R4, R5
+BGT FORLOOP_2_LEVEL_1
+BLE FOREND_2_LEVEL_1
+FORLOOP_2_LEVEL_1: LDR R5, WriteInt_param_frame_size
+ADD R13, R13, R5
+LDR R5, WriteInt_return_address_outer
+STR R14, [R13, -R5]
+LDR R4, f25
+LDR R5, f31_outer
+STR R4, [R13, -R5]
+BL WriteInt
+LDR R14, WriteInt_return_address_outer
+LDR R14, [R13, -R14]
+LDR R5, WriteInt_param_frame_size
+SUB R13, R13, R5
+LDR R5, f35_value
+LDR R6, f35
+STR R5, [R13, -R6]
+LDR R5, INeg_param_frame_size
+ADD R13, R13, R5
+LDR R5, INeg_return_address_outer
+STR R14, [R13, -R5]
+LDR R6, f35
+LDR R6, [R13, -R6]
+LDR R5, f38_outer
+STR R6, [R13, -R5]
+BL INeg
+LDR R14, INeg_return_address_outer
+LDR R14, [R13, -R14]
+LDR R5, INeg_param_frame_size
+SUB R13, R13, R5
+LDR R5, f41_outer
+LDR R5, [R13, -R5]
+LDR R6, f42_inner
+STR R5, [R13, -R6]
+LDR R4, f25
+LDR R6, f42
+LDR R6, [R13, -R6]
+ADD R4, R4, R6
+STR R4, f25
+B FORBEG_2_LEVEL_1
+FOREND_2_LEVEL_1: LDR R4, WriteLn_param_frame_size
+ADD R13, R13, R4
+LDR R4, WriteLn_return_address_outer
+STR R14, [R13, -R4]
+BL WriteLn
+LDR R14, WriteLn_return_address_outer
+LDR R14, [R13, -R14]
+LDR R4, WriteLn_param_frame_size
+SUB R13, R13, R4
 LDR R4, f43_value
-LDR R4, f43
-STR R4[R13, -R4]
+LDR R5, f43
+STR R4, [R13, -R5]
 LDR R2, f24
-LDR R4, f43
+LDR R5, f43
+LDR R5, [R13, -R5]
+ADD R4, R2, R5
+LDR R6, f44
+STR R4, [R13, -R6]
+LDR R4, f44
 LDR R4, [R13, -R4]
-ADD R5, R2, R4
-LDR R5, f44
-STR R5[R13, -R5]
-LDR R2, f44
-LDR R2, [R13, -R2]
-STR R2, f24
+STR R4, f24
 B FORBEG_0_LEVEL_0
 FOREND_0_LEVEL_0: SUB R13, R13, #44
 STP
 WriteInt: LDR R2, local_allocate_WriteInt
 ADD R13, R13, R2
 LDR R2, f30_value
-LDR R2, f30
-STR R2[R13, -R2]
+LDR R3, f30
+STR R2, [R13, -R3]
 MOV R2, R0
 LDR R0, f31
 SWI 1
 MOV R0, R2
 SUB R13, R13, #4
 MOV R15, R14
-WriteLn: LDR R2, local_allocate_WriteLn
-ADD R13, R13, R2
+WriteLn: LDR R3, local_allocate_WriteLn
+ADD R13, R13, R3
 SWI 4
 SUB R13, R13, #0
 MOV R15, R14
 INeg: LDR R2, local_allocate_INeg
 ADD R13, R13, R2
 LDR R2, f36_value
-LDR R2, f36
-STR R2[R13, -R2]
+LDR R3, f36
+STR R2, [R13, -R3]
 LDR R2, f38_inner
 LDR R2, [R13, -R2]
-MVN R2, R2
-LDR R2, f37
-STR R2[R13, -R2]
+MVN R3, R2
+LDR R4, f37
+STR R3, [R13, -R4]
 LDR R2, f39_value
-LDR R2, f39
-STR R2[R13, -R2]
-LDR R2, f37
-LDR R2, [R13, -R2]
+LDR R4, f39
+STR R2, [R13, -R4]
+LDR R3, f37
+LDR R3, [R13, -R3]
 LDR R4, f39
 LDR R4, [R13, -R4]
-ADD R5, R2, R4
+ADD R2, R3, R4
 LDR R5, f40
-STR R5[R13, -R5]
+STR R2, [R13, -R5]
 LDR R2, f40
 LDR R2, [R13, -R2]
-LDR R4, f36_inner
-STR R2[R13, -R4]
-LDR R4, f36
-LDR R4, [R13, -R4]
+LDR R3, f36_inner
+STR R2, [R13, -R3]
+LDR R3, f36
+LDR R3, [R13, -R3]
 LDR R2, f41_inner
-STR R4[R13, -R2]
+STR R3, [R13, -R2]
 SUB R13, R13, #16
 MOV R15, R14
 f24: .WORD 0
@@ -186,28 +196,33 @@ f35: .WORD 16
 f42: .WORD 12
 f43: .WORD 8
 f44: .WORD 4
-f26_valueWORD: .WORD 1.0
-f27_valueWORD: .WORD 10.0
-f28_valueWORD: .WORD 1.0
-f29_valueWORD: .WORD 10.0
+f26_value: .WORD 1
+f27_value: .WORD 10
+f28_value: .WORD 1
+f29_value: .WORD 10
 WriteInt_return_address_outer: .WORD 8
 f31_outer: .WORD 4
-f32_valueWORD: .WORD 1.0
+WriteInt_param_frame_size: .WORD 8
+f32_value: .WORD 1
 WriteLn_return_address_outer: .WORD 4
-f33_valueWORD: .WORD 10.0
-f34_valueWORD: .WORD 0.0
+WriteLn_param_frame_size: .WORD 4
+f33_value: .WORD 10
+f34_value: .WORD 0
 WriteInt_return_address_outer: .WORD 8
 f31_outer: .WORD 4
-f35_valueWORD: .WORD 1.0
+WriteInt_param_frame_size: .WORD 8
+f35_value: .WORD 1
 INeg_return_address_outer: .WORD 8
 f38_outer: .WORD 4
+INeg_param_frame_size: .WORD 8
 WriteLn_return_address_outer: .WORD 4
-f43_valueWORD: .WORD 1.0
+WriteLn_param_frame_size: .WORD 4
+f43_value: .WORD 1
 local_allocate_WriteInt: .WORD 4
 WriteInt_return_address_inner: .WORD 12
 f31_inner: .WORD 8
 f30: .WORD 4
-f30_valueWORD: .WORD 0.0
+f30_value: .WORD 0
 local_allocate_WriteLn: .WORD 0
 WriteLn_return_address_inner: .WORD 4
 local_allocate_INeg: .WORD 16
@@ -218,6 +233,6 @@ f36: .WORD 16
 f37: .WORD 12
 f39: .WORD 8
 f40: .WORD 4
-f36_valueWORD: .WORD 0.0
-f39_valueWORD: .WORD 1.0
-totalBytes: .WORD 896
+f36_value: .WORD 0
+f39_value: .WORD 1
+totalBytes: .WORD 956

@@ -171,6 +171,20 @@ public class Utils {
             return false;
         }
     }
+    
+    public static boolean endOfBlockIsProcedureCall(BasicBlock block) {
+    	List<ICode> codeInBlock = block.getIcode();
+    	if(codeInBlock.size() > 0){
+            ICode lastICode = codeInBlock.get(codeInBlock.size() - 1);
+            if(lastICode instanceof Call){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
     public static boolean endOfBlockIsJump(BasicBlock block){
         List<ICode> codeInBlock = block.getIcode();

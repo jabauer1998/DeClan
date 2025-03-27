@@ -13,21 +13,25 @@ function clean_src{
     }
 }
 function compile_file_into_ir{
-    param($src, $nolink)
+    param($src, $nolink, $optimized)
     Write-Host "Compiling Ir with src-"
     Write-Host "$src"
     if ($nolink){
         $out = "$src".replace(".declib", ".ilib").replace(".dcl", ".ir").replace("standard_library\declan", "standard_library\ir\linkable").replace("test\declan", "test\ir\linkable")
-    } else {
+    } elseif ($optimized){
+		$out = "$src".replace(".dcl", ".ir").replace("test\declan", "test\ir\optimized")
+	} else {
         $out = "$src".replace(".dcl", ".ir").replace("test\declan", "test\ir\linked")
     }
     Write-Host "to output-"
     Write-Host "$out"
     Write-Host "---------Output-Window-----------"
     if($out.Contains(".ir")){
-        if ($nolink -eq ''){
+        if (($nolink -eq '') -and ($optimized -eq '')){
             Invoke-Expression "mvn exec:java -e -q -f '$PSScriptRoot/pom.xml' -P ir -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
-        } else {
+        } elseif ($nolink -eq ''){
+			Invoke-Expression "mvn exec:java -e -q -f '$PSScriptRoot/pom.xml' -P ir-optimized -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+		} else {
             Invoke-Expression "mvn exec:java -e -q -f '$PSScriptRoot/pom.xml' -P ir-nolink -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
         }
     } elseif ($out.Contains(".ilib")){
@@ -135,6 +139,8 @@ function parse_commands(){
     $return_set.Add("clean", $containsClean)
     $containsNoLink = list_contains -list $arguments -elem "no_link"
     $return_set.Add("no_link", $containsNoLink)
+    $containsOpt = list_contains -list $arguments -elem "opt"
+    $return_set.Add("opt", $containsOpt)
     $containsStdLib = list_contains -list $arguments -elem "std"
     $return_set.Add("std", $containsStdLib)
     return $return_set
@@ -158,7 +164,8 @@ if($commands["help"] -eq $true){
     Write-Host "4) assembly - compiles the source in test/declan into assembly files that are located in test/assembly"
     Write-Host "5) binary - compiles the src located in test/declan into a binary executable located in test/binary"
     Write-Host "6) no_link - designed to be supplied with the ir command the no_link command generates ir modules that are not linked"
-    Write-Host "7) all - Runs all the commands above. Same as suplying the script with no command line arguments."
+    Write-Host "7) opt - optimize the ir code with all available passes"
+    Write-Host "8) all - Runs all the commands above. Same as suplying the script with no command line arguments."
 } else {
     $noArgs = $args.Count -eq 0
     if(($noArgs -eq $true) -or ($commands["all"] -eq $true) -or ($commands["clean"] -eq $true)){
@@ -170,19 +177,22 @@ if($commands["help"] -eq $true){
 
     $depends = check_dependencies
     if ($depends -eq 0) {
-        if($noArgs -or $commands["all"] -or $commands["std"] -or ($commands["ir"] -and $commands["no_link"])){
+        if($noArgs -or $commands["all"] -or $commands["std"]){
             Get-ChildItem -File "$PSScriptRoot/standard_library/declan" |
             Foreach-Object {
-                compile_file_into_ir -src $_.FullName -nolink $true
+                compile_file_into_ir -src $_.FullName -nolink $true -optimized $false
             }
         }
         Get-ChildItem -File "$PSScriptRoot/test/declan" |
         Foreach-Object {
             if($noArgs -or $commands["all"] -or ($commands["ir"] -and $commands["no_link"])){
-                compile_file_into_ir -src $_.FullName -nolink $true
+                compile_file_into_ir -src $_.FullName -nolink $true -optimized $false
             }
-            if($noArgs -or $commands["all"] -or ($commands["ir"] -and (-not $commands["no_link"]))){
-                compile_file_into_ir -src $_.FullName -nolink $false
+            if($noArgs -or $commands["all"] -or ($commands["ir"] -and $commands["opt"])){
+                compile_file_into_ir -src $_.FullName -optimized $true -nolink $false
+            }
+            if($noArgs -or $commands["all"] -or ($commands["ir"] -and (-not ($commands["no_link"] -or $commands["opt"])))){
+                compile_file_into_ir -src $_.FullName -nolink $false -optimized $false
             }
             if($noArgs -or $commands["all"] -or $commands["assembly"]){
                 compile_file_into_assembly -src $_.FullName

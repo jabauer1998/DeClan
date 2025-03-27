@@ -1,0 +1,322 @@
+LDR R3, f24_value
+LDR R2, f24
+STR R3, [R13, -R2]
+LDR R2, f24
+LDR R2, [R13, -R2]
+STR R2, f25
+LDR R3, f26_value
+LDR R2, f26
+STR R3, [R13, -R2]
+LDR R2, f26
+LDR R2, [R13, -R2]
+STR R2, f27
+LDR R2, f52_value
+LDR R3, f52
+STR R2, [R13, -R3]
+LDR R3, f52
+LDR R3, [R13, -R3]
+STR R3, g50
+SUB R13, R13, #12
+LDR R2, RDivide_param_frame_size
+ADD R13, R13, R2
+LDR R2, RDivide_return_address_outer
+STR R14, [R13, -R2]
+LDR R2, f25
+LDR R3, g56_outer
+STR R2, [R13, -R3]
+LDR R3, f27
+LDR R4, g57_outer
+STR R3, [R13, -R4]
+BL RDivide
+LDR R14, RDivide_return_address_outer
+LDR R14, [R13, -R14]
+LDR R4, RDivide_param_frame_size
+SUB R13, R13, R4
+LDR R2, g55_outer
+LDR R2, [R13, -R2]
+LDR R3, g58_inner
+STR R2, [R13, -R3]
+LDR R3, g58
+LDR R3, [R13, -R3]
+STR R3, f28
+LDR R2, WriteReal_param_frame_size
+ADD R13, R13, R2
+LDR R2, WriteReal_return_address_outer
+STR R14, [R13, -R2]
+LDR R2, f28
+LDR R3, g60_outer
+STR R2, [R13, -R3]
+BL WriteReal
+LDR R14, WriteReal_return_address_outer
+LDR R14, [R13, -R14]
+LDR R3, WriteReal_param_frame_size
+SUB R13, R13, R3
+SUB R13, R13, #4
+STP
+RDivide: LDR R3, local_allocate_RDivide
+ADD R13, R13, R3
+LDR R3, T3_value
+LDR R2, T3
+STR R3, [R13, -R2]
+LDR R2, T4_value
+LDR R3, T4
+STR R2, [R13, -R3]
+LDR R2, T5_value
+LDR R3, T5
+STR R2, [R13, -R3]
+LDR R2, T6_value
+LDR R3, T6
+STR R2, [R13, -R3]
+LDR R2, T7_value
+LDR R3, T7
+STR R2, [R13, -R3]
+LDR R2, T8_value
+LDR R3, T8
+STR R2, [R13, -R3]
+LDR R2, T9_value
+LDR R3, T9
+STR R2, [R13, -R3]
+LDR R2, U0_value
+LDR R3, U0
+STR R2, [R13, -R3]
+LDR R2, U1_value
+LDR R3, U1
+STR R2, [R13, -R3]
+LDR R2, U2_value
+LDR R3, U2
+STR R2, [R13, -R3]
+LDR R2, U3_value
+LDR R3, U3
+STR R2, [R13, -R3]
+LDR R2, U4_value
+LDR R3, U4
+STR R2, [R13, -R3]
+LDR R2, U5_value
+LDR R3, U5
+STR R2, [R13, -R3]
+LDR R2, U6_value
+LDR R3, U6
+STR R2, [R13, -R3]
+LDR R2, U7_value
+LDR R3, U7
+STR R2, [R13, -R3]
+LDR R2, U8_value
+LDR R3, U8
+STR R2, [R13, -R3]
+LDR R2, U9_value
+LDR R4, U9
+STR R2, [R13, -R4]
+LDR R2, V0_value
+LDR R4, V0
+STR R2, [R13, -R4]
+LDR R2, V1_value
+LDR R4, V1
+STR R2, [R13, -R4]
+LDR R2, V2_value
+LDR R5, V2
+STR R2, [R13, -R5]
+LDR R2, V3_value
+LDR R5, V3
+STR R2, [R13, -R5]
+LDR R2, V4_value
+LDR R5, V4
+STR R2, [R13, -R5]
+LDR R2, V5_value
+LDR R5, V5
+STR R2, [R13, -R5]
+LDR R2, V6_value
+LDR R5, V6
+STR R2, [R13, -R5]
+LDR R2, V7_value
+LDR R5, V7
+STR R2, [R13, -R5]
+LDR R2, V8_value
+LDR R5, V8
+STR R2, [R13, -R5]
+LDR R2, V9_value
+LDR R5, V9
+STR R2, [R13, -R5]
+LDR R2, W0_value
+LDR R5, W0
+STR R2, [R13, -R5]
+LDR R2, W1_value
+LDR R5, W1
+STR R2, [R13, -R5]
+LDR R2, W2_value
+LDR R5, W2
+STR R2, [R13, -R5]
+LDR R2, W3_value
+LDR R6, W3
+STR R2, [R13, -R6]
+LDR R2, W4_value
+LDR R7, W4
+STR R2, [R13, -R7]
+LDR R2, W5_value
+LDR R7, W5
+STR R2, [R13, -R7]
+LDR R2, W6_value
+LDR R7, W6
+STR R2, [R13, -R7]
+LDR R2, W7_value
+LDR R8, W7
+STR R2, [R13, -R8]
+LDR R2, W8_value
+LDR R8, W8
+STR R2, [R13, -R8]
+LDR R2, RealSign_param_frame_size
+ADD R13, R13, R2
+LDR R2, RealSign_return_address_outer
+STR R14, [R13, -R2]
+LDR R2, g56_inner
+LDR R2, [R13, -R2]
+LDR R8, f41_outer
+STR R2, [R13, -R8]
+BL RealSign
+LDR R14, RealSign_return_address_outer
+LDR R14, [R13, -R14]
+LDR R2, RealSign_param_frame_size
+SUB R13, R13, R2
+LDR R2, f40_outer
+LDR R2, [R13, -R2]
+LDR R8, W9_inner
+STR R2, [R13, -R8]
+LDR R8, W9
+LDR R8, [R13, -R8]
+LDR R2, T5_inner
+STR R8, [R13, -R2]
+LDR R8, RealSign_param_frame_size
+ADD R13, R13, R8
+LDR R8, RealSign_return_address_outer
+STR R14, [R13, -R8]
+LDR R8, g57_inner
+LDR R8, [R13, -R8]
+LDR R9, f41_outer
+STR R8, [R13, -R9]
+BL RealSign
+LDR R14, RealSign_return_address_outer
+LDR R14, [R13, -R14]
+LDR R8, RealSign_param_frame_size
+SUB R13, R13, R8
+LDR R8, f40_outer
+LDR R8, [R13, -R8]
+LDR R9, X0_inner
+STR R8, [R13, -R9]
+LDR R9, X0
+LDR R9, [R13, -R9]
+LDR R8, T6_inner
+STR R9, [R13, -R8]
+LDR R9, RealExponent_param_frame_size
+ADD R13, R13, R9
+LDR R9, RealExponent_return_address_outer
+STR R14, [R13, -R9]
+LDR R9, g56_inner
+LDR R9, [R13, -R9]
+LDR R10, f55_outer
+STR R9, [R13, -R10]
+BL RealExponent
+LDR R14, RealExponent_return_address_outer
+LDR R14, [R13, -R14]
+LDR R9, RealExponent_param_frame_size
+SUB R13, R13, R9
+LDR R9, f54_outer
+LDR R9, [R13, -R9]
+LDR R10, X1_inner
+STR R9, [R13, -R10]
+LDR R10, X1
+LDR R10, [R13, -R10]
+LDR R9, T7_inner
+STR R10, [R13, -R9]
+LDR R10, RealExponent_param_frame_size
+ADD R13, R13, R10
+LDR R10, RealExponent_return_address_outer
+STR R14, [R13, -R10]
+LDR R10, g57_inner
+LDR R10, [R13, -R10]
+LDR R12, f55_outer
+STR R10, [R13, -R12]
+BL RealExponent
+LDR R14, RealExponent_return_address_outer
+LDR R14, [R13, -R14]
+LDR R10, RealExponent_param_frame_size
+SUB R13, R13, R10
+LDR R10, f54_outer
+LDR R10, [R13, -R10]
+LDR R12, X2_inner
+STR R10, [R13, -R12]
+LDR R12, X2
+LDR R12, [R13, -R12]
+LDR R10, T8_inner
+STR R12, [R13, -R10]
+LDR R12, RealMantissa_param_frame_size
+ADD R13, R13, R12
+LDR R12, RealMantissa_return_address_outer
+STR R14, [R13, -R12]
+LDR R12, g56_inner
+LDR R12, [R13, -R12]
+LDR R11, f81_outer
+STR R12, [R13, -R11]
+BL RealMantissa
+LDR R14, RealMantissa_return_address_outer
+LDR R14, [R13, -R14]
+LDR R12, RealMantissa_param_frame_size
+SUB R13, R13, R12
+LDR R12, f80_outer
+LDR R12, [R13, -R12]
+LDR R11, X3_inner
+STR R12, [R13, -R11]
+LDR R11, X3
+LDR R11, [R13, -R11]
+LDR R12, T9_inner
+STR R11, [R13, -R12]
+LDR R11, RealMantissa_param_frame_size
+ADD R13, R13, R11
+LDR R11, RealMantissa_return_address_outer
+STR R14, [R13, -R11]
+LDR R11, g57_inner
+LDR R11, [R13, -R11]
+LDR R15, f81_outer
+STR R11, [R13, -R15]
+BL RealMantissa
+LDR R14, RealMantissa_return_address_outer
+LDR R14, [R13, -R14]
+LDR R11, RealMantissa_param_frame_size
+SUB R13, R13, R11
+LDR R11, f80_outer
+LDR R11, [R13, -R11]
+LDR R15, X4_inner
+STR R11, [R13, -R15]
+LDR R15, X4
+LDR R15, [R13, -R15]
+LDR R11, U0_inner
+STR R15, [R13, -R11]
+LDR R15, IntIsZero_param_frame_size
+ADD R13, R13, R15
+LDR R15, IntIsZero_return_address_outer
+STR R14, [R13, -R15]
+LDR R12, T9
+LDR R12, [R13, -R12]
+LDR R15, f85_outer
+STR R12, [R13, -R15]
+BL IntIsZero
+LDR R14, IntIsZero_return_address_outer
+LDR R14, [R13, -R14]
+LDR R15, IntIsZero_param_frame_size
+SUB R13, R13, R15
+LDR R15, f89_outer
+LDRB R15, [R13, -R15]
+LDR R0, X5_inner
+STRB R15, [R13, -R0]
+LDR R15, IntIsZero_param_frame_size
+ADD R13, R13, R15
+LDR R15, IntIsZero_return_address_outer
+STR R14, [R13, -R15]
+LDR R11, U0
+LDR R11, [R13, -R11]
+LDR R15, f85_outer
+STR R11, [R13, -R15]
+BL IntIsZero
+LDR R14, IntIsZero_return_address_outer
+LDR R14, [R13, -R14]
+LDR R15, IntIsZero_param_frame_size
+SUB R13, R13, R15
+LD

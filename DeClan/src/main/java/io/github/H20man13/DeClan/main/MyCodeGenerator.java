@@ -26,6 +26,7 @@ import io.github.H20man13.DeClan.common.arm.ArmRegisterGenerator;
 import io.github.H20man13.DeClan.common.arm.ArmCodeGenerator.VariableLength;
 import io.github.H20man13.DeClan.common.ast.VariableDeclaration;
 import io.github.H20man13.DeClan.common.exception.CodeGeneratorException;
+import io.github.H20man13.DeClan.common.exception.RegisterAllocatorException;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Call;
@@ -69,7 +70,7 @@ public class MyCodeGenerator {
 	public MyCodeGenerator(String outputFile, LiveVariableAnalysis analysis, Prog program, ErrorLog errLog) throws IOException {
 		this.intermediateCode = program;
 		this.cGen = new ArmCodeGenerator(outputFile);
-		this.rGen = new ArmRegisterGenerator(cGen, analysis);
+		this.rGen = new ArmRegisterGenerator(analysis);
 		this.iGen = new IrRegisterGenerator();
 		String place;
 		do {
@@ -86,7 +87,7 @@ public class MyCodeGenerator {
 		if (codeGenFunctions.containsKey(possibleTwoStagePattern)) {
 			Callable<Void> codeGenFunction = codeGenFunctions.get(possibleTwoStagePattern);
 			codeGenFunction.call();
-			i+= 2;
+			i+=2;
 			return true;
 		}
 		return false;
@@ -590,12 +591,17 @@ public class MyCodeGenerator {
 						offset -= 4;
 					}
 				}
+				
+				cGen.addVariable(procICode.pname + "_param_frame_size", VariableLength.WORD, totalStackFrameLength);
+				String frameReg = rGen.getTempReg(procICode.pname + "_param_frame_size", procICode);
+				cGen.addInstruction("LDR " + frameReg + ", " + procICode.pname + "_param_frame_size");
+				cGen.addInstruction("ADD R13, R13, " + frameReg);
+				rGen.freeTempRegs();
 
-				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
-
-				String myReg = rGen.getReg(procICode.pname + "_return_address_outer", procICode);
+				String myReg = rGen.getTempReg(procICode.pname + "_return_address_outer", procICode);
 				cGen.addInstruction("LDR " + myReg + ", " + procICode.pname + "_return_address_outer");
 				cGen.addInstruction("STR R14, [R13, -" + myReg + "]");
+				rGen.freeTempRegs();
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
@@ -615,14 +621,19 @@ public class MyCodeGenerator {
 
 				// Now to load the Return value from the Stack
 				String temp = loadVariableToReg((IdentExp) returnPlacement.val, returnPlacement.type, retICode);
-				String offsetReg = rGen.getReg(returnPlacement.label + "_inner", retICode);
+				String offsetReg = rGen.getTempReg(returnPlacement.label + "_inner", retICode);
 				cGen.addInstruction("LDR " + offsetReg + ", " + returnPlacement.label + "_inner");
 				cGen.addInstruction("STRB " + temp + ", [R13, -" + offsetReg + ']');
+				rGen.freeTempRegs();
 
 				// Now to load the Return address from the Stack back into the Link Register R14
 				cGen.addInstruction("LDR R14, " + procICode.pname + "_return_address_outer");
 				cGen.addInstruction("LDR R14, [R13, -R14]");
-				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
+				
+				
+				frameReg = rGen.getTempReg(procICode.pname + "_param_frame_size", procICode);
+				cGen.addInstruction("LDR " + frameReg + ", " + procICode.pname + "_param_frame_size");
+				cGen.addInstruction("SUB R13, R13, " + frameReg);
 				rGen.freeTempRegs();
 				return null;
 			}
@@ -659,11 +670,16 @@ public class MyCodeGenerator {
 					}
 				}
 
-				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
+				cGen.addVariable(procICode.pname + "_param_frame_size", totalStackFrameLength);
+				String frameReg = rGen.getTempReg(procICode.pname + "_param_frame_size", procICode);
+				cGen.addInstruction("LDR " + frameReg + ", " + procICode.pname + "_param_frame_size");
+				cGen.addInstruction("ADD R13, R13, " + frameReg);
+				rGen.freeTempRegs();
 
-				String myReg = rGen.getReg(procICode.pname + "_return_address_outer", procICode);
+				String myReg = rGen.getTempReg(procICode.pname + "_return_address_outer", procICode);
 				cGen.addInstruction("LDR " + myReg + ", " + procICode.pname + "_return_address_outer");
 				cGen.addInstruction("STR R14, [R13, -" + myReg + "]");
+				rGen.freeTempRegs();
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
@@ -683,14 +699,17 @@ public class MyCodeGenerator {
 
 				// Now to load the Return value from the Stack
 				String temp = loadVariableToReg((IdentExp) returnPlacement.value, returnPlacement.getType(), retICode);
-				String offsetReg = rGen.getReg(returnPlacement.place + "_inner", retICode);
+				String offsetReg = rGen.getTempReg(returnPlacement.place + "_inner", retICode);
 				cGen.addInstruction("LDR " + offsetReg + ", " + returnPlacement.place + "_inner");
 				cGen.addInstruction("STRB " + temp + ", [R13, -" + offsetReg + ']');
+				rGen.freeTempRegs();
 
 				// Now to load the Return address from the Stack back into the Link Register R14
 				cGen.addInstruction("LDR R14, " + procICode.pname + "_return_address_outer");
 				cGen.addInstruction("LDR R14, [R13, -R14]");
-				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
+				frameReg = rGen.getTempReg(procICode.pname + "_param_frame_size", procICode);
+				cGen.addInstruction("LDR " + frameReg + ", " + procICode.pname + "_param_frame_size");
+				cGen.addInstruction("SUB R13, R13, " + frameReg);
 				rGen.freeTempRegs();
 				return null;
 			}
@@ -727,11 +746,16 @@ public class MyCodeGenerator {
 					}
 				}
 
-				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
+				cGen.addVariable(procICode.pname + "_param_frame_size", totalStackFrameLength);
+				String frameReg = rGen.getTempReg(procICode.pname + "_param_frame_size", procICode);
+				cGen.addInstruction("LDR " + frameReg + ", " + procICode.pname + "_param_frame_size");
+				cGen.addInstruction("ADD R13, R13, " + frameReg);
+				rGen.freeTempRegs();
 
-				String myReg = rGen.getReg(procICode.pname + "_return_address_outer", procICode);
+				String myReg = rGen.getTempReg(procICode.pname + "_return_address_outer", procICode);
 				cGen.addInstruction("LDR " + myReg + ", " + procICode.pname + "_return_address_outer");
 				cGen.addInstruction("STR R14, [R13, -" + myReg + "]");
+				rGen.freeTempRegs();
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
@@ -758,7 +782,9 @@ public class MyCodeGenerator {
 				// Now to load the Return address from the Stack back into the Link Register R14
 				cGen.addInstruction("LDR R14, " + procICode.pname + "_return_address_outer");
 				cGen.addInstruction("LDR R14, [R13, -R14]");
-				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
+				frameReg = rGen.getTempReg(procICode.pname + "_param_frame_size", procICode);
+				cGen.addInstruction("LDR " + frameReg + ", " + procICode.pname + "_param_frame_size");
+				cGen.addInstruction("SUB R13, R13, " + frameReg);
 				rGen.freeTempRegs();
 				return null;
 			}
@@ -795,7 +821,11 @@ public class MyCodeGenerator {
 					}
 				}
 
-				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
+				cGen.addVariable(procICode.pname + "_param_frame_size", totalStackFrameLength);
+				String frameReg = rGen.getTempReg(procICode.pname + "_param_frame_size", procICode);
+				cGen.addInstruction("LDR " + frameReg + ", " + procICode.pname + "_param_frame_size");
+				cGen.addInstruction("ADD R13, R13, " + frameReg);
+				rGen.freeTempRegs();
 
 				String myReg = rGen.getReg(procICode.pname + "_return_address_outer", procICode);
 				cGen.addInstruction("LDR " + myReg + ", " + procICode.pname + "_return_address_outer");
@@ -825,7 +855,9 @@ public class MyCodeGenerator {
 				// Now to load the Return address from the Stack back into the Link Register R14
 				cGen.addInstruction("LDR R14, " + procICode.pname + "_return_address_outer");
 				cGen.addInstruction("LDR R14, [R13, -R14]");
-				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
+				frameReg = rGen.getTempReg(procICode.pname + "_param_frame_size", procICode);
+				cGen.addInstruction("LDR " + frameReg + ", " + procICode.pname + "_param_frame_size");
+				cGen.addInstruction("SUB R13, R13, " + frameReg);
 				rGen.freeTempRegs();
 				return null;
 			}
@@ -862,11 +894,16 @@ public class MyCodeGenerator {
 					}
 				}
 
-				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
+				cGen.addVariable(procICode.pname + "_param_frame_size", totalStackFrameLength);
+				String frameReg = rGen.getTempReg(procICode.pname + "_param_frame_size", procICode);
+				cGen.addInstruction("LDR " + frameReg + ", " + procICode.pname + "_param_frame_size");
+				cGen.addInstruction("ADD R13, R13, " + frameReg);
+				rGen.freeTempRegs();
 
-				String myReg = rGen.getReg(procICode.pname + "_return_address_outer", procICode);
+				String myReg = rGen.getTempReg(procICode.pname + "_return_address_outer", procICode);
 				cGen.addInstruction("LDR " + myReg + ", " + procICode.pname + "_return_address_outer");
 				cGen.addInstruction("STR R14, [R13, -" + myReg + "]");
+				rGen.freeTempRegs();
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
@@ -893,7 +930,9 @@ public class MyCodeGenerator {
 				// Now to load the Return address from the Stack back into the Link Register R14
 				cGen.addInstruction("LDR R14, " + procICode.pname + "_return_address_outer");
 				cGen.addInstruction("LDR R14, [R13, -R14]");
-				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
+				frameReg = rGen.getTempReg(procICode.pname + "_param_frame_size", procICode);
+				cGen.addInstruction("LDR " + frameReg + ", " + procICode.pname + "_param_frame_size");
+				cGen.addInstruction("SUB R13, R13, " + frameReg);
 				rGen.freeTempRegs();
 				return null;
 			}
@@ -930,11 +969,16 @@ public class MyCodeGenerator {
 					}
 				}
 
-				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
+				cGen.addVariable(procICode.pname + "_param_frame_size", totalStackFrameLength);
+				String frameReg = rGen.getTempReg(procICode.pname + "_param_frame_size", procICode);
+				cGen.addInstruction("LDR " + frameReg + ", " + procICode.pname + "_param_frame_size");
+				cGen.addInstruction("ADD R13, R13, " + frameReg);
+				rGen.freeTempRegs();
 
-				String myReg = rGen.getReg(procICode.pname + "_return_address_outer", procICode);
+				String myReg = rGen.getTempReg(procICode.pname + "_return_address_outer", procICode);
 				cGen.addInstruction("LDR " + myReg + ", " + procICode.pname + "_return_address_outer");
 				cGen.addInstruction("STR R14, [R13, -" + myReg + "]");
+				rGen.freeTempRegs();
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
@@ -954,14 +998,17 @@ public class MyCodeGenerator {
 
 				// Now to load the Return value from the Stack
 				String temp = loadVariableToReg((IdentExp) returnPlacement.value, returnPlacement.getType(), retICode);
-				String offsetReg = rGen.getReg(returnPlacement.place + "_inner", retICode);
+				String offsetReg = rGen.getTempReg(returnPlacement.place + "_inner", retICode);
 				cGen.addInstruction("LDR " + offsetReg + ", " + returnPlacement.place + "_inner");
 				cGen.addInstruction("STR " + temp + ", [R13, -" + offsetReg + ']');
+				rGen.freeTempRegs();
 
 				// Now to load the Return address from the Stack back into the Link Register R14
 				cGen.addInstruction("LDR R14, " + procICode.pname + "_return_address_outer");
 				cGen.addInstruction("LDR R14, [R13, -R14]");
-				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
+				frameReg = rGen.getTempReg(procICode.pname + "_param_frame_size", procICode);
+				cGen.addInstruction("LDR " + frameReg + ", " + procICode.pname + "_param_frame_size");
+				cGen.addInstruction("SUB R13, R13, " + frameReg);
 				rGen.freeTempRegs();
 				return null;
 			}
@@ -2622,14 +2669,14 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				rGen.freeNonInputRegs(icode);
 				Def assignICode = (Def)icode;
 				IntExp assignExp = (IntExp) assignICode.val;
+				rGen.freeNonInputRegs(icode);
 
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addVariable(assignICode.label, VariableLength.WORD, assignExp.value);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					cGen.addVariable(assignICode.label + "_value" + VariableLength.WORD, assignExp.value);
+					cGen.addVariable(assignICode.label + "_value", VariableLength.WORD, assignExp.value);
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					String tempValue = rGen.getTempReg(assignICode.label + "_value", assignICode);
 					
@@ -2637,7 +2684,7 @@ public class MyCodeGenerator {
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
 					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {				
-					cGen.addVariable(assignICode.label + "_value" + VariableLength.WORD, assignExp.value);
+					cGen.addVariable(assignICode.label + "_value", VariableLength.WORD, assignExp.value);
 					String tempOffset = rGen.getTempReg(assignICode.label + "_inner", assignICode);
 					String tempValue = rGen.getTempReg(assignICode.label + "_value", assignICode);
 					
@@ -2645,7 +2692,7 @@ public class MyCodeGenerator {
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.label + "_inner");
 					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else {
-					cGen.addVariable(assignICode.label + "_value" + VariableLength.WORD, assignExp.value);
+					cGen.addVariable(assignICode.label + "_value", VariableLength.WORD, assignExp.value);
 					String tempValue = rGen.getTempReg(assignICode.label + "_value", assignICode);
 					String tempOffset = rGen.getReg(assignICode.label, assignICode);
 					
@@ -2676,7 +2723,7 @@ public class MyCodeGenerator {
 					cGen.addInstruction("LDR " + tempValue + ", " + random);
 					cGen.addInstruction("STR " + tempValue + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					cGen.addVariable(assignICode.place + "_value" + VariableLength.WORD, assignExp.value);
+					cGen.addVariable(assignICode.place + "_value", VariableLength.WORD, assignExp.value);
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					String tempValue = rGen.getTempReg(assignICode.place + "_value", assignICode);
 					
@@ -2684,7 +2731,7 @@ public class MyCodeGenerator {
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
 					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
-					cGen.addVariable(assignICode.place + "_value" + VariableLength.WORD, assignExp.value);
+					cGen.addVariable(assignICode.place + "_value", VariableLength.WORD, assignExp.value);
 					String tempOffset = rGen.getTempReg(assignICode.place + "_inner", assignICode);
 					String tempValue = rGen.getTempReg(assignICode.place + "_value", assignICode);
 					
@@ -2692,7 +2739,7 @@ public class MyCodeGenerator {
 					cGen.addInstruction("LDR " + tempOffset + ", " + assignICode.place + "_inner");
 					cGen.addInstruction("STR " + tempValue + ", [R13, -" + tempOffset + ']');
 				} else {
-					cGen.addVariable(assignICode.place + "_value" + VariableLength.WORD, assignExp.value);
+					cGen.addVariable(assignICode.place + "_value", VariableLength.WORD, assignExp.value);
 					String tempOffset = rGen.getReg(assignICode.place, assignICode);
 					String tempValue = rGen.getTempReg(assignICode.place + "_value", assignICode);
 					
@@ -3856,11 +3903,16 @@ public class MyCodeGenerator {
 					}
 				}
 
-				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
+				cGen.addVariable(procICode.pname + "_param_frame_size", VariableLength.WORD, totalStackFrameLength);
+				String frameReg = rGen.getTempReg(procICode.pname + "_param_frame_size", procICode);
+				cGen.addInstruction("LDR " + frameReg + ", " + procICode.pname + "_param_frame_size");
+				cGen.addInstruction("ADD R13, R13, " + frameReg);
+				rGen.freeTempRegs();
 
-				String myReg = rGen.getReg(procICode.pname + "_return_address_outer", procICode);
+				String myReg = rGen.getTempReg(procICode.pname + "_return_address_outer", procICode);
 				cGen.addInstruction("LDR " + myReg + ", " + procICode.pname + "_return_address_outer");
 				cGen.addInstruction("STR R14, [R13, -" + myReg + "]");
+				rGen.freeTempRegs();
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
@@ -3881,7 +3933,10 @@ public class MyCodeGenerator {
 				// Now to load the Return address from the Stack back into the Link Register R14
 				cGen.addInstruction("LDR R14, " + procICode.pname + "_return_address_outer");
 				cGen.addInstruction("LDR R14, [R13, -R14]");
-				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
+				
+				frameReg = rGen.getTempReg(procICode.pname + "_param_frame_size", procICode);
+				cGen.addInstruction("LDR " + frameReg + ", " + procICode.pname + "_param_frame_size");
+				cGen.addInstruction("SUB R13, R13, " + frameReg);
 				rGen.freeTempRegs();
 				return null;
 			}

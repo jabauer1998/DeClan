@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Future;
@@ -23,13 +24,18 @@ import io.github.H20man13.DeClan.common.ErrorLog.LogItem;
 import io.github.H20man13.DeClan.common.ast.Program;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
+import io.github.H20man13.DeClan.common.source.ElaborateReaderSource;
 import io.github.H20man13.DeClan.common.source.ReaderSource;
 import io.github.H20man13.DeClan.common.util.Utils;
 import io.github.H20man13.DeClan.main.MyCodeGenerator;
 import io.github.H20man13.DeClan.main.MyDeClanLexer;
 import io.github.H20man13.DeClan.main.MyDeClanParser;
 import io.github.H20man13.DeClan.main.MyICodeGenerator;
+import io.github.H20man13.DeClan.main.MyIrLexer;
+import io.github.H20man13.DeClan.main.MyIrLinker;
+import io.github.H20man13.DeClan.main.MyIrParser;
 import io.github.H20man13.DeClan.main.MyOptimizer;
 import io.github.H20man13.DeClan.main.MyStandardLibrary;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerLexer;
@@ -38,61 +44,33 @@ import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser;
 public class CodeGeneratorTest {
     private void testDeclanFile(String fileName){
         ErrorLog errLog = new ErrorLog();
-        String expectedResultFile = fileName.replace("test/declan", "test/assembly").replace(".dcl", ".a"); 
+        String expectedResultFile = fileName.replace("test/ir/linked", "test/temp").replace(".ir", ".a"); 
         try{
-            FileReader reader = new FileReader(fileName);
-            ReaderSource source = new ReaderSource(reader);
-            MyDeClanLexer lexer = new MyDeClanLexer(source, errLog);
-            MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
-            MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
-
-            Program prog = parser.parseProgram();
+            FileReader input = new FileReader(fileName);
+            ReaderSource source = new ElaborateReaderSource(fileName, input);
+            MyIrLexer lexer = new MyIrLexer(source, errLog);
+            MyIrParser parser = new MyIrParser(lexer, errLog);
+            Prog program = parser.parseProgram();
             parser.close();
-            
-            MyICodeGenerator gen = new MyICodeGenerator(errLog);
-            Prog program = gen.generateProgramIr(prog);
 
             MyOptimizer optimizer = new MyOptimizer(program);
-            optimizer.performCommonSubExpressionElimination();
-            optimizer.performDeadCodeElimination();
             optimizer.runLiveVariableAnalysis();
-            
-            String outputFile = fileName.replace("test/declan", "test/temp").replace(".dcl", ".tmp");
 
-            MyCodeGenerator codeGenerator = new MyCodeGenerator(outputFile, optimizer.getLiveVariableAnalysis(), program, errLog); 
+            MyCodeGenerator codeGenerator = new MyCodeGenerator(expectedResultFile, optimizer.getLiveVariableAnalysis(), program, errLog); 
             codeGenerator.codeGen();
 
             for(LogItem item : errLog){
                 assertTrue(item.toString(), false);
             }
 
-            FileReader outputStringReader = new FileReader(outputFile);
-            FileReader expectedResultReader = new FileReader(expectedResultFile);
-
-            Scanner outputStringScanner = new Scanner(outputStringReader);
-            Scanner expectedResultScanner = new Scanner(expectedResultReader);
-            
-            int lineNumber = 0;
-            while(outputStringScanner.hasNext() && expectedResultScanner.hasNext()){
-                String outputLine = outputStringScanner.nextLine();
-                String expectedLine = expectedResultScanner.nextLine();
-                assertTrue("At line " + lineNumber + " expected-\n" + expectedLine + "\n but found \n" + outputLine, outputLine.equals(expectedLine));
-                lineNumber++;
-            }
-
-            outputStringReader.close();
-
-            FileReader assemblerStringReader = new FileReader(outputFile);
+            FileReader assemblerStringReader = new FileReader(expectedResultFile);
             ANTLRInputStream inputString = new ANTLRInputStream(assemblerStringReader);
             ArmAssemblerLexer armLexer = new ArmAssemblerLexer(inputString);
             CommonTokenStream tokStream = new CommonTokenStream(armLexer);
             ArmAssemblerParser armParser = new ArmAssemblerParser(tokStream);
             armParser.program();
-
-            outputStringScanner.close();
-            expectedResultScanner.close();
-
-            Utils.deleteFile(outputFile);
+            
+            assertTrue("Error syntax errors discovered", armParser.getNumberOfSyntaxErrors() == 0);
         } catch(Exception exp){
             assertTrue(exp.toString(), false);
         }
@@ -100,86 +78,86 @@ public class CodeGeneratorTest {
 
     @Test
     public void testConversions(){
-        testDeclanFile("test/declan/conversions.dcl");
+        testDeclanFile("test/ir/linked/conversions.ir");
     }
 
     @Test
     public void testExpressions(){
-        testDeclanFile("test_source/expressions.dcl");
+        testDeclanFile("test/ir/linked/expressions.ir");
     }
 
     @Test
     public void testForLoopAdvanced(){
-        testDeclanFile("test/declan/ForLoopAdvanced.dcl");
+        testDeclanFile("test/ir/linked/ForLoopAdvanced.ir");
     }
 
     @Test
     public void testForLoopBasic(){
-        testDeclanFile("test/declan/ForLoopBasic.dcl");
+        testDeclanFile("test/ir/linked/ForLoopBasic.ir");
     }
 
     @Test
     public void testForLoopBasic2(){
-        testDeclanFile("test/declan/ForLoopBasic2.dcl");
+        testDeclanFile("test/ir/linked/ForLoopBasic2.ir");
     }
 
     @Test
     public void testForLoopBasic3(){
-        testDeclanFile("test/declan/ForLoopBasic3.dcl");
+        testDeclanFile("test/ir/linked/ForLoopBasic3.ir");
     }
 
     @Test
     public void testIfStatementAdvanced(){
-        testDeclanFile("test/declan/IfStatementAdvanced.dcl");
+        testDeclanFile("test/ir/linked/IfStatementAdvanced.ir");
     }
 
     @Test
     public void testIfStatementBasic(){
-        testDeclanFile("test/declan/IfStatementBasic.dcl");
+        testDeclanFile("test/ir/linked/IfStatementBasic.ir");
     }
 
     @Test
     public void testLoops(){
-        testDeclanFile("test/declan/loops.dcl");
+        testDeclanFile("test/ir/linked/loops.ir");
     }
 
     @Test
     public void testRepeatLoopBasic(){
-        testDeclanFile("test/declan/RepeatLoopBasic.dcl");
+        testDeclanFile("test/ir/linked/RepeatLoopBasic.ir");
     }
 
     @Test
     public void testSample(){
-        testDeclanFile("test/declan/sample.dcl");
+        testDeclanFile("test/ir/linked/sample.ir");
     }
 
     @Test
     public void testTest(){
-        testDeclanFile("test/declan/test.dcl");
+        testDeclanFile("test/ir/linked/test.ir");
     }
 
     @Test
     public void testTest2(){
-        testDeclanFile("test/declan/test2.dcl");
+        testDeclanFile("test/ir/linked/test2.ir");
     }
 
     @Test
     public void testTest3(){
-        testDeclanFile("test/declan/test3.dcl");
+        testDeclanFile("test/ir/linked/test3.ir");
     }
 
     @Test
     public void testTest4(){
-        testDeclanFile("test/declan/test4.dcl");
+        testDeclanFile("test/ir/linked/test4.ir");
     }
 
     @Test
     public void testWhileLoopAdvanced(){
-        testDeclanFile("test/declan/WhileLoopAdvanced.dcl");
+        testDeclanFile("test/ir/linked/WhileLoopAdvanced.ir");
     }
 
     @Test
     public void testWhileLoopBasic(){
-        testDeclanFile("test/declan/WhileLoopBasic.dcl");
+        testDeclanFile("test/ir/linked/WhileLoopBasic.ir");
     }
 }

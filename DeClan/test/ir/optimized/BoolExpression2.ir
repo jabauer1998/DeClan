@@ -1,0 +1,25 @@
+SYMBOL SECTION
+ ENTRY b CONST INTERNAL GLOBAL a  <INT>
+ ENTRY d CONST INTERNAL GLOBAL e  <BOOL>
+ ENTRY f CONST INTERNAL GLOBAL x  <REAL>
+ ENTRY g INTERNAL GLOBAL result  <BOOL>
+DATA SECTION
+ DEF b := 0 <INT>
+ DEF d := TRUE <BOOL>
+ DEF f := 1.0 <REAL>
+BSS SECTION
+CODE SECTION
+ DEF h := "e is " <STRING>
+ CALL WriteString([h -> t]<STRING>)
+ CALL WriteBool([(GLOBAL d) -> A]<BOOL>)
+ CALL WriteLn()
+ DEF k := FALSE <BOOL>
+ CALL IntToReal([(GLOBAL b) -> v]<INT>)
+ DEF n := (RETURN w) <REAL>
+ CALL RGreaterThanOrEqualTo([(GLOBAL f) -> x]<REAL>, [n -> y]<REAL>)
+ DEF r := (RETURN z) <BOOL>
+ DEF s := k LOR r <BOOL>
+ DEF g := s <BOOL>
+ CALL WriteBool([(GLOBAL g) -> A]<BOOL>)
+END
+PROC SECTION

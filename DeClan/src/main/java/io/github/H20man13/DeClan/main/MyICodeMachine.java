@@ -614,7 +614,7 @@ public class MyICodeMachine {
                 case BEQ: return OpUtil.equal(left, right);
                 case BNE: return OpUtil.notEqual(left, right);
                 case IEQ: return OpUtil.equal(left, right);
-                case INE: return OpUtil.equal(left, right);
+                case INE: return OpUtil.notEqual(left, right);
                 case GE: return OpUtil.greaterThanOrEqualTo(left, right);
                 case GT: return OpUtil.greaterThan(left, right);
                 case LE: return OpUtil.lessThanOrEqualTo(left, right);
