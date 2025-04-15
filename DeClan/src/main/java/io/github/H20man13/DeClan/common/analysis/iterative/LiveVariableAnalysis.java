@@ -18,22 +18,24 @@ import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.util.Utils;
 
-public class LiveVariableAnalysis extends InstructionAnalysis<String> {
+public class LiveVariableAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<String>>, HashSet<String>, String> {
 
-    private Map<ICode, Set<String>> defSets;
-    private Map<ICode, Set<String>> useSets;
+    private Map<ICode, HashSet<String>> defSets;
+    private Map<ICode, HashSet<String>> useSets;
 
-    public LiveVariableAnalysis(FlowGraph flowGraph) {
-        super(flowGraph, Direction.BACKWARDS, Meet.UNION);
+    @SuppressWarnings("unchecked")
+	public LiveVariableAnalysis(FlowGraph flowGraph) {
+        super(flowGraph, Direction.BACKWARDS, Meet.UNION, false, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
 
-        this.defSets = new HashMap<ICode, Set<String>>();
-        this.useSets = new HashMap<ICode, Set<String>>();
+        this.defSets = newMap();
+        this.useSets = newMap();
         
         for(BlockNode block : flowGraph.getBlocks()){
             for(ICode code : block.getICode()){
-                Set<String> instructionDef = new HashSet<String>();
-                Set<String> instructionUse = new HashSet<String>();
+                HashSet<String> instructionDef = newSet();
+                HashSet<String> instructionUse = newSet();
                 if(code instanceof Assign){
                     Assign assCode = (Assign)code;
                     instructionDef.add(assCode.place);
@@ -97,8 +99,8 @@ public class LiveVariableAnalysis extends InstructionAnalysis<String> {
     }
 
     @Override
-    public Set<String> transferFunction(ICode instruction, Set<String> inputSet) {
-        Set<String> resultSet = new HashSet<String>();
+    public HashSet<String> transferFunction(ICode instruction, HashSet<String> inputSet) {
+        HashSet<String> resultSet = newSet();
 
         resultSet.addAll(inputSet);
         Set<String> useSet = useSets.get(instruction);

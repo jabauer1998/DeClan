@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.analysis.iterative;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -9,21 +10,22 @@ import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
+import io.github.H20man13.DeClan.common.util.Utils;
 
-public class UsedExpressionAnalysis extends InstructionAnalysis<Tuple<Exp, ICode.Type>> {
+public class UsedExpressionAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<Exp, ICode.Type>>>, HashSet<Tuple<Exp, ICode.Type>>, Tuple<Exp, ICode.Type>> {
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets;
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> latest;
 
     public UsedExpressionAnalysis(FlowGraph flowGraph, Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets, Map<ICode, Set<Tuple<Exp, ICode.Type>>> latest) {
-        super(flowGraph, Direction.BACKWARDS, Meet.UNION);
+        super(flowGraph, Direction.BACKWARDS, Meet.UNION, false, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
 
         this.latest = latest;
         this.usedSets = usedSets;
     }
 
     @Override
-    public Set<Tuple<Exp, ICode.Type>> transferFunction(ICode block, Set<Tuple<Exp, ICode.Type>> inputSet) {
-        Set<Tuple<Exp, ICode.Type>> result = new HashSet<Tuple<Exp, ICode.Type>>();
+    public HashSet<Tuple<Exp, ICode.Type>> transferFunction(ICode block, HashSet<Tuple<Exp, ICode.Type>> inputSet) {
+        HashSet<Tuple<Exp, ICode.Type>> result = newSet();
 
         Set<Tuple<Exp, ICode.Type>> usedInBlock = usedSets.get(block);
         result.addAll(usedInBlock);

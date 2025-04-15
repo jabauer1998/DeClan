@@ -25,4 +25,9 @@ public class EntryNode implements FlowGraphNode {
     public String toString(){
         return "ENTRY";
     }
+
+	@Override
+	public FlowGraphNode copy() {
+		return new EntryNode(entry);
+	}
 }

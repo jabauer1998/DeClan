@@ -40,6 +40,11 @@ public abstract class Label implements ICode {
 	public boolean containsPlace(String place){
 		return false;
 	}
+	
+	@Override
+    public int hashCode() {
+    	return label.hashCode();
+    }
 
 	@Override
 	public void replacePlace(String from, String to){

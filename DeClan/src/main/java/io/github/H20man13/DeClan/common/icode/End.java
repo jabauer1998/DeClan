@@ -60,4 +60,9 @@ public class End implements ICode {
 	public int hashCode() {
 		return 42;
 	}
+
+	@Override
+	public ICode copy() {
+		return new End();
+	}
 }

@@ -19,22 +19,26 @@ import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.util.Utils;
 
-public class AnticipatedExpressionsAnalysis extends InstructionAnalysis<Tuple<Exp, ICode.Type>>{
-    private Map<ICode, Set<Tuple<Exp, ICode.Type>>> genSets;
-    private Map<ICode, Set<String>> killSets;
+public class AnticipatedExpressionsAnalysis extends 
+InstructionAnalysis<HashMap<ICode, HashSet<Tuple<Exp, ICode.Type>>>, 
+HashSet<Tuple<Exp, ICode.Type>>, 
+Tuple<Exp, ICode.Type>>{
+    private HashMap<ICode, HashSet<Tuple<Exp, ICode.Type>>> genSets;
+    private HashMap<ICode, Set<String>> killSets;
 
     public AnticipatedExpressionsAnalysis(FlowGraph flowGraph, Set<Tuple<Exp, ICode.Type>> globalFlowSet) {
-        super(flowGraph, Direction.BACKWARDS, Meet.INTERSECTION, globalFlowSet);
-        genSets = new HashMap<ICode, Set<Tuple<Exp, ICode.Type>>>();
+        super(flowGraph, Direction.BACKWARDS, Meet.INTERSECTION, globalFlowSet, false, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
+        genSets = newMap();
         killSets =  new HashMap<ICode, Set<String>>();
 
         for(BlockNode block : flowGraph.getBlocks()){
             List<ICode> codeList = block.getICode();
             for(int i = codeList.size() - 1; i >= 0; i--){
                 ICode icode = codeList.get(i);
-                Set<String> instructionKill = new HashSet<String>();
-                Set<Tuple<Exp, ICode.Type>> instructionGen = new HashSet<Tuple<Exp, ICode.Type>>();
+                HashSet<String> instructionKill = new HashSet<String>();
+                HashSet<Tuple<Exp, ICode.Type>> instructionGen = newSet();
                 if(icode instanceof Assign){
                     Assign assIcode = (Assign)icode;
                     instructionGen.add(new Tuple<Exp, ICode.Type>(assIcode.value, assIcode.getType()));
@@ -64,8 +68,8 @@ public class AnticipatedExpressionsAnalysis extends InstructionAnalysis<Tuple<Ex
 
 
     @Override
-    public Set<Tuple<Exp, ICode.Type>> transferFunction(ICode icode, Set<Tuple<Exp, ICode.Type>> inputSet) {
-        Set<Tuple<Exp, ICode.Type>> result = new HashSet<Tuple<Exp, ICode.Type>>();
+    public HashSet<Tuple<Exp, ICode.Type>> transferFunction(ICode icode, HashSet<Tuple<Exp, ICode.Type>> inputSet) {
+        HashSet<Tuple<Exp, ICode.Type>> result = newSet();
         
         result.addAll(inputSet);
         for(Tuple<Exp, ICode.Type> exp: inputSet) {
@@ -79,6 +83,6 @@ public class AnticipatedExpressionsAnalysis extends InstructionAnalysis<Tuple<Ex
         result.addAll(genSets.get(icode));
 
         return result;
-    }
+     }
     
 }

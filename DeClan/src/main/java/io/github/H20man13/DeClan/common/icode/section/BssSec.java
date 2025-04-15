@@ -53,5 +53,15 @@ public class BssSec implements ICode {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'replaceLabel'");
     }
+
+	@Override
+	public ICode copy() {
+		return new BssSec();
+	}
     
+	
+	@Override
+	public int hashCode() {
+		return BssSec.class.hashCode();
+	}
 }

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import io.github.H20man13.DeClan.common.dag.DagNode.ScopeType;
 import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
 import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
@@ -227,9 +228,10 @@ public class DagNodeFactory {
         return new DagValueNode(isDefinition, scope, nodeName, value, ValueType.STRING);
     }
 
-    public DagNode createDefaultVariableNode(boolean isDefinition, String nodeName, DagNode child, Assign.Type origType){
+    public DagNode createDefaultVariableNode(boolean isDefinition, ICode.Scope scope, String nodeName, DagNode child, Assign.Type origType){
         ValueType type = ConversionUtils.assignTypeToDagValueType(origType);
-        return new DagVariableNode(isDefinition, ScopeType.LOCAL, nodeName, child, type);
+        ScopeType scopeType = ConversionUtils.assignScopeToDagScopeType(scope);
+        return new DagVariableNode(isDefinition, scopeType, nodeName, child, type);
     }
 
     public DagNode createParamVariableNode(boolean isDefinition, String nodeName, DagNode child, Assign.Type origType){
@@ -245,13 +247,5 @@ public class DagNodeFactory {
     public DagNode createExternalReturnVariableNode(boolean isDefinition, String nodeName, DagNode child, Assign.Type origType){
         ValueType type = ConversionUtils.assignTypeToDagValueType(origType);
         return new DagVariableNode(isDefinition, ScopeType.RETURN, nodeName, child, type);
-    }
-
-    public DagNode createInlineAssemblyNode(String nodeName, DagNode... children){
-        LinkedList<DagNode> childs = new LinkedList<DagNode>();
-        for(DagNode child : children){
-            childs.add(child);
-        }
-        return new DagInlineAssemblyNode(nodeName, childs);
     }
 }

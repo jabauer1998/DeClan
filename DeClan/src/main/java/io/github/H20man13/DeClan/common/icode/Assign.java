@@ -113,4 +113,9 @@ public class Assign implements ICode{
     public int hashCode() {
     	return Objects.hash(place, value, scope, type);
     }
+
+	@Override
+	public ICode copy() {
+		return new Assign(scope, place, value, type);
+	}
 }

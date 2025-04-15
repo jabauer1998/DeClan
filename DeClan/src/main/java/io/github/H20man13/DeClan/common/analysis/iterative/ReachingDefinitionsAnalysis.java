@@ -19,20 +19,21 @@ import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.util.Utils;
 
-public class ReachingDefinitionsAnalysis extends InstructionAnalysis<String> {
-    private Map<ICode, Set<String>> killSets;
-    private Map<ICode, Set<String>> genSets;
+public class ReachingDefinitionsAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<String>>, HashSet<String>, String> {
+    private Map<ICode, HashSet<String>> killSets;
+    private Map<ICode, HashSet<String>> genSets;
 
-    public ReachingDefinitionsAnalysis(FlowGraph flowGraph, LiveVariableAnalysis liveAnal) {
-        super(flowGraph, Direction.FORWARDS, Meet.UNION);
+    @SuppressWarnings("unchecked")
+	public ReachingDefinitionsAnalysis(FlowGraph flowGraph, LiveVariableAnalysis liveAnal) {
+        super(flowGraph, Direction.FORWARDS, Meet.UNION, false, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
 
-        this.killSets = new HashMap<ICode, Set<String>>();
-        this.genSets = new HashMap<ICode, Set<String>>();
+        this.killSets = newMap();
+        this.genSets = newMap();
 
         for(BlockNode block : flowGraph.getBlocks()){
             for(ICode decl : block.getICode()){
-            	Set<String> instructionGenSet = new HashSet<String>();
-                Set<String> instructionKillSet = new HashSet<String>();
+            	HashSet<String> instructionGenSet = newSet();
+                HashSet<String> instructionKillSet = newSet();
                 
                 if(decl instanceof Assign){
                     Assign declAssign = (Assign)decl;
@@ -57,11 +58,11 @@ public class ReachingDefinitionsAnalysis extends InstructionAnalysis<String> {
     }
 
     @Override
-    public Set<String> transferFunction(ICode block, Set<String> inputSet){
-        Set<String> result = new HashSet<String>();
+    public HashSet<String> transferFunction(ICode block, HashSet<String> inputSet){
+        HashSet<String> result = newSet();
 
-        Set<String> killSet = killSets.get(block);
-        Set<String> genSet = genSets.get(block);
+        HashSet<String> killSet = killSets.get(block);
+        HashSet<String> genSet = genSets.get(block);
         
         result.addAll(inputSet);
         result.removeAll(killSet);

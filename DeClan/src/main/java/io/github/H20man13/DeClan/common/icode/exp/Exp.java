@@ -1,8 +1,9 @@
 package io.github.H20man13.DeClan.common.icode.exp;
 
+import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public interface Exp {
+public interface Exp extends Copyable<Exp>{
     @Override
     public boolean equals(Object exp);
     @Override

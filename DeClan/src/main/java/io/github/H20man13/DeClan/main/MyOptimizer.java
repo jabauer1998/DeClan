@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.management.RuntimeErrorException;
+
+import io.github.H20man13.DeClan.common.Config;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.iterative.AnticipatedExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.AvailableExpressionsAnalysis;
@@ -21,7 +23,6 @@ import io.github.H20man13.DeClan.common.analysis.iterative.ReachingDefinitionsAn
 import io.github.H20man13.DeClan.common.analysis.iterative.UsedExpressionAnalysis;
 import io.github.H20man13.DeClan.common.dag.DagGraph;
 import io.github.H20man13.DeClan.common.dag.DagIgnoredInstruction;
-import io.github.H20man13.DeClan.common.dag.DagInlineAssemblyNode;
 import io.github.H20man13.DeClan.common.dag.DagNode;
 import io.github.H20man13.DeClan.common.dag.DagNodeFactory;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
@@ -101,6 +102,7 @@ public class MyOptimizer {
     private List<BlockNode> origBlocks;
     private Map<Tuple<BlockNode, BlockNode>, BackEdgeLoop> loops;
     private RegionGraph regions;
+    private Config cfg;
 
     private enum OptName{
         COMMON_SUB_EXPRESSION_ELIMINATION,
@@ -109,7 +111,7 @@ public class MyOptimizer {
         PARTIAL_REDUNDANCY_ELIMINATION
     }
 
-    public MyOptimizer(Prog intermediateCode){
+    public MyOptimizer(Config cfg, Prog intermediateCode){
         this.intermediateCode = intermediateCode;
         this.globalFlowGraph = null;
         this.propAnal = null;
@@ -127,6 +129,7 @@ public class MyOptimizer {
         this.origBlocks = null;
         this.loops = null;
         this.regions = null;
+        this.cfg = cfg;
     }
 
     public LiveVariableAnalysis getLiveVariableAnalysis(){
@@ -327,6 +330,13 @@ public class MyOptimizer {
         
         exit = new ExitNode(findEndingBlock(nodeList));
         FlowGraph flowGraph = new FlowGraph(entry, nodeList, exit);
+        
+        if(cfg != null)
+        	if(cfg.containsFlag("debug")) {
+        		Utils.createFile("test/temp/flow.txt");
+        		Utils.writeToFile("test/temp/flow.txt", flowGraph.toString());
+        	}
+        		
         this.globalFlowGraph = flowGraph;
     }
     
@@ -591,15 +601,6 @@ public class MyOptimizer {
                     } else {
                     	result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, identifier1, ConversionUtils.dagValueTypeToAssignType(type)));
                     }
-                } else if(node instanceof DagInlineAssemblyNode){
-                    DagInlineAssemblyNode dagNode = (DagInlineAssemblyNode)node;
-                    List<IdentExp> children = new LinkedList<IdentExp>();
-                    for(DagNode child : dagNode.getChildren()){
-                        IdentExp ident = getIdentifier(child, liveAtEndOfBlock);
-                        children.add(ident);
-                    }
-                    List<String> operationList = dagNode.getIdentifiers();
-                    result.add(new Inline(operationList.get(0), children));
                 }
                 
                 for(String ident : isAlive){
@@ -690,7 +691,7 @@ public class MyOptimizer {
                         dag.addDagNode(right);
                     }
 
-                    DagNode newNode = factory.createDefaultVariableNode(false, assignICode.place, right, assignICode.getType());
+                    DagNode newNode = factory.createDefaultVariableNode(false, assignICode.getScope(), assignICode.place, right, assignICode.getType());
 
                     DagNode exists = dag.getDagNode(newNode);
                     if(exists == null || !optimized){
@@ -770,7 +771,7 @@ public class MyOptimizer {
                         dag.addDagNode(right);
                     }
 
-                    DagNode newNode = factory.createDefaultVariableNode(true, assignICode.label, right, assignICode.type);
+                    DagNode newNode = factory.createDefaultVariableNode(true, assignICode.scope, assignICode.label, right, assignICode.type);
 
                     DagNode exists = dag.getDagNode(newNode);
                     if(exists == null || !optimized){
@@ -793,25 +794,6 @@ public class MyOptimizer {
                 } else if(assignICode.val instanceof StrExp){
                     StrExp strICode = (StrExp)assignICode.val;
                     DagNode newNode = factory.createStringNode(true, assignICode.scope, assignICode.label, strICode.value);
-                    dag.addDagNode(newNode);
-                }
-            } else if(icode instanceof Inline){
-                Inline inline = (Inline)icode;
-                LinkedList<DagNode> children = new LinkedList<DagNode>();
-                for(IdentExp param : inline.params){
-                    DagNode child = dag.searchForLatestChild(param);
-                    if(child == null){
-                        child = factory.createNullNode(param);
-                        dag.addDagNode(child);
-                    }
-
-                    children.add(child);
-                }
-
-                DagNode newNode = new DagInlineAssemblyNode(inline.inlineAssembly, children);
-                
-                DagNode exists = dag.getDagNode(newNode);
-                if(exists == null){
                     dag.addDagNode(newNode);
                 }
             } else {
@@ -856,6 +838,12 @@ public class MyOptimizer {
         }
         this.propAnal = new ConstantPropogationAnalysis(this.globalFlowGraph);
         this.propAnal.run();
+        
+        if(this.cfg != null)
+        	if(this.cfg.containsFlag("debug")){
+        		Utils.createFile("test/temp/constProp.txt");
+        		Utils.writeToFile("test/temp/constProp.txt", this.propAnal.toString());
+        	}
     }
 
     public void runLiveVariableAnalysis(){
@@ -864,6 +852,12 @@ public class MyOptimizer {
         }
         this.liveAnal = new LiveVariableAnalysis(this.globalFlowGraph);
         this.liveAnal.run();
+        
+        if(this.cfg != null)
+        	if(this.cfg.containsFlag("debug")){
+        		Utils.createFile("test/temp/liveAnal.txt");
+        		Utils.writeToFile("test/temp/liveAnal.txt", this.liveAnal.toString());
+        	}
     }
     
     public void runReachingDefinitionsAnalysis(){
@@ -873,6 +867,12 @@ public class MyOptimizer {
         	runLiveVariableAnalysis();
         this.defAnal = new ReachingDefinitionsAnalysis(this.globalFlowGraph, this.liveAnal);
         this.defAnal.run();
+        
+        if(this.cfg != null)
+        	if(this.cfg.containsFlag("debug")){
+        		Utils.createFile("test/temp/reachDef.txt");
+        		Utils.writeToFile("test/temp/reachDef.txt", this.defAnal.toString());
+        	}
     }
     
     private void buildGlobalExpressionsSemilattice(){
@@ -903,6 +903,12 @@ public class MyOptimizer {
     		buildFlowGraph();
     	this.domAnal = new DominatorAnalysis(this.globalFlowGraph);
     	this.domAnal.run();
+    	
+    	if(this.cfg != null)
+        	if(this.cfg.containsFlag("debug")){
+        		Utils.createFile("test/temp/dominator.txt");
+        		Utils.writeToFile("test/temp/dominator.txt", this.domAnal.toString());
+        	}
     }
     
     private void runAvailableExpressionsAnalysis() {
@@ -914,6 +920,12 @@ public class MyOptimizer {
     		runAnticipatedExpressionsAnalysis();
     	this.availableAnal = new AvailableExpressionsAnalysis(this.globalFlowGraph, this.anticipatedAnal, this.globalExpressionSet);
     	this.availableAnal.run();
+    	
+    	if(this.cfg != null)
+        	if(this.cfg.containsFlag("debug")){
+        		Utils.createFile("test/temp/availableAnal.txt");
+        		Utils.writeToFile("test/temp/availableAnal.txt", this.availableAnal.toString());
+        	}
     }
     
     private void runAnticipatedExpressionsAnalysis() {
@@ -923,6 +935,12 @@ public class MyOptimizer {
     		buildGlobalExpressionsSemilattice();
     	this.anticipatedAnal = new AnticipatedExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet);
     	this.anticipatedAnal.run();
+    	
+    	if(this.cfg != null)
+        	if(this.cfg.containsFlag("debug")){
+        		Utils.createFile("test/temp/anticipatedAnal.txt");
+        		Utils.writeToFile("test/temp/anticipatedAnal.txt", this.anticipatedAnal.toString());
+        	}
     }
     
     private void copyOrigBlocks() {
@@ -1131,25 +1149,33 @@ public class MyOptimizer {
                 List<ICode> icodeList = block.getICode();
                 for(int i = 0; i < icodeList.size(); i++){
                     ICode icode = icodeList.get(i);
+                    if(icode.toString().equals("m0 := l9 <INT>"))
+                    	if(this.cfg != null)
+                    		if(this.cfg.containsFlag("debug")){
+                    			Utils.createFile("test/temp/constPropAfter.txt");
+                    			Utils.writeToFile("test/temp/constPropAfter.txt", this.propAnal.toString());
+                    		}
                     Set<Tuple<String, Exp>> values = this.propAnal.getInputSet(icode);
                     if(icode instanceof Assign){
                         Assign varICode = (Assign)icode;
                         if(varICode.value instanceof IdentExp){
                             IdentExp identVal = (IdentExp)varICode.value;
                             String sourceVal = identVal.ident;
+                            Exp rightHandSide = varICode.value;
+                            
                             while(Utils.containsExpInSet(values, sourceVal)){
-                                Exp rightHandSide = Utils.getExpFromSet(values, sourceVal);
+                                rightHandSide = Utils.getExpFromSet(values, sourceVal);
                                 if(rightHandSide instanceof IdentExp){
                                     identVal = (IdentExp)rightHandSide;
                                     sourceVal = identVal.ident;
-                                } else if(rightHandSide.isConstant()){
-                                    varICode.value = rightHandSide;
                                     changes = true;
-                                    break;
-                                } else {
+                                } else if(rightHandSide.isConstant()){
+                                	changes = true;
                                     break;
                                 }
                             }
+                            
+                            varICode.value = rightHandSide;
                         } else if(varICode.value instanceof BinExp){
                             BinExp binExpVal = (BinExp)varICode.value;
 
@@ -1310,12 +1336,12 @@ public class MyOptimizer {
                             IdentExp identRight = unExpVal.right;
                             String sourceVal = identRight.ident;
                             Exp rightExp = identRight;
+                            
                             while(Utils.containsExpInSet(values, sourceVal)){
                                 rightExp = Utils.getExpFromSet(values, sourceVal);
                                 if(rightExp instanceof IdentExp){
                                     identRight = (IdentExp)rightExp;
                                     sourceVal = identRight.ident;
-                                    changes = true;
                                 } else {
                                     break;
                                 }
@@ -1345,19 +1371,21 @@ public class MyOptimizer {
                         if(varICode.val instanceof IdentExp){
                             IdentExp identVal = (IdentExp)varICode.val;
                             String sourceVal = identVal.ident;
+                            Exp rightHandSide = varICode.val;
+                            
                             while(Utils.containsExpInSet(values, sourceVal)){
-                                Exp rightHandSide = Utils.getExpFromSet(values, sourceVal);
+                                rightHandSide = Utils.getExpFromSet(values, sourceVal);
                                 if(rightHandSide instanceof IdentExp){
                                     identVal = (IdentExp)rightHandSide;
                                     sourceVal = identVal.ident;
-                                } else if(rightHandSide.isConstant()){
-                                    varICode.val = rightHandSide;
                                     changes = true;
-                                    break;
-                                } else {
+                                } else if(rightHandSide.isConstant()){
+                                	changes = true;
                                     break;
                                 }
                             }
+                            
+                            varICode.val = rightHandSide;
                         } else if(varICode.val instanceof BinExp){
                             BinExp binExpVal = (BinExp)varICode.val;
 

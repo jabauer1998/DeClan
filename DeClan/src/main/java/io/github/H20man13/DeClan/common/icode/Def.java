@@ -107,4 +107,9 @@ public class Def implements ICode {
     public int hashCode() {
     	return Objects.hash(label, type, scope, val);
     }
+
+	@Override
+	public ICode copy() {
+		return new Def(scope, label, val.copy(), type);
+	}
 }

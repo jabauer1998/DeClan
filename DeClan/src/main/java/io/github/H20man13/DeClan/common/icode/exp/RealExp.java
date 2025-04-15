@@ -59,4 +59,9 @@ public class RealExp implements Exp {
     public int hashCode() {
     	return Objects.hashCode(realValue);
     }
+
+	@Override
+	public Exp copy() {
+		return new RealExp(realValue);
+	}
 }

@@ -8,9 +8,15 @@ import java.util.Set;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Return implements ICode {
+	private String funcName;
+	
+	public Return(String funcName) {
+		this.funcName = funcName;
+	}
+
 	@Override
 	public String toString() {
-		return "RETURN";
+		return "RETURN FROM " + funcName;
 	}
 
 	@Override
@@ -25,16 +31,16 @@ public class Return implements ICode {
 
 	@Override
 	public boolean equals(Object obj){
-		if(obj instanceof Return)
-			return true;
-		else
-			return false;
+		if(obj instanceof Return) {
+			Return ret = (Return)obj;
+			return ret.funcName.equals(funcName);
+		}
+		return false;
 	}
 
 	@Override
 	public P asPattern() {
-		// TODO Auto-generated method stub
-		return P.RETURN();
+		return P.PAT(P.RETURN(), P.FROM(), P.ID());
 	}
 
 	@Override
@@ -59,6 +65,11 @@ public class Return implements ICode {
 	
 	@Override
 	public int hashCode() {
-		return 24;
+		return funcName.hashCode();
+	}
+
+	@Override
+	public ICode copy() {
+		return new Return(funcName);
 	}
 }

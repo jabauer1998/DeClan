@@ -101,4 +101,9 @@ public class Inline implements ICode{
     public int hashCode() {
     	return Objects.hash(inlineAssembly, params);
     }
+
+	@Override
+	public ICode copy() {
+		return new Inline(inlineAssembly, params);
+	}
 }

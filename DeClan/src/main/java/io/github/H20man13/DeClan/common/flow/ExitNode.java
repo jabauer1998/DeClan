@@ -10,7 +10,7 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 public class ExitNode implements FlowGraphNode{
     public FlowGraphNode exit;
 
-    public ExitNode(BlockNode exit){
+    public ExitNode(FlowGraphNode exit){
         this.exit = exit;
     }
 
@@ -23,4 +23,9 @@ public class ExitNode implements FlowGraphNode{
     public String toString(){
         return "EXIT";
     }
+
+	@Override
+	public FlowGraphNode copy() {
+		return new ExitNode(exit);
+	}
 }

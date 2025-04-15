@@ -8,7 +8,7 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.ICode.Scope;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class IdentExp implements Exp, Copyable<IdentExp>{
+public class IdentExp implements Exp{
     public String ident;
     public ICode.Scope scope;
 

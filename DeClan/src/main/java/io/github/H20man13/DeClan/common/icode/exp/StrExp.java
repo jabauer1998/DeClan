@@ -57,4 +57,9 @@ public class StrExp implements Exp{
     public int hashCode() {
     	return value.hashCode();
     }
+
+	@Override
+	public Exp copy() {
+		return new StrExp(value);
+	}
 }

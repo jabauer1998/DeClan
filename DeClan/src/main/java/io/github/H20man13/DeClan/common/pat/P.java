@@ -296,6 +296,13 @@ public abstract class P {
             return obj instanceof DEF;
         }
     }
+    
+    private static class FROM extends P{
+    	@Override
+        public boolean equals(Object obj) {
+            return obj instanceof FROM;
+        }
+    }
 
     private static class GLOBAL extends P{
         @Override
@@ -560,6 +567,9 @@ public abstract class P {
     }
     public static SECTION SECTION(){
         return new SECTION();
+    }
+    public static FROM FROM() {
+    	return new FROM();
     }
 
     @Override

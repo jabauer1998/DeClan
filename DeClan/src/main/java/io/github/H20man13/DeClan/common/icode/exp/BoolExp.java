@@ -59,4 +59,9 @@ public class BoolExp implements Exp {
     public int hashCode() {
     	return Objects.hashCode(trueFalse);
     }
+
+	@Override
+	public Exp copy() {
+		return new BoolExp(trueFalse);
+	}
 }

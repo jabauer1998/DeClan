@@ -59,4 +59,9 @@ public class IntExp implements Exp {
     public int hashCode() {
     	return Objects.hashCode(value);
     }
+
+	@Override
+	public Exp copy() {
+		return new IntExp(value);
+	}
 }

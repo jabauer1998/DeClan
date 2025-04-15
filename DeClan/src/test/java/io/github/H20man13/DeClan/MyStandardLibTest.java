@@ -47,11 +47,11 @@ public class MyStandardLibTest {
         try{
             FileReader declanReader = new FileReader(declanFile);
             Source declanSource = new ElaborateReaderSource(declanFile, declanReader);
-            MyDeClanLexer declanLexer = new MyDeClanLexer(declanSource, errLog);
+            MyDeClanLexer declanLexer = new MyDeClanLexer(declanSource, null, errLog);
             MyDeClanParser declanParser = new MyDeClanParser(declanLexer, errLog);
             Library declanLib = declanParser.parseLibrary();
             declanParser.close();
-            MyICodeGenerator iGen = new MyICodeGenerator(errLog);
+            MyICodeGenerator iGen = new MyICodeGenerator(null, errLog);
             return iGen.generateLibraryIr(declanLib);
         } catch(Exception exp){
             assertTrue(exp.toString(), false);

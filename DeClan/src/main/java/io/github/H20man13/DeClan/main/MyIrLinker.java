@@ -3,6 +3,7 @@ package io.github.H20man13.DeClan.main;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.Config;
 import io.github.H20man13.DeClan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.ast.Library;
 import io.github.H20man13.DeClan.common.ast.Program;
@@ -33,14 +34,19 @@ import io.github.H20man13.DeClan.common.util.Utils;
 public class MyIrLinker {
     private IrRegisterGenerator gen;
     private ErrorLog errLog;
+    private Config cfg;
 
-    public MyIrLinker(ErrorLog errLog){
+    public MyIrLinker(Config cfg, ErrorLog errLog){
         this.errLog = errLog;
         this.gen = new IrRegisterGenerator();
+        this.cfg = cfg;
+        if(this.cfg != null)
+        	if(this.cfg.containsFlag("debug"))
+        		Utils.createFile("test/temp/linked.txt");
     }
 
     private static Prog generateProgram(ErrorLog errorLog, Program prog){
-        MyICodeGenerator iGen = new MyICodeGenerator(errorLog);
+        MyICodeGenerator iGen = new MyICodeGenerator(null, errorLog);
         return iGen.generateProgramIr(prog);
     }
 
@@ -54,7 +60,7 @@ public class MyIrLinker {
     }
 
     private static Lib generateLibrary(ErrorLog errLog, Library lib){
-        MyICodeGenerator iGen = new MyICodeGenerator(errLog);
+        MyICodeGenerator iGen = new MyICodeGenerator(null, errLog);
         return iGen.generateLibraryIr(lib);
     }
 
@@ -4213,6 +4219,9 @@ public class MyIrLinker {
         linkDataSections(program, libraries, newProg);
         linkBssSection(program, libraries, newProg);
         linkCodeSection(program, libraries, newProg);
+        if(this.cfg != null)
+        	if(this.cfg.containsFlag("debug"))
+        		Utils.writeToFile("test/temp/linked.txt", newProg.toString());
         return newProg;
     }
 

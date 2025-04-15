@@ -50,4 +50,14 @@ public class DataSec implements ICode {
     public void replaceLabel(String from, String to) {
         //Do nothing
     }
+
+	@Override
+	public ICode copy() {
+		return new DataSec();
+	}
+	
+	@Override
+	public int hashCode() {
+		return DataSec.class.hashCode();
+	}
 }

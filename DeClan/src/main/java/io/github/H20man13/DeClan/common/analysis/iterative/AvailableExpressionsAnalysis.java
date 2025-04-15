@@ -19,14 +19,15 @@ import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.util.Utils;
 
-public class AvailableExpressionsAnalysis extends InstructionAnalysis<Tuple<Exp, ICode.Type>> {
+public class AvailableExpressionsAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<Exp, ICode.Type>>>, HashSet<Tuple<Exp, ICode.Type>>, Tuple<Exp, ICode.Type>> {
 
     private AnticipatedExpressionsAnalysis anticipatedAnalysis;
     private Map<ICode, Set<String>> killSets;
 
     public AvailableExpressionsAnalysis(FlowGraph flowGraph, AnticipatedExpressionsAnalysis analysis, Set<Tuple<Exp, ICode.Type>> globalFlowSet) {
-        super(flowGraph, Direction.FORWARDS, Meet.INTERSECTION, globalFlowSet);
+        super(flowGraph, Direction.FORWARDS, Meet.INTERSECTION, globalFlowSet, false, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
         killSets = new HashMap<ICode, Set<String>>();
         this.anticipatedAnalysis = analysis;
         for(BlockNode block : flowGraph.getBlocks()){
@@ -47,13 +48,13 @@ public class AvailableExpressionsAnalysis extends InstructionAnalysis<Tuple<Exp,
     }
 
     @Override
-    public Set<Tuple<Exp, ICode.Type>> transferFunction(ICode instruction, Set<Tuple<Exp, ICode.Type>> inputSet) {
-        Set<Tuple<Exp, ICode.Type>> result = new HashSet<Tuple<Exp, ICode.Type>>();
+    public HashSet<Tuple<Exp, ICode.Type>> transferFunction(ICode instruction, HashSet<Tuple<Exp, ICode.Type>> inputSet) {
+        HashSet<Tuple<Exp, ICode.Type>> result = newSet();
 
         result.addAll(inputSet);
         result.addAll(this.anticipatedAnalysis.getInputSet(instruction));
         
-        Set<Tuple<Exp, ICode.Type>> resultCopy = new HashSet<Tuple<Exp, ICode.Type>>();
+        HashSet<Tuple<Exp, ICode.Type>> resultCopy = newSet();
         resultCopy.addAll(result);
         
         for(Tuple<Exp, ICode.Type> exp: resultCopy) {

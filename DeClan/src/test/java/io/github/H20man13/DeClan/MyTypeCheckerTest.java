@@ -21,7 +21,7 @@ public class MyTypeCheckerTest {
         try{
             FileReader reader = new FileReader(fileSource);
             Source source = new ElaborateReaderSource(fileSource, reader);
-            MyDeClanLexer lexer = new MyDeClanLexer(source, errLog);
+            MyDeClanLexer lexer = new MyDeClanLexer(source, null, errLog);
             MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
             Program prog = parser.parseProgram();
             parser.close();

@@ -3,9 +3,10 @@ package io.github.H20man13.DeClan.common.icode;
 import java.util.List;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public interface ICode {
+public interface ICode extends Copyable<ICode>{
     public enum Scope{
         GLOBAL,
         LOCAL,
@@ -23,6 +24,7 @@ public interface ICode {
     public String toString();
     public boolean isConstant();
     public boolean isBranch();
+    public ICode copy();
     public P asPattern();
     public boolean equals(Object object);
     public boolean containsPlace(String place);

@@ -23,7 +23,7 @@ public class MyParserBasicTest {
             FileReader reader = new FileReader(sourceFile);
             Source mySource = new ReaderSource(reader);
             ErrorLog errLog = new ErrorLog();
-            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
+            MyDeClanLexer lexer = new MyDeClanLexer(mySource, null, errLog);
             MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
             parser.parseProgram();
             parser.close();

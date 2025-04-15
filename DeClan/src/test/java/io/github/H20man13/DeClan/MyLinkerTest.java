@@ -29,14 +29,14 @@ public class MyLinkerTest {
         try{
             FileReader reader = new FileReader(prgSrc);
             Source source = new ReaderSource(reader);
-            MyDeClanLexer lexer = new MyDeClanLexer(source, log);
+            MyDeClanLexer lexer = new MyDeClanLexer(source, null, log);
             MyDeClanParser parser = new MyDeClanParser(lexer, log);
             Program prog = parser.parseProgram();
             parser.close();
-            MyICodeGenerator icodeGen = new MyICodeGenerator(log);
+            MyICodeGenerator icodeGen = new MyICodeGenerator(null, log);
             Prog program = icodeGen.generateProgramIr(prog);
             MyStandardLibrary lib = new MyStandardLibrary(log);
-            MyIrLinker linker = new MyIrLinker(log);
+            MyIrLinker linker = new MyIrLinker(null, log);
             Prog irCode = linker.performLinkage(program, lib.irIoLibrary(), lib.irMathLibrary(), lib.irConversionsLibrary(), lib.irIntLibrary(), lib.irRealLibrary(), lib.irUtilsLibrary());
             String outputFile = prgSrc.replace("test/declan", "test/ir/linked").replace(".dcl", ".ir");
             FileReader fileReader = new FileReader(outputFile);
@@ -108,7 +108,7 @@ public class MyLinkerTest {
     }
 
     private static void linkPrograms(ErrorLog errLog, String expectedString, Prog prog, Lib... libs){
-        MyIrLinker linker = new MyIrLinker(errLog);
+        MyIrLinker linker = new MyIrLinker(null, errLog);
         Prog program = linker.performLinkage(prog, libs);
         regenerateProgram(program, expectedString);
     }

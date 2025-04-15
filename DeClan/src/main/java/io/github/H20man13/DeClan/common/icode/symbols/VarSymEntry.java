@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.icode.symbols;
 
+import java.util.Objects;
+
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.pat.P;
@@ -146,5 +148,10 @@ public class VarSymEntry extends SymEntry {
             
         }
         return false;
+    }
+    
+    @Override
+    public int hashCode() {
+    	return Objects.hash(icodePlace, declanIdent, funcName, paramNumber, codeType);
     }
 }

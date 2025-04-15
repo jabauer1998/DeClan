@@ -56,7 +56,7 @@ public class MyStandardLibrary {
             try{
                 FileReader reader = new FileReader(declanSrcFile);
                 Source source = new ElaborateReaderSource(fileName, reader);
-                MyDeClanLexer lexer = new MyDeClanLexer(source, errLog);
+                MyDeClanLexer lexer = new MyDeClanLexer(source, null, errLog);
                 MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
                 Library lib = parser.parseLibrary();
                 parser.close();
@@ -93,7 +93,7 @@ public class MyStandardLibrary {
 
         if(declanDirFound){
             Library lib = parseDeclanSource(fileName);
-            MyICodeGenerator gen = new MyICodeGenerator(errLog);
+            MyICodeGenerator gen = new MyICodeGenerator(null, errLog);
             return gen.generateLibraryIr(lib);
         } else {
             throw new RuntimeException("Error directory at path-\n" + declanDir + "\n not found!!!");

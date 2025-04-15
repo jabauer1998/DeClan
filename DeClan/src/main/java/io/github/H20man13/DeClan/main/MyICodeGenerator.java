@@ -22,6 +22,7 @@ import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
+import io.github.H20man13.DeClan.common.Config;
 import io.github.H20man13.DeClan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.ast.ASTVisitor;
@@ -98,13 +99,18 @@ public class MyICodeGenerator{
   private MyInterpreter interpreter;
   private IrBuilderContext ctx;
   private IrRegisterGenerator gen;
+  private Config cfg;
 
-  public MyICodeGenerator(ErrorLog errorLog) {
+  public MyICodeGenerator(Config cfg, ErrorLog errorLog) {
     this.errorLog = errorLog;
     this.ctx = new IrBuilderContext();
     this.gen = new IrRegisterGenerator();
     this.typeChecker = new MyTypeChecker(errorLog);
     this.interpreter = new MyInterpreter(errorLog, null, null, null);
+    this.cfg = cfg;
+    if(this.cfg != null)
+    	if(this.cfg.containsFlag("debug"))
+    		Utils.createFile("test/temp/icode.txt");
   }
 
   public Lib generateLibraryIr(Library lib){
@@ -128,7 +134,11 @@ public class MyICodeGenerator{
       typeChecker.removeVarScope();
     }
 
-    return builder.completeBuild();
+    Lib library = builder.completeBuild();
+    if(this.cfg != null)
+    	if(this.cfg.containsFlag("debug"))
+    		Utils.writeToFile("test/temp/icode.txt", library.toString());
+    return library;
   }
 
   public Prog generateProgramIr(Program program) {
@@ -165,7 +175,11 @@ public class MyICodeGenerator{
       typeChecker.removeVarScope();
     }
 
-    return builder.completeBuild();
+    Prog prog = builder.completeBuild();
+    if(this.cfg != null)
+    	if(this.cfg.containsFlag("debug"))
+    		Utils.writeToFile("test/temp/icode.txt", prog.toString());
+    return prog;
   }
 
   public void generateConstantIr(Scope scope, ConstDeclaration constDecl, DefinitionBuilder builder) {
@@ -287,7 +301,7 @@ public class MyICodeGenerator{
       IdentExp returnPlace = builder.getVariablePlace(procedureName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
       builder.buildDefinition(returnPlace.scope, returnPlace.ident, retPlace, ConversionUtils.typeCheckerQualitiesToAssignType(qual));
     }
-    builder.buildReturnStatement();
+    builder.buildReturnStatement(procedureName);
   }
 
   public void generateStatementIr(Statement stat, StatementBuilder builder){

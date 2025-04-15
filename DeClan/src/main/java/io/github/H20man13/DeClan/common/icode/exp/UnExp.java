@@ -72,4 +72,9 @@ public class UnExp implements Exp {
     public int hashCode() {
     	return Objects.hash(op, right);
     }
+
+	@Override
+	public Exp copy() {
+		return new UnExp(op, right.copy());
+	}
 }

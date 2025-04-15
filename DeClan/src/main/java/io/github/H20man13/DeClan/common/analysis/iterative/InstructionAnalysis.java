@@ -1,59 +1,59 @@
 package io.github.H20man13.DeClan.common.analysis.iterative;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.function.Function;
 
-import io.github.H20man13.DeClan.common.analysis.AnalysisBase;
-import io.github.H20man13.DeClan.common.analysis.AnalysisBase.Direction;
-import io.github.H20man13.DeClan.common.analysis.AnalysisBase.Meet;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.ICode;
 
-public abstract class InstructionAnalysis<SetType> extends IterativeAnalysis<ICode, SetType> {
-    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, Set<SetType> semiLattice){
-        super(flowGraph, direction, meetOperation, semiLattice);
+public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, SetType extends Set<DataType>, DataType> extends IterativeAnalysis<ICode, MapType, SetType, DataType> {
+    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, Set<DataType> semiLattice, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
+        super(flowGraph, direction, meetOperation, semiLattice, copyKey, mapClass, setClass);
     }
 
-    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semilattice){
-        super(flowGraph, direction, meetOperation, semilattice);
+    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, Set<DataType> semilattice, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
+        super(flowGraph, direction, meetOperation, semilattice, copyKey, mapClass, setClass);
     }
 
-    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation){
-        super(flowGraph, direction, meetOperation);
+    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
+        super(flowGraph, direction, meetOperation, copyKey, mapClass, setClass);
     }
 
-    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation){
-        super(flowGraph, direction, meetOperation);
+    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
+        super(flowGraph, direction, meetOperation, copyKey, mapClass, setClass);
     }
 
     @Override
-    protected void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semiLattice){
+    protected void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, Set<DataType> semiLattice, boolean copyKey){
         if(direction == Direction.FORWARDS){
-            Map<ICode, Set<SetType>> outputCache = new HashMap<ICode, Set<SetType>>();
+            MapType outputCache = newMap();
 
             for(BlockNode block : flowGraph.getBlocks()){
             	if(block.getICode().size() > 0) {
             		ICode lastICode = block.getICode().getLast();
-            		Set<SetType> semilatticeCopy = new HashSet<SetType>();
+            		SetType semilatticeCopy = newSet();
                     semilatticeCopy.addAll(semiLattice);
-                    addOutputSet(lastICode, semilatticeCopy);
+                    if(copyKey)
+                    	addOutputSet(lastICode.copy(), semilatticeCopy);
+                    else
+                    	addOutputSet(lastICode, semilatticeCopy);
             	}
             }
 
+            int time = 0;
             while(changesHaveOccuredOnOutputs(outputCache)){
                 outputCache = deepCopyOutputMap();
+                System.out.print("Running: ");
+                System.out.println(time);
                 for(BlockNode block : flowGraph.getBlocks()){
-                    Set<SetType> inputSet = new HashSet<SetType>();
+                    SetType inputSet = newSet();
 
-                    List<Set<SetType>> predecessorsLists = new LinkedList<Set<SetType>>();
+                    List<SetType> predecessorsLists = new LinkedList<SetType>();
                     for(FlowGraphNode node : block.getPredecessors()){
                     	if(!node.getICode().isEmpty()) {
                     		predecessorsLists.add(getOutputSet(node.getICode().getLast()));
@@ -63,21 +63,32 @@ public abstract class InstructionAnalysis<SetType> extends IterativeAnalysis<ICo
                     inputSet = meetOperation.apply(predecessorsLists);
 
                     for(ICode instr : block.getICode()){
-                        addInputSet(instr, inputSet);
-                        inputSet = transferFunction(instr, inputSet);
-                        addOutputSet(instr, inputSet);
+                    	if(copyKey) {
+                    		ICode copy = instr.copy();
+                    		addInputSet(copy, inputSet);
+                            inputSet = transferFunction(instr, inputSet);
+                            addOutputSet(copy, inputSet);
+                    	} else {
+                    		addInputSet(instr, inputSet);
+                            inputSet = transferFunction(instr, inputSet);
+                            addOutputSet(instr, inputSet);
+                    	}
                     }
                 }
+                time++;
             }
         } else {
-            Map<ICode, Set<SetType>> inputCache = new HashMap<ICode, Set<SetType>>();
+            MapType inputCache = newMap();
 
             for(BlockNode block : flowGraph.getBlocks()){
             	if(!block.getICode().isEmpty()) {
             		ICode firstICode = block.getICode().getFirst();
-            		Set<SetType> semilatticeCopy = new HashSet<SetType>();
+            		SetType semilatticeCopy = newSet();
             		semilatticeCopy.addAll(semiLattice);
-            		addInputSet(firstICode, semilatticeCopy);
+            		if(copyKey)
+                    	addInputSet(firstICode.copy(), semilatticeCopy);
+                    else
+                    	addInputSet(firstICode, semilatticeCopy);
             	}
             }
 
@@ -86,9 +97,9 @@ public abstract class InstructionAnalysis<SetType> extends IterativeAnalysis<ICo
                 List<BlockNode> blocks = flowGraph.getBlocks();
                 for(int b = blocks.size() - 1; b >= 0; b--){
                     BlockNode block = blocks.get(b);
-                    Set<SetType> outputSet = new HashSet<SetType>();
+                    SetType outputSet = newSet();
 
-                    List<Set<SetType>> sucessorLists = new LinkedList<Set<SetType>>();
+                    List<SetType> sucessorLists = new LinkedList<SetType>();
                     for(FlowGraphNode node : block.getSuccessors()){
                     	if(!node.getICode().isEmpty()) {
                     		ICode first = node.getICode().getFirst();
@@ -99,15 +110,23 @@ public abstract class InstructionAnalysis<SetType> extends IterativeAnalysis<ICo
 
                     List<ICode> icodeList = block.getICode();
                     for(int i = icodeList.size() - 1; i >= 0; i--){
-                        ICode icode = icodeList.get(i);
-                        addOutputSet(icode, outputSet);
-                        outputSet = transferFunction(icode, outputSet);
-                        addInputSet(icode, outputSet);
+                        if(copyKey) {
+                        	ICode icode = icodeList.get(i).copy();
+                        	addOutputSet(icode, outputSet);
+                            outputSet = transferFunction(icode, outputSet);
+                            addInputSet(icode, outputSet);
+                        } else {
+                        	ICode icode = icodeList.get(i);
+                        	addOutputSet(icode, outputSet);
+                            outputSet = transferFunction(icode, outputSet);
+                            addInputSet(icode, outputSet);
+                        }
+                        
                     }
                 }
             }
         }
     }
 
-    public abstract Set<SetType> transferFunction(ICode instr, Set<SetType> inputSet);
+    public abstract SetType transferFunction(ICode instr, SetType inputSet);
 }

@@ -88,4 +88,9 @@ public class If implements ICode {
 	public int hashCode() {
 		return Objects.hash(exp, ifTrue, ifFalse);
 	}
+
+	@Override
+	public ICode copy() {
+		return new If(exp, ifTrue, ifFalse);
+	}
 }

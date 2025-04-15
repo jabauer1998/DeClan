@@ -33,7 +33,7 @@ public class InterpreterICodeTest {
         try{
             Source source = new ReaderSource(new FileReader(sourceFile));
             ErrorLog errLog = new ErrorLog();
-            MyDeClanLexer lexer = new MyDeClanLexer(source, errLog);
+            MyDeClanLexer lexer = new MyDeClanLexer(source, null, errLog);
             MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
             Program prog = parser.parseProgram();
             parser.close();
@@ -53,7 +53,7 @@ public class InterpreterICodeTest {
                 assertTrue(errItem.toString(), false);
             }
             
-            MyIrLinker linker = new MyIrLinker(errLog);
+            MyIrLinker linker = new MyIrLinker(null, errLog);
             Prog program = linker.performLinkage(prog, lib.declanIoLibrary(), lib.declanMathLibrary(), lib.declanConversionsLibrary(), lib.declanRealLibrary(), lib.declanUtilsLibrary(), lib.declanIntLibrary());
 
             MyICodeMachine vm = new MyICodeMachine(errLog, icodeOut, errOut, standardInICode);

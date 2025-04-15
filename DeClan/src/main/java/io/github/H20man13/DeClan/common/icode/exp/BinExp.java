@@ -93,4 +93,9 @@ public class BinExp implements Exp {
     public int hashCode() {
     	return Objects.hash(left, op, right);
     }
+
+	@Override
+	public Exp copy() {
+		return new BinExp(left.copy(), op, right.copy());
+	}
 }

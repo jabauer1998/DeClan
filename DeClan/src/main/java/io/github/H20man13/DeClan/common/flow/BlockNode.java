@@ -10,7 +10,6 @@ import java.util.Set;
 
 import io.github.H20man13.DeClan.common.ast.Identifier;
 import io.github.H20man13.DeClan.common.dag.DagGraph;
-import io.github.H20man13.DeClan.common.dag.DagInlineAssemblyNode;
 import io.github.H20man13.DeClan.common.dag.DagNode;
 import io.github.H20man13.DeClan.common.dag.DagNodeFactory;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
@@ -44,6 +43,12 @@ public class BlockNode implements FlowGraphNode, Iterable<ICode> {
         this.block = block;
         this.successors = new ArrayList<FlowGraphNode>();
         this.predecessors = new ArrayList<FlowGraphNode>();
+    }
+    
+    private BlockNode(BasicBlock block, List<FlowGraphNode> successors, List<FlowGraphNode> predecessors){
+    	this.block = block;
+    	this.successors = successors;
+    	this.predecessors = predecessors;
     }
 
     public BasicBlock getBlock(){
@@ -98,4 +103,9 @@ public class BlockNode implements FlowGraphNode, Iterable<ICode> {
     public Iterator<ICode> iterator() {
         return this.block.iterator();
     }
+
+	@Override
+	public FlowGraphNode copy() {
+		return new BlockNode(block, successors, predecessors);
+	}
 }

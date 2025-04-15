@@ -53,7 +53,7 @@ public class CodeGeneratorTest {
             Prog program = parser.parseProgram();
             parser.close();
 
-            MyOptimizer optimizer = new MyOptimizer(program);
+            MyOptimizer optimizer = new MyOptimizer(null, program);
             optimizer.runLiveVariableAnalysis();
 
             MyCodeGenerator codeGenerator = new MyCodeGenerator(expectedResultFile, optimizer.getLiveVariableAnalysis(), program, errLog); 

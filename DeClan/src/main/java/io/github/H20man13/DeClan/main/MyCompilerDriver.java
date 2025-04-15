@@ -423,14 +423,14 @@ public class MyCompilerDriver {
         scanner.close();
     }
 
-    private static Program parseDeclanProgram(String programString, ErrorLog errLog) throws Exception{
+    private static Program parseDeclanProgram(String programString, Config cfg, ErrorLog errLog) throws Exception{
         File file = new File(programString);
         if(file.exists()){
             System.out.println("Parsing program at path-");
             System.out.println(file.getAbsolutePath());
             FileReader reader = new FileReader(programString);
             ElaborateReaderSource source = new ElaborateReaderSource(programString, reader);
-            MyDeClanLexer lexer = new MyDeClanLexer(source, errLog);
+            MyDeClanLexer lexer = new MyDeClanLexer(source, cfg, errLog);
             MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
             Program prog = parser.parseProgram();
             parser.close();
@@ -441,24 +441,24 @@ public class MyCompilerDriver {
         }
     }
 
-    private static Prog generateProgram(Program prog, ErrorLog errLog){
-        MyICodeGenerator iGen = new MyICodeGenerator(errLog);
+    private static Prog generateProgram(Program prog, Config cfg, ErrorLog errLog){
+        MyICodeGenerator iGen = new MyICodeGenerator(cfg, errLog);
         return iGen.generateProgramIr(prog);
     }
 
-    private static Lib generateLibrary(Library library, ErrorLog errLog){
-        MyICodeGenerator iGen = new MyICodeGenerator(errLog);
+    private static Lib generateLibrary(Library library, Config cfg, ErrorLog errLog){
+        MyICodeGenerator iGen = new MyICodeGenerator(cfg, errLog);
         return iGen.generateLibraryIr(library);
     }
 
-    private static Library parseLibrary(String libString, ErrorLog errLog) throws Exception{
+    private static Library parseLibrary(String libString, Config cfg, ErrorLog errLog) throws Exception{
         File file = new File(libString);
         if(file.exists()){
             System.out.println("Parsing library at path-");
             System.out.println(file.getAbsolutePath());
             FileReader reader = new FileReader(file);
             ElaborateReaderSource source = new ElaborateReaderSource(libString, reader);
-            MyDeClanLexer lexer = new MyDeClanLexer(source, errLog);
+            MyDeClanLexer lexer = new MyDeClanLexer(source, cfg, errLog);
             MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
             Library lib = parser.parseLibrary();
             parser.close();
@@ -484,7 +484,7 @@ public class MyCompilerDriver {
         ErrorLog errLog = new ErrorLog();
         if(cfg.containsFlag("program")){
             String programString = cfg.getValueFromFlag("program");
-            Program program = parseDeclanProgram(programString, errLog);
+            Program program = parseDeclanProgram(programString, cfg, errLog);
 
             //We need to compile a Program into an executable
             List<Lib> libs = new LinkedList<Lib>();
@@ -492,8 +492,8 @@ public class MyCompilerDriver {
                 String libString = cfg.getValueFromFlag("library");
                 String[] libraries = libString.split("#");
                 for(String libPath: libraries){
-                    Library declanLib = parseLibrary(libPath, errLog);
-                    Lib icodeLib = generateLibrary(declanLib, errLog);
+                    Library declanLib = parseLibrary(libPath, null, errLog);
+                    Lib icodeLib = generateLibrary(declanLib, null, errLog);
                     libs.add(icodeLib);
                 }
             }
@@ -509,7 +509,7 @@ public class MyCompilerDriver {
                     }
 
                     if(noLink){
-                        Prog prog = generateProgram(program, errLog);
+                        Prog prog = generateProgram(program, cfg, errLog);
                         FileWriter writer = new FileWriter(outputDestination);
                         writer.write(prog.toString());
                         writer.close();
@@ -527,18 +527,19 @@ public class MyCompilerDriver {
                             }
                         }
 
-                        MyIrLinker linker = new MyIrLinker(errLog);
+                        MyIrLinker linker = new MyIrLinker(cfg, errLog);
                         Lib[] libsArray = listAsArray(libs);
-                        Prog myProg = generateProgram(program, errLog);
+                        Prog myProg = generateProgram(program, cfg,  errLog);
                         Prog prog = linker.performLinkage(myProg, libsArray);
 
                         if(cfg.containsFlag("optimize")){
                             boolean shouldOptimize = cfg.getValueFromFlag("optimize").equals("TRUE");
                             if(shouldOptimize){
-                                MyOptimizer optimizer = new MyOptimizer(prog);
+                                MyOptimizer optimizer = new MyOptimizer(cfg, prog);
                                 optimizer.performCommonSubExpressionElimination();
                                 optimizer.performConstantPropogation();
                                 optimizer.performDeadCodeElimination();
+                                optimizer.performPartialRedundancyElimination();
                                 prog = optimizer.getICode();
                             }
                         }
@@ -551,8 +552,8 @@ public class MyCompilerDriver {
             } else if(emitAssembly){
                 if(cfg.containsFlag("output")){
                     String outputDestination = cfg.getValueFromFlag("output");
-                    MyIrLinker linker = new MyIrLinker(errLog);
-                    Prog myProg = generateProgram(program, errLog);
+                    MyIrLinker linker = new MyIrLinker(cfg, errLog);
+                    Prog myProg = generateProgram(program, cfg, errLog);
                     
                     if(cfg.containsFlag("std")){
                         String isStd = cfg.getValueFromFlag("std");
@@ -570,7 +571,7 @@ public class MyCompilerDriver {
                     Lib[] newLibs = listAsArray(libs);
                     Prog prog = linker.performLinkage(myProg, newLibs);
 
-                    MyOptimizer optimizer = new MyOptimizer(prog);
+                    MyOptimizer optimizer = new MyOptimizer(cfg, prog);
                     if(cfg.containsFlag("optimize")){
                         boolean shouldOptimize = cfg.getValueFromFlag("optimize").equals("TRUE");
                         if(shouldOptimize){
@@ -593,12 +594,12 @@ public class MyCompilerDriver {
             } else {
                 if(cfg.containsFlag("output")){
                     String outputDestination = cfg.getValueFromFlag("output");
-                    MyIrLinker linker = new MyIrLinker(errLog);
+                    MyIrLinker linker = new MyIrLinker(cfg, errLog);
                     Lib[] libArray = listAsArray(libs);
-                    Prog myProg = generateProgram(program, errLog);
+                    Prog myProg = generateProgram(program, cfg, errLog);
                     Prog prog = linker.performLinkage(myProg, libArray);
 
-                    MyOptimizer optimizer = new MyOptimizer(prog);
+                    MyOptimizer optimizer = new MyOptimizer(cfg, prog);
                     if(cfg.containsFlag("optimize")){
                         boolean shouldOptimize = cfg.getValueFromFlag("optimize").equals("TRUE");
                         if(shouldOptimize){
@@ -659,9 +660,9 @@ public class MyCompilerDriver {
                     String outputDestination = cfg.getValueFromFlag("output");
                     if(noLink){
                         String library = libString;
-                        Library lib = parseLibrary(library, errLog);
+                        Library lib = parseLibrary(library, cfg, errLog);
                         	
-                        MyICodeGenerator iCodeGenerator = new MyICodeGenerator(errLog);
+                        MyICodeGenerator iCodeGenerator = new MyICodeGenerator(cfg, errLog);
                         Lib genedLib = iCodeGenerator.generateLibraryIr(lib);
                         File outputFile = new File(outputDestination);
                         if(outputFile.exists()){
@@ -674,8 +675,8 @@ public class MyCompilerDriver {
                     } else {
                     	String[] libraries = libString.split("#");
                         for(String libPath: libraries){
-                            Library lib = parseLibrary(libPath, errLog);
-                            Lib lib2 = generateLibrary(lib, errLog);
+                            Library lib = parseLibrary(libPath, null, errLog);
+                            Lib lib2 = generateLibrary(lib, null, errLog);
                             libs.add(lib2);
                         }
                         
@@ -692,7 +693,7 @@ public class MyCompilerDriver {
                             }
                         }
                         
-                        MyIrLinker linker = new MyIrLinker(errLog);
+                        MyIrLinker linker = new MyIrLinker(cfg, errLog);
                         Lib startingLibrary = libs.remove(0);
                         Lib[] libsAsArray = listAsArray(libs);
                         Lib library = linker.performLinkage(startingLibrary, libsAsArray);

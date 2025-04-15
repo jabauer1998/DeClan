@@ -1,6 +1,7 @@
 package io.github.H20man13.DeClan.common.util;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.StandardCopyOption;
@@ -338,10 +339,42 @@ public class Utils {
     }
   }
   
-  public static void createFile(String fileName) throws IOException {
+  public static void createFile(String fileName) {
 	  Utils.deleteFile(fileName);
 	  File file = new File(fileName);
-	  file.createNewFile();
+	  try {
+		  file.createNewFile();
+	  } catch(IOException exp) {
+		  throw new RuntimeException(exp.toString());
+	  }
+  }
+  
+  public static void appendToFile(String fileName, String textToAppend) {
+	  File file = new File(fileName);
+	  try {
+		FileWriter writer = new FileWriter(file, true);
+		for(int i = 0; i < textToAppend.length(); i++) {
+			char c = textToAppend.charAt(i);
+			writer.append(c);
+		}
+		writer.close();
+	} catch (IOException e) {
+		throw new RuntimeException(e.toString());
+	}
+  }
+  
+  public static void writeToFile(String fileName, String textToAppend) {
+	  File file = new File(fileName);
+	  try {
+		  FileWriter writer = new FileWriter(file);
+		  for(int i = 0; i < textToAppend.length(); i++) {
+			  char c = textToAppend.charAt(i);
+			  writer.write(c);
+		  }
+		  writer.close();
+	  } catch(IOException exp) {
+		  throw new RuntimeException(exp.toString());
+	  }
   }
   
   public static int getLengthOfUnsignedNumber(int number) {
@@ -351,5 +384,10 @@ public class Utils {
 		  number /= 10;
 	  }
 	  return count;
+  }
+  
+  @SuppressWarnings("unchecked")
+  public static <ClassType> Class<ClassType> getClassType(Class<?> type){
+	  return (Class<ClassType>)type;
   }
 }

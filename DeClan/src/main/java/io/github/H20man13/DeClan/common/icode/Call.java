@@ -108,4 +108,9 @@ public class Call implements ICode {
 	public int hashCode() {
 		return Objects.hash(pname, params);
 	}
+
+	@Override
+	public ICode copy() {
+		return new Call(pname, params);
+	}
 }

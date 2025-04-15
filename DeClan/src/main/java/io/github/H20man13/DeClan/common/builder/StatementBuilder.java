@@ -406,8 +406,8 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         addInstruction(new ProcLabel(pname));
     }
 
-    public void buildReturnStatement(){
-        addInstruction(new Return());
+    public void buildReturnStatement(String funcName){
+        addInstruction(new Return(funcName));
     }
 
     public void buildExternalProcedureCall(String funcName, List<Tuple<Exp, ICode.Type>> args){

@@ -396,7 +396,9 @@ public class MyIrParser {
 
     private Return parseReturn(){
         match(IrTokenType.RETURN);
-        return new Return();
+        match(IrTokenType.FROM);
+        IrToken id = match(IrTokenType.ID);
+        return new Return(id.getLexeme());
     }
 
     private ICode parseLabel(){

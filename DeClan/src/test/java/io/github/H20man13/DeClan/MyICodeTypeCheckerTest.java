@@ -45,15 +45,15 @@ public class MyICodeTypeCheckerTest {
     private MyICodeTypeChecker runTypeCheckerOnDeClanSource(Source typeCheckerSource){
         ErrorLog errLog = new ErrorLog();
         
-        MyDeClanLexer lexer = new MyDeClanLexer(typeCheckerSource, errLog);
+        MyDeClanLexer lexer = new MyDeClanLexer(typeCheckerSource, null, errLog);
         MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
         Program prog = parser.parseProgram();
-        MyICodeGenerator iGen = new MyICodeGenerator(errLog);
+        MyICodeGenerator iGen = new MyICodeGenerator(null, errLog);
         Prog program = iGen.generateProgramIr(prog);
         parser.close();
 
         MyStandardLibrary lib = new MyStandardLibrary(errLog);
-        MyIrLinker linker = new MyIrLinker(errLog);
+        MyIrLinker linker = new MyIrLinker(null, errLog);
 
         Prog icodeProg = linker.performLinkage(program, lib.irIoLibrary(), lib.irMathLibrary(), lib.irConversionsLibrary(), lib.irIntLibrary(), lib.irRealLibrary(), lib.irUtilsLibrary());
 

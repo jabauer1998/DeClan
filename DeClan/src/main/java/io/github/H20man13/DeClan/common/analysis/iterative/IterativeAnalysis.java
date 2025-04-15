@@ -1,47 +1,60 @@
 package io.github.H20man13.DeClan.common.analysis.iterative;
 
+import java.lang.reflect.MalformedParameterizedTypeException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Function;
 
+import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.analysis.AnalysisBase;
 import io.github.H20man13.DeClan.common.analysis.AnalysisBase.Direction;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.ICode;
 
-public abstract class IterativeAnalysis<AnalysisType, SetType> implements AnalysisBase {
+public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisType>, MapType extends Map<AnalysisType, SetType>, SetType extends Set<DataType>, DataType> implements AnalysisBase {
 	private FlowGraph flowGraph;
     private Direction direction;
-    private Function<List<Set<SetType>>, Set<SetType>> meetOperation;
-    private Set<SetType> semiLattice;
+    private Function<List<SetType>, SetType> meetOperation;
+    private Set<DataType> semiLattice;
+    private Class<MapType> mapClass;
+    private Class<SetType> setClass;
+    private boolean copyKey;
 
-    private Map<AnalysisType, Set<SetType>> mappedOutputs;
-    private Map<AnalysisType, Set<SetType>> mappedInputs;
+    private MapType mappedOutputs;
+    private MapType mappedInputs;
     
-	public abstract Set<SetType> transferFunction(AnalysisType type, Set<SetType> inputSet);
+	public abstract SetType transferFunction(AnalysisType type, SetType inputSet);
 	
-	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, Set<SetType> semiLattice) {
+	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, Set<DataType> semiLattice, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass) {
 		this.flowGraph = flowGraph;
         this.direction = direction;
-        Function<List<Set<SetType>>,Set<SetType>> unionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
+        this.mapClass = mapClass;
+        this.setClass = setClass;
+		this.mappedInputs = newMap();
+		this.mappedOutputs = newMap();
+	    this.semiLattice = semiLattice;
+	    this.copyKey = copyKey;
+	        
+        Function<List<SetType>,SetType> unionOperation = new Function<List<SetType>, SetType>() {
             @Override
-            public Set<SetType> apply(List<Set<SetType>> t) {
-                Set<SetType> result = new HashSet<SetType>();
-                for(Set<SetType> set : t){
-                    result.addAll(set);
-                }
-                return result;
-            } 
+            public SetType apply(List<SetType> t) {
+                SetType result = newSet();
+				for(SetType set : t){
+					result.addAll(set);
+	            }
+		        return result;
+            }
         };
-        Function<List<Set<SetType>>,Set<SetType>> intersectionOperation = new Function<List<Set<SetType>>,Set<SetType>>() {
+        Function<List<SetType>, SetType> intersectionOperation = new Function<List<SetType>, SetType>() {
             @Override
-            public Set<SetType> apply(List<Set<SetType>> t) {
-                Set<SetType> result = unionOperation.apply(t);
-                for(Set<SetType> set : t){
+            public SetType apply(List<SetType> t) {
+                SetType result = unionOperation.apply(t);
+                for(SetType set : t){
                     result.retainAll(set);
                 }
                 return result;
@@ -53,82 +66,139 @@ public abstract class IterativeAnalysis<AnalysisType, SetType> implements Analys
         } else {
             this.meetOperation = intersectionOperation;
         }
-
-        this.mappedInputs = new HashMap<AnalysisType, Set<SetType>>();
-        this.mappedOutputs = new HashMap<AnalysisType, Set<SetType>>();
-        this.semiLattice = semiLattice;
 	}
 	
-	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semilattice){
+	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, Set<DataType> semilattice, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
         this.flowGraph = flowGraph;
         this.direction = direction;
         this.meetOperation = meetOperation;
         this.semiLattice = semilattice;
-        this.mappedInputs = new HashMap<AnalysisType, Set<SetType>>();
-        this.mappedOutputs = new HashMap<AnalysisType, Set<SetType>>();
+        this.copyKey = copyKey;
+		this.mappedInputs = newMap();
+		this.mappedOutputs = newMap();
     }
 	
-	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation){
-       this(flowGraph, direction, meetOperation, new HashSet<SetType>());
+	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
+       this.flowGraph = flowGraph;
+       this.direction = direction;
+       this.meetOperation = meetOperation;
+       this.setClass = setClass;
+       this.mapClass = mapClass;
+       this.copyKey = copyKey;
+       this.mappedInputs = newMap();
+       this.mappedOutputs = newMap();
+       this.semiLattice = newSet();
     }
 
-    public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation){
-        this(flowGraph, direction, meetOperation, new HashSet<SetType>());
+    public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
+    	this.flowGraph = flowGraph;
+        this.direction = direction;
+        this.mapClass = mapClass;
+        this.setClass = setClass;
+        this.copyKey = copyKey;
+		this.mappedInputs = newMap();
+		this.mappedOutputs = newMap();
+	    this.semiLattice = newSet();
+	        
+        Function<List<SetType>,SetType> unionOperation = new Function<List<SetType>, SetType>() {
+            @Override
+            public SetType apply(List<SetType> t) {
+                SetType result = newSet();
+				for(SetType set : t){
+					result.addAll(set);
+	            }
+		        return result;
+            }
+        };
+        Function<List<SetType>, SetType> intersectionOperation = new Function<List<SetType>, SetType>() {
+            @Override
+            public SetType apply(List<SetType> t) {
+                SetType result = unionOperation.apply(t);
+                for(SetType set : t){
+                    result.retainAll(set);
+                }
+                return result;
+            }
+        };
+
+        if(meetOperation == Meet.UNION){
+            this.meetOperation = unionOperation;
+        } else {
+            this.meetOperation = intersectionOperation;
+        }
     }
     
-    public Set<SetType> getInputSet(AnalysisType instruction){
+    @SuppressWarnings("deprecation")
+	protected SetType newSet() {
+    	try {
+			return setClass.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+    }
+    
+    @SuppressWarnings("deprecation")
+	protected MapType newMap() {
+    	try {
+			return mapClass.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+    }
+    
+    public SetType getInputSet(AnalysisType instruction){
         return mappedInputs.get(instruction);
     }
 
-    public Set<SetType> getOutputSet(AnalysisType instruction){
+    public SetType getOutputSet(AnalysisType instruction){
         return mappedOutputs.get(instruction);
     }
     
     protected void addEmptyInputSet(AnalysisType analysisType) {
-    	mappedInputs.put(analysisType, new HashSet<SetType>());
+    	mappedInputs.put(analysisType, newSet());
     }
     
     protected void addEmptyOutputSet(AnalysisType analysisType) {
-    	mappedOutputs.put(analysisType, new HashSet<SetType>());
+    	mappedOutputs.put(analysisType, newSet());
     }
     
-    protected void addOutputSet(AnalysisType anslysisType, Set<SetType> setToAdd) {
+    protected void addOutputSet(AnalysisType anslysisType, SetType setToAdd) {
     	mappedOutputs.put(anslysisType, setToAdd);
     }
     
-    protected void addInputSet(AnalysisType anslysisType, Set<SetType> setToAdd) {
+    protected void addInputSet(AnalysisType anslysisType, SetType setToAdd) {
     	mappedInputs.put(anslysisType, setToAdd);
     }
     
-    protected Map<AnalysisType, Set<SetType>> deepCopyOutputMap() {
-    	Map<AnalysisType, Set<SetType>> result = new HashMap<AnalysisType, Set<SetType>>();
+    protected MapType deepCopyOutputMap() {
+    	MapType result = newMap();
         for(AnalysisType key : mappedOutputs.keySet()){
-            Set<SetType> resultSet = new HashSet<SetType>();
+            SetType resultSet = newSet();
             resultSet.addAll(mappedOutputs.get(key));
             result.put(key, resultSet);
         }
         return result;
     }
     
-    protected Map<AnalysisType, Set<SetType>> deepCopyInputMap() {
-    	Map<AnalysisType, Set<SetType>> result = new HashMap<AnalysisType, Set<SetType>>();
+    protected MapType deepCopyInputMap() {
+    	MapType result = newMap();
         for(AnalysisType key : mappedInputs.keySet()){
-            Set<SetType> resultSet = new HashSet<SetType>();
+            SetType resultSet = newSet();
             resultSet.addAll(mappedInputs.get(key));
             result.put(key, resultSet);
         }
         return result;
     }
     
-    protected boolean changesHaveOccuredOnOutputs(Map<AnalysisType, Set<SetType>> cached){
+    protected boolean changesHaveOccuredOnOutputs(MapType cached){
         Set<AnalysisType> keys = mappedOutputs.keySet();
         for(AnalysisType key : keys){
             if(!cached.containsKey(key)){
                 return true;
             }
 
-            Set<SetType> actualData = mappedOutputs.get(key);
-            Set<SetType> cachedData = cached.get(key);
+            SetType actualData = mappedOutputs.get(key);
+            SetType cachedData = cached.get(key);
 
             if(actualData.size() != cachedData.size()){
                 return true;
@@ -142,15 +212,15 @@ public abstract class IterativeAnalysis<AnalysisType, SetType> implements Analys
         return false;
     }
     
-    protected boolean changesHaveOccuredOnInputs(Map<AnalysisType, Set<SetType>> cached){
+    protected boolean changesHaveOccuredOnInputs(MapType cached){
         Set<AnalysisType> keys = mappedInputs.keySet();
         for(AnalysisType key : keys){
             if(!cached.containsKey(key)){
                 return true;
             }
 
-            Set<SetType> actualData = mappedInputs.get(key);
-            Set<SetType> cachedData = cached.get(key);
+            SetType actualData = mappedInputs.get(key);
+            SetType cachedData = cached.get(key);
 
             if(actualData.size() != cachedData.size()){
                 return true;
@@ -168,22 +238,28 @@ public abstract class IterativeAnalysis<AnalysisType, SetType> implements Analys
     	StringBuilder sb = new StringBuilder();
     	for(AnalysisType analysisElem: this.mappedInputs.keySet()) {
     		sb.append("Input Set\r\n");
-    		Set<SetType> inputSet = mappedInputs.get(analysisElem);
-    		sb.append(inputSet.toString());
+    		SetType inputSet = mappedInputs.get(analysisElem);
+    		if(inputSet != null)
+    			sb.append(inputSet.toString());
+    		else
+    			sb.append("NULL");
     		sb.append("\n|\nV\n");
     		sb.append(analysisElem.toString());
-    		sb.append("|\nV\n");    		
+    		sb.append("\r\n|\nV\n");    		
     		sb.append("Output Set\r\n");
-    		Set<SetType> outputSet = mappedOutputs.get(analysisElem);
-    		sb.append(outputSet);
+    		SetType outputSet = mappedOutputs.get(analysisElem);
+    		if(outputSet != null)
+    			sb.append(outputSet);
+    		else
+    			sb.append("NULL");
     		sb.append("\r\n\r\n\r\n");
     	}
     	return sb.toString();
     }
     
     public void run() {
-    	runAnalysis(flowGraph, direction, meetOperation, semiLattice);
+    	runAnalysis(flowGraph, direction, meetOperation, semiLattice, copyKey);
     }
     
-    protected abstract void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<Set<SetType>>, Set<SetType>> meetOperation, Set<SetType> semiLattice);
+    protected abstract void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, Set<DataType> semiLattice, boolean copyKey);
 }

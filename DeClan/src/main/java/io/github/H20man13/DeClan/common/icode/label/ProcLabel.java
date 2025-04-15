@@ -36,4 +36,9 @@ public class ProcLabel extends Label {
             return false;
         }
     }
+
+	@Override
+	public ICode copy() {
+		return new ProcLabel(label);
+	}
 }

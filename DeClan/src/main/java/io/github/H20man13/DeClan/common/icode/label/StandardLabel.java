@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.icode.label;
 
+import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class StandardLabel extends Label {
@@ -30,4 +31,9 @@ public class StandardLabel extends Label {
             return false;
         }
     }
+
+	@Override
+	public ICode copy() {
+		return new StandardLabel(label);
+	}
 }

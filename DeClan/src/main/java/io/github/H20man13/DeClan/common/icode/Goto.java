@@ -71,4 +71,9 @@ public class Goto implements ICode {
 	public int hashCode() {
 		return label.hashCode();
 	}
+
+	@Override
+	public ICode copy() {
+		return new Goto(label);
+	}
 }

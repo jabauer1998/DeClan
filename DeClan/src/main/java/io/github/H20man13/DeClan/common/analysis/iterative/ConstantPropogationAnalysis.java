@@ -24,17 +24,17 @@ import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.OpUtil;
 import io.github.H20man13.DeClan.common.util.Utils;
 
-public class ConstantPropogationAnalysis extends InstructionAnalysis<Tuple<String, Exp>> {
+public class ConstantPropogationAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<String, Exp>>>, HashSet<Tuple<String, Exp>>, Tuple<String, Exp>> {
 
-    private Map<ICode, Set<Tuple<String, Exp>>> constDefinitions;
-    private Map<ICode, Set<Tuple<String, Exp>>> killDefinitions;
+    private Map<ICode, HashSet<Tuple<String, Exp>>> constDefinitions;
+    private Map<ICode, HashSet<Tuple<String, Exp>>> killDefinitions;
 
     public ConstantPropogationAnalysis(FlowGraph flowGraph) {
-        super(flowGraph, Direction.FORWARDS, new Function<List<Set<Tuple<String, Exp>>>, Set<Tuple<String, Exp>>>(){
+        super(flowGraph, Direction.FORWARDS, new Function<List<HashSet<Tuple<String, Exp>>>, HashSet<Tuple<String, Exp>>>(){
             @Override
-            public Set<Tuple<String, Exp>> apply(List<Set<Tuple<String, Exp>>> list) {
-                Set<Tuple<String, Exp>> resultSet = new HashSet<Tuple<String, Exp>>();
-                HashMap<String, Set<Exp>> hashMap = new HashMap<String, Set<Exp>>();
+            public HashSet<Tuple<String, Exp>> apply(List<HashSet<Tuple<String, Exp>>> list) {
+                HashSet<Tuple<String, Exp>> resultSet = new HashSet<Tuple<String, Exp>>();
+                HashMap<String, HashSet<Exp>> hashMap = new HashMap<String, HashSet<Exp>>();
 
                 for(Set<Tuple<String, Exp>> set : list){
                     for(Tuple<String, Exp> tup : set){
@@ -49,7 +49,7 @@ public class ConstantPropogationAnalysis extends InstructionAnalysis<Tuple<Strin
                 }
 
                 for(String key : hashMap.keySet()){
-                    Set<Exp> objValues = hashMap.get(key);
+                    HashSet<Exp> objValues = hashMap.get(key);
                     if(objValues.size() == 1){
                         for(Exp val :  objValues){
                             resultSet.add(new Tuple<String, Exp>(key, val));
@@ -59,15 +59,15 @@ public class ConstantPropogationAnalysis extends InstructionAnalysis<Tuple<Strin
 
                 return resultSet;
             }
-        });
+        }, true, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
 
-        this.constDefinitions = new HashMap<ICode, Set<Tuple<String, Exp>>>();
-        this.killDefinitions = new HashMap<ICode, Set<Tuple<String, Exp>>>();
+        this.constDefinitions = newMap();
+        this.killDefinitions = newMap();
 
         for(BlockNode block : flowGraph.getBlocks()){
             for(ICode icode : block.getICode()){
-                Set<Tuple<String, Exp>> setTuples = new HashSet<Tuple<String, Exp>>();
-                Set<Tuple<String, Exp>> killTuples = new HashSet<Tuple<String, Exp>>();
+                HashSet<Tuple<String, Exp>> setTuples = newSet();
+                HashSet<Tuple<String, Exp>> killTuples = newSet();
                 if(icode instanceof Assign){
                     Assign assICode = (Assign)icode;
                     if(assICode.isConstant()){
@@ -101,13 +101,13 @@ public class ConstantPropogationAnalysis extends InstructionAnalysis<Tuple<Strin
     }
 
     @Override
-    public Set<Tuple<String, Exp>> transferFunction(ICode instruction, Set<Tuple<String, Exp>> inputSet){
-        Set<Tuple<String, Exp>> result = new HashSet<Tuple<String, Exp>>();
+    public HashSet<Tuple<String, Exp>> transferFunction(ICode instruction, HashSet<Tuple<String, Exp>> inputSet){
+        HashSet<Tuple<String, Exp>> result = newSet();
         result.addAll(inputSet);
 
-        Set<Tuple<String, Exp>> finalResult = new HashSet<Tuple<String, Exp>>();
+        HashSet<Tuple<String, Exp>> finalResult = newSet();
 
-        Set<Tuple<String, Exp>> killSet = killDefinitions.get(instruction);
+        HashSet<Tuple<String, Exp>> killSet = killDefinitions.get(instruction);
         for(Tuple<String, Exp> res: result){
             String resTest = res.source;
             if(!Utils.containsExpInSet(killSet, resTest)){

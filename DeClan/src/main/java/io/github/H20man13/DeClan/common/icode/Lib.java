@@ -189,7 +189,7 @@ public class Lib implements ICode, Iterable<ICode> {
     public void addProcedureHeader(String procName){
         int end = endOfProcedureSection();
         addInstruction(end + 1, new ProcLabel(procName));
-        addInstruction(end + 2, new Return());
+        addInstruction(end + 2, new Return(procName));
     }
 
     public Lib(List<ICode> instructions){
@@ -534,4 +534,9 @@ public class Lib implements ICode, Iterable<ICode> {
     public int hashCode() {
     	return instructions.hashCode();
     }
+
+	@Override
+	public ICode copy() {
+		return new Lib(instructions);
+	}
 }

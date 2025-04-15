@@ -52,4 +52,14 @@ public class ProcSec implements ICode {
     public void replaceLabel(String from, String to) {
         //Do nothing  
     }
+
+	@Override
+	public ICode copy() {
+		return new ProcSec();
+	}
+	
+	@Override
+	public int hashCode() {
+		return ProcSec.class.hashCode();
+	}
 }

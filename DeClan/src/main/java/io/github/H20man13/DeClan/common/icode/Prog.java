@@ -248,4 +248,8 @@ public class Prog extends Lib implements ICode {
     public int hashCode() {
     	return instructions.hashCode();
     }
+    
+    public ICode copy() {
+    	return new Prog(instructions);
+    }
 }

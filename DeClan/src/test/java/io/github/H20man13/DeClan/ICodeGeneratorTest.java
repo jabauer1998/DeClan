@@ -69,11 +69,11 @@ public class ICodeGeneratorTest {
         try{
             Source mySource = new ReaderSource(new FileReader(programName));
             ErrorLog errLog = new ErrorLog();
-            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
+            MyDeClanLexer lexer = new MyDeClanLexer(mySource, null, errLog);
             MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
             Library prog = parser.parseLibrary();
             
-            MyICodeGenerator igen = new MyICodeGenerator(errLog);
+            MyICodeGenerator igen = new MyICodeGenerator(null, errLog);
             
             Lib program = igen.generateLibraryIr(prog);
             testReaderFile(program, expectedOutput);
@@ -89,11 +89,11 @@ public class ICodeGeneratorTest {
         try{
             Source mySource = new ReaderSource(new FileReader(programName));
             ErrorLog errLog = new ErrorLog();
-            MyDeClanLexer lexer = new MyDeClanLexer(mySource, errLog);
+            MyDeClanLexer lexer = new MyDeClanLexer(mySource, null, errLog);
             MyDeClanParser parser = new MyDeClanParser(lexer, errLog);
             Program prog = parser.parseProgram();
             
-            MyICodeGenerator igen = new MyICodeGenerator(errLog);
+            MyICodeGenerator igen = new MyICodeGenerator(null, errLog);
             
             Prog program = igen.generateProgramIr(prog);
             testReaderFile(program, expectedOutput);

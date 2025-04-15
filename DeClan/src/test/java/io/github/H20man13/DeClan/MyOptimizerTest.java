@@ -51,7 +51,7 @@ public class MyOptimizerTest {
         MyIrLexer lexer = new MyIrLexer(source, errLog);
         MyIrParser parser = new MyIrParser(lexer, errLog);
         Prog prog = parser.parseProgram();
-        MyOptimizer optimizer = new MyOptimizer(prog);
+        MyOptimizer optimizer = new MyOptimizer(null, prog);
         optimizer.performCommonSubExpressionElimination();
         //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
         //It is called within the Optimizers constructor
@@ -103,7 +103,7 @@ public class MyOptimizerTest {
         MyIrLexer lexer = new MyIrLexer(source, errLog);
         MyIrParser parser = new MyIrParser(lexer, errLog);
         Prog prog = parser.parseProgram();
-        MyOptimizer optimizer = new MyOptimizer(prog);
+        MyOptimizer optimizer = new MyOptimizer(null, prog);
         optimizer.performCommonSubExpressionElimination();
 
         Prog optimizedProg = optimizer.getICode();
@@ -151,7 +151,7 @@ public class MyOptimizerTest {
         MyIrLexer lexer = new MyIrLexer(source, errLog);
         MyIrParser parser = new MyIrParser(lexer, errLog);
         Prog prog = parser.parseProgram();
-        MyOptimizer optimizer = new MyOptimizer(prog);
+        MyOptimizer optimizer = new MyOptimizer(null, prog);
         optimizer.performDeadCodeElimination();
         //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
         //It is called within the Optimizers constructor
@@ -201,7 +201,7 @@ public class MyOptimizerTest {
         MyIrLexer lexer = new MyIrLexer(source, errLog);
         MyIrParser parser = new MyIrParser(lexer, errLog);
         Prog prog = parser.parseProgram();
-        MyOptimizer optimizer = new MyOptimizer(prog);
+        MyOptimizer optimizer = new MyOptimizer(null, prog);
         optimizer.performDeadCodeElimination();
         //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
         //It is called within the Optimizers constructor
@@ -242,7 +242,7 @@ public class MyOptimizerTest {
         MyIrParser parser = new MyIrParser(lexer, errLog);
         Prog prog = parser.parseProgram();
         
-        MyOptimizer optimizer = new MyOptimizer(prog);
+        MyOptimizer optimizer = new MyOptimizer(null, prog);
         optimizer.performConstantPropogation();
         //By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
         //It is called within the Optimizers constructor
@@ -312,7 +312,7 @@ public class MyOptimizerTest {
 		MyIrParser parser = new MyIrParser(lexer, errLog);
 		Prog prog = parser.parseProgram();
 		
-		MyOptimizer optimizer = new MyOptimizer(prog);
+		MyOptimizer optimizer = new MyOptimizer(null, prog);
 		optimizer.performPartialRedundancyElimination();
 		//By Default the commonSubExpressionElimination is ran when building the Dags in the FlowGraph
 		//It is called within the Optimizers constructor
