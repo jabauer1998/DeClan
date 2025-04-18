@@ -22,12 +22,12 @@ public abstract class BasicBlockAnalysis<MapType extends Map<FlowGraphNode, SetT
         super(flowGraph, direction, meetOperation, semiLattice, toCopy, mapClass, setClass);
     }
 
-    public BasicBlockAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, Set<DataType> semilattice, boolean toCopy, Class<MapType> mapClass, Class<SetType> setClass){
-        super(flowGraph, direction, meetOperation, semilattice, toCopy, mapClass, setClass);
+    public BasicBlockAnalysis(FlowGraph flowGraph, Direction direction, Set<DataType> semilattice, boolean toCopy, Class<MapType> mapClass, Class<SetType> setClass){
+        super(flowGraph, direction, semilattice, toCopy, mapClass, setClass);
     }
 
-    public BasicBlockAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, boolean toCopy, Class<MapType> mapClass, Class<SetType> setClass){
-        super(flowGraph, direction, meetOperation, toCopy, mapClass, setClass);
+    public BasicBlockAnalysis(FlowGraph flowGraph, Direction direction, boolean toCopy, Class<MapType> mapClass, Class<SetType> setClass){
+        super(flowGraph, direction, toCopy, mapClass, setClass);
     }
 
     public BasicBlockAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, boolean toCopy, Class<MapType> mapClass, Class<SetType> setClass){

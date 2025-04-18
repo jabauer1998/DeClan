@@ -10,8 +10,10 @@ import java.util.TreeSet;
 import java.util.function.Function;
 
 import io.github.H20man13.DeClan.common.Copyable;
+import io.github.H20man13.DeClan.common.CustomMeet;
 import io.github.H20man13.DeClan.common.analysis.AnalysisBase;
 import io.github.H20man13.DeClan.common.analysis.AnalysisBase.Direction;
+import io.github.H20man13.DeClan.common.exception.IterativeAnalysisException;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -39,7 +41,7 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
 		this.mappedOutputs = newMap();
 	    this.semiLattice = semiLattice;
 	    this.copyKey = copyKey;
-	        
+	    
         Function<List<SetType>,SetType> unionOperation = new Function<List<SetType>, SetType>() {
             @Override
             public SetType apply(List<SetType> t) {
@@ -68,20 +70,43 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
         }
 	}
 	
-	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, Set<DataType> semilattice, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
+	@SuppressWarnings("unchecked")
+	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Set<DataType> semilattice, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
         this.flowGraph = flowGraph;
         this.direction = direction;
-        this.meetOperation = meetOperation;
+        if(this instanceof CustomMeet) {
+        	CustomMeet<SetType, DataType> meetOp = (CustomMeet<SetType, DataType>)this;
+        	this.meetOperation = new Function<List<SetType>, SetType>() {
+				@Override
+				public SetType apply(List<SetType> t) {
+					return meetOp.performMeet(t);
+				}
+        	};
+        } else {
+        	throw new IterativeAnalysisException("IterativeAnalysis(Constructor)", "Error expected analysis type to inherit from CustomMeet");
+        }
+        
         this.semiLattice = semilattice;
         this.copyKey = copyKey;
 		this.mappedInputs = newMap();
 		this.mappedOutputs = newMap();
     }
 	
-	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
+	@SuppressWarnings("unchecked")
+	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
        this.flowGraph = flowGraph;
        this.direction = direction;
-       this.meetOperation = meetOperation;
+       if(this instanceof CustomMeet) {
+	       	CustomMeet<SetType, DataType> meetOp = (CustomMeet<SetType, DataType>)this;
+	       	this.meetOperation = new Function<List<SetType>, SetType>() {
+					@Override
+					public SetType apply(List<SetType> t) {
+						return meetOp.performMeet(t);
+					}
+	       	};
+       } else {
+       		throw new IterativeAnalysisException("IterativeAnalysis(Constructor)", "Error expected analysis type to inherit from CustomMeet");
+       }
        this.setClass = setClass;
        this.mapClass = mapClass;
        this.copyKey = copyKey;

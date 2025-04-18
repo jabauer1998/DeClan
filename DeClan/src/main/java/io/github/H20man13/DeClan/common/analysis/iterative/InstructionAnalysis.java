@@ -16,12 +16,12 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
         super(flowGraph, direction, meetOperation, semiLattice, copyKey, mapClass, setClass);
     }
 
-    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, Set<DataType> semilattice, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
-        super(flowGraph, direction, meetOperation, semilattice, copyKey, mapClass, setClass);
+    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Set<DataType> semilattice, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
+        super(flowGraph, direction, semilattice, copyKey, mapClass, setClass);
     }
 
-    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
-        super(flowGraph, direction, meetOperation, copyKey, mapClass, setClass);
+    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
+        super(flowGraph, direction, copyKey, mapClass, setClass);
     }
 
     public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
@@ -47,9 +47,10 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
 
             int time = 0;
             while(changesHaveOccuredOnOutputs(outputCache)){
-                outputCache = deepCopyOutputMap();
+            	outputCache = deepCopyOutputMap();
                 System.out.print("Running: ");
                 System.out.println(time);
+                
                 for(BlockNode block : flowGraph.getBlocks()){
                     SetType inputSet = newSet();
 
