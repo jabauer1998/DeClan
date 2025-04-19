@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
+import io.github.H20man13.DeClan.common.Config;
 import io.github.H20man13.DeClan.common.CustomMeet;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
@@ -31,8 +32,8 @@ implements CustomMeet<HashSet<Tuple<String, Exp>>, Tuple<String, Exp>>{
     private Map<ICode, HashSet<Tuple<String, Exp>>> constDefinitions;
     private Map<ICode, HashSet<Tuple<String, Exp>>> killDefinitions;
 
-    public ConstantPropogationAnalysis(FlowGraph flowGraph) {
-        super(flowGraph, Direction.FORWARDS, true, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
+    public ConstantPropogationAnalysis(FlowGraph flowGraph, Config cfg) {
+        super(flowGraph, Direction.FORWARDS, true, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
 
         this.constDefinitions = newMap();
         this.killDefinitions = newMap();

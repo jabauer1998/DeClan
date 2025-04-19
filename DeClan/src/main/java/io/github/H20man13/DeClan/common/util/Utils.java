@@ -197,6 +197,8 @@ public class Utils {
                 return true;
             } else if(lastICode instanceof Call){
                 return true;
+            } else if(lastICode instanceof Return){
+            	return true;
             } else if(lastICode instanceof End){
             	return true;
             } else {

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.Config;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
@@ -24,8 +25,8 @@ public class ReachingDefinitionsAnalysis extends InstructionAnalysis<HashMap<ICo
     private Map<ICode, HashSet<String>> genSets;
 
     @SuppressWarnings("unchecked")
-	public ReachingDefinitionsAnalysis(FlowGraph flowGraph, LiveVariableAnalysis liveAnal) {
-        super(flowGraph, Direction.FORWARDS, Meet.UNION, false, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
+	public ReachingDefinitionsAnalysis(FlowGraph flowGraph, LiveVariableAnalysis liveAnal, Config cfg) {
+        super(flowGraph, Direction.FORWARDS, Meet.UNION, false, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
 
         this.killSets = newMap();
         this.genSets = newMap();

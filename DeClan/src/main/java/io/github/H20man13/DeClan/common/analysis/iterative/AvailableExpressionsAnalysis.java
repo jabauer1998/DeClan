@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.Config;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
@@ -26,8 +27,8 @@ public class AvailableExpressionsAnalysis extends InstructionAnalysis<HashMap<IC
     private AnticipatedExpressionsAnalysis anticipatedAnalysis;
     private Map<ICode, Set<String>> killSets;
 
-    public AvailableExpressionsAnalysis(FlowGraph flowGraph, AnticipatedExpressionsAnalysis analysis, Set<Tuple<Exp, ICode.Type>> globalFlowSet) {
-        super(flowGraph, Direction.FORWARDS, Meet.INTERSECTION, globalFlowSet, false, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
+    public AvailableExpressionsAnalysis(FlowGraph flowGraph, AnticipatedExpressionsAnalysis analysis, Set<Tuple<Exp, ICode.Type>> globalFlowSet, Config cfg) {
+        super(flowGraph, Direction.FORWARDS, Meet.INTERSECTION, globalFlowSet, false, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
         killSets = new HashMap<ICode, Set<String>>();
         this.anticipatedAnalysis = analysis;
         for(BlockNode block : flowGraph.getBlocks()){

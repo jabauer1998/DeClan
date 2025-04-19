@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 
+import io.github.H20man13.DeClan.common.Config;
 import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.CustomMeet;
 import io.github.H20man13.DeClan.common.analysis.AnalysisBase;
@@ -26,13 +27,14 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
     private Class<MapType> mapClass;
     private Class<SetType> setClass;
     private boolean copyKey;
+    protected Config cfg;
 
     private MapType mappedOutputs;
     private MapType mappedInputs;
     
 	public abstract SetType transferFunction(AnalysisType type, SetType inputSet);
 	
-	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, Set<DataType> semiLattice, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass) {
+	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, Set<DataType> semiLattice, boolean copyKey, Config cfg, Class<MapType> mapClass, Class<SetType> setClass) {
 		this.flowGraph = flowGraph;
         this.direction = direction;
         this.mapClass = mapClass;
@@ -41,6 +43,7 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
 		this.mappedOutputs = newMap();
 	    this.semiLattice = semiLattice;
 	    this.copyKey = copyKey;
+	    this.cfg = cfg;
 	    
         Function<List<SetType>,SetType> unionOperation = new Function<List<SetType>, SetType>() {
             @Override
@@ -71,7 +74,7 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
 	}
 	
 	@SuppressWarnings("unchecked")
-	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Set<DataType> semilattice, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
+	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Set<DataType> semilattice, boolean copyKey, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
         this.flowGraph = flowGraph;
         this.direction = direction;
         if(this instanceof CustomMeet) {
@@ -85,7 +88,7 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
         } else {
         	throw new IterativeAnalysisException("IterativeAnalysis(Constructor)", "Error expected analysis type to inherit from CustomMeet");
         }
-        
+        this.cfg = cfg;
         this.semiLattice = semilattice;
         this.copyKey = copyKey;
 		this.mappedInputs = newMap();
@@ -93,7 +96,7 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
     }
 	
 	@SuppressWarnings("unchecked")
-	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
+	public IterativeAnalysis(FlowGraph flowGraph, Direction direction, boolean copyKey, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
        this.flowGraph = flowGraph;
        this.direction = direction;
        if(this instanceof CustomMeet) {
@@ -107,6 +110,7 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
        } else {
        		throw new IterativeAnalysisException("IterativeAnalysis(Constructor)", "Error expected analysis type to inherit from CustomMeet");
        }
+       this.cfg = cfg;
        this.setClass = setClass;
        this.mapClass = mapClass;
        this.copyKey = copyKey;
@@ -115,7 +119,7 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
        this.semiLattice = newSet();
     }
 
-    public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
+    public IterativeAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, boolean copyKey, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
     	this.flowGraph = flowGraph;
         this.direction = direction;
         this.mapClass = mapClass;
@@ -124,6 +128,7 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
 		this.mappedInputs = newMap();
 		this.mappedOutputs = newMap();
 	    this.semiLattice = newSet();
+	    this.cfg = cfg;
 	        
         Function<List<SetType>,SetType> unionOperation = new Function<List<SetType>, SetType>() {
             @Override
@@ -216,25 +221,59 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
     }
     
     protected boolean changesHaveOccuredOnOutputs(MapType cached){
-        Set<AnalysisType> keys = mappedOutputs.keySet();
-        for(AnalysisType key : keys){
-            if(!cached.containsKey(key)){
-                return true;
-            }
+    	if(cfg == null || !cfg.containsFlag("debug")){
+			Set<AnalysisType> keys = mappedOutputs.keySet();
+	        for(AnalysisType key : keys){
+	            if(!cached.containsKey(key)){
+	                return true;
+	            }
 
-            SetType actualData = mappedOutputs.get(key);
-            SetType cachedData = cached.get(key);
+	            SetType actualData = mappedOutputs.get(key);
+	            SetType cachedData = cached.get(key);
 
-            if(actualData.size() != cachedData.size()){
-                return true;
-            }
+	            if(actualData.size() != cachedData.size()){
+	                return true;
+	            }
 
-            if(!actualData.equals(cachedData)){
-                return true;
-            }
-        }
+	            if(!actualData.equals(cachedData)){
+	                return true;
+	            }
+	        }
+	        return false;
+    	} else {
+    		boolean result = false;
+    		Set<AnalysisType> keys = mappedOutputs.keySet();
+	        for(AnalysisType key : keys){
+	            if(!cached.containsKey(key)){
+	            	System.out.println("Cached map contains " + key + " and actual data does not");
+	                result = true;
+	                continue;
+	            }
 
-        return false;
+	            SetType actualData = mappedOutputs.get(key);
+	            SetType cachedData = cached.get(key);
+
+	            if(actualData.size() != cachedData.size()) {
+	            	System.out.println("For " + key + " actual data size not equal to cache data size!!!");
+	            	System.out.println("Actual data size: " + actualData.size());
+	            	System.out.println("Actual data: " + actualData.toString());
+	            	System.out.println("Cached data size: " + cachedData.size());
+	            	System.out.println("Cached data: " + cachedData.toString());
+	                result = true;
+	                continue;
+	            }
+
+	            if(!actualData.equals(cachedData)){
+	            	System.out.println("For " + key + " actual data not equal to cache data");
+	            	System.out.println("Actual data: " + actualData.toString());
+	            	System.out.println("Cached data: " + cachedData.toString());
+	                result = true;
+	                continue;
+	            }
+	        }
+	        
+	        return result;
+    	}
     }
     
     protected boolean changesHaveOccuredOnInputs(MapType cached){

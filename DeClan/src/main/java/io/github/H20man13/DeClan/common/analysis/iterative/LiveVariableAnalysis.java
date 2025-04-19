@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.Config;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
@@ -26,8 +27,8 @@ public class LiveVariableAnalysis extends InstructionAnalysis<HashMap<ICode, Has
     private Map<ICode, HashSet<String>> useSets;
 
     @SuppressWarnings("unchecked")
-	public LiveVariableAnalysis(FlowGraph flowGraph) {
-        super(flowGraph, Direction.BACKWARDS, Meet.UNION, false, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
+	public LiveVariableAnalysis(FlowGraph flowGraph, Config cfg) {
+        super(flowGraph, Direction.BACKWARDS, Meet.UNION, false, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
 
         this.defSets = newMap();
         this.useSets = newMap();

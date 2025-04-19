@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.Config;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
@@ -16,8 +17,8 @@ public class UsedExpressionAnalysis extends InstructionAnalysis<HashMap<ICode, H
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets;
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> latest;
 
-    public UsedExpressionAnalysis(FlowGraph flowGraph, Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets, Map<ICode, Set<Tuple<Exp, ICode.Type>>> latest) {
-        super(flowGraph, Direction.BACKWARDS, Meet.UNION, false, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
+    public UsedExpressionAnalysis(FlowGraph flowGraph, Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets, Map<ICode, Set<Tuple<Exp, ICode.Type>>> latest, Config cfg) {
+        super(flowGraph, Direction.BACKWARDS, Meet.UNION, false, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
 
         this.latest = latest;
         this.usedSets = usedSets;

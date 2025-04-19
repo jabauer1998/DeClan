@@ -836,7 +836,7 @@ public class MyOptimizer {
         if(this.globalFlowGraph == null){
             buildFlowGraph();
         }
-        this.propAnal = new ConstantPropogationAnalysis(this.globalFlowGraph);
+        this.propAnal = new ConstantPropogationAnalysis(this.globalFlowGraph, this.cfg);
         this.propAnal.run();
         
         if(this.cfg != null)
@@ -850,7 +850,7 @@ public class MyOptimizer {
         if(this.globalFlowGraph == null){
             buildFlowGraph();
         }
-        this.liveAnal = new LiveVariableAnalysis(this.globalFlowGraph);
+        this.liveAnal = new LiveVariableAnalysis(this.globalFlowGraph, this.cfg);
         this.liveAnal.run();
         
         if(this.cfg != null)
@@ -865,7 +865,7 @@ public class MyOptimizer {
             buildFlowGraph();
         if(this.liveAnal == null)
         	runLiveVariableAnalysis();
-        this.defAnal = new ReachingDefinitionsAnalysis(this.globalFlowGraph, this.liveAnal);
+        this.defAnal = new ReachingDefinitionsAnalysis(this.globalFlowGraph, this.liveAnal, this.cfg);
         this.defAnal.run();
         
         if(this.cfg != null)
@@ -901,7 +901,7 @@ public class MyOptimizer {
     private void runDominatorAnalysis() {
     	if(this.globalFlowGraph == null)
     		buildFlowGraph();
-    	this.domAnal = new DominatorAnalysis(this.globalFlowGraph);
+    	this.domAnal = new DominatorAnalysis(this.globalFlowGraph, this.cfg);
     	this.domAnal.run();
     	
     	if(this.cfg != null)
@@ -918,7 +918,7 @@ public class MyOptimizer {
     		buildGlobalExpressionsSemilattice();
     	if(this.anticipatedAnal == null)
     		runAnticipatedExpressionsAnalysis();
-    	this.availableAnal = new AvailableExpressionsAnalysis(this.globalFlowGraph, this.anticipatedAnal, this.globalExpressionSet);
+    	this.availableAnal = new AvailableExpressionsAnalysis(this.globalFlowGraph, this.anticipatedAnal, this.globalExpressionSet, this.cfg);
     	this.availableAnal.run();
     	
     	if(this.cfg != null)
@@ -933,7 +933,7 @@ public class MyOptimizer {
     		buildFlowGraph();
     	if(this.globalExpressionSet == null)
     		buildGlobalExpressionsSemilattice();
-    	this.anticipatedAnal = new AnticipatedExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet);
+    	this.anticipatedAnal = new AnticipatedExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet, this.cfg);
     	this.anticipatedAnal.run();
     	
     	if(this.cfg != null)
@@ -1007,7 +1007,7 @@ public class MyOptimizer {
     		buildUsedExpressionSets();
     	if(this.earliestSets == null)
     		buildEarliestSets();
-    	this.posponableAnal = new PostponableExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet, this.earliestSets, this.usedSets);
+    	this.posponableAnal = new PostponableExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet, this.earliestSets, this.usedSets, this.cfg);
     	this.posponableAnal.run();
     }
     
@@ -1096,7 +1096,7 @@ public class MyOptimizer {
     	if(this.latestSets == null)
     		this.buildLatestSets();
     	
-    	this.usedAnal = new UsedExpressionAnalysis(this.globalFlowGraph, this.usedSets, this.latestSets);
+    	this.usedAnal = new UsedExpressionAnalysis(this.globalFlowGraph, this.usedSets, this.latestSets, this.cfg);
     	this.usedAnal.run();
     }
     

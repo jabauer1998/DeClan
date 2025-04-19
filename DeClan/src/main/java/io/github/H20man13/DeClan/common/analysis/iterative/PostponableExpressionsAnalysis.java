@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.Config;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
@@ -25,8 +26,8 @@ public class PostponableExpressionsAnalysis extends InstructionAnalysis<HashMap<
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> earliest;
     
     @SuppressWarnings("unchecked")
-	public PostponableExpressionsAnalysis(FlowGraph flowGraph, Set<Tuple<Exp, ICode.Type>> globalFlowSet, Map<ICode, Set<Tuple<Exp, ICode.Type>>> earliest, Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets) {
-        super(flowGraph, Direction.FORWARDS, Meet.INTERSECTION, globalFlowSet, false, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
+	public PostponableExpressionsAnalysis(FlowGraph flowGraph, Set<Tuple<Exp, ICode.Type>> globalFlowSet, Map<ICode, Set<Tuple<Exp, ICode.Type>>> earliest, Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets, Config cfg) {
+        super(flowGraph, Direction.FORWARDS, Meet.INTERSECTION, globalFlowSet, false, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
         this.earliest = earliest;
         this.usedSets = usedSets;
     }

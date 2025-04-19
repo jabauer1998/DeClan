@@ -6,26 +6,27 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
+import io.github.H20man13.DeClan.common.Config;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.ICode;
 
 public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, SetType extends Set<DataType>, DataType> extends IterativeAnalysis<ICode, MapType, SetType, DataType> {
-    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, Set<DataType> semiLattice, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
-        super(flowGraph, direction, meetOperation, semiLattice, copyKey, mapClass, setClass);
+    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, Set<DataType> semiLattice, boolean copyKey, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
+        super(flowGraph, direction, meetOperation, semiLattice, copyKey, cfg, mapClass, setClass);
     }
 
-    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Set<DataType> semilattice, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
-        super(flowGraph, direction, semilattice, copyKey, mapClass, setClass);
+    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Set<DataType> semilattice, boolean copyKey, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
+        super(flowGraph, direction, semilattice, copyKey, cfg, mapClass, setClass);
     }
 
-    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
-        super(flowGraph, direction, copyKey, mapClass, setClass);
+    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, boolean copyKey, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
+        super(flowGraph, direction, copyKey, cfg, mapClass, setClass);
     }
 
-    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, boolean copyKey, Class<MapType> mapClass, Class<SetType> setClass){
-        super(flowGraph, direction, meetOperation, copyKey, mapClass, setClass);
+    public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, boolean copyKey, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
+        super(flowGraph, direction, meetOperation, copyKey, cfg, mapClass, setClass);
     }
 
     @Override
