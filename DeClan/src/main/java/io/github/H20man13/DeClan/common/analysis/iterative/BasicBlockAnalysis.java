@@ -38,8 +38,6 @@ public abstract class BasicBlockAnalysis<MapType extends Map<FlowGraphNode, SetT
     @Override
     protected void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, Set<DataType> semiLattice, boolean toCopy){
         if(direction == Direction.FORWARDS){
-            MapType outputCache = newMap();
-            
             if(toCopy) {
             	FlowGraphNode entry = flowGraph.getEntry().copy();
             	addInputSet(entry, newSet());
@@ -61,8 +59,9 @@ public abstract class BasicBlockAnalysis<MapType extends Map<FlowGraphNode, SetT
             	}
             }
 
-            while(changesHaveOccuredOnOutputs(outputCache)){
-                outputCache = deepCopyOutputMap();
+            MapType outputCache = null;
+            do{
+                outputCache = copyOutputsFromFlowGraph();
                 for(BlockNode block : flowGraph.getBlocks()){
                     SetType inputSet = newSet();
 
@@ -84,7 +83,7 @@ public abstract class BasicBlockAnalysis<MapType extends Map<FlowGraphNode, SetT
                         addOutputSet(block, outputSet);
                     }
                 }
-            }
+            } while(changesHaveOccuredOnOutputs(outputCache));
             
             if(toCopy) {
             	FlowGraphNode copy = flowGraph.getExit().copy();
@@ -95,8 +94,6 @@ public abstract class BasicBlockAnalysis<MapType extends Map<FlowGraphNode, SetT
                 addOutputSet(flowGraph.getExit(), newSet());
             }
         } else {
-            MapType inputCache = newMap();
-            
             if(toCopy) {
             	FlowGraphNode node = flowGraph.getExit().copy();
             	addOutputSet(node, newSet());
@@ -118,8 +115,9 @@ public abstract class BasicBlockAnalysis<MapType extends Map<FlowGraphNode, SetT
             	}
             }
 
-            while(changesHaveOccuredOnInputs(inputCache)){
-                inputCache = deepCopyInputMap();
+            MapType inputCache = null;
+            do{
+                inputCache = copyInputsFromFlowGraph();
                 List<BlockNode> blocks = flowGraph.getBlocks();
                 for(int b = blocks.size() - 1; b >= 0; b--){
                     BlockNode block = blocks.get(b);
@@ -142,7 +140,7 @@ public abstract class BasicBlockAnalysis<MapType extends Map<FlowGraphNode, SetT
                         addInputSet(block, inputSet);
                     }
                 }
-            }
+            } while(changesHaveOccuredOnInputs(inputCache));
             
             if(toCopy) {
             	addInputSet(flowGraph.getEntry().copy(), newSet());
@@ -150,6 +148,34 @@ public abstract class BasicBlockAnalysis<MapType extends Map<FlowGraphNode, SetT
             	addInputSet(flowGraph.getEntry(), newSet());
             }
         }
+    }
+    
+    @Override
+    protected MapType copyOutputsFromFlowGraph(FlowGraph flow){
+    	MapType newMap = newMap();
+    	for(FlowGraphNode node: flow) {
+    		if(node instanceof BlockNode) {
+    			BlockNode block = (BlockNode)node;
+    			SetType set = newSet();
+    			set.addAll(getOutputSet(block));
+    			newMap.put(block, set);
+    		}
+    	}
+    	return newMap;
+    }
+    
+    @Override
+    protected MapType copyInputsFromFlowGraph(FlowGraph flow) {
+    	MapType newMap = newMap();
+    	for(FlowGraphNode node: flow) {
+    		if(node instanceof BlockNode) {
+    			BlockNode block = (BlockNode)node;
+				SetType set = newSet();
+				set.addAll(getInputSet(block));
+				newMap.put(block, set);
+    		}
+    	}
+    	return newMap;
     }
 
     public abstract SetType transferFunction(FlowGraphNode instr, SetType inputSet);

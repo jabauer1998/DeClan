@@ -28,12 +28,46 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
     public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, boolean copyKey, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
         super(flowGraph, direction, meetOperation, copyKey, cfg, mapClass, setClass);
     }
+    
+    @Override
+    protected MapType copyOutputsFromFlowGraph(FlowGraph flow){
+    	MapType newMap = newMap();
+    	for(FlowGraphNode node: flow) {
+    		if(node instanceof BlockNode) {
+    			BlockNode block = (BlockNode)node;
+    			List<ICode> code = block.getICode();
+    			if(code.size() > 0) {
+    				ICode last = code.getLast();
+    				SetType set = newSet();
+    				set.addAll(getOutputSet(last));
+    				newMap.put(last, set);
+    			}
+    		}
+    	}
+    	return newMap;
+    }
+    
+    @Override
+    protected MapType copyInputsFromFlowGraph(FlowGraph flow) {
+    	MapType newMap = newMap();
+    	for(FlowGraphNode node: flow) {
+    		if(node instanceof BlockNode) {
+    			BlockNode block = (BlockNode)node;
+    			List<ICode> code = block.getICode();
+    			if(code.size() > 0) {
+    				ICode first = code.getFirst();
+    				SetType set = newSet();
+    				set.addAll(getInputSet(first));
+    				newMap.put(first, set);
+    			}
+    		}
+    	}
+    	return newMap;
+    }
 
     @Override
     protected void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, Set<DataType> semiLattice, boolean copyKey){
         if(direction == Direction.FORWARDS){
-            MapType outputCache = newMap();
-
             for(BlockNode block : flowGraph.getBlocks()){
             	if(block.getICode().size() > 0) {
             		ICode lastICode = block.getICode().getLast();
@@ -47,8 +81,9 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
             }
 
             int time = 0;
-            while(changesHaveOccuredOnOutputs(outputCache)){
-            	outputCache = deepCopyOutputMap();
+            MapType outputCache = null;
+            do{
+            	outputCache = copyOutputsFromFlowGraph();
                 System.out.print("Running: ");
                 System.out.println(time);
                 
@@ -78,10 +113,8 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
                     }
                 }
                 time++;
-            }
+            } while(changesHaveOccuredOnOutputs(outputCache));
         } else {
-            MapType inputCache = newMap();
-
             for(BlockNode block : flowGraph.getBlocks()){
             	if(!block.getICode().isEmpty()) {
             		ICode firstICode = block.getICode().getFirst();
@@ -94,8 +127,9 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
             	}
             }
 
-            while(changesHaveOccuredOnInputs(inputCache)){
-                inputCache = deepCopyInputMap();
+            MapType inputCache = null;
+            do{
+                inputCache = copyInputsFromFlowGraph();
                 List<BlockNode> blocks = flowGraph.getBlocks();
                 for(int b = blocks.size() - 1; b >= 0; b--){
                     BlockNode block = blocks.get(b);
@@ -126,7 +160,7 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
                         
                     }
                 }
-            }
+            }while(changesHaveOccuredOnInputs(inputCache));
         }
     }
 

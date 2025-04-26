@@ -18,6 +18,7 @@ import io.github.H20man13.DeClan.common.exception.IterativeAnalysisException;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.util.Utils;
 
 public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisType>, MapType extends Map<AnalysisType, SetType>, SetType extends Set<DataType>, DataType> implements AnalysisBase {
 	private FlowGraph flowGraph;
@@ -200,31 +201,22 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
     	mappedInputs.put(anslysisType, setToAdd);
     }
     
-    protected MapType deepCopyOutputMap() {
-    	MapType result = newMap();
-        for(AnalysisType key : mappedOutputs.keySet()){
-            SetType resultSet = newSet();
-            resultSet.addAll(mappedOutputs.get(key));
-            result.put(key, resultSet);
-        }
-        return result;
+    protected MapType copyOutputsFromFlowGraph() {
+    	return copyOutputsFromFlowGraph(flowGraph);
     }
     
-    protected MapType deepCopyInputMap() {
-    	MapType result = newMap();
-        for(AnalysisType key : mappedInputs.keySet()){
-            SetType resultSet = newSet();
-            resultSet.addAll(mappedInputs.get(key));
-            result.put(key, resultSet);
-        }
-        return result;
+    protected MapType copyInputsFromFlowGraph() {
+    	return copyInputsFromFlowGraph(flowGraph);
     }
+    
+    protected abstract MapType copyOutputsFromFlowGraph(FlowGraph flow);
+    protected abstract MapType copyInputsFromFlowGraph(FlowGraph flow);
     
     protected boolean changesHaveOccuredOnOutputs(MapType cached){
     	if(cfg == null || !cfg.containsFlag("debug")){
-			Set<AnalysisType> keys = mappedOutputs.keySet();
+			Set<AnalysisType> keys = cached.keySet();
 	        for(AnalysisType key : keys){
-	            if(!cached.containsKey(key)){
+	            if(!mappedOutputs.containsKey(key)){
 	                return true;
 	            }
 
@@ -241,11 +233,12 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
 	        }
 	        return false;
     	} else {
+    		Utils.createFile("test/temp/AnalysisCacheLog.txt");
     		boolean result = false;
-    		Set<AnalysisType> keys = mappedOutputs.keySet();
+    		Set<AnalysisType> keys = cached.keySet();
 	        for(AnalysisType key : keys){
-	            if(!cached.containsKey(key)){
-	            	System.out.println("Cached map contains " + key + " and actual data does not");
+	            if(!mappedOutputs.containsKey(key)){
+	            	Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "Actual map contains " + key + " and cached data does not\r\n");
 	                result = true;
 	                continue;
 	            }
@@ -254,19 +247,19 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
 	            SetType cachedData = cached.get(key);
 
 	            if(actualData.size() != cachedData.size()) {
-	            	System.out.println("For " + key + " actual data size not equal to cache data size!!!");
-	            	System.out.println("Actual data size: " + actualData.size());
-	            	System.out.println("Actual data: " + actualData.toString());
-	            	System.out.println("Cached data size: " + cachedData.size());
-	            	System.out.println("Cached data: " + cachedData.toString());
+	            	Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "For " + key + " actual data size not equal to cache data size!!!\r\n");
+	            	Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "Actual data size: " + actualData.size() + "\r\n");
+	            	Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "Actual data: " + actualData.toString() + "\r\n");
+	            	Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "Cached data size: " + cachedData.size() + "\r\n");
+	            	Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "Cached data: " + cachedData.toString() + "\r\n");
 	                result = true;
 	                continue;
 	            }
 
 	            if(!actualData.equals(cachedData)){
-	            	System.out.println("For " + key + " actual data not equal to cache data");
-	            	System.out.println("Actual data: " + actualData.toString());
-	            	System.out.println("Cached data: " + cachedData.toString());
+	            	Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "For " + key + " actual data not equal to cache data\r\n");
+	            	Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "Actual data: " + actualData.toString() + "\r\n");
+	            	Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "Cached data: " + cachedData.toString() + "\r\n");
 	                result = true;
 	                continue;
 	            }
@@ -277,9 +270,9 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
     }
     
     protected boolean changesHaveOccuredOnInputs(MapType cached){
-        Set<AnalysisType> keys = mappedInputs.keySet();
+        Set<AnalysisType> keys = cached.keySet();
         for(AnalysisType key : keys){
-            if(!cached.containsKey(key)){
+            if(!mappedInputs.containsKey(key)){
                 return true;
             }
 

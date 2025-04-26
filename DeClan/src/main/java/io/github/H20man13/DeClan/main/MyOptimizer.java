@@ -519,7 +519,7 @@ public class MyOptimizer {
         List<ICode> result = new LinkedList<ICode>();
         List<ICode> initialList = block.getICode();
 
-        Set<String> liveAtEndOfBlock = this.liveAnal.getInputSet(initialList.get(initialList.size() - 1));
+        Set<String> liveAtEndOfBlock = this.liveAnal.getInputSet(initialList.getLast());
 
         for(DagNode node : dag.getDagNodes()){
         	if(node instanceof DagIgnoredInstruction) {
