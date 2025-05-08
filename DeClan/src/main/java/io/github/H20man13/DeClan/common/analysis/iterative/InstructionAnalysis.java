@@ -81,12 +81,9 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
             	}
             }
 
-            int time = 0;
             MapType outputCache = null;
             do{
             	outputCache = copyOutputsFromFlowGraph();
-                System.out.print("Running: ");
-                System.out.println(time);
                 
                 for(BlockNode block : flowGraph.getBlocks()){
                     SetType inputSet = newSet();
@@ -113,7 +110,6 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
                     	}
                     }
                 }
-                time++;
             } while(changesHaveOccuredOnOutputs(outputCache));
         } else {
             for(BlockNode block : flowGraph.getBlocks()){

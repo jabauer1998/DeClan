@@ -1384,9 +1384,7 @@ public class MyOptimizer {
 
                             Tuple<IdentExp, Exp> sourceDestLeft = new Tuple<IdentExp, Exp>(binExpVal.left, binExpVal.left);
                             while(Utils.containsExpInSet(values, sourceDestLeft.dest)){
-                            	System.out.println("Tuple Before: " + sourceDestLeft.toString());
                                 sourceDestLeft = new Tuple<IdentExp, Exp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
-                                System.out.println("Tuple After:  " + sourceDestLeft.toString());
                                 changes = true;
                             }
     
@@ -1569,7 +1567,6 @@ public class MyOptimizer {
             }
             cleanUpOptimization(OptName.CONSTANT_PROPOGATION);
         }
-        System.out.println("Finished!!!");
     }
     
     public void performPartialRedundancyElimination() {
