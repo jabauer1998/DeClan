@@ -80,22 +80,38 @@ public class Utils {
         return false;
     }
 
-    public static Exp getExpFromSet(Set<Tuple<String, Exp>> tuples, String name){
-        for(Tuple<String, Exp> tuple : tuples){
-            if(tuple.source.equals(name)){
-                return tuple.dest;
+    public static Exp getExpFromSet(Set<Tuple<String, Exp>> tuples, Exp name){
+    	if(name instanceof IdentExp) {
+    		IdentExp nExp = (IdentExp)name;
+    		for(Tuple<String, Exp> tuple : tuples){
+                if(tuple.source.equals(nExp.ident)){
+                    return tuple.dest;
+                }
             }
-        }
+    	}
+        
         throw new UtilityException("getExpFromSet", "Tuple with name " + name + " was not found");
     }
 
-    public static boolean containsExpInSet(Set<Tuple<String, Exp>> tuples, String name){
-        for(Tuple<String, Exp> tuple : tuples){
-            if(tuple.source.equals(name)){
+    public static boolean containsExpInSet(Set<Tuple<String, Exp>> tuples, Exp name){
+    	if(name instanceof IdentExp) {
+    		IdentExp nExp = (IdentExp)name;
+    		for(Tuple<String, Exp> tuple : tuples){
+                if(tuple.source.equals(nExp.ident)){
+                    return true;
+                }
+            }
+    	}
+        return false;
+    }
+    
+    public static boolean containsExpInSet(HashSet<Tuple<String, Exp>> killSet, String resTest) {
+		for(Tuple<String, Exp> tuple : killSet){
+            if(tuple.source.equals(resTest)){
                 return true;
             }
-        }
-        return false;
+		}
+		return false;
     }
 
     public static DagNode createBinaryNode(boolean isDefinition, ICode.Scope origScope, BinExp.Operator op, String place, DagNode left, DagNode right) {
@@ -359,6 +375,7 @@ public class Utils {
 			char c = textToAppend.charAt(i);
 			writer.append(c);
 		}
+		writer.flush();
 		writer.close();
 	} catch (IOException e) {
 		throw new RuntimeException(e.toString());
@@ -373,6 +390,7 @@ public class Utils {
 			  char c = textToAppend.charAt(i);
 			  writer.write(c);
 		  }
+		  writer.flush();
 		  writer.close();
 	  } catch(IOException exp) {
 		  throw new RuntimeException(exp.toString());
@@ -391,5 +409,16 @@ public class Utils {
   @SuppressWarnings("unchecked")
   public static <ClassType> Class<ClassType> getClassType(Class<?> type){
 	  return (Class<ClassType>)type;
+  }
+
+  public static boolean containsDestExpInSet(Set<Tuple<String, Exp>> killSet, String resTest) {
+	  for(Tuple<String, Exp> elem: killSet){
+		  if(elem.dest instanceof IdentExp) {
+			  IdentExp ident = (IdentExp)elem.dest;
+			  if(ident.ident.equals(resTest))
+				  return true;
+		  }
+	  }
+	  return false;
   }
 }

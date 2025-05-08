@@ -39,7 +39,8 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
     			if(code.size() > 0) {
     				ICode last = code.getLast();
     				SetType set = newSet();
-    				set.addAll(getOutputSet(last));
+    				SetType output = getOutputSet(last);
+    				set.addAll(output);
     				newMap.put(last, set);
     			}
     		}

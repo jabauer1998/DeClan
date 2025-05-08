@@ -50,10 +50,9 @@ implements CustomMeet<HashSet<Tuple<String, Exp>>, Tuple<String, Exp>>{
                     } else if(assICode.value instanceof IdentExp){
                         Tuple<String, Exp> newTuple = new Tuple<String,Exp>(assICode.place, assICode.value);
                         setTuples.add(newTuple);
-                    } else {
-                        Tuple<String, Exp> killTuple = new Tuple<String, Exp>(assICode.place, null);
-                        killTuples.add(killTuple);
                     }
+                    Tuple<String, Exp> killTuple = new Tuple<String, Exp>(assICode.place, assICode.value);
+                    killTuples.add(killTuple);
                 } else if(icode instanceof Def){
                 	Def assICode = (Def)icode;
                     if(assICode.isConstant()){
@@ -62,9 +61,6 @@ implements CustomMeet<HashSet<Tuple<String, Exp>>, Tuple<String, Exp>>{
                     } else if(assICode.val instanceof IdentExp){
                         Tuple<String, Exp> newTuple = new Tuple<String,Exp>(assICode.label, assICode.val);
                         setTuples.add(newTuple);
-                    } else {
-                        Tuple<String, Exp> killTuple = new Tuple<String, Exp>(assICode.label, null);
-                        killTuples.add(killTuple);
                     }
                 }
 
@@ -84,9 +80,9 @@ implements CustomMeet<HashSet<Tuple<String, Exp>>, Tuple<String, Exp>>{
         HashSet<Tuple<String, Exp>> killSet = killDefinitions.get(instruction);
         for(Tuple<String, Exp> res: result){
             String resTest = res.source;
-            if(!Utils.containsExpInSet(killSet, resTest)){
-                finalResult.add(res);
-            }
+            if(!Utils.containsExpInSet(killSet, resTest))
+            	if(!Utils.containsDestExpInSet(killSet, resTest))
+            		finalResult.add(res);
         }
 
         finalResult.addAll(constDefinitions.get(instruction));
