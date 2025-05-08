@@ -410,15 +410,4 @@ public class Utils {
   public static <ClassType> Class<ClassType> getClassType(Class<?> type){
 	  return (Class<ClassType>)type;
   }
-
-  public static boolean containsDestExpInSet(Set<Tuple<String, Exp>> killSet, String resTest) {
-	  for(Tuple<String, Exp> elem: killSet){
-		  if(elem.dest instanceof IdentExp) {
-			  IdentExp ident = (IdentExp)elem.dest;
-			  if(ident.ident.equals(resTest))
-				  return true;
-		  }
-	  }
-	  return false;
-  }
 }

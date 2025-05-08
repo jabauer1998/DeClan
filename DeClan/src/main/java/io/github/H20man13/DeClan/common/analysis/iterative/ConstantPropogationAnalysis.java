@@ -80,8 +80,9 @@ implements CustomMeet<HashSet<Tuple<String, Exp>>, Tuple<String, Exp>>{
         HashSet<Tuple<String, Exp>> killSet = killDefinitions.get(instruction);
         for(Tuple<String, Exp> res: result){
             String resTest = res.source;
+            Exp resDest = res.dest;            
             if(!Utils.containsExpInSet(killSet, resTest))
-            	if(!Utils.containsDestExpInSet(killSet, resTest))
+            	if(!Utils.containsExpInSet(killSet, resDest))
             		finalResult.add(res);
         }
 
