@@ -1189,7 +1189,7 @@ public class MyOptimizer {
                                 changes = true;
                             }
     
-                            Tuple<IdentExp, Exp> sourceDestRight = new Tuple<IdentExp, Exp>(binExpVal.left, binExpVal.left);
+                            Tuple<IdentExp, Exp> sourceDestRight = new Tuple<IdentExp, Exp>(binExpVal.right, binExpVal.right);
                             while(Utils.containsExpInSet(values, sourceDestRight.dest)){
                                 sourceDestRight = new Tuple<IdentExp, Exp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                                 changes = true;
@@ -1392,7 +1392,7 @@ public class MyOptimizer {
                                 changes = true;
                             }
     
-                            Tuple<IdentExp, Exp> sourceDestRight = new Tuple<IdentExp, Exp>(binExpVal.left, binExpVal.left);
+                            Tuple<IdentExp, Exp> sourceDestRight = new Tuple<IdentExp, Exp>(binExpVal.right, binExpVal.right);
                             while(Utils.containsExpInSet(values, sourceDestRight.dest)){
                                 sourceDestRight = new Tuple<IdentExp, Exp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                                 changes = true;
