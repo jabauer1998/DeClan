@@ -368,6 +368,11 @@ public class MyOptimizer {
                 regenerateICodeForBlock(block, dag);
             }
             cleanUpOptimization(OptName.COMMON_SUB_EXPRESSION_ELIMINATION);
+            if(cfg != null)
+        		if(cfg.containsFlag("debug")) {
+        			Utils.createFile("test/temp/CommonSubExpressionEliminationICode.txt");
+        			Utils.writeToFile("test/temp/CommonSubExpressionEliminationICode.txt", this.intermediateCode.toString());
+        		}
     }
     
     private void resetLiveVariableAnalysis() {
@@ -436,7 +441,7 @@ public class MyOptimizer {
             case COMMON_SUB_EXPRESSION_ELIMINATION:
             	unsortFlowGraph();
             	rebuildFromFlowGraph();
-                resetFlowGraph();
+            	resetFlowGraph();
                 resetLiveVariableAnalysis();
                 break;
             case CONSTANT_PROPOGATION:
@@ -1138,6 +1143,11 @@ public class MyOptimizer {
             }
         	cleanUpOptimization(OptName.DEAD_CODE_ELIMINATION);
         }
+        if(cfg != null)
+    		if(cfg.containsFlag("debug")) {
+    			Utils.createFile("test/temp/DeadCodeEliminationICode.txt");
+    			Utils.writeToFile("test/temp/DeadCodeEliminationICode.txt", this.intermediateCode.toString());
+    		}
     }
 
     public void performConstantPropogation(){
@@ -1149,12 +1159,6 @@ public class MyOptimizer {
                 List<ICode> icodeList = block.getICode();
                 for(int i = 0; i < icodeList.size(); i++){
                     ICode icode = icodeList.get(i);
-                    if(icode.toString().equals("m0 := l9 <INT>"))
-                    	if(this.cfg != null)
-                    		if(this.cfg.containsFlag("debug")){
-                    			Utils.createFile("test/temp/constPropAfter.txt");
-                    			Utils.writeToFile("test/temp/constPropAfter.txt", this.propAnal.toString());
-                    		}
                     Set<Tuple<String, Exp>> values = this.propAnal.getInputSet(icode);
                     if(icode instanceof Assign){
                         Assign varICode = (Assign)icode;
@@ -1317,7 +1321,7 @@ public class MyOptimizer {
                                 }
                             } else {
                             	IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant()) ? sourceDestLeft.source : sourceDestLeft.dest);
-                            	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant()) ? sourceDestLeft.source : sourceDestLeft.dest);
+                            	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant()) ? sourceDestRight.source : sourceDestRight.dest);
                             	
                                 BinExp val = new BinExp(leftExp, binExpVal.op, rightExp);
                                 if(!val.equals(binExpVal)) {
@@ -1520,7 +1524,7 @@ public class MyOptimizer {
                                 }
                             } else {
                             	IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant()) ? sourceDestLeft.source : sourceDestLeft.dest);
-                            	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant()) ? sourceDestLeft.source : sourceDestLeft.dest);
+                            	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant()) ? sourceDestRight.source : sourceDestRight.dest);
                             	
                                 BinExp val = new BinExp(leftExp, binExpVal.op, rightExp);
                                 if(!val.equals(binExpVal)) {
@@ -1567,6 +1571,11 @@ public class MyOptimizer {
             }
             cleanUpOptimization(OptName.CONSTANT_PROPOGATION);
         }
+        if(cfg != null)
+    		if(cfg.containsFlag("debug")) {
+    			Utils.createFile("test/temp/ConstantPropogationICode.txt");
+    			Utils.writeToFile("test/temp/ConstantPropogationICode.txt", this.intermediateCode.toString());
+    		}
     }
     
     public void performPartialRedundancyElimination() {
@@ -1633,6 +1642,11 @@ public class MyOptimizer {
     		block.getBlock().setICode(newICode);
     	}
     	cleanUpOptimization(OptName.PARTIAL_REDUNDANCY_ELIMINATION);
+    	if(cfg != null)
+    		if(cfg.containsFlag("debug")) {
+    			Utils.createFile("test/temp/PartialRedundancyEliminationICode.txt");
+    			Utils.writeToFile("test/temp/PartialRedundancyEliminationICode.txt", this.intermediateCode.toString());
+    		}
     }
     
     private void buildDfst() {
