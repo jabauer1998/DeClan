@@ -91,6 +91,6 @@ public class If implements ICode {
 
 	@Override
 	public ICode copy() {
-		return new If(exp, ifTrue, ifFalse);
+		return new If((BinExp)exp.copy(), ifTrue, ifFalse);
 	}
 }

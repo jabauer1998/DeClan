@@ -111,6 +111,10 @@ public class Call implements ICode {
 
 	@Override
 	public ICode copy() {
-		return new Call(pname, params);
+		List<Def> newParams = new LinkedList<Def>();
+		for(Def param: params) {
+			newParams.add((Def)param.copy());
+		}
+		return new Call(pname, newParams);
 	}
 }
