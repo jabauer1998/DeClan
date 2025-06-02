@@ -84,7 +84,7 @@ public class IdentExp implements Exp{
     }
 
     @Override
-    public IdentExp copy() {
+    public NullableExp copy() {
         return new IdentExp(scope, ident);
     }
     

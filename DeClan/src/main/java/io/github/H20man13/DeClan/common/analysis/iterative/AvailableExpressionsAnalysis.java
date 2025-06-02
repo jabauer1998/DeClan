@@ -28,7 +28,7 @@ public class AvailableExpressionsAnalysis extends InstructionAnalysis<HashMap<IC
     private Map<ICode, Set<String>> killSets;
 
     public AvailableExpressionsAnalysis(FlowGraph flowGraph, AnticipatedExpressionsAnalysis analysis, Set<Tuple<Exp, ICode.Type>> globalFlowSet, Config cfg) {
-        super(flowGraph, Direction.FORWARDS, Meet.INTERSECTION, globalFlowSet, false, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
+        super(flowGraph, Direction.FORWARDS, Meet.INTERSECTION, globalFlowSet, true, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
         killSets = new HashMap<ICode, Set<String>>();
         this.anticipatedAnalysis = analysis;
         for(BlockNode block : flowGraph.getBlocks()){

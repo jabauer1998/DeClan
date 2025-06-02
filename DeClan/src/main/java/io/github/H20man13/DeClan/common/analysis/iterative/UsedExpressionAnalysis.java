@@ -18,7 +18,7 @@ public class UsedExpressionAnalysis extends InstructionAnalysis<HashMap<ICode, H
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> latest;
 
     public UsedExpressionAnalysis(FlowGraph flowGraph, Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets, Map<ICode, Set<Tuple<Exp, ICode.Type>>> latest, Config cfg) {
-        super(flowGraph, Direction.BACKWARDS, Meet.UNION, false, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
+        super(flowGraph, Direction.BACKWARDS, Meet.UNION, true, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
 
         this.latest = latest;
         this.usedSets = usedSets;

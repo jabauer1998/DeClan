@@ -52,21 +52,27 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.ICode.Scope;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Inline;
+import io.github.H20man13.DeClan.common.icode.Lib.SymbolSearchStrategy;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.IntExp;
+import io.github.H20man13.DeClan.common.icode.exp.NaaExp;
+import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
+import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
+import io.github.H20man13.DeClan.common.icode.section.BssSec;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.icode.section.SymSec;
+import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.common.region.LoopBodyRegion;
 import io.github.H20man13.DeClan.common.region.LoopRegion;
 import io.github.H20man13.DeClan.common.region.Region;
@@ -146,6 +152,42 @@ public class MyOptimizer {
         }
         return toRet;
     }
+    
+    private static Map<String, BlockNode> findSectionExitPoints(List<BlockNode> nodeList){
+    	Map<String, BlockNode> toRet = new HashMap<String, BlockNode>();
+    	String lastBlockNode = null;
+    	for(int i = 0; i < nodeList.size(); i++) {
+    		BlockNode node = nodeList.get(i);
+    		BasicBlock block = node.getBlock();
+    		if(Utils.beginningOfBlockIsSection(block)) {
+    			ICode first = block.getIcode().getFirst();
+    			if(first instanceof SymSec){
+    				lastBlockNode = "SymSec";
+    			} else if(first instanceof DataSec) {
+    				BlockNode previous = nodeList.get(i - 1);
+    				toRet.put(lastBlockNode, previous);
+    				lastBlockNode = "DataSec";
+    			} else if(first instanceof BssSec) {
+    				BlockNode previous = nodeList.get(i - 1);
+    				toRet.put(lastBlockNode, previous);
+    				lastBlockNode = "BssSec";
+    			} else if(first instanceof CodeSec) {
+    				BlockNode previous = nodeList.get(i - 1);
+    				toRet.put(lastBlockNode, previous);
+    				lastBlockNode = "CodeSec";
+    			} else if(first instanceof ProcSec) {
+    				BlockNode previous = nodeList.get(i - 1);
+    				toRet.put(lastBlockNode, previous);
+    				lastBlockNode = "ProcSec";
+    			}
+    		}
+    	}
+    	
+    	BlockNode lastNode = nodeList.getLast();
+    	toRet.put(lastBlockNode, lastNode);
+    	
+    	return toRet;
+    }
 
     private static Map<String, BlockNode> findBranchEntryPoints(List<BlockNode> nodes){
         Map<String, BlockNode> toRet = new HashMap<String, BlockNode>();
@@ -198,6 +240,41 @@ public class MyOptimizer {
                 }
             }
         }
+    }
+    
+    private static void linkUpSections(List<BlockNode> nodes, Map<String, BlockNode> sectionTails) {
+    	for(int i = 0; i < nodes.size(); i++) {
+    		BlockNode current = nodes.get(i);
+    		BasicBlock block = current.getBlock();
+    		if(Utils.beginningOfBlockIsSection(block)){
+    			ICode icodeFirst = block.getIcode().getFirst();
+    			if(icodeFirst instanceof DataSec) {
+    				BlockNode previous = sectionTails.get("SymSec");
+    				previous.addSuccessor(current);
+    				current.addPredecessor(previous);
+    			} else if(icodeFirst instanceof BssSec) {
+    				BlockNode previous = sectionTails.get("SymSec");
+    				previous.addSuccessor(current);
+    				current.addPredecessor(previous);
+    			} else if(icodeFirst instanceof CodeSec) {
+    				BlockNode bssSec = sectionTails.get("BssSec");
+    				BlockNode dataSec = sectionTails.get("DataSec");
+    				
+    				current.addPredecessor(dataSec);
+    				current.addPredecessor(bssSec);
+    				dataSec.addSuccessor(current);
+    				bssSec.addSuccessor(current);
+    			}
+    		} else if(Utils.beginningOfBlockIsProcedureHeader(block)) {
+    			BlockNode bssSec = sectionTails.get("BssSec");
+    			BlockNode dataSec = sectionTails.get("DataSec");
+    			
+    			bssSec.addSuccessor(current);
+    			dataSec.addSuccessor(current);
+    			current.addPredecessor(bssSec);
+    			current.addPredecessor(dataSec);
+    		}
+    	}
     }
 
     private static void linkUpJumps(List<BlockNode> nodes, Map<String, BlockNode> branchLabels){
@@ -254,12 +331,18 @@ public class MyOptimizer {
     		BasicBlock currentBlock = current.getBlock();
     		if(!Utils.endOfBlockIsJump(currentBlock)) {
     			BlockNode nextNode = nodes.get(i + 1);
-    			nextNode.addPredecessor(current);
-    			current.addSuccessor(nextNode);
+    			BasicBlock nextBlock = nextNode.getBlock();
+    			if(!Utils.beginningOfBlockIsSection(nextBlock)) {
+    				nextNode.addPredecessor(current);
+    				current.addSuccessor(nextNode);
+    			}
     		} else if(Utils.endOfBlockIsProcedureCall(currentBlock)) {
     			BlockNode nextNode = nodes.get(i + 1);
-    			nextNode.addPredecessor(current);
-    			current.addSuccessor(nextNode);
+    			BasicBlock nextBlock = nextNode.getBlock();
+    			if(!Utils.beginningOfBlockIsSection(nextBlock)) {
+    				nextNode.addPredecessor(current);
+    				current.addSuccessor(nextNode);
+    			}
     		}
     	}
     }
@@ -309,6 +392,9 @@ public class MyOptimizer {
 
         Map<String, BlockNode> codeLabeledNodes = findBranchEntryPoints(nodeList);
         linkUpJumps(nodeList, codeLabeledNodes);
+        
+        Map<String, BlockNode> sectionExitPoints = findSectionExitPoints(nodeList);
+        linkUpSections(nodeList, sectionExitPoints);
 
         /*
         Map<String, BlockNode> procedureExitNodes = findProcedureExitPoints(nodeList);
@@ -820,16 +906,32 @@ public class MyOptimizer {
             if(i == 0){
                 //First Statement is allways a leader
                 firsts.add(i);
-            } else if(intermediateInstruction instanceof Label || intermediateInstruction instanceof ProcLabel){
+            } else if(intermediateInstruction instanceof Label){
                 //Target of Jumps are allways leaders
                 firsts.add(i);
+            } else if(intermediateInstruction instanceof BssSec) {
+            	firsts.add(i);
+            } else if(intermediateInstruction instanceof DataSec){
+            	firsts.add(i);
+            } else if(intermediateInstruction instanceof CodeSec){
+            	firsts.add(i);
+            } else if(intermediateInstruction instanceof SymSec) {
+            	firsts.add(i);
             } else if(i + 1 < intermediateCode.size() && intermediateInstruction.isBranch()){
                 //First instruction following an If/Goto/Proc/Call are leaders
                 firsts.add(i + 1);
                 //To prevent loading a Label as a first twice
                 ICode nextInstruction = intermediateCode.get(i + 1);
-                if(nextInstruction instanceof Label || nextInstruction instanceof ProcLabel){
+                if(nextInstruction instanceof Label){
                     i++;
+                } else if(nextInstruction instanceof SymSec) {
+                	i++;
+                } else if(nextInstruction instanceof DataSec) {
+                	i++;
+                } else if(nextInstruction instanceof BssSec) {
+                	i++;
+                } else if(nextInstruction instanceof CodeSec) {
+                	i++;
                 }
             }
         }
@@ -855,7 +957,7 @@ public class MyOptimizer {
         if(this.globalFlowGraph == null){
             buildFlowGraph();
         }
-        this.liveAnal = new LiveVariableAnalysis(this.globalFlowGraph, this.cfg);
+        this.liveAnal = new LiveVariableAnalysis(this.intermediateCode, this.globalFlowGraph, this.cfg);
         this.liveAnal.run();
         
         if(this.cfg != null)
@@ -973,7 +1075,7 @@ public class MyOptimizer {
         			if(!availableSet.contains(anticipatedExp))
         				earliestSet.add(anticipatedExp);
         		}
-        		this.earliestSets.put(icode, earliestSet);
+        		this.earliestSets.put(icode.copy(), earliestSet);
     		}
     	}
     }
@@ -1000,7 +1102,7 @@ public class MyOptimizer {
     					toAdd.add(new Tuple<Exp, ICode.Type>(param.val, param.type));
     				}
     			}
-    			this.usedSets.put(icode, toAdd);
+    			this.usedSets.put(icode.copy(), toAdd);
     		}
     	}
     }
@@ -1088,7 +1190,7 @@ public class MyOptimizer {
         		secondPartOfEquation.addAll(firstPartOfEquation);
         		secondPartOfEquation.retainAll(forthPartOfEquation);
         		
-        		this.latestSets.put(instruction, secondPartOfEquation);
+        		this.latestSets.put(instruction.copy(), secondPartOfEquation);
         	}
     	}
     }
@@ -1130,11 +1232,24 @@ public class MyOptimizer {
                     } else if(icode instanceof Def){
                     	Def assICode = (Def)icode;
                     	Set<String> liveVariables = this.liveAnal.getOutputSet(icode);
-                        if(liveVariables.contains(assICode.label)){
+                        if(assICode.scope == Scope.RETURN || liveVariables.contains(assICode.label)){
                             result.add(assICode);
                         } else {
                         	changes = true;
                         }
+                    } else if(icode instanceof Call){
+                    	Call myCall = (Call)icode;
+                    	if(this.intermediateCode.containsEntry(myCall.pname, SymEntry.INTERNAL| SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME)) {
+                    		SymEntry data = this.intermediateCode.getVariableData(myCall.pname, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME);
+                    		Set<String> liveVariables = this.liveAnal.getOutputSet(icode);
+                    		if(liveVariables.contains(data.icodePlace)) {
+                    			result.add(icode);
+                    		} else {
+                    			changes = true;
+                    		}
+                    	} else {
+                    		result.add(icode);
+                    	}
                     } else {
                         result.add(icode);
                     }
@@ -1160,156 +1275,161 @@ public class MyOptimizer {
                 List<ICode> icodeList = block.getICode();
                 for(int i = 0; i < icodeList.size(); i++){
                     ICode icode = icodeList.get(i);
-                    Set<Tuple<String, Exp>> values = this.propAnal.getInputSet(icode);
+                    Set<Tuple<String, NullableExp>> values = this.propAnal.getInputSet(icode);
                     if(icode instanceof Assign){
                         Assign varICode = (Assign)icode;
                         if(varICode.value instanceof IdentExp){
                             IdentExp identVal = (IdentExp)varICode.value;
                             
-                            Tuple<IdentExp, Exp> sourceDestRight = new Tuple<IdentExp, Exp>(identVal, identVal);
-                            while(Utils.containsExpInSet(values, sourceDestRight.dest)){
-                                sourceDestRight = new Tuple<IdentExp, Exp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                            Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(identVal, identVal);
+                            while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
+                                sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                             }
                             
                             if(sourceDestRight.dest.isConstant()) {
                             	changes = true;
-                            	varICode.value = sourceDestRight.dest;
-                            } else {
+                            	varICode.value = (Exp)sourceDestRight.dest;
+                            } else if(sourceDestRight.dest instanceof IdentExp) {
                             	if(!identVal.equals(sourceDestRight.dest)) {
                             		changes = true;
-                            		varICode.value = sourceDestRight.dest;
+                            		varICode.value = (Exp)sourceDestRight.dest;
+                            	}
+                            } else {
+                            	if(!identVal.equals(sourceDestRight.source)) {
+                            		changes = true;
+                            		varICode.value = (Exp)sourceDestRight.source;
                             	}
                             }
                         } else if(varICode.value instanceof BinExp){
                             BinExp binExpVal = (BinExp)varICode.value;
 
-                            Tuple<IdentExp, Exp> sourceDestLeft = new Tuple<IdentExp, Exp>(binExpVal.left, binExpVal.left);
-                            while(Utils.containsExpInSet(values, sourceDestLeft.dest)){
-                                sourceDestLeft = new Tuple<IdentExp, Exp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
+                            Tuple<IdentExp, NullableExp> sourceDestLeft = new Tuple<IdentExp, NullableExp>(binExpVal.left, binExpVal.left);
+                            while(Utils.containsExpInSet(values, sourceDestLeft.dest) && !Utils.scopeIsGlobal(sourceDestLeft.dest)){
+                                sourceDestLeft = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
                             }
     
-                            Tuple<IdentExp, Exp> sourceDestRight = new Tuple<IdentExp, Exp>(binExpVal.right, binExpVal.right);
-                            while(Utils.containsExpInSet(values, sourceDestRight.dest)){
-                                sourceDestRight = new Tuple<IdentExp, Exp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                            Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(binExpVal.right, binExpVal.right);
+                            while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
+                                sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                             }
 
                             if(sourceDestLeft.dest.isConstant() && sourceDestRight.dest.isConstant()){
                                 switch(binExpVal.op){
                                     case IEQ:
-                                        Object leftValEq = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValEq = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValEq = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValEq = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultEq = OpUtil.equal(leftValEq, rightValEq);
                                         varICode.value = ConversionUtils.valueToExp(resultEq);
                                         changes = true;
                                         break;
                                     case INE:
-                                        Object leftValNe = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValNe = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValNe = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValNe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultNe = OpUtil.notEqual(leftValNe, rightValNe);
                                         varICode.value = ConversionUtils.valueToExp(resultNe);
                                         changes = true;
                                         break;
                                     case BEQ:
-                                        Object leftValEq1 = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValEq1 = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValEq1 = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValEq1 = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultEq1 = OpUtil.equal(leftValEq1, rightValEq1);
                                         varICode.value = ConversionUtils.valueToExp(resultEq1);
                                         changes = true;
                                         break;
                                     case BNE:
-                                        Object leftValNe1 = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValNe1 = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValNe1 = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValNe1 = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultNe1 = OpUtil.notEqual(leftValNe1, rightValNe1);
                                         varICode.value = ConversionUtils.valueToExp(resultNe1);
                                         changes = true;
                                         break;
                                     case IADD:
-                                        Object leftValueIAdd = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueIAdd = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueIAdd = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueIAdd = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIAdd = OpUtil.iAdd(leftValueIAdd, rightValueIAdd);
                                         varICode.value = ConversionUtils.valueToExp(resultIAdd);
                                         changes = true;
                                         break;
                                     case ISUB:
-                                        Object leftValueISub = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueISub = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueISub = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueISub = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultISub = OpUtil.iSub(leftValueISub, rightValueISub);
                                         varICode.value = ConversionUtils.valueToExp(resultISub);
                                         changes = true;
                                         break;
                                     case ILSHIFT:
-                                        Object leftValueILShift = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueILShift = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueILShift = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueILShift = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultILShift = OpUtil.leftShift(leftValueILShift, rightValueILShift);
                                         varICode.value = ConversionUtils.valueToExp(resultILShift);
                                         changes = true;
                                         break;
                                     case IRSHIFT:
-                                        Object leftValueIRShift = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueIRShift = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueIRShift = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueIRShift = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIRShift = OpUtil.rightShift(leftValueIRShift, rightValueIRShift);
                                         varICode.value = ConversionUtils.valueToExp(resultIRShift);
                                         changes = true;
                                         break;
                                     case IAND: 
-                                        Object leftValueIAnd = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueIAnd = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueIAnd = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueIAnd = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIAnd = OpUtil.bitwiseAnd(leftValueIAnd, rightValueIAnd);
                                         varICode.value = ConversionUtils.valueToExp(resultIAnd);
                                         changes = true;
                                         break;
                                     case IOR:
-                                        Object leftValueIOr = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueIOr = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueIOr = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueIOr = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIOr = OpUtil.bitwiseOr(leftValueIOr, rightValueIOr);
                                         varICode.value = ConversionUtils.valueToExp(resultIOr);
                                         changes = true;
                                         break;
                                     case IXOR:
-                                        Object leftValueXOr = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueXOr = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueXOr = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueXOr = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultXor = OpUtil.bitwiseXor(leftValueXOr, rightValueXOr);
                                         varICode.value = ConversionUtils.valueToExp(resultXor);
                                         changes = true;
                                         break;
                                     case GE:
-                                        Object leftValueGe = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueGe = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueGe = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueGe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultValueGe = OpUtil.greaterThanOrEqualTo(leftValueGe, rightValueGe);
                                         varICode.value = ConversionUtils.valueToExp(resultValueGe);
                                         changes = true;
                                         break;
                                     case GT:
-                                        Object leftValueGt = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueGt = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueGt = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueGt = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultValueGt = OpUtil.greaterThan(leftValueGt, rightValueGt);
                                         varICode.value = ConversionUtils.valueToExp(resultValueGt);
                                         changes = true;
                                         break;
                                     case LE:
-                                        Object leftValueLe = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueLe = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueLe = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueLe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLe = OpUtil.lessThanOrEqualTo(leftValueLe, rightValueLe);
                                         varICode.value = ConversionUtils.valueToExp(resultLe);
                                         changes = true;
                                         break;
                                     case LT:
-                                        Object leftValueLt = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueLt = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueLt = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueLt = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLt = OpUtil.lessThan(leftValueLt, rightValueLt);
                                         varICode.value = ConversionUtils.valueToExp(resultLt);
                                         changes = true;
                                         break;
                                     case LAND:
-                                        Object leftValueLand = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueLand = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueLand = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueLand = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLand = OpUtil.and(leftValueLand, rightValueLand);
                                         varICode.value = ConversionUtils.valueToExp(resultLand);
                                         changes = true;
                                         break;
                                     case LOR:
-                                        Object leftValueLor = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueLor = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueLor = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueLor = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLor = OpUtil.or(leftValueLor, rightValueLor);
                                         varICode.value = ConversionUtils.valueToExp(resultLor);
                                         changes = true;
@@ -1318,8 +1438,8 @@ public class MyOptimizer {
                                         throw new OptimizerException(icode.getClass().getEnclosingMethod().getName(), "UnExpected binary operation found when optomizing expression " + varICode.value);
                                 }
                             } else {
-                            	IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant()) ? sourceDestLeft.source : sourceDestLeft.dest);
-                            	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant()) ? sourceDestRight.source : sourceDestRight.dest);
+                            	IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant() || sourceDestLeft.dest instanceof NaaExp) ? sourceDestLeft.source : sourceDestLeft.dest);
+                            	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : sourceDestRight.dest);
                             	
                                 BinExp val = new BinExp(leftExp, binExpVal.op, rightExp);
                                 if(!val.equals(binExpVal)) {
@@ -1330,21 +1450,21 @@ public class MyOptimizer {
                         } else if(varICode.value instanceof UnExp){
                             UnExp unExpVal = (UnExp)varICode.value;
     
-                            Tuple<IdentExp, Exp> sourceDestRight = new Tuple<IdentExp, Exp>(unExpVal.right, unExpVal.right);
-                            while(Utils.containsExpInSet(values, sourceDestRight.dest)){
-                                sourceDestRight = new Tuple<IdentExp, Exp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                            Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(unExpVal.right, unExpVal.right);
+                            while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
+                                sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                             }
 
                             if(sourceDestRight.dest.isConstant()){
                                 switch(unExpVal.op){
                                     case INOT:
-                                        Object rightValueINot = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object rightValueINot = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultINot = OpUtil.bitwiseNot(rightValueINot);
                                         varICode.value = ConversionUtils.valueToExp(resultINot);
                                         changes = true;
                                         break;
                                     case BNOT:
-                                        Object rightValueBNot = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object rightValueBNot = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultBNot = OpUtil.not(rightValueBNot);
                                         varICode.value = ConversionUtils.valueToExp(resultBNot);
                                         changes = true;
@@ -1352,8 +1472,14 @@ public class MyOptimizer {
                                     default:
                                         throw new OptimizerException(sourceDestRight.dest.getClass().getEnclosingMethod().getName(), "Error invalid operation in " + unExpVal);
                                 }
-                            } else {
+                            } else if(sourceDestRight.dest instanceof IdentExp) {
                             	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.dest);
+                            	if(!newExp.equals(unExpVal)) {
+                            		changes = true;
+                            		varICode.value = newExp;
+                            	}
+                            } else {
+                            	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.source);
                             	if(!newExp.equals(unExpVal)) {
                             		changes = true;
                             		varICode.value = newExp;
@@ -1365,150 +1491,155 @@ public class MyOptimizer {
                         if(varICode.val instanceof IdentExp){
                             IdentExp identVal = (IdentExp)varICode.val;
                             
-                            Tuple<IdentExp, Exp> sourceDestRight = new Tuple<IdentExp, Exp>(identVal, identVal);
-                            while(Utils.containsExpInSet(values, sourceDestRight.dest)){
-                                sourceDestRight = new Tuple<IdentExp, Exp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                            Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(identVal, identVal);
+                            while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
+                                sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                             }
                             
                             if(sourceDestRight.dest.isConstant()) {
                             	changes = true;
-                            	varICode.val = sourceDestRight.dest;
-                            } else {
+                            	varICode.val = (Exp)sourceDestRight.dest;
+                            } else if(sourceDestRight.dest instanceof IdentExp) {
                             	if(!identVal.equals(sourceDestRight.dest)) {
                             		changes = true;
-                            		varICode.val = sourceDestRight.dest;
+                            		varICode.val = (Exp)sourceDestRight.dest;
+                            	}
+                            } else {
+                            	if(!identVal.equals(sourceDestRight.source)) {
+                            		changes = true;
+                            		varICode.val = (Exp)sourceDestRight.source;
                             	}
                             }
                         } else if(varICode.val instanceof BinExp){
                             BinExp binExpVal = (BinExp)varICode.val;
 
-                            Tuple<IdentExp, Exp> sourceDestLeft = new Tuple<IdentExp, Exp>(binExpVal.left, binExpVal.left);
-                            while(Utils.containsExpInSet(values, sourceDestLeft.dest)){
-                                sourceDestLeft = new Tuple<IdentExp, Exp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
+                            Tuple<IdentExp, NullableExp> sourceDestLeft = new Tuple<IdentExp, NullableExp>(binExpVal.left, binExpVal.left);
+                            while(Utils.containsExpInSet(values, sourceDestLeft.dest) && !Utils.scopeIsGlobal(sourceDestLeft.dest)){
+                                sourceDestLeft = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
                             }
     
-                            Tuple<IdentExp, Exp> sourceDestRight = new Tuple<IdentExp, Exp>(binExpVal.right, binExpVal.right);
-                            while(Utils.containsExpInSet(values, sourceDestRight.dest)){
-                                sourceDestRight = new Tuple<IdentExp, Exp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                            Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(binExpVal.right, binExpVal.right);
+                            while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
+                                sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                             }
 
                             if(sourceDestLeft.dest.isConstant() && sourceDestRight.dest.isConstant()){
                                 switch(binExpVal.op){
                                     case IEQ:
-                                        Object leftValEq = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValEq = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValEq = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValEq = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultEq = OpUtil.equal(leftValEq, rightValEq);
                                         varICode.val = ConversionUtils.valueToExp(resultEq);
                                         changes = true;
                                         break;
                                     case INE:
-                                        Object leftValNe = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValNe = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValNe = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValNe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultNe = OpUtil.notEqual(leftValNe, rightValNe);
                                         varICode.val = ConversionUtils.valueToExp(resultNe);
                                         changes = true;
                                         break;
                                     case BEQ:
-                                        Object leftValEq1 = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValEq1 = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValEq1 = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValEq1 = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultEq1 = OpUtil.equal(leftValEq1, rightValEq1);
                                         varICode.val = ConversionUtils.valueToExp(resultEq1);
                                         changes = true;
                                         break;
                                     case BNE:
-                                        Object leftValNe1 = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValNe1 = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValNe1 = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValNe1 = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultNe1 = OpUtil.notEqual(leftValNe1, rightValNe1);
                                         varICode.val = ConversionUtils.valueToExp(resultNe1);
                                         changes = true;
                                         break;
                                     case IADD:
-                                        Object leftValueIAdd = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueIAdd = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueIAdd = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueIAdd = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIAdd = OpUtil.iAdd(leftValueIAdd, rightValueIAdd);
                                         varICode.val = ConversionUtils.valueToExp(resultIAdd);
                                         changes = true;
                                         break;
                                     case ISUB:
-                                        Object leftValueISub = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueISub = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueISub = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueISub = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultISub = OpUtil.iSub(leftValueISub, rightValueISub);
                                         varICode.val = ConversionUtils.valueToExp(resultISub);
                                         changes = true;
                                         break;
                                     case ILSHIFT:
-                                        Object leftValueILShift = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueILShift = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueILShift = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueILShift = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultILShift = OpUtil.leftShift(leftValueILShift, rightValueILShift);
                                         varICode.val = ConversionUtils.valueToExp(resultILShift);
                                         changes = true;
                                         break;
                                     case IRSHIFT:
-                                        Object leftValueIRShift = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueIRShift = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueIRShift = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueIRShift = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIRShift = OpUtil.rightShift(leftValueIRShift, rightValueIRShift);
                                         varICode.val = ConversionUtils.valueToExp(resultIRShift);
                                         changes = true;
                                         break;
                                     case IAND: 
-                                        Object leftValueIAnd = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueIAnd = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueIAnd = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueIAnd = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIAnd = OpUtil.bitwiseAnd(leftValueIAnd, rightValueIAnd);
                                         varICode.val = ConversionUtils.valueToExp(resultIAnd);
                                         changes = true;
                                         break;
                                     case IOR:
-                                        Object leftValueIOr = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueIOr = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueIOr = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueIOr = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIOr = OpUtil.bitwiseOr(leftValueIOr, rightValueIOr);
                                         varICode.val = ConversionUtils.valueToExp(resultIOr);
                                         changes = true;
                                         break;
                                     case IXOR:
-                                        Object leftValueXOr = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueXOr = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueXOr = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueXOr = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultXor = OpUtil.bitwiseXor(leftValueXOr, rightValueXOr);
                                         varICode.val = ConversionUtils.valueToExp(resultXor);
                                         changes = true;
                                         break;
                                     case GE:
-                                        Object leftValueGe = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueGe = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueGe = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueGe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultValueGe = OpUtil.greaterThanOrEqualTo(leftValueGe, rightValueGe);
                                         varICode.val = ConversionUtils.valueToExp(resultValueGe);
                                         changes = true;
                                         break;
                                     case GT:
-                                        Object leftValueGt = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueGt = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueGt = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueGt = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultValueGt = OpUtil.greaterThan(leftValueGt, rightValueGt);
                                         varICode.val = ConversionUtils.valueToExp(resultValueGt);
                                         changes = true;
                                         break;
                                     case LE:
-                                        Object leftValueLe = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueLe = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueLe = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueLe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLe = OpUtil.lessThanOrEqualTo(leftValueLe, rightValueLe);
                                         varICode.val = ConversionUtils.valueToExp(resultLe);
                                         changes = true;
                                         break;
                                     case LT:
-                                        Object leftValueLt = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueLt = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueLt = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueLt = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLt = OpUtil.lessThan(leftValueLt, rightValueLt);
                                         varICode.val = ConversionUtils.valueToExp(resultLt);
                                         changes = true;
                                         break;
                                     case LAND:
-                                        Object leftValueLand = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueLand = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueLand = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueLand = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLand = OpUtil.and(leftValueLand, rightValueLand);
                                         varICode.val = ConversionUtils.valueToExp(resultLand);
                                         changes = true;
                                         break;
                                     case LOR:
-                                        Object leftValueLor = ConversionUtils.getValue(sourceDestLeft.dest);
-                                        Object rightValueLor = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object leftValueLor = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                        Object rightValueLor = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLor = OpUtil.or(leftValueLor, rightValueLor);
                                         varICode.val = ConversionUtils.valueToExp(resultLor);
                                         changes = true;
@@ -1517,8 +1648,8 @@ public class MyOptimizer {
                                         throw new OptimizerException(icode.getClass().getEnclosingMethod().getName(), "UnExpected binary operation found when optomizing expression " + varICode.val);
                                 }
                             } else {
-                            	IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant()) ? sourceDestLeft.source : sourceDestLeft.dest);
-                            	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant()) ? sourceDestRight.source : sourceDestRight.dest);
+                            	IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant() || sourceDestLeft.dest instanceof NaaExp) ? sourceDestLeft.source : sourceDestLeft.dest);
+                            	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : sourceDestRight.dest);
                             	
                                 BinExp val = new BinExp(leftExp, binExpVal.op, rightExp);
                                 if(!val.equals(binExpVal)) {
@@ -1529,21 +1660,21 @@ public class MyOptimizer {
                         } else if(varICode.val instanceof UnExp){
                             UnExp unExpVal = (UnExp)varICode.val;
     
-                            Tuple<IdentExp, Exp> sourceDestRight = new Tuple<IdentExp, Exp>(unExpVal.right, unExpVal.right);
-                            while(Utils.containsExpInSet(values, sourceDestRight.dest)){
-                                sourceDestRight = new Tuple<IdentExp, Exp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                            Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(unExpVal.right, unExpVal.right);
+                            while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
+                                sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                             }
 
                             if(sourceDestRight.dest.isConstant()){
                                 switch(unExpVal.op){
                                     case INOT:
-                                        Object rightValueINot = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object rightValueINot = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultINot = OpUtil.bitwiseNot(rightValueINot);
                                         varICode.val = ConversionUtils.valueToExp(resultINot);
                                         changes = true;
                                         break;
                                     case BNOT:
-                                        Object rightValueBNot = ConversionUtils.getValue(sourceDestRight.dest);
+                                        Object rightValueBNot = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultBNot = OpUtil.not(rightValueBNot);
                                         varICode.val = ConversionUtils.valueToExp(resultBNot);
                                         changes = true;
@@ -1551,8 +1682,14 @@ public class MyOptimizer {
                                     default:
                                         throw new OptimizerException(sourceDestRight.dest.getClass().getEnclosingMethod().getName(), "Error invalid operation in " + unExpVal);
                                 }
-                            } else {
+                            } else if(sourceDestRight.dest instanceof IdentExp) {
                             	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.dest);
+                            	if(!newExp.equals(unExpVal)) {
+                            		changes = true;
+                            		varICode.val = newExp;
+                            	}
+                            } else {
+                            	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.source);
                             	if(!newExp.equals(unExpVal)) {
                             		changes = true;
                             		varICode.val = newExp;
@@ -1563,18 +1700,18 @@ public class MyOptimizer {
                     	If ifStat = (If)icode;
                     	BinExp exp = ifStat.exp;
                     	
-                    	Tuple<IdentExp, Exp> sourceDestLeft = new Tuple<IdentExp, Exp>(exp.left, exp.left);
-                        while(Utils.containsExpInSet(values, sourceDestLeft.dest)){
-                            sourceDestLeft = new Tuple<IdentExp, Exp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
+                    	Tuple<IdentExp, NullableExp> sourceDestLeft = new Tuple<IdentExp, NullableExp>(exp.left, exp.left);
+                        while(Utils.containsExpInSet(values, sourceDestLeft.dest) && !Utils.scopeIsGlobal(sourceDestLeft.dest)){
+                            sourceDestLeft = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
                         }
 
-                        Tuple<IdentExp, Exp> sourceDestRight = new Tuple<IdentExp, Exp>(exp.right, exp.right);
-                        while(Utils.containsExpInSet(values, sourceDestRight.dest)){
-                            sourceDestRight = new Tuple<IdentExp, Exp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                        Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(exp.right, exp.right);
+                        while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
+                            sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                         }
                         
-                        IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant()) ? sourceDestLeft.source : sourceDestLeft.dest);
-                    	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant()) ? sourceDestRight.source : sourceDestRight.dest);
+                        IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant() || sourceDestLeft.dest instanceof NaaExp) ? sourceDestLeft.source : sourceDestLeft.dest);
+                    	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : sourceDestRight.dest);
                     	
                     	BinExp newExp = new BinExp(leftExp, exp.op, rightExp);
                     	
@@ -1589,150 +1726,155 @@ public class MyOptimizer {
                     		if(param.val instanceof IdentExp){
                                 IdentExp identVal = (IdentExp)param.val;
                                 
-                                Tuple<IdentExp, Exp> sourceDestRight = new Tuple<IdentExp, Exp>(identVal, identVal);
-                                while(Utils.containsExpInSet(values, sourceDestRight.dest)){
-                                    sourceDestRight = new Tuple<IdentExp, Exp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                                Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(identVal, identVal);
+                                while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
+                                    sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                                 }
                                 
                                 if(sourceDestRight.dest.isConstant()) {
                                 	changes = true;
-                                	param.val = sourceDestRight.dest;
-                                } else {
+                                	param.val = (Exp)sourceDestRight.dest;
+                                } else if(sourceDestRight.dest instanceof IdentExp) {
                                 	if(!identVal.equals(sourceDestRight.dest)) {
                                 		changes = true;
-                                		param.val = sourceDestRight.dest;
+                                		param.val = (Exp)sourceDestRight.dest;
+                                	}
+                                } else {
+                                	if(!identVal.equals(sourceDestRight.source)) {
+                                		changes = true;
+                                		param.val = (Exp)sourceDestRight.source;
                                 	}
                                 }
                             } else if(param.val instanceof BinExp){
                                 BinExp binExpVal = (BinExp)param.val;
 
-                                Tuple<IdentExp, Exp> sourceDestLeft = new Tuple<IdentExp, Exp>(binExpVal.left, binExpVal.left);
-                                while(Utils.containsExpInSet(values, sourceDestLeft.dest)){
-                                    sourceDestLeft = new Tuple<IdentExp, Exp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
+                                Tuple<IdentExp, NullableExp> sourceDestLeft = new Tuple<IdentExp, NullableExp>(binExpVal.left, binExpVal.left);
+                                while(Utils.containsExpInSet(values, sourceDestLeft.dest) && !Utils.scopeIsGlobal(sourceDestLeft.dest)){
+                                    sourceDestLeft = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
                                 }
         
-                                Tuple<IdentExp, Exp> sourceDestRight = new Tuple<IdentExp, Exp>(binExpVal.right, binExpVal.right);
-                                while(Utils.containsExpInSet(values, sourceDestRight.dest)){
-                                    sourceDestRight = new Tuple<IdentExp, Exp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                                Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(binExpVal.right, binExpVal.right);
+                                while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
+                                    sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                                 }
 
                                 if(sourceDestLeft.dest.isConstant() && sourceDestRight.dest.isConstant()){
                                     switch(binExpVal.op){
                                         case IEQ:
-                                            Object leftValEq = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValEq = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValEq = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValEq = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultEq = OpUtil.equal(leftValEq, rightValEq);
                                             param.val = ConversionUtils.valueToExp(resultEq);
                                             changes = true;
                                             break;
                                         case INE:
-                                            Object leftValNe = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValNe = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValNe = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValNe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultNe = OpUtil.notEqual(leftValNe, rightValNe);
                                             param.val = ConversionUtils.valueToExp(resultNe);
                                             changes = true;
                                             break;
                                         case BEQ:
-                                            Object leftValEq1 = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValEq1 = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValEq1 = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValEq1 = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultEq1 = OpUtil.equal(leftValEq1, rightValEq1);
                                             param.val = ConversionUtils.valueToExp(resultEq1);
                                             changes = true;
                                             break;
                                         case BNE:
-                                            Object leftValNe1 = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValNe1 = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValNe1 = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValNe1 = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultNe1 = OpUtil.notEqual(leftValNe1, rightValNe1);
                                             param.val = ConversionUtils.valueToExp(resultNe1);
                                             changes = true;
                                             break;
                                         case IADD:
-                                            Object leftValueIAdd = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValueIAdd = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValueIAdd = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValueIAdd = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultIAdd = OpUtil.iAdd(leftValueIAdd, rightValueIAdd);
                                             param.val = ConversionUtils.valueToExp(resultIAdd);
                                             changes = true;
                                             break;
                                         case ISUB:
-                                            Object leftValueISub = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValueISub = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValueISub = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValueISub = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultISub = OpUtil.iSub(leftValueISub, rightValueISub);
                                             param.val = ConversionUtils.valueToExp(resultISub);
                                             changes = true;
                                             break;
                                         case ILSHIFT:
-                                            Object leftValueILShift = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValueILShift = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValueILShift = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValueILShift = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultILShift = OpUtil.leftShift(leftValueILShift, rightValueILShift);
                                             param.val = ConversionUtils.valueToExp(resultILShift);
                                             changes = true;
                                             break;
                                         case IRSHIFT:
-                                            Object leftValueIRShift = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValueIRShift = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValueIRShift = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValueIRShift = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultIRShift = OpUtil.rightShift(leftValueIRShift, rightValueIRShift);
                                             param.val = ConversionUtils.valueToExp(resultIRShift);
                                             changes = true;
                                             break;
                                         case IAND: 
-                                            Object leftValueIAnd = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValueIAnd = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValueIAnd = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValueIAnd = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultIAnd = OpUtil.bitwiseAnd(leftValueIAnd, rightValueIAnd);
                                             param.val = ConversionUtils.valueToExp(resultIAnd);
                                             changes = true;
                                             break;
                                         case IOR:
-                                            Object leftValueIOr = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValueIOr = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValueIOr = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValueIOr = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultIOr = OpUtil.bitwiseOr(leftValueIOr, rightValueIOr);
                                             param.val = ConversionUtils.valueToExp(resultIOr);
                                             changes = true;
                                             break;
                                         case IXOR:
-                                            Object leftValueXOr = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValueXOr = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValueXOr = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValueXOr = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultXor = OpUtil.bitwiseXor(leftValueXOr, rightValueXOr);
                                             param.val = ConversionUtils.valueToExp(resultXor);
                                             changes = true;
                                             break;
                                         case GE:
-                                            Object leftValueGe = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValueGe = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValueGe = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValueGe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultValueGe = OpUtil.greaterThanOrEqualTo(leftValueGe, rightValueGe);
                                             param.val = ConversionUtils.valueToExp(resultValueGe);
                                             changes = true;
                                             break;
                                         case GT:
-                                            Object leftValueGt = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValueGt = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValueGt = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValueGt = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultValueGt = OpUtil.greaterThan(leftValueGt, rightValueGt);
                                             param.val = ConversionUtils.valueToExp(resultValueGt);
                                             changes = true;
                                             break;
                                         case LE:
-                                            Object leftValueLe = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValueLe = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValueLe = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValueLe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultLe = OpUtil.lessThanOrEqualTo(leftValueLe, rightValueLe);
                                             param.val = ConversionUtils.valueToExp(resultLe);
                                             changes = true;
                                             break;
                                         case LT:
-                                            Object leftValueLt = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValueLt = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValueLt = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValueLt = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultLt = OpUtil.lessThan(leftValueLt, rightValueLt);
                                             param.val = ConversionUtils.valueToExp(resultLt);
                                             changes = true;
                                             break;
                                         case LAND:
-                                            Object leftValueLand = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValueLand = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValueLand = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValueLand = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultLand = OpUtil.and(leftValueLand, rightValueLand);
                                             param.val = ConversionUtils.valueToExp(resultLand);
                                             changes = true;
                                             break;
                                         case LOR:
-                                            Object leftValueLor = ConversionUtils.getValue(sourceDestLeft.dest);
-                                            Object rightValueLor = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object leftValueLor = ConversionUtils.getValue((Exp)sourceDestLeft.dest);
+                                            Object rightValueLor = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultLor = OpUtil.or(leftValueLor, rightValueLor);
                                             param.val = ConversionUtils.valueToExp(resultLor);
                                             changes = true;
@@ -1741,8 +1883,8 @@ public class MyOptimizer {
                                             throw new OptimizerException(icode.getClass().getEnclosingMethod().getName(), "UnExpected binary operation found when optomizing expression " + param.val);
                                     }
                                 } else {
-                                	IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant()) ? sourceDestLeft.source : sourceDestLeft.dest);
-                                	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant()) ? sourceDestRight.source : sourceDestRight.dest);
+                                	IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant() || sourceDestLeft.dest instanceof NaaExp) ? sourceDestLeft.source : sourceDestLeft.dest);
+                                	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : sourceDestRight.dest);
                                 	
                                     BinExp val = new BinExp(leftExp, binExpVal.op, rightExp);
                                     if(!val.equals(binExpVal)) {
@@ -1753,21 +1895,21 @@ public class MyOptimizer {
                             } else if(param.val instanceof UnExp){
                                 UnExp unExpVal = (UnExp)param.val;
         
-                                Tuple<IdentExp, Exp> sourceDestRight = new Tuple<IdentExp, Exp>(unExpVal.right, unExpVal.right);
-                                while(Utils.containsExpInSet(values, sourceDestRight.dest)){
-                                    sourceDestRight = new Tuple<IdentExp, Exp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                                Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(unExpVal.right, unExpVal.right);
+                                while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
+                                    sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                                 }
 
                                 if(sourceDestRight.dest.isConstant()){
                                     switch(unExpVal.op){
                                         case INOT:
-                                            Object rightValueINot = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object rightValueINot = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultINot = OpUtil.bitwiseNot(rightValueINot);
                                             param.val = ConversionUtils.valueToExp(resultINot);
                                             changes = true;
                                             break;
                                         case BNOT:
-                                            Object rightValueBNot = ConversionUtils.getValue(sourceDestRight.dest);
+                                            Object rightValueBNot = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultBNot = OpUtil.not(rightValueBNot);
                                             param.val = ConversionUtils.valueToExp(resultBNot);
                                             changes = true;
@@ -1775,8 +1917,14 @@ public class MyOptimizer {
                                         default:
                                             throw new OptimizerException(sourceDestRight.dest.getClass().getEnclosingMethod().getName(), "Error invalid operation in " + unExpVal);
                                     }
-                                } else {
+                                } else if(sourceDestRight.dest instanceof IdentExp) {
                                 	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.dest);
+                                	if(!newExp.equals(unExpVal)) {
+                                		changes = true;
+                                		param.val = newExp;
+                                	}
+                                } else {
+                                	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.source);
                                 	if(!newExp.equals(unExpVal)) {
                                 		changes = true;
                                 		param.val = newExp;
@@ -1819,10 +1967,17 @@ public class MyOptimizer {
 					}while(this.intermediateCode.containsPlace(next));
 					//Otherwise create a new place with the generator
 					
-	    			newICode.add(new Def(Scope.LOCAL, next, expression.source, expression.dest));
+	    			newICode.add(new Def(Scope.LOCAL, next, (Exp)expression.source.copy(), expression.dest));
 	    			expressionMap.put(expression, next);
 	    		}
-	    		
+    		}
+    		block.getBlock().setICode(newICode);
+    	}
+    	
+    	for(BlockNode block: this.globalFlowGraph.getBlocks()) {
+    		List<ICode> newICode = new LinkedList<ICode>();
+    		for(ICode icode: block.getBlock().getIcode()) {
+    			Set<Tuple<Exp, ICode.Type>> latestOfBlock = this.latestSets.get(icode);
 	    		Set<Tuple<Exp, ICode.Type>> newVarSet = new HashSet<Tuple<Exp, ICode.Type>>();
 	    		newVarSet.addAll(this.usedAnal.getOutputSet(icode));
 	    		

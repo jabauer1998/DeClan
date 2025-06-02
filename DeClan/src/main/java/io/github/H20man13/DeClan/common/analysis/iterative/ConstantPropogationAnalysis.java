@@ -21,16 +21,18 @@ import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.NaaExp;
+import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.OpUtil;
 import io.github.H20man13.DeClan.common.util.Utils;
 
-public class ConstantPropogationAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<String, Exp>>>, HashSet<Tuple<String, Exp>>, Tuple<String, Exp>> 
-implements CustomMeet<HashSet<Tuple<String, Exp>>, Tuple<String, Exp>>{
+public class ConstantPropogationAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<String, NullableExp>>>, HashSet<Tuple<String, NullableExp>>, Tuple<String, NullableExp>> 
+implements CustomMeet<HashSet<Tuple<String, NullableExp>>, Tuple<String, NullableExp>>{
 
-    private Map<ICode, HashSet<Tuple<String, Exp>>> constDefinitions;
-    private Map<ICode, HashSet<Tuple<String, Exp>>> killDefinitions;
+    private Map<ICode, HashSet<Tuple<String, NullableExp>>> constDefinitions;
+    private Map<ICode, HashSet<Tuple<String, NullableExp>>> killDefinitions;
 
     public ConstantPropogationAnalysis(FlowGraph flowGraph, Config cfg) {
         super(flowGraph, Direction.FORWARDS, true, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
@@ -40,27 +42,33 @@ implements CustomMeet<HashSet<Tuple<String, Exp>>, Tuple<String, Exp>>{
 
         for(BlockNode block : flowGraph.getBlocks()){
             for(ICode icode : block.getICode()){
-                HashSet<Tuple<String, Exp>> setTuples = newSet();
-                HashSet<Tuple<String, Exp>> killTuples = newSet();
+                HashSet<Tuple<String, NullableExp>> setTuples = newSet();
+                HashSet<Tuple<String, NullableExp>> killTuples = newSet();
                 if(icode instanceof Assign){
                     Assign assICode = (Assign)icode;
                     if(assICode.isConstant()){
-                        Tuple<String, Exp> newTuple = new Tuple<String, Exp>(assICode.place, assICode.value);
+                        Tuple<String, NullableExp> newTuple = new Tuple<String, NullableExp>(assICode.place, assICode.value);
                         setTuples.add(newTuple);
                     } else if(assICode.value instanceof IdentExp){
-                        Tuple<String, Exp> newTuple = new Tuple<String,Exp>(assICode.place, assICode.value);
-                        setTuples.add(newTuple);
+                    	IdentExp val = (IdentExp)assICode.value;
+                    	if(val.scope != ICode.Scope.RETURN) {
+                    		Tuple<String, NullableExp> newTuple = new Tuple<String, NullableExp>(assICode.place, assICode.value);
+                    		setTuples.add(newTuple);
+                    	}
                     }
-                    Tuple<String, Exp> killTuple = new Tuple<String, Exp>(assICode.place, assICode.value);
+                    Tuple<String, NullableExp> killTuple = new Tuple<String, NullableExp>(assICode.place, assICode.value);
                     killTuples.add(killTuple);
                 } else if(icode instanceof Def){
                 	Def assICode = (Def)icode;
                     if(assICode.isConstant()){
-                        Tuple<String, Exp> newTuple = new Tuple<String, Exp>(assICode.label, assICode.val);
+                        Tuple<String, NullableExp> newTuple = new Tuple<String, NullableExp>(assICode.label, assICode.val);
                         setTuples.add(newTuple);
                     } else if(assICode.val instanceof IdentExp){
-                        Tuple<String, Exp> newTuple = new Tuple<String,Exp>(assICode.label, assICode.val);
-                        setTuples.add(newTuple);
+                    	IdentExp ident = (IdentExp)assICode.val;
+                    	if(ident.scope != ICode.Scope.RETURN) {
+                    		Tuple<String, NullableExp> newTuple = new Tuple<String, NullableExp>(assICode.label, assICode.val);
+                    		setTuples.add(newTuple);
+                    	}
                     }
                 }
 
@@ -71,16 +79,16 @@ implements CustomMeet<HashSet<Tuple<String, Exp>>, Tuple<String, Exp>>{
     }
 
     @Override
-    public HashSet<Tuple<String, Exp>> transferFunction(ICode instruction, HashSet<Tuple<String, Exp>> inputSet){
-        HashSet<Tuple<String, Exp>> result = newSet();
+    public HashSet<Tuple<String, NullableExp>> transferFunction(ICode instruction, HashSet<Tuple<String, NullableExp>> inputSet){
+        HashSet<Tuple<String, NullableExp>> result = newSet();
         result.addAll(inputSet);
 
-        HashSet<Tuple<String, Exp>> finalResult = newSet();
+        HashSet<Tuple<String, NullableExp>> finalResult = newSet();
 
-        HashSet<Tuple<String, Exp>> killSet = killDefinitions.get(instruction);
-        for(Tuple<String, Exp> res: result){
+        HashSet<Tuple<String, NullableExp>> killSet = killDefinitions.get(instruction);
+        for(Tuple<String, NullableExp> res: result){
             String resTest = res.source;
-            Exp resDest = res.dest;            
+            NullableExp resDest = res.dest;            
             if(!Utils.containsExpInSet(killSet, resTest))
             	if(!Utils.containsExpInSet(killSet, resDest))
             		finalResult.add(res);
@@ -92,28 +100,30 @@ implements CustomMeet<HashSet<Tuple<String, Exp>>, Tuple<String, Exp>>{
     }
 
 	@Override
-	public HashSet<Tuple<String, Exp>> performMeet(List<HashSet<Tuple<String, Exp>>> list) {
-       HashSet<Tuple<String, Exp>> resultSet = newSet();
-       HashMap<String, HashSet<Exp>> hashMap = new HashMap<String, HashSet<Exp>>();
+	public HashSet<Tuple<String, NullableExp>> performMeet(List<HashSet<Tuple<String, NullableExp>>> list) {
+       HashSet<Tuple<String, NullableExp>> resultSet = newSet();
+       HashMap<String, HashSet<NullableExp>> hashMap = new HashMap<String, HashSet<NullableExp>>();
 
-        for(Set<Tuple<String, Exp>> set : list){
-            for(Tuple<String, Exp> tup : set){
+        for(Set<Tuple<String, NullableExp>> set : list){
+            for(Tuple<String, NullableExp> tup : set){
                 String tupName = tup.source;
                 if(!hashMap.containsKey(tupName)){
-                    hashMap.put(tupName, new HashSet<Exp>());
+                    hashMap.put(tupName, new HashSet<NullableExp>());
                 }
 
-                Set<Exp> objList = hashMap.get(tupName);
+                Set<NullableExp> objList = hashMap.get(tupName);
                 objList.add(tup.dest);
             }
         }
 
         for(String key : hashMap.keySet()){
-            HashSet<Exp> objValues = hashMap.get(key);
+            HashSet<NullableExp> objValues = hashMap.get(key);
             if(objValues.size() == 1){
-                for(Exp val :  objValues){
-                    resultSet.add(new Tuple<String, Exp>(key, val));
+                for(NullableExp val :  objValues){
+                    resultSet.add(new Tuple<String, NullableExp>(key, val));
                 }
+            } else if(objValues.size() > 1) {
+            	resultSet.add(new Tuple<String, NullableExp>(key, new NaaExp()));
             }
         }
 

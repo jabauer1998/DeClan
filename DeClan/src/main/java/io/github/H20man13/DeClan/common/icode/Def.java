@@ -110,6 +110,6 @@ public class Def implements ICode {
 
 	@Override
 	public ICode copy() {
-		return new Def(scope, label, val.copy(), type);
+		return new Def(scope, label, (Exp)val.copy(), type);
 	}
 }

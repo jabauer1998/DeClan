@@ -26,6 +26,10 @@ public class BaseBuilder {
     protected List<ICode> getInstructions(){
         return this.intermediateCode;
     }
+    
+    protected ICode getLastInstruction() {
+    	return intermediateCode.getLast();
+    }
 
     protected ICode getInstruction(int index){
         return intermediateCode.get(index);

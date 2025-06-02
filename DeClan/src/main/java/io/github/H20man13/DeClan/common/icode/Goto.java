@@ -10,14 +10,16 @@ import io.github.H20man13.DeClan.common.pat.P;
 
 public class Goto implements ICode {
 	public String label;
+	private ICode leavingFrom;
 
-	public Goto(String label) {
+	public Goto(String label, ICode icode) {
 		this.label = label;
+		this.leavingFrom = icode;
 	}
 
 	@Override
 	public String toString() {
-		return "GOTO " + label;
+		return "GOTO " + label + " FROM " + leavingFrom.toString();
 	}
 
 	@Override
@@ -25,7 +27,7 @@ public class Goto implements ICode {
 		if(obj instanceof Goto){
 			Goto objGoto = (Goto)obj;
 
-			return objGoto.label.equals(label);
+			return objGoto.label.equals(label) && this.leavingFrom.equals(objGoto.leavingFrom);
 		} else {
 			return false;
 		}
@@ -58,7 +60,7 @@ public class Goto implements ICode {
 
 	@Override
 	public void replacePlace(String from, String to) {
-		//Do nothing
+		leavingFrom.replacePlace(from, to);
 	}
 
 	@Override
@@ -69,11 +71,11 @@ public class Goto implements ICode {
 	
 	@Override
 	public int hashCode() {
-		return label.hashCode();
+		return Objects.hash(label, leavingFrom);
 	}
 
 	@Override
 	public ICode copy() {
-		return new Goto(label);
+		return new Goto(label, leavingFrom.copy());
 	}
 }

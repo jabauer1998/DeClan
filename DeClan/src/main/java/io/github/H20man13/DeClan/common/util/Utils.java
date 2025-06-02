@@ -39,12 +39,14 @@ import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.IntExp;
+import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
+import io.github.H20man13.DeClan.common.icode.section.BssSec;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
@@ -80,10 +82,10 @@ public class Utils {
         return false;
     }
 
-    public static Exp getExpFromSet(Set<Tuple<String, Exp>> tuples, Exp name){
+    public static NullableExp getExpFromSet(Set<Tuple<String, NullableExp>> tuples, NullableExp name){
     	if(name instanceof IdentExp) {
     		IdentExp nExp = (IdentExp)name;
-    		for(Tuple<String, Exp> tuple : tuples){
+    		for(Tuple<String, NullableExp> tuple : tuples){
                 if(tuple.source.equals(nExp.ident)){
                     return tuple.dest;
                 }
@@ -93,10 +95,10 @@ public class Utils {
         throw new UtilityException("getExpFromSet", "Tuple with name " + name + " was not found");
     }
 
-    public static boolean containsExpInSet(Set<Tuple<String, Exp>> tuples, Exp name){
+    public static boolean containsExpInSet(Set<Tuple<String, NullableExp>> tuples, NullableExp name){
     	if(name instanceof IdentExp) {
     		IdentExp nExp = (IdentExp)name;
-    		for(Tuple<String, Exp> tuple : tuples){
+    		for(Tuple<String, NullableExp> tuple : tuples){
                 if(tuple.source.equals(nExp.ident)){
                     return true;
                 }
@@ -105,8 +107,8 @@ public class Utils {
         return false;
     }
     
-    public static boolean containsExpInSet(HashSet<Tuple<String, Exp>> killSet, String resTest) {
-		for(Tuple<String, Exp> tuple : killSet){
+    public static boolean containsExpInSet(HashSet<Tuple<String, NullableExp>> killSet, String resTest) {
+		for(Tuple<String, NullableExp> tuple : killSet){
             if(tuple.source.equals(resTest)){
                 return true;
             }
@@ -409,5 +411,45 @@ public class Utils {
   @SuppressWarnings("unchecked")
   public static <ClassType> Class<ClassType> getClassType(Class<?> type){
 	  return (Class<ClassType>)type;
+  }
+
+  public static boolean scopeIsGlobal(NullableExp dest) {
+	if(dest instanceof IdentExp) {
+		IdentExp ident = (IdentExp)dest;
+		if(ident.scope == ICode.Scope.GLOBAL)
+			return true;
+	}
+	return false;
+  }
+
+  public static boolean beginningOfBlockIsSection(BasicBlock block) {
+	List<ICode> intermediateCode = block.getIcode();
+	if(intermediateCode.size() > 0) {
+		ICode first = intermediateCode.getFirst();
+		if(first instanceof SymSec)
+			return true;
+		else if(first instanceof DataSec)
+			return true;
+		else if(first instanceof BssSec)
+			return true;
+		else if(first instanceof CodeSec)
+			return true;
+		else if(first instanceof ProcSec)
+			return true;
+	}
+	return false;
+  }
+
+  public static int posOf(String str, char c, int count) {
+	int myCount = 0;
+	for(int i = 0; i < str.length(); i++) {
+		char at = str.charAt(i);
+		if(at == c) {
+			myCount++;
+			if(myCount == count)
+				return i;
+		}
+	}
+	throw new UtilityException("posOf", "Cant find " + count + " of " + c + " in " + "\"" + str + "\"");
   }
 }

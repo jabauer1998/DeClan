@@ -61,7 +61,7 @@ public class RealExp implements Exp {
     }
 
 	@Override
-	public Exp copy() {
+	public NullableExp copy() {
 		return new RealExp(realValue);
 	}
 }

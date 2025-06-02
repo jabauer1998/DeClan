@@ -15,10 +15,13 @@ import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Lib.SymbolSearchStrategy;
+import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class LiveVariableAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<String>>, HashSet<String>, String> {
@@ -27,7 +30,7 @@ public class LiveVariableAnalysis extends InstructionAnalysis<HashMap<ICode, Has
     private Map<ICode, HashSet<String>> useSets;
 
     @SuppressWarnings("unchecked")
-	public LiveVariableAnalysis(FlowGraph flowGraph, Config cfg) {
+	public LiveVariableAnalysis(Prog orig, FlowGraph flowGraph, Config cfg) {
         super(flowGraph, Direction.BACKWARDS, Meet.UNION, false, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
 
         this.defSets = newMap();
@@ -76,6 +79,12 @@ public class LiveVariableAnalysis extends InstructionAnalysis<HashMap<ICode, Has
                     instructionUse.add(exp.right.ident);
                 } else if(code instanceof Call){
                     Call placement = (Call)code;
+                    
+                    if(orig.containsEntry(placement.pname, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME)) {
+                    	SymEntry data = orig.getVariableData(placement.pname, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME);
+                    	instructionDef.add(data.icodePlace);
+                    }
+                    
                     for(Def arg : placement.params){
                         instructionDef.add(arg.label);
                         

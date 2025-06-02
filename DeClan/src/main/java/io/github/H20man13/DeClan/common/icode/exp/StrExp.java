@@ -59,7 +59,7 @@ public class StrExp implements Exp{
     }
 
 	@Override
-	public Exp copy() {
+	public NullableExp copy() {
 		return new StrExp(value);
 	}
 }

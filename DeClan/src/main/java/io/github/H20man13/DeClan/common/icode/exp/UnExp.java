@@ -74,7 +74,7 @@ public class UnExp implements Exp {
     }
 
 	@Override
-	public Exp copy() {
-		return new UnExp(op, right.copy());
+	public NullableExp copy() {
+		return new UnExp(op, (IdentExp)right.copy());
 	}
 }

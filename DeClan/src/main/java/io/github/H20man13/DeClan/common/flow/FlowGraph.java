@@ -69,35 +69,41 @@ public class FlowGraph implements Iterable<BlockNode>{
 		
 		builder.append("\n----------Block Connections----------\n");
 		
-		builder.append("Block Number |              Connects From            |                   Connects To\n");
+		
+		String header = "Block Number |                                               Connects From                                                   |                                                                                     Connects To\n";
+		builder.append(header);
+		
+		int endOfFirstSection = Utils.posOf(header, '|', 1);
+		int endOfSecondSection = Utils.posOf(header, '|', 2);
+		int endOfThirdSection = Utils.posOf(header, '\n', 1);
 		int number = nodesToNumbers.get(entryNode);
-		builder.append(Utils.padWhiteSpace("" + number, 13, WhiteSpaceType.TRAILING));
+		builder.append(Utils.padWhiteSpace("" + number, endOfFirstSection, WhiteSpaceType.TRAILING));
 		builder.append('|');
-		builder.append(Utils.padWhiteSpace("", 39, WhiteSpaceType.TRAILING));
+		builder.append(Utils.padWhiteSpace("", endOfSecondSection - endOfFirstSection, WhiteSpaceType.TRAILING));
 		builder.append('|');
 		number = nodesToNumbers.get(entryNode.entry);
-		builder.append(Utils.padWhiteSpace(" [" + number + "]", 30, WhiteSpaceType.TRAILING));
+		builder.append(Utils.padWhiteSpace(" [" + number + "]", endOfThirdSection - endOfSecondSection, WhiteSpaceType.TRAILING));
 		builder.append('\n');
 		
 		for(BlockNode node: blockNodes) {
 			number = nodesToNumbers.get(node);
-			builder.append(Utils.padWhiteSpace("" + number, 13, WhiteSpaceType.TRAILING));
+			builder.append(Utils.padWhiteSpace("" + number, endOfFirstSection, WhiteSpaceType.TRAILING));
 			builder.append('|');
 			Set<Integer> predecessors = getNumbersFromNode(node, NodeType.PREDECESSORS, nodesToNumbers);
-			builder.append(Utils.padWhiteSpace(" " + predecessors.toString(), 39, WhiteSpaceType.TRAILING));
+			builder.append(Utils.padWhiteSpace(" " + predecessors.toString(), endOfSecondSection - endOfFirstSection, WhiteSpaceType.TRAILING));
 			builder.append('|');
 			Set<Integer> sucessors = getNumbersFromNode(node, NodeType.SUCESSORS, nodesToNumbers);
-			builder.append(Utils.padWhiteSpace(" " + sucessors.toString(), 30, WhiteSpaceType.TRAILING));
+			builder.append(Utils.padWhiteSpace(" " + sucessors.toString(), endOfThirdSection - endOfSecondSection, WhiteSpaceType.TRAILING));
 			builder.append('\n');
 		}
 		
 		number = nodesToNumbers.get(exitNode);
-		builder.append(Utils.padWhiteSpace("" + number, 13, WhiteSpaceType.TRAILING));
+		builder.append(Utils.padWhiteSpace("" + number, endOfFirstSection, WhiteSpaceType.TRAILING));
 		builder.append('|');
 		number = nodesToNumbers.get(exitNode.exit);
-		builder.append(Utils.padWhiteSpace(" [" + number + "]", 39, WhiteSpaceType.TRAILING));
+		builder.append(Utils.padWhiteSpace(" [" + number + "]", endOfSecondSection - endOfFirstSection, WhiteSpaceType.TRAILING));
 		builder.append('|');
-		builder.append(Utils.padWhiteSpace("", 30, WhiteSpaceType.TRAILING));
+		builder.append(Utils.padWhiteSpace("", endOfThirdSection - endOfSecondSection, WhiteSpaceType.TRAILING));
 		builder.append('\n');
 		builder.append("---------------------------------------------------");
         return builder.toString();

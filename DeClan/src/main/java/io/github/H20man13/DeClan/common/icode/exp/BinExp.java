@@ -95,7 +95,7 @@ public class BinExp implements Exp {
     }
 
 	@Override
-	public Exp copy() {
-		return new BinExp(left.copy(), op, right.copy());
+	public NullableExp copy() {
+		return new BinExp((IdentExp)left.copy(), op, (IdentExp)right.copy());
 	}
 }

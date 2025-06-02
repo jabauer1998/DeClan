@@ -410,7 +410,9 @@ public class MyIrParser {
     private ICode parseGoto(){
         match(IrTokenType.GOTO);
         IrToken id = match(IrTokenType.ID);
-        return new Goto(id.getLexeme());
+        match(IrTokenType.FROM);
+        ICode lastInstr = parseInstruction();
+        return new Goto(id.getLexeme(), lastInstr);
     }
 
     private ICode parseProcedureCall(){

@@ -91,7 +91,8 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
                     List<SetType> predecessorsLists = new LinkedList<SetType>();
                     for(FlowGraphNode node : block.getPredecessors()){
                     	if(!node.getICode().isEmpty()) {
-                    		predecessorsLists.add(getOutputSet(node.getICode().getLast()));
+                    		SetType outputOfPredecessor = getOutputSet(node.getICode().getLast());
+                    		predecessorsLists.add(outputOfPredecessor);
                     	}
                     }
 
