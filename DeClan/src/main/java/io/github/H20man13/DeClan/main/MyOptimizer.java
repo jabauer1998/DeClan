@@ -1948,9 +1948,8 @@ public class MyOptimizer {
     	setUpOptimization(OptName.PARTIAL_REDUNDANCY_ELIMINATION);
     	Map<Tuple<Exp, ICode.Type>, String> expressionMap = new HashMap<Tuple<Exp, ICode.Type>, String>();
     	for(BlockNode block: this.globalFlowGraph.getBlocks()) {
-    		List<ICode> newICode = new LinkedList<ICode>();
-    		
-    		for(ICode icode: block.getICode()) {
+    		List<ICode> oldICode = block.getICode();
+    		for(ICode icode: oldICode) {
 	    		Set<Tuple<Exp, ICode.Type>> newExpSet = new HashSet<Tuple<Exp, ICode.Type>>();
 	    		Set<Tuple<Exp, ICode.Type>> latestOfBlock = this.latestSets.get(icode);
 	    		Set<Tuple<Exp, ICode.Type>> usedAnalBlock = this.usedAnal.getOutputSet(icode);
@@ -1966,20 +1965,28 @@ public class MyOptimizer {
 						next = iGen.genNext();
 					}while(this.intermediateCode.containsPlace(next));
 					//Otherwise create a new place with the generator
-					
-	    			newICode.add(new Def(Scope.LOCAL, next, (Exp)expression.source.copy(), expression.dest));
 	    			expressionMap.put(expression, next);
-	    		}
+	    		}	
     		}
-    		block.getBlock().setICode(newICode);
     	}
     	
     	for(BlockNode block: this.globalFlowGraph.getBlocks()) {
+    		List<ICode> oldICode = block.getICode();
     		List<ICode> newICode = new LinkedList<ICode>();
-    		for(ICode icode: block.getBlock().getIcode()) {
-    			Set<Tuple<Exp, ICode.Type>> latestOfBlock = this.latestSets.get(icode);
+    		for(ICode icode: oldICode) {
+    			Set<Tuple<Exp, ICode.Type>> newExpSet = new HashSet<Tuple<Exp, ICode.Type>>();
+	    		Set<Tuple<Exp, ICode.Type>> latestOfBlock = this.latestSets.get(icode);
+	    		Set<Tuple<Exp, ICode.Type>> usedAnalBlock = this.usedAnal.getOutputSet(icode);
+	    		newExpSet.addAll(latestOfBlock);
+	    		newExpSet.retainAll(usedAnalBlock);
+	    		
+	    		for(Tuple<Exp, ICode.Type> expression: newExpSet) {
+	    			String ident = expressionMap.get(expression);
+	    			newICode.add(new Def(ICode.Scope.LOCAL, ident, expression.source, expression.dest));
+	    		}
+	    		
 	    		Set<Tuple<Exp, ICode.Type>> newVarSet = new HashSet<Tuple<Exp, ICode.Type>>();
-	    		newVarSet.addAll(this.usedAnal.getOutputSet(icode));
+	    		newVarSet.addAll(usedAnalBlock);
 	    		
 	    		for(Tuple<Exp, ICode.Type> semiLatticeElem: this.globalExpressionSet) {
 	    			if(!latestOfBlock.contains(semiLatticeElem)) {
@@ -1987,26 +1994,30 @@ public class MyOptimizer {
 	    			}
 	    		}
 	    		
-	    		newVarSet.retainAll(this.usedSets.get(icode));
+	    		Set<Tuple<Exp, ICode.Type>> usedSet = this.usedSets.get(icode);
+	    		newVarSet.retainAll(usedSet);
 	    		
     			if(icode instanceof Assign){
     				Assign assign = (Assign)icode;
     				Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(assign.value, assign.getType());
     				if(newVarSet.contains(myTuple)) {
-    					assign.value = new IdentExp(Scope.LOCAL, expressionMap.get(myTuple));
+    					String ident = expressionMap.get(myTuple);
+    					assign.value = new IdentExp(Scope.LOCAL, ident);
     				}
     			} else if(icode instanceof Def){
     				Def assign = (Def)icode;
     				Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(assign.val, assign.type);
     				if(newVarSet.contains(myTuple)) {
-    					assign.val = new IdentExp(Scope.LOCAL, expressionMap.get(myTuple));
+    					String ident = expressionMap.get(myTuple);
+    					assign.val = new IdentExp(Scope.LOCAL, ident);
     				}
     			} else if(icode instanceof Call) {
     				Call assign = (Call)icode;
     				for(Def param: assign.params) {
     					Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(param.val, param.type);
         				if(newVarSet.contains(myTuple)) {
-        					param.val = new IdentExp(Scope.LOCAL, expressionMap.get(myTuple));
+        					String ident = expressionMap.get(myTuple);
+        					param.val = new IdentExp(Scope.LOCAL, ident);
         				}
     				}
     			}
