@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.management.RuntimeErrorException;
-
 import io.github.H20man13.DeClan.common.Config;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.iterative.AnticipatedExpressionsAnalysis;
@@ -1223,7 +1221,7 @@ public class MyOptimizer {
                         Set<String> liveVar = this.liveAnal.getOutputSet(icode);
                         if(defsReached.contains(assICode.place) && liveVar.contains(assICode.place)){
                             result.add(assICode);
-                        } else if(liveVar.contains(assICode.place)) {
+                        } else if(liveVar.contains(assICode.place) && assICode.getScope() != ICode.Scope.GLOBAL){
                         	result.add(new Def(assICode.getScope(), assICode.place, assICode.value, assICode.getType()));
                         	changes = true;
                         } else {
@@ -1232,7 +1230,7 @@ public class MyOptimizer {
                     } else if(icode instanceof Def){
                     	Def assICode = (Def)icode;
                     	Set<String> liveVariables = this.liveAnal.getOutputSet(icode);
-                        if(assICode.scope == Scope.RETURN || liveVariables.contains(assICode.label)){
+                        if(assICode.scope == Scope.RETURN || assICode.scope == Scope.GLOBAL || liveVariables.contains(assICode.label)){
                             result.add(assICode);
                         } else {
                         	changes = true;
@@ -1958,14 +1956,28 @@ public class MyOptimizer {
 	    		
 	    		
 	    		for(Tuple<Exp, ICode.Type> expression: newExpSet) {
-	    			//If the current block already contains the expression
-	    			//Add the already existing place to the map
-					String next;
-					do {
-						next = iGen.genNext();
-					}while(this.intermediateCode.containsPlace(next));
-					//Otherwise create a new place with the generator
-	    			expressionMap.put(expression, next);
+	    			if(expression.source instanceof IdentExp) {
+	    				IdentExp ident = (IdentExp)expression.source;
+	    				if(ident.scope != ICode.Scope.RETURN) {
+	    					//If the current block already contains the expression
+	    	    			//Add the already existing place to the map
+	    					String next;
+	    					do {
+	    						next = iGen.genNext();
+	    					}while(this.intermediateCode.containsPlace(next));
+	    					//Otherwise create a new place with the generator
+	    	    			expressionMap.put(expression, next);
+	    				}
+	    			} else {
+	    				//If the current block already contains the expression
+		    			//Add the already existing place to the map
+						String next;
+						do {
+							next = iGen.genNext();
+						}while(this.intermediateCode.containsPlace(next));
+						//Otherwise create a new place with the generator
+		    			expressionMap.put(expression, next);
+	    			}
 	    		}	
     		}
     	}
@@ -1981,8 +1993,16 @@ public class MyOptimizer {
 	    		newExpSet.retainAll(usedAnalBlock);
 	    		
 	    		for(Tuple<Exp, ICode.Type> expression: newExpSet) {
-	    			String ident = expressionMap.get(expression);
-	    			newICode.add(new Def(ICode.Scope.LOCAL, ident, expression.source, expression.dest));
+	    			if(expression.source instanceof IdentExp) {
+	    				IdentExp ident = (IdentExp)expression.source;
+	    				if(ident.scope != ICode.Scope.RETURN) {
+	    					String name = expressionMap.get(expression);
+	    					newICode.add(new Def(ICode.Scope.LOCAL, name, expression.source, expression.dest));
+	    				}
+	    			} else {
+	    				String name = expressionMap.get(expression);
+    					newICode.add(new Def(ICode.Scope.LOCAL, name, expression.source, expression.dest));
+	    			}
 	    		}
 	    		
 	    		Set<Tuple<Exp, ICode.Type>> newVarSet = new HashSet<Tuple<Exp, ICode.Type>>();
@@ -2001,23 +2021,45 @@ public class MyOptimizer {
     				Assign assign = (Assign)icode;
     				Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(assign.value, assign.getType());
     				if(newVarSet.contains(myTuple)) {
-    					String ident = expressionMap.get(myTuple);
-    					assign.value = new IdentExp(Scope.LOCAL, ident);
+    					if(myTuple.source instanceof IdentExp) {
+    						IdentExp ident = (IdentExp)myTuple.source;
+    						if(ident.scope != ICode.Scope.RETURN) {
+    							String name = expressionMap.get(myTuple);
+    	    					assign.value = new IdentExp(Scope.LOCAL, name);
+    						}
+    					} else {
+    						String ident = expressionMap.get(myTuple);
+        					assign.value = new IdentExp(Scope.LOCAL, ident);
+    					}
     				}
     			} else if(icode instanceof Def){
     				Def assign = (Def)icode;
     				Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(assign.val, assign.type);
-    				if(newVarSet.contains(myTuple)) {
-    					String ident = expressionMap.get(myTuple);
+    				if(myTuple.source instanceof IdentExp) {
+						IdentExp ident = (IdentExp)myTuple.source;
+						if(ident.scope != ICode.Scope.RETURN) {
+							String name = expressionMap.get(myTuple);
+	    					assign.val = new IdentExp(Scope.LOCAL, name);
+						}
+					} else {
+						String ident = expressionMap.get(myTuple);
     					assign.val = new IdentExp(Scope.LOCAL, ident);
-    				}
+					}
     			} else if(icode instanceof Call) {
     				Call assign = (Call)icode;
     				for(Def param: assign.params) {
     					Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(param.val, param.type);
         				if(newVarSet.contains(myTuple)) {
-        					String ident = expressionMap.get(myTuple);
-        					param.val = new IdentExp(Scope.LOCAL, ident);
+        					if(myTuple.source instanceof IdentExp) {
+        						IdentExp ident = (IdentExp)myTuple.source;
+        						if(ident.scope != ICode.Scope.RETURN) {
+        							String name = expressionMap.get(myTuple);
+        	    					param.val = new IdentExp(Scope.LOCAL, name);
+        						}
+        					} else {
+        						String ident = expressionMap.get(myTuple);
+            					param.val = new IdentExp(Scope.LOCAL, ident);
+        					}
         				}
     				}
     			}

@@ -47,7 +47,7 @@ public class ReachingDefinitionsAnalysis extends InstructionAnalysis<HashMap<ICo
                 } else if(decl instanceof Def) {
                 	Def declDef = (Def)decl;
                 	
-                	if(!liveAnal.getOutputSet(decl).contains(declDef.label)) {
+                	if(!liveAnal.getOutputSet(decl).contains(declDef.label)){
                 		instructionGenSet.add(declDef.label);
                 	}
                 }
