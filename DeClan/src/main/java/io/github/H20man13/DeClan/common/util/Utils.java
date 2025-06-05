@@ -115,6 +115,14 @@ public class Utils {
 		}
 		return false;
     }
+    
+    public static boolean containsExpInSet(Set<Tuple<Exp, ICode.Type>> set, Exp toSearch) {
+    	for(Tuple<Exp, ICode.Type> tuple: set) {
+    		if(tuple.source.equals(toSearch))
+    			return true;
+    	}
+    	return false;
+    }
 
     public static DagNode createBinaryNode(boolean isDefinition, ICode.Scope origScope, BinExp.Operator op, String place, DagNode left, DagNode right) {
         ScopeType scope = ConversionUtils.assignScopeToDagScopeType(origScope);
