@@ -18,6 +18,7 @@ import io.github.H20man13.DeClan.common.analysis.iterative.DominatorAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.LiveVariableAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.PostponableExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.ReachingDefinitionsAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.SavedExpressionAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.UsedExpressionAnalysis;
 import io.github.H20man13.DeClan.common.dag.DagGraph;
 import io.github.H20man13.DeClan.common.dag.DagIgnoredInstruction;
@@ -97,6 +98,7 @@ public class MyOptimizer {
     private ReachingDefinitionsAnalysis defAnal;
     private DominatorAnalysis domAnal;
     private AvailableExpressionsAnalysis availableAnal;
+    private SavedExpressionAnalysis savedAnal;
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> earliestSets;
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> latestSets;
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets;
@@ -479,6 +481,10 @@ public class MyOptimizer {
     	this.availableAnal = null;
     }
     
+    private void resetSavedExpressionAnalysis() {
+    	this.savedAnal = null;
+    }
+    
     private void resetAnticipatedExpressionAnalysis() {
     	this.anticipatedAnal = null;
     }
@@ -554,6 +560,7 @@ public class MyOptimizer {
             	resetLatestSets();
             	resetUsedAnalysis();
             	resetRegisterGenerator();
+            	resetSavedExpressionAnalysis();
             	break;
         }
     }
@@ -600,6 +607,7 @@ public class MyOptimizer {
             	buildLatestSets();
             	runUsedExpressionAnalysis();
             	setUpRegisterGenerator();
+            	runSavedExpressionAnalysis();
             	break;
         }
     }
@@ -1203,6 +1211,20 @@ public class MyOptimizer {
     	
     	this.usedAnal = new UsedExpressionAnalysis(this.globalFlowGraph, this.usedSets, this.latestSets, this.cfg);
     	this.usedAnal.run();
+    }
+    
+    private void runSavedExpressionAnalysis() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	if(this.latestSets == null)
+    		buildLatestSets();
+    	if(this.usedAnal == null)
+    		this.runUsedExpressionAnalysis();
+    	if(this.iGen == null)
+    		this.setUpRegisterGenerator();
+    	
+    	this.savedAnal = new SavedExpressionAnalysis(this.intermediateCode, this.iGen, this.globalFlowGraph, this.latestSets, this.usedAnal, this.cfg);
+    	this.savedAnal.run();
     }
     
     
@@ -1944,51 +1966,16 @@ public class MyOptimizer {
     
     public void performPartialRedundancyElimination() {
     	setUpOptimization(OptName.PARTIAL_REDUNDANCY_ELIMINATION);
-    	Map<Tuple<Exp, ICode.Type>, String> expressionMap = new HashMap<Tuple<Exp, ICode.Type>, String>();
-    	for(BlockNode block: this.globalFlowGraph.getBlocks()) {
-    		List<ICode> oldICode = block.getICode();
-    		for(ICode icode: oldICode) {
-	    		Set<Tuple<Exp, ICode.Type>> newExpSet = new HashSet<Tuple<Exp, ICode.Type>>();
-	    		Set<Tuple<Exp, ICode.Type>> latestOfBlock = this.latestSets.get(icode);
-	    		Set<Tuple<Exp, ICode.Type>> usedAnalBlock = this.usedAnal.getOutputSet(icode);
-	    		newExpSet.addAll(latestOfBlock);
-	    		newExpSet.retainAll(usedAnalBlock);
-	    		
-	    		
-	    		for(Tuple<Exp, ICode.Type> expression: newExpSet) {
-	    			if(expression.source instanceof IdentExp) {
-	    				IdentExp ident = (IdentExp)expression.source;
-	    				if(ident.scope != ICode.Scope.RETURN) {
-	    					//If the current block already contains the expression
-	    	    			//Add the already existing place to the map
-	    					String next;
-	    					do {
-	    						next = iGen.genNext();
-	    					}while(this.intermediateCode.containsPlace(next));
-	    					//Otherwise create a new place with the generator
-	    	    			expressionMap.put(expression, next);
-	    				}
-	    			} else {
-	    				//If the current block already contains the expression
-		    			//Add the already existing place to the map
-						String next;
-						do {
-							next = iGen.genNext();
-						}while(this.intermediateCode.containsPlace(next));
-						//Otherwise create a new place with the generator
-		    			expressionMap.put(expression, next);
-	    			}
-	    		}	
-    		}
-    	}
     	
     	for(BlockNode block: this.globalFlowGraph.getBlocks()) {
     		List<ICode> oldICode = block.getICode();
     		List<ICode> newICode = new LinkedList<ICode>();
+    		
     		for(ICode icode: oldICode) {
     			Set<Tuple<Exp, ICode.Type>> newExpSet = new HashSet<Tuple<Exp, ICode.Type>>();
 	    		Set<Tuple<Exp, ICode.Type>> latestOfBlock = this.latestSets.get(icode);
 	    		Set<Tuple<Exp, ICode.Type>> usedAnalBlock = this.usedAnal.getOutputSet(icode);
+	    		HashSet<Tuple<Exp, String>> savedVars = this.savedAnal.getInputSet(icode);
 	    		newExpSet.addAll(latestOfBlock);
 	    		newExpSet.retainAll(usedAnalBlock);
 	    		
@@ -1996,12 +1983,14 @@ public class MyOptimizer {
 	    			if(expression.source instanceof IdentExp) {
 	    				IdentExp ident = (IdentExp)expression.source;
 	    				if(ident.scope != ICode.Scope.RETURN) {
-	    					String name = expressionMap.get(expression);
-	    					newICode.add(new Def(ICode.Scope.LOCAL, name, expression.source, expression.dest));
+	    					if(Utils.containsExpInSet(savedVars, ident)) {
+	    						String name = Utils.getVar(savedVars, ident);
+	    						newICode.add(new Def(ICode.Scope.LOCAL, name, expression.source, expression.dest));
+	    					}
 	    				}
-	    			} else {
-	    				String name = expressionMap.get(expression);
-    					newICode.add(new Def(ICode.Scope.LOCAL, name, expression.source, expression.dest));
+	    			} else if(Utils.containsExpInSet(savedVars, expression.source)) {
+						String name = Utils.getVar(savedVars, expression.source);
+						newICode.add(new Def(ICode.Scope.LOCAL, name, expression.source, expression.dest));
 	    			}
 	    		}
 	    		
@@ -2024,13 +2013,15 @@ public class MyOptimizer {
     					if(myTuple.source instanceof IdentExp) {
     						IdentExp ident = (IdentExp)myTuple.source;
     						if(ident.scope != ICode.Scope.RETURN) {
-    							String name = expressionMap.get(myTuple);
-    	    					assign.value = new IdentExp(Scope.LOCAL, name);
+    							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
+    								String name = Utils.getVar(savedVars, myTuple.source);
+    								assign.value = new IdentExp(Scope.LOCAL, name);
+    							}
     						}
-    					} else {
-    						String ident = expressionMap.get(myTuple);
-        					assign.value = new IdentExp(Scope.LOCAL, ident);
-    					}
+    					} else if(Utils.containsExpInSet(savedVars, myTuple.source)) {
+							String name = Utils.getVar(savedVars, myTuple.source);
+							assign.value = new IdentExp(Scope.LOCAL, name);
+						}
     				}
     			} else if(icode instanceof Def){
     				Def assign = (Def)icode;
@@ -2038,12 +2029,16 @@ public class MyOptimizer {
     				if(myTuple.source instanceof IdentExp) {
 						IdentExp ident = (IdentExp)myTuple.source;
 						if(ident.scope != ICode.Scope.RETURN) {
-							String name = expressionMap.get(myTuple);
-	    					assign.val = new IdentExp(Scope.LOCAL, name);
+							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
+								String name = Utils.getVar(savedVars, myTuple.source);
+								assign.val = new IdentExp(Scope.LOCAL, name);
+							}
 						}
 					} else {
-						String ident = expressionMap.get(myTuple);
-    					assign.val = new IdentExp(Scope.LOCAL, ident);
+						if(Utils.containsExpInSet(savedVars, myTuple.source)) {
+							String name = Utils.getVar(savedVars, myTuple.source);
+							assign.val = new IdentExp(Scope.LOCAL, name);
+						}
 					}
     			} else if(icode instanceof Call) {
     				Call assign = (Call)icode;
@@ -2053,13 +2048,15 @@ public class MyOptimizer {
         					if(myTuple.source instanceof IdentExp) {
         						IdentExp ident = (IdentExp)myTuple.source;
         						if(ident.scope != ICode.Scope.RETURN) {
-        							String name = expressionMap.get(myTuple);
-        	    					param.val = new IdentExp(Scope.LOCAL, name);
+        							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
+        								String name = Utils.getVar(savedVars, myTuple.source);
+        								param.val = new IdentExp(Scope.LOCAL, name);
+        							}
         						}
-        					} else {
-        						String ident = expressionMap.get(myTuple);
-            					param.val = new IdentExp(Scope.LOCAL, ident);
-        					}
+        					} else if(Utils.containsExpInSet(savedVars, myTuple.source)) {
+								String name = Utils.getVar(savedVars, myTuple.source);
+								param.val = new IdentExp(Scope.LOCAL, name);
+							}
         				}
     				}
     			}

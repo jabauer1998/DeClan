@@ -123,6 +123,24 @@ public class Utils {
     	}
     	return false;
     }
+    
+    public static boolean containsExpInSet(HashSet<Tuple<Exp, String>> set, Exp toSearch) {
+    	for(Tuple<Exp, String> tuple: set) {
+    		if(tuple.source.equals(toSearch))
+    			return true;
+    	}
+    	return false;
+    }
+    
+    public static String getVar(Set<Tuple<Exp, String>> set, Exp toSearch) {
+    	for(Tuple<Exp, String> tuple: set) {
+    		if(tuple.source.equals(toSearch))
+    			return tuple.dest;
+    	}
+    	throw new UtilityException("getVar", "Error expression [" + toSearch.toString() + "] not found in set\n" + set.toString());
+    }
+    
+    
 
     public static DagNode createBinaryNode(boolean isDefinition, ICode.Scope origScope, BinExp.Operator op, String place, DagNode left, DagNode right) {
         ScopeType scope = ConversionUtils.assignScopeToDagScopeType(origScope);

@@ -25,7 +25,7 @@ implements CustomMeet<HashSet<Tuple<Exp, String>>, Tuple<Exp, String>>{
 	private Prog prog;
 	
 	public SavedExpressionAnalysis(Prog program, IrRegisterGenerator gen, FlowGraph flow, Map<ICode, Set<Tuple<Exp, ICode.Type>>> latest, UsedExpressionAnalysis used, Config cfg) {
-		super(flow, Direction.FORWARDS, Meet.UNION, true, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
+		super(flow, Direction.FORWARDS, true, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
 		this.opSet = new HashMap<ICode, Set<Tuple<Exp, ICode.Type>>>();
 		for(ICode icode: latest.keySet()) {
 			Set<Tuple<Exp, ICode.Type>> newSet = new HashSet<Tuple<Exp, ICode.Type>>();
@@ -34,7 +34,7 @@ implements CustomMeet<HashSet<Tuple<Exp, String>>, Tuple<Exp, String>>{
 			opSet.put(icode, newSet);
 		}
 		this.gen = gen;
-		this.prog = prog;
+		this.prog = program;
 	}
 
 
