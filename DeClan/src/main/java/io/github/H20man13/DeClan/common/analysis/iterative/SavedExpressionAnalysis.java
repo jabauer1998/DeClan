@@ -23,6 +23,8 @@ implements CustomMeet<HashSet<Tuple<Exp, String>>, Tuple<Exp, String>>{
 	private Map<ICode, Set<Tuple<Exp, ICode.Type>>> opSet;
 	private IrRegisterGenerator gen;
 	private Prog prog;
+	private char startLetter;
+	private int startNumber;
 	
 	public SavedExpressionAnalysis(Prog program, IrRegisterGenerator gen, FlowGraph flow, Map<ICode, Set<Tuple<Exp, ICode.Type>>> latest, UsedExpressionAnalysis used, Config cfg) {
 		super(flow, Direction.FORWARDS, true, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
@@ -35,8 +37,14 @@ implements CustomMeet<HashSet<Tuple<Exp, String>>, Tuple<Exp, String>>{
 		}
 		this.gen = gen;
 		this.prog = program;
+		this.startLetter = gen.getCurrentLetter();
+		this.startNumber = gen.getCurrentNumber();
 	}
-
+	
+	@Override
+	protected void analysisLoopEndAction() {
+		this.gen.synch(startLetter, startNumber);
+	}
 
 	@Override
 	public HashSet<Tuple<Exp, String>> transferFunction(ICode instr, HashSet<Tuple<Exp, String>> inputSet) {

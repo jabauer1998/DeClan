@@ -83,6 +83,7 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
 
             MapType outputCache = null;
             do{
+            	analysisLoopStartAction();
             	outputCache = copyOutputsFromFlowGraph();
                 
                 for(BlockNode block : flowGraph.getBlocks()){
@@ -111,6 +112,7 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
                     	}
                     }
                 }
+                analysisLoopEndAction();
             } while(changesHaveOccuredOnOutputs(outputCache));
         } else {
             for(BlockNode block : flowGraph.getBlocks()){
@@ -127,6 +129,7 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
 
             MapType inputCache = null;
             do{
+            	analysisLoopStartAction();
                 inputCache = copyInputsFromFlowGraph();
                 List<BlockNode> blocks = flowGraph.getBlocks();
                 for(int b = blocks.size() - 1; b >= 0; b--){
@@ -158,6 +161,7 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
                         
                     }
                 }
+                analysisLoopEndAction();
             }while(changesHaveOccuredOnInputs(inputCache));
         }
     }

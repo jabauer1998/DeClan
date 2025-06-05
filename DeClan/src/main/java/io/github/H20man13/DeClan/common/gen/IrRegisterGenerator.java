@@ -18,6 +18,19 @@ public class IrRegisterGenerator implements Generator {
 		endNumber = 9;
 		currentNumber = 0;
 	}
+	
+	public void synch(char currentLetter, int currentNumber) {
+		this.currentLetter = currentLetter;
+		this.currentNumber = currentNumber;
+	}
+	
+	public char getCurrentLetter() {
+		return currentLetter;
+	}
+	
+	public int getCurrentNumber() {
+		return currentNumber;
+	}
     
     public String genNext(){
 		if(firstRound){
