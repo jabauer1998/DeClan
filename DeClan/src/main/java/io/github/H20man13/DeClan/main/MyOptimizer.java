@@ -1952,7 +1952,24 @@ public class MyOptimizer {
                                 }
                             }
                     	}
-                    }     	
+                    } else if(icode instanceof Inline) {
+                    	Inline inline = (Inline)icode;
+                    	LinkedList<IdentExp> newParams = new LinkedList<IdentExp>();
+                    	
+                    	for(IdentExp param: inline.params) {
+                    		Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(param, param);
+                            while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
+                                sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                            }
+                            
+                            IdentExp finalExp = (sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : (IdentExp)sourceDestRight.dest;
+                            if(!finalExp.equals(param))
+                            	changes = true;
+                            newParams.add(finalExp);
+                    	}
+                    	
+                    	inline.params = newParams;
+                    }
                 }
             }
             cleanUpOptimization(OptName.CONSTANT_PROPOGATION);

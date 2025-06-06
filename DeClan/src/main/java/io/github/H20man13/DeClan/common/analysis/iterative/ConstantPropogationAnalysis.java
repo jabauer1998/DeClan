@@ -14,6 +14,7 @@ import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.NaaExp;
 import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
@@ -47,7 +48,7 @@ implements CustomMeet<HashSet<Tuple<String, NullableExp>>, Tuple<String, Nullabl
                     		setTuples.add(newTuple);
                     	}
                     }
-                    Tuple<String, NullableExp> killTuple = new Tuple<String, NullableExp>(assICode.place, assICode.value);
+                    Tuple<String, NullableExp> killTuple = new Tuple<String, NullableExp>(assICode.place, new NaaExp());
                     killTuples.add(killTuple);
                 } else if(icode instanceof Def){
                 	Def assICode = (Def)icode;
@@ -61,6 +62,11 @@ implements CustomMeet<HashSet<Tuple<String, NullableExp>>, Tuple<String, Nullabl
                     		setTuples.add(newTuple);
                     	}
                     }
+                } else if(icode instanceof Inline) {
+                	Inline inline = (Inline)icode;
+                	for(IdentExp param: inline.params) {
+                		killTuples.add(new Tuple<String, NullableExp>(param.ident, new NaaExp()));
+                	}
                 }
 
                 constDefinitions.put(icode, setTuples);

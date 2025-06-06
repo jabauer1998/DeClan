@@ -15,6 +15,7 @@ import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Lib.SymbolSearchStrategy;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -100,6 +101,12 @@ public class LiveVariableAnalysis extends InstructionAnalysis<HashMap<ICode, Has
                         	instructionUse.add(binaryExpression.right.ident);
                         }
                     }
+                } else if(code instanceof Inline) {
+                	Inline inline = (Inline)code;
+                	
+                	for(IdentExp param: inline.params) {
+                		instructionUse.add(param.ident);
+                	}
                 }
                 defSets.put(code, instructionDef);
                 useSets.put(code, instructionUse);
@@ -115,9 +122,8 @@ public class LiveVariableAnalysis extends InstructionAnalysis<HashMap<ICode, Has
         resultSet.addAll(inputSet);
         Set<String> useSet = useSets.get(instruction);
         Set<String> defSet = defSets.get(instruction);
-        resultSet.addAll(useSet);
         resultSet.removeAll(defSet);
-        resultSet.addAll(useSets.get(instruction));
+        resultSet.addAll(useSet);
 
         return resultSet;
     }
