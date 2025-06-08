@@ -430,8 +430,11 @@ public class MyIrParser {
         }   
 
         match(IrTokenType.RPAR);
+        match(IrTokenType.FROM);
+        
+        ICode instruction = parseInstruction();
 
-        return new Call(procName.getLexeme(), args);
+        return new Call(procName.getLexeme(), args, instruction);
     }
 
     private UnExp parseUnaryExpression(){

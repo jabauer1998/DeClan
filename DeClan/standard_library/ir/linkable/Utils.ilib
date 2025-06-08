@@ -58,7 +58,7 @@ PROC SECTION
   DEF y := FALSE <BOOL>
   DEF z := 0 <INT>
   DEF A := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM c) -> B]<REAL>)
+  CALL RealBinaryAsInt([(PARAM c) -> B]<REAL>) FROM DEF A := 0 <INT>
   DEF D := (RETURN C) <INT>
   A := D <INT>
   DEF E := 2147483647 <INT>
@@ -132,17 +132,17 @@ PROC SECTION
   DEF a2 := FALSE <BOOL>
   DEF a3 := 0 <INT>
   DEF a4 := 0 <INT>
-  CALL RealSign([(PARAM i) -> q]<REAL>)
+  CALL RealSign([(PARAM i) -> q]<REAL>) FROM DEF a4 := 0 <INT>
   DEF a5 := (RETURN r) <INT>
   a4 := a5 <INT>
-  CALL RealBinaryAsInt([(PARAM i) -> B]<REAL>)
+  CALL RealBinaryAsInt([(PARAM i) -> B]<REAL>) FROM a4 := a5 <INT>
   DEF a6 := (RETURN C) <INT>
   DEF a7 := 2147483647 <INT>
   DEF a8 := a6 IAND a7 <INT>
   a3 := a8 <INT>
   DEF a9 := 1 <INT>
   DEF b0 := a4 IEQ a9 <BOOL>
-  CALL IntIsZero([a3 -> e]<INT>)
+  CALL IntIsZero([a3 -> e]<INT>) FROM DEF b0 := a4 IEQ a9 <BOOL>
   DEF b1 := (RETURN f) <BOOL>
   DEF b2 := BNOT b1 <BOOL>
   DEF b3 := b0 LAND b2 <BOOL>
@@ -192,17 +192,17 @@ PROC SECTION
   DEF c8 := FALSE <BOOL>
   DEF c9 := 0 <INT>
   DEF d0 := 0 <INT>
-  CALL RealSign([(PARAM m) -> q]<REAL>)
+  CALL RealSign([(PARAM m) -> q]<REAL>) FROM DEF d0 := 0 <INT>
   DEF d1 := (RETURN r) <INT>
   d0 := d1 <INT>
-  CALL RealBinaryAsInt([(PARAM m) -> B]<REAL>)
+  CALL RealBinaryAsInt([(PARAM m) -> B]<REAL>) FROM d0 := d1 <INT>
   DEF d2 := (RETURN C) <INT>
   DEF d3 := 2147483647 <INT>
   DEF d4 := d2 IAND d3 <INT>
   c9 := d4 <INT>
   DEF d5 := 0 <INT>
   DEF d6 := d0 IEQ d5 <BOOL>
-  CALL IntIsZero([c9 -> e]<INT>)
+  CALL IntIsZero([c9 -> e]<INT>) FROM DEF d6 := d0 IEQ d5 <BOOL>
   DEF d7 := (RETURN f) <BOOL>
   DEF d8 := BNOT d7 <BOOL>
   DEF d9 := d6 LAND d8 <BOOL>
@@ -227,13 +227,13 @@ PROC SECTION
   DEF e4 := 0 <INT>
   DEF e5 := 0 <INT>
   DEF e6 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM o) -> B]<REAL>)
+  CALL RealBinaryAsInt([(PARAM o) -> B]<REAL>) FROM DEF e6 := 0 <INT>
   DEF e7 := (RETURN C) <INT>
   e4 := e7 <INT>
   DEF e8 := 8388607 <INT>
   DEF e9 := e4 IAND e8 <INT>
   e5 := e9 <INT>
-  CALL RealIsZero([(PARAM o) -> c]<REAL>)
+  CALL RealIsZero([(PARAM o) -> c]<REAL>) FROM e5 := e9 <INT>
   DEF f0 := (RETURN d) <BOOL>
   DEF f1 := TRUE <BOOL>
   IF f0 BEQ f1
@@ -254,7 +254,7 @@ PROC SECTION
  PROC LABEL RealSign
   DEF f4 := 0 <INT>
   DEF f5 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM q) -> B]<REAL>)
+  CALL RealBinaryAsInt([(PARAM q) -> B]<REAL>) FROM DEF f5 := 0 <INT>
   DEF f6 := (RETURN C) <INT>
   f5 := f6 <INT>
   DEF f7 := 31 <INT>
@@ -268,7 +268,7 @@ PROC SECTION
   DEF g1 := 0 <INT>
   DEF g2 := 0 <INT>
   DEF g3 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM s) -> B]<REAL>)
+  CALL RealBinaryAsInt([(PARAM s) -> B]<REAL>) FROM DEF g3 := 0 <INT>
   DEF g4 := (RETURN C) <INT>
   g2 := g4 <INT>
   DEF g5 := 23 <INT>
@@ -314,14 +314,14 @@ PROC SECTION
  RETURN FROM MantissaNeg
  PROC LABEL MantissaAbs
   DEF i7 := 0 <INT>
-  CALL IntIsNegative([(PARAM w) -> g]<INT>)
+  CALL IntIsNegative([(PARAM w) -> g]<INT>) FROM DEF i7 := 0 <INT>
   DEF i8 := (RETURN h) <BOOL>
   DEF i9 := TRUE <BOOL>
   IF i8 BEQ i9
   THEN IFSTAT_8_SEQ_0_LEVEL_0
   ELSE IFNEXT_8_SEQ_0_LEVEL_0
   LABEL IFSTAT_8_SEQ_0_LEVEL_0
-  CALL MantissaNeg([(PARAM w) -> u]<INT>)
+  CALL MantissaNeg([(PARAM w) -> u]<INT>) FROM LABEL IFSTAT_8_SEQ_0_LEVEL_0
   DEF j0 := (RETURN v) <INT>
   i7 := j0 <INT>
   GOTO IFEND_8_LEVEL_0 FROM i7 := j0 <INT>

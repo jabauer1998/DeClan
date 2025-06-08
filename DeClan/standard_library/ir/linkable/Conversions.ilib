@@ -92,16 +92,16 @@ PROC SECTION
   DEF K := 0 <INT>
   DEF L := 0 <INT>
   DEF M := 0 <INT>
-  CALL Abs([(PARAM a) -> N]<INT>)
+  CALL Abs([(PARAM a) -> N]<INT>) FROM DEF M := 0 <INT>
   DEF P := (RETURN O) <INT>
   B := P <INT>
   G := B <INT>
   DEF Q := 0 <INT>
   F := Q <INT>
-  CALL IntIsNegative([(PARAM a) -> R]<INT>)
+  CALL IntIsNegative([(PARAM a) -> R]<INT>) FROM F := Q <INT>
   DEF T := (RETURN S) <BOOL>
   C := T <BOOL>
-  CALL IntIsZero([G -> U]<INT>)
+  CALL IntIsZero([G -> U]<INT>) FROM C := T <BOOL>
   DEF W := (RETURN V) <BOOL>
   DEF X := TRUE <BOOL>
   IF W BEQ X
@@ -112,7 +112,7 @@ PROC SECTION
   D := Y <INT>
   GOTO IFEND_0_LEVEL_0 FROM D := Y <INT>
   LABEL IFNEXT_0_SEQ_0_LEVEL_0
-  CALL IntIsZero([G -> U]<INT>)
+  CALL IntIsZero([G -> U]<INT>) FROM LABEL IFNEXT_0_SEQ_0_LEVEL_0
   DEF Z := (RETURN V) <BOOL>
   DEF a0 := BNOT Z <BOOL>
   DEF a1 := TRUE <BOOL>
@@ -144,7 +144,7 @@ PROC SECTION
   DEF a9 := 1 <INT>
   DEF b0 := G IRSHIFT a9 <INT>
   G := b0 <INT>
-  CALL IntIsZero([G -> U]<INT>)
+  CALL IntIsZero([G -> U]<INT>) FROM G := b0 <INT>
   DEF b1 := (RETURN V) <BOOL>
   DEF b2 := BNOT b1 <BOOL>
   a0 := b2 <BOOL>
@@ -205,7 +205,7 @@ PROC SECTION
   GOTO IFEND_0_LEVEL_0 FROM LABEL IFEND_3_LEVEL_1
   LABEL IFNEXT_0_SEQ_1_LEVEL_0
   LABEL IFEND_0_LEVEL_0
-  CALL IntBinaryAsReal([D -> o]<INT>)
+  CALL IntBinaryAsReal([D -> o]<INT>) FROM LABEL IFEND_0_LEVEL_0
   DEF d7 := (RETURN p) <REAL>
   A := d7 <REAL>
   DEF RETURN b := A <REAL>
@@ -216,13 +216,13 @@ PROC SECTION
   DEF e0 := 0 <INT>
   DEF e1 := 0 <INT>
   DEF e2 := 0 <INT>
-  CALL RealExponent([(PARAM c) -> e3]<REAL>)
+  CALL RealExponent([(PARAM c) -> e3]<REAL>) FROM DEF e2 := 0 <INT>
   DEF e5 := (RETURN e4) <INT>
   d9 := e5 <INT>
-  CALL RealMantissa([(PARAM c) -> e6]<REAL>)
+  CALL RealMantissa([(PARAM c) -> e6]<REAL>) FROM d9 := e5 <INT>
   DEF e8 := (RETURN e7) <INT>
   e0 := e8 <INT>
-  CALL RealSign([(PARAM c) -> e9]<REAL>)
+  CALL RealSign([(PARAM c) -> e9]<REAL>) FROM e0 := e8 <INT>
   DEF f1 := (RETURN f0) <INT>
   e1 := f1 <INT>
   DEF f2 := 0 <INT>
@@ -309,7 +309,7 @@ PROC SECTION
  RETURN FROM BoolToReal
  PROC LABEL IntToBool
   DEF h6 := FALSE <BOOL>
-  CALL IntIsZero([(PARAM i) -> U]<INT>)
+  CALL IntIsZero([(PARAM i) -> U]<INT>) FROM DEF h6 := FALSE <BOOL>
   DEF h7 := (RETURN V) <BOOL>
   DEF h8 := TRUE <BOOL>
   IF h7 BEQ h8
@@ -329,7 +329,7 @@ PROC SECTION
  RETURN FROM IntToBool
  PROC LABEL RealToBool
   DEF i1 := FALSE <BOOL>
-  CALL RealIsZero([(PARAM k) -> i2]<REAL>)
+  CALL RealIsZero([(PARAM k) -> i2]<REAL>) FROM DEF i1 := FALSE <BOOL>
   DEF i4 := (RETURN i3) <BOOL>
   DEF i5 := TRUE <BOOL>
   IF i4 BEQ i5

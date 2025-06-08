@@ -12,9 +12,9 @@ BSS SECTION
  DEF GLOBAL c := 0.0 <REAL>
  DEF GLOBAL d := 0.0 <REAL>
 CODE SECTION
- CALL IntToReal([(GLOBAL b) -> e]<INT>)
+ CALL IntToReal([(GLOBAL b) -> e]<INT>) FROM CODE SECTION
  DEF g := (RETURN f) <REAL>
  GLOBAL c := g <REAL>
- CALL WriteReal([(GLOBAL c) -> h]<REAL>)
+ CALL WriteReal([(GLOBAL c) -> h]<REAL>) FROM GLOBAL c := g <REAL>
 END
 PROC SECTION

@@ -62,29 +62,29 @@ DATA SECTION
  DEF c := 1.2 <REAL>
  DEF GLOBAL d := c <REAL>
  DEF e := 3.14 <REAL>
- CALL RNeg([e -> f]<REAL>)
+ CALL RNeg([e -> f]<REAL>) FROM DEF e := 3.14 <REAL>
  DEF h := (RETURN g) <REAL>
- CALL IntToReal([(GLOBAL b) -> i]<INT>)
+ CALL IntToReal([(GLOBAL b) -> i]<INT>) FROM DEF h := (RETURN g) <REAL>
  DEF k := (RETURN j) <REAL>
- CALL RAdd([h -> l]<REAL>, [k -> m]<REAL>)
+ CALL RAdd([h -> l]<REAL>, [k -> m]<REAL>) FROM DEF k := (RETURN j) <REAL>
  DEF o := (RETURN n) <REAL>
  DEF GLOBAL p := o <REAL>
  DEF q := 6 <INT>
  DEF r := 6 <INT>
  DEF s := 1 <INT>
  DEF t := r IADD s <INT>
- CALL Multiply([q -> u]<INT>, [t -> v]<INT>)
+ CALL Multiply([q -> u]<INT>, [t -> v]<INT>) FROM DEF t := r IADD s <INT>
  DEF x := (RETURN w) <INT>
  DEF GLOBAL y := x <INT>
- CALL IntToReal([(GLOBAL b) -> i]<INT>)
+ CALL IntToReal([(GLOBAL b) -> i]<INT>) FROM DEF GLOBAL y := x <INT>
  DEF z := (RETURN j) <REAL>
- CALL RMul([z -> A]<REAL>, [(GLOBAL d) -> B]<REAL>)
+ CALL RMul([z -> A]<REAL>, [(GLOBAL d) -> B]<REAL>) FROM DEF z := (RETURN j) <REAL>
  DEF D := (RETURN C) <REAL>
- CALL IntToReal([(GLOBAL y) -> i]<INT>)
+ CALL IntToReal([(GLOBAL y) -> i]<INT>) FROM DEF D := (RETURN C) <REAL>
  DEF E := (RETURN j) <REAL>
- CALL RDivide([(GLOBAL p) -> F]<REAL>, [E -> G]<REAL>)
+ CALL RDivide([(GLOBAL p) -> F]<REAL>, [E -> G]<REAL>) FROM DEF E := (RETURN j) <REAL>
  DEF I := (RETURN H) <REAL>
- CALL RNotEqualTo([D -> J]<REAL>, [I -> K]<REAL>)
+ CALL RNotEqualTo([D -> J]<REAL>, [I -> K]<REAL>) FROM DEF I := (RETURN H) <REAL>
  DEF M := (RETURN L) <BOOL>
  DEF GLOBAL N := M <BOOL>
 BSS SECTION
@@ -98,42 +98,42 @@ BSS SECTION
  DEF GLOBAL V := FALSE <BOOL>
  DEF GLOBAL W := FALSE <BOOL>
 CODE SECTION
- CALL RDivide([(GLOBAL d) -> F]<REAL>, [(GLOBAL d) -> G]<REAL>)
+ CALL RDivide([(GLOBAL d) -> F]<REAL>, [(GLOBAL d) -> G]<REAL>) FROM CODE SECTION
  DEF X := (RETURN H) <REAL>
  GLOBAL O := X <REAL>
  DEF Y := 10 <INT>
- CALL Mod([(GLOBAL y) -> Z]<INT>, [Y -> a0]<INT>)
+ CALL Mod([(GLOBAL y) -> Z]<INT>, [Y -> a0]<INT>) FROM DEF Y := 10 <INT>
  DEF a2 := (RETURN a1) <INT>
  GLOBAL R := a2 <INT>
- CALL RNeg([(GLOBAL p) -> f]<REAL>)
+ CALL RNeg([(GLOBAL p) -> f]<REAL>) FROM GLOBAL R := a2 <INT>
  DEF a3 := (RETURN g) <REAL>
- CALL IntToReal([(GLOBAL b) -> i]<INT>)
+ CALL IntToReal([(GLOBAL b) -> i]<INT>) FROM DEF a3 := (RETURN g) <REAL>
  DEF a4 := (RETURN j) <REAL>
- CALL RMul([(GLOBAL d) -> A]<REAL>, [a4 -> B]<REAL>)
+ CALL RMul([(GLOBAL d) -> A]<REAL>, [a4 -> B]<REAL>) FROM DEF a4 := (RETURN j) <REAL>
  DEF a5 := (RETURN C) <REAL>
- CALL RSub([a3 -> a6]<REAL>, [a5 -> a7]<REAL>)
+ CALL RSub([a3 -> a6]<REAL>, [a5 -> a7]<REAL>) FROM DEF a5 := (RETURN C) <REAL>
  DEF a9 := (RETURN a8) <REAL>
  GLOBAL P := a9 <REAL>
- CALL WriteInt([(GLOBAL b) -> b0]<INT>)
- CALL WriteReal([(GLOBAL O) -> b1]<REAL>)
- CALL WriteReal([(GLOBAL O) -> b1]<REAL>)
- CALL WriteReal([(GLOBAL P) -> b1]<REAL>)
- CALL WriteLn()
- CALL Div([(GLOBAL y) -> b2]<INT>, [(GLOBAL R) -> b3]<INT>)
+ CALL WriteInt([(GLOBAL b) -> b0]<INT>) FROM GLOBAL P := a9 <REAL>
+ CALL WriteReal([(GLOBAL O) -> b1]<REAL>) FROM CALL WriteInt([(GLOBAL b) -> b0]<INT>) FROM GLOBAL P := a9 <REAL>
+ CALL WriteReal([(GLOBAL O) -> b1]<REAL>) FROM CALL WriteReal([(GLOBAL O) -> b1]<REAL>) FROM CALL WriteInt([(GLOBAL b) -> b0]<INT>) FROM GLOBAL P := a9 <REAL>
+ CALL WriteReal([(GLOBAL P) -> b1]<REAL>) FROM CALL WriteReal([(GLOBAL O) -> b1]<REAL>) FROM CALL WriteReal([(GLOBAL O) -> b1]<REAL>) FROM CALL WriteInt([(GLOBAL b) -> b0]<INT>) FROM GLOBAL P := a9 <REAL>
+ CALL WriteLn() FROM CALL WriteReal([(GLOBAL P) -> b1]<REAL>) FROM CALL WriteReal([(GLOBAL O) -> b1]<REAL>) FROM CALL WriteReal([(GLOBAL O) -> b1]<REAL>) FROM CALL WriteInt([(GLOBAL b) -> b0]<INT>) FROM GLOBAL P := a9 <REAL>
+ CALL Div([(GLOBAL y) -> b2]<INT>, [(GLOBAL R) -> b3]<INT>) FROM CALL WriteLn() FROM CALL WriteReal([(GLOBAL P) -> b1]<REAL>) FROM CALL WriteReal([(GLOBAL O) -> b1]<REAL>) FROM CALL WriteReal([(GLOBAL O) -> b1]<REAL>) FROM CALL WriteInt([(GLOBAL b) -> b0]<INT>) FROM GLOBAL P := a9 <REAL>
  DEF b5 := (RETURN b4) <INT>
  GLOBAL S := b5 <INT>
- CALL Divide([(GLOBAL y) -> b6]<INT>, [(GLOBAL R) -> b7]<INT>)
+ CALL Divide([(GLOBAL y) -> b6]<INT>, [(GLOBAL R) -> b7]<INT>) FROM GLOBAL S := b5 <INT>
  DEF b9 := (RETURN b8) <REAL>
  GLOBAL Q := b9 <REAL>
- CALL WriteInt([(GLOBAL S) -> b0]<INT>)
- CALL WriteReal([(GLOBAL Q) -> b1]<REAL>)
- CALL WriteLn()
- CALL Round([(GLOBAL p) -> c0]<REAL>)
+ CALL WriteInt([(GLOBAL S) -> b0]<INT>) FROM GLOBAL Q := b9 <REAL>
+ CALL WriteReal([(GLOBAL Q) -> b1]<REAL>) FROM CALL WriteInt([(GLOBAL S) -> b0]<INT>) FROM GLOBAL Q := b9 <REAL>
+ CALL WriteLn() FROM CALL WriteReal([(GLOBAL Q) -> b1]<REAL>) FROM CALL WriteInt([(GLOBAL S) -> b0]<INT>) FROM GLOBAL Q := b9 <REAL>
+ CALL Round([(GLOBAL p) -> c0]<REAL>) FROM CALL WriteLn() FROM CALL WriteReal([(GLOBAL Q) -> b1]<REAL>) FROM CALL WriteInt([(GLOBAL S) -> b0]<INT>) FROM GLOBAL Q := b9 <REAL>
  DEF c2 := (RETURN c1) <INT>
- CALL IntToReal([c2 -> i]<INT>)
+ CALL IntToReal([c2 -> i]<INT>) FROM DEF c2 := (RETURN c1) <INT>
  DEF c3 := (RETURN j) <REAL>
  GLOBAL Q := c3 <REAL>
- CALL WriteReal([(GLOBAL Q) -> b1]<REAL>)
+ CALL WriteReal([(GLOBAL Q) -> b1]<REAL>) FROM GLOBAL Q := c3 <REAL>
  DEF c4 := TRUE <BOOL>
  IF (GLOBAL N) BEQ c4
  THEN IFSTAT_0_SEQ_0_LEVEL_0
@@ -141,47 +141,47 @@ CODE SECTION
  LABEL IFSTAT_0_SEQ_0_LEVEL_0
  DEF c5 := 2 <INT>
  DEF c6 := 2 <INT>
- CALL Multiply([c5 -> u]<INT>, [c6 -> v]<INT>)
+ CALL Multiply([c5 -> u]<INT>, [c6 -> v]<INT>) FROM DEF c6 := 2 <INT>
  DEF c7 := (RETURN w) <INT>
- CALL WriteInt([c7 -> b0]<INT>)
- GOTO IFEND_0_LEVEL_0 FROM CALL WriteInt([c7 -> b0]<INT>)
+ CALL WriteInt([c7 -> b0]<INT>) FROM DEF c7 := (RETURN w) <INT>
+ GOTO IFEND_0_LEVEL_0 FROM CALL WriteInt([c7 -> b0]<INT>) FROM DEF c7 := (RETURN w) <INT>
  LABEL IFNEXT_0_SEQ_0_LEVEL_0
  DEF c8 := 10 <INT>
- CALL Divide([(GLOBAL y) -> b6]<INT>, [c8 -> b7]<INT>)
+ CALL Divide([(GLOBAL y) -> b6]<INT>, [c8 -> b7]<INT>) FROM DEF c8 := 10 <INT>
  DEF c9 := (RETURN b8) <REAL>
- CALL WriteReal([c9 -> b1]<REAL>)
- GOTO IFEND_0_LEVEL_0 FROM CALL WriteReal([c9 -> b1]<REAL>)
+ CALL WriteReal([c9 -> b1]<REAL>) FROM DEF c9 := (RETURN b8) <REAL>
+ GOTO IFEND_0_LEVEL_0 FROM CALL WriteReal([c9 -> b1]<REAL>) FROM DEF c9 := (RETURN b8) <REAL>
  LABEL IFNEXT_0_SEQ_1_LEVEL_0
  LABEL IFEND_0_LEVEL_0
- CALL WriteLn()
+ CALL WriteLn() FROM LABEL IFEND_0_LEVEL_0
  DEF d0 := BNOT (GLOBAL N) <BOOL>
- CALL IntToReal([(GLOBAL b) -> i]<INT>)
+ CALL IntToReal([(GLOBAL b) -> i]<INT>) FROM DEF d0 := BNOT (GLOBAL N) <BOOL>
  DEF d1 := (RETURN j) <REAL>
- CALL RGreaterThan([(GLOBAL O) -> d2]<REAL>, [d1 -> d3]<REAL>)
+ CALL RGreaterThan([(GLOBAL O) -> d2]<REAL>, [d1 -> d3]<REAL>) FROM DEF d1 := (RETURN j) <REAL>
  DEF d5 := (RETURN d4) <BOOL>
  DEF d6 := d0 LAND d5 <BOOL>
  GLOBAL U := d6 <BOOL>
  DEF d7 := BNOT (GLOBAL N) <BOOL>
- CALL IntToReal([(GLOBAL b) -> i]<INT>)
+ CALL IntToReal([(GLOBAL b) -> i]<INT>) FROM DEF d7 := BNOT (GLOBAL N) <BOOL>
  DEF d8 := (RETURN j) <REAL>
- CALL RGreaterThanOrEqualTo([(GLOBAL O) -> d9]<REAL>, [d8 -> e0]<REAL>)
+ CALL RGreaterThanOrEqualTo([(GLOBAL O) -> d9]<REAL>, [d8 -> e0]<REAL>) FROM DEF d8 := (RETURN j) <REAL>
  DEF e2 := (RETURN e1) <BOOL>
  DEF e3 := d7 LOR e2 <BOOL>
  GLOBAL V := e3 <BOOL>
  DEF e4 := (GLOBAL U) IEQ (GLOBAL V) <BOOL>
  GLOBAL W := e4 <BOOL>
  DEF e5 := "Q is " <STRING>
- CALL WriteString([e5 -> e6]<STRING>)
- CALL WriteBool([(GLOBAL V) -> e7]<BOOL>)
- CALL WriteLn()
+ CALL WriteString([e5 -> e6]<STRING>) FROM DEF e5 := "Q is " <STRING>
+ CALL WriteBool([(GLOBAL V) -> e7]<BOOL>) FROM CALL WriteString([e5 -> e6]<STRING>) FROM DEF e5 := "Q is " <STRING>
+ CALL WriteLn() FROM CALL WriteBool([(GLOBAL V) -> e7]<BOOL>) FROM CALL WriteString([e5 -> e6]<STRING>) FROM DEF e5 := "Q is " <STRING>
  DEF e8 := TRUE <BOOL>
  IF (GLOBAL U) BEQ e8
  THEN IFSTAT_1_SEQ_0_LEVEL_0
  ELSE IFNEXT_1_SEQ_0_LEVEL_0
  LABEL IFSTAT_1_SEQ_0_LEVEL_0
  DEF e9 := 4 <INT>
- CALL WriteInt([e9 -> b0]<INT>)
- GOTO IFEND_1_LEVEL_0 FROM CALL WriteInt([e9 -> b0]<INT>)
+ CALL WriteInt([e9 -> b0]<INT>) FROM DEF e9 := 4 <INT>
+ GOTO IFEND_1_LEVEL_0 FROM CALL WriteInt([e9 -> b0]<INT>) FROM DEF e9 := 4 <INT>
  LABEL IFNEXT_1_SEQ_0_LEVEL_0
  DEF f0 := TRUE <BOOL>
  IF (GLOBAL V) BEQ f0
@@ -189,8 +189,8 @@ CODE SECTION
  ELSE IFNEXT_1_SEQ_1_LEVEL_0
  LABEL IFSTAT_1_SEQ_1_LEVEL_0
  DEF f1 := 5 <INT>
- CALL WriteInt([f1 -> b0]<INT>)
- GOTO IFEND_1_LEVEL_0 FROM CALL WriteInt([f1 -> b0]<INT>)
+ CALL WriteInt([f1 -> b0]<INT>) FROM DEF f1 := 5 <INT>
+ GOTO IFEND_1_LEVEL_0 FROM CALL WriteInt([f1 -> b0]<INT>) FROM DEF f1 := 5 <INT>
  LABEL IFNEXT_1_SEQ_1_LEVEL_0
  LABEL IFEND_1_LEVEL_0
  DEF f2 := TRUE <BOOL>
@@ -199,14 +199,14 @@ CODE SECTION
  ELSE IFNEXT_2_SEQ_0_LEVEL_0
  LABEL IFSTAT_2_SEQ_0_LEVEL_0
  DEF f3 := 5 <INT>
- CALL WriteInt([f3 -> b0]<INT>)
- GOTO IFEND_2_LEVEL_0 FROM CALL WriteInt([f3 -> b0]<INT>)
+ CALL WriteInt([f3 -> b0]<INT>) FROM DEF f3 := 5 <INT>
+ GOTO IFEND_2_LEVEL_0 FROM CALL WriteInt([f3 -> b0]<INT>) FROM DEF f3 := 5 <INT>
  LABEL IFNEXT_2_SEQ_0_LEVEL_0
  DEF f4 := 6 <INT>
- CALL WriteInt([f4 -> b0]<INT>)
- GOTO IFEND_2_LEVEL_0 FROM CALL WriteInt([f4 -> b0]<INT>)
+ CALL WriteInt([f4 -> b0]<INT>) FROM DEF f4 := 6 <INT>
+ GOTO IFEND_2_LEVEL_0 FROM CALL WriteInt([f4 -> b0]<INT>) FROM DEF f4 := 6 <INT>
  LABEL IFNEXT_2_SEQ_1_LEVEL_0
  LABEL IFEND_2_LEVEL_0
- CALL WriteLn()
+ CALL WriteLn() FROM LABEL IFEND_2_LEVEL_0
 END
 PROC SECTION

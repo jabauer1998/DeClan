@@ -24,7 +24,7 @@ DATA SECTION
  DEF c := 1.2 <REAL>
  DEF GLOBAL d := c <REAL>
  DEF e := 3.14 <REAL>
- CALL RNeg([e -> f]<REAL>)
+ CALL RNeg([e -> f]<REAL>) FROM DEF e := 3.14 <REAL>
  DEF h := (RETURN g) <REAL>
  DEF GLOBAL i := h <REAL>
  DEF j := 42 <INT>
@@ -32,17 +32,17 @@ DATA SECTION
 BSS SECTION
  DEF GLOBAL l := FALSE <BOOL>
 CODE SECTION
- CALL IntToReal([(GLOBAL b) -> m]<INT>)
+ CALL IntToReal([(GLOBAL b) -> m]<INT>) FROM CODE SECTION
  DEF o := (RETURN n) <REAL>
- CALL RMul([o -> p]<REAL>, [(GLOBAL d) -> q]<REAL>)
+ CALL RMul([o -> p]<REAL>, [(GLOBAL d) -> q]<REAL>) FROM DEF o := (RETURN n) <REAL>
  DEF s := (RETURN r) <REAL>
- CALL IntToReal([(GLOBAL k) -> m]<INT>)
+ CALL IntToReal([(GLOBAL k) -> m]<INT>) FROM DEF s := (RETURN r) <REAL>
  DEF t := (RETURN n) <REAL>
- CALL RDivide([(GLOBAL i) -> u]<REAL>, [t -> v]<REAL>)
+ CALL RDivide([(GLOBAL i) -> u]<REAL>, [t -> v]<REAL>) FROM DEF t := (RETURN n) <REAL>
  DEF x := (RETURN w) <REAL>
- CALL RNotEqualTo([s -> y]<REAL>, [x -> z]<REAL>)
+ CALL RNotEqualTo([s -> y]<REAL>, [x -> z]<REAL>) FROM DEF x := (RETURN w) <REAL>
  DEF B := (RETURN A) <BOOL>
  GLOBAL l := B <BOOL>
- CALL WriteBool([(GLOBAL l) -> C]<BOOL>)
+ CALL WriteBool([(GLOBAL l) -> C]<BOOL>) FROM GLOBAL l := B <BOOL>
 END
 PROC SECTION

@@ -14,9 +14,9 @@ DATA SECTION
 BSS SECTION
  DEF GLOBAL e := 0.0 <REAL>
 CODE SECTION
- CALL RSub([(GLOBAL b) -> f]<REAL>, [(GLOBAL d) -> g]<REAL>)
+ CALL RSub([(GLOBAL b) -> f]<REAL>, [(GLOBAL d) -> g]<REAL>) FROM CODE SECTION
  DEF i := (RETURN h) <REAL>
  GLOBAL e := i <REAL>
- CALL WriteReal([(GLOBAL e) -> j]<REAL>)
+ CALL WriteReal([(GLOBAL e) -> j]<REAL>) FROM GLOBAL e := i <REAL>
 END
 PROC SECTION

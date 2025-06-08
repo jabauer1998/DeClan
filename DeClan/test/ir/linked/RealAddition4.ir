@@ -71,7 +71,7 @@ SYMBOL SECTION
  ENTRY h49 INTERNAL PARAM r WriteReal 0 <REAL>
 DATA SECTION
  DEF f24 := 3.14 <REAL>
- CALL RNeg([f24 -> f34]<REAL>)
+ CALL RNeg([f24 -> f34]<REAL>) FROM DEF f24 := 3.14 <REAL>
  DEF f35 := (RETURN f33) <REAL>
  DEF GLOBAL f36 := f35 <REAL>
  DEF f37 := 0.5 <REAL>
@@ -81,12 +81,12 @@ DATA SECTION
 BSS SECTION
  DEF GLOBAL f39 := 0 <INT>
 CODE SECTION
- CALL RAdd([(GLOBAL f36) -> h31]<REAL>, [(GLOBAL f38) -> h32]<REAL>)
+ CALL RAdd([(GLOBAL f36) -> h31]<REAL>, [(GLOBAL f38) -> h32]<REAL>) FROM CODE SECTION
  DEF h33 := (RETURN h30) <REAL>
- CALL RealToInt([h33 -> h46]<REAL>)
+ CALL RealToInt([h33 -> h46]<REAL>) FROM DEF h33 := (RETURN h30) <REAL>
  DEF h47 := (RETURN h45) <INT>
  GLOBAL f39 := h47 <INT>
- CALL WriteReal([(GLOBAL f39) -> h49]<INT>)
+ CALL WriteReal([(GLOBAL f39) -> h49]<INT>) FROM GLOBAL f39 := h47 <INT>
 END
 PROC SECTION
  PROC LABEL RNeg
@@ -98,12 +98,12 @@ PROC SECTION
   DEF b53 := 31 <INT>
   DEF b54 := b52 ILSHIFT b53 <INT>
   b48 := b54 <INT>
-  CALL RealBinaryAsInt([(PARAM f34) -> f27]<REAL>)
+  CALL RealBinaryAsInt([(PARAM f34) -> f27]<REAL>) FROM b48 := b54 <INT>
   DEF b57 := (RETURN f28) <INT>
   b49 := b57 <INT>
   DEF b58 := b49 IXOR b48 <INT>
   b51 := b58 <INT>
-  CALL IntBinaryAsReal([b51 -> f31]<INT>)
+  CALL IntBinaryAsReal([b51 -> f31]<INT>) FROM b51 := b58 <INT>
   DEF b59 := (RETURN f32) <REAL>
   b50 := b59 <REAL>
   DEF RETURN f33 := b50 <REAL>
@@ -148,22 +148,22 @@ PROC SECTION
   DEF f54 := 0 <INT>
   DEF f55 := 0 <INT>
   DEF f56 := 0 <INT>
-  CALL RealSign([(PARAM h31) -> f65]<REAL>)
+  CALL RealSign([(PARAM h31) -> f65]<REAL>) FROM DEF f56 := 0 <INT>
   DEF f66 := (RETURN f64) <INT>
   f42 := f66 <INT>
-  CALL RealSign([(PARAM h32) -> f65]<REAL>)
+  CALL RealSign([(PARAM h32) -> f65]<REAL>) FROM f42 := f66 <INT>
   DEF f67 := (RETURN f64) <INT>
   f43 := f67 <INT>
-  CALL RealExponent([(PARAM h31) -> f81]<REAL>)
+  CALL RealExponent([(PARAM h31) -> f81]<REAL>) FROM f43 := f67 <INT>
   DEF f82 := (RETURN f80) <INT>
   f45 := f82 <INT>
-  CALL RealExponent([(PARAM h32) -> f81]<REAL>)
+  CALL RealExponent([(PARAM h32) -> f81]<REAL>) FROM f45 := f82 <INT>
   DEF f83 := (RETURN f80) <INT>
   f46 := f83 <INT>
-  CALL RealMantissa([(PARAM h31) -> g19]<REAL>)
+  CALL RealMantissa([(PARAM h31) -> g19]<REAL>) FROM f46 := f83 <INT>
   DEF g20 := (RETURN g18) <INT>
   f47 := g20 <INT>
-  CALL RealMantissa([(PARAM h32) -> g19]<REAL>)
+  CALL RealMantissa([(PARAM h32) -> g19]<REAL>) FROM f47 := g20 <INT>
   DEF g21 := (RETURN g18) <INT>
   f48 := g21 <INT>
   DEF g22 := f45 LT f46 <BOOL>
@@ -315,7 +315,7 @@ PROC SECTION
   f53 := f51 <INT>
   DEF g81 := 0 <INT>
   f56 := g81 <INT>
-  CALL IntIsZero([f53 -> g85]<INT>)
+  CALL IntIsZero([f53 -> g85]<INT>) FROM f56 := g81 <INT>
   DEF g90 := (RETURN g89) <BOOL>
   DEF g91 := BNOT g90 <BOOL>
   DEF g92 := TRUE <BOOL>
@@ -347,7 +347,7 @@ PROC SECTION
   DEF h10 := 1 <INT>
   DEF h11 := f53 IRSHIFT h10 <INT>
   f53 := h11 <INT>
-  CALL IntIsZero([f53 -> g85]<INT>)
+  CALL IntIsZero([f53 -> g85]<INT>) FROM f53 := h11 <INT>
   DEF h12 := (RETURN g89) <BOOL>
   DEF h13 := BNOT h12 <BOOL>
   g91 := h13 <BOOL>
@@ -384,7 +384,7 @@ PROC SECTION
   DEF h28 := f52 ILSHIFT h27 <INT>
   DEF h29 := f41 IOR h28 <INT>
   f41 := h29 <INT>
-  CALL IntBinaryAsReal([f41 -> f31]<INT>)
+  CALL IntBinaryAsReal([f41 -> f31]<INT>) FROM f41 := h29 <INT>
   DEF k4 := (RETURN f32) <REAL>
   f40 := k4 <REAL>
   DEF RETURN h30 := f40 <REAL>
@@ -392,7 +392,7 @@ PROC SECTION
  PROC LABEL RealSign
   DEF f57 := 0 <INT>
   DEF f58 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM f65) -> f27]<REAL>)
+  CALL RealBinaryAsInt([(PARAM f65) -> f27]<REAL>) FROM DEF f58 := 0 <INT>
   DEF f59 := (RETURN f28) <INT>
   f58 := f59 <INT>
   DEF f60 := 31 <INT>
@@ -406,7 +406,7 @@ PROC SECTION
   DEF f68 := 0 <INT>
   DEF f69 := 0 <INT>
   DEF f70 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM f81) -> f27]<REAL>)
+  CALL RealBinaryAsInt([(PARAM f81) -> f27]<REAL>) FROM DEF f70 := 0 <INT>
   DEF f71 := (RETURN f28) <INT>
   f69 := f71 <INT>
   DEF f72 := 23 <INT>
@@ -423,13 +423,13 @@ PROC SECTION
   DEF f85 := 0 <INT>
   DEF f86 := 0 <INT>
   DEF f87 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM g19) -> f27]<REAL>)
+  CALL RealBinaryAsInt([(PARAM g19) -> f27]<REAL>) FROM DEF f87 := 0 <INT>
   DEF f88 := (RETURN f28) <INT>
   f85 := f88 <INT>
   DEF f89 := 8388607 <INT>
   DEF f90 := f85 IAND f89 <INT>
   f86 := f90 <INT>
-  CALL RealIsZero([(PARAM g19) -> g13]<REAL>)
+  CALL RealIsZero([(PARAM g19) -> g13]<REAL>) FROM f86 := f90 <INT>
   DEF g14 := (RETURN g12) <BOOL>
   DEF g15 := TRUE <BOOL>
   IF g14 BEQ g15
@@ -451,7 +451,7 @@ PROC SECTION
   DEF f91 := FALSE <BOOL>
   DEF f92 := 0 <INT>
   DEF f93 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM g13) -> f27]<REAL>)
+  CALL RealBinaryAsInt([(PARAM g13) -> f27]<REAL>) FROM DEF f93 := 0 <INT>
   DEF f94 := (RETURN f28) <INT>
   f93 := f94 <INT>
   DEF f95 := 2147483647 <INT>
@@ -501,13 +501,13 @@ PROC SECTION
   DEF h36 := 0 <INT>
   DEF h37 := 0 <INT>
   DEF h38 := 0 <INT>
-  CALL RealExponent([(PARAM h46) -> f81]<REAL>)
+  CALL RealExponent([(PARAM h46) -> f81]<REAL>) FROM DEF h38 := 0 <INT>
   DEF h39 := (RETURN f80) <INT>
   h35 := h39 <INT>
-  CALL RealMantissa([(PARAM h46) -> g19]<REAL>)
+  CALL RealMantissa([(PARAM h46) -> g19]<REAL>) FROM h35 := h39 <INT>
   DEF h40 := (RETURN g18) <INT>
   h36 := h40 <INT>
-  CALL RealSign([(PARAM h46) -> f65]<REAL>)
+  CALL RealSign([(PARAM h46) -> f65]<REAL>) FROM h36 := h40 <INT>
   DEF h41 := (RETURN f64) <INT>
   h37 := h41 <INT>
   DEF h42 := 0 <INT>

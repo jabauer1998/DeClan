@@ -25,7 +25,7 @@ BSS SECTION
  DEF GLOBAL b := 0 <INT>
  DEF GLOBAL c := 0 <INT>
 CODE SECTION
- CALL ReadInt()
+ CALL ReadInt() FROM CODE SECTION
  DEF k := (RETURN j) <INT>
  GLOBAL a := k <INT>
  DEF l := 0 <INT>
@@ -35,15 +35,15 @@ CODE SECTION
  THEN FORLOOP_0_LEVEL_0
  ELSE FOREND_0_LEVEL_0
  LABEL FORLOOP_0_LEVEL_0
- CALL F([(GLOBAL b) -> f]<INT>)
+ CALL F([(GLOBAL b) -> f]<INT>) FROM LABEL FORLOOP_0_LEVEL_0
  DEF m := (RETURN g) <INT>
  GLOBAL c := m <INT>
- CALL WriteInt([(GLOBAL c) -> n]<INT>)
- CALL Fact([(GLOBAL b) -> h]<INT>)
+ CALL WriteInt([(GLOBAL c) -> n]<INT>) FROM GLOBAL c := m <INT>
+ CALL Fact([(GLOBAL b) -> h]<INT>) FROM CALL WriteInt([(GLOBAL c) -> n]<INT>) FROM GLOBAL c := m <INT>
  DEF o := (RETURN i) <INT>
  GLOBAL c := o <INT>
- CALL WriteInt([(GLOBAL c) -> n]<INT>)
- CALL WriteLn()
+ CALL WriteInt([(GLOBAL c) -> n]<INT>) FROM GLOBAL c := o <INT>
+ CALL WriteLn() FROM CALL WriteInt([(GLOBAL c) -> n]<INT>) FROM GLOBAL c := o <INT>
  DEF p := 1 <INT>
  GLOBAL b := (GLOBAL b) IADD p <INT>
  GOTO FORBEG_0_LEVEL_0 FROM GLOBAL b := (GLOBAL b) IADD p <INT>
@@ -66,10 +66,10 @@ PROC SECTION
   LABEL IFNEXT_0_SEQ_0_LEVEL_0
   DEF w := 1 <INT>
   DEF x := (PARAM d) ISUB w <INT>
-  CALL M([x -> d]<INT>)
+  CALL M([x -> d]<INT>) FROM DEF x := (PARAM d) ISUB w <INT>
   DEF y := (RETURN e) <INT>
   q := y <INT>
-  CALL F([q -> f]<INT>)
+  CALL F([q -> f]<INT>) FROM q := y <INT>
   DEF z := (RETURN g) <INT>
   r := z <INT>
   DEF A := (PARAM d) ISUB r <INT>
@@ -95,10 +95,10 @@ PROC SECTION
   LABEL IFNEXT_1_SEQ_0_LEVEL_0
   DEF H := 1 <INT>
   DEF I := (PARAM f) ISUB H <INT>
-  CALL F([I -> f]<INT>)
+  CALL F([I -> f]<INT>) FROM DEF I := (PARAM f) ISUB H <INT>
   DEF J := (RETURN g) <INT>
   B := J <INT>
-  CALL M([B -> d]<INT>)
+  CALL M([B -> d]<INT>) FROM B := J <INT>
   DEF K := (RETURN e) <INT>
   C := K <INT>
   DEF L := (PARAM f) ISUB C <INT>
@@ -124,10 +124,10 @@ PROC SECTION
   LABEL IFNEXT_2_SEQ_0_LEVEL_0
   DEF S := 1 <INT>
   DEF T := (PARAM h) ISUB S <INT>
-  CALL Fact([T -> h]<INT>)
+  CALL Fact([T -> h]<INT>) FROM DEF T := (PARAM h) ISUB S <INT>
   DEF U := (RETURN i) <INT>
   M := U <INT>
-  CALL Multiply([(PARAM h) -> V]<INT>, [M -> W]<INT>)
+  CALL Multiply([(PARAM h) -> V]<INT>, [M -> W]<INT>) FROM M := U <INT>
   DEF Y := (RETURN X) <INT>
   N := Y <INT>
   GOTO IFEND_2_LEVEL_0 FROM N := Y <INT>

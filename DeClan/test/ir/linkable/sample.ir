@@ -24,31 +24,31 @@ DATA SECTION
 BSS SECTION
  DEF GLOBAL e := 0 <INT>
 CODE SECTION
- CALL gcd([(GLOBAL b) -> f]<INT>, [(GLOBAL d) -> g]<INT>)
+ CALL gcd([(GLOBAL b) -> f]<INT>, [(GLOBAL d) -> g]<INT>) FROM CODE SECTION
  DEF i := (RETURN h) <INT>
  GLOBAL e := i <INT>
  DEF j := "Answer is " <STRING>
- CALL WriteString([j -> k]<STRING>)
- CALL WriteInt([(GLOBAL e) -> l]<INT>)
- CALL WriteLn()
- CALL WriteInt([(GLOBAL b) -> l]<INT>)
- CALL WriteInt([(GLOBAL d) -> l]<INT>)
- CALL WriteInt([(GLOBAL e) -> l]<INT>)
- CALL Multiply([(GLOBAL b) -> m]<INT>, [(GLOBAL d) -> n]<INT>)
+ CALL WriteString([j -> k]<STRING>) FROM DEF j := "Answer is " <STRING>
+ CALL WriteInt([(GLOBAL e) -> l]<INT>) FROM CALL WriteString([j -> k]<STRING>) FROM DEF j := "Answer is " <STRING>
+ CALL WriteLn() FROM CALL WriteInt([(GLOBAL e) -> l]<INT>) FROM CALL WriteString([j -> k]<STRING>) FROM DEF j := "Answer is " <STRING>
+ CALL WriteInt([(GLOBAL b) -> l]<INT>) FROM CALL WriteLn() FROM CALL WriteInt([(GLOBAL e) -> l]<INT>) FROM CALL WriteString([j -> k]<STRING>) FROM DEF j := "Answer is " <STRING>
+ CALL WriteInt([(GLOBAL d) -> l]<INT>) FROM CALL WriteInt([(GLOBAL b) -> l]<INT>) FROM CALL WriteLn() FROM CALL WriteInt([(GLOBAL e) -> l]<INT>) FROM CALL WriteString([j -> k]<STRING>) FROM DEF j := "Answer is " <STRING>
+ CALL WriteInt([(GLOBAL e) -> l]<INT>) FROM CALL WriteInt([(GLOBAL d) -> l]<INT>) FROM CALL WriteInt([(GLOBAL b) -> l]<INT>) FROM CALL WriteLn() FROM CALL WriteInt([(GLOBAL e) -> l]<INT>) FROM CALL WriteString([j -> k]<STRING>) FROM DEF j := "Answer is " <STRING>
+ CALL Multiply([(GLOBAL b) -> m]<INT>, [(GLOBAL d) -> n]<INT>) FROM CALL WriteInt([(GLOBAL e) -> l]<INT>) FROM CALL WriteInt([(GLOBAL d) -> l]<INT>) FROM CALL WriteInt([(GLOBAL b) -> l]<INT>) FROM CALL WriteLn() FROM CALL WriteInt([(GLOBAL e) -> l]<INT>) FROM CALL WriteString([j -> k]<STRING>) FROM DEF j := "Answer is " <STRING>
  DEF p := (RETURN o) <INT>
- CALL Multiply([p -> m]<INT>, [(GLOBAL e) -> n]<INT>)
+ CALL Multiply([p -> m]<INT>, [(GLOBAL e) -> n]<INT>) FROM DEF p := (RETURN o) <INT>
  DEF q := (RETURN o) <INT>
  GLOBAL e := q <INT>
  DEF r := "Answer is " <STRING>
- CALL WriteString([r -> k]<STRING>)
- CALL WriteInt([(GLOBAL e) -> l]<INT>)
+ CALL WriteString([r -> k]<STRING>) FROM DEF r := "Answer is " <STRING>
+ CALL WriteInt([(GLOBAL e) -> l]<INT>) FROM CALL WriteString([r -> k]<STRING>) FROM DEF r := "Answer is " <STRING>
  DEF s := 1.0 <REAL>
- CALL IntToReal([(GLOBAL e) -> t]<INT>)
+ CALL IntToReal([(GLOBAL e) -> t]<INT>) FROM DEF s := 1.0 <REAL>
  DEF v := (RETURN u) <REAL>
- CALL RMul([v -> w]<REAL>, [s -> x]<REAL>)
+ CALL RMul([v -> w]<REAL>, [s -> x]<REAL>) FROM DEF v := (RETURN u) <REAL>
  DEF z := (RETURN y) <REAL>
- CALL WriteReal([z -> A]<REAL>)
- CALL WriteLn()
+ CALL WriteReal([z -> A]<REAL>) FROM DEF z := (RETURN y) <REAL>
+ CALL WriteLn() FROM CALL WriteReal([z -> A]<REAL>) FROM DEF z := (RETURN y) <REAL>
 END
 PROC SECTION
  PROC LABEL gcd

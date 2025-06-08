@@ -25,28 +25,28 @@ DATA SECTION
  DEF c := 1.2 <REAL>
  DEF GLOBAL d := c <REAL>
  DEF e := 3.14 <REAL>
- CALL RNeg([e -> f]<REAL>)
+ CALL RNeg([e -> f]<REAL>) FROM DEF e := 3.14 <REAL>
  DEF h := (RETURN g) <REAL>
- CALL IntToReal([(GLOBAL b) -> i]<INT>)
+ CALL IntToReal([(GLOBAL b) -> i]<INT>) FROM DEF h := (RETURN g) <REAL>
  DEF k := (RETURN j) <REAL>
- CALL RAdd([h -> l]<REAL>, [k -> m]<REAL>)
+ CALL RAdd([h -> l]<REAL>, [k -> m]<REAL>) FROM DEF k := (RETURN j) <REAL>
  DEF o := (RETURN n) <REAL>
  DEF GLOBAL p := o <REAL>
 BSS SECTION
  DEF GLOBAL q := 0.0 <REAL>
  DEF GLOBAL r := 0.0 <REAL>
 CODE SECTION
- CALL IntToReal([(GLOBAL b) -> i]<INT>)
+ CALL IntToReal([(GLOBAL b) -> i]<INT>) FROM CODE SECTION
  DEF s := (RETURN j) <REAL>
- CALL RMul([(GLOBAL d) -> t]<REAL>, [s -> u]<REAL>)
+ CALL RMul([(GLOBAL d) -> t]<REAL>, [s -> u]<REAL>) FROM DEF s := (RETURN j) <REAL>
  DEF w := (RETURN v) <REAL>
  GLOBAL r := w <REAL>
- CALL RSub([(GLOBAL p) -> x]<REAL>, [(GLOBAL r) -> y]<REAL>)
+ CALL RSub([(GLOBAL p) -> x]<REAL>, [(GLOBAL r) -> y]<REAL>) FROM GLOBAL r := w <REAL>
  DEF A := (RETURN z) <REAL>
  GLOBAL q := A <REAL>
  DEF B := "Result is " <STRING>
- CALL WriteString([B -> C]<STRING>)
- CALL WriteReal([(GLOBAL q) -> D]<REAL>)
- CALL WriteLn()
+ CALL WriteString([B -> C]<STRING>) FROM DEF B := "Result is " <STRING>
+ CALL WriteReal([(GLOBAL q) -> D]<REAL>) FROM CALL WriteString([B -> C]<STRING>) FROM DEF B := "Result is " <STRING>
+ CALL WriteLn() FROM CALL WriteReal([(GLOBAL q) -> D]<REAL>) FROM CALL WriteString([B -> C]<STRING>) FROM DEF B := "Result is " <STRING>
 END
 PROC SECTION

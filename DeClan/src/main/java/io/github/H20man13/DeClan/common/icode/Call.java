@@ -12,10 +12,12 @@ import io.github.H20man13.DeClan.common.pat.P;
 public class Call implements ICode {
 	public String pname;
 	public List<Def> params;
+	private ICode from;
 
-	public Call(String pname, List<Def> params) {
+	public Call(String pname, List<Def> params, ICode from) {
 		this.pname = pname;
 		this.params = params;
+		this.from = from;
 	}
 
 	@Override
@@ -32,7 +34,8 @@ public class Call implements ICode {
 			}
 			sb.append(param.toString());
 		}
-		sb.append(")");
+		sb.append(") FROM ");
+		sb.append(from.toString());
 		return sb.toString();
 	}
 
@@ -69,7 +72,10 @@ public class Call implements ICode {
 				if(!arg1.equals(arg2))
 					return false;
 			}
-
+			
+			if(!from.equals(objCall.from))
+				return false;
+			
 			return true;
 		} else {
 			return false;
@@ -96,17 +102,19 @@ public class Call implements ICode {
 	public void replacePlace(String from, String to) {
 		for(Def assign: params)
 			assign.replacePlace(from, to);
+		this.from.replacePlace(from, to);
 	}
 
 	@Override
 	public void replaceLabel(String from, String to) {
 		if(pname.equals(from))
 			pname = to;
+		this.from.replaceLabel(from, to);
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(pname, params);
+		return Objects.hash(pname, params, from);
 	}
 
 	@Override
@@ -115,6 +123,6 @@ public class Call implements ICode {
 		for(Def param: params) {
 			newParams.add((Def)param.copy());
 		}
-		return new Call(pname, newParams);
+		return new Call(pname, newParams, from);
 	}
 }

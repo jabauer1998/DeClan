@@ -1992,7 +1992,7 @@ public class MyOptimizer {
     			Set<Tuple<Exp, ICode.Type>> newExpSet = new HashSet<Tuple<Exp, ICode.Type>>();
 	    		Set<Tuple<Exp, ICode.Type>> latestOfBlock = this.latestSets.get(icode);
 	    		Set<Tuple<Exp, ICode.Type>> usedAnalBlock = this.usedAnal.getOutputSet(icode);
-	    		HashSet<Tuple<Exp, String>> savedVars = this.savedAnal.getInputSet(icode);
+	    		HashSet<Tuple<Exp, String>> savedVars = this.savedAnal.getOutputSet(icode);
 	    		newExpSet.addAll(latestOfBlock);
 	    		newExpSet.retainAll(usedAnalBlock);
 	    		

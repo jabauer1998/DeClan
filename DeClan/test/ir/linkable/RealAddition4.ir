@@ -12,7 +12,7 @@ SYMBOL SECTION
  ENTRY p EXTERNAL PARAM WriteReal 0 <INT>
 DATA SECTION
  DEF a := 3.14 <REAL>
- CALL RNeg([a -> b]<REAL>)
+ CALL RNeg([a -> b]<REAL>) FROM DEF a := 3.14 <REAL>
  DEF d := (RETURN c) <REAL>
  DEF GLOBAL e := d <REAL>
  DEF f := 0.5 <REAL>
@@ -20,11 +20,11 @@ DATA SECTION
 BSS SECTION
  DEF GLOBAL h := 0 <INT>
 CODE SECTION
- CALL RAdd([(GLOBAL e) -> i]<REAL>, [(GLOBAL g) -> j]<REAL>)
+ CALL RAdd([(GLOBAL e) -> i]<REAL>, [(GLOBAL g) -> j]<REAL>) FROM CODE SECTION
  DEF l := (RETURN k) <REAL>
- CALL RealToInt([l -> m]<REAL>)
+ CALL RealToInt([l -> m]<REAL>) FROM DEF l := (RETURN k) <REAL>
  DEF o := (RETURN n) <INT>
  GLOBAL h := o <INT>
- CALL WriteReal([(GLOBAL h) -> p]<INT>)
+ CALL WriteReal([(GLOBAL h) -> p]<INT>) FROM GLOBAL h := o <INT>
 END
 PROC SECTION

@@ -14,7 +14,7 @@ SYMBOL SECTION
  ENTRY E EXTERNAL RETURN Div <INT>
 DATA SECTION
  DEF a := 42 <INT>
- CALL INeg([a -> b]<INT>)
+ CALL INeg([a -> b]<INT>) FROM DEF a := 42 <INT>
  DEF d := (RETURN c) <INT>
  DEF GLOBAL e := d <INT>
 BSS SECTION
@@ -28,7 +28,7 @@ CODE SECTION
  THEN IFSTAT_0_SEQ_0_LEVEL_0
  ELSE IFNEXT_0_SEQ_0_LEVEL_0
  LABEL IFSTAT_0_SEQ_0_LEVEL_0
- CALL INeg([(GLOBAL f) -> b]<INT>)
+ CALL INeg([(GLOBAL f) -> b]<INT>) FROM LABEL IFSTAT_0_SEQ_0_LEVEL_0
  DEF k := (RETURN c) <INT>
  GLOBAL f := k <INT>
  GOTO IFEND_0_LEVEL_0 FROM GLOBAL f := k <INT>
@@ -40,8 +40,8 @@ CODE SECTION
  THEN IFSTAT_0_SEQ_1_LEVEL_0
  ELSE IFNEXT_0_SEQ_1_LEVEL_0
  LABEL IFSTAT_0_SEQ_1_LEVEL_0
- CALL Display([(GLOBAL f) -> g]<INT>)
- GOTO IFEND_0_LEVEL_0 FROM CALL Display([(GLOBAL f) -> g]<INT>)
+ CALL Display([(GLOBAL f) -> g]<INT>) FROM LABEL IFSTAT_0_SEQ_1_LEVEL_0
+ GOTO IFEND_0_LEVEL_0 FROM CALL Display([(GLOBAL f) -> g]<INT>) FROM LABEL IFSTAT_0_SEQ_1_LEVEL_0
  LABEL IFNEXT_0_SEQ_1_LEVEL_0
  LABEL IFEND_0_LEVEL_0
 END
@@ -49,7 +49,7 @@ PROC SECTION
  PROC LABEL Display
   DEF o := FALSE <BOOL>
   DEF p := 2 <INT>
-  CALL Mod([(PARAM g) -> q]<INT>, [p -> r]<INT>)
+  CALL Mod([(PARAM g) -> q]<INT>, [p -> r]<INT>) FROM DEF p := 2 <INT>
   DEF t := (RETURN s) <INT>
   DEF u := 0 <INT>
   DEF v := t INE u <BOOL>
@@ -60,11 +60,11 @@ PROC SECTION
   ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
   DEF x := 1 <INT>
-  CALL WriteInt([x -> y]<INT>)
+  CALL WriteInt([x -> y]<INT>) FROM DEF x := 1 <INT>
   DEF z := 1 <INT>
   DEF A := (PARAM g) ISUB z <INT>
   DEF B := 2 <INT>
-  CALL Div([A -> C]<INT>, [B -> D]<INT>)
+  CALL Div([A -> C]<INT>, [B -> D]<INT>) FROM DEF B := 2 <INT>
   DEF F := (RETURN E) <INT>
   PARAM g := F <INT>
   GOTO IFEND_1_LEVEL_0 FROM PARAM g := F <INT>
@@ -77,15 +77,15 @@ PROC SECTION
   ELSE IFNEXT_1_SEQ_1_LEVEL_0
   LABEL IFSTAT_1_SEQ_1_LEVEL_0
   DEF J := 1 <INT>
-  CALL INeg([J -> b]<INT>)
+  CALL INeg([J -> b]<INT>) FROM DEF J := 1 <INT>
   DEF K := (RETURN c) <INT>
-  CALL WriteInt([K -> y]<INT>)
-  GOTO IFEND_1_LEVEL_0 FROM CALL WriteInt([K -> y]<INT>)
+  CALL WriteInt([K -> y]<INT>) FROM DEF K := (RETURN c) <INT>
+  GOTO IFEND_1_LEVEL_0 FROM CALL WriteInt([K -> y]<INT>) FROM DEF K := (RETURN c) <INT>
   LABEL IFNEXT_1_SEQ_1_LEVEL_0
   DEF L := 0 <INT>
-  CALL WriteInt([L -> y]<INT>)
+  CALL WriteInt([L -> y]<INT>) FROM DEF L := 0 <INT>
   DEF M := 2 <INT>
-  CALL Div([(PARAM g) -> C]<INT>, [M -> D]<INT>)
+  CALL Div([(PARAM g) -> C]<INT>, [M -> D]<INT>) FROM DEF M := 2 <INT>
   DEF N := (RETURN E) <INT>
   PARAM g := N <INT>
   GOTO IFEND_1_LEVEL_0 FROM PARAM g := N <INT>

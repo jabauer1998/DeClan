@@ -42,10 +42,10 @@ DATA SECTION
 BSS SECTION
  DEF GLOBAL f26 := 0 <INT>
 CODE SECTION
- CALL RealToInt([(GLOBAL f25) -> g15]<REAL>)
+ CALL RealToInt([(GLOBAL f25) -> g15]<REAL>) FROM CODE SECTION
  DEF g16 := (RETURN g14) <INT>
  GLOBAL f26 := g16 <INT>
- CALL WriteInt([(GLOBAL f26) -> g18]<INT>)
+ CALL WriteInt([(GLOBAL f26) -> g18]<INT>) FROM GLOBAL f26 := g16 <INT>
 END
 PROC SECTION
  PROC LABEL RealToInt
@@ -54,13 +54,13 @@ PROC SECTION
   DEF f29 := 0 <INT>
   DEF f30 := 0 <INT>
   DEF f31 := 0 <INT>
-  CALL RealExponent([(PARAM g15) -> f49]<REAL>)
+  CALL RealExponent([(PARAM g15) -> f49]<REAL>) FROM DEF f31 := 0 <INT>
   DEF f50 := (RETURN f48) <INT>
   f28 := f50 <INT>
-  CALL RealMantissa([(PARAM g15) -> f76]<REAL>)
+  CALL RealMantissa([(PARAM g15) -> f76]<REAL>) FROM f28 := f50 <INT>
   DEF f77 := (RETURN f75) <INT>
   f29 := f77 <INT>
-  CALL RealSign([(PARAM g15) -> f86]<REAL>)
+  CALL RealSign([(PARAM g15) -> f86]<REAL>) FROM f29 := f77 <INT>
   DEF f87 := (RETURN f85) <INT>
   f30 := f87 <INT>
   DEF f88 := 0 <INT>
@@ -113,7 +113,7 @@ PROC SECTION
   DEF f32 := 0 <INT>
   DEF f33 := 0 <INT>
   DEF f34 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM f49) -> f37]<REAL>)
+  CALL RealBinaryAsInt([(PARAM f49) -> f37]<REAL>) FROM DEF f34 := 0 <INT>
   DEF f39 := (RETURN f38) <INT>
   f33 := f39 <INT>
   DEF f40 := 23 <INT>
@@ -141,13 +141,13 @@ PROC SECTION
   DEF f52 := 0 <INT>
   DEF f53 := 0 <INT>
   DEF f54 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM f76) -> f37]<REAL>)
+  CALL RealBinaryAsInt([(PARAM f76) -> f37]<REAL>) FROM DEF f54 := 0 <INT>
   DEF f55 := (RETURN f38) <INT>
   f52 := f55 <INT>
   DEF f56 := 8388607 <INT>
   DEF f57 := f52 IAND f56 <INT>
   f53 := f57 <INT>
-  CALL RealIsZero([(PARAM f76) -> f70]<REAL>)
+  CALL RealIsZero([(PARAM f76) -> f70]<REAL>) FROM f53 := f57 <INT>
   DEF f71 := (RETURN f69) <BOOL>
   DEF f72 := TRUE <BOOL>
   IF f71 BEQ f72
@@ -169,7 +169,7 @@ PROC SECTION
   DEF f58 := FALSE <BOOL>
   DEF f59 := 0 <INT>
   DEF f60 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM f70) -> f37]<REAL>)
+  CALL RealBinaryAsInt([(PARAM f70) -> f37]<REAL>) FROM DEF f60 := 0 <INT>
   DEF f61 := (RETURN f38) <INT>
   f60 := f61 <INT>
   DEF f62 := 2147483647 <INT>
@@ -196,7 +196,7 @@ PROC SECTION
  PROC LABEL RealSign
   DEF f78 := 0 <INT>
   DEF f79 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM f86) -> f37]<REAL>)
+  CALL RealBinaryAsInt([(PARAM f86) -> f37]<REAL>) FROM DEF f79 := 0 <INT>
   DEF f80 := (RETURN f38) <INT>
   f79 := f80 <INT>
   DEF f81 := 31 <INT>

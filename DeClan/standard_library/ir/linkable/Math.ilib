@@ -69,7 +69,7 @@ PROC SECTION
   q := (PARAM a) <INT>
   GOTO IFEND_0_LEVEL_0 FROM q := (PARAM a) <INT>
   LABEL IFNEXT_0_SEQ_0_LEVEL_0
-  CALL INeg([(PARAM a) -> u]<INT>)
+  CALL INeg([(PARAM a) -> u]<INT>) FROM LABEL IFNEXT_0_SEQ_0_LEVEL_0
   DEF w := (RETURN v) <INT>
   q := w <INT>
   GOTO IFEND_0_LEVEL_0 FROM q := w <INT>
@@ -81,7 +81,7 @@ PROC SECTION
   DEF x := 0.0 <REAL>
   DEF y := 0 <INT>
   DEF z := FALSE <BOOL>
-  CALL RealIsNegative([(PARAM c) -> A]<REAL>)
+  CALL RealIsNegative([(PARAM c) -> A]<REAL>) FROM DEF z := FALSE <BOOL>
   DEF C := (RETURN B) <BOOL>
   z := C <BOOL>
   DEF D := TRUE <BOOL>
@@ -89,7 +89,7 @@ PROC SECTION
   THEN IFSTAT_1_SEQ_0_LEVEL_0
   ELSE IFNEXT_1_SEQ_0_LEVEL_0
   LABEL IFSTAT_1_SEQ_0_LEVEL_0
-  CALL RNeg([(PARAM c) -> E]<REAL>)
+  CALL RNeg([(PARAM c) -> E]<REAL>) FROM LABEL IFSTAT_1_SEQ_0_LEVEL_0
   DEF G := (RETURN F) <REAL>
   x := G <REAL>
   GOTO IFEND_1_LEVEL_0 FROM x := G <REAL>
@@ -101,7 +101,7 @@ PROC SECTION
   DEF H := 0.0 <REAL>
   DEF I := 0 <INT>
   DEF J := 1 <INT>
-  CALL IntToReal([J -> K]<INT>)
+  CALL IntToReal([J -> K]<INT>) FROM DEF J := 1 <INT>
   DEF M := (RETURN L) <REAL>
   H := M <REAL>
   DEF N := 0 <INT>
@@ -123,7 +123,7 @@ PROC SECTION
   THEN WHILESTAT_0_SEQ_0_LEVEL_0
   ELSE WHILEEND_0_LEVEL_0
   LABEL WHILESTAT_0_SEQ_0_LEVEL_0
-  CALL RMul([H -> T]<REAL>, [(PARAM e) -> U]<REAL>)
+  CALL RMul([H -> T]<REAL>, [(PARAM e) -> U]<REAL>) FROM LABEL WHILESTAT_0_SEQ_0_LEVEL_0
   DEF W := (RETURN V) <REAL>
   H := W <REAL>
   DEF X := 1 <INT>
@@ -153,7 +153,7 @@ PROC SECTION
   THEN WHILESTAT_2_SEQ_0_LEVEL_0
   ELSE WHILEEND_2_LEVEL_0
   LABEL WHILESTAT_2_SEQ_0_LEVEL_0
-  CALL RDivide([H -> a5]<REAL>, [(PARAM e) -> a6]<REAL>)
+  CALL RDivide([H -> a5]<REAL>, [(PARAM e) -> a6]<REAL>) FROM LABEL WHILESTAT_2_SEQ_0_LEVEL_0
   DEF a8 := (RETURN a7) <REAL>
   H := a8 <REAL>
   DEF a9 := 1 <INT>
@@ -175,12 +175,12 @@ PROC SECTION
   DEF b4 := 1 <INT>
   b2 := b4 <INT>
   DEF b5 := 0 <INT>
-  CALL IntToReal([b5 -> K]<INT>)
+  CALL IntToReal([b5 -> K]<INT>) FROM DEF b5 := 0 <INT>
   DEF b6 := (RETURN L) <REAL>
   b3 := b6 <REAL>
-  CALL IntToReal([(PARAM i) -> K]<INT>)
+  CALL IntToReal([(PARAM i) -> K]<INT>) FROM b3 := b6 <REAL>
   DEF b7 := (RETURN L) <REAL>
-  CALL RLessThan([b3 -> b8]<REAL>, [b7 -> b9]<REAL>)
+  CALL RLessThan([b3 -> b8]<REAL>, [b7 -> b9]<REAL>) FROM DEF b7 := (RETURN L) <REAL>
   DEF c1 := (RETURN c0) <BOOL>
   DEF c2 := TRUE <BOOL>
   IF c1 BEQ c2
@@ -191,18 +191,18 @@ PROC SECTION
   THEN WHILESTAT_4_SEQ_0_LEVEL_0
   ELSE WHILEEND_4_LEVEL_0
   LABEL WHILESTAT_4_SEQ_0_LEVEL_0
-  CALL Multiply([b2 -> c3]<INT>, [(PARAM h) -> c4]<INT>)
+  CALL Multiply([b2 -> c3]<INT>, [(PARAM h) -> c4]<INT>) FROM LABEL WHILESTAT_4_SEQ_0_LEVEL_0
   DEF c6 := (RETURN c5) <INT>
   b2 := c6 <INT>
   DEF c7 := 1 <INT>
-  CALL IntToReal([c7 -> K]<INT>)
+  CALL IntToReal([c7 -> K]<INT>) FROM DEF c7 := 1 <INT>
   DEF c8 := (RETURN L) <REAL>
-  CALL RAdd([b3 -> c9]<REAL>, [c8 -> d0]<REAL>)
+  CALL RAdd([b3 -> c9]<REAL>, [c8 -> d0]<REAL>) FROM DEF c8 := (RETURN L) <REAL>
   DEF d2 := (RETURN d1) <REAL>
   b3 := d2 <REAL>
-  CALL IntToReal([(PARAM i) -> K]<INT>)
+  CALL IntToReal([(PARAM i) -> K]<INT>) FROM b3 := d2 <REAL>
   DEF d3 := (RETURN L) <REAL>
-  CALL RLessThan([b3 -> b8]<REAL>, [d3 -> b9]<REAL>)
+  CALL RLessThan([b3 -> b8]<REAL>, [d3 -> b9]<REAL>) FROM DEF d3 := (RETURN L) <REAL>
   DEF d4 := (RETURN c0) <BOOL>
   c1 := d4 <BOOL>
   GOTO WHILECOND_4_SEQ_0_LEVEL_0 FROM c1 := d4 <BOOL>
@@ -212,7 +212,7 @@ PROC SECTION
  RETURN FROM IntExp
  PROC LABEL Floor
   DEF d5 := 0 <INT>
-  CALL RealToInt([(PARAM k) -> d6]<REAL>)
+  CALL RealToInt([(PARAM k) -> d6]<REAL>) FROM DEF d5 := 0 <INT>
   DEF d8 := (RETURN d7) <INT>
   d5 := d8 <INT>
   DEF RETURN l := d5 <INT>
@@ -220,7 +220,7 @@ PROC SECTION
  PROC LABEL Round
   DEF d9 := 0 <INT>
   DEF e0 := 0.0 <REAL>
-  CALL RealIsNegative([(PARAM m) -> A]<REAL>)
+  CALL RealIsNegative([(PARAM m) -> A]<REAL>) FROM DEF e0 := 0.0 <REAL>
   DEF e1 := (RETURN B) <BOOL>
   DEF e2 := TRUE <BOOL>
   IF e1 BEQ e2
@@ -228,26 +228,26 @@ PROC SECTION
   ELSE IFNEXT_3_SEQ_0_LEVEL_0
   LABEL IFSTAT_3_SEQ_0_LEVEL_0
   DEF e3 := 0.5 <REAL>
-  CALL RSub([(PARAM m) -> e4]<REAL>, [e3 -> e5]<REAL>)
+  CALL RSub([(PARAM m) -> e4]<REAL>, [e3 -> e5]<REAL>) FROM DEF e3 := 0.5 <REAL>
   DEF e7 := (RETURN e6) <REAL>
   e0 := e7 <REAL>
   GOTO IFEND_3_LEVEL_0 FROM e0 := e7 <REAL>
   LABEL IFNEXT_3_SEQ_0_LEVEL_0
   DEF e8 := 0.5 <REAL>
-  CALL RAdd([(PARAM m) -> c9]<REAL>, [e8 -> d0]<REAL>)
+  CALL RAdd([(PARAM m) -> c9]<REAL>, [e8 -> d0]<REAL>) FROM DEF e8 := 0.5 <REAL>
   DEF e9 := (RETURN d1) <REAL>
   e0 := e9 <REAL>
   GOTO IFEND_3_LEVEL_0 FROM e0 := e9 <REAL>
   LABEL IFNEXT_3_SEQ_1_LEVEL_0
   LABEL IFEND_3_LEVEL_0
-  CALL Floor([e0 -> k]<REAL>)
+  CALL Floor([e0 -> k]<REAL>) FROM LABEL IFEND_3_LEVEL_0
   DEF f0 := (RETURN l) <INT>
   d9 := f0 <INT>
   DEF RETURN n := d9 <INT>
  RETURN FROM Round
  PROC LABEL Ceil
   DEF f1 := 0 <INT>
-  CALL Floor([(PARAM o) -> k]<REAL>)
+  CALL Floor([(PARAM o) -> k]<REAL>) FROM DEF f1 := 0 <INT>
   DEF f2 := (RETURN l) <INT>
   DEF f3 := 1 <INT>
   DEF f4 := f2 IADD f3 <INT>

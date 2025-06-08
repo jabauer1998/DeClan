@@ -426,10 +426,10 @@ public abstract class StatementBuilder extends AssignmentBuilder{
             }
             newDefs.add(new Def(Scope.PARAM, newPlace, arg.source, arg.dest));
         }
-        addInstruction(new Call(funcName, newDefs));
+        addInstruction(new Call(funcName, newDefs, this.getLastInstruction()));
     }
 
     public void buildProcedureCall(String funcName, List<Def> params){
-        addInstruction(new Call(funcName, params));
+        addInstruction(new Call(funcName, params, this.getLastInstruction()));
     }
 }

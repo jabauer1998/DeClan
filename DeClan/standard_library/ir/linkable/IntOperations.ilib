@@ -62,7 +62,7 @@ PROC SECTION
   x := B <INT>
   DEF C := 0 <INT>
   v := C <INT>
-  CALL IntIsZero([u -> D]<INT>)
+  CALL IntIsZero([u -> D]<INT>) FROM v := C <INT>
   DEF F := (RETURN E) <BOOL>
   DEF G := BNOT F <BOOL>
   DEF H := TRUE <BOOL>
@@ -94,7 +94,7 @@ PROC SECTION
   DEF P := 1 <INT>
   DEF Q := u IRSHIFT P <INT>
   u := Q <INT>
-  CALL IntIsZero([u -> D]<INT>)
+  CALL IntIsZero([u -> D]<INT>) FROM u := Q <INT>
   DEF R := (RETURN E) <BOOL>
   DEF S := BNOT R <BOOL>
   G := S <BOOL>
@@ -156,13 +156,13 @@ PROC SECTION
   DEF b4 := 0.0 <REAL>
   DEF b5 := 0.0 <REAL>
   DEF b6 := 0.0 <REAL>
-  CALL IntToReal([(PARAM f) -> b7]<INT>)
+  CALL IntToReal([(PARAM f) -> b7]<INT>) FROM DEF b6 := 0.0 <REAL>
   DEF b9 := (RETURN b8) <REAL>
   b5 := b9 <REAL>
-  CALL IntToReal([(PARAM g) -> b7]<INT>)
+  CALL IntToReal([(PARAM g) -> b7]<INT>) FROM b5 := b9 <REAL>
   DEF c0 := (RETURN b8) <REAL>
   b6 := c0 <REAL>
-  CALL RDivide([b5 -> c1]<REAL>, [b6 -> c2]<REAL>)
+  CALL RDivide([b5 -> c1]<REAL>, [b6 -> c2]<REAL>) FROM b6 := c0 <REAL>
   DEF c4 := (RETURN c3) <REAL>
   b4 := c4 <REAL>
   DEF RETURN h := b4 <REAL>
