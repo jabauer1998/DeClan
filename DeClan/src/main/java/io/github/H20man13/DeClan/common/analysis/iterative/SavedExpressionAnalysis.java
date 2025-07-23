@@ -31,8 +31,10 @@ implements CustomMeet<HashSet<Tuple<Exp, String>>, Tuple<Exp, String>>{
 		this.opSet = new HashMap<ICode, Set<Tuple<Exp, ICode.Type>>>();
 		for(ICode icode: latest.keySet()) {
 			Set<Tuple<Exp, ICode.Type>> newSet = new HashSet<Tuple<Exp, ICode.Type>>();
-			newSet.addAll(latest.get(icode));
-			newSet.retainAll(used.getOutputSet(icode));
+			Set<Tuple<Exp, ICode.Type>> latestSet = latest.get(icode);
+			Set<Tuple<Exp, ICode.Type>> usedSet = used.getOutputSet(icode);
+			newSet.addAll(latestSet);
+			newSet.retainAll(usedSet);
 			opSet.put(icode, newSet);
 		}
 		this.gen = gen;
