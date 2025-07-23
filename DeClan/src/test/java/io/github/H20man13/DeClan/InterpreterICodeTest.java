@@ -70,12 +70,9 @@ public class InterpreterICodeTest {
             	optt.performConstantPropogation();
             	optt.performDeadCodeElimination();
             	optt.performPartialRedundancyElimination();
-            	
             	Prog optProg = optt.getICode();
-            	
-            	StringReader optStr = new StringReader(optProg.toString());
-            	
             	standardInICode.reset();
+            	
             	MyICodeMachine optimizedRun = new MyICodeMachine(errLog, optOut, errOut, standardInICode);
             	optimizedRun.interpretICode(optProg);
             	
