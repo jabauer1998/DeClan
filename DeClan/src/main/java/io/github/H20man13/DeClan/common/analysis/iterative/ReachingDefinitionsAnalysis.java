@@ -39,7 +39,9 @@ public class ReachingDefinitionsAnalysis extends InstructionAnalysis<HashMap<ICo
                 if(decl instanceof Assign){
                     Assign declAssign = (Assign)decl;
 
-                    instructionKillSet.add(declAssign.place);
+                    if(!liveAnal.getOutputSet(decl).contains(declAssign.place)) {
+                    	instructionKillSet.add(declAssign.place);
+                    }
                 } else if(decl instanceof Def) {
                 	Def declDef = (Def)decl;
                 	
