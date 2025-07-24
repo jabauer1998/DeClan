@@ -277,7 +277,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
     public void buildForLoopEnd(){
         int forLoopNumber = ctx.getForLoopNumber();
         int forLoopLevel = ctx.getForLoopLevel();
-        addInstruction(new Goto("FORBEG_" + forLoopNumber + "_LEVEL_" + forLoopLevel, this.getLastInstruction()));
+        addInstruction(new Goto("FORBEG_" + forLoopNumber + "_LEVEL_" + forLoopLevel, this.getLastInstruction().copy()));
         addInstruction(new StandardLabel("FOREND_" + forLoopNumber + "_LEVEL_" + forLoopLevel));
         ctx.incrimentForLoopNumber();
     }
@@ -395,7 +395,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
     }
 
     public void buildGoto(String label){
-        addInstruction(new Goto(label, this.getLastInstruction()));
+        addInstruction(new Goto(label, this.getLastInstruction().copy()));
     }
 
     public void buildInlineAssembly(String inlineAssembly, List<IdentExp> param){
@@ -426,10 +426,10 @@ public abstract class StatementBuilder extends AssignmentBuilder{
             }
             newDefs.add(new Def(Scope.PARAM, newPlace, arg.source, arg.dest));
         }
-        addInstruction(new Call(funcName, newDefs, this.getLastInstruction()));
+        addInstruction(new Call(funcName, newDefs, this.getLastInstruction().copy()));
     }
 
     public void buildProcedureCall(String funcName, List<Def> params){
-        addInstruction(new Call(funcName, params, this.getLastInstruction()));
+        addInstruction(new Call(funcName, params, this.getLastInstruction().copy()));
     }
 }

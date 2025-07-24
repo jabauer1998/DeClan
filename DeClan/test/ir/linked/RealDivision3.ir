@@ -449,9 +449,9 @@ PROC SECTION
   CALL RealMantissa([(PARAM h87) -> h34]<REAL>) FROM CALL WriteString([Y1 -> g70]<STRING>) FROM DEF Y1 := "n2BaseIs: " <STRING>
   DEF Y2 := (RETURN h33) <INT>
   U0 := Y2 <INT>
-  CALL WriteLn() FROM U0 := Y2 <INT>
-  CALL WriteInt([U0 -> g85]<INT>) FROM CALL WriteLn() FROM U0 := Y2 <INT>
-  CALL IntIsZero([T9 -> f86]<INT>) FROM CALL WriteInt([U0 -> g85]<INT>) FROM CALL WriteLn() FROM U0 := Y2 <INT>
+  CALL WriteInt([U0 -> g85]<INT>) FROM U0 := Y2 <INT>
+  CALL WriteLn() FROM CALL WriteInt([U0 -> g85]<INT>) FROM U0 := Y2 <INT>
+  CALL IntIsZero([T9 -> f86]<INT>) FROM CALL WriteLn() FROM CALL WriteInt([U0 -> g85]<INT>) FROM U0 := Y2 <INT>
   DEF Y3 := (RETURN f90) <BOOL>
   CALL IntIsZero([U0 -> f86]<INT>) FROM DEF Y3 := (RETURN f90) <BOOL>
   DEF Y4 := (RETURN f90) <BOOL>
