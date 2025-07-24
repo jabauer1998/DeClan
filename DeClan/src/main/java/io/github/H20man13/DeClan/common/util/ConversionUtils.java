@@ -10,6 +10,10 @@ import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
 import io.github.H20man13.DeClan.common.analysis.region.expr.Expr;
 import io.github.H20man13.DeClan.common.analysis.region.expr.IntExpr;
 import io.github.H20man13.DeClan.common.analysis.region.expr.RefVar;
+import io.github.H20man13.DeClan.common.ast.BoolValue;
+import io.github.H20man13.DeClan.common.ast.Expression;
+import io.github.H20man13.DeClan.common.ast.NumValue;
+import io.github.H20man13.DeClan.common.ast.StrValue;
 import io.github.H20man13.DeClan.common.dag.DagOperationNode;
 import io.github.H20man13.DeClan.common.exception.ConversionException;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -23,6 +27,7 @@ import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.pat.P;
+import io.github.H20man13.DeClan.common.position.Position;
 import io.github.H20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
 import io.github.H20man13.DeClan.common.token.IrTokenType;
 
@@ -69,6 +74,22 @@ public class ConversionUtils {
             return new RealExp((float)result);
         } else if(result instanceof Double){
         	return new RealExp((float)result);
+        } else {
+            throw new ConversionException("valueToExp", result.getClass().getName(), Exp.class.getName());
+        }
+    }
+    
+    public static Expression valueToExpression(Position pos, Object result) {
+    	if(result instanceof Boolean){
+            return new BoolValue(pos, ((Boolean)result) ? "TRUE" : "FALSE");
+        } else if(result instanceof Integer){
+            return new NumValue(pos, ((Integer)result).toString());
+        } else if(result instanceof String){
+            return new StrValue(pos, (String)result);
+        } else if(result instanceof Float){
+            return new NumValue(pos, ((Float)result).toString());
+        } else if(result instanceof Double){
+        	return new NumValue(pos, ((Float)result).toString());
         } else {
             throw new ConversionException("valueToExp", result.getClass().getName(), Exp.class.getName());
         }

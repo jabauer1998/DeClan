@@ -1973,6 +1973,7 @@ public class MyOptimizer {
                 }
             }
             cleanUpOptimization(OptName.CONSTANT_PROPOGATION);
+            time++;
         }
         if(cfg != null)
     		if(cfg.containsFlag("debug")) {

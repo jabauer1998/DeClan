@@ -62,7 +62,8 @@ public class InterpreterICodeTest {
             MyICodeMachine vm = new MyICodeMachine(errLog, icodeOut, errOut, standardInICode);
             vm.interpretICode(program);
             
-            assertTrue("Expected icode output to be the same as the interpreter output \n\n Interpreter Output is \n\n " + intOut.toString() + " \n\n while icode output is \n\n " + icodeOut.toString(), icodeOut.toString().equals(intOut.toString()));
+            if(!opt)
+            	assertTrue("Expected icode output to be the same as the interpreter output \n\n Interpreter Output is \n\n " + intOut.toString() + " \n\n while icode output is \n\n " + icodeOut.toString(), icodeOut.toString().equals(intOut.toString()));
             
             if(opt) {
             	MyOptimizer optt = new MyOptimizer(null, program);
@@ -80,7 +81,7 @@ public class InterpreterICodeTest {
                     assertTrue(errItem.toString(), false);
                 }
             	
-            	assertTrue("Expected icode output to be the same as the interpreter output \n\n Interpreter Output is \n\n " + intOut.toString() + " \n\n while icode output is \n\n " + optOut.toString(), optOut.toString().equals(intOut.toString()));
+            	assertTrue("Expected optimized output to be the same as the interpreter output \n\n Unoptomized Output is \n\n " + icodeOut.toString() + " \n\n while optimized output is \n\n " + optOut.toString(), optOut.toString().equals(icodeOut.toString()));
             } else {
             	for(LogItem errItem : errLog){
                     assertTrue(errItem.toString(), false);

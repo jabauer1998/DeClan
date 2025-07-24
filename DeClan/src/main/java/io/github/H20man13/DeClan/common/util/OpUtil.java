@@ -1,9 +1,15 @@
 package io.github.H20man13.DeClan.common.util;
 
 import java.math.BigInteger;
+import java.util.LinkedList;
+import java.util.List;
 
+import io.github.H20man13.DeClan.common.ast.Expression;
+import io.github.H20man13.DeClan.common.ast.FunctionCall;
+import io.github.H20man13.DeClan.common.ast.Identifier;
 import io.github.H20man13.DeClan.common.exception.ConversionException;
 import io.github.H20man13.DeClan.common.exception.OperationException;
+import io.github.H20man13.DeClan.common.position.Position;
 
 public class OpUtil {
     public static Object negate(Object val){
@@ -208,5 +214,18 @@ public class OpUtil {
 
     public static Object or(Object val1, Object val2){
         return ConversionUtils.toBool(val1) || ConversionUtils.toBool(val2);
+    }
+    
+    public static FunctionCall binaryOpFunction(Position pos, String name, Expression val1, Expression val2) {
+    	List<Expression> exps = new LinkedList<Expression>();
+    	exps.add(val1);
+    	exps.add(val2);
+    	return new FunctionCall(pos, new Identifier(pos, name), exps);
+    }
+    
+    public static FunctionCall unaryOpFunction(Position pos, String name, Expression val1) {
+    	List<Expression> exps = new LinkedList<Expression>();
+    	exps.add(val1);
+    	return new FunctionCall(pos, new Identifier(pos, name), exps);
     }
 }

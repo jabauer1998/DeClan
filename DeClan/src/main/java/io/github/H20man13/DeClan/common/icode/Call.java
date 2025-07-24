@@ -123,6 +123,6 @@ public class Call implements ICode {
 		for(Def param: params) {
 			newParams.add((Def)param.copy());
 		}
-		return new Call(pname, newParams, from);
+		return new Call(pname, newParams, from.copy());
 	}
 }
