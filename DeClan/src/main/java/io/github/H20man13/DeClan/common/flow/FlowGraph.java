@@ -148,7 +148,7 @@ public class FlowGraph implements Iterable<BlockNode>{
     }
     
     public void unsortFromCopy(List<BlockNode> blocks) {
-    	int dfstSize = blocks.size();
+    	int dfstSize = blockNodes.size() <= blocks.size() ? blockNodes.size() : blocks.size();
     	for(int i = 0; i < dfstSize; i++){
     		BlockNode elem = blockNodes.get(i);
     		BlockNode node = blocks.get(i);
@@ -180,6 +180,10 @@ public class FlowGraph implements Iterable<BlockNode>{
 
     public List<BlockNode> getBlocks(){
         return blockNodes;
+    }
+    
+    public void setBlocks(List<BlockNode> blocks){
+    	this.blockNodes = blocks;
     }
 
     @Override
