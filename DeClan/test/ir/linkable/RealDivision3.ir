@@ -25,18 +25,18 @@ BSS SECTION
  DEF GLOBAL h := 0 <INT>
  DEF GLOBAL i := 0 <INT>
 CODE SECTION
- CALL IntToReal([(GLOBAL b) -> j]<INT>) FROM CODE SECTION
+ CALL IntToReal([(GLOBAL b) -> j]<INT>)
  DEF l := (RETURN k) <REAL>
  GLOBAL f := l <REAL>
- CALL IntToReal([(GLOBAL d) -> j]<INT>) FROM GLOBAL f := l <REAL>
+ CALL IntToReal([(GLOBAL d) -> j]<INT>)
  DEF m := (RETURN k) <REAL>
  GLOBAL g := m <REAL>
- CALL RDivide([(GLOBAL f) -> n]<REAL>, [(GLOBAL g) -> o]<REAL>) FROM GLOBAL g := m <REAL>
+ CALL RDivide([(GLOBAL f) -> n]<REAL>, [(GLOBAL g) -> o]<REAL>)
  DEF q := (RETURN p) <REAL>
  GLOBAL e := q <REAL>
  DEF r := "Result as real: " <STRING>
- CALL WriteString([r -> s]<STRING>) FROM DEF r := "Result as real: " <STRING>
- CALL WriteReal([(GLOBAL e) -> t]<REAL>) FROM CALL WriteString([r -> s]<STRING>) FROM DEF r := "Result as real: " <STRING>
- CALL WriteLn() FROM CALL WriteReal([(GLOBAL e) -> t]<REAL>) FROM CALL WriteString([r -> s]<STRING>) FROM DEF r := "Result as real: " <STRING>
+ CALL WriteString([r -> s]<STRING>)
+ CALL WriteReal([(GLOBAL e) -> t]<REAL>)
+ CALL WriteLn()
 END
 PROC SECTION

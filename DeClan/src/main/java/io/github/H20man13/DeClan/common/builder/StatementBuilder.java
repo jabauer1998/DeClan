@@ -277,7 +277,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
     public void buildForLoopEnd(){
         int forLoopNumber = ctx.getForLoopNumber();
         int forLoopLevel = ctx.getForLoopLevel();
-        addInstruction(new Goto("FORBEG_" + forLoopNumber + "_LEVEL_" + forLoopLevel, this.getLastInstruction().copy()));
+        addInstruction(new Goto("FORBEG_" + forLoopNumber + "_LEVEL_" + forLoopLevel));
         addInstruction(new StandardLabel("FOREND_" + forLoopNumber + "_LEVEL_" + forLoopLevel));
         ctx.incrimentForLoopNumber();
     }
@@ -305,7 +305,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
     public void buildRepeatLoopEnd(){
         int repeatLoopLevel = ctx.getRepeatLoopLevel();
         int repeatLoopNumber = ctx.getRepeatLoopNumber();
-        addInstruction(new Goto("REPEATBEG_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel, this.getLastInstruction()));
+        addInstruction(new Goto("REPEATBEG_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
         addInstruction(new StandardLabel("REPEATEND_" + repeatLoopNumber + "_LEVEL_" + repeatLoopLevel));
         ctx.incrimentRepeatLoopNumber();
     }
@@ -334,7 +334,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         int ifStatementLevel = ctx.getIfStatementLevel();
         int ifStatementNumber = ctx.getIfStatementNumber();
         int ifStatementSeqNumber = ctx.getIfStatementSeqNumber();
-        addInstruction(new Goto("IFEND_" + ifStatementNumber + "_LEVEL_" + ifStatementLevel, this.getLastInstruction()));
+        addInstruction(new Goto("IFEND_" + ifStatementNumber + "_LEVEL_" + ifStatementLevel));
         addInstruction(new StandardLabel("IFNEXT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber + "_LEVEL_" + ifStatementLevel));
         ctx.incrimentIfStatementSeqNumber();
     }
@@ -343,7 +343,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         int ifStatementLevel = ctx.getIfStatementLevel();
         int ifStatementNumber = ctx.getIfStatementNumber();
         int ifStatementSeqNumber = ctx.getIfStatementSeqNumber();
-        addInstruction(new Goto("IFEND_" + ifStatementNumber + "_LEVEL_" + ifStatementLevel, this.getLastInstruction()));
+        addInstruction(new Goto("IFEND_" + ifStatementNumber + "_LEVEL_" + ifStatementLevel));
         addInstruction(new StandardLabel("IFNEXT_" + ifStatementNumber + "_SEQ_" + ifStatementSeqNumber + "_LEVEL_" + ifStatementLevel));
         addInstruction(new StandardLabel("IFEND_" + ifStatementNumber + "_LEVEL_" + ifStatementLevel));
         ctx.incrimentIfStatementNumber();
@@ -375,7 +375,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         int whileLoopNumber = ctx.getWhileLoopNumber();
         int whileLoopLevel = ctx.getWhileLoopLevel();
         int whileLoopSeqNumber = ctx.getWhileLoopSeqNumber();
-        addInstruction(new Goto("WHILECOND_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel, this.getLastInstruction()));
+        addInstruction(new Goto("WHILECOND_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
         addInstruction(new StandardLabel("WHILENEXT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
         ctx.incrimentWhileLoopSeqNumber();
     }
@@ -384,7 +384,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         int whileLoopNumber = ctx.getWhileLoopNumber();
         int whileLoopSeqNumber = ctx.getWhileLoopSeqNumber();
         int whileLoopLevel = ctx.getWhileLoopLevel();
-        addInstruction(new Goto("WHILECOND_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel, this.getLastInstruction()));
+        addInstruction(new Goto("WHILECOND_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
         addInstruction(new StandardLabel("WHILENEXT_" + whileLoopNumber + "_SEQ_" + whileLoopSeqNumber + "_LEVEL_" + whileLoopLevel));
         addInstruction(new StandardLabel("WHILEEND_" + whileLoopNumber + "_LEVEL_" + whileLoopLevel));
         ctx.incrimentWhileLoopNumber();
@@ -395,7 +395,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
     }
 
     public void buildGoto(String label){
-        addInstruction(new Goto(label, this.getLastInstruction().copy()));
+        addInstruction(new Goto(label));
     }
 
     public void buildInlineAssembly(String inlineAssembly, List<IdentExp> param){
@@ -426,10 +426,10 @@ public abstract class StatementBuilder extends AssignmentBuilder{
             }
             newDefs.add(new Def(Scope.PARAM, newPlace, arg.source, arg.dest));
         }
-        addInstruction(new Call(funcName, newDefs, this.getLastInstruction().copy()));
+        addInstruction(new Call(funcName, newDefs));
     }
 
     public void buildProcedureCall(String funcName, List<Def> params){
-        addInstruction(new Call(funcName, params, this.getLastInstruction().copy()));
+        addInstruction(new Call(funcName, params));
     }
 }

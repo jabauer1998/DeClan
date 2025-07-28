@@ -30,27 +30,27 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     }
     
     public void buildRealToIntConversion(ICode.Scope resultScope, String place, IdentExp input){
-    	this.buildUnaryFunctionCallAssignment("RealToInt", resultScope, place, ICode.Type.INT, input, ICode.Type.REAL, this.getLastInstruction().copy());
+    	this.buildUnaryFunctionCallAssignment("RealToInt", resultScope, place, ICode.Type.INT, input, ICode.Type.REAL);
     }
     
     public void buildIntToRealConversion(ICode.Scope resultScope, String place, IdentExp input){
-    	this.buildUnaryFunctionCallAssignment("IntToReal", resultScope, place, ICode.Type.REAL, input, ICode.Type.INT, this.getLastInstruction().copy());
+    	this.buildUnaryFunctionCallAssignment("IntToReal", resultScope, place, ICode.Type.REAL, input, ICode.Type.INT);
     }
     
     public void buildRealToBoolConversion(ICode.Scope resultScope, String place, IdentExp input){
-    	this.buildUnaryFunctionCallAssignment("RealToBool", resultScope, place, ICode.Type.BOOL, input, ICode.Type.REAL, this.getLastInstruction().copy());
+    	this.buildUnaryFunctionCallAssignment("RealToBool", resultScope, place, ICode.Type.BOOL, input, ICode.Type.REAL);
     }
     
     public void buildIntToBoolConversion(ICode.Scope resultScope, String place, IdentExp input){
-    	this.buildUnaryFunctionCallAssignment("IntToBool", resultScope, place, ICode.Type.BOOL, input, ICode.Type.INT, this.getLastInstruction().copy());
+    	this.buildUnaryFunctionCallAssignment("IntToBool", resultScope, place, ICode.Type.BOOL, input, ICode.Type.INT);
     }
     
     public void buildBoolToIntConversion(ICode.Scope resultScope, String place, IdentExp input){
-    	this.buildUnaryFunctionCallAssignment("BoolToInt", resultScope, place, ICode.Type.INT, input, ICode.Type.BOOL, this.getLastInstruction().copy());
+    	this.buildUnaryFunctionCallAssignment("BoolToInt", resultScope, place, ICode.Type.INT, input, ICode.Type.BOOL);
     }
     
     public void buildBoolToRealConversion(ICode.Scope resultScope, String place, IdentExp input){
-    	this.buildUnaryFunctionCallAssignment("BoolToReal", resultScope, place, ICode.Type.REAL, input, ICode.Type.BOOL, this.getLastInstruction().copy());
+    	this.buildUnaryFunctionCallAssignment("BoolToReal", resultScope, place, ICode.Type.REAL, input, ICode.Type.BOOL);
     }
 
     private void buildBinaryAssignment(ICode.Scope scope, String place, IdentExp left, BinExp.Operator op, IdentExp right, ICode.Type type){
@@ -125,7 +125,7 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     	buildBinaryAssignment(scope, place, left, BinExp.Operator.LAND, right, ICode.Type.BOOL);
     }
     
-    private void buildBinaryFunctionCall(String funcName, ICode.Scope scope, String place, ICode.Type retType, IdentExp left, ICode.Type leftType, IdentExp right, ICode.Type rightType, ICode from) {
+    private void buildBinaryFunctionCall(String funcName, ICode.Scope scope, String place, ICode.Type retType, IdentExp left, ICode.Type leftType, IdentExp right, ICode.Type rightType) {
     	if(containsEntry(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM) && containsEntry(funcName, 1, SymEntry.EXTERNAL | SymEntry.PARAM)
     	&& containsEntry(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME)) {
     		IdentExp leftPlace = this.getVariablePlace(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM);
@@ -138,7 +138,7 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     		args.add(leftAssign);
     		args.add(rightAssign);
     		
-    		addInstruction(new Call(funcName, args, from));
+    		addInstruction(new Call(funcName, args));
     		
     		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		addInstruction(new Def(ICode.Scope.LOCAL, place, retPlace, retType));
@@ -154,7 +154,7 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     		args.add(leftAssign);
     		args.add(rightAssign);
     		
-    		addInstruction(new Call(funcName, args, from));
+    		addInstruction(new Call(funcName, args));
     		
     		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		
@@ -169,63 +169,63 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     }
     
     public void buildIntegerMultiplicationAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
-    	this.buildBinaryFunctionCall("Multiply", scope, place, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("Multiply", scope, place, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT);
     }
     
     public void buildIntegerModuloAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
-    	this.buildBinaryFunctionCall("Mod", scope, place, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("Mod", scope, place, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT);
     }
     
     public void buildIntegerDivideAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
-    	this.buildBinaryFunctionCall("Divide", scope, place, ICode.Type.REAL, left, ICode.Type.INT, right, ICode.Type.INT, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("Divide", scope, place, ICode.Type.REAL, left, ICode.Type.INT, right, ICode.Type.INT);
     }
     
     public void buildIntegerDivAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
-    	this.buildBinaryFunctionCall("Div", scope, place, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("Div", scope, place, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT);
     }
     
     public void buildRealAdditionAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
-    	this.buildBinaryFunctionCall("RAdd", scope, place, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("RAdd", scope, place, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public void buildRealSubtractionAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right){
-    	this.buildBinaryFunctionCall("RSub", scope, place, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("RSub", scope, place, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public void buildRealMultiplicationAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
-    	this.buildBinaryFunctionCall("RMul", scope, place, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("RMul", scope, place, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public void buildRealDivisionAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
-    	this.buildBinaryFunctionCall("RDivide", scope, place, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("RDivide", scope, place, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public void buildRealDivAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
-    	this.buildBinaryFunctionCall("RDiv", scope, place, ICode.Type.INT, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("RDiv", scope, place, ICode.Type.INT, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public void buildRealLessThanAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right){
-    	this.buildBinaryFunctionCall("RLessThan", scope, place, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("RLessThan", scope, place, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public void buildRealLessThanOrEqualToAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
-    	this.buildBinaryFunctionCall("RLessThanOrEqualTo", scope, place, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("RLessThanOrEqualTo", scope, place, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public void buildRealGreaterThanAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
-    	this.buildBinaryFunctionCall("RGreaterThan", scope, place, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("RGreaterThan", scope, place, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public void buildRealGreaterThenOrEqualToAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right){
-    	this.buildBinaryFunctionCall("RGreaterThanOrEqualTo", scope, place, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("RGreaterThanOrEqualTo", scope, place, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public void buildRNotEqualToAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
-    	this.buildBinaryFunctionCall("RNotEqualTo", scope, place, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("RNotEqualTo", scope, place, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public void buildREqualToAssignment(ICode.Scope scope, String place, IdentExp left, IdentExp right) {
-    	this.buildBinaryFunctionCall("REqualTo", scope, place, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	this.buildBinaryFunctionCall("REqualTo", scope, place, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     private void buildUnaryAssignment(ICode.Scope scope, String place, UnExp.Operator op, IdentExp right, ICode.Type type){
@@ -240,7 +240,7 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     	this.buildUnaryAssignment(scope, place, UnExp.Operator.INOT, right, ICode.Type.INT);
     }
     
-    private void buildUnaryFunctionCallAssignment(String funcName, ICode.Scope scope, String place, ICode.Type retType, IdentExp right, ICode.Type rightType, ICode from) {
+    private void buildUnaryFunctionCallAssignment(String funcName, ICode.Scope scope, String place, ICode.Type retType, IdentExp right, ICode.Type rightType) {
     	if(containsEntry(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM) && containsEntry(funcName, SymEntry.EXTERNAL | SymEntry.PARAM, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME)) {
     		IdentExp rightPlace = this.getVariablePlace(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM);
     		
@@ -249,7 +249,7 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     		LinkedList<Def> args = new LinkedList<Def>();
     		args.add(rightAssign);
     		
-    		addInstruction(new Call(funcName, args, from));
+    		addInstruction(new Call(funcName, args));
     		
     		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		
@@ -262,7 +262,7 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     		LinkedList<Def> args = new LinkedList<Def>();
     		args.add(rightAssign);
     		
-    		addInstruction(new Call(funcName, args, from));
+    		addInstruction(new Call(funcName, args));
     		
     		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		
@@ -276,10 +276,10 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     }
     
     public void buildIntegerNegationAssignment(ICode.Scope scope, String place, IdentExp right) {
-    	this.buildUnaryFunctionCallAssignment("INeg", scope, place, ICode.Type.INT, right, ICode.Type.INT, this.getLastInstruction().copy());
+    	this.buildUnaryFunctionCallAssignment("INeg", scope, place, ICode.Type.INT, right, ICode.Type.INT);
     }
     
     public void buildRealNegationAssignment(ICode.Scope scope, String place, IdentExp right) {
-    	this.buildUnaryFunctionCallAssignment("RNeg", scope, place, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	this.buildUnaryFunctionCallAssignment("RNeg", scope, place, ICode.Type.REAL, right, ICode.Type.REAL);
     }
 }

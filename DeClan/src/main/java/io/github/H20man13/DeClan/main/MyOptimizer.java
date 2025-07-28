@@ -1241,9 +1241,9 @@ public class MyOptimizer {
                         Assign assICode = (Assign)icode;
                         Set<String> defsReached = this.defAnal.getInputSet(icode);
                         Set<String> liveVar = this.liveAnal.getOutputSet(icode);
-                        if(defsReached.contains(assICode.place) && liveVar.contains(assICode.place)){
+                        if((defsReached.contains(assICode.place) && liveVar.contains(assICode.place) || assICode.getScope() == Scope.GLOBAL)){
                             result.add(assICode);
-                        } else if(!defsReached.contains(assICode.place) && liveVar.contains(assICode.place) && assICode.getScope() != ICode.Scope.GLOBAL){
+                        } else if(liveVar.contains(assICode.place) || assICode.getScope() == Scope.GLOBAL){
                         	result.add(new Def(assICode.getScope(), assICode.place, assICode.value, assICode.getType()));
                         	changes = true;
                         } else {

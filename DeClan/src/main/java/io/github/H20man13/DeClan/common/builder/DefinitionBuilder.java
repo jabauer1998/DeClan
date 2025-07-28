@@ -35,27 +35,27 @@ public class DefinitionBuilder extends SymbolBuilder{
     }
     
     public IdentExp buildRealToIntConversion(ICode.Scope resultScope, IdentExp input){
-    	return this.buildUnaryFunctionCall("RealToInt", resultScope, ICode.Type.INT, input, ICode.Type.REAL, this.getLastInstruction().copy());
+    	return this.buildUnaryFunctionCall("RealToInt", resultScope, ICode.Type.INT, input, ICode.Type.REAL);
     }
     
     public IdentExp buildIntToRealConversion(ICode.Scope resultScope, IdentExp input){
-    	return this.buildUnaryFunctionCall("IntToReal", resultScope, ICode.Type.REAL, input, ICode.Type.INT, this.getLastInstruction().copy());
+    	return this.buildUnaryFunctionCall("IntToReal", resultScope, ICode.Type.REAL, input, ICode.Type.INT);
     }
     
     public IdentExp buildRealToBoolConversion(ICode.Scope resultScope, IdentExp input){
-    	return this.buildUnaryFunctionCall("RealToBool", resultScope, ICode.Type.BOOL, input, ICode.Type.REAL, this.getLastInstruction().copy());
+    	return this.buildUnaryFunctionCall("RealToBool", resultScope, ICode.Type.BOOL, input, ICode.Type.REAL);
     }
     
     public IdentExp buildIntToBoolConversion(ICode.Scope resultScope, IdentExp input){
-    	return this.buildUnaryFunctionCall("IntToBool", resultScope, ICode.Type.BOOL, input, ICode.Type.INT, this.getLastInstruction().copy());
+    	return this.buildUnaryFunctionCall("IntToBool", resultScope, ICode.Type.BOOL, input, ICode.Type.INT);
     }
     
     public IdentExp buildBoolToIntConversion(ICode.Scope resultScope, IdentExp input){
-    	return this.buildUnaryFunctionCall("BoolToInt", resultScope, ICode.Type.INT, input, ICode.Type.BOOL, this.getLastInstruction().copy());
+    	return this.buildUnaryFunctionCall("BoolToInt", resultScope, ICode.Type.INT, input, ICode.Type.BOOL);
     }
     
     public IdentExp buildBoolToRealConversion(ICode.Scope resultScope, IdentExp input){
-    	return this.buildUnaryFunctionCall("BoolToReal", resultScope, ICode.Type.REAL, input, ICode.Type.BOOL, this.getLastInstruction().copy());
+    	return this.buildUnaryFunctionCall("BoolToReal", resultScope, ICode.Type.REAL, input, ICode.Type.BOOL);
     }
 
     private IdentExp buildBinaryDefinition(ICode.Scope scope, IdentExp left, BinExp.Operator op,  IdentExp right, ICode.Type type){
@@ -132,7 +132,7 @@ public class DefinitionBuilder extends SymbolBuilder{
     	return this.buildBinaryDefinition(scope, left, BinExp.Operator.LAND, right, ICode.Type.BOOL);
     }
     
-    private IdentExp buildBinaryFunctionCall(String funcName, ICode.Scope scope, ICode.Type retType, IdentExp left, ICode.Type leftType, IdentExp right, ICode.Type rightType, ICode last) {
+    private IdentExp buildBinaryFunctionCall(String funcName, ICode.Scope scope, ICode.Type retType, IdentExp left, ICode.Type leftType, IdentExp right, ICode.Type rightType) {
     	if(containsEntry(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM) && containsEntry(funcName, 1, SymEntry.EXTERNAL | SymEntry.PARAM)
     	&& containsEntry(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME)) {
     		IdentExp leftPlace = this.getVariablePlace(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM);
@@ -145,7 +145,7 @@ public class DefinitionBuilder extends SymbolBuilder{
     		args.add(leftAssign);
     		args.add(rightAssign);
     		
-    		addInstruction(new Call(funcName, args, last));
+    		addInstruction(new Call(funcName, args));
     		
     		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		
@@ -165,7 +165,7 @@ public class DefinitionBuilder extends SymbolBuilder{
     		args.add(leftAssign);
     		args.add(rightAssign);
     		
-    		addInstruction(new Call(funcName, args, this.getLastInstruction().copy()));
+    		addInstruction(new Call(funcName, args));
     		
     		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		
@@ -182,63 +182,63 @@ public class DefinitionBuilder extends SymbolBuilder{
     }
     
     public IdentExp buildIntegerMultiplicationDefinition(ICode.Scope scope, IdentExp left, IdentExp right) {
-    	return this.buildBinaryFunctionCall("Multiply", scope, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("Multiply", scope, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT);
     }
     
     public IdentExp buildIntegerModulo(ICode.Scope scope, IdentExp left, IdentExp right) {
-    	return this.buildBinaryFunctionCall("Mod", scope, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("Mod", scope, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT);
     }
     
     public IdentExp buildIntegerDivide(ICode.Scope scope, IdentExp left, IdentExp right) {
-    	return this.buildBinaryFunctionCall("Divide", scope, ICode.Type.REAL, left, ICode.Type.INT, right, ICode.Type.INT, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("Divide", scope, ICode.Type.REAL, left, ICode.Type.INT, right, ICode.Type.INT);
     }
     
     public IdentExp buildIntegerDiv(ICode.Scope scope, IdentExp left, IdentExp right) {
-    	return this.buildBinaryFunctionCall("Div", scope, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("Div", scope, ICode.Type.INT, left, ICode.Type.INT, right, ICode.Type.INT);
     }
     
     public IdentExp buildRealAddition(ICode.Scope scope, IdentExp left, IdentExp right) {
-    	return this.buildBinaryFunctionCall("RAdd", scope, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("RAdd", scope, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public IdentExp buildRealSubtraction(ICode.Scope scope, IdentExp left, IdentExp right){
-    	return this.buildBinaryFunctionCall("RSub", scope, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("RSub", scope, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public IdentExp buildRealMultiplication(ICode.Scope scope, IdentExp left, IdentExp right) {
-    	return this.buildBinaryFunctionCall("RMul", scope, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("RMul", scope, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public IdentExp buildRealDivision(ICode.Scope scope, IdentExp left, IdentExp right) {
-    	return this.buildBinaryFunctionCall("RDivide", scope, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("RDivide", scope, ICode.Type.REAL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public IdentExp buildRealDiv(ICode.Scope scope, IdentExp left, IdentExp right) {
-    	return this.buildBinaryFunctionCall("RDiv", scope, ICode.Type.INT, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("RDiv", scope, ICode.Type.INT, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public IdentExp buildRealLessThan(ICode.Scope scope, IdentExp left, IdentExp right){
-    	return this.buildBinaryFunctionCall("RLessThan", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("RLessThan", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public IdentExp buildRealLessThanOrEqualTo(ICode.Scope scope, IdentExp left, IdentExp right) {
-    	return this.buildBinaryFunctionCall("RLessThanOrEqualTo", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("RLessThanOrEqualTo", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public IdentExp buildRealGreaterThan(ICode.Scope scope, IdentExp left, IdentExp right) {
-    	return this.buildBinaryFunctionCall("RGreaterThan", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("RGreaterThan", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public IdentExp buildRealGreaterThenOrEqualTo(ICode.Scope scope, IdentExp left, IdentExp right){
-    	return this.buildBinaryFunctionCall("RGreaterThanOrEqualTo", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("RGreaterThanOrEqualTo", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public IdentExp buildRNotEqualTo(ICode.Scope scope, IdentExp left, IdentExp right) {
-    	return this.buildBinaryFunctionCall("RNotEqualTo", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("RNotEqualTo", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
     
     public IdentExp buildREqualTo(ICode.Scope scope, IdentExp left, IdentExp right) {
-    	return this.buildBinaryFunctionCall("REqualTo", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	return this.buildBinaryFunctionCall("REqualTo", scope, ICode.Type.BOOL, left, ICode.Type.REAL, right, ICode.Type.REAL);
     }
 
     private IdentExp buildUnaryDefinition(ICode.Scope scope, UnExp.Operator op, IdentExp right, ICode.Type type){
@@ -255,7 +255,7 @@ public class DefinitionBuilder extends SymbolBuilder{
     	return this.buildUnaryDefinition(scope, UnExp.Operator.INOT, right, ICode.Type.INT);
     }
     
-    private IdentExp buildUnaryFunctionCall(String funcName, ICode.Scope scope, ICode.Type retType, IdentExp right, ICode.Type rightType, ICode last) {
+    private IdentExp buildUnaryFunctionCall(String funcName, ICode.Scope scope, ICode.Type retType, IdentExp right, ICode.Type rightType) {
     	if(containsEntry(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM) && containsEntry(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME)) {
     		IdentExp rightPlace = this.getVariablePlace(funcName, 0, SymEntry.EXTERNAL | SymEntry.PARAM);
     		
@@ -264,7 +264,7 @@ public class DefinitionBuilder extends SymbolBuilder{
     		LinkedList<Def> args = new LinkedList<Def>();
     		args.add(rightAssign);
     		
-    		addInstruction(new Call(funcName, args, last));
+    		addInstruction(new Call(funcName, args));
     		
     		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		
@@ -280,7 +280,7 @@ public class DefinitionBuilder extends SymbolBuilder{
     		LinkedList<Def> args = new LinkedList<Def>();
     		args.add(rightAssign);
     		
-    		addInstruction(new Call(funcName, args, last));
+    		addInstruction(new Call(funcName, args));
     		
     		IdentExp retPlace = this.getVariablePlace(funcName, SymEntry.INTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME);
     		
@@ -296,11 +296,11 @@ public class DefinitionBuilder extends SymbolBuilder{
     }
     
     public IdentExp buildIntegerNegationDefinition(ICode.Scope scope, IdentExp right) {
-    	return this.buildUnaryFunctionCall("INeg", scope, ICode.Type.INT, right, ICode.Type.INT, this.getLastInstruction().copy());
+    	return this.buildUnaryFunctionCall("INeg", scope, ICode.Type.INT, right, ICode.Type.INT);
     }
     
     public IdentExp buildRealNegationDefinition(ICode.Scope scope, IdentExp right) {
-    	return this.buildUnaryFunctionCall("RNeg", scope, ICode.Type.REAL, right, ICode.Type.REAL, this.getLastInstruction().copy());
+    	return this.buildUnaryFunctionCall("RNeg", scope, ICode.Type.REAL, right, ICode.Type.REAL);
     }
 
     public void buildDefinition(ICode.Scope scope, String place, Exp value, ICode.Type type){
@@ -316,7 +316,7 @@ public class DefinitionBuilder extends SymbolBuilder{
     
     public IdentExp buildFunctionCall(String funcName, List<Def> definitions, IdentExp returnPlace, ICode.Type returnType) {
     	String newReg = gen.genNext();
-    	addInstruction(new Call(funcName, definitions, this.getLastInstruction().copy()));
+    	addInstruction(new Call(funcName, definitions));
     	addInstruction(new Def(ICode.Scope.LOCAL, newReg, returnPlace, returnType));
     	return new IdentExp(ICode.Scope.LOCAL, newReg);
     }
@@ -336,7 +336,7 @@ public class DefinitionBuilder extends SymbolBuilder{
             }
             newDefs.add(new Def(Scope.PARAM, next, arg.source, arg.dest));
         }
-        addInstruction(new Call(funcName, newDefs, this.getLastInstruction().copy()));
+        addInstruction(new Call(funcName, newDefs));
         String oldPlace;
         if(containsEntry(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME))
             oldPlace = getVariablePlace(funcName, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME).ident;

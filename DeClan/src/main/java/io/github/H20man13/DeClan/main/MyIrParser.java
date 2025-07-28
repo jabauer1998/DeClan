@@ -410,9 +410,7 @@ public class MyIrParser {
     private ICode parseGoto(){
         match(IrTokenType.GOTO);
         IrToken id = match(IrTokenType.ID);
-        match(IrTokenType.FROM);
-        ICode lastInstr = parseInstruction();
-        return new Goto(id.getLexeme(), lastInstr);
+        return new Goto(id.getLexeme());
     }
 
     private ICode parseProcedureCall(){
@@ -430,11 +428,8 @@ public class MyIrParser {
         }   
 
         match(IrTokenType.RPAR);
-        match(IrTokenType.FROM);
-        
-        ICode instruction = parseInstruction();
 
-        return new Call(procName.getLexeme(), args, instruction);
+        return new Call(procName.getLexeme(), args);
     }
 
     private UnExp parseUnaryExpression(){

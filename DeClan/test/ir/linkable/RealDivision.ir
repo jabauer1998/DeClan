@@ -14,9 +14,9 @@ DATA SECTION
 BSS SECTION
  DEF GLOBAL e := 0.0 <REAL>
 CODE SECTION
- CALL RDivide([(GLOBAL b) -> f]<REAL>, [(GLOBAL d) -> g]<REAL>) FROM CODE SECTION
+ CALL RDivide([(GLOBAL b) -> f]<REAL>, [(GLOBAL d) -> g]<REAL>)
  DEF i := (RETURN h) <REAL>
  GLOBAL e := i <REAL>
- CALL WriteReal([(GLOBAL e) -> j]<REAL>) FROM GLOBAL e := i <REAL>
+ CALL WriteReal([(GLOBAL e) -> j]<REAL>)
 END
 PROC SECTION

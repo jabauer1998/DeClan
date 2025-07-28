@@ -21,16 +21,16 @@ BSS SECTION
  DEF GLOBAL g := FALSE <BOOL>
 CODE SECTION
  DEF h := "e is " <STRING>
- CALL WriteString([h -> i]<STRING>) FROM DEF h := "e is " <STRING>
- CALL WriteBool([(GLOBAL d) -> j]<BOOL>) FROM CALL WriteString([h -> i]<STRING>) FROM DEF h := "e is " <STRING>
- CALL WriteLn() FROM CALL WriteBool([(GLOBAL d) -> j]<BOOL>) FROM CALL WriteString([h -> i]<STRING>) FROM DEF h := "e is " <STRING>
+ CALL WriteString([h -> i]<STRING>)
+ CALL WriteBool([(GLOBAL d) -> j]<BOOL>)
+ CALL WriteLn()
  DEF k := BNOT (GLOBAL d) <BOOL>
- CALL IntToReal([(GLOBAL b) -> l]<INT>) FROM DEF k := BNOT (GLOBAL d) <BOOL>
+ CALL IntToReal([(GLOBAL b) -> l]<INT>)
  DEF n := (RETURN m) <REAL>
- CALL RGreaterThanOrEqualTo([(GLOBAL f) -> o]<REAL>, [n -> p]<REAL>) FROM DEF n := (RETURN m) <REAL>
+ CALL RGreaterThanOrEqualTo([(GLOBAL f) -> o]<REAL>, [n -> p]<REAL>)
  DEF r := (RETURN q) <BOOL>
  DEF s := k LOR r <BOOL>
  GLOBAL g := s <BOOL>
- CALL WriteBool([(GLOBAL g) -> j]<BOOL>) FROM GLOBAL g := s <BOOL>
+ CALL WriteBool([(GLOBAL g) -> j]<BOOL>)
 END
 PROC SECTION

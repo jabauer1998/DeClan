@@ -17,19 +17,19 @@ DATA SECTION
  DEF b := 6 <INT>
  DEF c := 1 <INT>
  DEF d := b IADD c <INT>
- CALL Multiply([a -> e]<INT>, [d -> f]<INT>) FROM DEF d := b IADD c <INT>
+ CALL Multiply([a -> e]<INT>, [d -> f]<INT>)
  DEF h := (RETURN g) <INT>
  DEF GLOBAL i := h <INT>
  DEF j := 10 <INT>
- CALL Mod([(GLOBAL i) -> k]<INT>, [j -> l]<INT>) FROM DEF j := 10 <INT>
+ CALL Mod([(GLOBAL i) -> k]<INT>, [j -> l]<INT>)
  DEF n := (RETURN m) <INT>
  DEF GLOBAL o := n <INT>
 BSS SECTION
  DEF GLOBAL p := 0.0 <REAL>
 CODE SECTION
- CALL Divide([(GLOBAL i) -> q]<INT>, [(GLOBAL o) -> r]<INT>) FROM CODE SECTION
+ CALL Divide([(GLOBAL i) -> q]<INT>, [(GLOBAL o) -> r]<INT>)
  DEF t := (RETURN s) <REAL>
  GLOBAL p := t <REAL>
- CALL WriteReal([(GLOBAL p) -> u]<REAL>) FROM GLOBAL p := t <REAL>
+ CALL WriteReal([(GLOBAL p) -> u]<REAL>)
 END
 PROC SECTION

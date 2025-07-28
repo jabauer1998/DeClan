@@ -1,25 +1,31 @@
 package io.github.H20man13.DeClan.common.icode;
 
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Goto implements ICode {
+	private static Set<Goto> gotos = new HashSet<Goto>();
+	
 	public String label;
-	private ICode leavingFrom;
+	private int seqNum;
 
-	public Goto(String label, ICode icode) {
+	public Goto(String label) {
 		this.label = label;
-		this.leavingFrom = icode;
+		for(seqNum = 0; gotos.contains(this); ++this.seqNum);
+		gotos.add(this);
+	}
+	
+	public Goto(String label, int seqNum) {
+		this.label = label;
+		this.seqNum = seqNum;
 	}
 
 	@Override
 	public String toString() {
-		return "GOTO " + label + " FROM " + leavingFrom.toString();
+		return "GOTO " + label;
 	}
 
 	@Override
@@ -27,7 +33,7 @@ public class Goto implements ICode {
 		if(obj instanceof Goto){
 			Goto objGoto = (Goto)obj;
 
-			return objGoto.label.equals(label) && this.leavingFrom.equals(objGoto.leavingFrom);
+			return objGoto.label.equals(label) && this.seqNum == objGoto.seqNum;
 		} else {
 			return false;
 		}
@@ -60,7 +66,7 @@ public class Goto implements ICode {
 
 	@Override
 	public void replacePlace(String from, String to) {
-		leavingFrom.replacePlace(from, to);
+		//DO nothing
 	}
 
 	@Override
@@ -71,11 +77,11 @@ public class Goto implements ICode {
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(label, leavingFrom);
+		return Objects.hash(label, seqNum);
 	}
 
 	@Override
 	public ICode copy() {
-		return new Goto(label, leavingFrom.copy());
+		return new Goto(label, seqNum);
 	}
 }

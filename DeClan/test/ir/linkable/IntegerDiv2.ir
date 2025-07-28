@@ -14,9 +14,9 @@ DATA SECTION
 BSS SECTION
  DEF GLOBAL e := 0 <INT>
 CODE SECTION
- CALL Div([(GLOBAL b) -> f]<INT>, [(GLOBAL d) -> g]<INT>) FROM CODE SECTION
+ CALL Div([(GLOBAL b) -> f]<INT>, [(GLOBAL d) -> g]<INT>)
  DEF i := (RETURN h) <INT>
  GLOBAL e := i <INT>
- CALL WriteInt([(GLOBAL e) -> j]<INT>) FROM GLOBAL e := i <INT>
+ CALL WriteInt([(GLOBAL e) -> j]<INT>)
 END
 PROC SECTION

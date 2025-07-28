@@ -12,16 +12,33 @@ import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
 public class Assign implements ICode{
+	private static Set<Assign> times = new HashSet<Assign>();
+	
     public String place;
     public Exp value;
     private Scope scope;
     private Type type;
-
+    private int time;
+    
     public Assign(ICode.Scope scope, String place, Exp value, ICode.Type type){
         this.scope = scope;
         this.place = place;
         this.value = value;
         this.type = type;
+        this.time = 0;
+        while(times.contains(this)) {
+        	this.time++;
+        }
+        times.add(this);
+    }
+    
+    public Assign(ICode.Scope scope, String place, Exp value, ICode.Type type, int time){
+        this.scope = scope;
+        this.place = place;
+        this.value = value;
+        this.type = type;
+        this.time = 0;
+        this.time = time;
     }
 
     public Scope getScope(){
@@ -72,8 +89,9 @@ public class Assign implements ICode{
 
             boolean placeEquals = assign.place.equals(place);
             boolean expEquals = assign.value.equals(value);
+            boolean timesEquals = assign.time == this.time;
 
-            return placeEquals && expEquals;
+            return placeEquals && expEquals && timesEquals;
         } else {
             return false;
         }
@@ -81,7 +99,7 @@ public class Assign implements ICode{
 
     @Override
     public P asPattern() {
-        return P.PAT(P.ID(), P.ASSIGN(), value.asPattern(true), ConversionUtils.typeToPattern(type));
+        return P.PAT(P.ID(), P.ASSIGN(), value.asPattern(true), ConversionUtils.typeToPattern(type), P.INT());
     }
 
     @Override
@@ -111,11 +129,11 @@ public class Assign implements ICode{
     
     @Override
     public int hashCode() {
-    	return Objects.hash(place, value, scope, type);
+    	return Objects.hash(place, value, scope, type, time);
     }
 
 	@Override
 	public ICode copy() {
-		return new Assign(scope, place, value, type);
+		return new Assign(scope, place, value, type, time);
 	}
 }

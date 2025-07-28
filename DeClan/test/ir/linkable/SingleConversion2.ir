@@ -10,9 +10,9 @@ DATA SECTION
 BSS SECTION
  DEF GLOBAL c := 0 <INT>
 CODE SECTION
- CALL RealToInt([(GLOBAL b) -> d]<REAL>) FROM CODE SECTION
+ CALL RealToInt([(GLOBAL b) -> d]<REAL>)
  DEF f := (RETURN e) <INT>
  GLOBAL c := f <INT>
- CALL WriteInt([(GLOBAL c) -> g]<INT>) FROM GLOBAL c := f <INT>
+ CALL WriteInt([(GLOBAL c) -> g]<INT>)
 END
 PROC SECTION

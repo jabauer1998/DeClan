@@ -10,14 +10,23 @@ import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Call implements ICode {
+	private static Set<Call> calls = new HashSet<Call>();
+	
 	public String pname;
 	public List<Def> params;
-	private ICode from;
+	private int seqNum;
 
-	public Call(String pname, List<Def> params, ICode from) {
+	public Call(String pname, List<Def> params) {
 		this.pname = pname;
 		this.params = params;
-		this.from = from;
+		for(this.seqNum = 0; calls.contains(this); ++this.seqNum);
+		calls.add(this);
+	}
+	
+	public Call(String pname, List<Def> params, int time) {
+		this.pname = pname;
+		this.params = params;
+		this.seqNum = time;
 	}
 
 	@Override
@@ -34,8 +43,7 @@ public class Call implements ICode {
 			}
 			sb.append(param.toString());
 		}
-		sb.append(") FROM ");
-		sb.append(from.toString());
+		sb.append(")");
 		return sb.toString();
 	}
 
@@ -73,7 +81,7 @@ public class Call implements ICode {
 					return false;
 			}
 			
-			if(!from.equals(objCall.from))
+			if(!(seqNum == objCall.seqNum))
 				return false;
 			
 			return true;
@@ -102,19 +110,17 @@ public class Call implements ICode {
 	public void replacePlace(String from, String to) {
 		for(Def assign: params)
 			assign.replacePlace(from, to);
-		this.from.replacePlace(from, to);
 	}
 
 	@Override
 	public void replaceLabel(String from, String to) {
 		if(pname.equals(from))
 			pname = to;
-		this.from.replaceLabel(from, to);
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(pname, params, from);
+		return Objects.hash(pname, params, seqNum);
 	}
 
 	@Override
@@ -123,6 +129,6 @@ public class Call implements ICode {
 		for(Def param: params) {
 			newParams.add((Def)param.copy());
 		}
-		return new Call(pname, newParams, from.copy());
+		return new Call(pname, newParams, seqNum);
 	}
 }

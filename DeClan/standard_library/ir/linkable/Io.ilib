@@ -33,7 +33,7 @@ PROC SECTION
   DEF i := 0 <INT>
   DEF j := 0 <INT>
   DEF k := 0 <INT>
-  CALL StringAsAddress([(PARAM a) -> l]<STRING>) FROM DEF k := 0 <INT>
+  CALL StringAsAddress([(PARAM a) -> l]<STRING>)
   DEF n := (RETURN m) <INT>
   h := n <INT>
   DEF o := 0 <INT>
@@ -45,9 +45,7 @@ PROC SECTION
   IPARAM j
   IPARAM j
   IASM "STR %r, %a"
-  CALL IntIsZero([j -> p]<INT>) FROM IPARAM j
-  IPARAM j
-  IASM "STR %r, %a"
+  CALL IntIsZero([j -> p]<INT>)
   DEF r := (RETURN q) <BOOL>
   DEF s := BNOT r <BOOL>
   DEF t := TRUE <BOOL>
@@ -76,12 +74,11 @@ PROC SECTION
   IASM "STR %r, %a"
   IPARAM k
   IASM "MOV R0, %r"
-  CALL IntIsZero([j -> p]<INT>) FROM IPARAM k
-  IASM "MOV R0, %r"
+  CALL IntIsZero([j -> p]<INT>)
   DEF w := (RETURN q) <BOOL>
   DEF x := BNOT w <BOOL>
   s := x <BOOL>
-  GOTO WHILECOND_0_SEQ_0_LEVEL_0 FROM s := x <BOOL>
+  GOTO WHILECOND_0_SEQ_0_LEVEL_0
   LABEL WHILENEXT_0_SEQ_0_LEVEL_0
   LABEL WHILEEND_0_LEVEL_0
  RETURN FROM WriteString
