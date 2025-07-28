@@ -1234,6 +1234,7 @@ public class MyOptimizer {
         while(changes) {
         	changes = false;
         	setUpOptimization(OptName.DEAD_CODE_ELIMINATION);
+        	Set<BlockNode> blocksToDelete = new HashSet<BlockNode>();
         	for(BlockNode block : this.globalFlowGraph.getBlocks()){
                 List<ICode> result = new LinkedList<ICode>();
                 for(ICode icode : block.getICode()){
@@ -1249,6 +1250,11 @@ public class MyOptimizer {
                         } else {
                         	changes = true;
                         }
+                    } else if(icode instanceof StandardLabel){
+                    	if(block.getPredecessors().isEmpty()){
+                    		blocksToDelete.add(block);
+                    		changes = true;
+                    	}
                     } else if(icode instanceof Def){
                     	Def assICode = (Def)icode;
                     	Set<String> liveVariables = this.liveAnal.getOutputSet(icode);
@@ -1259,7 +1265,7 @@ public class MyOptimizer {
                         }
                     } else if(icode instanceof Call){
                     	Call myCall = (Call)icode;
-                    	if(this.intermediateCode.containsEntry(myCall.pname, SymEntry.INTERNAL| SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME)) {
+                    	if(this.intermediateCode.containsEntry(myCall.pname, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME)) {
                     		SymEntry data = this.intermediateCode.getVariableData(myCall.pname, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME);
                     		Set<String> liveVariables = this.liveAnal.getOutputSet(icode);
                     		if(liveVariables.contains(data.icodePlace)) {
@@ -1276,6 +1282,31 @@ public class MyOptimizer {
                 }
                 block.getBlock().setICode(result);
             }
+        	
+        	List<BlockNode> newBlocks = new LinkedList<BlockNode>();
+        	for(BlockNode block: this.globalFlowGraph.getBlocks()) {
+        		if(!blocksToDelete.contains(block)){
+        			newBlocks.add(block);
+        		} else {
+        			for(FlowGraphNode successor: block.getSuccessors()){
+        				if(successor instanceof BlockNode){
+        					BlockNode bl = (BlockNode)successor;
+        					bl.removePredecessor(block);
+        				}
+        			}
+        		}
+        	}
+        	
+        	LinkedList<BlockNode> newOrigBlocks = new LinkedList<BlockNode>();
+        	for(BlockNode block: this.origBlocks) {
+        		if(!blocksToDelete.contains(block)){
+        			newOrigBlocks.add(block);
+        		}
+        	}
+        	
+        	this.origBlocks = newOrigBlocks;
+        	this.globalFlowGraph.setBlocks(newBlocks);
+        	
         	cleanUpOptimization(OptName.DEAD_CODE_ELIMINATION);
         }
         if(cfg != null)
