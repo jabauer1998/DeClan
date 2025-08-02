@@ -36,7 +36,6 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.ICode.Scope;
 import io.github.H20man13.DeClan.common.icode.If;
-import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Lib.SymbolSearchStrategy;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
@@ -48,6 +47,8 @@ import io.github.H20man13.DeClan.common.icode.exp.IntExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.inline.Inline;
+import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.section.BssSec;
@@ -3956,7 +3957,7 @@ public class MyCodeGenerator {
 				StringBuilder resultInstruction = new StringBuilder();
 				int index = 0;
 				int paramIndex = 0;
-				List<IdentExp> params = inline.params;
+				List<InlineParam> params = inline.params;
 				while (index < instruction.length()) {
 					char letterAtFirstIndex = instruction.charAt(index);
 					if (letterAtFirstIndex == '%') {
@@ -3967,7 +3968,7 @@ public class MyCodeGenerator {
 						char formatSpecifierLetter = instruction.charAt(index);
 						if (formatSpecifierLetter == 'A' || formatSpecifierLetter == 'a') {
 							if (paramIndex < params.size()) {
-								IdentExp addressParam = params.get(paramIndex);
+								IdentExp addressParam = params.get(paramIndex).name;
 								resultInstruction.append(addressParam.ident);
 								paramIndex++;
 							} else {
@@ -3976,7 +3977,7 @@ public class MyCodeGenerator {
 							}
 						} else if (formatSpecifierLetter == 'R' || formatSpecifierLetter == 'r') {
 							if (paramIndex < params.size()) {
-								IdentExp addresParam = params.get(paramIndex);
+								IdentExp addresParam = params.get(paramIndex).name;
 								String regParam = rGen.getReg(addresParam.ident, icode);
 								resultInstruction.append(regParam);
 								paramIndex++;

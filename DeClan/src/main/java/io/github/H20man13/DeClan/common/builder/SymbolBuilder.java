@@ -76,6 +76,32 @@ public class SymbolBuilder extends BaseBuilder {
          }
         return false;
     }
+    
+    public ICode.Type getVariableType(String identifierOrFuncName, int internalOrExternal, SymbolBuilderSearchStrategy strat){
+        int symbolStart = beginningOfSymbolTable();
+        int symbolEnd = endOfSymbolTable();
+        for(int i = symbolStart; i <= symbolEnd; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(strat == SymbolBuilderSearchStrategy.SEARCH_VIA_FUNC_NAME) {
+                	if(entry.funcName != null)
+                		if(entry.funcName.equals(identifierOrFuncName))
+                			if(entry.containsAllQualities(internalOrExternal))
+                				if(entry.containsAllQualities(SymEntry.RETURN))
+                					return entry.codeType;
+                	
+                } else {
+                	if(entry.declanIdent != null)
+                		if(entry.declanIdent.equals(identifierOrFuncName))
+                			if(entry.containsAllQualities(internalOrExternal))
+                					return entry.codeType;
+                }
+            }
+        }
+
+        throw new RuntimeException("Coulld not find symbol with identifier ");
+    }
         
         
 
@@ -158,6 +184,26 @@ public class SymbolBuilder extends BaseBuilder {
 
         throw new RuntimeException("Could not find symbol with identifier ");
     }
+    
+    public ICode.Type getVariableType(String identifierName, String funcName, int internalOrExternal){
+        int symbolStart = beginningOfSymbolTable();
+        int symbolEnd = endOfSymbolTable();
+        for(int i = symbolStart; i <= symbolEnd; i++){
+            ICode instruction = getInstruction(i);
+            if(instruction instanceof VarSymEntry){
+                VarSymEntry entry = (VarSymEntry)instruction;
+                if(entry.declanIdent != null)
+                	if(entry.declanIdent.equals(identifierName))
+                		if(entry.funcName != null)
+                			if(entry.funcName.equals(funcName))
+                				if(entry.containsAllQualities(internalOrExternal))
+                					return entry.codeType;
+            }
+        }
+
+        throw new RuntimeException("Could not find symbol with identifier ");
+    }
+
     
     public void addVariableEntry(String name, int mask, String declanName, String functionName, int paramNumber, ICode.Type type){
         int end = this.endOfSymbolTable() + 1;

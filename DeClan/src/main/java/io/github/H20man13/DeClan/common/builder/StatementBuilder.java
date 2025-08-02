@@ -11,7 +11,6 @@ import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
-import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.ICode.Scope;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -20,6 +19,8 @@ import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.IntExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
+import io.github.H20man13.DeClan.common.icode.inline.Inline;
+import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
@@ -398,8 +399,35 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         addInstruction(new Goto(label));
     }
 
-    public void buildInlineAssembly(String inlineAssembly, List<IdentExp> param){
-        addInstruction(new Inline(inlineAssembly, param));
+    public void buildInlineAssembly(String inlineAssembly, List<Tuple<IdentExp, ICode.Type>> param){
+    	String[] elems = inlineAssembly.split(" ");
+        List<InlineParam> realParams = new LinkedList<InlineParam>();
+        
+        int count = 0;
+        for(String elem: elems) {
+        	if(elem.startsWith("%")) {
+        		int mask = 0;
+        		
+        		for(int i = 0; i < elem.length(); i++){
+        			char c = elem.charAt(i);
+        			if(c == 'a')
+        				mask |= InlineParam.IS_ADDRESS;
+        			else if(c == 'r')
+        				mask |= InlineParam.IS_REGISTER;
+        			else if(c == 'd')
+        				mask |= InlineParam.IS_DEFINITION;
+        			else if(c == 'u')
+        				mask |= InlineParam.IS_USE;
+        		}
+        		
+        		Tuple<IdentExp, ICode.Type> myParam = param.get(count);
+        		
+        		realParams.add(new InlineParam(myParam, mask));
+        		
+        		count++;
+        	}
+        }
+        addInstruction(new Inline(inlineAssembly, realParams));
     }
 
     public void buildProcedureLabel(String pname){

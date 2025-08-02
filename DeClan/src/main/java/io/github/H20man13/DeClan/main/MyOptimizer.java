@@ -50,7 +50,6 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.ICode.Scope;
 import io.github.H20man13.DeClan.common.icode.If;
-import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Lib.SymbolSearchStrategy;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -63,6 +62,8 @@ import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.inline.Inline;
+import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
@@ -585,6 +586,7 @@ public class MyOptimizer {
                 break;
             case DEAD_CODE_ELIMINATION:
                 buildFlowGraph();
+                removeUnusedBlocks();
                 copyOrigBlocks();
                 runDominatorAnalysis();
                 buildDfst();
@@ -610,6 +612,47 @@ public class MyOptimizer {
             	runSavedExpressionAnalysis();
             	break;
         }
+    }
+    
+    private void removeUnusedBlocks() {
+    	LinkedList<BlockNode> newBlocks = new LinkedList<BlockNode>();
+    	
+    	for(int blockNum = 0; blockNum < this.globalFlowGraph.getBlocks().size(); blockNum++){
+    		BlockNode getBlock = this.globalFlowGraph.getBlocks().get(blockNum);
+    		if(getBlock.getPredecessors().size() > 0 
+    		|| this.globalFlowGraph.getEntry().equals(getBlock)){
+    			newBlocks.add(getBlock);
+    		} else if(getBlock.getICode().size() > 0){
+    			ICode header = getBlock.getICode().getFirst();
+    			if(header instanceof SymSec)
+    				newBlocks.add(getBlock);
+    			else if(header instanceof ProcSec)
+    				newBlocks.add(getBlock);
+    			else if(header instanceof DataSec)
+    				newBlocks.add(getBlock);
+    			else {
+    				for(int flowNode = 0; flowNode < getBlock.getSuccessors().size(); flowNode++) {
+        				FlowGraphNode block2 = getBlock.getSuccessors().get(flowNode);
+        				if(block2 instanceof BlockNode) {
+        					BlockNode block2Block = (BlockNode)block2;
+        					block2Block.removePredecessor(getBlock);
+        					getBlock.removeSuccessor(block2Block);
+        				}
+        			}
+    			}
+    		} else {
+    			for(int flowNode = 0; flowNode < getBlock.getSuccessors().size(); flowNode++) {
+    				FlowGraphNode block2 = getBlock.getSuccessors().get(flowNode);
+    				if(block2 instanceof BlockNode) {
+    					BlockNode block2Block = (BlockNode)block2;
+    					block2Block.removePredecessor(getBlock);
+    					getBlock.removeSuccessor(block2Block);
+    				}
+    			}
+    		}
+    	}
+    	
+    	this.globalFlowGraph.setBlocks(newBlocks);
     }
 
     private void regenerateICodeForBlock(BlockNode block, DagGraph dag){
@@ -1250,11 +1293,6 @@ public class MyOptimizer {
                         } else {
                         	changes = true;
                         }
-                    } else if(icode instanceof StandardLabel){
-                    	if(block.getPredecessors().isEmpty()){
-                    		blocksToDelete.add(block);
-                    		changes = true;
-                    	}
                     } else if(icode instanceof Def){
                     	Def assICode = (Def)icode;
                     	Set<String> liveVariables = this.liveAnal.getOutputSet(icode);
@@ -1282,31 +1320,6 @@ public class MyOptimizer {
                 }
                 block.getBlock().setICode(result);
             }
-        	
-        	List<BlockNode> newBlocks = new LinkedList<BlockNode>();
-        	for(BlockNode block: this.globalFlowGraph.getBlocks()) {
-        		if(!blocksToDelete.contains(block)){
-        			newBlocks.add(block);
-        		} else {
-        			for(FlowGraphNode successor: block.getSuccessors()){
-        				if(successor instanceof BlockNode){
-        					BlockNode bl = (BlockNode)successor;
-        					bl.removePredecessor(block);
-        				}
-        			}
-        		}
-        	}
-        	
-        	LinkedList<BlockNode> newOrigBlocks = new LinkedList<BlockNode>();
-        	for(BlockNode block: this.origBlocks) {
-        		if(!blocksToDelete.contains(block)){
-        			newOrigBlocks.add(block);
-        		}
-        	}
-        	
-        	this.origBlocks = newOrigBlocks;
-        	this.globalFlowGraph.setBlocks(newBlocks);
-        	
         	cleanUpOptimization(OptName.DEAD_CODE_ELIMINATION);
         }
         if(cfg != null)
@@ -1985,10 +1998,10 @@ public class MyOptimizer {
                     	}
                     } else if(icode instanceof Inline) {
                     	Inline inline = (Inline)icode;
-                    	LinkedList<IdentExp> newParams = new LinkedList<IdentExp>();
+                    	LinkedList<InlineParam> newParams = new LinkedList<InlineParam>();
                     	
-                    	for(IdentExp param: inline.params) {
-                    		Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(param, param);
+                    	for(InlineParam param: inline.params) {
+                    		Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(param.name, param.name);
                             while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
                                 sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                             }
@@ -1996,7 +2009,7 @@ public class MyOptimizer {
                             IdentExp finalExp = (sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : (IdentExp)sourceDestRight.dest;
                             if(!finalExp.equals(param))
                             	changes = true;
-                            newParams.add(finalExp);
+                            newParams.add(new InlineParam(finalExp, param.type, param.qual));
                     	}
                     	
                     	inline.params = newParams;

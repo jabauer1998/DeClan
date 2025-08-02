@@ -1,4 +1,4 @@
-package io.github.H20man13.DeClan.common.icode;
+package io.github.H20man13.DeClan.common.icode.inline;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -6,14 +6,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.ICode.Type;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.pat.P;
 
 public class Inline implements ICode{
     public String inlineAssembly;
-    public List<IdentExp> params;
+    public List<InlineParam> params;
 
-    public Inline(String inlineAssembly, List<IdentExp> param){
+    public Inline(String inlineAssembly, List<InlineParam> param){
         this.inlineAssembly = inlineAssembly;
         this.params = param;
     }
@@ -59,10 +62,10 @@ public class Inline implements ICode{
     @Override
     public String toString(){
         StringBuilder inlineAssemblyBuilder = new StringBuilder();
-        for(IdentExp str : params){
+        for(InlineParam str : params){
             inlineAssemblyBuilder.append("IPARAM ");
             inlineAssemblyBuilder.append(str);
-            inlineAssemblyBuilder.append('\n');
+            inlineAssemblyBuilder.append("\r\n");
         }
         inlineAssemblyBuilder.append("IASM \"");
         inlineAssemblyBuilder.append(inlineAssembly);
@@ -73,8 +76,8 @@ public class Inline implements ICode{
 
     @Override
     public boolean containsPlace(String place) {
-        for(IdentExp param: params){
-            if(param.containsPlace(place))
+        for(InlineParam param: params){
+            if(param.name.containsPlace(place))
                 return true;
         }
         return false;
@@ -87,8 +90,8 @@ public class Inline implements ICode{
 
     @Override
     public void replacePlace(String from, String to) {
-        for(IdentExp param: params){
-            param.replacePlace(from, to);
+        for(InlineParam param: params){
+            param.name.replacePlace(from, to);
         }
     }
 

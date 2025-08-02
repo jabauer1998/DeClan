@@ -22,7 +22,6 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
-import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -33,6 +32,8 @@ import io.github.H20man13.DeClan.common.icode.exp.IntExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.inline.Inline;
+import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
@@ -190,12 +191,12 @@ public class MyICodeMachine {
     private void interpretInlineAssembly(Inline instruction) {
         if(instruction.inlineAssembly.startsWith("MULL")){
             //Then it is a multiply long instruction and we have to simulate that here
-            List<IdentExp> paramaters = instruction.params;
+            List<InlineParam> paramaters = instruction.params;
             if(paramaters.size() == 4){
                 //First get the two source paramaters
-                IdentExp param1 = paramaters.get(2);
+                IdentExp param1 = paramaters.get(2).name;
                 VariableEntry entry1 = variableValues.getEntry(param1.ident);
-                IdentExp param2 = paramaters.get(3);
+                IdentExp param2 = paramaters.get(3).name;
                 VariableEntry entry2 = variableValues.getEntry(param2.ident);
 
                 Object obj1 = entry1.getValue();
@@ -222,8 +223,8 @@ public class MyICodeMachine {
                 Integer smallInt = smallLong.intValue();
                 Integer largeInt = largeLong.intValue();
 
-                String largeRegister = paramaters.get(1).ident;
-                String smallRegister = paramaters.get(0).ident;
+                String largeRegister = paramaters.get(1).name.ident;
+                String smallRegister = paramaters.get(0).name.ident;
                 variableValues.addEntry(largeRegister, new VariableEntry(false, largeInt));
                 variableValues.addEntry(smallRegister, new VariableEntry(false, smallInt));
             } else {

@@ -15,13 +15,14 @@ import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
-import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Lib.SymbolSearchStrategy;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.inline.Inline;
+import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.common.util.Utils;
 
@@ -104,8 +105,11 @@ public class LiveVariableAnalysis extends InstructionAnalysis<HashMap<ICode, Has
                 } else if(code instanceof Inline) {
                 	Inline inline = (Inline)code;
                 	
-                	for(IdentExp param: inline.params) {
-                		instructionUse.add(param.ident);
+                	for(InlineParam param: inline.params) {
+                		if(param.containsAllQual(InlineParam.IS_DEFINITION))
+                			instructionDef.add(param.name.ident);
+                		else if(param.containsAllQual(InlineParam.IS_USE))
+                			instructionUse.add(param.name.ident);
                 	}
                 }
                 defSets.put(code, instructionDef);

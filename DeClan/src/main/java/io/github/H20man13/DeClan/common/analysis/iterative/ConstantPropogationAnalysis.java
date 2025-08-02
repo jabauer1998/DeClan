@@ -14,10 +14,11 @@ import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.ICode;
-import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.NaaExp;
 import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
+import io.github.H20man13.DeClan.common.icode.inline.Inline;
+import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class ConstantPropogationAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<String, NullableExp>>>, HashSet<Tuple<String, NullableExp>>, Tuple<String, NullableExp>> 
@@ -64,8 +65,9 @@ implements CustomMeet<HashSet<Tuple<String, NullableExp>>, Tuple<String, Nullabl
                     }
                 } else if(icode instanceof Inline) {
                 	Inline inline = (Inline)icode;
-                	for(IdentExp param: inline.params) {
-                		killTuples.add(new Tuple<String, NullableExp>(param.ident, new NaaExp()));
+                	for(InlineParam param: inline.params) {
+                		if(param.containsAllQual(InlineParam.IS_DEFINITION))
+                			killTuples.add(new Tuple<String, NullableExp>(param.name.ident, new NaaExp()));
                 	}
                 }
 

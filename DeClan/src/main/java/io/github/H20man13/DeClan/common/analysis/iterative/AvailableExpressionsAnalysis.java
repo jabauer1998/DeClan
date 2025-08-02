@@ -20,6 +20,8 @@ import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.inline.Inline;
+import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class AvailableExpressionsAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<Exp, ICode.Type>>>, HashSet<Tuple<Exp, ICode.Type>>, Tuple<Exp, ICode.Type>> {
@@ -42,6 +44,17 @@ public class AvailableExpressionsAnalysis extends InstructionAnalysis<HashMap<IC
                 } else if(icode instanceof Def) {
                 	Def definition = (Def)icode;
                 	instructionKill.add(definition.label);
+                } else if(icode instanceof Call){
+                	Call myCall = (Call)icode;
+                	
+                	for(Def param: myCall.params) {
+                		instructionKill.add(param.label);
+                	}
+                } else if(icode instanceof Inline) {
+                	Inline inline = (Inline)icode;
+                	for(InlineParam param: inline.params)
+                		if(param.containsAllQual(InlineParam.IS_DEFINITION))
+                			instructionKill.add(param.name.ident);
                 }
                 killSets.put(icode, instructionKill);
             }

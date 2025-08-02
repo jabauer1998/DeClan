@@ -797,11 +797,12 @@ public class MyICodeGenerator{
 	  }
   
   public void generateInlineAssemblyIr(Asm asm, StatementBuilder builder) {
-     List<IdentExp> icodeParams = new LinkedList<IdentExp>();
+     List<Tuple<IdentExp, ICode.Type>> icodeParams = new LinkedList<Tuple<IdentExp, ICode.Type>>();
      for(String param : asm.getParamaters()){
        if(builder.containsEntry(param, SymEntry.ANY, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
           IdentExp icodeParam = builder.getVariablePlace(param, SymEntry.INTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
-          icodeParams.add(icodeParam);
+          ICode.Type icodeType = builder.getVariableType(param, SymEntry.INTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+          icodeParams.add(new Tuple<IdentExp, ICode.Type>(icodeParam, icodeType));
        } else {
           throw new ICodeGeneratorException(asm, "Input paramater " + param + " does not exist"); 
        }
@@ -810,20 +811,22 @@ public class MyICodeGenerator{
   }
   
   public void generateInlineAssemblyIr(Asm asm, String callerFuncName, StatementBuilder builder) {
-	     List<IdentExp> icodeParams = new LinkedList<IdentExp>();
-	     for(String param : asm.getParamaters()){
-	       if(builder.containsEntry(param, callerFuncName, SymEntry.INTERNAL)) {
-	          IdentExp icodeParam = builder.getVariablePlace(param, callerFuncName, SymEntry.INTERNAL);
-	          icodeParams.add(icodeParam);
-	       } else if(builder.containsEntry(param, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
-	    	   IdentExp icodeParam = builder.getVariablePlace(param, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
-		       icodeParams.add(icodeParam);
-	       } else {
-	          throw new ICodeGeneratorException(asm, "Input paramater " + param + " does not exist"); 
-	       }
-	     }
-	     builder.buildInlineAssembly(asm.getInlineAssembly(), icodeParams);
-	  }
+     List<Tuple<IdentExp, ICode.Type>> icodeParams = new LinkedList<Tuple<IdentExp, ICode.Type>>();
+     for(String param : asm.getParamaters()){
+       if(builder.containsEntry(param, callerFuncName, SymEntry.INTERNAL)) {
+          IdentExp icodeParam = builder.getVariablePlace(param, callerFuncName, SymEntry.INTERNAL);
+          ICode.Type icodeType = builder.getVariableType(param, callerFuncName, SymEntry.INTERNAL);
+          icodeParams.add(new Tuple<IdentExp, ICode.Type>(icodeParam, icodeType));
+       } else if(builder.containsEntry(param, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
+    	   IdentExp icodeParam = builder.getVariablePlace(param, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+    	   ICode.Type icodeType = builder.getVariableType(param, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+	       icodeParams.add(new Tuple<IdentExp, ICode.Type>(icodeParam, icodeType));
+       } else {
+          throw new ICodeGeneratorException(asm, "Input paramater " + param + " does not exist"); 
+       }
+     }
+     builder.buildInlineAssembly(asm.getInlineAssembly(), icodeParams);
+  }
 
   
   public IdentExp generateExpressionIr(Expression exp, DefinitionBuilder builder){

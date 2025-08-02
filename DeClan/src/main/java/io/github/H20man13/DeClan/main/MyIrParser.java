@@ -13,7 +13,6 @@ import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
-import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
@@ -25,6 +24,8 @@ import io.github.H20man13.DeClan.common.icode.exp.IntExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.inline.Inline;
+import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.label.StandardLabel;
@@ -313,16 +314,47 @@ public class MyIrParser {
     }
 
     private Inline parseInlineAssembly(){
-        List<IdentExp> params = new LinkedList<IdentExp>();
+        List<Tuple<IdentExp, ICode.Type>> params = new LinkedList<Tuple<IdentExp, ICode.Type>>();
         while(willMatch(IrTokenType.IPARAM)){
             skip();
             IdentExp param = parseIdentifier();
-            params.add(param);
+            ICode.Type type = parseType();
+            params.add(new Tuple<IdentExp, ICode.Type>(param, type));
         }
         match(IrTokenType.IASM);
         IrToken inlineAssembly = match(IrTokenType.STRING);
         String lexeme = inlineAssembly.getLexeme();
-        return new Inline(lexeme, params);
+        
+        String[] elems = lexeme.split(" ");
+        List<InlineParam> realParams = new LinkedList<InlineParam>();
+        
+        int count = 0;
+        for(String elem: elems) {
+        	if(elem.startsWith("%")) {
+        		int mask = 0;
+        		
+        		for(int i = 0; i < elem.length(); i++){
+        			char c = elem.charAt(i);
+        			if(c == 'a')
+        				mask |= InlineParam.IS_ADDRESS;
+        			else if(c == 'r')
+        				mask |= InlineParam.IS_REGISTER;
+        			else if(c == 'd')
+        				mask |= InlineParam.IS_DEFINITION;
+        			else if(c == 'u')
+        				mask |= InlineParam.IS_USE;
+        		}
+        		
+        		Tuple<IdentExp, ICode.Type> myParam = params.get(count);
+        		
+        		realParams.add(new InlineParam(myParam, mask));
+        		
+        		count++;
+        	}
+        }
+        
+        
+        return new Inline(lexeme, realParams);
     }
 
     private IdentExp parseIdentifier(){

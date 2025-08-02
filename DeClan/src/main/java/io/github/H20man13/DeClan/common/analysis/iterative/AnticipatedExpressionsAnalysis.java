@@ -20,6 +20,8 @@ import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.inline.Inline;
+import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class AnticipatedExpressionsAnalysis extends 
@@ -58,6 +60,14 @@ Tuple<Exp, ICode.Type>>{
                 	for(Def param: params) {
                         instructionGen.add(new Tuple<Exp, ICode.Type>(param.val, param.type));
                         instructionKill.add(param.label);
+                	}
+                } else if(icode instanceof Inline) {
+                	Inline inICode = (Inline)icode;
+                	for(InlineParam param: inICode.params) {
+                		if(param.containsAllQual(InlineParam.IS_USE))
+                			instructionGen.add(new Tuple<Exp, ICode.Type>(param.name, param.type));
+                		else if(param.containsAllQual(InlineParam.IS_DEFINITION))
+                			instructionKill.add(param.name.ident);
                 	}
                 }
                 

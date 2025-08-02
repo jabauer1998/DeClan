@@ -18,6 +18,8 @@ import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.inline.Inline;
+import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class ReachingDefinitionsAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<String>>, HashSet<String>, String> {
@@ -47,6 +49,15 @@ public class ReachingDefinitionsAnalysis extends InstructionAnalysis<HashMap<ICo
                 	
                 	if(liveAnal.getOutputSet(decl).contains(declDef.label)){
                 		instructionGenSet.add(declDef.label);
+                	}
+                } else if(decl instanceof Inline) {
+                	Inline inline = (Inline)decl;
+                	
+                	for(InlineParam param: inline.params) {
+                		if(param.containsAllQual(InlineParam.IS_DEFINITION))
+                			if(!liveAnal.getOutputSet(decl).contains(param.name.ident)) {
+                            	instructionKillSet.add(param.name.ident);
+                            }
                 	}
                 }
                 

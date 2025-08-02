@@ -5,6 +5,7 @@ import java.util.Set;
 
 import io.github.H20man13.DeClan.common.Config;
 import io.github.H20man13.DeClan.common.ErrorLog;
+import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.ast.Library;
 import io.github.H20man13.DeClan.common.ast.Program;
 import io.github.H20man13.DeClan.common.exception.ICodeLinkerException;
@@ -16,7 +17,6 @@ import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
-import io.github.H20man13.DeClan.common.icode.Inline;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Lib.SymbolSearchStrategy;
 import io.github.H20man13.DeClan.common.icode.Prog;
@@ -25,6 +25,8 @@ import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.inline.Inline;
+import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.icode.label.Label;
 import io.github.H20man13.DeClan.common.icode.label.ProcLabel;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
@@ -2394,21 +2396,21 @@ public class MyIrLinker {
                         } else if(icode instanceof Inline) {
                         	Inline inlineAsm = (Inline)icode;
                         	
-                        	for(IdentExp arg: inlineAsm.params) {
-                        		if(library.containsEntry(arg.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
-                                    VarSymEntry entry = library.getVariableData(arg.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        	for(InlineParam arg: inlineAsm.params) {
+                        		if(library.containsEntry(arg.name.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(arg.name.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
                                     if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
                                         fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
-                                } else if(library.containsEntry(arg.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
-                                	if(!newProg.containsEntry(arg.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
-                                		SymEntry entry = library.getVariableData(arg.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                } else if(library.containsEntry(arg.name.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                	if(!newProg.containsEntry(arg.name.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                		SymEntry entry = library.getVariableData(arg.name.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
                                 		newProg.addSymEntry(entry);
                                 	}
                                 } else {
-                                    fetchInternalDependentInstructions(library, prog, libraries, arg.ident, newProg);
+                                    fetchInternalDependentInstructions(library, prog, libraries, arg.name.ident, newProg);
                                 }
 
-                                String leftPlace = arg.ident;
+                                String leftPlace = arg.name.ident;
                                 if(!placeIsUniqueAcrossProgramAndLibraries(leftPlace, prog, libraries)){
                                     String newPlace;
                                     do{
