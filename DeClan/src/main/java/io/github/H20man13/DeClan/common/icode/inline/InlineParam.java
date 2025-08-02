@@ -34,7 +34,7 @@ public class InlineParam implements Copyable<InlineParam>{
 	}
 	
 	public boolean containsAllQual(int mask) {
-		return (qual & mask) == qual;
+		return (qual & mask) == mask;
 	}
 	
 	public boolean containsAnyQual(int mask) {
@@ -44,7 +44,6 @@ public class InlineParam implements Copyable<InlineParam>{
 	public String toString() {
 		StringBuilder toString = new StringBuilder();
 		toString.append(this.name);
-		toString.append(' ');
 		toString.append(" <");
 		toString.append(this.type);
 		toString.append("> %");

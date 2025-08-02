@@ -2011,6 +2011,8 @@ public class MyOptimizer {
                                 if(!finalExp.equals(param.name))
                                 	changes = true;
                                 newParams.add(new InlineParam(finalExp, param.type, param.qual));
+                    		} else {
+                    			newParams.add(param.copy());
                     		}
                     	}
                     	

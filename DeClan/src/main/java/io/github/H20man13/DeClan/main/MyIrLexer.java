@@ -164,7 +164,7 @@ public class MyIrLexer implements Lexer<IrToken> {
                     }
                 case SPEC:
                 	if(c == 'u' || c == 'd' || c == 'a' || c == 'r') {
-                		lexeme.append('c');
+                		lexeme.append(c);
                 		source.advance();
                 		continue;
                 	} else {
