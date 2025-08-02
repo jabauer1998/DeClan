@@ -107,6 +107,11 @@ public class Inline implements ICode{
 
 	@Override
 	public ICode copy() {
-		return new Inline(inlineAssembly, params);
+		LinkedList<InlineParam> newCopy = new LinkedList<InlineParam>();
+		for(InlineParam param: params) {
+			newCopy.add(param.copy());
+		}
+		
+		return new Inline(inlineAssembly, newCopy);
 	}
 }

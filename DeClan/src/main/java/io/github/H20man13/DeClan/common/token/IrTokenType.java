@@ -7,6 +7,7 @@ public enum IrTokenType {
     ID, //Identifiers
     NUMBER,
     STRING,
+    SPECIFIER,
     //Reserved Keywords
     LABEL,
     IF,

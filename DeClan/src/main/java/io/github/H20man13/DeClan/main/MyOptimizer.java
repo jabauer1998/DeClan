@@ -1999,17 +1999,19 @@ public class MyOptimizer {
                     } else if(icode instanceof Inline) {
                     	Inline inline = (Inline)icode;
                     	LinkedList<InlineParam> newParams = new LinkedList<InlineParam>();
-                    	
+                        
                     	for(InlineParam param: inline.params) {
-                    		Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(param.name, param.name);
-                            while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
-                                sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
-                            }
-                            
-                            IdentExp finalExp = (sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : (IdentExp)sourceDestRight.dest;
-                            if(!finalExp.equals(param))
-                            	changes = true;
-                            newParams.add(new InlineParam(finalExp, param.type, param.qual));
+                    		if(param.containsAllQual(InlineParam.IS_USE)) {
+                    			Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(param.name, param.name);
+                                while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
+                                    sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                                }
+                                
+                                IdentExp finalExp = (sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : (IdentExp)sourceDestRight.dest;
+                                if(!finalExp.equals(param.name))
+                                	changes = true;
+                                newParams.add(new InlineParam(finalExp, param.type, param.qual));
+                    		}
                     	}
                     	
                     	inline.params = newParams;

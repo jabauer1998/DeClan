@@ -1246,7 +1246,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 	@Override
 	public void visit(Asm asm) {
 		List<String> actualParam = asm.getParamaters();
-		Pattern pat = Pattern.compile("%a|%r", Pattern.CASE_INSENSITIVE);
+		Pattern pat = Pattern.compile("%[arud][arud]", Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pat.matcher(asm.getInlineAssembly());
 		int found = 0;
 		int startIndex = 0;

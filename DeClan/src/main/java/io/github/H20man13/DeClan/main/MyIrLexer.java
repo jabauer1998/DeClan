@@ -42,7 +42,7 @@ public class MyIrLexer implements Lexer<IrToken> {
     }
 
     private static enum State{
-        INIT, IDENT, STRING, COMMENT, NUM, REAL, OP
+        INIT, IDENT, STRING, COMMENT, NUM, REAL, OP, SPEC
     }
 
     private void scanNext(){
@@ -83,6 +83,12 @@ public class MyIrLexer implements Lexer<IrToken> {
                         source.advance();
                         position = source.getPosition();
                         continue;
+                    } else if(c == '%') {
+                    	state = state.SPEC;
+                    	lexeme.append(c);
+                    	source.advance();
+                    	position = source.getPosition();
+                    	continue;
                     } else {
                         position = source.getPosition();
                         errorLog.add("Unrecognized character " + c, position);
@@ -156,6 +162,15 @@ public class MyIrLexer implements Lexer<IrToken> {
                         errorLog.add("Error: Invalid operator with lexeme " + lexeme.toString(), position);
                         return;
                     }
+                case SPEC:
+                	if(c == 'u' || c == 'd' || c == 'a' || c == 'r') {
+                		lexeme.append('c');
+                		source.advance();
+                		continue;
+                	} else {
+                		nextToken = IrToken.create(IrTokenType.SPECIFIER, lexeme.toString(), position);
+                		return;
+                	}
             }
         }
 

@@ -312,49 +312,39 @@ public class MyIrParser {
             return parseAssignment();
         }
     }
+    
+    private InlineParam parseInlineParam() {
+    	match(IrTokenType.IPARAM);
+    	IdentExp ident = parseIdentifier();
+    	ICode.Type type = parseType();
+    	IrToken tok = match(IrTokenType.SPECIFIER);
+    	String tokLexeme = tok.getLexeme();
+    	int mask = 0;
+    	for(int i = 0; i < tokLexeme.length(); i++){
+			char c = tokLexeme.charAt(i);
+			if(c == 'a')
+				mask |= InlineParam.IS_ADDRESS;
+			else if(c == 'r')
+				mask |= InlineParam.IS_REGISTER;
+			else if(c == 'd')
+				mask |= InlineParam.IS_DEFINITION;
+			else if(c == 'u')
+				mask |= InlineParam.IS_USE;
+		}
+    	return new InlineParam(ident, type, mask);
+    }
 
     private Inline parseInlineAssembly(){
-        List<Tuple<IdentExp, ICode.Type>> params = new LinkedList<Tuple<IdentExp, ICode.Type>>();
+        List<InlineParam> params = new LinkedList<InlineParam>();
         while(willMatch(IrTokenType.IPARAM)){
-            skip();
-            IdentExp param = parseIdentifier();
-            ICode.Type type = parseType();
-            params.add(new Tuple<IdentExp, ICode.Type>(param, type));
+            InlineParam param = parseInlineParam();
+            params.add(param);
         }
         match(IrTokenType.IASM);
         IrToken inlineAssembly = match(IrTokenType.STRING);
         String lexeme = inlineAssembly.getLexeme();
         
-        String[] elems = lexeme.split(" ");
-        List<InlineParam> realParams = new LinkedList<InlineParam>();
-        
-        int count = 0;
-        for(String elem: elems) {
-        	if(elem.startsWith("%")) {
-        		int mask = 0;
-        		
-        		for(int i = 0; i < elem.length(); i++){
-        			char c = elem.charAt(i);
-        			if(c == 'a')
-        				mask |= InlineParam.IS_ADDRESS;
-        			else if(c == 'r')
-        				mask |= InlineParam.IS_REGISTER;
-        			else if(c == 'd')
-        				mask |= InlineParam.IS_DEFINITION;
-        			else if(c == 'u')
-        				mask |= InlineParam.IS_USE;
-        		}
-        		
-        		Tuple<IdentExp, ICode.Type> myParam = params.get(count);
-        		
-        		realParams.add(new InlineParam(myParam, mask));
-        		
-        		count++;
-        	}
-        }
-        
-        
-        return new Inline(lexeme, realParams);
+        return new Inline(lexeme, params);
     }
 
     private IdentExp parseIdentifier(){

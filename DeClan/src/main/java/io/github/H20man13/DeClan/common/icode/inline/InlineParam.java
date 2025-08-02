@@ -2,11 +2,12 @@ package io.github.H20man13.DeClan.common.icode.inline;
 
 import java.util.Objects;
 
+import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 
-public class InlineParam {
+public class InlineParam implements Copyable<InlineParam>{
 	public static final int IS_ADDRESS = 0b0001;
 	public static final int IS_REGISTER = 0b0010;
 	public static final int IS_DEFINITION = 0b0100;
@@ -79,5 +80,10 @@ public class InlineParam {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public InlineParam copy() {
+		return new InlineParam(name, type, qual);
 	}
 }
