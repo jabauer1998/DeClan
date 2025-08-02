@@ -57,6 +57,6 @@ PROCEDURE Mod (dividend: INTEGER; divisor: INTEGER);
 PROCEDURE Multiply (a: INTEGER; b: INTEGER);
 	VAR low: INTEGER; high: INTEGER;
 	BEGIN
-	asm("MULL %r, %r, %r, %r": low, high, a, b);
+	asm("MULL %dr, %dr, %ur, %ur": low, high, a, b);
 	RETURN low
 	END Multiply;

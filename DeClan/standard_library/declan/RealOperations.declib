@@ -133,9 +133,9 @@ PROCEDURE RMul(n1: REAL; n2: REAL);
 		END;
 
 		resultExp := n1Exp + n2Exp;
-		asm("MULL %r, %r, %r, %r": lowBase, hiBase, n1Base, n2Base);
-		asm("STR %r, %a": hiBase, hiBase);
-		asm("STR %r, %a": lowBase, lowBase);
+		asm("MULL %dr, %dr, %ur, %ur": lowBase, hiBase, n1Base, n2Base);
+		asm("STR %ur, %da": hiBase, hiBase);
+		asm("STR %ur, %da": lowBase, lowBase);
 
 		count := 0;
 		tempHi := hiBase;
@@ -257,30 +257,12 @@ PROCEDURE RMul(n1: REAL; n2: REAL);
 PROCEDURE RDivide(n1: REAL; n2: REAL);
     VAR result: REAL; intResult: INTEGER; n1Sign: INTEGER; n2Sign: INTEGER; n1Exp: INTEGER; n2Exp: INTEGER; n1Base: INTEGER; n2Base: INTEGER; resultSign: INTEGER; resultBase: INTEGER; resultExp: INTEGER; n2Count: INTEGER; n2LastDigit: INTEGER; n2TempBase: INTEGER; n2FirstOne: INTEGER; n2LastOne: INTEGER; toShiftExp: INTEGER; toShiftBase: INTEGER; toShiftBack: INTEGER; resultLastOne: INTEGER; resultLastDigit: INTEGER; count: INTEGER; resultTempBase: INTEGER; n1DecimalPlace: INTEGER; resultDecimalPlace: INTEGER; roundIndex: INTEGER; afterRound: INTEGER; lowBase: INTEGER; hiBase: INTEGER; lowDiff: INTEGER; hiDiff: INTEGER; lowBit: INTEGER; hiBit: INTEGER; resultBitStorage: INTEGER; lowBitStorage: INTEGER; hiBitStorage: INTEGER;
     BEGIN
-    WriteString("n1SignIs: ");
 	n1Sign := RealSign(n1);
-	WriteInt(n1Sign);
-	WriteLn();
-	WriteString("n2SignIs: ");
 	n2Sign := RealSign(n2);
-	WriteInt(n2Sign);
-	WriteLn();
-	WriteString("n1ExponentIs: ");
 	n1Exp := RealExponent(n1);
-	WriteInt(n1Exp);
-	WriteLn();
-	WriteString("n2ExpIs: ");
 	n2Exp := RealExponent(n2);
-	WriteInt(n2Exp);
-	WriteLn();
-	WriteString("n1Base is: ");
 	n1Base := RealMantissa(n1);
-	WriteInt(n1Base);
-	WriteLn();
-	WriteString("n2BaseIs: ");
 	n2Base := RealMantissa(n2);
-	WriteInt(n2Base);
-	WriteLn();
 	
 	IF IntIsZero(n1Base) & IntIsZero(n2Base) THEN
 		intResult := 1065353216

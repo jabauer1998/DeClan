@@ -99,49 +99,49 @@ PROCEDURE RealToBool(r: REAL);
 PROCEDURE RealBinaryAsInt(r: REAL);
     VAR result: INTEGER; temp: REAL;
     BEGIN
-        asm("LDR %r, %a": temp, r);
-	    asm("STR %r, %a": temp, result)
+        asm("LDR %dr, %ua": temp, r);
+	    asm("STR %ur, %da": temp, result)
 	RETURN result
     END RealBinaryAsInt;
 PROCEDURE IntBinaryAsReal(n: INTEGER);
     VAR result: REAL; temp: INTEGER;
     BEGIN
-	    asm("LDR %r, %a": temp, n);
-	    asm("STR %r, %a": temp, result)
+	    asm("LDR %dr, %ua": temp, n);
+	    asm("STR %ur, %da": temp, result)
         RETURN result
     END IntBinaryAsReal;
 PROCEDURE BoolBinaryAsReal(b: BOOLEAN);
     VAR result: REAL; temp: INTEGER;
     BEGIN
-        asm("LDRB %r, %a": temp, b);
-        asm("STR %r, %a": temp, result)
+        asm("LDRB %dr, %ua": temp, b);
+        asm("STR %ur, %da": temp, result)
         RETURN result
     END BoolBinaryAsReal;
 PROCEDURE RealBinaryAsBool(r: REAL);
     VAR result: BOOLEAN; temp: INTEGER;
     BEGIN
-        asm("LDR %r, %a": temp, r);
-        asm("STRB %r, %a": temp, result)
+        asm("LDR %dr, %ua": temp, r);
+        asm("STRB %ur, %da": temp, result)
         RETURN result
     END RealBinaryAsBool;
 PROCEDURE BoolBinaryAsInt(b: BOOLEAN);
     VAR result: INTEGER; temp: INTEGER;
     BEGIN
-        asm("LDRB %r, %a": temp, b);
-        asm("STR %r, %a": temp, result)
+        asm("LDRB %dr, %ua": temp, b);
+        asm("STR %ur, %da": temp, result)
         RETURN result
     END BoolBinaryAsInt;
 PROCEDURE IntBinaryAsBool(n: INTEGER);
     VAR result: BOOLEAN; temp: INTEGER;
     BEGIN
-        asm("LDR %r, %a": temp, n);
-        asm("STRB %r, %a": temp, result)
+        asm("LDR %dr, %ua": temp, n);
+        asm("STRB %ur, %da": temp, result)
         RETURN result
     END IntBinaryAsBool;
 PROCEDURE StringAsAddress(s: STRING);
    VAR result: INTEGER; temp: INTEGER;
    BEGIN
-      asm("LDR %r, %a": temp, s);
-      asm("STR %r, %a": temp, result);
+      asm("LDR %dr, %ua": temp, s);
+      asm("STR %ur, %da": temp, result);
       RETURN result
    END StringAsAddress;
