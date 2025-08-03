@@ -25,20 +25,16 @@ public class Assign implements ICode{
         this.place = place;
         this.value = value;
         this.type = type;
-        this.time = 0;
-        while(times.contains(this)) {
-        	this.time++;
-        }
+        for(this.time = 0; times.contains(this); ++this.time);
         times.add(this);
     }
     
-    public Assign(ICode.Scope scope, String place, Exp value, ICode.Type type, int time){
-        this.scope = scope;
-        this.place = place;
-        this.value = value;
-        this.type = type;
-        this.time = 0;
-        this.time = time;
+    private Assign(Assign other) {
+    	this.scope = other.scope;
+    	this.type = other.type;
+    	this.time = other.time;
+    	this.place = other.place;
+    	this.value = (Exp)other.value.copy();
     }
 
     public Scope getScope(){
@@ -134,6 +130,6 @@ public class Assign implements ICode{
 
 	@Override
 	public ICode copy() {
-		return new Assign(scope, place, value, type, time);
+		return new Assign(this);
 	}
 }

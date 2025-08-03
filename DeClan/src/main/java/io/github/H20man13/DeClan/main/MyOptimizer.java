@@ -2108,6 +2108,7 @@ public class MyOptimizer {
 					}
     			} else if(icode instanceof Call) {
     				Call assign = (Call)icode;
+    				
     				for(Def param: assign.params) {
     					Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(param.val, param.type);
         				if(newVarSet.contains(myTuple)) {
@@ -2124,6 +2125,25 @@ public class MyOptimizer {
 								param.val = new IdentExp(Scope.LOCAL, name);
 							}
         				}
+    				}
+    			} else if(icode instanceof Inline) {
+    				Inline inline = (Inline)icode;
+    				
+    				for(InlineParam param: inline.params){
+    					if(param.containsAllQual(InlineParam.IS_USE)) {
+    						Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(param.name, param.type);
+    						if(newVarSet.contains(myTuple)) {
+            					if(myTuple.source instanceof IdentExp) {
+            						IdentExp ident = (IdentExp)myTuple.source;
+            						if(ident.scope != ICode.Scope.RETURN){
+            							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
+            								String name = Utils.getVar(savedVars, myTuple.source);
+            								param.name = new IdentExp(Scope.LOCAL, name);
+            							}
+            						}
+            					}
+            				}
+    					}
     				}
     			}
     			newICode.add(icode);

@@ -1,5 +1,6 @@
 package io.github.H20man13.DeClan.common.icode;
 
+import java.util.HashSet;
 import java.util.Objects;
 
 import io.github.H20man13.DeClan.common.exception.ICodeFormatException;
@@ -8,17 +9,31 @@ import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
 public class Def implements ICode {
-    public String label;
+    private static HashSet<Def> allDefs = new HashSet<Def>();
+	
+	public String label;
     public Type type;
     public Scope scope;
     public Exp val;
+    private int seq;
 
     public Def(ICode.Scope scope, String label, Exp val, ICode.Type type){
         this.scope = scope;
         this.label = label;
         this.type = type;
         this.val = val;
+        for(this.seq = 0; allDefs.contains(this); this.seq++);
+        allDefs.add(this);
     }
+    
+    private Def(Def other){
+        this.scope = other.scope;
+        this.label = other.label;
+        this.type = other.type;
+        this.val = (Exp)other.val.copy();
+        this.seq = other.seq;
+    }
+    
 
     @Override
     public boolean isConstant() {
@@ -38,7 +53,8 @@ public class Def implements ICode {
                 if(toCheck.scope == scope)
                     if(toCheck.type == type)
                         if(toCheck.val.equals(val))
-                            return true;
+                        	if(toCheck.seq == seq)
+                        		return true;
         }
         return false;
     }
@@ -105,11 +121,11 @@ public class Def implements ICode {
     
     @Override
     public int hashCode() {
-    	return Objects.hash(label, type, scope, val);
+    	return Objects.hash(label, type, scope, val, seq);
     }
 
 	@Override
 	public ICode copy() {
-		return new Def(scope, label, (Exp)val.copy(), type);
+		return new Def(this);
 	}
 }

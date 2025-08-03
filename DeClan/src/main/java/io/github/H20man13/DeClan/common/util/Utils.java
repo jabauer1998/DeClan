@@ -465,6 +465,42 @@ public class Utils {
 	}
 	return false;
   }
+  
+  public static List<String> viewCommonElements(Prog program) {
+	  LinkedList<String> myList = new LinkedList<String>();
+	  for(int i = 0; i < program.getICode().size(); i++) {
+		  ICode instruction = program.getInstruction(i);
+		  if(instruction instanceof Assign) {
+			  for(int j = i + 1; j < program.getICode().size(); j++) {
+				  ICode instruction2 = program.getInstruction(j);
+				  if(instruction2 instanceof Assign) {
+					  if(instruction.equals(instruction2)) {
+						  myList.add("Instruction " + instruction.toString() + " at " + i + " is also at " + j + "\n");
+					  }
+				  }
+			  }
+		  } else if(instruction instanceof Call) {
+			  for(int j = i + 1; j < program.getICode().size(); j++) {
+				  ICode instruction2 = program.getInstruction(j);
+				  if(instruction2 instanceof Call) {
+					  if(instruction.equals(instruction2)) {
+						  myList.add("Instruction " + instruction.toString() + " at " + i + " is also at " + j + "\n");
+					  }
+				  }
+			  }
+		  } else if(instruction instanceof Goto) {
+			  for(int j = i + 1; j < program.getICode().size(); j++) {
+				  ICode instruction2 = program.getInstruction(j);
+				  if(instruction2 instanceof Goto) {
+					  if(instruction.equals(instruction2)) {
+						  myList.add("Instruction " + instruction.toString() + " at " + i + " is also at " + j + "\n");
+					  }
+				  }
+			  }
+		  }
+	  }
+	  return myList;
+  }
 
   public static int posOf(String str, char c, int count) {
 	int myCount = 0;

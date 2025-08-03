@@ -23,10 +23,14 @@ public class Call implements ICode {
 		calls.add(this);
 	}
 	
-	public Call(String pname, List<Def> params, int time) {
-		this.pname = pname;
+	private Call(Call other) {
+		this.pname = other.pname;
+		LinkedList<Def> params = new LinkedList<Def>();
+		for(Def param: other.params) {
+			params.add((Def)param.copy());
+		}
 		this.params = params;
-		this.seqNum = time;
+		this.seqNum = other.seqNum;
 	}
 
 	@Override
@@ -44,6 +48,25 @@ public class Call implements ICode {
 			sb.append(param.toString());
 		}
 		sb.append(")");
+		return sb.toString();
+	}
+	
+	public String toAccurateString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("CALL " + pname + "(");
+
+		boolean first = true;
+		for (Def param : params) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			sb.append(param.toString());
+		}
+		sb.append(") NUMBER ");
+		sb.append(seqNum);
+		
 		return sb.toString();
 	}
 
@@ -125,10 +148,6 @@ public class Call implements ICode {
 
 	@Override
 	public ICode copy() {
-		List<Def> newParams = new LinkedList<Def>();
-		for(Def param: params) {
-			newParams.add((Def)param.copy());
-		}
-		return new Call(pname, newParams, seqNum);
+		return new Call(this);
 	}
 }

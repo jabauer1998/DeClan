@@ -18,9 +18,9 @@ public class Goto implements ICode {
 		gotos.add(this);
 	}
 	
-	public Goto(String label, int seqNum) {
-		this.label = label;
-		this.seqNum = seqNum;
+	private Goto(Goto other) {
+		this.label = other.label;
+		this.seqNum = other.seqNum;
 	}
 
 	@Override
@@ -82,6 +82,6 @@ public class Goto implements ICode {
 
 	@Override
 	public ICode copy() {
-		return new Goto(label, seqNum);
+		return new Goto(this);
 	}
 }
