@@ -104,7 +104,7 @@ public class Call implements ICode {
 					return false;
 			}
 			
-			if(!(seqNum == objCall.seqNum))
+			if(seqNum != objCall.seqNum)
 				return false;
 			
 			return true;

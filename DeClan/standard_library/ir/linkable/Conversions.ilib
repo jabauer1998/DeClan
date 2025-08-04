@@ -350,77 +350,77 @@ PROC SECTION
  PROC LABEL RealBinaryAsInt
   DEF i8 := 0 <INT>
   DEF i9 := 0.0 <REAL>
-  IPARAM i9
-  IPARAM (PARAM m)
-  IASM "LDR %r, %a"
-  IPARAM i9
-  IPARAM i8
-  IASM "STR %r, %a"
+  IPARAM i9 <REAL> %dr
+  IPARAM (PARAM m) <REAL> %a
+  IASM "LDR %dr, %ua"
+  IPARAM i9 <REAL> %r
+  IPARAM i8 <INT> %da
+  IASM "STR %ur, %da"
   DEF RETURN n := i8 <INT>
  RETURN FROM RealBinaryAsInt
  PROC LABEL IntBinaryAsReal
   DEF j0 := 0.0 <REAL>
   DEF j1 := 0 <INT>
-  IPARAM j1
-  IPARAM (PARAM o)
-  IASM "LDR %r, %a"
-  IPARAM j1
-  IPARAM j0
-  IASM "STR %r, %a"
+  IPARAM j1 <INT> %dr
+  IPARAM (PARAM o) <INT> %a
+  IASM "LDR %dr, %ua"
+  IPARAM j1 <INT> %r
+  IPARAM j0 <REAL> %da
+  IASM "STR %ur, %da"
   DEF RETURN p := j0 <REAL>
  RETURN FROM IntBinaryAsReal
  PROC LABEL BoolBinaryAsReal
   DEF j2 := 0.0 <REAL>
   DEF j3 := 0 <INT>
-  IPARAM j3
-  IPARAM (PARAM q)
-  IASM "LDRB %r, %a"
-  IPARAM j3
-  IPARAM j2
-  IASM "STR %r, %a"
+  IPARAM j3 <INT> %dr
+  IPARAM (PARAM q) <BOOL> %a
+  IASM "LDRB %dr, %ua"
+  IPARAM j3 <INT> %r
+  IPARAM j2 <REAL> %da
+  IASM "STR %ur, %da"
   DEF RETURN r := j2 <REAL>
  RETURN FROM BoolBinaryAsReal
  PROC LABEL RealBinaryAsBool
   DEF j4 := FALSE <BOOL>
   DEF j5 := 0 <INT>
-  IPARAM j5
-  IPARAM (PARAM s)
-  IASM "LDR %r, %a"
-  IPARAM j5
-  IPARAM j4
-  IASM "STRB %r, %a"
+  IPARAM j5 <INT> %dr
+  IPARAM (PARAM s) <REAL> %a
+  IASM "LDR %dr, %ua"
+  IPARAM j5 <INT> %r
+  IPARAM j4 <BOOL> %da
+  IASM "STRB %ur, %da"
   DEF RETURN t := j4 <BOOL>
  RETURN FROM RealBinaryAsBool
  PROC LABEL BoolBinaryAsInt
   DEF j6 := 0 <INT>
   DEF j7 := 0 <INT>
-  IPARAM j7
-  IPARAM (PARAM u)
-  IASM "LDRB %r, %a"
-  IPARAM j7
-  IPARAM j6
-  IASM "STR %r, %a"
+  IPARAM j7 <INT> %dr
+  IPARAM (PARAM u) <BOOL> %a
+  IASM "LDRB %dr, %ua"
+  IPARAM j7 <INT> %r
+  IPARAM j6 <INT> %da
+  IASM "STR %ur, %da"
   DEF RETURN v := j6 <INT>
  RETURN FROM BoolBinaryAsInt
  PROC LABEL IntBinaryAsBool
   DEF j8 := FALSE <BOOL>
   DEF j9 := 0 <INT>
-  IPARAM j9
-  IPARAM (PARAM w)
-  IASM "LDR %r, %a"
-  IPARAM j9
-  IPARAM j8
-  IASM "STRB %r, %a"
+  IPARAM j9 <INT> %dr
+  IPARAM (PARAM w) <INT> %a
+  IASM "LDR %dr, %ua"
+  IPARAM j9 <INT> %r
+  IPARAM j8 <BOOL> %da
+  IASM "STRB %ur, %da"
   DEF RETURN x := j8 <BOOL>
  RETURN FROM IntBinaryAsBool
  PROC LABEL StringAsAddress
   DEF k0 := 0 <INT>
   DEF k1 := 0 <INT>
-  IPARAM k1
-  IPARAM (PARAM y)
-  IASM "LDR %r, %a"
-  IPARAM k1
-  IPARAM k0
-  IASM "STR %r, %a"
+  IPARAM k1 <INT> %dr
+  IPARAM (PARAM y) <STRING> %a
+  IASM "LDR %dr, %ua"
+  IPARAM k1 <INT> %r
+  IPARAM k0 <INT> %da
+  IASM "STR %ur, %da"
   DEF RETURN z := k0 <INT>
  RETURN FROM StringAsAddress

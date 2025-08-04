@@ -1161,9 +1161,11 @@ public class MyOptimizer {
     		buildFlowGraph();
     	if(this.usedSets == null)
     		buildUsedExpressionSets();
+    	if(this.anticipatedAnal == null)
+    		runAnticipatedExpressionsAnalysis();
     	if(this.earliestSets == null)
     		buildEarliestSets();
-    	this.posponableAnal = new PostponableExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet, this.earliestSets, this.usedSets, this.cfg);
+    	this.posponableAnal = new PostponableExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet, this.earliestSets, this.usedSets, this.anticipatedAnal, cfg);
     	this.posponableAnal.run();
     }
     

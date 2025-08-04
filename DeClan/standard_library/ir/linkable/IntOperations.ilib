@@ -197,10 +197,10 @@ PROC SECTION
  PROC LABEL Multiply
   DEF d5 := 0 <INT>
   DEF d6 := 0 <INT>
-  IPARAM d5
-  IPARAM d6
-  IPARAM (PARAM l)
-  IPARAM (PARAM m)
-  IASM "MULL %r, %r, %r, %r"
+  IPARAM d5 <INT> %dr
+  IPARAM d6 <INT> %dr
+  IPARAM (PARAM l) <INT> %r
+  IPARAM (PARAM m) <INT> %r
+  IASM "MULL %dr, %dr, %ur, %ur"
   DEF RETURN n := d5 <INT>
  RETURN FROM Multiply
