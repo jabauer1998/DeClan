@@ -48,6 +48,9 @@ implements CustomMeet<HashSet<Tuple<String, NullableExp>>, Tuple<String, Nullabl
                     		Tuple<String, NullableExp> newTuple = new Tuple<String, NullableExp>(assICode.place, assICode.value);
                     		setTuples.add(newTuple);
                     	}
+                    } else {
+                    	Tuple<String, NullableExp> newTuple = new Tuple<String, NullableExp>(assICode.place, new NaaExp());
+                		setTuples.add(newTuple);
                     }
                     Tuple<String, NullableExp> killTuple = new Tuple<String, NullableExp>(assICode.place, new NaaExp());
                     killTuples.add(killTuple);
@@ -62,6 +65,9 @@ implements CustomMeet<HashSet<Tuple<String, NullableExp>>, Tuple<String, Nullabl
                     		Tuple<String, NullableExp> newTuple = new Tuple<String, NullableExp>(assICode.label, assICode.val);
                     		setTuples.add(newTuple);
                     	}
+                    } else {
+                    	Tuple<String, NullableExp> newTuple = new Tuple<String, NullableExp>(assICode.label, new NaaExp());
+                		setTuples.add(newTuple);
                     }
                 } else if(icode instanceof Inline) {
                 	Inline inline = (Inline)icode;
