@@ -39,13 +39,17 @@ implements CustomMeet<HashSet<Tuple<String, NullableExp>>, Tuple<String, Nullabl
                 HashSet<Tuple<String, NullableExp>> killTuples = newSet();
                 if(icode instanceof Assign){
                     Assign assICode = (Assign)icode;
+                    
                     if(assICode.isConstant()){
                         Tuple<String, NullableExp> newTuple = new Tuple<String, NullableExp>(assICode.place, assICode.value);
                         setTuples.add(newTuple);
-                    } else if(assICode.value instanceof IdentExp){
+                    } else if(assICode.value instanceof IdentExp && assICode.getScope() != ICode.Scope.PARAM){
                     	IdentExp val = (IdentExp)assICode.value;
                     	if(val.scope != ICode.Scope.RETURN) {
                     		Tuple<String, NullableExp> newTuple = new Tuple<String, NullableExp>(assICode.place, assICode.value);
+                    		setTuples.add(newTuple);
+                    	} else {
+                    		Tuple<String, NullableExp> newTuple = new Tuple<String, NullableExp>(assICode.place, new NaaExp());
                     		setTuples.add(newTuple);
                     	}
                     } else {
@@ -59,10 +63,13 @@ implements CustomMeet<HashSet<Tuple<String, NullableExp>>, Tuple<String, Nullabl
                     if(assICode.isConstant()){
                         Tuple<String, NullableExp> newTuple = new Tuple<String, NullableExp>(assICode.label, assICode.val);
                         setTuples.add(newTuple);
-                    } else if(assICode.val instanceof IdentExp){
+                    } else if(assICode.val instanceof IdentExp && assICode.scope != ICode.Scope.PARAM){
                     	IdentExp ident = (IdentExp)assICode.val;
                     	if(ident.scope != ICode.Scope.RETURN) {
                     		Tuple<String, NullableExp> newTuple = new Tuple<String, NullableExp>(assICode.label, assICode.val);
+                    		setTuples.add(newTuple);
+                    	} else {
+                    		Tuple<String, NullableExp> newTuple = new Tuple<String, NullableExp>(assICode.label, new NaaExp());
                     		setTuples.add(newTuple);
                     	}
                     } else {
@@ -74,6 +81,8 @@ implements CustomMeet<HashSet<Tuple<String, NullableExp>>, Tuple<String, Nullabl
                 	for(InlineParam param: inline.params) {
                 		if(param.containsAllQual(InlineParam.IS_DEFINITION))
                 			killTuples.add(new Tuple<String, NullableExp>(param.name.ident, new NaaExp()));
+                		else if(param.containsAllQual(InlineParam.IS_USE))
+                			setTuples.add(new Tuple<String, NullableExp>(param.name.ident, new NaaExp()));
                 	}
                 }
 
