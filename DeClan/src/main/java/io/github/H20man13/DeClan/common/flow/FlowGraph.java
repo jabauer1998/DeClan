@@ -70,7 +70,7 @@ public class FlowGraph implements Iterable<BlockNode>{
 		builder.append("\n----------Block Connections----------\n");
 		
 		
-		String header = "Block Number |                                               Connects From                                                   |                                                                                     Connects To\n";
+		String header = "Block Number |                                               Connects From                                                   |                                                                                                                                                                                                            Connects To\n";
 		builder.append(header);
 		
 		int endOfFirstSection = Utils.posOf(header, '|', 1);

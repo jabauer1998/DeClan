@@ -2050,7 +2050,7 @@ public class MyOptimizer {
 	    		for(Tuple<Exp, ICode.Type> expression: newExpSet) {
 	    			if(expression.source instanceof IdentExp) {
 	    				IdentExp ident = (IdentExp)expression.source;
-	    				if(ident.scope != ICode.Scope.RETURN) {
+	    				if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL) {
 	    					if(Utils.containsExpInSet(savedVars, ident)) {
 	    						String name = Utils.getVar(savedVars, ident);
 	    						newICode.add(new Def(ICode.Scope.LOCAL, name, expression.source, expression.dest));
@@ -2080,7 +2080,7 @@ public class MyOptimizer {
     				if(newVarSet.contains(myTuple)) {
     					if(myTuple.source instanceof IdentExp) {
     						IdentExp ident = (IdentExp)myTuple.source;
-    						if(ident.scope != ICode.Scope.RETURN) {
+    						if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL) {
     							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
     								String name = Utils.getVar(savedVars, myTuple.source);
     								assign.value = new IdentExp(Scope.LOCAL, name);
@@ -2096,7 +2096,7 @@ public class MyOptimizer {
     				Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(assign.val, assign.type);
     				if(myTuple.source instanceof IdentExp) {
 						IdentExp ident = (IdentExp)myTuple.source;
-						if(ident.scope != ICode.Scope.RETURN) {
+						if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL) {
 							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
 								String name = Utils.getVar(savedVars, myTuple.source);
 								assign.val = new IdentExp(Scope.LOCAL, name);
@@ -2116,7 +2116,7 @@ public class MyOptimizer {
         				if(newVarSet.contains(myTuple)) {
         					if(myTuple.source instanceof IdentExp) {
         						IdentExp ident = (IdentExp)myTuple.source;
-        						if(ident.scope != ICode.Scope.RETURN) {
+        						if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL) {
         							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
         								String name = Utils.getVar(savedVars, myTuple.source);
         								param.val = new IdentExp(Scope.LOCAL, name);
@@ -2137,7 +2137,7 @@ public class MyOptimizer {
     						if(newVarSet.contains(myTuple)) {
             					if(myTuple.source instanceof IdentExp) {
             						IdentExp ident = (IdentExp)myTuple.source;
-            						if(ident.scope != ICode.Scope.RETURN){
+            						if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL){
             							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
             								String name = Utils.getVar(savedVars, myTuple.source);
             								param.name = new IdentExp(Scope.LOCAL, name);

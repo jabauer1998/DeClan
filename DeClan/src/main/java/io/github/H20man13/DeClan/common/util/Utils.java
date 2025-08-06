@@ -352,7 +352,7 @@ public class Utils {
   public static String padWhiteSpace(String input, int expectedLength, WhiteSpaceType type) {
 	  int actualLength = input.length();
 	  if(actualLength > expectedLength)
-		  throw new UtilityException("padWhiteSpace", "The actual length of string-\n" + input + "(Length=" + actualLength + ")\n exceded the expected length " + expectedLength);
+		  throw new UtilityException("padWhiteSpace", "The actual length of string-\n" + input.toString() + "(Length=" + actualLength + ")\n exceded the expected length " + expectedLength);
 	  
 	  if(actualLength == expectedLength)
 		  return input;
