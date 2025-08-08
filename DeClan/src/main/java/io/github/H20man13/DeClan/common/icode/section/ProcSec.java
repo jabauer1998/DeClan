@@ -3,7 +3,7 @@ package io.github.H20man13.DeClan.common.icode.section;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class ProcSec implements ICode {
+public class ProcSec extends ICode {
     public ProcSec(){
         //Do nothing
     }

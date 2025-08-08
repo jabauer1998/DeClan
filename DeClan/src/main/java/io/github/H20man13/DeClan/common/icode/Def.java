@@ -8,7 +8,7 @@ import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
-public class Def implements ICode {
+public class Def extends ICode {
     private static HashSet<Def> allDefs = new HashSet<Def>();
 	
 	public String label;

@@ -136,7 +136,7 @@ public class MyLinkerTest {
                     + " PROC LABEL func\n"
                     + "  DEF a := 3 <INT>\n"
                     + "  DEF RETURN b := a <INT>\n"
-                    + " RETURN\n";
+                    + " RETURN FROM func\n";
 
         String res = "SYMBOL SECTION\r\n" + //
                      "DATA SECTION\r\n" + //
@@ -174,7 +174,7 @@ public class MyLinkerTest {
                     + "PROC LABEL func\n"
                     + " DEF a := 3 <INT>\n"
                     + " DEF RETURN b := a <INT>\n"
-                    + "RETURN\n";
+                    + "RETURN FROM func\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
                      " ENTRY c INTERNAL lib1VariableName <INT>\r\n" + //
@@ -216,7 +216,7 @@ public class MyLinkerTest {
                     + "PROC LABEL func\n"
                     + " DEF a := 3 <INT>\n"
                     + " DEF RETURN b := a <INT>\n"
-                    + "RETURN\n";
+                    + "RETURN FROM func\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
                      " ENTRY c INTERNAL lib1VariableName <INT>\r\n" + //
@@ -262,7 +262,7 @@ public class MyLinkerTest {
                     + "PROC LABEL func\n"
                     + " DEF a := 3 <INT>\n"
                     + " DEF RETURN b := a <INT>\n"
-                    + "RETURN\n";
+                    + "RETURN FROM func\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
                      " ENTRY f INTERNAL lib1VariableName <INT>\r\n" + //
@@ -280,7 +280,7 @@ public class MyLinkerTest {
                      " PROC LABEL func\r\n" + //
                      "  DEF c := 3 <INT>\r\n" + //
                      "  DEF RETURN e := c <INT>\r\n" + //
-                     " RETURN\r\n";
+                     " RETURN FROM func\r\n";
 
                      
 
@@ -314,7 +314,7 @@ public class MyLinkerTest {
                     + "  DEF b := (RETURN g) <INT>\n"
                     + "  DEF c := b ISUB (GLOBAL a) <INT>\n"
                     + "  DEF RETURN d := c <INT>\n"
-                    + " RETURN\n";
+                    + " RETURN FROM func2\n";
 
         String lib2 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
@@ -322,7 +322,7 @@ public class MyLinkerTest {
                     + "PROC LABEL func1\n"
                     + " DEF a := 3 <INT>\n"
                     + " DEF RETURN b := a <INT>\n"
-                    + "RETURN\n";
+                    + "RETURN FROM func1\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
                      " ENTRY j INTERNAL lib1VariableName <INT>\r\n" + //
@@ -342,11 +342,11 @@ public class MyLinkerTest {
                      "  DEF f := (RETURN i) <INT>\r\n" + //
                      "  DEF c := f ISUB (GLOBAL j) <INT>\r\n" + //
                      "  DEF RETURN d := c <INT>\r\n" + //
-                     " RETURN\r\n" + //
+                     " RETURN FROM func2\r\n" + //
                      " PROC LABEL func1\r\n" + //
                      "  DEF h := 3 <INT>\r\n" + //
                      "  DEF RETURN i := h <INT>\r\n" + //
-                     " RETURN\r\n";
+                     " RETURN FROM func1\r\n";
 
          linkProgramStrings(exp, prog1, lib1, lib2);
     }
@@ -390,7 +390,7 @@ public class MyLinkerTest {
                     + "  GOTO begin2\n"
                     + "  LABEL end\n"
                     + "  DEF RETURN d := e <INT>\n"
-                    + " RETURN\n";
+                    + " RETURN FROM func2\n";
 
         String lib2 = "SYMBOL SECTION\n"
                     + "DATA SECTION\n"
@@ -404,7 +404,7 @@ public class MyLinkerTest {
                     + "  GOTO begin2\n"
                     + "  LABEL end\n"
                     + "  DEF RETURN b := e <INT>\n"
-                    + "RETURN\n";
+                    + "RETURN FROM func1\n";
 
         String exp = "SYMBOL SECTION\r\n" + //
                      " ENTRY l INTERNAL lib1VariableName <INT>\r\n" + //
@@ -436,7 +436,7 @@ public class MyLinkerTest {
                      "  GOTO begin2_1\r\n" + //
                      "  LABEL end_1\r\n" + //
                      "  DEF RETURN d := h <INT>\r\n" + //
-                     " RETURN\r\n" + //
+                     " RETURN FROM func2\r\n" + //
                      " PROC LABEL func1\r\n" + //
                      "  DEF k := 3 <INT>\r\n" + //
                      "  LABEL begin2_0\r\n" + //
@@ -446,7 +446,7 @@ public class MyLinkerTest {
                      "  GOTO begin2_0\r\n" + //
                      "  LABEL end_0\r\n" + //
                      "  DEF RETURN j := e <INT>\r\n" + //
-                     " RETURN\r\n";
+                     " RETURN FROM func1\r\n";
 
         linkProgramStrings(exp, prog1, lib1, lib2);
     }

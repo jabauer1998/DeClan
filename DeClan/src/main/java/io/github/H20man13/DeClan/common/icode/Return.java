@@ -7,7 +7,7 @@ import java.util.Set;
 
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class Return implements ICode {
+public class Return extends ICode {
 	private String funcName;
 	
 	public Return(String funcName) {

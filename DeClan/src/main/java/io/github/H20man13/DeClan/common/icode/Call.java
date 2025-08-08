@@ -9,7 +9,7 @@ import java.util.Set;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class Call implements ICode {
+public class Call extends ICode {
 	private static Set<Call> calls = new HashSet<Call>();
 	
 	public String pname;

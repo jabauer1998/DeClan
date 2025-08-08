@@ -11,7 +11,7 @@ import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
-public class Assign implements ICode{
+public class Assign extends ICode{
 	private static Set<Assign> times = new HashSet<Assign>();
 	
     public String place;
@@ -95,7 +95,7 @@ public class Assign implements ICode{
 
     @Override
     public P asPattern() {
-        return P.PAT(P.ID(), P.ASSIGN(), value.asPattern(true), ConversionUtils.typeToPattern(type), P.INT());
+        return P.PAT(P.ID(), P.ASSIGN(), value.asPattern(true), ConversionUtils.typeToPattern(type));
     }
 
     @Override
@@ -124,7 +124,7 @@ public class Assign implements ICode{
     }
     
     @Override
-    public int hashCode() {
+    public int hashCode(){
     	return Objects.hash(place, value, scope, type, time);
     }
 

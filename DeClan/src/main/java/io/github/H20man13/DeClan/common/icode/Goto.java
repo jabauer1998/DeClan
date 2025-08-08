@@ -6,7 +6,7 @@ import java.util.Set;
 
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class Goto implements ICode {
+public class Goto extends ICode {
 	private static Set<Goto> gotos = new HashSet<Goto>();
 	
 	public String label;

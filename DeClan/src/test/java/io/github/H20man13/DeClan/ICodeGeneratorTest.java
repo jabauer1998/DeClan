@@ -229,7 +229,7 @@ public class ICodeGeneratorTest {
                        + "  DEF x := 78 <INT>\r\n"
                        + "  DEF y := 79 <INT>\r\n"
                        + "  DEF RETURN z := 48 <INT>\r\n"
-                       + " RETURN\r\n";
+                       + " RETURN FROM func\r\n";
 
 
         Source mySource = new ReaderSource(new StringReader(program));

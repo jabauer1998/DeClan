@@ -7,7 +7,7 @@ import java.util.Set;
 
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class End implements ICode {
+public class End extends ICode {
 	@Override
 	public String toString() {
 		return "END";

@@ -3,7 +3,7 @@ package io.github.H20man13.DeClan.common.icode.section;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class DataSec implements ICode {
+public class DataSec extends ICode {
     public DataSec(){}
 
     @Override

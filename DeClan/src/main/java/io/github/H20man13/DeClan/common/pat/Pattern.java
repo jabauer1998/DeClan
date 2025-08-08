@@ -143,7 +143,7 @@ public class Pattern {
     public static P label0 = P.PAT(P.LABEL(), P.ID());
     public static P procLabel0 = P.PAT(P.PROC(), P.LABEL(), P.ID());
     public static P end0 = P.END();
-    public static P return0 = P.RETURN();
+    public static P return0 = P.PAT(P.RETURN(), P.FROM(), P.ID());
     public static P call0 = P.PAT(P.CALL(), P.ID());
     public static P inline0 = P.INLINE();
 }

@@ -13,7 +13,7 @@ import io.github.H20man13.DeClan.common.icode.section.SymSec;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.util.Utils;
 
-public class Prog extends Lib implements ICode {
+public class Prog extends Lib {
     public Prog(boolean insertHeaders){
         super(false);
         if(insertHeaders){

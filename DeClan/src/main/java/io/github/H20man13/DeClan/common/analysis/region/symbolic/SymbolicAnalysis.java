@@ -46,7 +46,7 @@ public class SymbolicAnalysis extends RegionAnalysis<Tuple<String, Expr>> {
 		for(RegionBase base: regionGraph) {
 			if(base instanceof InstructionRegion) {
 				InstructionRegion instrReg = (InstructionRegion)base;
-				ICode instruction  = (ICode)instrReg;
+				ICode instruction  = (ICode)instrReg.instruction;
 				Set<Tuple<String, Expr>> toGen = new HashSet<Tuple<String, Expr>>();
 				Set<String> toKill = new HashSet<String>();
 				

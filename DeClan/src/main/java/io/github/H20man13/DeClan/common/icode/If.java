@@ -5,7 +5,7 @@ import java.util.Objects;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class If implements ICode {
+public class If extends ICode {
 	public BinExp exp;
 	public String ifTrue, ifFalse;
 

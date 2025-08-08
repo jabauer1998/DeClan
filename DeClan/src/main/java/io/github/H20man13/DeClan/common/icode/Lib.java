@@ -22,7 +22,7 @@ import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 import io.github.H20man13.DeClan.common.util.Utils;
 
-public class Lib implements ICode, Iterable<ICode> {
+public class Lib extends ICode implements Iterable<ICode> {
     protected List<ICode> instructions;
 
     public Lib(boolean insertHeaders){

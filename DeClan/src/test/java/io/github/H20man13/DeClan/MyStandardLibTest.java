@@ -37,7 +37,7 @@ public class MyStandardLibTest {
         for(int i = 0; i < irLib.getSize(); i++){
             ICode irLibInstr = irLib.getInstruction(i);
             ICode declanLibInstr = declanLib.getInstruction(i);
-            assertTrue("Ir file instruction " + irLibInstr.toString() + "\n\n is not equal to declanLib instr \n\n" + declanLibInstr.toString(), declanLibInstr.equals(irLibInstr));
+            assertTrue("Ir file instruction " + irLibInstr.toString() + "\n\n is not equal to declanLib instr \n\n" + declanLibInstr.toString(), declanLibInstr.toString().equals(irLibInstr.toString()));
         }
     }
 

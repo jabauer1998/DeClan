@@ -5,7 +5,7 @@ import java.util.List;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public abstract class Label implements ICode {
+public abstract class Label extends ICode {
 	public String label;
 
 	protected Label(String label) {

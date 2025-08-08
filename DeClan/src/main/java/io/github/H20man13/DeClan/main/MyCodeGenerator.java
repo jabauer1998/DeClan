@@ -3943,6 +3943,11 @@ public class MyCodeGenerator {
 			}
 		});
 	}
+	
+	private enum InlineParamState{
+		BEGIN,
+		SPECIFIER,
+	}
 
 	private void initInline0() {
 		codeGenFunctions.put(Pattern.inline0, new Callable<Void>() {
@@ -3958,42 +3963,52 @@ public class MyCodeGenerator {
 				int index = 0;
 				int paramIndex = 0;
 				List<InlineParam> params = inline.params;
-				while (index < instruction.length()) {
-					char letterAtFirstIndex = instruction.charAt(index);
-					if (letterAtFirstIndex == '%') {
-						index++;
-						if (index >= instruction.length()) {
-							break;
-						}
-						char formatSpecifierLetter = instruction.charAt(index);
-						if (formatSpecifierLetter == 'A' || formatSpecifierLetter == 'a') {
-							if (paramIndex < params.size()) {
-								IdentExp addressParam = params.get(paramIndex).name;
-								resultInstruction.append(addressParam.ident);
-								paramIndex++;
+				InlineParamState state = InlineParamState.BEGIN; 
+				
+				while (index < instruction.length()) {					
+					char letterAtIndex = instruction.charAt(index);
+					switch(state) {
+					case BEGIN: 
+							if(letterAtIndex == '%'){
+								state = InlineParamState.SPECIFIER;
 							} else {
-								errorLog.add("No paramater to substite %a found at " + paramIndex,
-										new Position(i, index));
+								resultInstruction.append(letterAtIndex);
 							}
-						} else if (formatSpecifierLetter == 'R' || formatSpecifierLetter == 'r') {
-							if (paramIndex < params.size()) {
-								IdentExp addresParam = params.get(paramIndex).name;
-								String regParam = rGen.getReg(addresParam.ident, icode);
-								resultInstruction.append(regParam);
-								paramIndex++;
+							index++;
+							continue;
+					case SPECIFIER:
+							if (Character.toLowerCase(letterAtIndex) == 'a') {
+								if (paramIndex < params.size()) {
+									IdentExp addressParam = params.get(paramIndex).name;
+									resultInstruction.append(addressParam.ident);
+								} else {
+									errorLog.add("No paramater to substite %a found at " + paramIndex,
+											new Position(i, index));
+								}
+								index++;
+								continue;
+							} else if (Character.toLowerCase(letterAtIndex) == 'r'){
+								if (paramIndex < params.size()) {
+									IdentExp addresParam = params.get(paramIndex).name;
+									String regParam = rGen.getReg(addresParam.ident, icode);
+									resultInstruction.append(regParam);
+									paramIndex++;
+								} else {
+									errorLog.add("No paramater to substite %r found at " + paramIndex,
+											new Position(i, index));
+								}
+								index++;
+								continue;
+							} else if(Character.toLowerCase(letterAtIndex) == 'u' || Character.toLowerCase(letterAtIndex) == 'd'){
+								index++;
+								continue;
 							} else {
-								errorLog.add("No paramater to substite %r found at " + paramIndex,
-										new Position(i, index));
+								state = InlineParamState.BEGIN;
+								resultInstruction.append(letterAtIndex);
+								index++;
+								continue;
 							}
-						} else {
-							errorLog.add("Invalid adress or paramater specifier found expected %r or %a",
-									new Position(i, index));
-						}
-					} else {
-						resultInstruction.append(letterAtFirstIndex);
 					}
-
-					index++;
 				}
 
 				cGen.addInstruction(resultInstruction.toString());

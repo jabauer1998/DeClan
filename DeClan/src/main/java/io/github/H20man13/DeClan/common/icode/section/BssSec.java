@@ -3,7 +3,7 @@ package io.github.H20man13.DeClan.common.icode.section;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class BssSec implements ICode {
+public class BssSec extends ICode {
 
     @Override
     public boolean isConstant() {

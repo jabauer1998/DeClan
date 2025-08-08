@@ -6,7 +6,7 @@ import java.util.Set;
 import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public interface ICode extends Copyable<ICode>{
+public abstract class ICode implements Copyable<ICode>{
     public enum Scope{
         GLOBAL,
         LOCAL,
@@ -21,16 +21,16 @@ public interface ICode extends Copyable<ICode>{
          STRING
      }
 
-    public String toString();
-    public boolean isConstant();
-    public boolean isBranch();
-    public ICode copy();
-    public P asPattern();
-    public boolean equals(Object object);
-    public boolean containsPlace(String place);
-    public boolean containsLabel(String label);
-    public void replacePlace(String from, String to);
-    public void replaceLabel(String from, String to);
+    public abstract String toString();
+    public abstract boolean isConstant();
+    public abstract boolean isBranch();
+    public abstract ICode copy();
+    public abstract P asPattern();
+    public abstract boolean equals(Object object);
+    public abstract boolean containsPlace(String place);
+    public abstract boolean containsLabel(String label);
+    public abstract void replacePlace(String from, String to);
+    public abstract void replaceLabel(String from, String to);
     @Override
-    public int hashCode();
+    public abstract int hashCode();
 }

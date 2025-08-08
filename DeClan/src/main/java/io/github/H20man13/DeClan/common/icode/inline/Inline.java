@@ -12,7 +12,7 @@ import io.github.H20man13.DeClan.common.icode.ICode.Type;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.pat.P;
 
-public class Inline implements ICode{
+public class Inline extends ICode{
     public String inlineAssembly;
     public List<InlineParam> params;
 

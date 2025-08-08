@@ -147,7 +147,7 @@ public class IrParserTest {
                        + "x := 78 <INT>\n"
                        + "y := 79 <INT>\n"
                        + "z := 48 <INT>\n"
-                       + "RETURN\n";
+                       + "RETURN FROM func\n";
 
         Source mySource = new ReaderSource(new StringReader(program));
         ErrorLog errorLog = new ErrorLog();
@@ -221,9 +221,9 @@ public class IrParserTest {
                        + "DATA SECTION\n"
                        + "BSS SECTION\n"
                        + "CODE SECTION\n"
-                       + "IPARAM x\n"
-                       + "IPARAM z\n"
-                       + "IASM \"LDR %r, %a\"\n"
+                       + "IPARAM x <INT> %dr\n"
+                       + "IPARAM z <INT> %ua\n"
+                       + "IASM \"LDR %dr, %ua\"\n"
                        + "END\n"
                        + "PROC SECTION\n";
 

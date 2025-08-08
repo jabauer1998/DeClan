@@ -630,7 +630,9 @@ public class MyOptimizer {
     				newBlocks.add(getBlock);
     			else if(header instanceof DataSec)
     				newBlocks.add(getBlock);
-    			else {
+    			else if(header instanceof End){
+    				newBlocks.add(getBlock);
+    			} else {
     				for(int flowNode = 0; flowNode < getBlock.getSuccessors().size(); flowNode++) {
         				FlowGraphNode block2 = getBlock.getSuccessors().get(flowNode);
         				if(block2 instanceof BlockNode) {

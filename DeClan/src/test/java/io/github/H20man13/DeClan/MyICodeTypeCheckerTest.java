@@ -148,11 +148,11 @@ public class MyICodeTypeCheckerTest {
                       + "CALL func2 ([b->param2]<INT>)\n"
                       + "DEF c := (RETURN return2) <INT>\n"
                       + "DEF RETURN return1 := c <INT>\n"
-                      + "RETURN\n"
+                      + "RETURN FROM func1\n"
                       + "PROC LABEL func2\n"
                       + "DEF d := (PARAM param2) <INT>\n"
                       + "DEF RETURN return2 := d <INT>\n"
-                      + "RETURN\n";
+                      + "RETURN FROM func2\n";
 
         MyICodeTypeChecker tC = runTypeCheckerOnIrStringSource(source);
         assertTypeCheckerQualities(tC, "a", TypeCheckerQualities.INTEGER);
