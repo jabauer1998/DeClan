@@ -17,6 +17,7 @@ public class ArmRegisterGenerator {
     private Set<Tuple<String, String>> variablesToRegister;
     private Set<Tuple<String, String>> variablesToTempRegisters;
     private LiveVariableAnalysis liveAnal;
+    private int spillOffset;
 
     public ArmRegisterGenerator(LiveVariableAnalysis liveAnal){
         this.registers = new HashSet<String>();
@@ -39,6 +40,7 @@ public class ArmRegisterGenerator {
         this.liveAnal = liveAnal;
         this.variablesToRegister = new HashSet<Tuple<String, String>>();
         this.variablesToTempRegisters = new HashSet<Tuple<String, String>>();
+        this.spillOffset = 0;
     }
 
     private Set<String> getRegs(String var){
@@ -54,6 +56,7 @@ public class ArmRegisterGenerator {
                 vars.add(tuple.dest);
             }
         }
+        
         return vars;
     }
 

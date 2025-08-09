@@ -67,6 +67,7 @@ public class MyCodeGenerator {
 	private Map<P, Callable<Void>> codeGenFunctions;
 
 	private int i;
+	private int spillOffset;
 
 	public MyCodeGenerator(String outputFile, LiveVariableAnalysis analysis, Prog program, ErrorLog errLog) throws IOException {
 		this.intermediateCode = program;
@@ -80,6 +81,7 @@ public class MyCodeGenerator {
 		this.errorLog = errLog;
 		this.codeGenFunctions = new HashMap<>();
 		this.i = 0;
+		this.spillOffset = 0;
 		initCodeGenFunctions();
 	}
 

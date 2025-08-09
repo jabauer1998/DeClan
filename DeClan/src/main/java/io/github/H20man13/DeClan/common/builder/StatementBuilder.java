@@ -399,34 +399,120 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         addInstruction(new Goto(label));
     }
 
+    private enum InlineState {
+    	BEGIN,
+    	SPECIFIER
+    }
+    
     public void buildInlineAssembly(String inlineAssembly, List<Tuple<IdentExp, ICode.Type>> param){
-    	String[] elems = inlineAssembly.split(" ");
         List<InlineParam> realParams = new LinkedList<InlineParam>();
-        
+        int index = 0;
         int count = 0;
-        for(String elem: elems) {
-        	if(elem.startsWith("%")) {
-        		int mask = 0;
-        		
-        		for(int i = 0; i < elem.length(); i++){
-        			char c = elem.charAt(i);
-        			if(c == 'a')
-        				mask |= InlineParam.IS_ADDRESS;
-        			else if(c == 'r')
-        				mask |= InlineParam.IS_REGISTER;
-        			else if(c == 'd')
-        				mask |= InlineParam.IS_DEFINITION;
-        			else if(c == 'u')
-        				mask |= InlineParam.IS_USE;
-        		}
-        		
-        		Tuple<IdentExp, ICode.Type> myParam = param.get(count);
-        		
-        		realParams.add(new InlineParam(myParam, mask));
-        		
-        		count++;
+        
+        InlineState state = InlineState.BEGIN;
+        StringBuilder sb = new StringBuilder();
+        while(index < inlineAssembly.length() && count < param.size()) {
+        	char c = inlineAssembly.charAt(index);
+        	switch (state){
+        		case BEGIN:
+        			if(c == '%') {
+        				state = InlineState.SPECIFIER;
+        				sb.append(c);
+        				index++;
+        				continue;
+        			} else {
+        				index++;
+        				continue;
+        			}
+        		case SPECIFIER:
+        			if(Character.isLetter(c)) {
+        				if(Character.toLowerCase(c) == 'd') {
+        					state = InlineState.SPECIFIER;
+        					sb.append(c);
+        					index++;
+        					continue;
+        				} else if(Character.toLowerCase(c) == 'u') {
+        					sb.append(c);
+        					index++;
+        					continue;
+        				} else if(Character.toLowerCase(c) == 'r') {
+        					sb.append(c);
+        					index++;
+        					continue;
+        				} else if(Character.toLowerCase(c) == 'a') {
+        					sb.append(c);
+        					index++;
+        					continue;
+        				} else {
+        					state = InlineState.BEGIN;
+        					int mask = 0;
+        	        		
+        	        		for(int i = 0; i < sb.length(); i++){
+        	        			char x = sb.charAt(i);
+        	        			if(Character.isLetter(x)) {
+	        	        			if(Character.toLowerCase(x) == 'a')
+	        	        				mask |= InlineParam.IS_ADDRESS;
+	        	        			else if(Character.toLowerCase(x) == 'r')
+	        	        				mask |= InlineParam.IS_REGISTER;
+	        	        			else if(Character.toLowerCase(x) == 'd')
+	        	        				mask |= InlineParam.IS_DEFINITION;
+	        	        			else if(Character.toLowerCase(x) == 'u')
+	        	        				mask |= InlineParam.IS_USE;
+        	        			}
+        	        		}
+        	        		
+        	        		sb = new StringBuilder();
+        					realParams.add(new InlineParam(param.get(count), mask));
+        					count++;
+        					continue;
+        				}
+        			} else {
+        				state = InlineState.BEGIN;
+    					int mask = 0;
+    	        		
+    	        		for(int i = 0; i < sb.length(); i++){
+    	        			char x = sb.charAt(i);
+    	        			if(Character.isLetter(x)) {
+    	        				if(Character.toLowerCase(x) == 'a')
+        	        				mask |= InlineParam.IS_ADDRESS;
+        	        			else if(Character.toLowerCase(x) == 'r')
+        	        				mask |= InlineParam.IS_REGISTER;
+        	        			else if(Character.toLowerCase(x) == 'd')
+        	        				mask |= InlineParam.IS_DEFINITION;
+        	        			else if(Character.toLowerCase(x) == 'u')
+        	        				mask |= InlineParam.IS_USE;
+    	        			}
+    	        			
+    	        		}
+    	        		
+    	        		sb = new StringBuilder();
+    					realParams.add(new InlineParam(param.get(count), mask));
+    					count++;
+    					continue;
+        			}
         	}
         }
+        
+        if(state == InlineState.SPECIFIER && !sb.isEmpty()) {
+        	int mask = 0;
+    		
+    		for(int i = 0; i < sb.length(); i++){
+    			char x = sb.charAt(i);
+    			if(Character.isLetter(x)) {
+	    			if(Character.toLowerCase(x) == 'a')
+	    				mask |= InlineParam.IS_ADDRESS;
+	    			else if(Character.toLowerCase(x) == 'r')
+	    				mask |= InlineParam.IS_REGISTER;
+	    			else if(Character.toLowerCase(x) == 'd')
+	    				mask |= InlineParam.IS_DEFINITION;
+	    			else if(Character.toLowerCase(x) == 'u')
+	    				mask |= InlineParam.IS_USE;
+    			}
+    		}
+    		
+			realParams.add(new InlineParam(param.get(count), mask));
+        }
+        
         addInstruction(new Inline(inlineAssembly, realParams));
     }
 
