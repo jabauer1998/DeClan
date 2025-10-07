@@ -2,10 +2,11 @@ package io.github.H20man13.DeClan.common.arm.descriptor;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-public class ArmRegisterDescriptor{
+public class ArmRegisterDescriptor implements Iterable<ArmRegisterElement>{
 	private Map<ArmRegisterElement, Set<ArmAddressElement>> descriptorMap;
 	
 	public ArmRegisterDescriptor() {
@@ -54,5 +55,10 @@ public class ArmRegisterDescriptor{
 	
 	public void clearAddresses(String reg) {
 		this.descriptorMap.put(newRegElem(reg), newSet());
+	}
+
+	@Override
+	public Iterator<ArmRegisterElement> iterator() {
+		return this.descriptorMap.keySet().iterator();
 	}
 }
