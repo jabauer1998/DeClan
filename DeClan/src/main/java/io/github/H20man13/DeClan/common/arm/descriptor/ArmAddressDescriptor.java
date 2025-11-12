@@ -24,6 +24,36 @@ public class ArmAddressDescriptor {
 		return new ArmAddressElement(name);
 	}
 	
+	public Set<ArmRegisterElement> getRegisters(String address) {
+		ArmAddressElement addr = newAddElem(address);
+		return getRegisters(addr);
+	}
+	
+	public Set<ArmRegisterElement> getRegisters(ArmAddressElement elem){
+		HashSet<ArmRegisterElement> regs = new HashSet<ArmRegisterElement>();
+		if(discriptorMap.containsKey(elem))
+			for(ArmElement myElem: discriptorMap.get(elem)) {
+				if(myElem instanceof ArmRegisterElement){
+					regs.add((ArmRegisterElement)myElem);
+				}
+			}
+		return regs;
+	}
+	
+	public Set<ArmElement> getElements(String address) {
+		ArmAddressElement addr = newAddElem(address);
+		return getElements(addr);
+	}
+	
+	public Set<ArmElement> getElements(ArmAddressElement addr) {
+		HashSet<ArmElement> regs = new HashSet<ArmElement>();
+		if(discriptorMap.containsKey(addr))
+			for(ArmElement elem: discriptorMap.get(addr)) {
+				regs.add(elem);
+			}
+		return regs;
+	}
+	
 	public void addAddress(String address, String toAdd) {
 		ArmAddressElement addr = newAddElem(address);
 		if(!discriptorMap.containsKey(addr))

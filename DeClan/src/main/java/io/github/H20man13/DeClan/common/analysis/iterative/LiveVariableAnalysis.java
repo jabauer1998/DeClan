@@ -15,6 +15,7 @@ import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Lib.SymbolSearchStrategy;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -32,7 +33,7 @@ public class LiveVariableAnalysis extends InstructionAnalysis<HashMap<ICode, Has
     private Map<ICode, HashSet<String>> useSets;
 
     @SuppressWarnings("unchecked")
-	public LiveVariableAnalysis(Prog orig, FlowGraph flowGraph, Config cfg) {
+	public LiveVariableAnalysis(Lib orig, FlowGraph flowGraph, Config cfg) {
         super(flowGraph, Direction.BACKWARDS, Meet.UNION, false, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
 
         this.defSets = newMap();
@@ -131,4 +132,8 @@ public class LiveVariableAnalysis extends InstructionAnalysis<HashMap<ICode, Has
 
         return resultSet;
     }
+
+	public HashSet<String> getDefSet(ICode icode) {
+		return defSets.get(icode);
+	}
 }
