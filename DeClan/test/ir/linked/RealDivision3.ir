@@ -976,6 +976,8 @@ PROC SECTION
   DEF h71 := 0 <INT>
   h63 := h71 <INT>
   IPARAM h64 <INT> %dr
+  IPARAM h62 <INT> %r
+  IPARAM h63 <INT> %r
   IASM "LDRB %dr, [%ur, +%ur]"
   IPARAM h64 <INT> %r
   IPARAM h64 <INT> %da
@@ -1001,6 +1003,8 @@ PROC SECTION
   DEF h76 := h63 IADD h75 <INT>
   h63 := h76 <INT>
   IPARAM h64 <INT> %dr
+  IPARAM h62 <INT> %r
+  IPARAM h63 <INT> %r
   IASM "LDRB %dr, [%ur, +%ur]"
   IPARAM h64 <INT> %r
   IPARAM h64 <INT> %da

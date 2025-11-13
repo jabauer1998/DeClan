@@ -1,0 +1,28 @@
+ADD R13, R13, #13
+MOV null, #0
+STR null, [R13, #-13]
+LDR R15, [R13, -#13]
+STR R15, f25
+MOV null, #1
+STRB null, [R13, #-9]
+LDRB R15, [R13, -#9]
+STRB R15, f27
+LDR null, f28
+STR null, [R13, #-8]
+LDR R15, [R13, -#8]
+STR R15, f29
+MOV null, #127
+STR null, [R13, #-4]
+LDR R15, [R13, -#4]
+STR R15, h44
+SUB R13, R13, #13
+ADD R13, R13, #11
+LDR null, f31
+STR null, [R13, #-11]
+ADD R13, R13, #4
+STR R14, [R13, #-8]
+LDR null, [R13, -#19]
+STR null, [R13, #-4]
+LDR R14, [R13, #-8]
+SUB R13, R13, #4
+AD

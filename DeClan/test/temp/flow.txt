@@ -1,0 +1,86 @@
+----------Block Definitions----------
+[Block 0
+       ENTRY
+]
+[Block 1
+       SYMBOL SECTION
+       ENTRY f25 CONST INTERNAL GLOBAL max  <INT>
+       ENTRY f26 INTERNAL GLOBAL x  <INT>
+       ENTRY f30 INTERNAL tempReg WriteInt <INT>
+       ENTRY f31 INTERNAL PARAM i WriteInt 0 <INT>
+]
+[Block 2
+       DATA SECTION
+       DEF GLOBAL f25 := 10 <INT>
+]
+[Block 3
+       BSS SECTION
+       DEF GLOBAL f26 := 0 <INT>
+]
+[Block 4
+       CODE SECTION
+       GLOBAL f26 := 0 <INT>
+       DEF f28 := (GLOBAL f26) LT (GLOBAL f25) <BOOL>
+       DEF f29 := TRUE <BOOL>
+       IF f28 BEQ f29
+       THEN WHILESTAT_0_SEQ_0_LEVEL_0_0
+       ELSE WHILENEXT_0_SEQ_0_LEVEL_0_0
+]
+[Block 5
+       LABEL WHILECOND_0_SEQ_0_LEVEL_0_0
+       IF f34 BEQ f29
+       THEN WHILESTAT_0_SEQ_0_LEVEL_0_0
+       ELSE WHILEEND_0_LEVEL_0_0
+]
+[Block 6
+       LABEL WHILESTAT_0_SEQ_0_LEVEL_0_0
+       CALL WriteInt([(GLOBAL f26) -> f31]<INT>)
+]
+[Block 7
+       DEF f32 := 1 <INT>
+       DEF f33 := (GLOBAL f26) IADD f32 <INT>
+       GLOBAL f26 := f33 <INT>
+       DEF f34 := (GLOBAL f26) LT (GLOBAL f25) <BOOL>
+       GOTO WHILECOND_0_SEQ_0_LEVEL_0_0
+]
+[Block 8
+       LABEL WHILENEXT_0_SEQ_0_LEVEL_0_0
+]
+[Block 9
+       LABEL WHILEEND_0_LEVEL_0_0
+       END
+]
+[Block 10
+       PROC SECTION
+]
+[Block 11
+       PROC LABEL WriteInt
+       IPARAM f30 <INT> %dr
+       IASM "MOV %dr, R0"
+       IPARAM (PARAM f31) <INT> %a
+       IASM "LDR R0, %ua"
+       IASM "SWI 1"
+       IPARAM f30 <INT> %r
+       IASM "MOV R0, %ur"
+       RETURN FROM WriteInt
+]
+[Block 12
+       EXIT
+]
+
+----------Block Connections----------
+Block Number |                                               Connects From                                                   |                                                                                                                                                                                                            Connects To
+0            |                                                                                                                | [1]                                                                                                                                                                                                                    
+1            | []                                                                                                             | [2, 3]                                                                                                                                                                                                                 
+2            | [1]                                                                                                            | [4, 11]                                                                                                                                                                                                                
+3            | [1]                                                                                                            | [4, 11]                                                                                                                                                                                                                
+4            | [2, 3]                                                                                                         | [6, 8]                                                                                                                                                                                                                 
+5            | [7]                                                                                                            | [6, 9]                                                                                                                                                                                                                 
+6            | [4, 5]                                                                                                         | [7]                                                                                                                                                                                                                    
+7            | [6]                                                                                                            | [5]                                                                                                                                                                                                                    
+8            | [4]                                                                                                            | [9]                                                                                                                                                                                                                    
+9            | [5, 8]                                                                                                         | []                                                                                                                                                                                                                     
+10           | []                                                                                                             | [11]                                                                                                                                                                                                                   
+11           | [2, 3, 10]                                                                                                     | []                                                                                                                                                                                                                     
+12           | [9]                                                                                                            |                                                                                                                                                                                                                        
+---------------------------------------------------

@@ -1,90 +1,49 @@
 LDR R13, totalBytes
+ADD R13, R13, #0
 SUB R13, R13, #0
-LDR R2, f25_value
-LDR R3, f25
-STR R2, [R13, -R3]
-LDR R3, f25
-LDR R3, [R13, -R3]
-STR R3, f24
-LDR R2, f26_value
-LDR R3, f26
-STR R2, [R13, -R3]
-FORBEG_0_LEVEL_0: LDR R2, f24
-LDR R3, f26
-LDR R3, [R13, -R3]
-TEQ R2, R3
+ADD R13, R13, #16
+MOV null, #1
+STR null, [R13, #-16]
+LDR R15, [R13, -#16]
+STR R15, f24
+MOV null, #10
+STR null, [R13, #-12]
+FORBEG_0_LEVEL_0: LDR null, f24
+LDR null, [R13, -#12]
+TEQ null, null
 BNE FORLOOP_0_LEVEL_0
 BEQ FOREND_0_LEVEL_0
-FORLOOP_0_LEVEL_0: LDR R4, WriteInt_param_frame_size
-ADD R13, R13, R4
-LDR R4, WriteInt_return_address_outer
-STR R14, [R13, -R4]
-LDR R2, f24
-LDR R4, f28_outer
-STR R2, [R13, -R4]
-BL WriteInt
-LDR R14, WriteInt_return_address_outer
-LDR R14, [R13, -R14]
-LDR R4, WriteInt_param_frame_size
-SUB R13, R13, R4
-LDR R4, f29_value
-LDR R5, f29
-STR R4, [R13, -R5]
-LDR R2, f24
-LDR R5, f29
-LDR R5, [R13, -R5]
-ADD R4, R2, R5
-LDR R6, f30
-STR R4, [R13, -R6]
-LDR R4, f30
-LDR R4, [R13, -R4]
-STR R4, f24
+FORLOOP_0_LEVEL_0: ADD R13, R13, #8
+STR R14, [R13, #-8]
+LDR null, f24
+STR null, [R13, #-4]
+LDR R14, [R13, #-8]
+SUB R13, R13, #8
+MOV null, #1
+STR null, [R13, #-4]
+ADD null, R15, R15
+STR null, [R13, #-0]
+LDR R15, [R13, -#0]
+STR R15, f24
 B FORBEG_0_LEVEL_0
-FOREND_0_LEVEL_0: LDR R2, WriteLn_param_frame_size
-ADD R13, R13, R2
-LDR R2, WriteLn_return_address_outer
-STR R14, [R13, -R2]
-BL WriteLn
-LDR R14, WriteLn_return_address_outer
-LDR R14, [R13, -R14]
-LDR R2, WriteLn_param_frame_size
-SUB R13, R13, R2
+FOREND_0_LEVEL_0: ADD R13, R13, #4
+STR R14, [R13, #-4]
+LDR R14, [R13, #-4]
+SUB R13, R13, #4
 SUB R13, R13, #16
 STP
-WriteInt: LDR R2, local_allocate_WriteInt
-ADD R13, R13, R2
-LDR R2, f27_value
-LDR R3, f27
-STR R2, [R13, -R3]
-MOV R2, R0
+ADD R13, R13, #4
+MOV null, #0
+STR null, [R13, #-4]
+MOV null, R0
 LDR R0, f28
 SWI 1
-MOV R0, R2
+MOV R0, null
 SUB R13, R13, #4
 MOV R15, R14
-WriteLn: LDR R3, local_allocate_WriteLn
-ADD R13, R13, R3
+ADD R13, R13, #0
 SWI 4
 SUB R13, R13, #0
 MOV R15, R14
 f24: .WORD 0
-f25: .WORD 16
-f26: .WORD 12
-f29: .WORD 8
-f30: .WORD 4
-f25_value: .WORD 1
-f26_value: .WORD 10
-WriteInt_return_address_outer: .WORD 8
-f28_outer: .WORD 4
-WriteInt_param_frame_size: .WORD 8
-f29_value: .WORD 1
-WriteLn_return_address_outer: .WORD 4
-WriteLn_param_frame_size: .WORD 4
-local_allocate_WriteInt: .WORD 4
-WriteInt_return_address_inner: .WORD 12
-f28_inner: .WORD 8
-f27: .WORD 4
-f27_value: .WORD 0
-local_allocate_WriteLn: .WORD 0
-WriteLn_return_address_inner: .WORD 4
-totalBytes: .WORD 364
+totalBytes: .WORD 200

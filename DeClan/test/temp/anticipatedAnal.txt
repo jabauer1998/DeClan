@@ -1,0 +1,370 @@
+Input Set
+[(f30, INT)]
+|
+V
+IASM "SWI 1"
+|
+V
+Output Set
+[(f30, INT)]
+
+
+Input Set
+[(1, INT), ((GLOBAL f26), INT)]
+|
+V
+CALL WriteInt([(GLOBAL f26) -> f31]<INT>)
+|
+V
+Output Set
+[(1, INT)]
+
+
+Input Set
+[]
+|
+V
+ENTRY f25 CONST INTERNAL GLOBAL max  <INT>
+|
+V
+Output Set
+[]
+
+
+Input Set
+[((GLOBAL f26) LT (GLOBAL f25), BOOL)]
+|
+V
+DEF f34 := (GLOBAL f26) LT (GLOBAL f25) <BOOL>
+|
+V
+Output Set
+[(f34 BEQ f29, BOOL)]
+
+
+Input Set
+[(10, INT)]
+|
+V
+DEF GLOBAL f25 := 10 <INT>
+|
+V
+Output Set
+[]
+
+
+Input Set
+[]
+|
+V
+LABEL WHILEEND_0_LEVEL_0_0
+|
+V
+Output Set
+[]
+
+
+Input Set
+[(f34 BEQ f29, BOOL)]
+|
+V
+GOTO WHILECOND_0_SEQ_0_LEVEL_0_0
+|
+V
+Output Set
+[(f34 BEQ f29, BOOL)]
+
+
+Input Set
+[(TRUE, BOOL)]
+|
+V
+DEF f29 := TRUE <BOOL>
+|
+V
+Output Set
+[(f28 BEQ f29, BOOL)]
+
+
+Input Set
+[((PARAM f31), INT)]
+|
+V
+PROC SECTION
+|
+V
+Output Set
+[((PARAM f31), INT)]
+
+
+Input Set
+[((PARAM f31), INT), (f30, INT)]
+|
+V
+IPARAM (PARAM f31) <INT> %a
+IASM "LDR R0, %ua"
+|
+V
+Output Set
+[(f30, INT)]
+
+
+Input Set
+[(0, INT)]
+|
+V
+DEF GLOBAL f26 := 0 <INT>
+|
+V
+Output Set
+[]
+
+
+Input Set
+[]
+|
+V
+ENTRY f30 INTERNAL tempReg WriteInt <INT>
+|
+V
+Output Set
+[]
+
+
+Input Set
+[]
+|
+V
+SYMBOL SECTION
+|
+V
+Output Set
+[]
+
+
+Input Set
+[(0, INT), (TRUE, BOOL)]
+|
+V
+CODE SECTION
+|
+V
+Output Set
+[(0, INT), (TRUE, BOOL)]
+
+
+Input Set
+[(f34 BEQ f29, BOOL)]
+|
+V
+LABEL WHILECOND_0_SEQ_0_LEVEL_0_0
+|
+V
+Output Set
+[(f34 BEQ f29, BOOL)]
+
+
+Input Set
+[((PARAM f31), INT)]
+|
+V
+IPARAM f30 <INT> %dr
+IASM "MOV %dr, R0"
+|
+V
+Output Set
+[((PARAM f31), INT), (f30, INT)]
+
+
+Input Set
+[(0, INT), (TRUE, BOOL)]
+|
+V
+GLOBAL f26 := 0 <INT>
+|
+V
+Output Set
+[((GLOBAL f26) LT (GLOBAL f25), BOOL), (TRUE, BOOL)]
+
+
+Input Set
+[(1, INT), ((GLOBAL f26), INT)]
+|
+V
+LABEL WHILESTAT_0_SEQ_0_LEVEL_0_0
+|
+V
+Output Set
+[(1, INT), ((GLOBAL f26), INT)]
+
+
+Input Set
+[(f28 BEQ f29, BOOL)]
+|
+V
+IF f28 BEQ f29
+THEN WHILESTAT_0_SEQ_0_LEVEL_0_0
+ELSE WHILENEXT_0_SEQ_0_LEVEL_0_0
+|
+V
+Output Set
+[]
+
+
+Input Set
+[]
+|
+V
+LABEL WHILENEXT_0_SEQ_0_LEVEL_0_0
+|
+V
+Output Set
+[]
+
+
+Input Set
+[((GLOBAL f26) IADD f32, INT)]
+|
+V
+DEF f33 := (GLOBAL f26) IADD f32 <INT>
+|
+V
+Output Set
+[(f33, INT)]
+
+
+Input Set
+[]
+|
+V
+END
+|
+V
+Output Set
+[]
+
+
+Input Set
+[((GLOBAL f26) LT (GLOBAL f25), BOOL), (TRUE, BOOL)]
+|
+V
+DEF f28 := (GLOBAL f26) LT (GLOBAL f25) <BOOL>
+|
+V
+Output Set
+[(TRUE, BOOL)]
+
+
+Input Set
+[(10, INT)]
+|
+V
+DATA SECTION
+|
+V
+Output Set
+[(10, INT)]
+
+
+Input Set
+[(f34 BEQ f29, BOOL)]
+|
+V
+IF f34 BEQ f29
+THEN WHILESTAT_0_SEQ_0_LEVEL_0_0
+ELSE WHILEEND_0_LEVEL_0_0
+|
+V
+Output Set
+[]
+
+
+Input Set
+[(1, INT)]
+|
+V
+DEF f32 := 1 <INT>
+|
+V
+Output Set
+[((GLOBAL f26) IADD f32, INT)]
+
+
+Input Set
+[(f33, INT)]
+|
+V
+GLOBAL f26 := f33 <INT>
+|
+V
+Output Set
+[((GLOBAL f26) LT (GLOBAL f25), BOOL)]
+
+
+Input Set
+[]
+|
+V
+ENTRY f26 INTERNAL GLOBAL x  <INT>
+|
+V
+Output Set
+[]
+
+
+Input Set
+[]
+|
+V
+ENTRY f31 INTERNAL PARAM i WriteInt 0 <INT>
+|
+V
+Output Set
+[]
+
+
+Input Set
+[(f30, INT)]
+|
+V
+IPARAM f30 <INT> %r
+IASM "MOV R0, %ur"
+|
+V
+Output Set
+[]
+
+
+Input Set
+[((PARAM f31), INT)]
+|
+V
+PROC LABEL WriteInt
+|
+V
+Output Set
+[((PARAM f31), INT)]
+
+
+Input Set
+[]
+|
+V
+RETURN FROM WriteInt
+|
+V
+Output Set
+[]
+
+
+Input Set
+[(0, INT)]
+|
+V
+BSS SECTION
+|
+V
+Output Set
+[(0, INT)]
+
+

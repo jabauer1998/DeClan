@@ -46,7 +46,7 @@ public class ArmRegisterDescriptor implements Iterable<ArmRegisterElement>{
         this.regNumberToIdent.put(10, "R10");
         this.regNumberToIdent.put(11, "R11");
         this.regNumberToIdent.put(12, "R12");
-        this.regNumberToIdent.put(15, "R15");
+        this.regNumberToIdent.put(13, "R15");
 	}
 	
 	private Set<ArmAddressElement> newSet(){

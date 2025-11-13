@@ -3,6 +3,8 @@ package io.github.H20man13.DeClan.common.interfere;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -17,10 +19,11 @@ import io.github.H20man13.DeClan.common.icode.Lib;
 
 public class InterferenceGraph {
 	private Set<Tuple<String, String>> edges;
-	private Set<Tuple<String, ICode>> nodes;
+	private List<Tuple<String, ICode>> nodes;
 	
 	public InterferenceGraph(Lib program, LiveVariableAnalysis anal){
-		this.nodes = new HashSet<Tuple<String, ICode>>();
+		this.nodes = new LinkedList<Tuple<String, ICode>>();
+		this.edges = new HashSet<Tuple<String, String>>();
 		
 		for(ICode instr: program){
 			if(instr instanceof Def) {
@@ -67,23 +70,22 @@ public class InterferenceGraph {
 				return t.source.equals(node.source) || t.dest.equals(node.source);
 			}
 		});
-		nodes.remove(node);
+		nodes.remove(0);
 	}
 	
 	private void simplifyGraph(Stack<InterfereColoredNode> colorStack, Set<String> spill) {
 		int K = 14;
 		do {
-			for(Tuple<String, ICode> node: nodes){
-				int edgeCount = countEdges(node.source);
-				if(edgeCount < K){
-					Set<Tuple<String, String>> edges = getEdges(node.source);
-					colorStack.push(new InterfereColoredNode(node, edges, new Color(0)));
-					removeGraph(node);
-				} else {
-					Set<Tuple<String, String>> edges = getEdges(node.source);
-					colorStack.push(new InterfereColoredNode(node, edges, new Spill()));
-					removeGraph(node);
-				}
+			Tuple<String, ICode> node = nodes.getFirst();
+			int edgeCount = countEdges(node.source);
+			if(edgeCount < K){
+				Set<Tuple<String, String>> edges = getEdges(node.source);
+				colorStack.push(new InterfereColoredNode(node, edges, new Color(0)));
+				removeGraph(node);
+			} else {
+				Set<Tuple<String, String>> edges = getEdges(node.source);
+				colorStack.push(new InterfereColoredNode(node, edges, new Spill()));
+				removeGraph(node);
 			}
 		} while(!(edges.isEmpty() && nodes.isEmpty()));
 	}
@@ -149,7 +151,7 @@ public class InterferenceGraph {
 		return new Tuple<>(assignColors(colorStack, spill), spill);
 	}
 	
-	public Set<Tuple<String, ICode>> getNodes(){
+	public List<Tuple<String, ICode>> getNodes(){
 		return nodes;
 	}
 	

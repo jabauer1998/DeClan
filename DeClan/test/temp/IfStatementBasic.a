@@ -1,179 +1,94 @@
 LDR R13, totalBytes
-MOV R3, #1
-LDR R2, f24
-STRB R3, [R13, -R2]
-LDR R2, f24
-LDRB R2, [R13, -R2]
-STRB R2, f25
-MOV R3, #0
-LDR R2, f26
-STRB R3, [R13, -R2]
-LDR R2, f26
-LDRB R2, [R13, -R2]
-STRB R2, f27
+ADD R13, R13, #2
+MOV null, #1
+STRB null, [R13, #-2]
+LDRB R15, [R13, -#2]
+STRB R15, f25
+MOV null, #0
+STRB null, [R13, #-1]
+LDRB R15, [R13, -#1]
+STRB R15, f27
 SUB R13, R13, #2
-MOV R3, #1
-LDR R2, f28
-STRB R3, [R13, -R2]
-LDRB R3, f25
-LDR R2, f28
-LDRB R2, [R13, -R2]
-TEQB R3, R2
+ADD R13, R13, #23
+MOV null, #1
+STRB null, [R13, #-23]
+LDRB null, f25
+LDRB null, [R13, -#23]
+TEQB null, null
 BEQ IFSTAT_0_SEQ_0_LEVEL_0_0
 BNE IFNEXT_0_SEQ_0_LEVEL_0_0
-IFSTAT_0_SEQ_0_LEVEL_0_0: LDR R2, f29_value
-LDR R4, f29
-STR R2, [R13, -R4]
-LDR R2, WriteInt_param_frame_size
-ADD R13, R13, R2
-LDR R2, WriteInt_return_address_outer
-STR R14, [R13, -R2]
-LDR R4, f29
-LDR R4, [R13, -R4]
-LDR R5, f31_outer
-STR R4, [R13, -R5]
-BL WriteInt
-LDR R14, WriteInt_return_address_outer
-LDR R14, [R13, -R14]
-LDR R5, WriteInt_param_frame_size
-SUB R13, R13, R5
+IFSTAT_0_SEQ_0_LEVEL_0_0: MOV null, #4
+STR null, [R13, #-22]
+ADD R13, R13, #8
+STR R14, [R13, #-8]
+LDR null, [R13, -#30]
+STR null, [R13, #-4]
+LDR R14, [R13, #-8]
+SUB R13, R13, #8
 B IFEND_0_LEVEL_0_0
-IFNEXT_0_SEQ_0_LEVEL_0_0: LDR R2, f32_value
-LDR R4, f32
-STR R2, [R13, -R4]
-LDR R2, WriteInt_param_frame_size
-ADD R13, R13, R2
-LDR R2, WriteInt_return_address_outer
-STR R14, [R13, -R2]
-LDR R4, f32
-LDR R4, [R13, -R4]
-LDR R5, f31_outer
-STR R4, [R13, -R5]
-BL WriteInt
-LDR R14, WriteInt_return_address_outer
-LDR R14, [R13, -R14]
-LDR R5, WriteInt_param_frame_size
-SUB R13, R13, R5
+IFNEXT_0_SEQ_0_LEVEL_0_0: MOV null, #5
+STR null, [R13, #-14]
+ADD R13, R13, #8
+STR R14, [R13, #-8]
+LDR null, [R13, -#22]
+STR null, [R13, #-4]
+LDR R14, [R13, #-8]
+SUB R13, R13, #8
 B IFEND_0_LEVEL_0_0
 IFNEXT_0_SEQ_1_LEVEL_0_0: MOV R0, R0
-IFEND_0_LEVEL_0_0: MOV R4, #1
-LDR R2, f33
-STRB R4, [R13, -R2]
-LDRB R4, f27
-LDR R2, f33
-LDRB R2, [R13, -R2]
-TEQB R4, R2
+IFEND_0_LEVEL_0_0: MOV null, #1
+STRB null, [R13, #-10]
+LDRB null, f27
+LDRB null, [R13, -#10]
+TEQB null, null
 BEQ IFSTAT_1_SEQ_0_LEVEL_0_0
 BNE IFNEXT_1_SEQ_0_LEVEL_0_0
-IFSTAT_1_SEQ_0_LEVEL_0_0: LDR R2, f34_value
-LDR R3, f34
-STR R2, [R13, -R3]
-LDR R2, WriteInt_param_frame_size
-ADD R13, R13, R2
-LDR R2, WriteInt_return_address_outer
-STR R14, [R13, -R2]
-LDR R3, f34
-LDR R3, [R13, -R3]
-LDR R4, f31_outer
-STR R3, [R13, -R4]
-BL WriteInt
-LDR R14, WriteInt_return_address_outer
-LDR R14, [R13, -R14]
-LDR R4, WriteInt_param_frame_size
-SUB R13, R13, R4
+IFSTAT_1_SEQ_0_LEVEL_0_0: MOV null, #2
+STR null, [R13, #-9]
+ADD R13, R13, #8
+STR R14, [R13, #-8]
+LDR null, [R13, -#17]
+STR null, [R13, #-4]
+LDR R14, [R13, #-8]
+SUB R13, R13, #8
 B IFEND_1_LEVEL_0_0
-IFNEXT_1_SEQ_0_LEVEL_0_0: MOV R3, #1
-LDR R2, f35
-STRB R3, [R13, -R2]
-LDRB R3, f25
-LDR R2, f35
-LDRB R2, [R13, -R2]
-TEQB R3, R2
+IFNEXT_1_SEQ_0_LEVEL_0_0: MOV null, #1
+STRB null, [R13, #-5]
+LDRB null, f25
+LDRB null, [R13, -#5]
+TEQB null, null
 BEQ IFSTAT_1_SEQ_1_LEVEL_0_0
 BNE IFNEXT_1_SEQ_1_LEVEL_0_0
-IFSTAT_1_SEQ_1_LEVEL_0_0: LDR R2, f36_value
-LDR R3, f36
-STR R2, [R13, -R3]
-LDR R2, WriteInt_param_frame_size
-ADD R13, R13, R2
-LDR R2, WriteInt_return_address_outer
-STR R14, [R13, -R2]
-LDR R3, f36
-LDR R3, [R13, -R3]
-LDR R4, f31_outer
-STR R3, [R13, -R4]
-BL WriteInt
-LDR R14, WriteInt_return_address_outer
-LDR R14, [R13, -R14]
-LDR R4, WriteInt_param_frame_size
-SUB R13, R13, R4
+IFSTAT_1_SEQ_1_LEVEL_0_0: MOV null, #5
+STR null, [R13, #-4]
+ADD R13, R13, #8
+STR R14, [R13, #-8]
+LDR null, [R13, -#12]
+STR null, [R13, #-4]
+LDR R14, [R13, #-8]
+SUB R13, R13, #8
 B IFEND_1_LEVEL_0_0
-IFNEXT_1_SEQ_1_LEVEL_0_0: LDR R2, f37_value
-LDR R3, f37
-STR R2, [R13, -R3]
-LDR R2, WriteInt_param_frame_size
-ADD R13, R13, R2
-LDR R2, WriteInt_return_address_outer
-STR R14, [R13, -R2]
-LDR R3, f37
-LDR R3, [R13, -R3]
-LDR R4, f31_outer
-STR R3, [R13, -R4]
-BL WriteInt
-LDR R14, WriteInt_return_address_outer
-LDR R14, [R13, -R14]
-LDR R4, WriteInt_param_frame_size
-SUB R13, R13, R4
+IFNEXT_1_SEQ_1_LEVEL_0_0: MOV null, #6
+STR null, [R13, #-0]
+ADD R13, R13, #8
+STR R14, [R13, #-8]
+LDR null, [R13, -#8]
+STR null, [R13, #-4]
+LDR R14, [R13, #-8]
+SUB R13, R13, #8
 B IFEND_1_LEVEL_0_0
 IFNEXT_1_SEQ_2_LEVEL_0_0: MOV R0, R0
 IFEND_1_LEVEL_0_0: SUB R13, R13, #23
 STP
-WriteInt: LDR R4, local_allocate_WriteInt
-ADD R13, R13, R4
-LDR R2, f30_value
-LDR R3, f30
-STR R2, [R13, -R3]
-MOV R2, R0
+ADD R13, R13, #4
+MOV null, #0
+STR null, [R13, #-4]
+MOV null, R0
 LDR R0, f31
 SWI 1
-MOV R0, R2
+MOV R0, null
 SUB R13, R13, #4
 MOV R15, R14
-f24: .WORD 2
-f26: .WORD 1
 f25: .BYTE 0
 f27: .BYTE 0
-f28: .WORD 23
-f29: .WORD 22
-f32: .WORD 18
-f33: .WORD 14
-f34: .WORD 13
-f35: .WORD 9
-f36: .WORD 8
-f37: .WORD 4
-f29_value: .WORD 4
-WriteInt_return_address_outer: .WORD 8
-f31_outer: .WORD 4
-WriteInt_param_frame_size: .WORD 8
-f32_value: .WORD 5
-WriteInt_return_address_outer: .WORD 8
-f31_outer: .WORD 4
-WriteInt_param_frame_size: .WORD 8
-f34_value: .WORD 2
-WriteInt_return_address_outer: .WORD 8
-f31_outer: .WORD 4
-WriteInt_param_frame_size: .WORD 8
-f36_value: .WORD 5
-WriteInt_return_address_outer: .WORD 8
-f31_outer: .WORD 4
-WriteInt_param_frame_size: .WORD 8
-f37_value: .WORD 6
-WriteInt_return_address_outer: .WORD 8
-f31_outer: .WORD 4
-WriteInt_param_frame_size: .WORD 8
-local_allocate_WriteInt: .WORD 4
-WriteInt_return_address_inner: .WORD 12
-f31_inner: .WORD 8
-f30: .WORD 4
-f30_value: .WORD 0
-totalBytes: .WORD 714
+totalBytes: .WORD 374

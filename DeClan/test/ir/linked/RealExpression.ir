@@ -1509,6 +1509,8 @@ PROC SECTION
   DEF i52 := 0 <INT>
   i46 := i52 <INT>
   IPARAM i47 <INT> %dr
+  IPARAM i45 <INT> %r
+  IPARAM i46 <INT> %r
   IASM "LDRB %dr, [%ur, +%ur]"
   IPARAM i47 <INT> %r
   IPARAM i47 <INT> %da
@@ -1534,6 +1536,8 @@ PROC SECTION
   DEF i57 := i46 IADD i56 <INT>
   i46 := i57 <INT>
   IPARAM i47 <INT> %dr
+  IPARAM i45 <INT> %r
+  IPARAM i46 <INT> %r
   IASM "LDRB %dr, [%ur, +%ur]"
   IPARAM i47 <INT> %r
   IPARAM i47 <INT> %da

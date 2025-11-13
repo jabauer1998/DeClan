@@ -2,7 +2,9 @@ package io.github.H20man13.DeClan;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -10,8 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Future;
-
-import javax.swing.JDialog;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -42,122 +42,117 @@ import io.github.H20man13.DeClan.main.assembler.ArmAssemblerLexer;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser;
 
 public class CodeGeneratorTest {
-    private void testDeclanFile(String fileName){
+    private void testDeclanFile(String fileName) throws Exception{
         ErrorLog errLog = new ErrorLog();
-        String expectedResultFile = fileName.replace("test/ir/linked", "test/temp").replace(".ir", ".a"); 
-        try{
-            FileReader input = new FileReader(fileName);
-            ReaderSource source = new ElaborateReaderSource(fileName, input);
-            MyIrLexer lexer = new MyIrLexer(source, errLog);
-            MyIrParser parser = new MyIrParser(lexer, errLog);
-            Prog program = parser.parseProgram();
-            parser.close();
+        String expectedResultFile = fileName.replace("test/ir/linked", "test/temp").replace(".ir", ".a");
+        FileReader input = new FileReader(fileName);
+        ReaderSource source = new ElaborateReaderSource(fileName, input);
+        MyIrLexer lexer = new MyIrLexer(source, errLog);
+        MyIrParser parser = new MyIrParser(lexer, errLog);
+        Prog program = parser.parseProgram();
+        parser.close();
 
-            MyOptimizer optimizer = new MyOptimizer(null, program);
-            optimizer.runLiveVariableAnalysis();
+        MyOptimizer optimizer = new MyOptimizer(null, program);
+        optimizer.runLiveVariableAnalysis();
 
-            MyCodeGenerator codeGenerator = new MyCodeGenerator(expectedResultFile, optimizer.getLiveVariableAnalysis(), program, errLog); 
-            codeGenerator.codeGen();
+        MyCodeGenerator codeGenerator = new MyCodeGenerator(expectedResultFile, optimizer.getLiveVariableAnalysis(), program, errLog); 
+        codeGenerator.codeGen();
 
-            for(LogItem item : errLog){
-                assertTrue(item.toString(), false);
-            }
-
-            FileReader assemblerStringReader = new FileReader(expectedResultFile);
-            ANTLRInputStream inputString = new ANTLRInputStream(assemblerStringReader);
-            ArmAssemblerLexer armLexer = new ArmAssemblerLexer(inputString);
-            CommonTokenStream tokStream = new CommonTokenStream(armLexer);
-            ArmAssemblerParser armParser = new ArmAssemblerParser(tokStream);
-            armParser.program();
-            
-            assertTrue("Error syntax errors discovered", armParser.getNumberOfSyntaxErrors() == 0);
-        } catch(Exception exp){
-            assertTrue(exp.toString(), false);
+        for(LogItem item : errLog){
+            assertTrue(item.toString(), false);
         }
+
+        FileReader assemblerStringReader = new FileReader(expectedResultFile);
+        ANTLRInputStream inputString = new ANTLRInputStream(assemblerStringReader);
+        ArmAssemblerLexer armLexer = new ArmAssemblerLexer(inputString);
+        CommonTokenStream tokStream = new CommonTokenStream(armLexer);
+        ArmAssemblerParser armParser = new ArmAssemblerParser(tokStream);
+        armParser.program();
+        assertTrue("Error syntax errors discovered", armParser.getNumberOfSyntaxErrors() == 0);
     }
 
     @Test
-    public void testConversions(){
+    public void testConversions() throws Exception{
         testDeclanFile("test/ir/linked/conversions.ir");
     }
 
     @Test
-    public void testExpressions(){
+    public void testExpressions() throws Exception{
         testDeclanFile("test/ir/linked/expressions.ir");
     }
 
     @Test
-    public void testForLoopAdvanced(){
+    public void testForLoopAdvanced() throws Exception{
         testDeclanFile("test/ir/linked/ForLoopAdvanced.ir");
     }
 
     @Test
-    public void testForLoopBasic(){
+    public void testForLoopBasic() throws Exception{
         testDeclanFile("test/ir/linked/ForLoopBasic.ir");
     }
 
     @Test
-    public void testForLoopBasic2(){
+    public void testForLoopBasic2() throws Exception{
         testDeclanFile("test/ir/linked/ForLoopBasic2.ir");
     }
 
     @Test
-    public void testForLoopBasic3(){
+    public void testForLoopBasic3() throws Exception{
         testDeclanFile("test/ir/linked/ForLoopBasic3.ir");
     }
 
     @Test
-    public void testIfStatementAdvanced(){
+    public void testIfStatementAdvanced() throws Exception{
         testDeclanFile("test/ir/linked/IfStatementAdvanced.ir");
     }
 
     @Test
-    public void testIfStatementBasic(){
+    public void testIfStatementBasic() throws Exception{
         testDeclanFile("test/ir/linked/IfStatementBasic.ir");
     }
 
     @Test
-    public void testLoops(){
+    public void testLoops() throws Exception{
         testDeclanFile("test/ir/linked/loops.ir");
     }
 
     @Test
-    public void testRepeatLoopBasic(){
+    public void testRepeatLoopBasic() throws Exception{
         testDeclanFile("test/ir/linked/RepeatLoopBasic.ir");
     }
 
     @Test
-    public void testSample(){
+    public void testSample() throws Exception{
         testDeclanFile("test/ir/linked/sample.ir");
     }
 
     @Test
-    public void testTest(){
+    public void testTest() throws Exception{
         testDeclanFile("test/ir/linked/test.ir");
     }
 
     @Test
-    public void testTest2(){
+    public void testTest2() throws Exception{
         testDeclanFile("test/ir/linked/test2.ir");
     }
 
     @Test
-    public void testTest3(){
+    public void testTest3() throws Exception{
         testDeclanFile("test/ir/linked/test3.ir");
     }
 
     @Test
-    public void testTest4(){
+    public void testTest4() throws Exception{
         testDeclanFile("test/ir/linked/test4.ir");
     }
 
     @Test
-    public void testWhileLoopAdvanced(){
+    public void testWhileLoopAdvanced() throws Exception{
         testDeclanFile("test/ir/linked/WhileLoopAdvanced.ir");
     }
 
     @Test
-    public void testWhileLoopBasic(){
+    public void testWhileLoopBasic() throws Exception{
         testDeclanFile("test/ir/linked/WhileLoopBasic.ir");
     }
 }

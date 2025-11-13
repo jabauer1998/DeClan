@@ -199,6 +199,8 @@ PROC SECTION
   DEF f50 := 0 <INT>
   f42 := f50 <INT>
   IPARAM f43 <INT> %dr
+  IPARAM f41 <INT> %r
+  IPARAM f42 <INT> %r
   IASM "LDRB %dr, [%ur, +%ur]"
   IPARAM f43 <INT> %r
   IPARAM f43 <INT> %da
@@ -224,6 +226,8 @@ PROC SECTION
   DEF f63 := f42 IADD f62 <INT>
   f42 := f63 <INT>
   IPARAM f43 <INT> %dr
+  IPARAM f41 <INT> %r
+  IPARAM f42 <INT> %r
   IASM "LDRB %dr, [%ur, +%ur]"
   IPARAM f43 <INT> %r
   IPARAM f43 <INT> %da

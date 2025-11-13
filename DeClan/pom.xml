@@ -156,6 +156,7 @@
                   <argument>-p</argument>
                   <argument>${project.SRC}</argument>
                   <argument>--optimize</argument>
+                  <argument>-std</argument>
                 </arguments>
               </configuration>
             </plugin>

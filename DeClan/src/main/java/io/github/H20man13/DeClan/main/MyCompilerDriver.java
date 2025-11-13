@@ -479,6 +479,7 @@ public class MyCompilerDriver {
         return toRet;
     }
     public static void main(String[] args) throws Exception{
+    	
         Config cfg = parseConfig(args);
         
         ErrorLog errLog = new ErrorLog();

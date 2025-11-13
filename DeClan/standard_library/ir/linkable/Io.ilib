@@ -39,6 +39,8 @@ PROC SECTION
   DEF o := 0 <INT>
   i := o <INT>
   IPARAM j <INT> %dr
+  IPARAM h <INT> %r
+  IPARAM i <INT> %r
   IASM "LDRB %dr, [%ur, +%ur]"
   IPARAM j <INT> %r
   IPARAM j <INT> %da
@@ -64,6 +66,8 @@ PROC SECTION
   DEF v := i IADD u <INT>
   i := v <INT>
   IPARAM j <INT> %dr
+  IPARAM h <INT> %r
+  IPARAM i <INT> %r
   IASM "LDRB %dr, [%ur, +%ur]"
   IPARAM j <INT> %r
   IPARAM j <INT> %da

@@ -18,7 +18,7 @@ public class ArmRegisterElement implements ArmElement {
 	public boolean equals(Object obj){
 		if(obj instanceof ArmRegisterElement) {
 			ArmRegisterElement reg = (ArmRegisterElement)obj;
-			return reg.equals(obj);
+			return this.label.equals(reg.label);
 		}
 		return false;
 	}

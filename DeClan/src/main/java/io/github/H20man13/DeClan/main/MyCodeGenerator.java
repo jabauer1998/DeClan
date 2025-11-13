@@ -122,28 +122,24 @@ public class MyCodeGenerator {
 		}
 	}
 
-	public void codeGen() {
-		try {
-			int size = intermediateCode.getSize();
+	public void codeGen() throws Exception {
+		int size = intermediateCode.getSize();
 
-			skipSymbolTable();
-			
-			while (i < size) {
-				ICode icode1 = intermediateCode.getInstruction(i);
-				if (i + 1 < size) {
-					ICode icode2 = intermediateCode.getInstruction(i + 1);
-					if (!genICode(icode1, icode2) && !genICode(icode1)) {
-						errorLog.add("Error cannot generate icode " + icode1, new Position(i, 0));
-					}
-				} else if (!genICode(icode1)) {
+		skipSymbolTable();
+		
+		while (i < size) {
+			ICode icode1 = intermediateCode.getInstruction(i);
+			if (i + 1 < size) {
+				ICode icode2 = intermediateCode.getInstruction(i + 1);
+				if (!genICode(icode1, icode2) && !genICode(icode1)) {
 					errorLog.add("Error cannot generate icode " + icode1, new Position(i, 0));
 				}
+			} else if (!genICode(icode1)) {
+				errorLog.add("Error cannot generate icode " + icode1, new Position(i, 0));
 			}
-
-			cGen.writeToStream();
-		} catch (Exception exp) {
-			errorLog.add(exp.toString(), new Position(i, 0));
 		}
+
+		cGen.writeToStream();
 	}
 
 	private void initCodeGenFunctions() {

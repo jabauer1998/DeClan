@@ -3000,6 +3000,8 @@ PROC SECTION
   DEF k52 := 0 <INT>
   k46 := k52 <INT>
   IPARAM k47 <INT> %dr
+  IPARAM k45 <INT> %r
+  IPARAM k46 <INT> %r
   IASM "LDRB %dr, [%ur, +%ur]"
   IPARAM k47 <INT> %r
   IPARAM k47 <INT> %da
@@ -3025,6 +3027,8 @@ PROC SECTION
   DEF k57 := k46 IADD k56 <INT>
   k46 := k57 <INT>
   IPARAM k47 <INT> %dr
+  IPARAM k45 <INT> %r
+  IPARAM k46 <INT> %r
   IASM "LDRB %dr, [%ur, +%ur]"
   IPARAM k47 <INT> %r
   IPARAM k47 <INT> %da
