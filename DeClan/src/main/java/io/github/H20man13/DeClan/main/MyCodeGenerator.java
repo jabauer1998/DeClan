@@ -43,6 +43,7 @@ import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Lib.SymbolSearchStrategy;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
+import io.github.H20man13.DeClan.common.icode.Spill;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
@@ -283,6 +284,12 @@ public class MyCodeGenerator {
 		initBssSectionHeader();
 		initCodeSectionHeader();
 		initProcSectionHeader();
+		
+		//Init Spill Patterns
+		initSpill0();
+		initSpill1();
+		initSpill2();
+		initSpill3();
 
 		// Init End Pattern
 		initEnd0();
@@ -3780,6 +3787,94 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				// DO nothing when this pattern is discovered
+				return null;
+			}
+		});
+	}
+	
+	private void initSpill0() {
+		codeGenFunctions.put(Pattern.spill0, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				ICode instr = intermediateCode.getInstruction(i);
+				
+				Spill spill = (Spill)instr;
+				
+				String addr = spill.getAddr();
+				ArmRegisterResult res = rGen.getFilteredInputSet(instr);
+				String reg = res.getRegister(addr);
+				
+				offset.pushAddress(addr, ICode.Type.INT);
+				int off = offset.findOffset(addr, ICode.Type.INT);
+				
+				cGen.addInstruction("ADD R13, R13, #" + off);
+				cGen.addInstruction("STR " + reg + "[R13, #-" + off + ']');
+				return null;
+			}
+		});
+	}
+	
+	private void initSpill1() {
+		codeGenFunctions.put(Pattern.spill1, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				ICode instr = intermediateCode.getInstruction(i);
+				
+				Spill spill = (Spill)instr;
+				
+				String addr = spill.getAddr();
+				ArmRegisterResult res = rGen.getFilteredInputSet(instr);
+				String reg = res.getRegister(addr);
+				
+				offset.pushAddress(addr, ICode.Type.REAL);
+				int off = offset.findOffset(addr, ICode.Type.REAL);
+				
+				cGen.addInstruction("ADD R13, R13, #" + off);
+				cGen.addInstruction("STR " + reg + "[R13, #-" + off + ']');
+				return null;
+			}
+		});
+	}
+	
+	private void initSpill2() {
+		codeGenFunctions.put(Pattern.spill2, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				ICode instr = intermediateCode.getInstruction(i);
+				
+				Spill spill = (Spill)instr;
+				
+				String addr = spill.getAddr();
+				ArmRegisterResult res = rGen.getFilteredInputSet(instr);
+				String reg = res.getRegister(addr);
+				
+				offset.pushAddress(addr, ICode.Type.STRING);
+				int off = offset.findOffset(addr, ICode.Type.STRING);
+				
+				cGen.addInstruction("ADD R13, R13, #" + off);
+				cGen.addInstruction("STR " + reg + "[R13, #-" + off + ']');
+				return null;
+			}
+		});
+	}
+	
+	private void initSpill3() {
+		codeGenFunctions.put(Pattern.spill3, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				ICode instr = intermediateCode.getInstruction(i);
+				
+				Spill spill = (Spill)instr;
+				
+				String addr = spill.getAddr();
+				ArmRegisterResult res = rGen.getFilteredInputSet(instr);
+				String reg = res.getRegister(addr);
+				
+				offset.pushAddress(addr, ICode.Type.BOOL);
+				int off = offset.findOffset(addr, ICode.Type.BOOL);
+				
+				cGen.addInstruction("ADD R13, R13, #" + off);
+				cGen.addInstruction("STRB " + reg + "[R13, #-" + off + ']');
 				return null;
 			}
 		});

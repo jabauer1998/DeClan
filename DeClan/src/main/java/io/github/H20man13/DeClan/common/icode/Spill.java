@@ -67,6 +67,10 @@ public class Spill extends ICode {
 		if(name.equals(from))
 			name = to;
 	}
+	
+	public String getAddr(){
+		return this.name;
+	}
 
 	@Override
 	public void replaceLabel(String from, String to) {

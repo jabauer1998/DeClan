@@ -139,6 +139,12 @@ public class Pattern {
     public static P codeSectionHeader = P.PAT(P.CODE(), P.SECTION());
     public static P procSectionHeader = P.PAT(P.PROC(), P.SECTION());
     
+    //Declare all spill patterns
+    public static P spill0 = P.PAT(P.SPILL(), P.ID(), P.INT());
+    public static P spill1 = P.PAT(P.SPILL(), P.ID(), P.REAL());
+    public static P spill2 = P.PAT(P.SPILL(), P.ID(), P.STR());
+    public static P spill3 = P.PAT(P.SPILL(), P.ID(), P.BOOL());
+    
     public static P goto0 = P.PAT(P.GOTO(), P.ID());
     public static P label0 = P.PAT(P.LABEL(), P.ID());
     public static P procLabel0 = P.PAT(P.PROC(), P.LABEL(), P.ID());
