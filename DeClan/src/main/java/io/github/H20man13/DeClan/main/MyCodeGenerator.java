@@ -12,22 +12,24 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.Callable;
 
+import io.github.H20man13.DeClan.common.Config;
 import io.github.H20man13.DeClan.common.ErrorLog;
 import io.github.H20man13.DeClan.common.position.Position;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.iterative.LiveVariableAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.RegisterAllocatorAnalysis;
 import io.github.H20man13.DeClan.common.arm.ArmCodeGenerator;
 import io.github.H20man13.DeClan.common.pat.P;
 import io.github.H20man13.DeClan.common.pat.Pattern;
 import io.github.H20man13.DeClan.common.symboltable.entry.VariableEntry;
 import io.github.H20man13.DeClan.common.util.Utils;
-import io.github.H20man13.DeClan.common.arm.ArmRegisterGenerator;
 import io.github.H20man13.DeClan.common.arm.descriptor.ArmAddressOffsets;
 import io.github.H20man13.DeClan.common.arm.descriptor.ArmRegisterResult;
 import io.github.H20man13.DeClan.common.arm.ArmCodeGenerator.VariableLength;
 import io.github.H20man13.DeClan.common.ast.VariableDeclaration;
 import io.github.H20man13.DeClan.common.exception.CodeGeneratorException;
 import io.github.H20man13.DeClan.common.exception.RegisterAllocatorException;
+import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Call;
@@ -62,20 +64,21 @@ import io.github.H20man13.DeClan.common.icode.symbols.VarSymEntry;
 
 public class MyCodeGenerator {
 	private Lib intermediateCode;
-	private ArmRegisterGenerator rGen;
+	private RegisterAllocatorAnalysis rGen;
 	private ArmCodeGenerator cGen;
 	private IrRegisterGenerator iGen;
 	private ErrorLog errorLog;
 	private Map<P, Callable<Void>> codeGenFunctions;
+	private FlowGraph flow;
 	private ArmAddressOffsets offset;
 	private int i;
 	private int offsetNum;
 
-	public MyCodeGenerator(String outputFile, LiveVariableAnalysis analysis, Lib program, ErrorLog errLog) throws IOException {
+	public MyCodeGenerator(String outputFile, Lib program, MyOptimizer opt, ErrorLog errLog, Config cfg) throws IOException {
 		this.intermediateCode = program;
 		this.offset = new ArmAddressOffsets();
 		this.cGen = new ArmCodeGenerator(outputFile);
-		this.rGen = new ArmRegisterGenerator(this.intermediateCode, analysis, this.offset, this.cGen);
+		this.rGen = new RegisterAllocatorAnalysis(opt, cfg);
 		this.iGen = new IrRegisterGenerator();
 		String place;
 		do {
@@ -150,6 +153,8 @@ public class MyCodeGenerator {
 		initCallWithReturn3();
 		initCallWithReturn4();
 		initCallWithReturn5();
+		initCallWithReturn6();
+		initCallWithReturn7();
 
 		// Init Add Patterns
 		initAdd0();
@@ -292,92 +297,95 @@ public class MyCodeGenerator {
 		initInline0();
 	}
 
-	private String loadVariableToReg(IdentExp exp, ICode.Type type, ArmRegisterResult res) throws Exception {
-		if (exp.scope == Scope.LOCAL) {
-		    ArmRegisterResult regs = res;
-		    int actualOffset = offset.findOffset(exp.ident);
-		    
-		    String reg = regs.getRegister(exp.ident);
-			if (type == ICode.Type.BOOL) {
-				if(actualOffset > 250) {
-					cGen.addVariable("offset" + offsetNum, actualOffset);
-					cGen.addInstruction("LDR " + reg + ", " + "offset" + offsetNum);
-					cGen.addInstruction("LDRB " + reg + ", [R13, -" + reg + ']');
-					this.offsetNum++;
+	private String loadVariableToReg(IdentExp exp, ICode.Type type, ArmRegisterResult pre, ArmRegisterResult res) throws IOException{
+		if(!pre.containsRegister(exp.ident) && res.containsRegister(exp.ident)){
+			if (exp.scope == Scope.LOCAL) {
+			    ArmRegisterResult regs = res;
+			    int actualOffset = offset.findOffset(exp.ident, type);
+			    
+			    String reg = regs.getRegister(exp.ident);
+				if (type == ICode.Type.BOOL) {
+					if(actualOffset > 250) {
+						cGen.addVariable("offset" + offsetNum, actualOffset);
+						cGen.addInstruction("LDR " + reg + ", " + "offset" + offsetNum);
+						cGen.addInstruction("LDRB " + reg + ", [R13, -" + reg + ']');
+						this.offsetNum++;
+					} else {
+						cGen.addInstruction("LDRB " + reg + ", [R13, -#" + actualOffset + ']');
+					}
 				} else {
-					cGen.addInstruction("LDRB " + reg + ", [R13, -#" + actualOffset + ']');
+					if(actualOffset > 250) {
+						cGen.addVariable("offset" + offsetNum, actualOffset);
+						cGen.addInstruction("LDR " + reg + ", " + "offset" + offsetNum);
+						cGen.addInstruction("LDR " + reg + ", [R13, -" + reg + ']');
+						this.offsetNum++;
+					} else {
+						cGen.addInstruction("LDR " + reg + ", [R13, -#" + actualOffset + ']');
+					}
 				}
+				return reg;
+			} else if (exp.scope == Scope.PARAM) {
+				ArmRegisterResult regs = res;
+				int actualOffset = offset.findOffset(exp.ident, type);
+				String reg = regs.getRegister(exp.ident);
+				if (type == ICode.Type.BOOL) {
+					if(actualOffset > 250) {
+						cGen.addVariable("offset" + offsetNum, actualOffset);
+						cGen.addInstruction("LDR " + reg + ", " + "offset" + offsetNum);
+						cGen.addInstruction("LDRB " + reg + ", [R13, -" + reg + ']');
+						this.offsetNum++;
+					} else {
+						cGen.addInstruction("LDRB " + reg + ", [R13, -#" + actualOffset + ']');
+					}
+				} else {
+					if(actualOffset > 250) {
+						cGen.addVariable("offset" + offsetNum, actualOffset);
+						cGen.addInstruction("LDR " + reg + ", " + "offset" + offsetNum);
+						cGen.addInstruction("LDR " + reg + ", [R13, -" + reg + ']');
+						this.offsetNum++;
+					} else {
+						cGen.addInstruction("LDR " + reg + ", [R13, -#" + actualOffset + ']');
+					}
+				}
+				return reg;
+			} else if (exp.scope == Scope.RETURN) {
+				ArmRegisterResult regs = res;
+				
+				int actualOffset = offset.findOffset(exp.ident, type);
+				String reg = regs.getRegister(exp.ident);
+				
+				if (type == ICode.Type.BOOL) {
+					if(actualOffset > 250) {
+						cGen.addVariable("offset" + offsetNum, actualOffset);
+						cGen.addInstruction("LDR " + reg + ", " + "offset" + offsetNum);
+						cGen.addInstruction("LDRB " + reg + ", [R13, -" + reg + ']');
+						this.offsetNum++;
+					} else {
+						cGen.addInstruction("LDRB " + reg + ", [R13, -#" + actualOffset + ']');
+					}
+				} else {
+					if(actualOffset > 250) {
+						cGen.addVariable("offset" + offsetNum, actualOffset);
+						cGen.addInstruction("LDR " + reg + ", " + "offset" + offsetNum);
+						cGen.addInstruction("LDR " + reg + ", [R13, -" + reg + ']');
+						this.offsetNum++;
+					} else {
+						cGen.addInstruction("LDR " + reg + ", [R13, -#" + actualOffset + ']');
+					}
+				}
+				return reg;
 			} else {
-				if(actualOffset > 250) {
-					cGen.addVariable("offset" + offsetNum, actualOffset);
-					cGen.addInstruction("LDR " + reg + ", " + "offset" + offsetNum);
-					cGen.addInstruction("LDR " + reg + ", [R13, -" + reg + ']');
-					this.offsetNum++;
+				ArmRegisterResult newReg = res;
+				String register = newReg.getRegister(exp.ident);
+				if (type == ICode.Type.BOOL) {
+					cGen.addInstruction("LDRB " + register + ", " + exp.ident);
 				} else {
-					cGen.addInstruction("LDR " + reg + ", [R13, -#" + actualOffset + ']');
+					cGen.addInstruction("LDR " + register + ", " + exp.ident);
 				}
+				return register;
 			}
-			return reg;
-		} else if (exp.scope == Scope.PARAM) {
-			ArmRegisterResult regs = res;
-			int actualOffset = offset.findOffset(exp.ident);
-			String reg = regs.getRegister(exp.ident);
-			if (type == ICode.Type.BOOL) {
-				if(actualOffset > 250) {
-					cGen.addVariable("offset" + offsetNum, actualOffset);
-					cGen.addInstruction("LDR " + reg + ", " + "offset" + offsetNum);
-					cGen.addInstruction("LDRB " + reg + ", [R13, -" + reg + ']');
-					this.offsetNum++;
-				} else {
-					cGen.addInstruction("LDRB " + reg + ", [R13, -#" + actualOffset + ']');
-				}
-			} else {
-				if(actualOffset > 250) {
-					cGen.addVariable("offset" + offsetNum, actualOffset);
-					cGen.addInstruction("LDR " + reg + ", " + "offset" + offsetNum);
-					cGen.addInstruction("LDR " + reg + ", [R13, -" + reg + ']');
-					this.offsetNum++;
-				} else {
-					cGen.addInstruction("LDR " + reg + ", [R13, -#" + actualOffset + ']');
-				}
-			}
-			return reg;
-		} else if (exp.scope == Scope.RETURN) {
-			ArmRegisterResult regs = res;
-			
-			int actualOffset = offset.findOffset(exp.ident);
-			String reg = regs.getRegister(exp.ident);
-			
-			if (type == ICode.Type.BOOL) {
-				if(actualOffset > 250) {
-					cGen.addVariable("offset" + offsetNum, actualOffset);
-					cGen.addInstruction("LDR " + reg + ", " + "offset" + offsetNum);
-					cGen.addInstruction("LDRB " + reg + ", [R13, -" + reg + ']');
-					this.offsetNum++;
-				} else {
-					cGen.addInstruction("LDRB " + reg + ", [R13, -#" + actualOffset + ']');
-				}
-			} else {
-				if(actualOffset > 250) {
-					cGen.addVariable("offset" + offsetNum, actualOffset);
-					cGen.addInstruction("LDR " + reg + ", " + "offset" + offsetNum);
-					cGen.addInstruction("LDR " + reg + ", [R13, -" + reg + ']');
-					this.offsetNum++;
-				} else {
-					cGen.addInstruction("LDR " + reg + ", [R13, -#" + actualOffset + ']');
-				}
-			}
-			return reg;
-		} else {
-			ArmRegisterResult newReg = res;
-			String register = newReg.getRegister(exp.ident);
-			if (type == ICode.Type.BOOL) {
-				cGen.addInstruction("LDRB " + register + ", " + exp.ident);
-			} else {
-				cGen.addInstruction("LDR " + register + ", " + exp.ident);
-			}
-			return register;
 		}
+		return res.getRegister(exp.ident);
 	}
 
 	private String genUnaryOp(String label, UnExp.Operator op, String rightReg, ArmRegisterResult res) throws Exception {
@@ -625,10 +633,10 @@ public class MyCodeGenerator {
 		return totalLength;
 	}
 
-	private String genExpression(Exp expression, ICode.Type returnType, ArmRegisterResult res) throws Exception {
+	private String genExpression(Exp expression, ICode.Type returnType, ArmRegisterResult pre, ArmRegisterResult res) throws Exception {
 		if (expression instanceof IdentExp) {
 			IdentExp exp = (IdentExp) expression;
-			return loadVariableToReg(exp, returnType, res);
+			return loadVariableToReg(exp, returnType, pre, res);
 		} else if (expression instanceof IntExp) {
 			IntExp exp = (IntExp) expression;
 			String newPlace = iGen.genNext();
@@ -674,12 +682,12 @@ public class MyCodeGenerator {
 					|| exp.op == BinExp.Operator.LT || exp.op == BinExp.Operator.LE || exp.op == BinExp.Operator.IAND
 					|| exp.op == BinExp.Operator.IOR || exp.op == BinExp.Operator.IXOR
 					|| exp.op == BinExp.Operator.ILSHIFT || exp.op == BinExp.Operator.IRSHIFT) {
-				leftReg = loadVariableToReg(exp.left, ICode.Type.INT, res);
-				rightReg = loadVariableToReg(exp.right, ICode.Type.INT, res);
+				leftReg = loadVariableToReg(exp.left, ICode.Type.INT, pre, res);
+				rightReg = loadVariableToReg(exp.right, ICode.Type.INT, pre, res);
 			} else if (exp.op == BinExp.Operator.LAND || exp.op == BinExp.Operator.LOR || exp.op == BinExp.Operator.BEQ
 					|| exp.op == BinExp.Operator.BNE) {
-				leftReg = loadVariableToReg(exp.left, ICode.Type.BOOL, res);
-				rightReg = loadVariableToReg(exp.right, ICode.Type.BOOL, res);
+				leftReg = loadVariableToReg(exp.left, ICode.Type.BOOL, pre, res);
+				rightReg = loadVariableToReg(exp.right, ICode.Type.BOOL, pre, res);
 			} else {
 				throw new CodeGeneratorException("genExpression", "Unexpected/Unsupported Operation type " + exp.op);
 			}
@@ -691,9 +699,9 @@ public class MyCodeGenerator {
 
 			String rightReg = null;
 			if (exp.op == UnExp.Operator.BNOT) {
-				rightReg = loadVariableToReg(exp.right, ICode.Type.BOOL, res);
+				rightReg = loadVariableToReg(exp.right, ICode.Type.BOOL, pre, res);
 			} else if (exp.op == UnExp.Operator.INOT) {
-				rightReg = loadVariableToReg(exp.right, ICode.Type.INT, res);
+				rightReg = loadVariableToReg(exp.right, ICode.Type.INT, pre, res);
 			} else {
 				throw new CodeGeneratorException("genExpression",
 						"Error cant load register from unarty operation " + exp.op);
@@ -717,32 +725,34 @@ public class MyCodeGenerator {
 				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Def returnPlacement = (Def) retICode;
 				
-				ArmRegisterResult res1 = rGen.getRegs(procICode);
+				ArmRegisterResult res1 = rGen.getFilteredOutputSet(procICode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(procICode);
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
-				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr") + "]");
+				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
 
-					String oldReg = genExpression(sourceDest.val, sourceDest.type, res1);
+					String oldReg = genExpression(sourceDest.val, sourceDest.type, pre, res1);
 					if (sourceDest.type == ICode.Type.BOOL) {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, ICode.Type.BOOL);
 						cGen.addInstruction("STRB " + oldReg + ", [R13, #-" + offset1 + "]");
 					} else {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, sourceDest.type);
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
 
-				ArmRegisterResult res2 = rGen.getRegs(returnPlacement);
+				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
+				ArmRegisterResult preRes2 = rGen.getFilteredInputSet(returnPlacement);
 				// Now to load the Return value from the Stack
-				String temp = loadVariableToReg((IdentExp)returnPlacement.val, returnPlacement.type, res2);
-				cGen.addInstruction("STRB " + temp + ", [R13, -" + offset.findOffset(returnPlacement.label) + ']');
+				String temp = loadVariableToReg((IdentExp)returnPlacement.val, returnPlacement.type, preRes2, res2);
+				cGen.addInstruction("STRB " + temp + ", [R13, -" + offset.findOffset(returnPlacement.label, returnPlacement.type) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp, returnPlacement.type) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -762,32 +772,34 @@ public class MyCodeGenerator {
 				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Assign returnPlacement = (Assign) retICode;
 				
-				ArmRegisterResult res1 = rGen.getRegs(procICode);
+				ArmRegisterResult res1 = rGen.getFilteredOutputSet(procICode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(procICode);
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
-				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr") + "]");
+				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
 
-					String oldReg = genExpression(sourceDest.val, sourceDest.type, res1);
+					String oldReg = genExpression(sourceDest.val, sourceDest.type, pre, res1);
 					if (sourceDest.type == ICode.Type.BOOL) {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, ICode.Type.BOOL);
 						cGen.addInstruction("STRB " + oldReg + ", [R13, #-" + offset1 + "]");
 					} else {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, sourceDest.type);
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
 
-				ArmRegisterResult res2 = rGen.getRegs(returnPlacement);
+				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
+				ArmRegisterResult pre2 = rGen.getFilteredInputSet(returnPlacement);
 				// Now to load the Return value from the Stack
-				String temp = loadVariableToReg((IdentExp)returnPlacement.value, returnPlacement.getType(), res2);
-				cGen.addInstruction("STRB " + temp + ", [R13, -" + offset.findOffset(returnPlacement.place) + ']');
+				String temp = loadVariableToReg((IdentExp)returnPlacement.value, returnPlacement.getType(), pre2, res2);
+				cGen.addInstruction("STRB " + temp + ", [R13, -" + offset.findOffset(returnPlacement.place, returnPlacement.getType()) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp, returnPlacement.getType()) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -807,32 +819,34 @@ public class MyCodeGenerator {
 				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Def returnPlacement = (Def) retICode;
 				
-				ArmRegisterResult res1 = rGen.getRegs(procICode);
+				ArmRegisterResult res1 = rGen.getFilteredOutputSet(procICode);
+				ArmRegisterResult pre1 = rGen.getFilteredInputSet(procICode);
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
-				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr") + "]");
+				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
 
-					String oldReg = genExpression(sourceDest.val, sourceDest.type, res1);
+					String oldReg = genExpression(sourceDest.val, sourceDest.type, pre1, res1);
 					if (sourceDest.type == ICode.Type.BOOL) {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, ICode.Type.BOOL);
 						cGen.addInstruction("STRB " + oldReg + ", [R13, #-" + offset1 + "]");
 					} else {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, ICode.Type.INT);
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
 
-				ArmRegisterResult res2 = rGen.getRegs(returnPlacement);
+				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
+				ArmRegisterResult pre2 = rGen.getFilteredInputSet(returnPlacement);
 				// Now to load the Return value from the Stack
-				String temp = loadVariableToReg((IdentExp)returnPlacement.val, returnPlacement.type, res2);
-				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.label) + ']');
+				String temp = loadVariableToReg((IdentExp)returnPlacement.val, returnPlacement.type, pre2, res2);
+				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.label, returnPlacement.type) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset("returnAddr", ICode.Type.INT) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -852,32 +866,34 @@ public class MyCodeGenerator {
 				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Assign returnPlacement = (Assign) retICode;
 				
-				ArmRegisterResult res1 = rGen.getRegs(procICode);
+				ArmRegisterResult res1 = rGen.getFilteredOutputSet(procICode);
+				ArmRegisterResult pre1 = rGen.getFilteredInputSet(procICode);
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
-				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr") + "]");
+				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
 
-					String oldReg = genExpression(sourceDest.val, sourceDest.type, res1);
+					String oldReg = genExpression(sourceDest.val, sourceDest.type, pre1, res1);
 					if (sourceDest.type == ICode.Type.BOOL) {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, sourceDest.type);
 						cGen.addInstruction("STRB " + oldReg + ", [R13, #-" + offset1 + "]");
 					} else {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, sourceDest.type);
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
 
-				ArmRegisterResult res2 = rGen.getRegs(returnPlacement);
+				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
+				ArmRegisterResult pre2 = rGen.getFilteredInputSet(returnPlacement);
 				// Now to load the Return value from the Stack
-				String temp = loadVariableToReg((IdentExp)returnPlacement.value, returnPlacement.getType(), res2);
-				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.place) + ']');
+				String temp = loadVariableToReg((IdentExp)returnPlacement.value, returnPlacement.getType(), pre2, res2);
+				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.place, returnPlacement.getType()) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp, ICode.Type.INT) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -897,32 +913,35 @@ public class MyCodeGenerator {
 				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Def returnPlacement = (Def) retICode;
 				
-				ArmRegisterResult res1 = rGen.getRegs(procICode);
+				ArmRegisterResult res1 = rGen.getFilteredOutputSet(procICode);
+				ArmRegisterResult pre1 = rGen.getFilteredInputSet(retICode);
+				
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
-				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr") + "]");
+				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
 
-					String oldReg = genExpression(sourceDest.val, sourceDest.type, res1);
+					String oldReg = genExpression(sourceDest.val, sourceDest.type, pre1, res1);
 					if (sourceDest.type == ICode.Type.BOOL) {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, ICode.Type.BOOL);
 						cGen.addInstruction("STRB " + oldReg + ", [R13, #-" + offset1 + "]");
 					} else {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, sourceDest.type);
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
 
-				ArmRegisterResult res2 = rGen.getRegs(returnPlacement);
+				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
+				ArmRegisterResult pre2 = rGen.getFilteredInputSet(returnPlacement);
 				// Now to load the Return value from the Stack
-				String temp = loadVariableToReg((IdentExp)returnPlacement.val, returnPlacement.type, res2);
-				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.label) + ']');
+				String temp = loadVariableToReg((IdentExp)returnPlacement.val, returnPlacement.type, pre2, res2);
+				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.label, returnPlacement.type) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp, ICode.Type.INT) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -942,32 +961,34 @@ public class MyCodeGenerator {
 				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Assign returnPlacement = (Assign) retICode;
 				
-				ArmRegisterResult res1 = rGen.getRegs(procICode);
+				ArmRegisterResult res1 = rGen.getFilteredOutputSet(procICode);
+				ArmRegisterResult pre1 = rGen.getFilteredInputSet(procICode);
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
-				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr") + "]");
+				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
 
-					String oldReg = genExpression(sourceDest.val, sourceDest.type, res1);
+					String oldReg = genExpression(sourceDest.val, sourceDest.type, pre1, res1);
 					if (sourceDest.type == ICode.Type.BOOL) {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, ICode.Type.BOOL);
 						cGen.addInstruction("STRB " + oldReg + ", [R13, #-" + offset1 + "]");
 					} else {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, sourceDest.type);
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
 
-				ArmRegisterResult res2 = rGen.getRegs(returnPlacement);
+				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
+				ArmRegisterResult pre2 = rGen.getFilteredInputSet(returnPlacement);
 				// Now to load the Return value from the Stack
-				String temp = loadVariableToReg((IdentExp)returnPlacement.value, returnPlacement.getType(), res2);
-				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.place) + ']');
+				String temp = loadVariableToReg((IdentExp)returnPlacement.value, returnPlacement.getType(), pre2, res2);
+				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.place, returnPlacement.getType()) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp, ICode.Type.INT) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -987,32 +1008,34 @@ public class MyCodeGenerator {
 				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Def returnPlacement = (Def) retICode;
 				
-				ArmRegisterResult res1 = rGen.getRegs(procICode);
+				ArmRegisterResult res1 = rGen.getFilteredOutputSet(procICode);
+				ArmRegisterResult pre1 = rGen.getFilteredInputSet(procICode);
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
-				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr") + "]");
+				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
 
-					String oldReg = genExpression(sourceDest.val, sourceDest.type, res1);
+					String oldReg = genExpression(sourceDest.val, sourceDest.type, pre1, res1);
 					if (sourceDest.type == ICode.Type.BOOL) {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, ICode.Type.BOOL);
 						cGen.addInstruction("STRB " + oldReg + ", [R13, #-" + offset1 + "]");
 					} else {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, sourceDest.type);
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
 
-				ArmRegisterResult res2 = rGen.getRegs(returnPlacement);
+				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
+				ArmRegisterResult pre2 = rGen.getFilteredInputSet(returnPlacement);
 				// Now to load the Return value from the Stack
-				String temp = loadVariableToReg((IdentExp)returnPlacement.val, returnPlacement.type, res2);
-				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.label) + ']');
+				String temp = loadVariableToReg((IdentExp)returnPlacement.val, returnPlacement.type, pre2, res2);
+				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.label, returnPlacement.type) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp, ICode.Type.INT) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -1032,32 +1055,35 @@ public class MyCodeGenerator {
 				ICode retICode = intermediateCode.getInstruction(i + 1);
 				Assign returnPlacement = (Assign) retICode;
 				
-				ArmRegisterResult res1 = rGen.getRegs(procICode);
+				ArmRegisterResult res1 = rGen.getFilteredOutputSet(procICode);
+				ArmRegisterResult pre1 = rGen.getFilteredInputSet(procICode);
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
-				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr") + "]");
+				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
 
-					String oldReg = genExpression(sourceDest.val, sourceDest.type, res1);
+					String oldReg = genExpression(sourceDest.val, sourceDest.type, pre1, res1);
 					if (sourceDest.type == ICode.Type.BOOL) {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, sourceDest.type);
 						cGen.addInstruction("STRB " + oldReg + ", [R13, #-" + offset1 + "]");
 					} else {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, sourceDest.type);
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
 
-				ArmRegisterResult res2 = rGen.getRegs(returnPlacement);
+				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
+				ArmRegisterResult pre2 = rGen.getFilteredInputSet(returnPlacement);
+				
 				// Now to load the Return value from the Stack
-				String temp = loadVariableToReg((IdentExp)returnPlacement.value, returnPlacement.getType(), res2);
-				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.place) + ']');
+				String temp = loadVariableToReg((IdentExp)returnPlacement.value, returnPlacement.getType(), pre2, res2);
+				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.place, returnPlacement.getType()) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp, ICode.Type.INT) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -1072,7 +1098,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getRegs(icode);
+				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -1089,13 +1115,13 @@ public class MyCodeGenerator {
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + destReg + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg+ ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				}
 
@@ -1110,7 +1136,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getRegs(icode);
+				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -1127,13 +1153,13 @@ public class MyCodeGenerator {
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + destReg + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg+ ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				}
 
@@ -1148,7 +1174,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getRegs(icode);
+				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -1166,13 +1192,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STR " + destReg + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg+ ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				}
 
@@ -1187,7 +1213,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getRegs(icode);
+				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -1205,13 +1231,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, VariableLength.WORD);
 					cGen.addInstruction("STR " + destReg + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg+ ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				}
 
@@ -1226,7 +1252,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getRegs(icode);
+				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -1243,13 +1269,13 @@ public class MyCodeGenerator {
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + destReg + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg+ ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				}
 
@@ -1264,7 +1290,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getRegs(icode);
+				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -1281,13 +1307,13 @@ public class MyCodeGenerator {
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + destReg + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg+ ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				}
 
@@ -1302,7 +1328,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getRegs(icode);
+				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -1319,13 +1345,13 @@ public class MyCodeGenerator {
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + destReg + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg+ ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				}
 
@@ -1340,7 +1366,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getRegs(icode);
+				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -1357,13 +1383,13 @@ public class MyCodeGenerator {
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + destReg + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg+ ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				}
 
@@ -1378,7 +1404,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getRegs(icode);
+				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -1395,13 +1421,13 @@ public class MyCodeGenerator {
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + destReg + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg+ ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				}
 
@@ -1416,7 +1442,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getRegs(icode);
+				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -1433,13 +1459,13 @@ public class MyCodeGenerator {
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + destReg + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg+ ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				}
 
@@ -1454,7 +1480,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getRegs(icode);
+				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -1471,13 +1497,13 @@ public class MyCodeGenerator {
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + destReg + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg+ ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				}
 
@@ -1492,7 +1518,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getRegs(icode);
+				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -1509,13 +1535,13 @@ public class MyCodeGenerator {
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + destReg + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg+ ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				}
 
@@ -1530,7 +1556,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getRegs(icode);
+				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -1547,13 +1573,13 @@ public class MyCodeGenerator {
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + destReg + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg+ ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				}
 
@@ -1568,7 +1594,7 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getRegs(icode);
+				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -1585,13 +1611,13 @@ public class MyCodeGenerator {
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + destReg + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg+ ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + destReg + ", [R13, #-" + off + ']');
 				}
 
@@ -1605,7 +1631,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -1613,8 +1640,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, pre, res);
 				String finalPlace = res.getRegister(assignICode.label);
 
 				cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
@@ -1625,13 +1652,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -1645,7 +1672,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -1653,8 +1681,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, pre, res);
 				String finalPlace = res.getRegister(assignICode.place);
 
 				cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
@@ -1665,13 +1693,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -1685,7 +1713,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -1693,8 +1722,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, pre, res);
 				String finalPlace = res.getRegister(assignICode.label);
 
 				cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
@@ -1705,13 +1734,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -1725,7 +1754,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -1733,8 +1763,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, pre, res);
 				String finalPlace = res.getRegister(assignICode.place);
 
 				cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
@@ -1745,13 +1775,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -1765,7 +1795,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -1773,8 +1804,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, pre, res);
 				String finalPlace = res.getRegister(assignICode.label);
 
 				cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
@@ -1785,13 +1816,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -1805,7 +1836,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -1813,8 +1845,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, pre, res);
 				String finalPlace = res.getRegister(assignICode.place);
 
 				cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
@@ -1825,13 +1857,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -1845,7 +1877,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -1853,8 +1886,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, pre, res);
 				String finalPlace = res.getRegister(assignICode.label);
 
 				cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
@@ -1865,13 +1898,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -1885,7 +1918,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -1893,8 +1927,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, pre, res);
 				String finalPlace = res.getRegister(assignICode.place);
 
 				cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
@@ -1905,13 +1939,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -1925,7 +1959,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult resRegs = rGen.getRegs(icode);
+				ArmRegisterResult resRegs = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult preRegs = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -1933,8 +1968,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, resRegs);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, resRegs);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, preRegs, resRegs);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, preRegs, resRegs);
 				String finalPlace = resRegs.getRegister(assignICode.label);
 
 				cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
@@ -1945,13 +1980,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -1965,7 +2000,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult resRegs = rGen.getRegs(icode);
+				ArmRegisterResult resRegs = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult preRegs = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp)assignICode.value;
@@ -1973,8 +2009,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, resRegs);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, resRegs);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, preRegs, resRegs);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, preRegs, resRegs);
 				String finalPlace = resRegs.getRegister(assignICode.place);
 
 				cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
@@ -1985,13 +2021,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -2005,7 +2041,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult resRegs = rGen.getRegs(icode);
+				ArmRegisterResult resRegs = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult preRegs = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -2013,8 +2050,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, resRegs);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, resRegs);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, preRegs, resRegs);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, preRegs, resRegs);
 				String finalPlace = resRegs.getRegister(assignICode.label);
 
 				cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
@@ -2025,13 +2062,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -2045,7 +2082,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult resRegs = rGen.getRegs(icode);
+				ArmRegisterResult resRegs = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult preRegs = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp)assignICode.value;
@@ -2053,8 +2091,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, resRegs);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, resRegs);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, preRegs, resRegs);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, preRegs, resRegs);
 				String finalPlace = resRegs.getRegister(assignICode.place);
 
 				cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
@@ -2065,13 +2103,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -2085,7 +2123,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -2093,8 +2132,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, pre, res);
 				String finalPlace = res.getRegister(assignICode.label);
 
 				cGen.addInstruction("TEQB " + leftReg + ", " + rightReg);
@@ -2105,13 +2144,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -2125,7 +2164,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -2133,8 +2173,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, pre, res);
 				String finalPlace = res.getRegister(assignICode.place);
 
 				cGen.addInstruction("TEQB " + leftReg + ", " + rightReg);
@@ -2145,13 +2185,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.place);
 				} else if (assignICode.getScope()  == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope()  == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -2165,7 +2205,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -2173,8 +2214,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, pre, res);
 				String finalPlace = res.getRegister(assignICode.label);
 
 				cGen.addInstruction("TEQB " + leftReg + ", " + rightReg);
@@ -2185,13 +2226,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -2205,7 +2246,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -2213,8 +2255,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, pre, res);
 				String finalPlace = res.getRegister(assignICode.place);
 
 				cGen.addInstruction("TEQB " + leftReg + ", " + rightReg);
@@ -2225,13 +2267,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(finalPlace);
+					int off = offset.findOffset(finalPlace, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -2245,7 +2287,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -2253,8 +2296,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, pre, res);
 				String finalPlace = res.getRegister(assignICode.label);
 
 				cGen.addInstruction("ANDB " + finalPlace + ", " + leftReg + ", " + rightReg);
@@ -2263,13 +2306,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 				
@@ -2283,7 +2326,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -2291,8 +2335,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, pre, res);
 				String finalPlace = res.getRegister(assignICode.place);
 
 				cGen.addInstruction("ANDB " + finalPlace + ", " + leftReg + ", " + rightReg);
@@ -2301,13 +2345,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 				
@@ -2321,7 +2365,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -2329,8 +2374,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, pre, res);
 				String finalPlace = res.getRegister(assignICode.label);
 
 				cGen.addInstruction("ORRB " + finalPlace + ", " + leftReg + ", " + rightReg);
@@ -2339,13 +2384,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -2359,7 +2404,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -2367,8 +2413,8 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 
-				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, res);
-				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, res);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.BOOL, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, pre, res);
 				String finalPlace = res.getRegister(assignICode.place);
 
 				cGen.addInstruction("ORRB " + finalPlace + ", " + leftReg + ", " + rightReg);
@@ -2376,13 +2422,13 @@ public class MyCodeGenerator {
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -2396,13 +2442,14 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def)icode;
 				UnExp assignExp = (UnExp)assignICode.val;
 
 				IdentExp rightIdent = (IdentExp) assignExp.right;
-				String reg = loadVariableToReg(rightIdent, ICode.Type.BOOL, res);
+				String reg = loadVariableToReg(rightIdent, ICode.Type.BOOL, pre, res);
 				String finalPlace = res.getRegister(assignICode.label);
 
 				cGen.addInstruction("TEQ " + reg + ", #0");
@@ -2413,13 +2460,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -2433,13 +2480,14 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def)icode;
 				UnExp assignExp = (UnExp)assignICode.val;
 
 				IdentExp rightIdent = (IdentExp) assignExp.right;
-				String reg = loadVariableToReg(rightIdent, ICode.Type.BOOL, res);
+				String reg = loadVariableToReg(rightIdent, ICode.Type.BOOL, pre, res);
 				String finalPlace = res.getRegister(assignICode.label);
 
 				cGen.addInstruction("TEQ " + reg + ", #0");
@@ -2450,13 +2498,13 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STRB " + finalPlace + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -2471,13 +2519,14 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def)icode;
 				UnExp assignExp = (UnExp)assignICode.val;
 
 				IdentExp rightIdent = (IdentExp) assignExp.right;
-				String reg = loadVariableToReg(rightIdent, ICode.Type.INT, res);
+				String reg = loadVariableToReg(rightIdent, ICode.Type.INT, pre, res);
 				
 				String finalPlace = res.getRegister(assignICode.label);
 
@@ -2486,13 +2535,13 @@ public class MyCodeGenerator {
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + finalPlace + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -2507,13 +2556,14 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				UnExp assignExp = (UnExp)assignICode.value;
 
 				IdentExp rightIdent = (IdentExp) assignExp.right;
-				String reg = loadVariableToReg(rightIdent, ICode.Type.INT, res);
+				String reg = loadVariableToReg(rightIdent, ICode.Type.INT, pre, res);
 				
 				String finalPlace = res.getRegister(assignICode.place);
 
@@ -2522,13 +2572,13 @@ public class MyCodeGenerator {
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + finalPlace + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + finalPlace + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + finalPlace + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + finalPlace + ", [R13, #-" + off + ']');
 				}
 
@@ -2542,7 +2592,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
 				
 				Def assignICode = (Def)icode;
 				BoolExp assignExp = (BoolExp) assignICode.val;
@@ -2551,19 +2601,19 @@ public class MyCodeGenerator {
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addVariable(assignICode.label, VariableLength.BYTE, assignExp.trueFalse ? 1 : 0);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					String reg = res.getRegister(assignICode.label);
 					
 					cGen.addInstruction("MOV " + reg + ", #" + (assignExp.trueFalse ? 1 : 0));
 					cGen.addInstruction("STRB " + reg + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					String reg = res.getRegister(assignICode.label);
 					
 					cGen.addInstruction("MOV " + reg + ", #" + (assignExp.trueFalse ? 1 : 0));
 					cGen.addInstruction("STRB " + reg + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					String reg = res.getRegister(assignICode.label);
 					
 					cGen.addInstruction("MOV " + reg + ", #" + (assignExp.trueFalse ? 1 : 0));
@@ -2580,7 +2630,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BoolExp assignExp = (BoolExp) assignICode.value;
@@ -2591,19 +2641,19 @@ public class MyCodeGenerator {
 					cGen.addInstruction("MOV " + reg + ", #" + (assignExp.trueFalse ? 1 : 0));
 					cGen.addInstruction("STRB " + reg + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					String reg = res.getRegister(assignICode.place);
 					
 					cGen.addInstruction("MOV " + reg + ", #" + (assignExp.trueFalse ? 1 : 0));
 					cGen.addInstruction("STRB " + reg + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					String reg = res.getRegister(assignICode.place);
 					
 					cGen.addInstruction("MOV " + reg + ", #" + (assignExp.trueFalse ? 1 : 0));
 					cGen.addInstruction("STRB " + reg + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					String reg = res.getRegister(assignICode.place);
 					
 					cGen.addInstruction("MOV " + reg + ", #" + (assignExp.trueFalse ? 1 : 0));
@@ -2620,7 +2670,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
 				
 				Def assignICode = (Def)icode;
 				IntExp assignExp = (IntExp) assignICode.val;
@@ -2637,7 +2687,7 @@ public class MyCodeGenerator {
 						cGen.addInstruction("MOV " + tempValue  + ", #" + assignExp.value);
 					}
 					
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {				
 					String tempValue = res.getRegister(assignICode.label);
@@ -2649,7 +2699,7 @@ public class MyCodeGenerator {
 						cGen.addInstruction("MOV " + tempValue  + ", #" + assignExp.value);
 					}
 					
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
 				} else {
 					String tempValue = res.getRegister(assignICode.label);
@@ -2661,7 +2711,7 @@ public class MyCodeGenerator {
 						cGen.addInstruction("MOV " + tempValue  + ", #" + assignExp.value);
 					}
 					
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
 				}
 				
@@ -2675,7 +2725,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				IntExp assignExp = (IntExp) assignICode.value;
@@ -2700,7 +2750,7 @@ public class MyCodeGenerator {
 						cGen.addInstruction("MOV " + tempValue  + ", #" + assignExp.value);
 					}
 					
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
 					String tempValue = res.getRegister(assignICode.place);
@@ -2712,7 +2762,7 @@ public class MyCodeGenerator {
 						cGen.addInstruction("MOV " + tempValue  + ", #" + assignExp.value);
 					}
 					
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
 				} else {
 					String tempValue = res.getRegister(assignICode.place);
@@ -2724,7 +2774,7 @@ public class MyCodeGenerator {
 						cGen.addInstruction("MOV " + tempValue  + ", #" + assignExp.value);
 					}
 					
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
 				}
 				
@@ -2738,7 +2788,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
 				
 				Def assignICode = (Def)icode;
 				RealExp assignExp = (RealExp)assignICode.val;
@@ -2751,7 +2801,7 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, assignExp.realValue);
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label);
 					
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {				
 					String tempValue = res.getRegister(assignICode.label);
@@ -2759,7 +2809,7 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, assignExp.realValue);
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label);
 					
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
 				} else {
 					String tempValue = res.getRegister(assignICode.label);
@@ -2767,7 +2817,7 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, assignExp.realValue);
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label);
 					
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
 				}
 				
@@ -2781,7 +2831,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				RealExp assignExp = (RealExp) assignICode.value;
@@ -2798,7 +2848,7 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, assignExp.realValue);
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place);
 					
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
 					String tempValue = res.getRegister(assignICode.place);
@@ -2806,7 +2856,7 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, assignExp.realValue);
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place);
 					
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
 				} else {
 					String tempValue = res.getRegister(assignICode.place);
@@ -2814,7 +2864,7 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, assignExp.realValue);
 					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place);
 					
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
 				}
 				
@@ -2828,7 +2878,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
 				
 				Def assignICode = (Def)icode;
 				StrExp assignExp = (StrExp)assignICode.val;
@@ -2872,7 +2922,7 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD, assignICode.label + "_value");
 					
 					String reg = res.getRegister(assignICode.label);
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					
 					cGen.addInstruction("LDR " + reg + ", " + assignICode.label);
 					cGen.addInstruction("STR " + reg + ", [R13, #-" + off + ']');
@@ -2897,7 +2947,7 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD, assignICode.label + "_value");
 					
 					String reg = res.getRegister(assignICode.label);
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					
 					cGen.addInstruction("LDR " + reg + ", " + assignICode.label);
 					cGen.addInstruction("STR " + reg + ", [R13, #-" + off + ']');
@@ -2922,7 +2972,7 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.label, VariableLength.WORD, assignICode.label + "_value");
 					
 					String reg = res.getRegister(assignICode.label);
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					
 					cGen.addInstruction("LDR " + reg + ", " + assignICode.label);
 					cGen.addInstruction("STR " + reg + ", [R13, #-" + off + ']');
@@ -2938,7 +2988,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				StrExp assignExp = (StrExp)assignICode.value;
@@ -2980,7 +3030,7 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, VariableLength.WORD, assignICode.place + "_value");
 					
 					String reg = res.getRegister(assignICode.place);
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					
 					cGen.addInstruction("LDR " + reg + ", " + assignICode.place);
 					cGen.addInstruction("STR " + reg + ", [R13, #-" + off + ']');
@@ -3005,7 +3055,7 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, VariableLength.WORD, assignICode.place + "_value");
 					
 					String reg = res.getRegister(assignICode.place);
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					
 					cGen.addInstruction("LDR " + reg + ", " + assignICode.place);
 					cGen.addInstruction("STR " + reg + ", [R13, #-" + off + ']');
@@ -3030,7 +3080,7 @@ public class MyCodeGenerator {
 					cGen.addVariable(assignICode.place, VariableLength.WORD, assignICode.place + "_value");
 					
 					String reg = res.getRegister(assignICode.place);
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					
 					cGen.addInstruction("LDR " + reg + ", " + assignICode.place);
 					cGen.addInstruction("STR " + reg + ", [R13, #-" + off + ']');
@@ -3046,24 +3096,25 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				IdentExp exp = (IdentExp) assignICode.val;
 
-				String tempReg = loadVariableToReg(exp, ICode.Type.BOOL, res);
+				String tempReg = loadVariableToReg(exp, ICode.Type.BOOL, pre, res);
 				
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addVariable(assignICode.label, VariableLength.BYTE);
 					cGen.addInstruction("STRB " + tempReg + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + tempReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {				
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + tempReg + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STRB " + tempReg + ", [R13, #-" + off + ']');
 				}
 
@@ -3077,24 +3128,25 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				IdentExp exp = (IdentExp) assignICode.val;
 
-				String tempReg = loadVariableToReg(exp, ICode.Type.REAL, res);
+				String tempReg = loadVariableToReg(exp, ICode.Type.REAL, pre, res);
 				
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STR " + tempReg + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {				
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				}
 
@@ -3108,24 +3160,25 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				IdentExp exp = (IdentExp) assignICode.val;
 
-				String tempReg = loadVariableToReg(exp, ICode.Type.INT, res);
+				String tempReg = loadVariableToReg(exp, ICode.Type.INT, pre, res);
 				
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STR " + tempReg + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {				
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				}
 
@@ -3139,24 +3192,25 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				IdentExp exp = (IdentExp) assignICode.val;
 
-				String tempReg = loadVariableToReg(exp, ICode.Type.STRING, res);
+				String tempReg = loadVariableToReg(exp, ICode.Type.STRING, pre, res);
 				
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
 					cGen.addInstruction("STR " + tempReg + ", " + assignICode.label);
 				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.scope == ICode.Scope.RETURN) {				
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label);
+					int off = offset.findOffset(assignICode.label, assignICode.type);
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				}
 
@@ -3170,23 +3224,24 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				IdentExp exp = (IdentExp)assignICode.value;
 
-				String tempReg = loadVariableToReg(exp, ICode.Type.BOOL, res);
+				String tempReg = loadVariableToReg(exp, ICode.Type.BOOL, pre, res);
 				
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STRB " + tempReg + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STRB " + tempReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STRB " + tempReg + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STRB " + tempReg + ", [R13, #-" + off + ']');
 				}
 
@@ -3200,24 +3255,25 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				IdentExp exp = (IdentExp)assignICode.value;
 
-				String tempReg = loadVariableToReg(exp, ICode.Type.REAL, res);
+				String tempReg = loadVariableToReg(exp, ICode.Type.REAL, pre, res);
 				
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
 					cGen.addVariable(assignICode.place, VariableLength.WORD);
 					cGen.addInstruction("STR " + tempReg + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				}
 
@@ -3231,23 +3287,24 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				IdentExp exp = (IdentExp) assignICode.value;
 
-				String tempReg = loadVariableToReg(exp, ICode.Type.INT, res);
+				String tempReg = loadVariableToReg(exp, ICode.Type.INT, pre, res);
 				
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
 					cGen.addInstruction("STR " + tempReg + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				}
 
@@ -3261,24 +3318,25 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				IdentExp exp = (IdentExp) assignICode.value;
 
-				String tempReg = loadVariableToReg(exp, ICode.Type.STRING, res);
+				String tempReg = loadVariableToReg(exp, ICode.Type.STRING, pre, res);
 				
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
 					cGen.addVariable(assignICode.place, VariableLength.WORD);
 					cGen.addInstruction("STR " + tempReg + ", " + assignICode.place);
 				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				} else if (assignICode.getScope() == ICode.Scope.RETURN) {				
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.place);
+					int off = offset.findOffset(assignICode.place, assignICode.getType());
 					cGen.addInstruction("STR " + tempReg + ", [R13, #-" + off + ']');
 				}
 
@@ -3292,7 +3350,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
@@ -3300,8 +3359,8 @@ public class MyCodeGenerator {
 				IdentExp left = (IdentExp) exp.left;
 				IdentExp right = (IdentExp) exp.right;
 
-				String leftReg = loadVariableToReg(left, ICode.Type.INT, res);
-				String rightReg = loadVariableToReg(right, ICode.Type.INT, res);
+				String leftReg = loadVariableToReg(left, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(right, ICode.Type.INT, pre, res);
 
 				cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
 				cGen.addInstruction("BLT " + ifStatement.ifTrue);
@@ -3317,7 +3376,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
@@ -3325,8 +3385,8 @@ public class MyCodeGenerator {
 				IdentExp left = (IdentExp) exp.left;
 				IdentExp right = (IdentExp) exp.right;
 
-				String leftReg = loadVariableToReg(left, ICode.Type.INT, res);
-				String rightReg = loadVariableToReg(right, ICode.Type.INT, res);
+				String leftReg = loadVariableToReg(left, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(right, ICode.Type.INT, pre, res);
 
 				cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
 				cGen.addInstruction("BGT " + ifStatement.ifTrue);
@@ -3342,7 +3402,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
@@ -3350,8 +3411,8 @@ public class MyCodeGenerator {
 				IdentExp left = (IdentExp) exp.left;
 				IdentExp right = (IdentExp) exp.right;
 
-				String leftReg = loadVariableToReg(left, ICode.Type.INT, res);
-				String rightReg = loadVariableToReg(right, ICode.Type.INT, res);
+				String leftReg = loadVariableToReg(left, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(right, ICode.Type.INT, pre, res);
 
 				cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
 				cGen.addInstruction("BLE " + ifStatement.ifTrue);
@@ -3367,7 +3428,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
@@ -3375,8 +3437,8 @@ public class MyCodeGenerator {
 				IdentExp left = (IdentExp) exp.left;
 				IdentExp right = (IdentExp) exp.right;
 
-				String leftReg = loadVariableToReg(left, ICode.Type.INT, res);
-				String rightReg = loadVariableToReg(right, ICode.Type.INT, res);
+				String leftReg = loadVariableToReg(left, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(right, ICode.Type.INT, pre, res);
 
 				cGen.addInstruction("CMP " + leftReg + ", " + rightReg);
 				cGen.addInstruction("BGE " + ifStatement.ifTrue);
@@ -3392,7 +3454,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
@@ -3400,8 +3463,8 @@ public class MyCodeGenerator {
 				IdentExp left = (IdentExp) exp.left;
 				IdentExp right = (IdentExp) exp.right;
 
-				String leftReg = loadVariableToReg(left, ICode.Type.INT, res);
-				String rightReg = loadVariableToReg(right, ICode.Type.INT, res);
+				String leftReg = loadVariableToReg(left, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(right, ICode.Type.INT, pre, res);
 
 				cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
 				cGen.addInstruction("BEQ " + ifStatement.ifTrue);
@@ -3417,7 +3480,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
@@ -3425,8 +3489,8 @@ public class MyCodeGenerator {
 				IdentExp left = (IdentExp) exp.left;
 				IdentExp right = (IdentExp) exp.right;
 
-				String leftReg = loadVariableToReg(left, ICode.Type.INT, res);
-				String rightReg = loadVariableToReg(right, ICode.Type.INT, res);
+				String leftReg = loadVariableToReg(left, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(right, ICode.Type.INT, pre, res);
 				
 				cGen.addInstruction("TEQ " + leftReg + ", " + rightReg);
 				cGen.addInstruction("BNE " + ifStatement.ifTrue);
@@ -3442,7 +3506,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
@@ -3450,8 +3515,8 @@ public class MyCodeGenerator {
 				IdentExp left = (IdentExp) exp.left;
 				IdentExp right = (IdentExp) exp.right;
 
-				String leftReg = loadVariableToReg(left, ICode.Type.BOOL, res);
-				String rightReg = loadVariableToReg(right, ICode.Type.BOOL, res);
+				String leftReg = loadVariableToReg(left, ICode.Type.BOOL, pre, res);
+				String rightReg = loadVariableToReg(right, ICode.Type.BOOL, pre, res);
 
 				cGen.addInstruction("TEQB " + leftReg + ", " + rightReg);
 				cGen.addInstruction("BEQ " + ifStatement.ifTrue);
@@ -3467,7 +3532,8 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				If ifStatement = (If) icode;
 				BinExp exp = ifStatement.exp;
@@ -3475,8 +3541,8 @@ public class MyCodeGenerator {
 				IdentExp left = (IdentExp) exp.left;
 				IdentExp right = (IdentExp) exp.right;
 
-				String leftReg = loadVariableToReg(left, ICode.Type.BOOL, res);
-				String rightReg = loadVariableToReg(right, ICode.Type.BOOL, res);
+				String leftReg = loadVariableToReg(left, ICode.Type.BOOL, pre, res);
+				String rightReg = loadVariableToReg(right, ICode.Type.BOOL, pre, res);
 				
 				cGen.addInstruction("TEQB " + leftReg + ", " + rightReg);
 				cGen.addInstruction("BNE " + ifStatement.ifTrue);
@@ -3517,6 +3583,22 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				ProcLabel labelICode = (ProcLabel) icode;
+				
+				offset.pushFrame();
+				
+				offset.pushAddress("returnAddr", ICode.Type.INT);
+				
+				if(intermediateCode.containsEntry(labelICode.label, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME)){
+					VarSymEntry entry = intermediateCode.getVariableData(labelICode.label, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME);
+					offset.pushAddress(entry.icodePlace, entry.codeType); 
+				}
+				
+				int paramNum = 0;
+				while(intermediateCode.containsEntry(labelICode.label, paramNum, SymEntry.INTERNAL | SymEntry.PARAM)){
+					VarSymEntry entry = intermediateCode.getVariableData(labelICode.label, paramNum, SymEntry.INTERNAL | SymEntry.PARAM);
+					offset.pushAddress(entry.icodePlace, entry.codeType);
+					paramNum++;
+				}
 				
 				int toAllocate = 0;
 				offset.pushFrame();
@@ -3742,27 +3824,29 @@ public class MyCodeGenerator {
 				
 				int totalLength = procICode.params.size();
 				
-				ArmRegisterResult res1 = rGen.getRegs(procICode);
+				ArmRegisterResult res1 = rGen.getFilteredOutputSet(procICode);
+				ArmRegisterResult pre1 = rGen.getFilteredInputSet(procICode);
+				
 				int totalStackFrameLength = getStackFrameLength(procICode);
 				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
-				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr") + "]");
+				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
 				for (int x = 0; x < totalLength; x++) {
 					Def sourceDest = procICode.params.get(x);
 
-					String oldReg = genExpression(sourceDest.val, sourceDest.type, res1);
+					String oldReg = genExpression(sourceDest.val, sourceDest.type, pre1, res1);
 					if (sourceDest.type == ICode.Type.BOOL) {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, sourceDest.type);
 						cGen.addInstruction("STRB " + oldReg + ", [R13, #-" + offset1 + "]");
 					} else {
-						int offset1 = offset.findOffset(sourceDest.label);
+						int offset1 = offset.findOffset(sourceDest.label, sourceDest.type);
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				int off = offset.findOffset("returnAddr");
+				int off = offset.findOffset("returnAddr", ICode.Type.INT);
 				cGen.addInstruction("LDR R14, [R13, #-"+ off +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
@@ -3782,7 +3866,7 @@ public class MyCodeGenerator {
 			@Override
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getRegs(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
 				
 				Inline inline = (Inline) icode;
 

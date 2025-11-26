@@ -16,10 +16,6 @@ public class ArmAddressElements implements Iterable<ArmAddressElement> {
 		return this.elems.contains(elem);
 	}
 	
-	public boolean containsElem(String str) {
-		return this.elems.contains(new ArmAddressElement(str));
-	}
-	
 	public boolean containsAllElem(Collection<ArmAddressElement> col){
 		return this.elems.containsAll(col);
 	}

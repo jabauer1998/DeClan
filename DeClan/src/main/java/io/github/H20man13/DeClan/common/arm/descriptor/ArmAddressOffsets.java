@@ -27,7 +27,7 @@ public class ArmAddressOffsets{
 	}
 	
 	public void pushAddress(String elem, ICode.Type type) {
-		ArmAddressElement myElem = new ArmAddressElement(elem);
+		ArmAddressElement myElem = new ArmAddressElement(elem, type);
 		pushAddress(myElem, type);
 	}
 	
@@ -48,8 +48,8 @@ public class ArmAddressOffsets{
 		}
 	}
 	
-	public int findOffset(String elem) {
-		ArmAddressElement element = new ArmAddressElement(elem);
+	public int findOffset(String elem, ICode.Type type) {
+		ArmAddressElement element = new ArmAddressElement(elem, type);
 		return findOffset(element);
 	}
 	
@@ -63,8 +63,8 @@ public class ArmAddressOffsets{
 		throw new OffsetNotFound("Offset for " + elem + " not found in stack");
 	}
 	
-	public boolean containsOffset(String strelem) {
-		ArmAddressElement elem = new ArmAddressElement(strelem);
+	public boolean containsOffset(String strelem, ICode.Type type) {
+		ArmAddressElement elem = new ArmAddressElement(strelem, type);
 		return containsOffset(elem);
 	}
 	

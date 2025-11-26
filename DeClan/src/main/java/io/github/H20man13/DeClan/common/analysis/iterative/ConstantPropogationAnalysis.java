@@ -22,7 +22,7 @@ import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class ConstantPropogationAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<String, NullableExp>>>, HashSet<Tuple<String, NullableExp>>, Tuple<String, NullableExp>> 
-implements CustomMeet<HashSet<Tuple<String, NullableExp>>, Tuple<String, NullableExp>>{
+implements CustomMeet<HashSet<Tuple<String, NullableExp>>>{
 
     private Map<ICode, HashSet<Tuple<String, NullableExp>>> constDefinitions;
     private Map<ICode, HashSet<Tuple<String, NullableExp>>> killDefinitions;

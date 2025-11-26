@@ -4,21 +4,21 @@ public class Pattern {
     //The Next pattern we will initialize is a Function call followed by a return Placement
     //There will be a pattern for just standard function Calls without a return as well
     public static P callWithReturn0 = P.PAT(P.PAT(P.CALL(), P.ID()),
-                                            P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.BOOL()));
+                                            P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.PAT(P.RETURN(), P.ID())), P.BOOL()));
     public static P callWithReturn1 = P.PAT(P.PAT(P.CALL(), P.ID()),
-            								P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.BOOL()));
+            								P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.PAT(P.RETURN(), P.ID())), P.BOOL()));
     public static P callWithReturn2 = P.PAT(P.PAT(P.CALL(), P.ID()),
-            								P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.INT()));
+            								P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.PAT(P.RETURN(), P.ID())), P.INT()));
     public static P callWithReturn3 = P.PAT(P.PAT(P.CALL(), P.ID()),
-											P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.INT()));
+											P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.PAT(P.RETURN(), P.ID())), P.INT()));
     public static P callWithReturn4 = P.PAT(P.PAT(P.CALL(), P.ID()),
-            								P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.REAL()));
+            								P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.PAT(P.RETURN(), P.ID())), P.REAL()));
     public static P callWithReturn5 = P.PAT(P.PAT(P.CALL(), P.ID()),
-											P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.REAL()));
+											P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.PAT(P.RETURN(), P.ID())), P.REAL()));
     public static P callWithReturn6 = P.PAT(P.PAT(P.CALL(), P.ID()),
-									  P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.STR()));
+									  P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.PAT(P.RETURN(), P.ID())), P.STR()));
     public static P callWithReturn7 = P.PAT(P.PAT(P.CALL(), P.ID()),
-											P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.RETURN(), P.ID()), P.STR()));
+											P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.PAT(P.RETURN(), P.ID())), P.STR()));
     
 
     //Addition Patterns

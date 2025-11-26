@@ -103,7 +103,7 @@ public class MyOptimizer {
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> earliestSets;
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> latestSets;
     private Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets;
-    private Set<Tuple<Exp, ICode.Type>> globalExpressionSet;
+    private HashSet<Tuple<Exp, ICode.Type>> globalExpressionSet;
     private IrRegisterGenerator iGen;
     private DepthFirstSpanningTree dfst;
     private List<BlockNode> origBlocks;
@@ -383,7 +383,7 @@ public class MyOptimizer {
         return nodes;
     }
 
-    private void buildFlowGraph() {
+    public void buildFlowGraph() {
         List<BlockNode> nodeList = buildBlockNodes();
         
         /*
@@ -425,6 +425,10 @@ public class MyOptimizer {
         	}
         		
         this.globalFlowGraph = flowGraph;
+    }
+    
+    public FlowGraph getFlowGraph() {
+    	return this.globalFlowGraph;
     }
     
     private static BlockNode findEndingBlock(List<BlockNode> blocks) {
@@ -1091,6 +1095,7 @@ public class MyOptimizer {
     		buildFlowGraph();
     	if(this.globalExpressionSet == null)
     		buildGlobalExpressionsSemilattice();
+    	
     	this.anticipatedAnal = new AnticipatedExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet, this.cfg);
     	this.anticipatedAnal.run();
     	

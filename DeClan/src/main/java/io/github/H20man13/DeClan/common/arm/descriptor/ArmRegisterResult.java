@@ -6,21 +6,29 @@ import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 
 public class ArmRegisterResult {
-	private HashSet<Tuple<IdentExp, ArmRegisterElement>> tupSet;
+	private HashSet<Tuple<String, String>> tupSet;
 	
 	public ArmRegisterResult() {
-		this.tupSet = new HashSet<Tuple<IdentExp, ArmRegisterElement>>();
+		this.tupSet = new HashSet<Tuple<String, String>>();
 	}
 	
-	public void addResult(IdentExp ident, String reg) {
-		this.tupSet.add(new Tuple<>(ident, new ArmRegisterElement(reg)));
+	public void addResult(String ident, String reg) {
+		this.tupSet.add(new Tuple<>(ident, reg));
 	}
 	
 	public String getRegister(String addrName) {
-		for(Tuple<IdentExp, ArmRegisterElement> tup : tupSet) {
-			if(tup.source.ident.equals(addrName))
+		for(Tuple<String, String> tup : tupSet) {
+			if(tup.source.equals(addrName))
 				return tup.dest.toString();
 		}
 		return null;
+	}
+	
+	public boolean containsRegister(String addrName) {
+		for(Tuple<String, String> tup: tupSet) {
+			if(tup.source.equals(addrName))
+				return true;
+		}
+		return false;
 	}
 }

@@ -514,4 +514,12 @@ public class Utils {
 	}
 	throw new UtilityException("posOf", "Cant find " + count + " of " + c + " in " + "\"" + str + "\"");
   }
+
+  public static <SetType extends Set<?>> SetType createNewSet(Class<SetType> setClass) {
+	try {
+		return setClass.newInstance();
+	} catch(Exception exp) {
+		throw new RuntimeException(exp);
+	}
+  }
 }

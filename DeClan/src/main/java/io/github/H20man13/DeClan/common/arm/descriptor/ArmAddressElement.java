@@ -1,10 +1,15 @@
 package io.github.H20man13.DeClan.common.arm.descriptor;
 
+import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.icode.ICode;
+
 public class ArmAddressElement implements ArmElement {
 	private String label;
+	private ICode.Type type;
 	
-	public ArmAddressElement(String label) {
+	public ArmAddressElement(String label, ICode.Type type) {
 		this.label = label;
+		this.type = type;
 	}
 	
 	@Override
@@ -22,5 +27,14 @@ public class ArmAddressElement implements ArmElement {
 	
 	public String toString(){
 		return label;
+	}
+
+	@Override
+	public ArmElement copy() {
+		return new ArmAddressElement(label, type);
+	}
+
+	public Tuple<String, ICode.Type> toTuple() {
+		return new Tuple<String, ICode.Type>(label, type);
 	}
 }

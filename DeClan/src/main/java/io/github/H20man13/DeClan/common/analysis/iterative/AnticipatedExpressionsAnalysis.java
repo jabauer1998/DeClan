@@ -31,7 +31,7 @@ Tuple<Exp, ICode.Type>>{
     private HashMap<ICode, HashSet<Tuple<Exp, ICode.Type>>> genSets;
     private HashMap<ICode, Set<String>> killSets;
 
-    public AnticipatedExpressionsAnalysis(FlowGraph flowGraph, Set<Tuple<Exp, ICode.Type>> globalFlowSet, Config cfg) {
+    public AnticipatedExpressionsAnalysis(FlowGraph flowGraph, HashSet<Tuple<Exp, ICode.Type>> globalFlowSet, Config cfg) {
         super(flowGraph, Direction.BACKWARDS, Meet.INTERSECTION, globalFlowSet, true, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
         genSets = newMap();
         killSets =  new HashMap<ICode, Set<String>>();

@@ -1,0 +1,779 @@
+package io.github.H20man13.DeClan.common.analysis.iterative;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
+import io.github.H20man13.DeClan.common.Config;
+import io.github.H20man13.DeClan.common.CustomMeet;
+import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.analysis.AnalysisBase;
+import io.github.H20man13.DeClan.common.analysis.AnalysisBase.Direction;
+import io.github.H20man13.DeClan.common.arm.descriptor.ArmAddressDescriptor;
+import io.github.H20man13.DeClan.common.arm.descriptor.ArmDescriptorState;
+import io.github.H20man13.DeClan.common.arm.descriptor.ArmRegisterDescriptor;
+import io.github.H20man13.DeClan.common.arm.descriptor.ArmRegisterElement;
+import io.github.H20man13.DeClan.common.arm.descriptor.ArmRegisterResult;
+import io.github.H20man13.DeClan.common.flow.BlockNode;
+import io.github.H20man13.DeClan.common.flow.FlowGraph;
+import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
+import io.github.H20man13.DeClan.common.icode.Assign;
+import io.github.H20man13.DeClan.common.icode.Call;
+import io.github.H20man13.DeClan.common.icode.Def;
+import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.If;
+import io.github.H20man13.DeClan.common.icode.Lib;
+import io.github.H20man13.DeClan.common.icode.Spill;
+import io.github.H20man13.DeClan.common.icode.exp.BinExp;
+import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.UnExp;
+import io.github.H20man13.DeClan.common.icode.inline.Inline;
+import io.github.H20man13.DeClan.common.interfere.InterferenceGraph;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
+import io.github.H20man13.DeClan.common.util.Utils;
+import io.github.H20man13.DeClan.main.MyOptimizer;
+
+public class RegisterAllocatorAnalysis extends IterativeAnalysis<ICode, HashMap<ICode, ArmDescriptorState>, ArmDescriptorState> implements 
+CustomMeet<ArmDescriptorState> {
+	private InterferenceGraph graph;
+	private LiveVariableAnalysis anal;
+	private SpillCostAnalysis spillAnal;
+	
+	public RegisterAllocatorAnalysis(MyOptimizer optimizer, Config cfg){
+		super(genFlowGraph(optimizer), Direction.FORWARDS, new ArmDescriptorState(), false, cfg, Utils.getClassType(HashMap.class));
+		this.graph = new InterferenceGraph(optimizer.getICode(), optimizer.getLiveVariableAnalysis());
+		this.anal = optimizer.getLiveVariableAnalysis();
+		this.spillAnal = new SpillCostAnalysis(optimizer.getICode(), optimizer.getFlowGraph(), cfg);
+		this.spillAnal.run();
+	}
+	
+	private static FlowGraph genFlowGraph(MyOptimizer opt) {
+		opt.buildFlowGraph();
+		return opt.getFlowGraph();
+	}
+	
+	private static boolean canidateHasAllValuesInOtherPlaces(String reg, ArmDescriptorState state){
+		Set<Tuple<String, ICode.Type>> addrs = state.getCandidateAddresses(reg);
+		for(Tuple<String, ICode.Type> addr: addrs) {
+			if(!state.isContainedInMoreThenOnePlace(addr.source, addr.dest))
+				return false;
+		}
+		return true;
+	}
+	
+	private static boolean canidateIsResultAndOnlyOperand(String reg, String defOp, ICode.Type type1, String otherOp, ICode.Type type2, ArmDescriptorState state) {
+		Set<Tuple<String, ICode.Type>> addressesInR = state.getCandidateAddresses(reg);
+		for(Tuple<String, ICode.Type> addr: addressesInR){
+			if(!(addr.equals(new Tuple<String, ICode.Type>(defOp, type1)) && !addr.equals(new Tuple<String, ICode.Type>(otherOp, type2))));
+				return false;
+		}
+		return true;
+	}
+	
+	private static boolean canidateIsResultAndSingleOperand(String reg, String defOp, ICode.Type type, String  otherOp1, ICode.Type op1Type, String  otherOp2, ICode.Type op2Type, ArmDescriptorState state) {
+		Set<Tuple<String, ICode.Type>> addressesInR = state.getCandidateAddresses(reg);
+		for(Tuple<String, ICode.Type> addr: addressesInR) {
+			if(!addr.equals(defOp) && !(addr.equals(otherOp1) || addr.equals(otherOp2)))
+				return false; //TODO -- NEED TO FIX
+		}
+		return true;
+	}
+	
+	private boolean candidateIsAllDead(String reg, ICode instr, ArmDescriptorState state) {
+		Set<Tuple<String, ICode.Type>> addressesInR = state.getCandidateAddresses(reg);
+		for(Tuple<String, ICode.Type> addr: addressesInR){
+			if(anal.getOutputSet(instr).contains(addr.source))
+				return false;
+		}
+		return true;
+	}
+	
+	private void loadUseReg(String place, ICode.Type type, ICode icode, String defPlace, ICode.Type typeDef, String otherPlace, ICode.Type otherType, ArmDescriptorState state) {
+		if(state.containsPlaceInReg(place, type)){
+			//Do nothing
+		} else if(state.containsEmptyReg()) {
+			String reg = state.pickEmptyReg();
+			state.addRegValuePair(place, type, reg);
+		} else {
+			boolean regOk = false;
+			for(String reg: state.getCanditateRegs()){
+				if(canidateHasAllValuesInOtherPlaces(reg, state)){
+					Set<Tuple<String, ICode.Type>> str = state.getCandidateAddresses(reg);
+					state.clearRegisterAddresses(reg);
+					for(Tuple<String, ICode.Type> addr: str){
+						state.removeRegFromAddress(reg, addr.source, addr.dest);
+					}
+					state.addRegValuePair(place, type, reg);
+					regOk = true;
+					break;
+				} else if(canidateIsResultAndOnlyOperand(reg, defPlace, typeDef, otherPlace, otherType, state)) {
+					Set<Tuple<String, ICode.Type>> str = state.getCandidateAddresses(reg);
+					state.clearRegisterAddresses(reg);
+					for(Tuple<String, ICode.Type> addr: str){
+						state.removeRegFromAddress(reg, addr.source, addr.dest);
+					}
+					state.addRegValuePair(place, type, reg);
+					regOk = true;
+					break;
+				} else if(candidateIsAllDead(reg, icode, state)) {
+					Set<Tuple<String, ICode.Type>> str = state.getCandidateAddresses(reg);
+					state.clearRegisterAddresses(reg);
+					for(Tuple<String, ICode.Type> addr: str){
+						state.removeRegFromAddress(reg, addr.source, addr.dest);
+					}
+					state.addRegValuePair(place, type, reg);
+					regOk = true;
+					break;
+				}
+			}
+			
+			if(regOk == false){
+				Map<String, Integer> savedCosts = new HashMap<String, Integer>();
+				Set<Tuple<String,Integer>> actualCosts = this.spillAnal.getOutputSet(icode);
+				for(String reg: state.getCanditateRegs()) {
+					Set<Tuple<String, ICode.Type>> addrs = state.getCandidateAddresses(reg);
+					int totalCost = 0;
+					for(Tuple<String, ICode.Type> addr: addrs) {
+						for(Tuple<String, Integer> actualCost : actualCosts) {
+							if(actualCost.source.equals(addr)) {
+								totalCost = (totalCost + actualCost.dest) / 2;
+								break;
+							}
+						}
+					}
+					savedCosts.put(reg, totalCost);
+				}
+				
+				Tuple<String, Integer> savedCost = null;
+				for(String reg: savedCosts.keySet()){
+					Integer cost = savedCosts.get(reg);
+					if(savedCost == null || cost > savedCost.dest)
+						savedCost = new Tuple<String, Integer>(reg, cost);
+						
+				}
+				
+				if(savedCost != null) {
+					for(Tuple<String, ICode.Type> addr: state.getCandidateAddresses(savedCost.source)) {
+						state.addSpill(addr.source, addr.dest);
+					}
+				}
+			}
+		}
+	}
+	
+	private void loadNewReg(String place, ICode.Type type, ICode icode, String operand1, ICode.Type op1Type, String operand2Opt,  ICode.Type op2Type, ArmDescriptorState state) {
+		if(state.containsOnlyPlaceInAReg(place, type)){
+			//Do nothing
+		} else if(state.containsEmptyReg()) {
+			String reg = state.pickEmptyReg();
+			state.addRegValuePair(place, type, reg);
+		} else {
+			boolean regOk = false;
+			for(String reg: state.getCanditateRegs()){
+				if(canidateHasAllValuesInOtherPlaces(reg, state)){
+					Set<Tuple<String, ICode.Type>> str = state.getCandidateAddresses(reg);
+					state.clearRegisterAddresses(reg);
+					for(Tuple<String, ICode.Type> addr: str){
+						state.removeRegFromAddress(reg, addr.source, addr.dest);
+					}
+					state.addRegValuePair(place, type, reg);
+					regOk = true;
+					break;
+				} else if(canidateIsResultAndSingleOperand(reg, place, type, operand1, op1Type, operand2Opt, op2Type, state)) {
+					Set<Tuple<String, ICode.Type>> str = state.getCandidateAddresses(reg);
+					state.clearRegisterAddresses(reg);
+					for(Tuple<String, ICode.Type> addr: str){
+						state.removeRegFromAddress(reg, addr.source, addr.dest);
+					}
+					state.addRegValuePair(place, type, reg);
+					regOk = true;
+					break;
+				} else if(candidateIsAllDead(reg, icode, state)) {
+					Set<Tuple<String, ICode.Type>> str = state.getCandidateAddresses(reg);
+					state.clearRegisterAddresses(reg);
+					for(Tuple<String, ICode.Type> addr: str){
+						state.removeRegFromAddress(reg, addr.source, addr.dest);
+					}
+					state.addRegValuePair(place, type, reg);
+					regOk = true;
+					break;
+				}
+			}
+			
+			if(regOk == false){
+				Map<String, Integer> savedCosts = new HashMap<String, Integer>();
+				Set<Tuple<String,Integer>> actualCosts = this.spillAnal.getOutputSet(icode);
+				for(String reg: state.getCanditateRegs()) {
+					Set<Tuple<String, ICode.Type>> addrs = state.getCandidateAddresses(reg);
+					int totalCost = 0;
+					for(Tuple<String, ICode.Type> addr: addrs) {
+						for(Tuple<String, Integer> actualCost : actualCosts) {
+							if(actualCost.source.equals(addr)) {
+								totalCost = (totalCost + actualCost.dest) / 2;
+								break;
+							}
+						}
+					}
+					savedCosts.put(reg, totalCost);
+				}
+				
+				Tuple<String, Integer> savedCost = null;
+				for(String reg: savedCosts.keySet()){
+					Integer cost = savedCosts.get(reg);
+					if(savedCost == null || cost > savedCost.dest)
+						savedCost = new Tuple<String, Integer>(reg, cost);
+						
+				}
+				
+				if(savedCost != null) {
+					for(Tuple<String, ICode.Type> addr: state.getCandidateAddresses(savedCost.source)) {
+						state.addSpill(addr.source, addr.dest);
+					}
+				}
+			}
+		}
+	}
+	
+	private ICode.Type opToArgType(BinExp.Operator op){
+		switch(op) {
+		case BEQ: return ICode.Type.BOOL;
+		case BNE: return ICode.Type.BOOL;
+		case GE: return ICode.Type.INT;
+		case GT: return ICode.Type.INT;
+		case IADD: return ICode.Type.INT;
+		case IAND: return ICode.Type.INT;
+		case IEQ: return ICode.Type.INT;
+		case ILSHIFT: return ICode.Type.INT;
+		case INE: return ICode.Type.INT;
+		case IOR: return ICode.Type.INT;
+		case IRSHIFT: return ICode.Type.INT;
+		case ISUB: return ICode.Type.INT;
+		case IXOR: return ICode.Type.INT;
+		case LAND: return ICode.Type.BOOL;
+		case LE: return ICode.Type.INT;
+		case LOR: return ICode.Type.BOOL;
+		case LT: return ICode.Type.INT;
+		default: throw new RuntimeException();
+		}
+	}
+	
+	private ICode.Type opToArgType(UnExp.Operator op){
+		switch(op) {
+		case BNOT: return ICode.Type.BOOL;
+		case INOT: return ICode.Type.INT;
+		default: throw new RuntimeException();
+		}
+	}
+	
+	private void getRegs(ICode icode, ArmDescriptorState state){
+		if(icode instanceof Def){
+			Def def = (Def)icode;
+			if(def.val instanceof BinExp) {
+				BinExp exp = (BinExp)def.val;
+				loadUseReg(exp.left.ident, opToArgType(exp.op), icode, def.label, def.type, exp.right.ident, opToArgType(exp.op), state);
+				loadUseReg(exp.right.ident, opToArgType(exp.op), icode, def.label, def.type, exp.left.ident, opToArgType(exp.op), state);
+				loadNewReg(def.label, def.type, icode, exp.left.ident, opToArgType(exp.op), exp.right.ident, opToArgType(exp.op), state);
+			} else if(def.val instanceof UnExp) {
+				UnExp exp = (UnExp)def.val;
+				loadUseReg(exp.right.ident, opToArgType(exp.op), icode, def.label, def.type, null, null, state);
+				loadNewReg(def.label, def.type, icode, exp.right.ident, opToArgType(exp.op), null, null, state);
+			} else if(def.val instanceof IdentExp) {
+				IdentExp exp = (IdentExp)def.val;
+				
+				loadUseReg(exp.ident, def.type, icode, def.label, def.type, null, null, state);
+				loadNewReg(def.label, def.type, icode, exp.ident, def.type, null, null, state);
+			}
+		} else if(icode instanceof Assign) {
+			Assign def = (Assign)icode;
+			if(def.value instanceof BinExp) {
+				BinExp exp = (BinExp)def.value;
+				loadUseReg(exp.left.ident, opToArgType(exp.op), icode, def.place, def.getType(), exp.right.ident, opToArgType(exp.op), state);
+				loadUseReg(exp.right.ident, opToArgType(exp.op), icode, def.place, def.getType(), exp.left.ident, opToArgType(exp.op), state);
+				loadNewReg(def.place, def.getType(), icode, exp.left.ident, opToArgType(exp.op), exp.right.ident, opToArgType(exp.op), state);
+			} else if(def.value instanceof UnExp) {
+				UnExp exp = (UnExp)def.value;
+				
+				loadUseReg(exp.right.ident, opToArgType(exp.op), icode, def.place, def.getType(), null, null, state);
+				loadNewReg(def.place, def.getType(), icode, exp.right.ident, opToArgType(exp.op), null, null, state);
+			} else if(def.value instanceof IdentExp) {
+				IdentExp exp = (IdentExp)def.value;
+				
+				loadUseReg(exp.ident, def.getType(), icode, def.place, def.getType(), null, null, state);
+				loadNewReg(def.place, def.getType(), icode, exp.ident, def.getType(), null, null, state);
+			}
+		} else if(icode instanceof Call) {
+			Call cicode = (Call)icode;
+			for(Def param: cicode.params) {
+				if(param.val instanceof BinExp) {
+					BinExp exp = (BinExp)param.val;
+					loadUseReg(exp.left.ident, opToArgType(exp.op), icode, param.label, param.type, exp.right.ident, opToArgType(exp.op), state);
+					loadUseReg(exp.right.ident, opToArgType(exp.op), icode, param.label, param.type, exp.left.ident, opToArgType(exp.op), state);
+					loadNewReg(param.label, param.type, icode, exp.left.ident, opToArgType(exp.op), exp.right.ident, opToArgType(exp.op), state);
+				} else if(param.val instanceof UnExp) {
+					UnExp exp = (UnExp)param.val;
+					loadUseReg(exp.right.ident, opToArgType(exp.op), icode, param.label, param.type, null, null, state);
+					loadNewReg(param.label, param.type, icode, exp.right.ident, opToArgType(exp.op), null, null, state);
+				} else if(param.val instanceof IdentExp) {
+					IdentExp exp = (IdentExp)param.val;
+					
+					loadUseReg(exp.ident, param.type, icode, param.label, param.type, null, null, state);
+					loadNewReg(param.label, param.type, icode, exp.ident, param.type, null, null, state);
+				}
+			}
+		} else if(icode instanceof If) {
+			If ifStat = (If)icode;
+			
+			BinExp exp = ifStat.exp;
+			loadUseReg(exp.left.ident, opToArgType(exp.op), icode, null, null, exp.right.ident, opToArgType(exp.op), state);
+			loadUseReg(exp.right.ident, opToArgType(exp.op), icode, null, null, exp.left.ident, opToArgType(exp.op), state);
+		}
+	}
+
+	@Override
+	public ArmDescriptorState transferFunction(ICode type, ArmDescriptorState inputState) {
+		ArmDescriptorState state = inputState.copy();
+		getRegs(type, state);
+		return state;
+	}
+
+	@Override
+	protected HashMap<ICode, ArmDescriptorState> copyOutputsFromFlowGraph(FlowGraph flow) {
+		HashMap<ICode, ArmDescriptorState> newMap = newMap();
+    	for(FlowGraphNode node: flow) {
+    		if(node instanceof BlockNode) {
+    			BlockNode block = (BlockNode)node;
+    			List<ICode> code = block.getICode();
+    			if(code.size() > 0) {
+    				ICode last = code.getLast();
+    				newMap.put(last, getOutputSet(last).copy());
+    			}
+    		}
+    	}
+    	return newMap;
+	}
+
+	@Override
+	protected HashMap<ICode, ArmDescriptorState> copyInputsFromFlowGraph(FlowGraph flow) {
+		HashMap<ICode, ArmDescriptorState> toRet = newMap();
+		for(FlowGraphNode node: flow)
+			if(node instanceof BlockNode) {
+				BlockNode block = (BlockNode)node;
+				List<ICode> icode = block.getICode();
+				if(!icode.isEmpty()){
+					ICode first = icode.getFirst();
+					toRet.put(first, this.getInputSet(first).copy());
+				}
+			}
+		return toRet;
+	}
+
+	@Override
+	protected boolean changesHaveOccuredOnOutputs(HashMap<ICode, ArmDescriptorState> cached) {
+		if(cfg == null || !cfg.containsFlag("debug")){
+			Set<ICode> keys = cached.keySet();
+	        for(ICode key : keys){
+	            if(!containsOutputKey(key)){
+	                return true;
+	            }
+
+	            ArmDescriptorState actualData = getOutputSet(key);
+	            ArmDescriptorState cachedData = cached.get(key);
+
+	            if(!actualData.equals(cachedData)){
+	                return true;
+	            }
+	        }
+	        return false;
+    	} else {
+    		Utils.createFile("test/temp/AnalysisCacheLog.txt");
+    		boolean result = false;
+    		Set<ICode> keys = cached.keySet();
+	        for(ICode key : keys){
+	            if(!containsOutputKey(key)){
+	            	Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "Actual map contains " + key + " and cached data does not\r\n");
+	                result = true;
+	                continue;
+	            }
+
+	            ArmDescriptorState actualData = getOutputSet(key);
+	            ArmDescriptorState cachedData = cached.get(key);
+
+	            if(!actualData.equals(cachedData)){
+	            	Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "For " + key + " actual data not equal to cache data\r\n");
+	            	Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "Actual data: " + actualData.toString() + "\r\n");
+	            	Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "Cached data: " + cachedData.toString() + "\r\n");
+	                result = true;
+	                continue;
+	            }
+	        }
+	        
+	        return result;
+    	}
+	}
+
+	@Override
+	protected boolean changesHaveOccuredOnInputs(HashMap<ICode, ArmDescriptorState> cached) {
+		Set<ICode> keys = cached.keySet();
+        for(ICode key : keys){
+            if(!containsInputKey(key)){
+                return true;
+            }
+
+            ArmDescriptorState actualData = getInputSet(key);
+            ArmDescriptorState cachedData = cached.get(key);
+
+            if(!actualData.equals(cachedData)){
+                return true;
+            }
+        }
+
+        return false;
+	}
+
+	@Override
+	protected void runAnalysis(FlowGraph flowGraph, Direction direction,
+			Function<List<ArmDescriptorState>, ArmDescriptorState> meetOperation, ArmDescriptorState semiLattice,
+			boolean copyKey) {
+		for(BlockNode block : flowGraph.getBlocks()){
+        	if(block.getICode().size() > 0) {
+        		ICode lastICode = block.getICode().getLast();
+        		ArmDescriptorState semilatticeCopy = semiLattice.copy();
+                if(copyKey)
+                	addOutputSet(lastICode.copy(), semilatticeCopy);
+                else
+                	addOutputSet(lastICode, semilatticeCopy);
+        	}
+        }
+
+        HashMap<ICode, ArmDescriptorState> outputCache = null;
+        do{
+        	analysisLoopStartAction();
+        	outputCache = copyOutputsFromFlowGraph();
+            
+            for(BlockNode block : flowGraph.getBlocks()){
+                ArmDescriptorState inputSet = new ArmDescriptorState();
+
+                List<ArmDescriptorState> predecessorsLists = new LinkedList<ArmDescriptorState>();
+                for(FlowGraphNode node : block.getPredecessors()){
+                	if(!node.getICode().isEmpty()) {
+                		ArmDescriptorState outputOfPredecessor = super.getOutputSet(node.getICode().getLast());
+                		predecessorsLists.add(outputOfPredecessor);
+                	}
+                }
+
+                inputSet = meetOperation.apply(predecessorsLists);
+
+                for(int instrIndex = 0; instrIndex < block.getICode().size(); instrIndex++){
+                	ICode instr = block.getICode().get(instrIndex);
+                	if(copyKey) {
+                		ICode copy = instr.copy();
+                		addInputSet(copy, inputSet);
+                        inputSet = transferFunction(instr, inputSet);
+                        addOutputSet(copy, inputSet);
+                        if(inputSet.containsSpill()) {
+                        	List<Tuple<String, ICode.Type>> mySpills = inputSet.getSpill();
+                        	for(Tuple<String, ICode.Type> mySpill: mySpills) {
+                        		block.getICode().add(instrIndex, new Spill(mySpill.source, mySpill.dest));
+                        		instrIndex++;
+                        	}
+                        }
+                	} else {
+                		addInputSet(instr, inputSet);
+                        inputSet = transferFunction(instr, inputSet);
+                        addOutputSet(instr, inputSet);
+                        if(inputSet.containsSpill()) {
+                        	List<Tuple<String, ICode.Type>> mySpills = inputSet.getSpill();
+                        	for(Tuple<String, ICode.Type> mySpill: mySpills) {
+                        		block.getICode().add(instrIndex, new Spill(mySpill.source, mySpill.dest));
+                        		instrIndex++;
+                        	}
+                        }
+                	}
+                }
+            }
+            analysisLoopEndAction();
+        } while(changesHaveOccuredOnOutputs(outputCache));
+	}
+
+	@Override
+	public ArmDescriptorState performMeet(List<ArmDescriptorState> li) {
+		ArmDescriptorState state = new ArmDescriptorState();
+		
+		for(ArmDescriptorState myState : li){
+			for(String myReg : myState.getCanditateRegs()) {
+				Set<Tuple<String, ICode.Type>> armAddresses = myState.getCandidateAddresses(myReg);
+				Set<Tuple<String, ICode.Type>> curAddresses = state.getCandidateAddresses(myReg);
+				if(curAddresses.isEmpty())
+					curAddresses.addAll(armAddresses);
+				else if(!curAddresses.equals(armAddresses))
+					for(Tuple<String, ICode.Type> addr: armAddresses) {
+						state.addSpill(addr.source, addr.dest);
+					}
+			}
+		}
+		
+		return state;
+	}
+	
+	public ArmRegisterResult getFilteredInputSet(ICode icode){
+		ArmRegisterResult retSet = new ArmRegisterResult();
+		ArmDescriptorState state = super.getInputSet(icode);
+		if(state == null)
+			return new ArmRegisterResult();
+		if(icode instanceof Def) {
+			Def def = (Def)icode;
+			if(def.val instanceof BinExp) {
+				BinExp exp = (BinExp)def.val;
+				for(String elem: state.getCanditateRegs()) {
+					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					if(ConversionUtils.setContainsName(addr, def.label)){
+						retSet.addResult(elem, elem);
+					} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
+						retSet.addResult(exp.left.ident, elem);
+					} else if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
+						retSet.addResult(exp.right.ident, elem);
+					}
+				}
+			} else if(def.val instanceof UnExp) {
+				UnExp un = (UnExp)def.val;
+				for(String elem: state.getCanditateRegs()) {
+					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					if(ConversionUtils.setContainsName(addr, def.label)){
+						retSet.addResult(def.label, elem);
+					} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
+						retSet.addResult(un.right.ident, elem);
+					}
+				}
+			} else if(def.val instanceof IdentExp) {
+				IdentExp ident = (IdentExp)def.val;
+				for(String elem: state.getCanditateRegs()) {
+					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					if(ConversionUtils.setContainsName(addr, def.label)){
+						retSet.addResult(def.label, elem);
+					} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
+						retSet.addResult(ident.ident, elem);
+					}
+				}
+			}
+		} else if(icode instanceof Assign) {
+			Assign def = (Assign)icode;
+			if(def.value instanceof BinExp) {
+				BinExp exp = (BinExp)def.value;
+				for(String elem: state.getCanditateRegs()) {
+					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					if(ConversionUtils.setContainsName(addr, def.place)){
+						retSet.addResult(def.place, elem);
+					} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
+						retSet.addResult(exp.left.ident, elem);
+					} else if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
+						retSet.addResult(exp.right.ident, elem);
+					}
+				}
+			} else if(def.value instanceof UnExp) {
+				UnExp un = (UnExp)def.value;
+				for(String elem: state.getCanditateRegs()) {
+					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					if(ConversionUtils.setContainsName(addr, def.place)){
+						retSet.addResult(def.place, elem);
+					} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
+						retSet.addResult(un.right.ident, elem);
+					}
+				}
+			} else if(def.value instanceof IdentExp) {
+				IdentExp ident = (IdentExp)def.value;
+				for(String elem: state.getCanditateRegs()) {
+					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					if(ConversionUtils.setContainsName(addr, def.place)){
+						retSet.addResult(def.place, elem);
+					} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
+						retSet.addResult(ident.ident, elem);
+					}
+				}
+			}
+		} else if(icode instanceof Call) {
+			Call cICode = (Call)icode;
+			for(Def def: cICode.params) {
+				if(def.val instanceof BinExp) {
+					BinExp exp = (BinExp)def.val;
+					for(String elem: state.getCanditateRegs()) {
+						Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+						if(ConversionUtils.setContainsName(addr, def.label)){
+							retSet.addResult(def.label, elem);
+						} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
+							retSet.addResult(exp.left.ident, elem);
+						} else if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
+							retSet.addResult(exp.right.ident, elem);
+						}
+					}
+				} else if(def.val instanceof UnExp) {
+					UnExp un = (UnExp)def.val;
+					for(String elem: state.getCanditateRegs()) {
+						Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+						if(ConversionUtils.setContainsName(addr, def.label)){
+							retSet.addResult(def.label, elem);
+						} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
+							retSet.addResult(un.right.ident, elem);
+						}
+					}
+				} else if(def.val instanceof IdentExp) {
+					IdentExp ident = (IdentExp)def.val;
+					for(String elem: state.getCanditateRegs()) {
+						Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+						if(ConversionUtils.setContainsName(addr, def.label)){
+							retSet.addResult(def.label, elem);
+						} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
+							retSet.addResult(ident.ident, elem);
+						}
+					}
+				}
+			}
+		} else if(icode instanceof If) {
+			If ifStat = (If)icode;
+			
+			BinExp exp = ifStat.exp;
+			for(String elem: state.getCanditateRegs()) {
+				Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+				if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
+					retSet.addResult(exp.left.ident, elem);
+				} else if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
+					retSet.addResult(exp.right.ident, elem);
+				}
+			}
+		}
+		
+		return retSet;
+	}
+	
+	public ArmRegisterResult getFilteredOutputSet(ICode icode){
+		ArmRegisterResult retSet = new ArmRegisterResult();
+		ArmDescriptorState state = super.getOutputSet(icode);
+		if(state == null)
+			return new ArmRegisterResult();
+		if(icode instanceof Def) {
+			Def def = (Def)icode;
+			if(def.val instanceof BinExp) {
+				BinExp exp = (BinExp)def.val;
+				for(String elem: state.getCanditateRegs()) {
+					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					if(ConversionUtils.setContainsName(addr, def.label)){
+						retSet.addResult(elem, elem);
+					} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
+						retSet.addResult(exp.left.ident, elem);
+					} else if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
+						retSet.addResult(exp.right.ident, elem);
+					}
+				}
+			} else if(def.val instanceof UnExp) {
+				UnExp un = (UnExp)def.val;
+				for(String elem: state.getCanditateRegs()) {
+					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					if(ConversionUtils.setContainsName(addr, def.label)){
+						retSet.addResult(def.label, elem);
+					} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
+						retSet.addResult(un.right.ident, elem);
+					}
+				}
+			} else if(def.val instanceof IdentExp) {
+				IdentExp ident = (IdentExp)def.val;
+				for(String elem: state.getCanditateRegs()) {
+					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					if(ConversionUtils.setContainsName(addr, def.label)){
+						retSet.addResult(def.label, elem);
+					} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
+						retSet.addResult(ident.ident, elem);
+					}
+				}
+			}
+		} else if(icode instanceof Assign) {
+			Assign def = (Assign)icode;
+			if(def.value instanceof BinExp) {
+				BinExp exp = (BinExp)def.value;
+				for(String elem: state.getCanditateRegs()) {
+					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					if(ConversionUtils.setContainsName(addr, def.place)){
+						retSet.addResult(def.place, elem);
+					} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
+						retSet.addResult(exp.left.ident, elem);
+					} else if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
+						retSet.addResult(exp.right.ident, elem);
+					}
+				}
+			} else if(def.value instanceof UnExp) {
+				UnExp un = (UnExp)def.value;
+				for(String elem: state.getCanditateRegs()) {
+					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					if(ConversionUtils.setContainsName(addr, def.place)){
+						retSet.addResult(def.place, elem);
+					} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
+						retSet.addResult(un.right.ident, elem);
+					}
+				}
+			} else if(def.value instanceof IdentExp) {
+				IdentExp ident = (IdentExp)def.value;
+				for(String elem: state.getCanditateRegs()) {
+					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					if(ConversionUtils.setContainsName(addr, def.place)){
+						retSet.addResult(def.place, elem);
+					} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
+						retSet.addResult(ident.ident, elem);
+					}
+				}
+			}
+		} else if(icode instanceof Call) {
+			Call cICode = (Call)icode;
+			for(Def def: cICode.params) {
+				if(def.val instanceof BinExp) {
+					BinExp exp = (BinExp)def.val;
+					for(String elem: state.getCanditateRegs()) {
+						Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+						if(ConversionUtils.setContainsName(addr, def.label)){
+							retSet.addResult(def.label, elem);
+						} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
+							retSet.addResult(exp.left.ident, elem);
+						} else if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
+							retSet.addResult(exp.right.ident, elem);
+						}
+					}
+				} else if(def.val instanceof UnExp) {
+					UnExp un = (UnExp)def.val;
+					for(String elem: state.getCanditateRegs()) {
+						Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+						if(ConversionUtils.setContainsName(addr, def.label)){
+							retSet.addResult(def.label, elem);
+						} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
+							retSet.addResult(un.right.ident, elem);
+						}
+					}
+				} else if(def.val instanceof IdentExp) {
+					IdentExp ident = (IdentExp)def.val;
+					for(String elem: state.getCanditateRegs()) {
+						Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+						if(ConversionUtils.setContainsName(addr, def.label)){
+							retSet.addResult(def.label, elem);
+						} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
+							retSet.addResult(ident.ident, elem);
+						}
+					}
+				}
+			}
+		} else if(icode instanceof If) {
+			If ifStat = (If)icode;
+			
+			BinExp exp = ifStat.exp;
+			for(String elem: state.getCanditateRegs()) {
+				Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+				if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
+					retSet.addResult(exp.left.ident, elem);
+				} else if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
+					retSet.addResult(exp.right.ident, elem);
+				}
+			}
+		}
+		
+		return retSet;
+	}
+}

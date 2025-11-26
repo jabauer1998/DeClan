@@ -5,28 +5,22 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ArmAddressDescriptor {
+import io.github.H20man13.DeClan.common.Copyable;
+import io.github.H20man13.DeClan.common.icode.ICode;
+
+public class ArmAddressDescriptor implements Copyable<ArmAddressDescriptor> {
 	private Map<ArmAddressElement, Set<ArmElement>> discriptorMap;
 	
 	public ArmAddressDescriptor() {
 		this.discriptorMap = new HashMap<ArmAddressElement, Set<ArmElement>>();
 	}
 	
+	private ArmAddressDescriptor(Map<ArmAddressElement, Set<ArmElement>> myMap){
+		this.discriptorMap = myMap;
+	}
+	
 	private Set<ArmElement> newSet() {
 		return new HashSet<ArmElement>();
-	}
-	
-	private ArmRegisterElement newRegElem(String name) {
-		return new ArmRegisterElement(name);
-	}
-	
-	private ArmAddressElement newAddElem(String name) {
-		return new ArmAddressElement(name);
-	}
-	
-	public Set<ArmRegisterElement> getRegisters(String address) {
-		ArmAddressElement addr = newAddElem(address);
-		return getRegisters(addr);
 	}
 	
 	public Set<ArmRegisterElement> getRegisters(ArmAddressElement elem){
@@ -40,9 +34,15 @@ public class ArmAddressDescriptor {
 		return regs;
 	}
 	
-	public Set<ArmElement> getElements(String address) {
-		ArmAddressElement addr = newAddElem(address);
-		return getElements(addr);
+	public boolean containedInRegisters(ArmAddressElement elem){
+		HashSet<ArmRegisterElement> regs = new HashSet<ArmRegisterElement>();
+		if(discriptorMap.containsKey(elem))
+			for(ArmElement myElem: discriptorMap.get(elem)) {
+				if(myElem instanceof ArmRegisterElement){
+					return true;
+				}
+			}
+		return false;
 	}
 	
 	public Set<ArmElement> getElements(ArmAddressElement addr) {
@@ -54,39 +54,47 @@ public class ArmAddressDescriptor {
 		return regs;
 	}
 	
-	public void addAddress(String address, String toAdd) {
-		ArmAddressElement addr = newAddElem(address);
+	public void addAddress(ArmAddressElement addr, ArmAddressElement elem){
 		if(!discriptorMap.containsKey(addr))
 			discriptorMap.put(addr, newSet());
 		
-		Set<ArmElement> elem = discriptorMap.get(addr);
-		elem.add(newAddElem(toAdd));
+		Set<ArmElement> elems = discriptorMap.get(addr);
+		elems.add(elem);
 	}
 	
-	public void addRegister(String address, String toAdd) {
-		ArmAddressElement addr = newAddElem(address);
-		if(!discriptorMap.containsKey(addr))
-			discriptorMap.put(addr, newSet());
+	public void addRegister(ArmAddressElement address, ArmRegisterElement toAdd) {
+		if(!discriptorMap.containsKey(address))
+			discriptorMap.put(address, newSet());
 		
-		Set<ArmElement> elem = discriptorMap.get(addr);
-		elem.add(newRegElem(toAdd));
+		Set<ArmElement> elem = discriptorMap.get(address);
+		elem.add(toAdd);
 	}
 	
-	public void removeAddress(String address, String toRemove) {
-		ArmAddressElement addr = newAddElem(address);
-		Set<ArmElement> elem = discriptorMap.get(addr);
-		elem.remove(newAddElem(toRemove));
+	public void removeAddress(ArmAddressElement address, ArmAddressElement toRemove) {
+		Set<ArmElement> elem = discriptorMap.get(address);
+		elem.remove(toRemove);
 		
 		if(elem.isEmpty())
-			discriptorMap.remove(addr);
+			discriptorMap.remove(address);
 	}
 	
-	public void removeRegister(String address, String toRemove) {
-		ArmAddressElement addr = newAddElem(address);
-		Set<ArmElement> elem = discriptorMap.get(addr);
-		elem.remove(newRegElem(toRemove));
+	public void removeRegister(ArmAddressElement address, ArmRegisterElement toRemove) {
+		Set<ArmElement> elem = discriptorMap.get(address);
+		elem.remove(toRemove);
 		
 		if(elem.isEmpty())
-			discriptorMap.remove(addr);
+			discriptorMap.remove(address);
+	}
+
+	public ArmAddressDescriptor copy() {
+		Map<ArmAddressElement, Set<ArmElement>> newMap = new HashMap<>();
+		for(ArmAddressElement elem: discriptorMap.keySet()){
+			HashSet<ArmElement> mySet = new HashSet<ArmElement>();
+			for(ArmElement elems: discriptorMap.get(elem)) {
+				mySet.add(elems.copy());
+			}
+			newMap.put(elem, mySet);
+		}
+		return new ArmAddressDescriptor(newMap);
 	}
 }

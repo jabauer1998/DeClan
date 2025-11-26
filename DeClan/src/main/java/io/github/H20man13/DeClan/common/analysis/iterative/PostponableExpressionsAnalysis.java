@@ -27,7 +27,7 @@ public class PostponableExpressionsAnalysis extends InstructionAnalysis<HashMap<
     private AnticipatedExpressionsAnalysis anticipated;
     
     @SuppressWarnings("unchecked")
-	public PostponableExpressionsAnalysis(FlowGraph flowGraph, Set<Tuple<Exp, ICode.Type>> globalFlowSet, Map<ICode, Set<Tuple<Exp, ICode.Type>>> earliest, Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets, AnticipatedExpressionsAnalysis anticipated, Config cfg) {
+	public PostponableExpressionsAnalysis(FlowGraph flowGraph, HashSet<Tuple<Exp, ICode.Type>> globalFlowSet, Map<ICode, Set<Tuple<Exp, ICode.Type>>> earliest, Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets, AnticipatedExpressionsAnalysis anticipated, Config cfg) {
         super(flowGraph, Direction.FORWARDS, Meet.INTERSECTION, globalFlowSet, true, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
         this.earliest = earliest;
         this.usedSets = usedSets;

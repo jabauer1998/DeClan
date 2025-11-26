@@ -44,7 +44,7 @@ import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser;
 public class CodeGeneratorTest {
     private void testDeclanFile(String fileName) throws Exception{
         ErrorLog errLog = new ErrorLog();
-        String expectedResultFile = fileName.replace("test/ir/linked", "test/temp").replace(".ir", ".a");
+        String expectedResultFile = fileName.replace("test/ir/optimized", "test/temp").replace(".ir", ".a");
         FileReader input = new FileReader(fileName);
         ReaderSource source = new ElaborateReaderSource(fileName, input);
         MyIrLexer lexer = new MyIrLexer(source, errLog);
@@ -55,7 +55,7 @@ public class CodeGeneratorTest {
         MyOptimizer optimizer = new MyOptimizer(null, program);
         optimizer.runLiveVariableAnalysis();
 
-        MyCodeGenerator codeGenerator = new MyCodeGenerator(expectedResultFile, optimizer.getLiveVariableAnalysis(), program, errLog); 
+        MyCodeGenerator codeGenerator = new MyCodeGenerator(expectedResultFile, program, optimizer, errLog, null); 
         codeGenerator.codeGen();
 
         for(LogItem item : errLog){
@@ -73,86 +73,86 @@ public class CodeGeneratorTest {
 
     @Test
     public void testConversions() throws Exception{
-        testDeclanFile("test/ir/linked/conversions.ir");
+        testDeclanFile("test/ir/optimized/conversions.ir");
     }
 
     @Test
     public void testExpressions() throws Exception{
-        testDeclanFile("test/ir/linked/expressions.ir");
+        testDeclanFile("test/ir/optimized/expressions.ir");
     }
 
     @Test
     public void testForLoopAdvanced() throws Exception{
-        testDeclanFile("test/ir/linked/ForLoopAdvanced.ir");
+        testDeclanFile("test/ir/optimized/ForLoopAdvanced.ir");
     }
 
     @Test
     public void testForLoopBasic() throws Exception{
-        testDeclanFile("test/ir/linked/ForLoopBasic.ir");
+        testDeclanFile("test/ir/optimized/ForLoopBasic.ir");
     }
 
     @Test
     public void testForLoopBasic2() throws Exception{
-        testDeclanFile("test/ir/linked/ForLoopBasic2.ir");
+        testDeclanFile("test/ir/optimized/ForLoopBasic2.ir");
     }
 
     @Test
     public void testForLoopBasic3() throws Exception{
-        testDeclanFile("test/ir/linked/ForLoopBasic3.ir");
+        testDeclanFile("test/ir/optimized/ForLoopBasic3.ir");
     }
 
     @Test
     public void testIfStatementAdvanced() throws Exception{
-        testDeclanFile("test/ir/linked/IfStatementAdvanced.ir");
+        testDeclanFile("test/ir/optimized/IfStatementAdvanced.ir");
     }
 
     @Test
     public void testIfStatementBasic() throws Exception{
-        testDeclanFile("test/ir/linked/IfStatementBasic.ir");
+        testDeclanFile("test/ir/optimized/IfStatementBasic.ir");
     }
 
     @Test
     public void testLoops() throws Exception{
-        testDeclanFile("test/ir/linked/loops.ir");
+        testDeclanFile("test/ir/optimized/loops.ir");
     }
 
     @Test
     public void testRepeatLoopBasic() throws Exception{
-        testDeclanFile("test/ir/linked/RepeatLoopBasic.ir");
+        testDeclanFile("test/ir/optimized/RepeatLoopBasic.ir");
     }
 
     @Test
     public void testSample() throws Exception{
-        testDeclanFile("test/ir/linked/sample.ir");
+        testDeclanFile("test/ir/optimized/sample.ir");
     }
 
     @Test
     public void testTest() throws Exception{
-        testDeclanFile("test/ir/linked/test.ir");
+        testDeclanFile("test/ir/optimized/test.ir");
     }
 
     @Test
     public void testTest2() throws Exception{
-        testDeclanFile("test/ir/linked/test2.ir");
+        testDeclanFile("test/ir/optimized/test2.ir");
     }
 
     @Test
     public void testTest3() throws Exception{
-        testDeclanFile("test/ir/linked/test3.ir");
+        testDeclanFile("test/ir/optimized/test3.ir");
     }
 
     @Test
     public void testTest4() throws Exception{
-        testDeclanFile("test/ir/linked/test4.ir");
+        testDeclanFile("test/ir/optimized/test4.ir");
     }
 
     @Test
     public void testWhileLoopAdvanced() throws Exception{
-        testDeclanFile("test/ir/linked/WhileLoopAdvanced.ir");
+        testDeclanFile("test/ir/optimized/WhileLoopAdvanced.ir");
     }
 
     @Test
     public void testWhileLoopBasic() throws Exception{
-        testDeclanFile("test/ir/linked/WhileLoopBasic.ir");
+        testDeclanFile("test/ir/optimized/WhileLoopBasic.ir");
     }
 }

@@ -1,7 +1,10 @@
 package io.github.H20man13.DeClan.common.arm.descriptor;
 
-public interface ArmElement {
+import io.github.H20man13.DeClan.common.Copyable;
+
+public interface ArmElement extends Copyable<ArmElement> {
 	public String toString();
 	public boolean equals(Object other);
 	public int hashCode();
+	public ArmElement copy();
 }

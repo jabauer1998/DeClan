@@ -2,11 +2,13 @@ package io.github.H20man13.DeClan.common.util;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Set;
 
 import javax.naming.spi.DirStateFactory.Result;
 
 import io.github.H20man13.DeClan.common.dag.DagNode.ScopeType;
 import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
+import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.region.expr.Expr;
 import io.github.H20man13.DeClan.common.analysis.region.expr.IntExpr;
 import io.github.H20man13.DeClan.common.analysis.region.expr.RefVar;
@@ -279,6 +281,14 @@ public class ConversionUtils {
         } else {
             throw new ConversionException("toBool", input.getClass().getName(), Boolean.class.getName());
         }
+    }
+    
+    public static boolean setContainsName(Set<Tuple<String, ICode.Type>> set, String name) {
+    	for(Tuple<String, ICode.Type> elem: set) {
+    		if(elem.source.equals(name))
+    			return true;
+    	}
+    	return false;
     }
     
     public static RefVar toExprFromIdentExp(IdentExp ident) {

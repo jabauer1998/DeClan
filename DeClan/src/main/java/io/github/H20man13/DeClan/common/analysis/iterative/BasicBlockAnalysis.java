@@ -18,25 +18,26 @@ import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
 import io.github.H20man13.DeClan.common.icode.ICode;
 
-public abstract class BasicBlockAnalysis<MapType extends Map<FlowGraphNode, SetType>, SetType extends Set<DataType>, DataType> extends IterativeAnalysis<FlowGraphNode, MapType, SetType, DataType> {
-    public BasicBlockAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, Set<DataType> semiLattice, boolean toCopy, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
+public abstract class BasicBlockAnalysis<MapType extends Map<FlowGraphNode, SetType>, SetType extends Set<DataType>, DataType> extends IterativeSetAnalysis<FlowGraphNode, MapType, SetType, DataType> {
+    public BasicBlockAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, SetType semiLattice, boolean toCopy, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
         super(flowGraph, direction, meetOperation, semiLattice, toCopy, cfg, mapClass, setClass);
     }
-
-    public BasicBlockAnalysis(FlowGraph flowGraph, Direction direction, Set<DataType> semilattice, boolean toCopy, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
-        super(flowGraph, direction, semilattice, toCopy, cfg, mapClass, setClass);
+    
+    public BasicBlockAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, boolean toCopy, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
+        super(flowGraph, direction, meetOperation, toCopy, cfg, mapClass, setClass);
     }
-
+    
+    public BasicBlockAnalysis(FlowGraph flowGraph, Direction direction, SetType semiLattice, boolean toCopy, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
+        super(flowGraph, direction, semiLattice, toCopy, cfg, mapClass, setClass);
+    }
+    
     public BasicBlockAnalysis(FlowGraph flowGraph, Direction direction, boolean toCopy, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
         super(flowGraph, direction, toCopy, cfg, mapClass, setClass);
     }
 
-    public BasicBlockAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, boolean toCopy, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){
-        super(flowGraph, direction, meetOperation, toCopy, cfg, mapClass, setClass);
-    }
 
     @Override
-    protected void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, Set<DataType> semiLattice, boolean toCopy){
+    protected void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<SetType>, SetType> meetOperation, SetType semiLattice, boolean toCopy){
         if(direction == Direction.FORWARDS){
             if(toCopy) {
             	FlowGraphNode entry = flowGraph.getEntry().copy();

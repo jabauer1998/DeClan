@@ -352,6 +352,20 @@ public abstract class P {
             return obj instanceof SYMBOL;
         }
     }
+    
+    private static class SPILL extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof SPILL;
+        }
+    }
+    
+    private static class RELOAD extends P{
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof RELOAD;
+        }
+    }
 
     private static class PAT extends P{
         private P[] pattern;
@@ -570,6 +584,12 @@ public abstract class P {
     }
     public static FROM FROM() {
     	return new FROM();
+    }
+    public static SPILL SPILL() {
+    	return new SPILL();
+    }
+    public static RELOAD RELOAD() {
+    	return new RELOAD();
     }
 
     @Override

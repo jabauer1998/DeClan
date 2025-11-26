@@ -22,4 +22,9 @@ public class ArmRegisterElement implements ArmElement {
 		}
 		return false;
 	}
+
+	@Override
+	public ArmElement copy() {
+		return new ArmRegisterElement(label);
+	}
 }

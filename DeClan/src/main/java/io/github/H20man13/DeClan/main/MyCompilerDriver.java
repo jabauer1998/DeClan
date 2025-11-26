@@ -585,7 +585,7 @@ public class MyCompilerDriver {
                         }
                     }
 
-                    MyCodeGenerator cGen = new MyCodeGenerator(outputDestination, optimizer.getLiveVariableAnalysis(), prog, errLog);
+                    MyCodeGenerator cGen = new MyCodeGenerator(outputDestination, prog, optimizer, errLog, cfg);
                     cGen.codeGen();
                     
                 	for(LogItem item: errLog) {
@@ -614,7 +614,7 @@ public class MyCompilerDriver {
                     }
 
                     String tempOutput = outputDestination.replace(".bin", ".a.temp");
-                    MyCodeGenerator cGen = new MyCodeGenerator(tempOutput, optimizer.getLiveVariableAnalysis(), prog, errLog);
+                    MyCodeGenerator cGen = new MyCodeGenerator(tempOutput, prog, optimizer, errLog, cfg);
                     cGen.codeGen();
 
                     FileReader tempReader = new FileReader(tempOutput);

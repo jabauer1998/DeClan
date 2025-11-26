@@ -19,7 +19,7 @@ import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class SavedExpressionAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<Exp, String>>>, HashSet<Tuple<Exp, String>>, Tuple<Exp, String>>
-implements CustomMeet<HashSet<Tuple<Exp, String>>, Tuple<Exp, String>>{
+implements CustomMeet<HashSet<Tuple<Exp, String>>>{
 	private Map<ICode, Set<Tuple<Exp, ICode.Type>>> opSet;
 	private IrRegisterGenerator gen;
 	private Prog prog;

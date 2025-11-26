@@ -11,11 +11,10 @@ import io.github.H20man13.DeClan.common.interfere.InterferenceGraph;
 
 public class ArmRegisterDescriptor implements Iterable<ArmRegisterElement>{
 	private Map<ArmRegisterElement, Set<ArmAddressElement>> descriptorMap;
-	private Map<Integer, String> regNumberToIdent;
-	private Map<String, Color> colorGraph;
+	private final Map<Integer, String> regNumberToIdent;
 	
-	public ArmRegisterDescriptor(Map<String, Color> colorGraph) {
-		this.colorGraph = colorGraph;
+	
+	public ArmRegisterDescriptor() {
 		this.descriptorMap = new HashMap<ArmRegisterElement, Set<ArmAddressElement>>();
 		this.descriptorMap.put(newRegElem("R0"), newSet());
         this.descriptorMap.put(newRegElem("R1"), newSet());
@@ -49,65 +48,73 @@ public class ArmRegisterDescriptor implements Iterable<ArmRegisterElement>{
         this.regNumberToIdent.put(13, "R15");
 	}
 	
-	private Set<ArmAddressElement> newSet(){
-		return new HashSet<ArmAddressElement>();
-	}
-	
 	private ArmRegisterElement newRegElem(String name) {
 		return new ArmRegisterElement(name);
 	}
 	
-	private ArmAddressElement newAddElem(String name) {
-		return new ArmAddressElement(name);
+	public Set<ArmRegisterElement> getCandidateRegisters(){
+		return this.descriptorMap.keySet();
 	}
 	
-	public void addAddressElement(String descriptor, String elem) {
-		Set<ArmAddressElement> set = this.descriptorMap.get(newRegElem(descriptor));
-		set.add(newAddElem(elem));
+	public ArmRegisterDescriptor(Map<ArmRegisterElement, Set<ArmAddressElement>> newMap,
+			Map<Integer, String> regNumberToIdent2) {
+		this.descriptorMap = newMap;
+		this.regNumberToIdent = regNumberToIdent2;
+	}
+
+	private Set<ArmAddressElement> newSet(){
+		return new HashSet<ArmAddressElement>();
 	}
 	
-	public Set<ArmAddressElement> getAddresses(String reg) {
-		return this.descriptorMap.get(newRegElem(reg));
+	public void addAddressElement(ArmRegisterElement descriptor,  ArmAddressElement elem) {
+		Set<ArmAddressElement> set = this.descriptorMap.get(descriptor);
+		set.add(elem);
 	}
 	
-	public void removeAddress(String reg, String address){
-		Set<ArmAddressElement> set = this.descriptorMap.get(newRegElem(reg));
-		set.remove(newAddElem(address));
+	public Set<ArmAddressElement> getAddresses(ArmRegisterElement reg) {
+		return this.descriptorMap.get(reg);
 	}
 	
-	public void clearAddresses(String reg) {
-		this.descriptorMap.put(newRegElem(reg), newSet());
+	public void removeAddress(ArmRegisterElement reg, ArmAddressElement address){
+		Set<ArmAddressElement> set = this.descriptorMap.get(reg);
+		set.remove(address);
+	}
+	
+	public void clearAddresses(ArmRegisterElement reg) {
+		this.descriptorMap.put(reg, newSet());
 	}
 
 	@Override
 	public Iterator<ArmRegisterElement> iterator() {
 		return this.descriptorMap.keySet().iterator();
 	}
-	
-	private Color getColor(String name) {
-		return this.colorGraph.get(name);
-	}
-	
-	private static int convertToRawInt(Color col) {
-		return col.literalColor();
-	}
-	
-	private String getReg(int color) {
-		return this.regNumberToIdent.get(color);
-	}
-
-	public ArmRegisterElement getEmptyReg(String name) {
-		Color col = getColor(name);
-		int intCol = convertToRawInt(col);
-		String actualReg = getReg(intCol);
-		return new ArmRegisterElement(actualReg);
-	}
-	
-	public Set<ArmAddressElement> getAddresses(ArmRegisterElement elem){
-		return this.descriptorMap.get(elem);
-	}
 
 	public ArmAddressElements getAddressesElements(ArmRegisterElement res) {
 		return new ArmAddressElements(getAddresses(res));
+	}
+
+	public ArmRegisterDescriptor copy() {
+		Map<ArmRegisterElement, Set<ArmAddressElement>> newMap = new HashMap<ArmRegisterElement, Set<ArmAddressElement>>();
+		for(ArmRegisterElement key : this.descriptorMap.keySet())
+			newMap.put(key, this.descriptorMap.get(key));
+		return new ArmRegisterDescriptor(newMap, this.regNumberToIdent);
+	}
+
+	public boolean containsEmptyRegister() {
+		for(ArmRegisterElement elem: this.descriptorMap.keySet()){
+			Set<ArmAddressElement> elems = this.descriptorMap.get(elem);
+			if(elems.isEmpty())
+				return true;
+		}
+		return false;
+	}
+
+	public ArmRegisterElement getEmptyReg() {
+		for(ArmRegisterElement elem: this.descriptorMap.keySet()){
+			Set<ArmAddressElement> elems = this.descriptorMap.get(elem);
+			if(elems.isEmpty())
+				return elem;
+		}
+		throw new RuntimeException();
 	}
 }
