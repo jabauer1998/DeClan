@@ -13,7 +13,7 @@ public class Tuple<SourceType extends Copyable<SourceType>, DestType extends Cop
 
 	@Override
     public int hashCode(){
-        return source.hashCode() + dest.hashCode();
+        return Objects.hash(source.hashCode(), dest.hashCode());
     }
 
     @Override
