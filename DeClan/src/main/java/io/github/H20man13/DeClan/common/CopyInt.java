@@ -20,6 +20,16 @@ public class CopyInt implements Copyable<CopyInt> {
 	public int asInt() {
 		return val;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof CopyInt) {
+			CopyInt myInt = (CopyInt)obj;
+			if(myInt.asInt() == asInt())
+				return true;
+		}
+		return false;
+	}
 
 	@Override
 	public CopyInt copy() {

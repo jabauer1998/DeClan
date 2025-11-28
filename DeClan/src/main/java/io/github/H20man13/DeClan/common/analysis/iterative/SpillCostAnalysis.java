@@ -148,15 +148,18 @@ implements CustomMeet<HashSet<Tuple<CopyStr, CopyInt>>>{
 		HashSet<Tuple<CopyStr, CopyInt>> newSet = newSet();
 		
 		for(Tuple<CopyStr, CopyInt> in: inputSet)
-			if(!def.contains(in.source))
+			if(!def.contains(in.source.toString()))
 				newSet.add(in.copy());
 		
 		HashSet<Tuple<CopyStr, CopyInt>> newish = newSet();
 		for(Tuple<CopyStr, CopyInt> newElem: newSet)
 			if(!setContainsLabel(use, newElem.source.toString()))
-				newish.add(getLabel(use, newElem.source.toString()));
+				newish.add(newElem.copy());
 		
-		newish.addAll(use);
+		for(Tuple<CopyStr, CopyInt> myUse: use) {
+			newish.add(myUse.copy());
+		}
+		
 		for(Tuple<CopyStr, CopyInt> tup: newish){
 			tup.dest = ConversionUtils.newI(tup.dest.asInt() + 1);
 		}
@@ -171,8 +174,9 @@ implements CustomMeet<HashSet<Tuple<CopyStr, CopyInt>>>{
 		for(HashSet<Tuple<CopyStr, CopyInt>> elem: list) {
 			for(Tuple<CopyStr, CopyInt> myElem: elem)
 				if(setContainsLabel(hash, myElem.source.toString())) {
-					Tuple<CopyStr, CopyInt> source = getLabel(hash, myElem.source.toString());
+					Tuple<CopyStr, CopyInt> source = getLabel(hash, myElem.source.toString()).copy();
 					source.dest = ConversionUtils.newI((source.dest.asInt() + myElem.dest.asInt()) / 2);
+					hash.add(source);
 				} else {
 					hash.add(new Tuple<>(myElem.source, myElem.dest));
 				}
