@@ -12,6 +12,7 @@ import java.util.Set;
 
 import javax.naming.NameNotFoundException;
 
+import io.github.H20man13.DeClan.common.CopyStr;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.ast.Identifier;
 import io.github.H20man13.DeClan.common.dag.DagNode;
@@ -29,6 +30,7 @@ import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.End;
 import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.ICode.Type;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Prog;
@@ -82,11 +84,11 @@ public class Utils {
         return false;
     }
 
-    public static NullableExp getExpFromSet(Set<Tuple<String, NullableExp>> tuples, NullableExp name){
+    public static NullableExp getExpFromSet(Set<Tuple<CopyStr, NullableExp>> tuples, NullableExp name){
     	if(name instanceof IdentExp) {
     		IdentExp nExp = (IdentExp)name;
-    		for(Tuple<String, NullableExp> tuple : tuples){
-                if(tuple.source.equals(nExp.ident)){
+    		for(Tuple<CopyStr, NullableExp> tuple : tuples){
+                if(tuple.source.toString().equals(nExp.ident)){
                     return tuple.dest;
                 }
             }
@@ -94,12 +96,23 @@ public class Utils {
         
         throw new UtilityException("getExpFromSet", "Tuple with name " + name + " was not found");
     }
+    
+    public static boolean containsExpInSet(Set<Tuple<NullableExp, Type>> opSet, String string) {
+    	for(Tuple<NullableExp, ICode.Type> tuple : opSet){
+            if(tuple.source instanceof IdentExp){
+            	IdentExp source = (IdentExp)tuple.source;
+            	if(source.ident.equals(string))
+            		return true;
+            }
+        }
+    	return false;
+    }
 
-    public static boolean containsExpInSet(Set<Tuple<String, NullableExp>> tuples, NullableExp name){
+    public static boolean containsExpInSet(Set<Tuple<CopyStr, NullableExp>> tuples, NullableExp name){
     	if(name instanceof IdentExp) {
     		IdentExp nExp = (IdentExp)name;
-    		for(Tuple<String, NullableExp> tuple : tuples){
-                if(tuple.source.equals(nExp.ident)){
+    		for(Tuple<CopyStr, NullableExp> tuple : tuples){
+                if(tuple.source.toString().equals(nExp.ident)){
                     return true;
                 }
             }
@@ -107,35 +120,35 @@ public class Utils {
         return false;
     }
     
-    public static boolean containsExpInSet(HashSet<Tuple<String, NullableExp>> killSet, String resTest) {
-		for(Tuple<String, NullableExp> tuple : killSet){
-            if(tuple.source.equals(resTest)){
+    public static boolean containsExpInSet(HashSet<Tuple<CopyStr, NullableExp>> killSet, String resTest) {
+		for(Tuple<CopyStr, NullableExp> tuple : killSet){
+            if(tuple.source.toString().equals(resTest)){
                 return true;
             }
 		}
 		return false;
     }
     
-    public static boolean containsExpInSet(Set<Tuple<Exp, ICode.Type>> set, Exp toSearch) {
-    	for(Tuple<Exp, ICode.Type> tuple: set) {
+    public static boolean containsNullExpInSet(Set<Tuple<NullableExp, ICode.Type>> set, NullableExp toSearch) {
+    	for(Tuple<NullableExp, ICode.Type> tuple: set) {
     		if(tuple.source.equals(toSearch))
     			return true;
     	}
     	return false;
     }
     
-    public static boolean containsExpInSet(HashSet<Tuple<Exp, String>> set, Exp toSearch) {
-    	for(Tuple<Exp, String> tuple: set) {
+    public static boolean containsExpInSet(HashSet<Tuple<NullableExp, CopyStr>> set, NullableExp toSearch) {
+    	for(Tuple<NullableExp, CopyStr> tuple: set) {
     		if(tuple.source.equals(toSearch))
     			return true;
     	}
     	return false;
     }
     
-    public static String getVar(Set<Tuple<Exp, String>> set, Exp toSearch) {
-    	for(Tuple<Exp, String> tuple: set) {
+    public static String getVar(Set<Tuple<NullableExp, CopyStr>> set, NullableExp toSearch) {
+    	for(Tuple<NullableExp, CopyStr> tuple: set) {
     		if(tuple.source.equals(toSearch))
-    			return tuple.dest;
+    			return tuple.dest.toString();
     	}
     	throw new UtilityException("getVar", "Error expression [" + toSearch.toString() + "] not found in set\n" + set.toString());
     }

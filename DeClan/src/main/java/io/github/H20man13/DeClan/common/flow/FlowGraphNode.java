@@ -12,4 +12,5 @@ public interface FlowGraphNode extends Copyable<FlowGraphNode>{
     public List<ICode> getICode();
     @Override
     public String toString();
+	FlowGraphNode copy();
 }

@@ -19,17 +19,18 @@ import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.inline.Inline;
 import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.util.Utils;
 
-public class AvailableExpressionsAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<Exp, ICode.Type>>>, HashSet<Tuple<Exp, ICode.Type>>, Tuple<Exp, ICode.Type>> {
+public class AvailableExpressionsAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<NullableExp, ICode.Type>>>, HashSet<Tuple<NullableExp, ICode.Type>>, Tuple<NullableExp, ICode.Type>> {
 
     private AnticipatedExpressionsAnalysis anticipatedAnalysis;
     private Map<ICode, Set<String>> killSets;
 
-    public AvailableExpressionsAnalysis(FlowGraph flowGraph, AnticipatedExpressionsAnalysis analysis, HashSet<Tuple<Exp, ICode.Type>> globalFlowSet, Config cfg) {
+    public AvailableExpressionsAnalysis(FlowGraph flowGraph, AnticipatedExpressionsAnalysis analysis, HashSet<Tuple<NullableExp, ICode.Type>> globalFlowSet, Config cfg) {
         super(flowGraph, Direction.FORWARDS, Meet.INTERSECTION, globalFlowSet, true, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
         killSets = new HashMap<ICode, Set<String>>();
         this.anticipatedAnalysis = analysis;
@@ -62,18 +63,18 @@ public class AvailableExpressionsAnalysis extends InstructionAnalysis<HashMap<IC
     }
 
     @Override
-    public HashSet<Tuple<Exp, ICode.Type>> transferFunction(ICode instruction, HashSet<Tuple<Exp, ICode.Type>> inputSet) {
-        HashSet<Tuple<Exp, ICode.Type>> result = newSet();
+    public HashSet<Tuple<NullableExp, ICode.Type>> transferFunction(ICode instruction, HashSet<Tuple<NullableExp, ICode.Type>> inputSet) {
+        HashSet<Tuple<NullableExp, ICode.Type>> result = newSet();
 
         result.addAll(inputSet);
         result.addAll(this.anticipatedAnalysis.getInputSet(instruction));
         
-        HashSet<Tuple<Exp, ICode.Type>> resultCopy = newSet();
+        HashSet<Tuple<NullableExp, ICode.Type>> resultCopy = newSet();
         resultCopy.addAll(result);
         
-        for(Tuple<Exp, ICode.Type> exp: resultCopy) {
+        for(Tuple<NullableExp, ICode.Type> exp: resultCopy) {
         	for(String s: killSets.get(instruction)) {
-        		if(exp.source.containsPlace(s)) {
+        		if(((Exp)exp.source).containsPlace(s)) {
         			result.remove(exp);
         		}
         	}

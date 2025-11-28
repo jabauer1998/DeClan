@@ -7,9 +7,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import io.github.H20man13.DeClan.common.CopyInt;
+import io.github.H20man13.DeClan.common.CopyStr;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.flow.FlowGraphNode;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class DepthFirstSpanningTree {
@@ -35,15 +38,15 @@ public class DepthFirstSpanningTree {
 		metaDataEdges.addRetreatingEdge(new DepthFirstMetaEdge(from, to));
 	}
 	
-	public Map<Tuple<BlockNode, BlockNode>, BackEdgeLoop> identifyLoops(){
-		HashMap<Tuple<BlockNode, BlockNode>, BackEdgeLoop> toRet = new HashMap<Tuple<BlockNode, BlockNode>, BackEdgeLoop>();
+	public Map<Tuple<FlowGraphNode, FlowGraphNode>, BackEdgeLoop> identifyLoops(){
+		HashMap<Tuple<FlowGraphNode, FlowGraphNode>, BackEdgeLoop> toRet = new HashMap<Tuple<FlowGraphNode, FlowGraphNode>, BackEdgeLoop>();
 		
 		int numBackEdges = metaDataEdges.getNumberOfBackEdges();
 		for(int i = 0; i < numBackEdges; i++){
 			DepthFirstMetaEdge edge = metaDataEdges.getBackEdge(i);
 			BlockNode sourceBlock = edge.source.getBlock();
 			BlockNode destBlock = edge.dest.getBlock();
-			Tuple<BlockNode, BlockNode> newEdge = new Tuple<BlockNode, BlockNode>(edge.source.getBlock(), edge.dest.getBlock());
+			Tuple<FlowGraphNode, FlowGraphNode> newEdge = new Tuple<FlowGraphNode, FlowGraphNode>(edge.source.getBlock(), edge.dest.getBlock());
 			
 			List<BlockNode> loopList = new LinkedList<BlockNode>();
 			RootDfstNode sourceNode = edge.source;
@@ -207,7 +210,7 @@ public class DepthFirstSpanningTree {
 		}
 	}
 	
-	private static Tuple<String, Integer> depthFirstOrderStrings(RootDfstNode node, Map<RootDfstNode, Integer> nodeToNumber, int currentNumber) {
+	private static Tuple<CopyStr, CopyInt> depthFirstOrderStrings(RootDfstNode node, Map<RootDfstNode, Integer> nodeToNumber, int currentNumber) {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append("Block ");
@@ -219,11 +222,11 @@ public class DepthFirstSpanningTree {
 		currentNumber++;
 		
 		for(DfstNode child: node){
-			Tuple<String, Integer> toStr = depthFirstOrderStrings(child, nodeToNumber, currentNumber);
-			currentNumber = toStr.dest;
+			Tuple<CopyStr, CopyInt> toStr = depthFirstOrderStrings(child, nodeToNumber, currentNumber);
+			currentNumber = toStr.dest.asInt();
 			sb.append(toStr.source);
 		}
 		
-		return new Tuple<String, Integer>(sb.toString(), currentNumber);
+		return new Tuple<CopyStr, CopyInt>(ConversionUtils.newS(sb.toString()), ConversionUtils.newI(currentNumber));
 	}
 }

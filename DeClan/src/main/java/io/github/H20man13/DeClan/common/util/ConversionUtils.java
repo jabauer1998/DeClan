@@ -8,6 +8,9 @@ import javax.naming.spi.DirStateFactory.Result;
 
 import io.github.H20man13.DeClan.common.dag.DagNode.ScopeType;
 import io.github.H20man13.DeClan.common.dag.DagNode.ValueType;
+import io.github.H20man13.DeClan.common.CopyBool;
+import io.github.H20man13.DeClan.common.CopyInt;
+import io.github.H20man13.DeClan.common.CopyStr;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.region.expr.Expr;
 import io.github.H20man13.DeClan.common.analysis.region.expr.IntExpr;
@@ -283,8 +286,8 @@ public class ConversionUtils {
         }
     }
     
-    public static boolean setContainsName(Set<Tuple<String, ICode.Type>> set, String name) {
-    	for(Tuple<String, ICode.Type> elem: set) {
+    public static boolean setContainsName(Set<Tuple<CopyStr, ICode.Type>> set, String name) {
+    	for(Tuple<CopyStr, ICode.Type> elem: set) {
     		if(elem.source.equals(name))
     			return true;
     	}
@@ -315,5 +318,17 @@ public class ConversionUtils {
 		case STRING: return P.STR();
 		default: throw new ConversionException("typeToPattern", type.toString(), P.class.getSimpleName());
 		}
+	}
+	
+	public static CopyStr newS(String s) {
+		return new CopyStr(s);
+	}
+	
+	public static CopyInt newI(int i) {
+		return new CopyInt(i);
+	}
+	
+	public static CopyBool newB(boolean b) {
+		return new CopyBool(b);
 	}
 }

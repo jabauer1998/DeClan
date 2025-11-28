@@ -14,11 +14,16 @@ public abstract class ICode implements Copyable<ICode>{
         RETURN
      }
  
-     public enum Type{
+     public enum Type implements Copyable<ICode.Type>{
          BOOL,
          REAL,
          INT,
-         STRING
+         STRING;
+
+		@Override
+		public Type copy() {
+			return this;
+		}
      }
 
     public abstract String toString();

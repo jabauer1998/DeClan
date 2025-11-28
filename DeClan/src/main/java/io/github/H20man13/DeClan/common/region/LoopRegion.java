@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.CopyBool;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Def;
@@ -11,6 +12,7 @@ import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.IntExp;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
 public class LoopRegion extends Region {
 	public LoopRegion(LoopBodyRegion region) {
@@ -33,18 +35,18 @@ public class LoopRegion extends Region {
 		boolean zeroExists = false;
 		boolean otherIsConstant = false;
 		
-		Tuple<Boolean, Boolean> analyzed = containsInductionVariable(this.header, zeroExists, otherIsConstant, cond.left, cond.right);
-		if(analyzed.source == true)
+		Tuple<CopyBool, CopyBool> analyzed = containsInductionVariable(this.header, zeroExists, otherIsConstant, cond.left, cond.right);
+		if(analyzed.source.asBool() == true)
 			zeroExists = true;
-		if(analyzed.dest == true)
+		if(analyzed.dest.asBool() == true)
 			otherIsConstant = true;
 		
 		if(!zeroExists || !otherIsConstant) {
 			for (RegionBase reg: this.getEntryRegions()) {
 				analyzed = containsInductionVariable(reg, zeroExists, otherIsConstant, cond.left, cond.right);
-				if(analyzed.source == true)
+				if(analyzed.source.asBool() == true)
 					zeroExists = true;
-				if(analyzed.dest == true)
+				if(analyzed.dest.asBool() == true)
 					otherIsConstant = true;
 				
 				if(zeroExists && otherIsConstant)
@@ -55,7 +57,7 @@ public class LoopRegion extends Region {
 		return zeroExists && otherIsConstant;
 	}
 	
-	private static Tuple<Boolean, Boolean> containsInductionVariable(RegionBase reg, boolean zeroExists, boolean otherIsConstant, IdentExp left, IdentExp right){
+	private static Tuple<CopyBool, CopyBool> containsInductionVariable(RegionBase reg, boolean zeroExists, boolean otherIsConstant, IdentExp left, IdentExp right){
 		if(reg instanceof BlockRegion) {
 			BlockRegion block = (BlockRegion)reg;
 			for(int i = block.getNumberOfInstructions() - 1; i >= 0; i--) {
@@ -101,16 +103,16 @@ public class LoopRegion extends Region {
 			BaseRegion base = (BaseRegion)reg;
 			
 			for (RegionBase sub: base) {
-				Tuple<Boolean, Boolean> analyzed = containsInductionVariable(sub, zeroExists, otherIsConstant, left, right);
-				if(analyzed.source == true)
+				Tuple<CopyBool, CopyBool> analyzed = containsInductionVariable(sub, zeroExists, otherIsConstant, left, right);
+				if(analyzed.source.asBool() == true)
 					zeroExists = true;
-				if(analyzed.dest == true)
+				if(analyzed.dest.asBool() == true)
 					otherIsConstant = true;
 				
 				if(zeroExists && otherIsConstant)
 					break;
 			}
 		}
-		return new Tuple<Boolean, Boolean>(zeroExists, otherIsConstant);
+		return new Tuple<CopyBool, CopyBool>(ConversionUtils.newB(zeroExists), ConversionUtils.newB(otherIsConstant));
 	}
 }

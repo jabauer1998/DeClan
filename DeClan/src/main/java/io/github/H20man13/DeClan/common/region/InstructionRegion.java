@@ -18,4 +18,9 @@ public class InstructionRegion implements RegionBase {
 	public ICode getLastInstruction() {
 		return instruction;
 	}
+
+	@Override
+	public RegionBase copy() {
+		return new InstructionRegion(instruction.copy());
+	}
 }

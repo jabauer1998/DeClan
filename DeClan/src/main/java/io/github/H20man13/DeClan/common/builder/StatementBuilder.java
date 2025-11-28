@@ -18,6 +18,7 @@ import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.IntExp;
+import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.inline.Inline;
 import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
@@ -404,7 +405,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
     	SPECIFIER
     }
     
-    public void buildInlineAssembly(String inlineAssembly, List<Tuple<IdentExp, ICode.Type>> param){
+    public void buildInlineAssembly(String inlineAssembly, List<Tuple<NullableExp, ICode.Type>> param){
         List<InlineParam> realParams = new LinkedList<InlineParam>();
         int index = 0;
         int count = 0;
@@ -524,13 +525,13 @@ public abstract class StatementBuilder extends AssignmentBuilder{
         addInstruction(new Return(funcName));
     }
 
-    public void buildExternalProcedureCall(String funcName, List<Tuple<Exp, ICode.Type>> args){
-        ArrayList<Tuple<Exp, ICode.Type>> newArgs = new ArrayList<Tuple<Exp, ICode.Type>>();
+    public void buildExternalProcedureCall(String funcName, List<Tuple<NullableExp, ICode.Type>> args){
+        ArrayList<Tuple<NullableExp, ICode.Type>> newArgs = new ArrayList<Tuple<NullableExp, ICode.Type>>();
         newArgs.addAll(args);
 
         List<Def> newDefs = new LinkedList<Def>();
         for(int i = 0; i < newArgs.size(); i++){
-            Tuple<Exp, ICode.Type> arg = newArgs.get(i);
+            Tuple<NullableExp, ICode.Type> arg = newArgs.get(i);
             String newPlace;
             if(containsEntry(funcName, i, SymEntry.EXTERNAL | SymEntry.PARAM)){
                 newPlace = getVariablePlace(funcName, i, SymEntry.EXTERNAL | SymEntry.PARAM).ident;
@@ -538,7 +539,7 @@ public abstract class StatementBuilder extends AssignmentBuilder{
                 newPlace = gen.genNext();
                 addVariableEntry(newPlace, SymEntry.EXTERNAL | SymEntry.PARAM, funcName, i, arg.dest);
             }
-            newDefs.add(new Def(Scope.PARAM, newPlace, arg.source, arg.dest));
+            newDefs.add(new Def(Scope.PARAM, newPlace, (Exp)arg.source, arg.dest));
         }
         addInstruction(new Call(funcName, newDefs));
     }

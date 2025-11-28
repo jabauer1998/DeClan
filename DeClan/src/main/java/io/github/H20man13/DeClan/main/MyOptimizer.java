@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.Config;
+import io.github.H20man13.DeClan.common.CopyStr;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.iterative.AnticipatedExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.AvailableExpressionsAnalysis;
@@ -100,14 +101,14 @@ public class MyOptimizer {
     private DominatorAnalysis domAnal;
     private AvailableExpressionsAnalysis availableAnal;
     private SavedExpressionAnalysis savedAnal;
-    private Map<ICode, Set<Tuple<Exp, ICode.Type>>> earliestSets;
-    private Map<ICode, Set<Tuple<Exp, ICode.Type>>> latestSets;
-    private Map<ICode, Set<Tuple<Exp, ICode.Type>>> usedSets;
-    private HashSet<Tuple<Exp, ICode.Type>> globalExpressionSet;
+    private Map<ICode, Set<Tuple<NullableExp, ICode.Type>>> earliestSets;
+    private Map<ICode, Set<Tuple<NullableExp, ICode.Type>>> latestSets;
+    private Map<ICode, Set<Tuple<NullableExp, ICode.Type>>> usedSets;
+    private HashSet<Tuple<NullableExp, ICode.Type>> globalExpressionSet;
     private IrRegisterGenerator iGen;
     private DepthFirstSpanningTree dfst;
     private List<BlockNode> origBlocks;
-    private Map<Tuple<BlockNode, BlockNode>, BackEdgeLoop> loops;
+    private Map<Tuple<FlowGraphNode, FlowGraphNode>, BackEdgeLoop> loops;
     private RegionGraph regions;
     private Config cfg;
 
@@ -1038,22 +1039,22 @@ public class MyOptimizer {
     }
     
     private void buildGlobalExpressionsSemilattice(){
-    	this.globalExpressionSet = new HashSet<Tuple<Exp, ICode.Type>>();
+    	this.globalExpressionSet = new HashSet<Tuple<NullableExp, ICode.Type>>();
     	for(FlowGraphNode node: this.globalFlowGraph.getBlocks()) {
     		for(ICode icode: node.getICode()) {
     			if(icode instanceof Def) {
     				Def definition = (Def)icode;
-    				this.globalExpressionSet.add(new Tuple<Exp, ICode.Type>(definition.val, definition.type));
+    				this.globalExpressionSet.add(new Tuple<NullableExp, ICode.Type>(definition.val, definition.type));
     			} else if(icode instanceof Assign) {
     				Assign assignment = (Assign)icode;
-    				this.globalExpressionSet.add(new Tuple<Exp, ICode.Type>(assignment.value, assignment.getType()));
+    				this.globalExpressionSet.add(new Tuple<NullableExp, ICode.Type>(assignment.value, assignment.getType()));
     			} else if(icode instanceof If) {
     				If stat = (If)icode;
-    				this.globalExpressionSet.add(new Tuple<Exp, ICode.Type>(stat.exp, ICode.Type.BOOL));
+    				this.globalExpressionSet.add(new Tuple<NullableExp, ICode.Type>(stat.exp, ICode.Type.BOOL));
     			} else if(icode instanceof Call) {
     				Call call = (Call)icode;
     				for(Def def: call.params) {
-    					this.globalExpressionSet.add(new Tuple<Exp, ICode.Type>(def.val, def.type));
+    					this.globalExpressionSet.add(new Tuple<NullableExp, ICode.Type>(def.val, def.type));
     				}
     			}
     		}
@@ -1121,13 +1122,13 @@ public class MyOptimizer {
     		runAnticipatedExpressionsAnalysis();
     	if(this.availableAnal == null)
     		runAvailableExpressionsAnalysis();
-    	this.earliestSets = new HashMap<ICode, Set<Tuple<Exp, ICode.Type>>>();
+    	this.earliestSets = new HashMap<ICode, Set<Tuple<NullableExp, ICode.Type>>>();
     	for(FlowGraphNode block: this.globalFlowGraph.getBlocks()){
     		for(ICode icode: block.getICode()) {
-    			Set<Tuple<Exp, ICode.Type>> earliestSet = new HashSet<Tuple<Exp, ICode.Type>>();
-        		Set<Tuple<Exp, ICode.Type>> anticipatedSet = this.anticipatedAnal.getInputSet(icode);
-        		Set<Tuple<Exp, ICode.Type>> availableSet = this.availableAnal.getInputSet(icode);
-        		for(Tuple<Exp, ICode.Type> anticipatedExp: anticipatedSet) {
+    			Set<Tuple<NullableExp, ICode.Type>> earliestSet = new HashSet<Tuple<NullableExp, ICode.Type>>();
+        		Set<Tuple<NullableExp, ICode.Type>> anticipatedSet = this.anticipatedAnal.getInputSet(icode);
+        		Set<Tuple<NullableExp, ICode.Type>> availableSet = this.availableAnal.getInputSet(icode);
+        		for(Tuple<NullableExp, ICode.Type> anticipatedExp: anticipatedSet) {
         			if(!availableSet.contains(anticipatedExp))
         				earliestSet.add(anticipatedExp);
         		}
@@ -1139,23 +1140,23 @@ public class MyOptimizer {
     private void buildUsedExpressionSets() {
     	if(this.globalFlowGraph == null)
     		buildFlowGraph();
-    	this.usedSets = new HashMap<ICode, Set<Tuple<Exp, ICode.Type>>>();
+    	this.usedSets = new HashMap<ICode, Set<Tuple<NullableExp, ICode.Type>>>();
     	for(FlowGraphNode block: this.globalFlowGraph) {
     		for(ICode icode: block.getICode()) {
-    			Set<Tuple<Exp, ICode.Type>> toAdd = new HashSet<Tuple<Exp, ICode.Type>>();
+    			Set<Tuple<NullableExp, ICode.Type>> toAdd = new HashSet<Tuple<NullableExp, ICode.Type>>();
     			if(icode instanceof Def) {
     				Def definition = (Def)icode;
-    				toAdd.add(new Tuple<Exp, ICode.Type>(definition.val, definition.type));
+    				toAdd.add(new Tuple<NullableExp, ICode.Type>(definition.val, definition.type));
     			} else if(icode instanceof Assign) {
     				Assign ass = (Assign)icode;
-    				toAdd.add(new Tuple<Exp, ICode.Type>(ass.value, ass.getType()));
+    				toAdd.add(new Tuple<NullableExp, ICode.Type>(ass.value, ass.getType()));
     			} else if(icode instanceof If) {
     				If ifStat = (If)icode;
-    				toAdd.add(new Tuple<Exp, ICode.Type>(ifStat.exp, ICode.Type.BOOL));
+    				toAdd.add(new Tuple<NullableExp, ICode.Type>(ifStat.exp, ICode.Type.BOOL));
     			} else if(icode instanceof Call) {
     				Call call = (Call)icode;
     				for(Def param: call.params) {
-    					toAdd.add(new Tuple<Exp, ICode.Type>(param.val, param.type));
+    					toAdd.add(new Tuple<NullableExp, ICode.Type>(param.val, param.type));
     				}
     			}
     			this.usedSets.put(icode.copy(), toAdd);
@@ -1188,29 +1189,29 @@ public class MyOptimizer {
     	if(this.posponableAnal == null)
     		runPostponableExpressionAnalysis();
     	
-    	this.latestSets = new HashMap<ICode, Set<Tuple<Exp, ICode.Type>>>();
+    	this.latestSets = new HashMap<ICode, Set<Tuple<NullableExp, ICode.Type>>>();
     	
     	for(BlockNode block: this.globalFlowGraph.getBlocks()) {
     		int blockLength = block.getICode().size();
     		for(int i = blockLength - 1; i >= 0; i--) {
     			ICode instruction = block.getICode().get(i);
     			//Earliest[B] U Postponable[B].in
-        		Set<Tuple<Exp, ICode.Type>> firstPartOfEquation = new HashSet<Tuple<Exp, ICode.Type>>();
-        		Set<Tuple<Exp, ICode.Type>> earliestPart = earliestSets.get(instruction);
-        		Set<Tuple<Exp, ICode.Type>> postponablePart = posponableAnal.getInputSet(instruction);
+        		Set<Tuple<NullableExp, ICode.Type>> firstPartOfEquation = new HashSet<Tuple<NullableExp, ICode.Type>>();
+        		Set<Tuple<NullableExp, ICode.Type>> earliestPart = earliestSets.get(instruction);
+        		Set<Tuple<NullableExp, ICode.Type>> postponablePart = posponableAnal.getInputSet(instruction);
         		firstPartOfEquation.addAll(earliestPart);
         		firstPartOfEquation.addAll(postponablePart);
         		
-        		Set<Tuple<Exp, ICode.Type>> thirdPartOfEquation = new HashSet<Tuple<Exp, ICode.Type>>();
+        		Set<Tuple<NullableExp, ICode.Type>> thirdPartOfEquation = new HashSet<Tuple<NullableExp, ICode.Type>>();
         		
         		if(i + 1 >= blockLength) {
         			//Intersection of sucessors of earliest union postponable
         			List<FlowGraphNode> successors = block.getSuccessors();
             		if(!successors.isEmpty()) {
             			FlowGraphNode sucessor = successors.getFirst();
-            			Set<Tuple<Exp, ICode.Type>> sucessorEarliestUnionPostponable = new HashSet<Tuple<Exp, ICode.Type>>();
+            			Set<Tuple<NullableExp, ICode.Type>> sucessorEarliestUnionPostponable = new HashSet<Tuple<NullableExp, ICode.Type>>();
             			ICode sucessorICode = sucessor.getICode().getFirst();
-            			Set<Tuple<Exp, ICode.Type>> earliestOfSucessor = earliestSets.get(sucessorICode);
+            			Set<Tuple<NullableExp, ICode.Type>> earliestOfSucessor = earliestSets.get(sucessorICode);
             			sucessorEarliestUnionPostponable.addAll(earliestOfSucessor);
             			sucessorEarliestUnionPostponable.addAll(this.posponableAnal.getInputSet(sucessorICode));
             			thirdPartOfEquation.addAll(sucessorEarliestUnionPostponable);
@@ -1218,7 +1219,7 @@ public class MyOptimizer {
             			for(int x = 1; x < successors.size(); x++) {
             				sucessor = successors.get(x);
             				sucessorICode = sucessor.getICode().getFirst();
-                			sucessorEarliestUnionPostponable = new HashSet<Tuple<Exp, ICode.Type>>();
+                			sucessorEarliestUnionPostponable = new HashSet<Tuple<NullableExp, ICode.Type>>();
                 			sucessorEarliestUnionPostponable.addAll(earliestSets.get(sucessorICode));
                 			sucessorEarliestUnionPostponable.addAll(this.posponableAnal.getInputSet(sucessorICode));
                 			thirdPartOfEquation.retainAll(sucessorEarliestUnionPostponable);
@@ -1226,7 +1227,7 @@ public class MyOptimizer {
             		}
         		} else {
         			ICode singleSuccessor = block.getICode().get(i + 1);
-        			Set<Tuple<Exp, ICode.Type>> sucessorEarliestUnionPostponable = new HashSet<Tuple<Exp, ICode.Type>>();
+        			Set<Tuple<NullableExp, ICode.Type>> sucessorEarliestUnionPostponable = new HashSet<Tuple<NullableExp, ICode.Type>>();
         			sucessorEarliestUnionPostponable.addAll(this.earliestSets.get(singleSuccessor));
         			sucessorEarliestUnionPostponable.addAll(this.posponableAnal.getInputSet(singleSuccessor));
         			
@@ -1236,15 +1237,15 @@ public class MyOptimizer {
         		
         		
         		//Compliment of previous intersection
-        		Set<Tuple<Exp, ICode.Type>> forthPartOfEquation = new HashSet<Tuple<Exp, ICode.Type>>();
-        		for(Tuple<Exp, ICode.Type> exp: this.globalExpressionSet) {
+        		Set<Tuple<NullableExp, ICode.Type>> forthPartOfEquation = new HashSet<Tuple<NullableExp, ICode.Type>>();
+        		for(Tuple<NullableExp, ICode.Type> exp: this.globalExpressionSet) {
         			if(!thirdPartOfEquation.contains(exp))
         				forthPartOfEquation.add(exp);
         		}
         		
         		forthPartOfEquation.addAll(this.usedSets.get(instruction));
         		
-        		Set<Tuple<Exp, ICode.Type>> secondPartOfEquation = new HashSet<Tuple<Exp, ICode.Type>>();
+        		Set<Tuple<NullableExp, ICode.Type>> secondPartOfEquation = new HashSet<Tuple<NullableExp, ICode.Type>>();
         		secondPartOfEquation.addAll(firstPartOfEquation);
         		secondPartOfEquation.retainAll(forthPartOfEquation);
         		
@@ -1348,15 +1349,15 @@ public class MyOptimizer {
                 List<ICode> icodeList = block.getICode();
                 for(int i = 0; i < icodeList.size(); i++){
                     ICode icode = icodeList.get(i);
-                    Set<Tuple<String, NullableExp>> values = this.propAnal.getInputSet(icode);
+                    Set<Tuple<CopyStr, NullableExp>> values = this.propAnal.getInputSet(icode);
                     if(icode instanceof Assign){
                         Assign varICode = (Assign)icode;
                         if(varICode.value instanceof IdentExp){
                             IdentExp identVal = (IdentExp)varICode.value;
                             
-                            Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(identVal, identVal);
+                            Tuple<NullableExp, NullableExp> sourceDestRight = new Tuple<NullableExp, NullableExp>(identVal, identVal);
                             while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
-                                sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                                sourceDestRight = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                             }
                             
                             if(sourceDestRight.dest.isConstant()) {
@@ -1376,14 +1377,14 @@ public class MyOptimizer {
                         } else if(varICode.value instanceof BinExp){
                             BinExp binExpVal = (BinExp)varICode.value;
 
-                            Tuple<IdentExp, NullableExp> sourceDestLeft = new Tuple<IdentExp, NullableExp>(binExpVal.left, binExpVal.left);
+                            Tuple<NullableExp, NullableExp> sourceDestLeft = new Tuple<NullableExp, NullableExp>(binExpVal.left, binExpVal.left);
                             while(Utils.containsExpInSet(values, sourceDestLeft.dest) && !Utils.scopeIsGlobal(sourceDestLeft.dest)){
-                                sourceDestLeft = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
+                                sourceDestLeft = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
                             }
     
-                            Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(binExpVal.right, binExpVal.right);
+                            Tuple<NullableExp, NullableExp> sourceDestRight = new Tuple<NullableExp, NullableExp>(binExpVal.right, binExpVal.right);
                             while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
-                                sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                                sourceDestRight = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                             }
 
                             if(sourceDestLeft.dest.isConstant() && sourceDestRight.dest.isConstant()){
@@ -1523,9 +1524,9 @@ public class MyOptimizer {
                         } else if(varICode.value instanceof UnExp){
                             UnExp unExpVal = (UnExp)varICode.value;
     
-                            Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(unExpVal.right, unExpVal.right);
+                            Tuple<NullableExp, NullableExp> sourceDestRight = new Tuple<NullableExp, NullableExp>(unExpVal.right, unExpVal.right);
                             while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
-                                sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                                sourceDestRight = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                             }
 
                             if(sourceDestRight.dest.isConstant()){
@@ -1564,9 +1565,9 @@ public class MyOptimizer {
                         if(varICode.val instanceof IdentExp){
                             IdentExp identVal = (IdentExp)varICode.val;
                             
-                            Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(identVal, identVal);
+                            Tuple<NullableExp, NullableExp> sourceDestRight = new Tuple<NullableExp, NullableExp>(identVal, identVal);
                             while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
-                                sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                                sourceDestRight = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                             }
                             
                             if(sourceDestRight.dest.isConstant()) {
@@ -1586,14 +1587,14 @@ public class MyOptimizer {
                         } else if(varICode.val instanceof BinExp){
                             BinExp binExpVal = (BinExp)varICode.val;
 
-                            Tuple<IdentExp, NullableExp> sourceDestLeft = new Tuple<IdentExp, NullableExp>(binExpVal.left, binExpVal.left);
+                            Tuple<NullableExp, NullableExp> sourceDestLeft = new Tuple<NullableExp, NullableExp>(binExpVal.left, binExpVal.left);
                             while(Utils.containsExpInSet(values, sourceDestLeft.dest) && !Utils.scopeIsGlobal(sourceDestLeft.dest)){
-                                sourceDestLeft = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
+                                sourceDestLeft = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
                             }
     
-                            Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(binExpVal.right, binExpVal.right);
+                            Tuple<NullableExp, NullableExp> sourceDestRight = new Tuple<NullableExp, NullableExp>(binExpVal.right, binExpVal.right);
                             while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
-                                sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                                sourceDestRight = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                             }
 
                             if(sourceDestLeft.dest.isConstant() && sourceDestRight.dest.isConstant()){
@@ -1733,9 +1734,9 @@ public class MyOptimizer {
                         } else if(varICode.val instanceof UnExp){
                             UnExp unExpVal = (UnExp)varICode.val;
     
-                            Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(unExpVal.right, unExpVal.right);
+                            Tuple<NullableExp, NullableExp> sourceDestRight = new Tuple<NullableExp, NullableExp>(unExpVal.right, unExpVal.right);
                             while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
-                                sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                                sourceDestRight = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                             }
 
                             if(sourceDestRight.dest.isConstant()){
@@ -1773,14 +1774,14 @@ public class MyOptimizer {
                     	If ifStat = (If)icode;
                     	BinExp exp = ifStat.exp;
                     	
-                    	Tuple<IdentExp, NullableExp> sourceDestLeft = new Tuple<IdentExp, NullableExp>(exp.left, exp.left);
+                    	Tuple<NullableExp, NullableExp> sourceDestLeft = new Tuple<NullableExp, NullableExp>(exp.left, exp.left);
                         while(Utils.containsExpInSet(values, sourceDestLeft.dest) && !Utils.scopeIsGlobal(sourceDestLeft.dest)){
-                            sourceDestLeft = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
+                            sourceDestLeft = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
                         }
 
-                        Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(exp.right, exp.right);
+                        Tuple<NullableExp, NullableExp> sourceDestRight = new Tuple<NullableExp, NullableExp>(exp.right, exp.right);
                         while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
-                            sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                            sourceDestRight = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                         }
                         
                         IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant() || sourceDestLeft.dest instanceof NaaExp) ? sourceDestLeft.source : sourceDestLeft.dest);
@@ -1799,9 +1800,9 @@ public class MyOptimizer {
                     		if(param.val instanceof IdentExp){
                                 IdentExp identVal = (IdentExp)param.val;
                                 
-                                Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(identVal, identVal);
+                                Tuple<NullableExp, NullableExp> sourceDestRight = new Tuple<NullableExp, NullableExp>(identVal, identVal);
                                 while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
-                                    sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                                    sourceDestRight = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                                 }
                                 
                                 if(sourceDestRight.dest.isConstant()) {
@@ -1821,14 +1822,14 @@ public class MyOptimizer {
                             } else if(param.val instanceof BinExp){
                                 BinExp binExpVal = (BinExp)param.val;
 
-                                Tuple<IdentExp, NullableExp> sourceDestLeft = new Tuple<IdentExp, NullableExp>(binExpVal.left, binExpVal.left);
+                                Tuple<NullableExp, NullableExp> sourceDestLeft = new Tuple<NullableExp, NullableExp>(binExpVal.left, binExpVal.left);
                                 while(Utils.containsExpInSet(values, sourceDestLeft.dest) && !Utils.scopeIsGlobal(sourceDestLeft.dest)){
-                                    sourceDestLeft = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
+                                    sourceDestLeft = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
                                 }
         
-                                Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(binExpVal.right, binExpVal.right);
+                                Tuple<NullableExp, NullableExp> sourceDestRight = new Tuple<NullableExp, NullableExp>(binExpVal.right, binExpVal.right);
                                 while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
-                                    sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                                    sourceDestRight = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                                 }
 
                                 if(sourceDestLeft.dest.isConstant() && sourceDestRight.dest.isConstant()){
@@ -1968,9 +1969,9 @@ public class MyOptimizer {
                             } else if(param.val instanceof UnExp){
                                 UnExp unExpVal = (UnExp)param.val;
         
-                                Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(unExpVal.right, unExpVal.right);
+                                Tuple<NullableExp, NullableExp> sourceDestRight = new Tuple<NullableExp, NullableExp>(unExpVal.right, unExpVal.right);
                                 while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
-                                    sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                                    sourceDestRight = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                                 }
 
                                 if(sourceDestRight.dest.isConstant()){
@@ -2011,12 +2012,12 @@ public class MyOptimizer {
                         
                     	for(InlineParam param: inline.params) {
                     		if(param.containsAllQual(InlineParam.IS_USE)) {
-                    			Tuple<IdentExp, NullableExp> sourceDestRight = new Tuple<IdentExp, NullableExp>(param.name, param.name);
+                    			Tuple<NullableExp, NullableExp> sourceDestRight = new Tuple<NullableExp, NullableExp>(param.name, param.name);
                                 while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
-                                    sourceDestRight = new Tuple<IdentExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
+                                    sourceDestRight = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                                 }
                                 
-                                IdentExp finalExp = (sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : (IdentExp)sourceDestRight.dest;
+                                IdentExp finalExp = (sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? (IdentExp)sourceDestRight.source : (IdentExp)sourceDestRight.dest;
                                 if(!finalExp.equals(param.name))
                                 	changes = true;
                                 newParams.add(new InlineParam(finalExp, param.type, param.qual));
@@ -2047,43 +2048,43 @@ public class MyOptimizer {
     		List<ICode> newICode = new LinkedList<ICode>();
     		
     		for(ICode icode: oldICode) {
-    			Set<Tuple<Exp, ICode.Type>> newExpSet = new HashSet<Tuple<Exp, ICode.Type>>();
-	    		Set<Tuple<Exp, ICode.Type>> latestOfBlock = this.latestSets.get(icode);
-	    		Set<Tuple<Exp, ICode.Type>> usedAnalBlock = this.usedAnal.getOutputSet(icode);
-	    		HashSet<Tuple<Exp, String>> savedVars = this.savedAnal.getOutputSet(icode);
+    			Set<Tuple<NullableExp, ICode.Type>> newExpSet = new HashSet<Tuple<NullableExp, ICode.Type>>();
+	    		Set<Tuple<NullableExp, ICode.Type>> latestOfBlock = this.latestSets.get(icode);
+	    		Set<Tuple<NullableExp, ICode.Type>> usedAnalBlock = this.usedAnal.getOutputSet(icode);
+	    		HashSet<Tuple<NullableExp, CopyStr>> savedVars = this.savedAnal.getOutputSet(icode);
 	    		newExpSet.addAll(latestOfBlock);
 	    		newExpSet.retainAll(usedAnalBlock);
 	    		
-	    		for(Tuple<Exp, ICode.Type> expression: newExpSet) {
+	    		for(Tuple<NullableExp, ICode.Type> expression: newExpSet) {
 	    			if(expression.source instanceof IdentExp) {
 	    				IdentExp ident = (IdentExp)expression.source;
 	    				if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL) {
 	    					if(Utils.containsExpInSet(savedVars, ident)) {
 	    						String name = Utils.getVar(savedVars, ident);
-	    						newICode.add(new Def(ICode.Scope.LOCAL, name, expression.source, expression.dest));
+	    						newICode.add(new Def(ICode.Scope.LOCAL, name.toString(), (Exp)expression.source, expression.dest));
 	    					}
 	    				}
 	    			} else if(Utils.containsExpInSet(savedVars, expression.source)) {
 						String name = Utils.getVar(savedVars, expression.source);
-						newICode.add(new Def(ICode.Scope.LOCAL, name, expression.source, expression.dest));
+						newICode.add(new Def(ICode.Scope.LOCAL, name.toString(), (Exp)expression.source, expression.dest));
 	    			}
 	    		}
 	    		
-	    		Set<Tuple<Exp, ICode.Type>> newVarSet = new HashSet<Tuple<Exp, ICode.Type>>();
+	    		Set<Tuple<NullableExp, ICode.Type>> newVarSet = new HashSet<Tuple<NullableExp, ICode.Type>>();
 	    		newVarSet.addAll(usedAnalBlock);
 	    		
-	    		for(Tuple<Exp, ICode.Type> semiLatticeElem: this.globalExpressionSet) {
+	    		for(Tuple<NullableExp, ICode.Type> semiLatticeElem: this.globalExpressionSet) {
 	    			if(!latestOfBlock.contains(semiLatticeElem)) {
 	    				newVarSet.add(semiLatticeElem);
 	    			}
 	    		}
 	    		
-	    		Set<Tuple<Exp, ICode.Type>> usedSet = this.usedSets.get(icode);
+	    		Set<Tuple<NullableExp, ICode.Type>> usedSet = this.usedSets.get(icode);
 	    		newVarSet.retainAll(usedSet);
 	    		
     			if(icode instanceof Assign){
     				Assign assign = (Assign)icode;
-    				Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(assign.value, assign.getType());
+    				Tuple<NullableExp, ICode.Type> myTuple = new Tuple<NullableExp, ICode.Type>(assign.value, assign.getType());
     				if(newVarSet.contains(myTuple)) {
     					if(myTuple.source instanceof IdentExp) {
     						IdentExp ident = (IdentExp)myTuple.source;
@@ -2100,7 +2101,7 @@ public class MyOptimizer {
     				}
     			} else if(icode instanceof Def){
     				Def assign = (Def)icode;
-    				Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(assign.val, assign.type);
+    				Tuple<NullableExp, ICode.Type> myTuple = new Tuple<NullableExp, ICode.Type>(assign.val, assign.type);
     				if(myTuple.source instanceof IdentExp) {
 						IdentExp ident = (IdentExp)myTuple.source;
 						if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL) {
@@ -2119,7 +2120,7 @@ public class MyOptimizer {
     				Call assign = (Call)icode;
     				
     				for(Def param: assign.params) {
-    					Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(param.val, param.type);
+    					Tuple<NullableExp, ICode.Type> myTuple = new Tuple<NullableExp, ICode.Type>(param.val, param.type);
         				if(newVarSet.contains(myTuple)) {
         					if(myTuple.source instanceof IdentExp) {
         						IdentExp ident = (IdentExp)myTuple.source;
@@ -2140,7 +2141,7 @@ public class MyOptimizer {
     				
     				for(InlineParam param: inline.params){
     					if(param.containsAllQual(InlineParam.IS_USE)) {
-    						Tuple<Exp, ICode.Type> myTuple = new Tuple<Exp, ICode.Type>(param.name, param.type);
+    						Tuple<NullableExp, ICode.Type> myTuple = new Tuple<NullableExp, ICode.Type>(param.name, param.type);
     						if(newVarSet.contains(myTuple)) {
             					if(myTuple.source instanceof IdentExp) {
             						IdentExp ident = (IdentExp)myTuple.source;
@@ -2278,20 +2279,20 @@ public class MyOptimizer {
     		resultRegionList.add(region);
     	}
     	
-    	Map<Tuple<BlockNode, BlockNode>, BackEdgeLoop> loops = this.loops;
-    	Map<Tuple<BlockNode, BlockNode>, List<Tuple<BlockNode, BlockNode>>> dependsOn = new HashMap<Tuple<BlockNode, BlockNode>, List<Tuple<BlockNode, BlockNode>>>();
-    	Set<Tuple<BlockNode, BlockNode>> visited = new HashSet<Tuple<BlockNode, BlockNode>>();
+    	Map<Tuple<FlowGraphNode, FlowGraphNode>, BackEdgeLoop> loops = this.loops;
+    	Map<Tuple<FlowGraphNode, FlowGraphNode>, List<Tuple<FlowGraphNode, FlowGraphNode>>> dependsOn = new HashMap<Tuple<FlowGraphNode, FlowGraphNode>, List<Tuple<FlowGraphNode, FlowGraphNode>>>();
+    	Set<Tuple<FlowGraphNode, FlowGraphNode>> visited = new HashSet<Tuple<FlowGraphNode, FlowGraphNode>>();
     	
-    	for(Tuple<BlockNode, BlockNode> backEdge: loops.keySet()) {
-    		for(Tuple<BlockNode, BlockNode> otherEdge: loops.keySet()){
+    	for(Tuple<FlowGraphNode, FlowGraphNode> backEdge: loops.keySet()) {
+    		for(Tuple<FlowGraphNode, FlowGraphNode> otherEdge: loops.keySet()){
     			if(!backEdge.equals(otherEdge)) {
     				BackEdgeLoop loop = loops.get(backEdge);
     				BackEdgeLoop otherLoop = loops.get(otherEdge);
     				if(loop.containsSubLoop(otherLoop)) {
     					if(!dependsOn.containsKey(backEdge)) {
-    						dependsOn.put(backEdge, new LinkedList<Tuple<BlockNode, BlockNode>>());
+    						dependsOn.put(backEdge, new LinkedList<Tuple<FlowGraphNode, FlowGraphNode>>());
     					}
-    					List<Tuple<BlockNode, BlockNode>> loopList = dependsOn.get(backEdge);
+    					List<Tuple<FlowGraphNode, FlowGraphNode>> loopList = dependsOn.get(backEdge);
     					loopList.add(otherEdge);
     				}
     			}
@@ -2324,7 +2325,7 @@ public class MyOptimizer {
     }
     
     private boolean containsLoopWithHeader(BlockNode node) {
-    	for(Tuple<BlockNode, BlockNode> loop: loops.keySet()){
+    	for(Tuple<FlowGraphNode, FlowGraphNode> loop: loops.keySet()){
     		if(loop.dest.equals(node))
     			return true;
     	}
@@ -2332,21 +2333,21 @@ public class MyOptimizer {
     }
     
     private BlockNode getSrcNode(BlockNode toSearch) {
-    	for(Tuple<BlockNode, BlockNode> loop: loops.keySet()){
+    	for(Tuple<FlowGraphNode, FlowGraphNode> loop: loops.keySet()){
     		if(loop.dest.equals(toSearch))
-    			return loop.source;
+    			return (BlockNode)loop.source;
     	}
     	throw new OptimizerException("getSrcNode", "No dest node found with " + toSearch);
     }
 
 	private void generateResultRegionLoops(List<RegionBase> resultRegionList, Map<FlowGraphNode, RegionBase> mapToRegions,
-			Map<Tuple<BlockNode, BlockNode>, BackEdgeLoop> loops2,
-			Map<Tuple<BlockNode, BlockNode>, List<Tuple<BlockNode, BlockNode>>> dependsOn,
-			Set<Tuple<BlockNode, BlockNode>> visited) {
-		for(Tuple<BlockNode, BlockNode> loopEdge: loops2.keySet()) {
+			Map<Tuple<FlowGraphNode, FlowGraphNode>, BackEdgeLoop> loops2,
+			Map<Tuple<FlowGraphNode, FlowGraphNode>, List<Tuple<FlowGraphNode, FlowGraphNode>>> dependsOn,
+			Set<Tuple<FlowGraphNode, FlowGraphNode>> visited) {
+		for(Tuple<FlowGraphNode, FlowGraphNode> loopEdge: loops2.keySet()) {
 			if(!visited.contains(loopEdge)) {
 				if(dependsOn.containsKey(loopEdge)) {
-					for(Tuple<BlockNode, BlockNode> loop: dependsOn.get(loopEdge)){
+					for(Tuple<FlowGraphNode, FlowGraphNode> loop: dependsOn.get(loopEdge)){
 						generateDependentRegion(loop, resultRegionList, mapToRegions, loops2, dependsOn, visited);
 					}
 				}
@@ -2379,13 +2380,13 @@ public class MyOptimizer {
 		}
 	}
 
-	private void generateDependentRegion(Tuple<BlockNode, BlockNode> loop, List<RegionBase> resultRegionList,
-			Map<FlowGraphNode, RegionBase> mapToRegions, Map<Tuple<BlockNode, BlockNode>, BackEdgeLoop> loops2,
-			Map<Tuple<BlockNode, BlockNode>, List<Tuple<BlockNode, BlockNode>>> dependsOn,
-			Set<Tuple<BlockNode, BlockNode>> visited) {
+	private void generateDependentRegion(Tuple<FlowGraphNode, FlowGraphNode> loop, List<RegionBase> resultRegionList,
+			Map<FlowGraphNode, RegionBase> mapToRegions, Map<Tuple<FlowGraphNode, FlowGraphNode>, BackEdgeLoop> loops2,
+			Map<Tuple<FlowGraphNode, FlowGraphNode>, List<Tuple<FlowGraphNode, FlowGraphNode>>> dependsOn,
+			Set<Tuple<FlowGraphNode, FlowGraphNode>> visited) {
 		if(!visited.contains(loop)) {
 			if(dependsOn.containsKey(loop)) {
-				for(Tuple<BlockNode, BlockNode> loopEdge: dependsOn.get(loop)){
+				for(Tuple<FlowGraphNode, FlowGraphNode> loopEdge: dependsOn.get(loop)){
 					generateDependentRegion(loopEdge, resultRegionList, mapToRegions, loops2, dependsOn, visited);
 				}
 			}

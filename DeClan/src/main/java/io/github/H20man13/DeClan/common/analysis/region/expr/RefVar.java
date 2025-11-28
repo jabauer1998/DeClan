@@ -23,4 +23,9 @@ public class RefVar implements Expr {
 	public Expr simplify() {
 		return this;
 	}
+
+	@Override
+	public Expr copy() {
+		return new RefVar(varName);
+	}
 }

@@ -16,6 +16,7 @@ import io.github.H20man13.DeClan.common.icode.ICode.Scope;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
@@ -174,7 +175,7 @@ public class DefinitionBuilder extends SymbolBuilder{
     		
     		return new IdentExp(scope, newPlace);
     	} else {
-    		LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
+    		LinkedList<Tuple<NullableExp, ICode.Type>> args = new LinkedList<Tuple<NullableExp, ICode.Type>>();
     		args.add(new Tuple<>(left, leftType));
     		args.add(new Tuple<>(right, rightType));
     		return this.buildExternalFunctionCall(scope, funcName, args, retType);
@@ -289,7 +290,7 @@ public class DefinitionBuilder extends SymbolBuilder{
     		
     		return new IdentExp(scope, newPlace);
     	} else {
-    		LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
+    		LinkedList<Tuple<NullableExp, ICode.Type>> args = new LinkedList<Tuple<NullableExp, ICode.Type>>();
     		args.add(new Tuple<>(right, rightType));
     		return this.buildExternalFunctionCall(scope, funcName, args, retType);
     	}
@@ -321,12 +322,12 @@ public class DefinitionBuilder extends SymbolBuilder{
     	return new IdentExp(ICode.Scope.LOCAL, newReg);
     }
 
-    public IdentExp buildExternalFunctionCall(ICode.Scope scope, String funcName, List<Tuple<Exp, Assign.Type>> args, ICode.Type type){
-        ArrayList<Tuple<Exp, Assign.Type>> newArgs = new ArrayList<Tuple<Exp, Assign.Type>>();
+    public IdentExp buildExternalFunctionCall(ICode.Scope scope, String funcName, List<Tuple<NullableExp, Assign.Type>> args, ICode.Type type){
+        ArrayList<Tuple<NullableExp, Assign.Type>> newArgs = new ArrayList<Tuple<NullableExp, Assign.Type>>();
         newArgs.addAll(args);
         List<Def> newDefs = new LinkedList<Def>();
         for(int i = 0; i < newArgs.size(); i++){
-            Tuple<Exp, Assign.Type> arg = newArgs.get(i);
+            Tuple<NullableExp, Assign.Type> arg = newArgs.get(i);
             String next;
             if(containsEntry(funcName, i, SymEntry.EXTERNAL | SymEntry.PARAM))
                 next = getVariablePlace(funcName, i, SymEntry.EXTERNAL | SymEntry.PARAM).ident;
@@ -334,7 +335,7 @@ public class DefinitionBuilder extends SymbolBuilder{
                 next = gen.genNext();
                 addVariableEntry(next, SymEntry.EXTERNAL | SymEntry.PARAM, funcName, i, arg.dest);
             }
-            newDefs.add(new Def(Scope.PARAM, next, arg.source, arg.dest));
+            newDefs.add(new Def(Scope.PARAM, next, (Exp)arg.source, arg.dest));
         }
         addInstruction(new Call(funcName, newDefs));
         String oldPlace;

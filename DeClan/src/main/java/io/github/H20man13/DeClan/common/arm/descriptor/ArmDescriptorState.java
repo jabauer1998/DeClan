@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.CopyStr;
 import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -15,18 +16,22 @@ import io.github.H20man13.DeClan.common.icode.exp.BinExp.Operator;
 public class ArmDescriptorState implements Copyable<ArmDescriptorState> {
 	private ArmRegisterDescriptor regDesc;
 	private ArmAddressDescriptor addrDesc;
-	private List<Tuple<String, ICode.Type>> spill;
+	private List<Tuple<CopyStr, ICode.Type>> spill;
+	
+	private static CopyStr newS(String s) {
+		return new CopyStr(s);
+	}
 	
 	public ArmDescriptorState(){
 		this.regDesc = new ArmRegisterDescriptor();
 		this.addrDesc = new ArmAddressDescriptor();
-		this.spill = new LinkedList<Tuple<String, ICode.Type>>();
+		this.spill = new LinkedList<Tuple<CopyStr, ICode.Type>>();
 	}
 	
 	private ArmDescriptorState(ArmRegisterDescriptor regDesc, ArmAddressDescriptor addrDesc){
 		this.regDesc = regDesc;
 		this.addrDesc = addrDesc;
-		this.spill = new LinkedList<Tuple<String, ICode.Type>>();
+		this.spill = new LinkedList<Tuple<CopyStr, ICode.Type>>();
 	}
 	
 	public void addRegValuePair(String ident, ICode.Type type,  String reg){
@@ -61,8 +66,8 @@ public class ArmDescriptorState implements Copyable<ArmDescriptorState> {
 		this.addrDesc.removeRegister(new ArmAddressElement(addr, type), new ArmRegisterElement(reg));
 	}
 	
-	public Set<Tuple<String, Type>> getCandidateAddresses(String reg){
-		HashSet<Tuple<String, ICode.Type>> addrsRet = new HashSet<Tuple<String, ICode.Type>>();
+	public Set<Tuple<CopyStr, Type>> getCandidateAddresses(String reg){
+		HashSet<Tuple<CopyStr, ICode.Type>> addrsRet = new HashSet<Tuple<CopyStr, ICode.Type>>();
 		Set<ArmAddressElement> addrs = regDesc.getAddresses(new ArmRegisterElement(reg));
 		for(ArmAddressElement elem: addrs) {
 			addrsRet.add(elem.toTuple());
@@ -93,7 +98,7 @@ public class ArmDescriptorState implements Copyable<ArmDescriptorState> {
 	}
 
 	public void addSpill(String ident, Type i) {
-		this.spill.add(new Tuple<>(ident, i));
+		this.spill.add(new Tuple<>(newS(ident), i));
 	}
 
 	public boolean containsOnlyPlaceInAReg(String place, ICode.Type type) {
@@ -109,7 +114,7 @@ public class ArmDescriptorState implements Copyable<ArmDescriptorState> {
 		return !this.spill.isEmpty();
 	}
 
-	public List<Tuple<String, ICode.Type>> getSpill() {
+	public List<Tuple<CopyStr, ICode.Type>> getSpill() {
 		return this.spill;
 	}
 }

@@ -2,31 +2,33 @@ package io.github.H20man13.DeClan.common.arm.descriptor;
 
 import java.util.HashSet;
 
+import io.github.H20man13.DeClan.common.CopyStr;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
 public class ArmRegisterResult {
-	private HashSet<Tuple<String, String>> tupSet;
+	private HashSet<Tuple<CopyStr, CopyStr>> tupSet;
 	
 	public ArmRegisterResult() {
-		this.tupSet = new HashSet<Tuple<String, String>>();
+		this.tupSet = new HashSet<Tuple<CopyStr, CopyStr>>();
 	}
 	
 	public void addResult(String ident, String reg) {
-		this.tupSet.add(new Tuple<>(ident, reg));
+		this.tupSet.add(new Tuple<>(ConversionUtils.newS(ident), ConversionUtils.newS(reg)));
 	}
 	
 	public String getRegister(String addrName) {
-		for(Tuple<String, String> tup : tupSet) {
-			if(tup.source.equals(addrName))
+		for(Tuple<CopyStr, CopyStr> tup : tupSet) {
+			if(tup.source.toString().equals(addrName))
 				return tup.dest.toString();
 		}
 		return null;
 	}
 	
 	public boolean containsRegister(String addrName) {
-		for(Tuple<String, String> tup: tupSet) {
-			if(tup.source.equals(addrName))
+		for(Tuple<CopyStr, CopyStr> tup: tupSet) {
+			if(tup.source.toString().equals(addrName))
 				return true;
 		}
 		return false;

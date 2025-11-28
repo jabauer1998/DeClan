@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.CopyStr;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.region.RegionAnalysis;
 import io.github.H20man13.DeClan.common.analysis.region.RegionAnalysis.LoopStrategy;
@@ -34,20 +35,20 @@ import io.github.H20man13.DeClan.common.region.RegionBase;
 import io.github.H20man13.DeClan.common.region.RegionGraph;
 import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
-public class SymbolicAnalysis extends RegionAnalysis<Tuple<String, Expr>> {
-	private Map<RegionBase, Set<Tuple<String, Expr>>> genSets;
+public class SymbolicAnalysis extends RegionAnalysis<Tuple<CopyStr, Expr>> {
+	private Map<RegionBase, Set<Tuple<CopyStr, Expr>>> genSets;
 	private Map<RegionBase, Set<String>> killSets;
 	private SymbolicAnalysisTransferFunctionFactory factory;
 	
 	public SymbolicAnalysis(RegionGraph regionGraph, Direction direction, LoopStrategy strat) {
 		super(regionGraph, direction, strat);
-		this.genSets = new HashMap<RegionBase, Set<Tuple<String, Expr>>>();
+		this.genSets = new HashMap<RegionBase, Set<Tuple<CopyStr, Expr>>>();
 		this.killSets = new HashMap<RegionBase, Set<String>>();
 		for(RegionBase base: regionGraph) {
 			if(base instanceof InstructionRegion) {
 				InstructionRegion instrReg = (InstructionRegion)base;
 				ICode instruction  = (ICode)instrReg.instruction;
-				Set<Tuple<String, Expr>> toGen = new HashSet<Tuple<String, Expr>>();
+				Set<Tuple<CopyStr, Expr>> toGen = new HashSet<Tuple<CopyStr, Expr>>();
 				Set<String> toKill = new HashSet<String>();
 				
 				if(instruction instanceof Assign) {
@@ -55,7 +56,7 @@ public class SymbolicAnalysis extends RegionAnalysis<Tuple<String, Expr>> {
 					Assign.Scope scope = assign.getScope();
 					if(scope == Assign.Scope.RETURN || scope == Assign.Scope.PARAM) {
 						NaaExpr naaExp = new NaaExpr();
-						Tuple<String, Expr> tup3 = new Tuple<String, Expr>(assign.place, naaExp);
+						Tuple<CopyStr, Expr> tup3 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.place), naaExp);
 						toGen.add(tup3);
 					} else if(assign.value instanceof BinExp) {
 						BinExp exp = (BinExp)assign.value;
@@ -64,17 +65,17 @@ public class SymbolicAnalysis extends RegionAnalysis<Tuple<String, Expr>> {
 						switch(exp.op) {
 						case IADD:
 							OpExpr bin = new OpExpr(OpExpr.Operator.IPLUS, left, right);
-							Tuple<String, Expr> tup1 = new Tuple<String, Expr>(assign.place, bin);
+							Tuple<CopyStr, Expr> tup1 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.place), bin);
 							toGen.add(tup1);
 							break;
 						case ISUB:
 							OpExpr un = new OpExpr(OpExpr.Operator.IMINUS, left, right);
-							Tuple<String, Expr> tup2 = new Tuple<String, Expr>(assign.place, un);
+							Tuple<CopyStr, Expr> tup2 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.place), un);
 							toGen.add(tup2);
 							break;
 						default:
 							NaaExpr naaExp = new NaaExpr();
-							Tuple<String, Expr> tup3 = new Tuple<String, Expr>(assign.place, naaExp);
+							Tuple<CopyStr, Expr> tup3 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.place), naaExp);
 							toGen.add(tup3);
 							break;
 						}
@@ -84,23 +85,23 @@ public class SymbolicAnalysis extends RegionAnalysis<Tuple<String, Expr>> {
 						switch(exp1.op){
 						default:
 							NaaExpr naaExp = new NaaExpr();
-							Tuple<String, Expr> tup2 = new Tuple<String, Expr>(assign.place, naaExp);
+							Tuple<CopyStr, Expr> tup2 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.place), naaExp);
 							toGen.add(tup2);
 							break;
 						}
 					} else if(assign.value instanceof IdentExp) {
 						IdentExp ident = (IdentExp)assign.value;
 						RefVar var = new RefVar(ident.ident);
-						Tuple<String, Expr> tup3 = new Tuple<String, Expr>(assign.place, var);
+						Tuple<CopyStr, Expr> tup3 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.place), var);
 						toGen.add(tup3);
 					} else if(assign.value instanceof IntExp) {
 						IntExp ident = (IntExp)assign.value;
 						IntExpr var = new IntExpr(ident.value);
-						Tuple<String, Expr> tup3 = new Tuple<String, Expr>(assign.place, var);
+						Tuple<CopyStr, Expr> tup3 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.place), var);
 						toGen.add(tup3);
 					} else {
 						NaaExpr naaExp = new NaaExpr();
-						Tuple<String, Expr> tup3 = new Tuple<String, Expr>(assign.place, naaExp);
+						Tuple<CopyStr, Expr> tup3 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.place), naaExp);
 						toGen.add(tup3);
 					}
 				} else if(instruction instanceof Def) {
@@ -108,7 +109,7 @@ public class SymbolicAnalysis extends RegionAnalysis<Tuple<String, Expr>> {
 					Assign.Scope scope = assign.scope;
 					if(scope == Assign.Scope.RETURN || scope == Assign.Scope.PARAM) {
 						NaaExpr naaExp = new NaaExpr();
-						Tuple<String, Expr> tup3 = new Tuple<String, Expr>(assign.label, naaExp);
+						Tuple<CopyStr, Expr> tup3 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.label), naaExp);
 						toGen.add(tup3);
 					} else if(assign.val instanceof BinExp) {
 						BinExp exp = (BinExp)assign.val;
@@ -117,17 +118,17 @@ public class SymbolicAnalysis extends RegionAnalysis<Tuple<String, Expr>> {
 						switch(exp.op) {
 						case IADD:
 							OpExpr bin = new OpExpr(OpExpr.Operator.IPLUS, left, right);
-							Tuple<String, Expr> tup1 = new Tuple<String, Expr>(assign.label, bin);
+							Tuple<CopyStr, Expr> tup1 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.label), bin);
 							toGen.add(tup1);
 							break;
 						case ISUB:
 							OpExpr un = new OpExpr(OpExpr.Operator.IMINUS, left, right);
-							Tuple<String, Expr> tup2 = new Tuple<String, Expr>(assign.label, un);
+							Tuple<CopyStr, Expr> tup2 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.label), un);
 							toGen.add(tup2);
 							break;
 						default:
 							NaaExpr naaExp = new NaaExpr();
-							Tuple<String, Expr> tup3 = new Tuple<String, Expr>(assign.label, naaExp);
+							Tuple<CopyStr, Expr> tup3 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.label), naaExp);
 							toGen.add(tup3);
 							break;
 						}
@@ -137,23 +138,23 @@ public class SymbolicAnalysis extends RegionAnalysis<Tuple<String, Expr>> {
 						switch(exp1.op){
 						default:
 							NaaExpr naaExp = new NaaExpr();
-							Tuple<String, Expr> tup2 = new Tuple<String, Expr>(assign.label, naaExp);
+							Tuple<CopyStr, Expr> tup2 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.label), naaExp);
 							toGen.add(tup2);
 							break;
 						}
 					} else if(assign.val instanceof IdentExp) {
 						IdentExp ident = (IdentExp)assign.val;
 						RefVar var = new RefVar(ident.ident);
-						Tuple<String, Expr> tup3 = new Tuple<String, Expr>(assign.label, var);
+						Tuple<CopyStr, Expr> tup3 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.label), var);
 						toGen.add(tup3);
 					} else if(assign.val instanceof IntExp) {
 						IntExp ident = (IntExp)assign.val;
 						IntExpr var = new IntExpr(ident.value);
-						Tuple<String, Expr> tup3 = new Tuple<String, Expr>(assign.label, var);
+						Tuple<CopyStr, Expr> tup3 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.label), var);
 						toGen.add(tup3);
 					} else {
 						NaaExpr naaExp = new NaaExpr();
-						Tuple<String, Expr> tup3 = new Tuple<String, Expr>(assign.label, naaExp);
+						Tuple<CopyStr, Expr> tup3 = new Tuple<CopyStr, Expr>(ConversionUtils.newS(assign.label), naaExp);
 						toGen.add(tup3);
 					}
 				}
@@ -164,35 +165,35 @@ public class SymbolicAnalysis extends RegionAnalysis<Tuple<String, Expr>> {
 	}
 
 	@Override
-	protected Closure<Tuple<String, Expr>> closureOfFunction(RegionBase reg,
-			RegionTransferFunction<Tuple<String, Expr>> input) {
+	protected Closure<Tuple<CopyStr, Expr>> closureOfFunction(RegionBase reg,
+			RegionTransferFunction<Tuple<CopyStr, Expr>> input) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected RegionTransferFunction<Tuple<String, Expr>> compositionOfFunctions(RegionTransferFunction<Tuple<String, Expr>> func1, RegionTransferFunction<Tuple<String, Expr>> func2) {
-		FunctionApplication<Tuple<String, Expr>> exp = factory.producefunctionApplication(func1, func2);
+	protected RegionTransferFunction<Tuple<CopyStr, Expr>> compositionOfFunctions(RegionTransferFunction<Tuple<CopyStr, Expr>> func1, RegionTransferFunction<Tuple<CopyStr, Expr>> func2) {
+		FunctionApplication<Tuple<CopyStr, Expr>> exp = factory.producefunctionApplication(func1, func2);
 		return factory.produceRegionTransferFunction(exp);
 	}
 
 	@Override
-	protected RegionTransferFunction<Tuple<String, Expr>> meetOfFunctions(RegionTransferFunction<Tuple<String, Expr>> exp1, RegionTransferFunction<Tuple<String, Expr>> exp2) {
-		SetExpression<Tuple<String, Expr>> left = exp1.getExpression();
-		SetExpression<Tuple<String, Expr>> right = exp2.getExpression();
+	protected RegionTransferFunction<Tuple<CopyStr, Expr>> meetOfFunctions(RegionTransferFunction<Tuple<CopyStr, Expr>> exp1, RegionTransferFunction<Tuple<CopyStr, Expr>> exp2) {
+		SetExpression<Tuple<CopyStr, Expr>> left = exp1.getExpression();
+		SetExpression<Tuple<CopyStr, Expr>> right = exp2.getExpression();
 		SymbolicMeetOperator op = factory.produceSymbolicAnalysisMeetOperator(left, right);
 		return factory.produceRegionTransferFunction(op);
 	}
 
 	@Override
-	protected RegionTransferFunction<Tuple<String, Expr>> transferFunction(RegionBase region) {
+	protected RegionTransferFunction<Tuple<CopyStr, Expr>> transferFunction(RegionBase region) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected RegionTransferFunction<Tuple<String, Expr>> identityFunction() {
-		InputParamater<Tuple<String, Expr>> param = factory.produceParamater();
+	protected RegionTransferFunction<Tuple<CopyStr, Expr>> identityFunction() {
+		InputParamater<Tuple<CopyStr, Expr>> param = factory.produceParamater();
 		return factory.produceRegionTransferFunction(param);
 	}
 }

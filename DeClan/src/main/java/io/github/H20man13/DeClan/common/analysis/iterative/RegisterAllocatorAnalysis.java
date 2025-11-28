@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.function.Function;
 
 import io.github.H20man13.DeClan.common.Config;
+import io.github.H20man13.DeClan.common.CopyInt;
+import io.github.H20man13.DeClan.common.CopyStr;
 import io.github.H20man13.DeClan.common.CustomMeet;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.analysis.AnalysisBase;
@@ -57,26 +59,26 @@ CustomMeet<ArmDescriptorState> {
 	}
 	
 	private static boolean canidateHasAllValuesInOtherPlaces(String reg, ArmDescriptorState state){
-		Set<Tuple<String, ICode.Type>> addrs = state.getCandidateAddresses(reg);
-		for(Tuple<String, ICode.Type> addr: addrs) {
-			if(!state.isContainedInMoreThenOnePlace(addr.source, addr.dest))
+		Set<Tuple<CopyStr, ICode.Type>> addrs = state.getCandidateAddresses(reg);
+		for(Tuple<CopyStr, ICode.Type> addr: addrs) {
+			if(!state.isContainedInMoreThenOnePlace(addr.source.toString(), addr.dest))
 				return false;
 		}
 		return true;
 	}
 	
 	private static boolean canidateIsResultAndOnlyOperand(String reg, String defOp, ICode.Type type1, String otherOp, ICode.Type type2, ArmDescriptorState state) {
-		Set<Tuple<String, ICode.Type>> addressesInR = state.getCandidateAddresses(reg);
-		for(Tuple<String, ICode.Type> addr: addressesInR){
-			if(!(addr.equals(new Tuple<String, ICode.Type>(defOp, type1)) && !addr.equals(new Tuple<String, ICode.Type>(otherOp, type2))));
+		Set<Tuple<CopyStr, ICode.Type>> addressesInR = state.getCandidateAddresses(reg);
+		for(Tuple<CopyStr, ICode.Type> addr: addressesInR){
+			if(!(addr.equals(new Tuple<CopyStr, ICode.Type>(ConversionUtils.newS(defOp), type1)) && !addr.equals(new Tuple<CopyStr, ICode.Type>(ConversionUtils.newS(otherOp), type2))));
 				return false;
 		}
 		return true;
 	}
 	
 	private static boolean canidateIsResultAndSingleOperand(String reg, String defOp, ICode.Type type, String  otherOp1, ICode.Type op1Type, String  otherOp2, ICode.Type op2Type, ArmDescriptorState state) {
-		Set<Tuple<String, ICode.Type>> addressesInR = state.getCandidateAddresses(reg);
-		for(Tuple<String, ICode.Type> addr: addressesInR) {
+		Set<Tuple<CopyStr, ICode.Type>> addressesInR = state.getCandidateAddresses(reg);
+		for(Tuple<CopyStr, ICode.Type> addr: addressesInR) {
 			if(!addr.equals(defOp) && !(addr.equals(otherOp1) || addr.equals(otherOp2)))
 				return false; //TODO -- NEED TO FIX
 		}
@@ -84,8 +86,8 @@ CustomMeet<ArmDescriptorState> {
 	}
 	
 	private boolean candidateIsAllDead(String reg, ICode instr, ArmDescriptorState state) {
-		Set<Tuple<String, ICode.Type>> addressesInR = state.getCandidateAddresses(reg);
-		for(Tuple<String, ICode.Type> addr: addressesInR){
+		Set<Tuple<CopyStr, ICode.Type>> addressesInR = state.getCandidateAddresses(reg);
+		for(Tuple<CopyStr, ICode.Type> addr: addressesInR){
 			if(anal.getOutputSet(instr).contains(addr.source))
 				return false;
 		}
@@ -102,28 +104,28 @@ CustomMeet<ArmDescriptorState> {
 			boolean regOk = false;
 			for(String reg: state.getCanditateRegs()){
 				if(canidateHasAllValuesInOtherPlaces(reg, state)){
-					Set<Tuple<String, ICode.Type>> str = state.getCandidateAddresses(reg);
+					Set<Tuple<CopyStr, ICode.Type>> str = state.getCandidateAddresses(reg);
 					state.clearRegisterAddresses(reg);
-					for(Tuple<String, ICode.Type> addr: str){
-						state.removeRegFromAddress(reg, addr.source, addr.dest);
+					for(Tuple<CopyStr, ICode.Type> addr: str){
+						state.removeRegFromAddress(reg, addr.source.toString(), addr.dest);
 					}
 					state.addRegValuePair(place, type, reg);
 					regOk = true;
 					break;
 				} else if(canidateIsResultAndOnlyOperand(reg, defPlace, typeDef, otherPlace, otherType, state)) {
-					Set<Tuple<String, ICode.Type>> str = state.getCandidateAddresses(reg);
+					Set<Tuple<CopyStr, ICode.Type>> str = state.getCandidateAddresses(reg);
 					state.clearRegisterAddresses(reg);
-					for(Tuple<String, ICode.Type> addr: str){
-						state.removeRegFromAddress(reg, addr.source, addr.dest);
+					for(Tuple<CopyStr, ICode.Type> addr: str){
+						state.removeRegFromAddress(reg, addr.source.toString(), addr.dest);
 					}
 					state.addRegValuePair(place, type, reg);
 					regOk = true;
 					break;
 				} else if(candidateIsAllDead(reg, icode, state)) {
-					Set<Tuple<String, ICode.Type>> str = state.getCandidateAddresses(reg);
+					Set<Tuple<CopyStr, ICode.Type>> str = state.getCandidateAddresses(reg);
 					state.clearRegisterAddresses(reg);
-					for(Tuple<String, ICode.Type> addr: str){
-						state.removeRegFromAddress(reg, addr.source, addr.dest);
+					for(Tuple<CopyStr, ICode.Type> addr: str){
+						state.removeRegFromAddress(reg, addr.source.toString(), addr.dest);
 					}
 					state.addRegValuePair(place, type, reg);
 					regOk = true;
@@ -133,14 +135,14 @@ CustomMeet<ArmDescriptorState> {
 			
 			if(regOk == false){
 				Map<String, Integer> savedCosts = new HashMap<String, Integer>();
-				Set<Tuple<String,Integer>> actualCosts = this.spillAnal.getOutputSet(icode);
+				Set<Tuple<CopyStr, CopyInt>> actualCosts = this.spillAnal.getOutputSet(icode);
 				for(String reg: state.getCanditateRegs()) {
-					Set<Tuple<String, ICode.Type>> addrs = state.getCandidateAddresses(reg);
+					Set<Tuple<CopyStr, ICode.Type>> addrs = state.getCandidateAddresses(reg);
 					int totalCost = 0;
-					for(Tuple<String, ICode.Type> addr: addrs) {
-						for(Tuple<String, Integer> actualCost : actualCosts) {
+					for(Tuple<CopyStr, ICode.Type> addr: addrs) {
+						for(Tuple<CopyStr, CopyInt> actualCost : actualCosts) {
 							if(actualCost.source.equals(addr)) {
-								totalCost = (totalCost + actualCost.dest) / 2;
+								totalCost = (totalCost + actualCost.dest.asInt()) / 2;
 								break;
 							}
 						}
@@ -148,17 +150,17 @@ CustomMeet<ArmDescriptorState> {
 					savedCosts.put(reg, totalCost);
 				}
 				
-				Tuple<String, Integer> savedCost = null;
+				Tuple<CopyStr, CopyInt> savedCost = null;
 				for(String reg: savedCosts.keySet()){
 					Integer cost = savedCosts.get(reg);
-					if(savedCost == null || cost > savedCost.dest)
-						savedCost = new Tuple<String, Integer>(reg, cost);
+					if(savedCost == null || cost > savedCost.dest.asInt())
+						savedCost = new Tuple<CopyStr, CopyInt>(ConversionUtils.newS(reg), ConversionUtils.newI(cost));
 						
 				}
 				
 				if(savedCost != null) {
-					for(Tuple<String, ICode.Type> addr: state.getCandidateAddresses(savedCost.source)) {
-						state.addSpill(addr.source, addr.dest);
+					for(Tuple<CopyStr, ICode.Type> addr: state.getCandidateAddresses(savedCost.source.toString())) {
+						state.addSpill(addr.source.toString(), addr.dest);
 					}
 				}
 			}
@@ -175,28 +177,28 @@ CustomMeet<ArmDescriptorState> {
 			boolean regOk = false;
 			for(String reg: state.getCanditateRegs()){
 				if(canidateHasAllValuesInOtherPlaces(reg, state)){
-					Set<Tuple<String, ICode.Type>> str = state.getCandidateAddresses(reg);
+					Set<Tuple<CopyStr, ICode.Type>> str = state.getCandidateAddresses(reg);
 					state.clearRegisterAddresses(reg);
-					for(Tuple<String, ICode.Type> addr: str){
-						state.removeRegFromAddress(reg, addr.source, addr.dest);
+					for(Tuple<CopyStr, ICode.Type> addr: str){
+						state.removeRegFromAddress(reg, addr.source.toString(), addr.dest);
 					}
 					state.addRegValuePair(place, type, reg);
 					regOk = true;
 					break;
 				} else if(canidateIsResultAndSingleOperand(reg, place, type, operand1, op1Type, operand2Opt, op2Type, state)) {
-					Set<Tuple<String, ICode.Type>> str = state.getCandidateAddresses(reg);
+					Set<Tuple<CopyStr, ICode.Type>> str = state.getCandidateAddresses(reg);
 					state.clearRegisterAddresses(reg);
-					for(Tuple<String, ICode.Type> addr: str){
-						state.removeRegFromAddress(reg, addr.source, addr.dest);
+					for(Tuple<CopyStr, ICode.Type> addr: str){
+						state.removeRegFromAddress(reg, addr.source.toString(), addr.dest);
 					}
 					state.addRegValuePair(place, type, reg);
 					regOk = true;
 					break;
 				} else if(candidateIsAllDead(reg, icode, state)) {
-					Set<Tuple<String, ICode.Type>> str = state.getCandidateAddresses(reg);
+					Set<Tuple<CopyStr, ICode.Type>> str = state.getCandidateAddresses(reg);
 					state.clearRegisterAddresses(reg);
-					for(Tuple<String, ICode.Type> addr: str){
-						state.removeRegFromAddress(reg, addr.source, addr.dest);
+					for(Tuple<CopyStr, ICode.Type> addr: str){
+						state.removeRegFromAddress(reg, addr.source.toString(), addr.dest);
 					}
 					state.addRegValuePair(place, type, reg);
 					regOk = true;
@@ -206,14 +208,14 @@ CustomMeet<ArmDescriptorState> {
 			
 			if(regOk == false){
 				Map<String, Integer> savedCosts = new HashMap<String, Integer>();
-				Set<Tuple<String,Integer>> actualCosts = this.spillAnal.getOutputSet(icode);
+				Set<Tuple<CopyStr,CopyInt>> actualCosts = this.spillAnal.getOutputSet(icode);
 				for(String reg: state.getCanditateRegs()) {
-					Set<Tuple<String, ICode.Type>> addrs = state.getCandidateAddresses(reg);
+					Set<Tuple<CopyStr, ICode.Type>> addrs = state.getCandidateAddresses(reg);
 					int totalCost = 0;
-					for(Tuple<String, ICode.Type> addr: addrs) {
-						for(Tuple<String, Integer> actualCost : actualCosts) {
+					for(Tuple<CopyStr, ICode.Type> addr: addrs) {
+						for(Tuple<CopyStr, CopyInt> actualCost : actualCosts) {
 							if(actualCost.source.equals(addr)) {
-								totalCost = (totalCost + actualCost.dest) / 2;
+								totalCost = (totalCost + actualCost.dest.asInt()) / 2;
 								break;
 							}
 						}
@@ -221,17 +223,17 @@ CustomMeet<ArmDescriptorState> {
 					savedCosts.put(reg, totalCost);
 				}
 				
-				Tuple<String, Integer> savedCost = null;
+				Tuple<CopyStr, CopyInt> savedCost = null;
 				for(String reg: savedCosts.keySet()){
 					Integer cost = savedCosts.get(reg);
-					if(savedCost == null || cost > savedCost.dest)
-						savedCost = new Tuple<String, Integer>(reg, cost);
+					if(savedCost == null || cost > savedCost.dest.asInt())
+						savedCost = new Tuple<CopyStr, CopyInt>(ConversionUtils.newS(reg), ConversionUtils.newI(cost));
 						
 				}
 				
 				if(savedCost != null) {
-					for(Tuple<String, ICode.Type> addr: state.getCandidateAddresses(savedCost.source)) {
-						state.addSpill(addr.source, addr.dest);
+					for(Tuple<CopyStr, ICode.Type> addr: state.getCandidateAddresses(savedCost.source.toString())) {
+						state.addSpill(addr.source.toString(), addr.dest);
 					}
 				}
 			}
@@ -475,9 +477,9 @@ CustomMeet<ArmDescriptorState> {
                         inputSet = transferFunction(instr, inputSet);
                         addOutputSet(copy, inputSet);
                         if(inputSet.containsSpill()) {
-                        	List<Tuple<String, ICode.Type>> mySpills = inputSet.getSpill();
-                        	for(Tuple<String, ICode.Type> mySpill: mySpills) {
-                        		block.getICode().add(instrIndex, new Spill(mySpill.source, mySpill.dest));
+                        	List<Tuple<CopyStr, ICode.Type>> mySpills = inputSet.getSpill();
+                        	for(Tuple<CopyStr, ICode.Type> mySpill: mySpills) {
+                        		block.getICode().add(instrIndex, new Spill(mySpill.source.toString(), mySpill.dest));
                         		instrIndex++;
                         	}
                         }
@@ -486,9 +488,9 @@ CustomMeet<ArmDescriptorState> {
                         inputSet = transferFunction(instr, inputSet);
                         addOutputSet(instr, inputSet);
                         if(inputSet.containsSpill()) {
-                        	List<Tuple<String, ICode.Type>> mySpills = inputSet.getSpill();
-                        	for(Tuple<String, ICode.Type> mySpill: mySpills) {
-                        		block.getICode().add(instrIndex, new Spill(mySpill.source, mySpill.dest));
+                        	List<Tuple<CopyStr, ICode.Type>> mySpills = inputSet.getSpill();
+                        	for(Tuple<CopyStr, ICode.Type> mySpill: mySpills) {
+                        		block.getICode().add(instrIndex, new Spill(mySpill.source.toString(), mySpill.dest));
                         		instrIndex++;
                         	}
                         }
@@ -505,13 +507,13 @@ CustomMeet<ArmDescriptorState> {
 		
 		for(ArmDescriptorState myState : li){
 			for(String myReg : myState.getCanditateRegs()) {
-				Set<Tuple<String, ICode.Type>> armAddresses = myState.getCandidateAddresses(myReg);
-				Set<Tuple<String, ICode.Type>> curAddresses = state.getCandidateAddresses(myReg);
+				Set<Tuple<CopyStr, ICode.Type>> armAddresses = myState.getCandidateAddresses(myReg);
+				Set<Tuple<CopyStr, ICode.Type>> curAddresses = state.getCandidateAddresses(myReg);
 				if(curAddresses.isEmpty())
 					curAddresses.addAll(armAddresses);
 				else if(!curAddresses.equals(armAddresses))
-					for(Tuple<String, ICode.Type> addr: armAddresses) {
-						state.addSpill(addr.source, addr.dest);
+					for(Tuple<CopyStr, ICode.Type> addr: armAddresses) {
+						state.addSpill(addr.source.toString(), addr.dest);
 					}
 			}
 		}
@@ -529,7 +531,7 @@ CustomMeet<ArmDescriptorState> {
 			if(def.val instanceof BinExp) {
 				BinExp exp = (BinExp)def.val;
 				for(String elem: state.getCanditateRegs()) {
-					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.label)){
 						retSet.addResult(elem, elem);
 					} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
@@ -541,7 +543,7 @@ CustomMeet<ArmDescriptorState> {
 			} else if(def.val instanceof UnExp) {
 				UnExp un = (UnExp)def.val;
 				for(String elem: state.getCanditateRegs()) {
-					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.label)){
 						retSet.addResult(def.label, elem);
 					} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
@@ -551,7 +553,7 @@ CustomMeet<ArmDescriptorState> {
 			} else if(def.val instanceof IdentExp) {
 				IdentExp ident = (IdentExp)def.val;
 				for(String elem: state.getCanditateRegs()) {
-					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.label)){
 						retSet.addResult(def.label, elem);
 					} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
@@ -564,7 +566,7 @@ CustomMeet<ArmDescriptorState> {
 			if(def.value instanceof BinExp) {
 				BinExp exp = (BinExp)def.value;
 				for(String elem: state.getCanditateRegs()) {
-					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.place)){
 						retSet.addResult(def.place, elem);
 					} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
@@ -576,7 +578,7 @@ CustomMeet<ArmDescriptorState> {
 			} else if(def.value instanceof UnExp) {
 				UnExp un = (UnExp)def.value;
 				for(String elem: state.getCanditateRegs()) {
-					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.place)){
 						retSet.addResult(def.place, elem);
 					} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
@@ -586,7 +588,7 @@ CustomMeet<ArmDescriptorState> {
 			} else if(def.value instanceof IdentExp) {
 				IdentExp ident = (IdentExp)def.value;
 				for(String elem: state.getCanditateRegs()) {
-					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.place)){
 						retSet.addResult(def.place, elem);
 					} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
@@ -600,7 +602,7 @@ CustomMeet<ArmDescriptorState> {
 				if(def.val instanceof BinExp) {
 					BinExp exp = (BinExp)def.val;
 					for(String elem: state.getCanditateRegs()) {
-						Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+						Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 						if(ConversionUtils.setContainsName(addr, def.label)){
 							retSet.addResult(def.label, elem);
 						} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
@@ -612,7 +614,7 @@ CustomMeet<ArmDescriptorState> {
 				} else if(def.val instanceof UnExp) {
 					UnExp un = (UnExp)def.val;
 					for(String elem: state.getCanditateRegs()) {
-						Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+						Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 						if(ConversionUtils.setContainsName(addr, def.label)){
 							retSet.addResult(def.label, elem);
 						} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
@@ -622,7 +624,7 @@ CustomMeet<ArmDescriptorState> {
 				} else if(def.val instanceof IdentExp) {
 					IdentExp ident = (IdentExp)def.val;
 					for(String elem: state.getCanditateRegs()) {
-						Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+						Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 						if(ConversionUtils.setContainsName(addr, def.label)){
 							retSet.addResult(def.label, elem);
 						} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
@@ -636,7 +638,7 @@ CustomMeet<ArmDescriptorState> {
 			
 			BinExp exp = ifStat.exp;
 			for(String elem: state.getCanditateRegs()) {
-				Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+				Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 				if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
 					retSet.addResult(exp.left.ident, elem);
 				} else if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
@@ -658,7 +660,7 @@ CustomMeet<ArmDescriptorState> {
 			if(def.val instanceof BinExp) {
 				BinExp exp = (BinExp)def.val;
 				for(String elem: state.getCanditateRegs()) {
-					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.label)){
 						retSet.addResult(elem, elem);
 					} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
@@ -670,7 +672,7 @@ CustomMeet<ArmDescriptorState> {
 			} else if(def.val instanceof UnExp) {
 				UnExp un = (UnExp)def.val;
 				for(String elem: state.getCanditateRegs()) {
-					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.label)){
 						retSet.addResult(def.label, elem);
 					} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
@@ -680,7 +682,7 @@ CustomMeet<ArmDescriptorState> {
 			} else if(def.val instanceof IdentExp) {
 				IdentExp ident = (IdentExp)def.val;
 				for(String elem: state.getCanditateRegs()) {
-					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.label)){
 						retSet.addResult(def.label, elem);
 					} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
@@ -693,7 +695,7 @@ CustomMeet<ArmDescriptorState> {
 			if(def.value instanceof BinExp) {
 				BinExp exp = (BinExp)def.value;
 				for(String elem: state.getCanditateRegs()) {
-					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.place)){
 						retSet.addResult(def.place, elem);
 					} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
@@ -705,7 +707,7 @@ CustomMeet<ArmDescriptorState> {
 			} else if(def.value instanceof UnExp) {
 				UnExp un = (UnExp)def.value;
 				for(String elem: state.getCanditateRegs()) {
-					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.place)){
 						retSet.addResult(def.place, elem);
 					} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
@@ -715,7 +717,7 @@ CustomMeet<ArmDescriptorState> {
 			} else if(def.value instanceof IdentExp) {
 				IdentExp ident = (IdentExp)def.value;
 				for(String elem: state.getCanditateRegs()) {
-					Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.place)){
 						retSet.addResult(def.place, elem);
 					} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
@@ -729,7 +731,7 @@ CustomMeet<ArmDescriptorState> {
 				if(def.val instanceof BinExp) {
 					BinExp exp = (BinExp)def.val;
 					for(String elem: state.getCanditateRegs()) {
-						Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+						Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 						if(ConversionUtils.setContainsName(addr, def.label)){
 							retSet.addResult(def.label, elem);
 						} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
@@ -741,7 +743,7 @@ CustomMeet<ArmDescriptorState> {
 				} else if(def.val instanceof UnExp) {
 					UnExp un = (UnExp)def.val;
 					for(String elem: state.getCanditateRegs()) {
-						Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+						Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 						if(ConversionUtils.setContainsName(addr, def.label)){
 							retSet.addResult(def.label, elem);
 						} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
@@ -751,7 +753,7 @@ CustomMeet<ArmDescriptorState> {
 				} else if(def.val instanceof IdentExp) {
 					IdentExp ident = (IdentExp)def.val;
 					for(String elem: state.getCanditateRegs()) {
-						Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+						Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 						if(ConversionUtils.setContainsName(addr, def.label)){
 							retSet.addResult(def.label, elem);
 						} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
@@ -765,7 +767,7 @@ CustomMeet<ArmDescriptorState> {
 			
 			BinExp exp = ifStat.exp;
 			for(String elem: state.getCanditateRegs()) {
-				Set<Tuple<String, ICode.Type>> addr = state.getCandidateAddresses(elem);
+				Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 				if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
 					retSet.addResult(exp.left.ident, elem);
 				} else if(ConversionUtils.setContainsName(addr, exp.right.ident)) {

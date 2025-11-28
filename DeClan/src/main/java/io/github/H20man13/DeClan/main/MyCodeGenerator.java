@@ -28,7 +28,6 @@ import io.github.H20man13.DeClan.common.arm.descriptor.ArmRegisterResult;
 import io.github.H20man13.DeClan.common.arm.ArmCodeGenerator.VariableLength;
 import io.github.H20man13.DeClan.common.ast.VariableDeclaration;
 import io.github.H20man13.DeClan.common.exception.CodeGeneratorException;
-import io.github.H20man13.DeClan.common.exception.RegisterAllocatorException;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
 import io.github.H20man13.DeClan.common.gen.IrRegisterGenerator;
 import io.github.H20man13.DeClan.common.icode.Assign;

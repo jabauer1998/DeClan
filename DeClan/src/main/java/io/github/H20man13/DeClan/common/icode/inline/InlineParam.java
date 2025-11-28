@@ -6,6 +6,7 @@ import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
 
 public class InlineParam implements Copyable<InlineParam>{
 	public static final int IS_ADDRESS = 0b0001;
@@ -17,8 +18,8 @@ public class InlineParam implements Copyable<InlineParam>{
 	public IdentExp name;
 	public int qual;
 	
-	public InlineParam(Tuple<IdentExp, ICode.Type> data, int mask) {
-		this.name = data.source;
+	public InlineParam(Tuple<NullableExp, ICode.Type> data, int mask) {
+		this.name = (IdentExp)data.source;
 		this.type = data.dest;
 		this.qual = mask;
 		if(!containsAnyQual(IS_DEFINITION | IS_USE))

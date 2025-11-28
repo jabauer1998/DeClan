@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.Config;
+import io.github.H20man13.DeClan.common.CopyStr;
 import io.github.H20man13.DeClan.common.CustomMeet;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.flow.FlowGraph;
@@ -16,23 +17,24 @@ import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.NaaExp;
 import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.Utils;
 
-public class SavedExpressionAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<Exp, String>>>, HashSet<Tuple<Exp, String>>, Tuple<Exp, String>>
-implements CustomMeet<HashSet<Tuple<Exp, String>>>{
-	private Map<ICode, Set<Tuple<Exp, ICode.Type>>> opSet;
+public class SavedExpressionAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<NullableExp, CopyStr>>>, HashSet<Tuple<NullableExp, CopyStr>>, Tuple<NullableExp, CopyStr>>
+implements CustomMeet<HashSet<Tuple<NullableExp, CopyStr>>>{
+	private Map<ICode, Set<Tuple<NullableExp, ICode.Type>>> opSet;
 	private IrRegisterGenerator gen;
 	private Prog prog;
 	private char startLetter;
 	private int startNumber;
 	
-	public SavedExpressionAnalysis(Prog program, IrRegisterGenerator gen, FlowGraph flow, Map<ICode, Set<Tuple<Exp, ICode.Type>>> latest, UsedExpressionAnalysis used, Config cfg) {
+	public SavedExpressionAnalysis(Prog program, IrRegisterGenerator gen, FlowGraph flow, Map<ICode, Set<Tuple<NullableExp, ICode.Type>>> latest, UsedExpressionAnalysis used, Config cfg) {
 		super(flow, Direction.FORWARDS, true, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
-		this.opSet = new HashMap<ICode, Set<Tuple<Exp, ICode.Type>>>();
+		this.opSet = new HashMap<ICode, Set<Tuple<NullableExp, ICode.Type>>>();
 		for(ICode icode: latest.keySet()) {
-			Set<Tuple<Exp, ICode.Type>> newSet = new HashSet<Tuple<Exp, ICode.Type>>();
-			Set<Tuple<Exp, ICode.Type>> latestSet = latest.get(icode);
-			Set<Tuple<Exp, ICode.Type>> usedSet = used.getOutputSet(icode);
+			Set<Tuple<NullableExp, ICode.Type>> newSet = new HashSet<Tuple<NullableExp, ICode.Type>>();
+			Set<Tuple<NullableExp, ICode.Type>> latestSet = latest.get(icode);
+			Set<Tuple<NullableExp, ICode.Type>> usedSet = used.getOutputSet(icode);
 			newSet.addAll(latestSet);
 			newSet.retainAll(usedSet);
 			opSet.put(icode, newSet);
@@ -49,22 +51,22 @@ implements CustomMeet<HashSet<Tuple<Exp, String>>>{
 	}
 
 	@Override
-	public HashSet<Tuple<Exp, String>> transferFunction(ICode instr, HashSet<Tuple<Exp, String>> inputSet) {
-		HashSet<Tuple<Exp, String>> newSet = new HashSet<Tuple<Exp, String>>();
-		Set<Tuple<Exp, ICode.Type>> opSet = this.opSet.get(instr);
-		for(Tuple<Exp, String> tup: inputSet) {
-			if(!Utils.containsExpInSet(opSet, tup.source)){
+	public HashSet<Tuple<NullableExp, CopyStr>> transferFunction(ICode instr, HashSet<Tuple<NullableExp, CopyStr>> inputSet) {
+		HashSet<Tuple<NullableExp, CopyStr>> newSet = new HashSet<Tuple<NullableExp, CopyStr>>();
+		Set<Tuple<NullableExp, ICode.Type>> opSet = this.opSet.get(instr);
+		for(Tuple<NullableExp, CopyStr> tup: inputSet) {
+			if(!Utils.containsExpInSet(opSet, tup.source.toString())){
 				newSet.add(tup);
 			}
 		}
 		
-		for(Tuple<Exp, ICode.Type> tup: opSet) {
+		for(Tuple<NullableExp, ICode.Type> tup: opSet) {
 			String next;
 			do {
 			   next = gen.genNext();	
 			} while(prog.containsPlace(next));
 			
-			newSet.add(new Tuple<Exp, String>(tup.source, next));
+			newSet.add(new Tuple<NullableExp, CopyStr>(tup.source, ConversionUtils.newS(next)));
 		}
 		
 		return newSet;
@@ -72,27 +74,27 @@ implements CustomMeet<HashSet<Tuple<Exp, String>>>{
 
 
 	@Override
-	public HashSet<Tuple<Exp, String>> performMeet(List<HashSet<Tuple<Exp, String>>> list) {
-		   HashSet<Tuple<Exp, String>> resultSet = newSet();
-	       HashMap<Exp, HashSet<String>> hashMap = new HashMap<Exp, HashSet<String>>();
+	public HashSet<Tuple<NullableExp, CopyStr>> performMeet(List<HashSet<Tuple<NullableExp, CopyStr>>> list) {
+		   HashSet<Tuple<NullableExp, CopyStr>> resultSet = newSet();
+	       HashMap<NullableExp, HashSet<String>> hashMap = new HashMap<NullableExp, HashSet<String>>();
 
-	        for(Set<Tuple<Exp, String>> set : list){
-	            for(Tuple<Exp, String> tup : set){
-	                Exp tupName = tup.source;
+	        for(Set<Tuple<NullableExp, CopyStr>> set : list){
+	            for(Tuple<NullableExp, CopyStr> tup : set){
+	                NullableExp tupName = tup.source;
 	                if(!hashMap.containsKey(tupName)){
 	                    hashMap.put(tupName, new HashSet<String>());
 	                }
 
 	                Set<String> objList = hashMap.get(tupName);
-	                objList.add(tup.dest);
+	                objList.add(tup.dest.toString());
 	            }
 	        }
 
-	        for(Exp key : hashMap.keySet()){
+	        for(NullableExp key : hashMap.keySet()){
 	            HashSet<String> objValues = hashMap.get(key);
 	            if(objValues.size() == 1){
 	                for(String val :  objValues){
-	                    resultSet.add(new Tuple<Exp, String>(key, val));
+	                    resultSet.add(new Tuple<NullableExp, CopyStr>(key, ConversionUtils.newS(val)));
 	                }
 	            }
 	        }

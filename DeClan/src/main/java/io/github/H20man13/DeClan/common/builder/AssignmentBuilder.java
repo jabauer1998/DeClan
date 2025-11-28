@@ -16,6 +16,7 @@ import io.github.H20man13.DeClan.common.icode.ICode.Scope;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp.Operator;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
@@ -160,7 +161,7 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     		
     		addInstruction(new Def(scope, place, retPlace, retType));
     	} else {
-    		LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
+    		LinkedList<Tuple<NullableExp, ICode.Type>> args = new LinkedList<Tuple<NullableExp, ICode.Type>>();
     		args.add(new Tuple<>(left, leftType));
     		args.add(new Tuple<>(right, rightType));
     		IdentExp result = this.buildExternalFunctionCall(ICode.Scope.LOCAL, funcName, args, retType);
@@ -268,7 +269,7 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     		
     		addInstruction(new Def(scope, place, retPlace, retType));
     	} else {
-    		LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
+    		LinkedList<Tuple<NullableExp, ICode.Type>> args = new LinkedList<Tuple<NullableExp, ICode.Type>>();
     		args.add(new Tuple<>(right, rightType));
     		IdentExp retPlace = this.buildExternalFunctionCall(scope, funcName, args, retType);
     		addInstruction(new Assign(scope, place, retPlace, retType));

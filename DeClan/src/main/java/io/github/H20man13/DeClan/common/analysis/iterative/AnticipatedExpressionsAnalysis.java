@@ -19,19 +19,20 @@ import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
+import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.inline.Inline;
 import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class AnticipatedExpressionsAnalysis extends 
-InstructionAnalysis<HashMap<ICode, HashSet<Tuple<Exp, ICode.Type>>>, 
-HashSet<Tuple<Exp, ICode.Type>>, 
-Tuple<Exp, ICode.Type>>{
-    private HashMap<ICode, HashSet<Tuple<Exp, ICode.Type>>> genSets;
+InstructionAnalysis<HashMap<ICode, HashSet<Tuple<NullableExp, ICode.Type>>>, 
+HashSet<Tuple<NullableExp, ICode.Type>>, 
+Tuple<NullableExp, ICode.Type>>{
+    private HashMap<ICode, HashSet<Tuple<NullableExp, ICode.Type>>> genSets;
     private HashMap<ICode, Set<String>> killSets;
 
-    public AnticipatedExpressionsAnalysis(FlowGraph flowGraph, HashSet<Tuple<Exp, ICode.Type>> globalFlowSet, Config cfg) {
+    public AnticipatedExpressionsAnalysis(FlowGraph flowGraph, HashSet<Tuple<NullableExp, ICode.Type>> globalFlowSet, Config cfg) {
         super(flowGraph, Direction.BACKWARDS, Meet.INTERSECTION, globalFlowSet, true, cfg, Utils.getClassType(HashMap.class), Utils.getClassType(HashSet.class));
         genSets = newMap();
         killSets =  new HashMap<ICode, Set<String>>();
@@ -41,31 +42,31 @@ Tuple<Exp, ICode.Type>>{
             for(int i = codeList.size() - 1; i >= 0; i--){
                 ICode icode = codeList.get(i);
                 HashSet<String> instructionKill = new HashSet<String>();
-                HashSet<Tuple<Exp, ICode.Type>> instructionGen = newSet();
+                HashSet<Tuple<NullableExp, ICode.Type>> instructionGen = newSet();
                 if(icode instanceof Assign){
                     Assign assIcode = (Assign)icode;
-                    instructionGen.add(new Tuple<Exp, ICode.Type>(assIcode.value, assIcode.getType()));
+                    instructionGen.add(new Tuple<NullableExp, ICode.Type>(assIcode.value, assIcode.getType()));
                     instructionKill.add(assIcode.place);
                 } else if(icode instanceof Def) {
                 	Def definition = (Def)icode;
-                	instructionGen.add(new Tuple<Exp, ICode.Type>(definition.val, definition.type));
+                	instructionGen.add(new Tuple<NullableExp, ICode.Type>(definition.val, definition.type));
                 	instructionKill.add(definition.label);
                 } else if(icode instanceof If) {
                 	If icodeIf = (If)icode;
-                    instructionGen.add(new Tuple<Exp, ICode.Type>(icodeIf.exp, ICode.Type.BOOL));
+                    instructionGen.add(new Tuple<NullableExp, ICode.Type>(icodeIf.exp, ICode.Type.BOOL));
                 } else if(icode instanceof Call) {
                 	Call callICode = (Call)icode;
                 	List<Def> params = callICode.params;
                 	
                 	for(Def param: params) {
-                        instructionGen.add(new Tuple<Exp, ICode.Type>(param.val, param.type));
+                        instructionGen.add(new Tuple<NullableExp, ICode.Type>(param.val, param.type));
                         instructionKill.add(param.label);
                 	}
                 } else if(icode instanceof Inline) {
                 	Inline inICode = (Inline)icode;
                 	for(InlineParam param: inICode.params) {
                 		if(param.containsAllQual(InlineParam.IS_USE))
-                			instructionGen.add(new Tuple<Exp, ICode.Type>(param.name, param.type));
+                			instructionGen.add(new Tuple<NullableExp, ICode.Type>(param.name, param.type));
                 		else if(param.containsAllQual(InlineParam.IS_DEFINITION))
                 			instructionKill.add(param.name.ident);
                 	}
@@ -79,13 +80,13 @@ Tuple<Exp, ICode.Type>>{
 
 
     @Override
-    public HashSet<Tuple<Exp, ICode.Type>> transferFunction(ICode icode, HashSet<Tuple<Exp, ICode.Type>> inputSet) {
-        HashSet<Tuple<Exp, ICode.Type>> result = newSet();
+    public HashSet<Tuple<NullableExp, ICode.Type>> transferFunction(ICode icode, HashSet<Tuple<NullableExp, ICode.Type>> inputSet) {
+        HashSet<Tuple<NullableExp, ICode.Type>> result = newSet();
         
         result.addAll(inputSet);
-        for(Tuple<Exp, ICode.Type> exp: inputSet) {
+        for(Tuple<NullableExp, ICode.Type> exp: inputSet) {
         	for(String toKill: killSets.get(icode)) {
-        		if(exp.source.containsPlace(toKill)) {
+        		if(((Exp)exp.source).containsPlace(toKill)) {
         			result.remove(exp);
         		}
         	}

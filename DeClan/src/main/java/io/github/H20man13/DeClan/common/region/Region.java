@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.CopyInt;
+import io.github.H20man13.DeClan.common.CopyStr;
 import io.github.H20man13.DeClan.common.Tuple;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
 public class Region extends BaseRegion implements Iterable<RegionBase>{
 	private RegionBase parent;
@@ -35,10 +38,10 @@ public class Region extends BaseRegion implements Iterable<RegionBase>{
 	public String toString() {
 		Map<RegionBase, Integer> mapToInt = new HashMap<RegionBase, Integer>();
 		int currentRegion = 0;
-		return genInnerRegion(this, mapToInt, currentRegion).dest;
+		return genInnerRegion(this, mapToInt, currentRegion).dest.toString();
 	}
 	
-	private static Tuple<Integer, String> genOuterRegion(RegionBase r, Map<RegionBase, Integer> mapToInt, int currentRegionNumber){
+	private static Tuple<CopyInt, CopyStr> genOuterRegion(RegionBase r, Map<RegionBase, Integer> mapToInt, int currentRegionNumber){
 		StringBuilder sb = new StringBuilder();
 		mapToInt.put(r, currentRegionNumber);
 		currentRegionNumber++;
@@ -51,9 +54,9 @@ public class Region extends BaseRegion implements Iterable<RegionBase>{
 			Region regionWithHeader = (Region)r;
 			
 			for(RegionBase region: regionWithHeader.subRegions) {
-				Tuple<Integer, String> gendSubRegion = genInnerRegion(region, mapToInt, currentRegionNumber);
+				Tuple<CopyInt, CopyStr> gendSubRegion = genInnerRegion(region, mapToInt, currentRegionNumber);
 				sb.append(gendSubRegion.dest);
-				currentRegionNumber = gendSubRegion.source;
+				currentRegionNumber = gendSubRegion.source.asInt();
 			}
 		
 			sb.append("Header Region=");
@@ -67,10 +70,10 @@ public class Region extends BaseRegion implements Iterable<RegionBase>{
 			sb.append(root.toString());
 			sb.append("\"\r\n");
 		}
-		return new Tuple<Integer, String>(currentRegionNumber, sb.toString());
+		return new Tuple<CopyInt, CopyStr>(ConversionUtils.newI(currentRegionNumber), ConversionUtils.newS(sb.toString()));
 	}
 	
-	private static Tuple<Integer, String> genInnerRegion(RegionBase r, Map<RegionBase, Integer> mapToInt, int currentRegionNumber){
+	private static Tuple<CopyInt, CopyStr> genInnerRegion(RegionBase r, Map<RegionBase, Integer> mapToInt, int currentRegionNumber){
 		StringBuilder sb = new StringBuilder();
 		mapToInt.put(r, currentRegionNumber);
 		currentRegionNumber++;
@@ -83,9 +86,9 @@ public class Region extends BaseRegion implements Iterable<RegionBase>{
 		if(r instanceof Region) {
 			Region rWithHeader = (Region)r;
 			for(RegionBase region: rWithHeader.subRegions) {
-				Tuple<Integer, String> gendSubRegion = genInnerRegion(region, mapToInt, currentRegionNumber);
+				Tuple<CopyInt, CopyStr> gendSubRegion = genInnerRegion(region, mapToInt, currentRegionNumber);
 				sb.append(gendSubRegion.dest);
-				currentRegionNumber = gendSubRegion.source;
+				currentRegionNumber = gendSubRegion.source.asInt();
 			}
 			
 			sb.append("Regions Outside ");
@@ -94,17 +97,17 @@ public class Region extends BaseRegion implements Iterable<RegionBase>{
 			for(Tuple<RegionBase, RegionBase> exitEdge: rWithHeader.exitEdge) {
 				RegionBase dest = exitEdge.dest;
 				if(!mapToInt.containsKey(dest)) {
-					Tuple<Integer, String> tuple = genOuterRegion(dest, mapToInt, currentRegionNumber);
+					Tuple<CopyInt, CopyStr> tuple = genOuterRegion(dest, mapToInt, currentRegionNumber);
 					sb.append(tuple.dest);
-					currentRegionNumber = tuple.source;
+					currentRegionNumber = tuple.source.asInt();
 				}
 			}
 			for(Tuple<RegionBase, RegionBase> entryEdge: rWithHeader.entryEdge) {
 				RegionBase dest = entryEdge.source;
 				if(!mapToInt.containsKey(dest)) {
-					Tuple<Integer, String> tuple = genOuterRegion(dest, mapToInt, currentRegionNumber);
+					Tuple<CopyInt, CopyStr> tuple = genOuterRegion(dest, mapToInt, currentRegionNumber);
 					sb.append(tuple.dest);
-					currentRegionNumber = tuple.source;
+					currentRegionNumber = tuple.source.asInt();
 				}
 			}
 			sb.append("Header Region=");
@@ -177,6 +180,6 @@ public class Region extends BaseRegion implements Iterable<RegionBase>{
 				}
 			}
 		}
-		return new Tuple<Integer, String>(currentRegionNumber, sb.toString());
+		return new Tuple<CopyInt, CopyStr>(ConversionUtils.newI(currentRegionNumber), ConversionUtils.newS(sb.toString()));
 	}
 }

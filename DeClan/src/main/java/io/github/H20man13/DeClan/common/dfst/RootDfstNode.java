@@ -5,18 +5,24 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 
+import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.flow.BasicBlock;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
 import io.github.H20man13.DeClan.common.util.Utils;
 
-public class RootDfstNode implements Iterable<DfstNode>{
+public class RootDfstNode implements Iterable<DfstNode>, Copyable<RootDfstNode>{
 	private BlockNode block;
 	private LinkedList<DfstNode> advancingEdges;
 	
 	public RootDfstNode(BlockNode block) {
 		this.block = block;
 		this.advancingEdges = new LinkedList<DfstNode>();
+	}
+	
+	public RootDfstNode(BlockNode block, LinkedList<DfstNode> edges) {
+		this.block = block;
+		this.advancingEdges = edges;
 	}
 	
 	public void addTreeEdge(DfstNode advancingEdge) {
@@ -62,5 +68,10 @@ public class RootDfstNode implements Iterable<DfstNode>{
 	@Override
 	public int hashCode() {
 		return block.hashCode();
+	}
+
+	@Override
+	public RootDfstNode copy() {
+		return new RootDfstNode(block, advancingEdges);
 	}
 }

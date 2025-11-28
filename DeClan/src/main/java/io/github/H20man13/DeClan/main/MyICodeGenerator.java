@@ -17,6 +17,7 @@ import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.IntExp;
+import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
@@ -348,12 +349,12 @@ public class MyICodeGenerator{
       builder.buildProcedureCall(funcName, valArgResults);
     } else {
       //Generate an External Procedure Call
-      LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
+      LinkedList<Tuple<NullableExp, ICode.Type>> args = new LinkedList<Tuple<NullableExp, ICode.Type>>();
       for(Expression valArg : valArgs){
          Exp place = generateExpressionIr(valArg, builder);
          TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
          ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
-         args.add(new Tuple<Exp, ICode.Type>(place, type));
+         args.add(new Tuple<NullableExp, ICode.Type>(place, type));
       }
       builder.buildExternalProcedureCall(funcName, args);
     }
@@ -389,12 +390,12 @@ public class MyICodeGenerator{
 		      builder.buildProcedureCall(funcName, valArgResults);
 	    } else {
 	      //Generate an External Procedure Call
-	      LinkedList<Tuple<Exp, ICode.Type>> args = new LinkedList<Tuple<Exp, ICode.Type>>();
+	      LinkedList<Tuple<NullableExp, ICode.Type>> args = new LinkedList<Tuple<NullableExp, ICode.Type>>();
 	      for(Expression valArg : valArgs){
 	         Exp place = generateExpressionIr(valArg, callerFuncName, builder);
 	         TypeCheckerQualities qual = valArg.acceptResult(typeChecker);
 	         ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
-	         args.add(new Tuple<Exp, ICode.Type>(place, type));
+	         args.add(new Tuple<NullableExp, ICode.Type>(place, type));
 	      }
 	      builder.buildExternalProcedureCall(funcName, args);
 	    }
@@ -797,12 +798,12 @@ public class MyICodeGenerator{
 	  }
   
   public void generateInlineAssemblyIr(Asm asm, StatementBuilder builder) {
-     List<Tuple<IdentExp, ICode.Type>> icodeParams = new LinkedList<Tuple<IdentExp, ICode.Type>>();
+     List<Tuple<NullableExp, ICode.Type>> icodeParams = new LinkedList<Tuple<NullableExp, ICode.Type>>();
      for(String param : asm.getParamaters()){
        if(builder.containsEntry(param, SymEntry.ANY, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
           IdentExp icodeParam = builder.getVariablePlace(param, SymEntry.INTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
           ICode.Type icodeType = builder.getVariableType(param, SymEntry.INTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
-          icodeParams.add(new Tuple<IdentExp, ICode.Type>(icodeParam, icodeType));
+          icodeParams.add(new Tuple<NullableExp, ICode.Type>(icodeParam, icodeType));
        } else {
           throw new ICodeGeneratorException(asm, "Input paramater " + param + " does not exist"); 
        }
@@ -811,16 +812,16 @@ public class MyICodeGenerator{
   }
   
   public void generateInlineAssemblyIr(Asm asm, String callerFuncName, StatementBuilder builder) {
-     List<Tuple<IdentExp, ICode.Type>> icodeParams = new LinkedList<Tuple<IdentExp, ICode.Type>>();
+     List<Tuple<NullableExp, ICode.Type>> icodeParams = new LinkedList<Tuple<NullableExp, ICode.Type>>();
      for(String param : asm.getParamaters()){
        if(builder.containsEntry(param, callerFuncName, SymEntry.INTERNAL)) {
           IdentExp icodeParam = builder.getVariablePlace(param, callerFuncName, SymEntry.INTERNAL);
           ICode.Type icodeType = builder.getVariableType(param, callerFuncName, SymEntry.INTERNAL);
-          icodeParams.add(new Tuple<IdentExp, ICode.Type>(icodeParam, icodeType));
+          icodeParams.add(new Tuple<NullableExp, ICode.Type>(icodeParam, icodeType));
        } else if(builder.containsEntry(param, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
     	   IdentExp icodeParam = builder.getVariablePlace(param, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
     	   ICode.Type icodeType = builder.getVariableType(param, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
-	       icodeParams.add(new Tuple<IdentExp, ICode.Type>(icodeParam, icodeType));
+	       icodeParams.add(new Tuple<NullableExp, ICode.Type>(icodeParam, icodeType));
        } else {
           throw new ICodeGeneratorException(asm, "Input paramater " + param + " does not exist"); 
        }
@@ -1037,12 +1038,12 @@ public class MyICodeGenerator{
 		return builder.buildFunctionCall(funcName, definitions, returnPlace, retType);
 	} else {
 	 //Build external function call
-      LinkedList<Tuple<Exp, ICode.Type>> procedureArgs = new LinkedList<Tuple<Exp, ICode.Type>>();
+      LinkedList<Tuple<NullableExp, ICode.Type>> procedureArgs = new LinkedList<Tuple<NullableExp, ICode.Type>>();
       for(Expression arg : valArgs){
         Exp place = generateExpressionIr(arg, builder);
         TypeCheckerQualities qual = arg.acceptResult(typeChecker);
         ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
-        procedureArgs.add(new Tuple<Exp, ICode.Type>(place, type));
+        procedureArgs.add(new Tuple<NullableExp, ICode.Type>(place, type));
       }
 
       return builder.buildExternalFunctionCall(Scope.LOCAL, funcName, procedureArgs, retType);
@@ -1087,12 +1088,12 @@ public class MyICodeGenerator{
 			return builder.buildFunctionCall(funcName, definitions, returnPlace, retType);
 		} else {
 		 //Build external function call
-	      LinkedList<Tuple<Exp, ICode.Type>> procedureArgs = new LinkedList<Tuple<Exp, ICode.Type>>();
+	      LinkedList<Tuple<NullableExp, ICode.Type>> procedureArgs = new LinkedList<Tuple<NullableExp, ICode.Type>>();
 	      for(Expression arg : valArgs){
 	        Exp place = generateExpressionIr(arg, callerFuncName, builder);
 	        TypeCheckerQualities qual = arg.acceptResult(typeChecker);
 	        ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
-	        procedureArgs.add(new Tuple<Exp, ICode.Type>(place, type));
+	        procedureArgs.add(new Tuple<NullableExp, ICode.Type>(place, type));
 	      }
 
 	      return builder.buildExternalFunctionCall(Scope.LOCAL, funcName, procedureArgs, retType);

@@ -212,4 +212,9 @@ public class OpExpr implements Expr{
 		
 		return toRet;
 	}
+
+	@Override
+	public Expr copy() {
+		return new OpExpr(op, arguments);
+	}
 }

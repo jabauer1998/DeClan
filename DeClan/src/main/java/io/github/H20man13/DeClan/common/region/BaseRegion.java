@@ -115,4 +115,9 @@ public class BaseRegion implements RegionBase, Iterable<RegionBase> {
 		
 		return last.getLastInstruction();
 	}
+
+	@Override
+	public RegionBase copy() {
+		return new BaseRegion(header, subRegions);
+	}
 }

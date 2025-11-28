@@ -2,7 +2,7 @@ package io.github.H20man13.DeClan.common;
 
 import java.util.Objects;
 
-public class Tuple<SourceType, DestType> {
+public class Tuple<SourceType extends Copyable<SourceType>, DestType extends Copyable<DestType>> implements Copyable<Tuple<SourceType, DestType>>{
     public SourceType source;
     public DestType dest;
 
@@ -11,7 +11,7 @@ public class Tuple<SourceType, DestType> {
         this.dest = dest;
     }
 
-    @Override
+	@Override
     public int hashCode(){
         return source.hashCode();
     }
@@ -38,4 +38,9 @@ public class Tuple<SourceType, DestType> {
             return false;
         }
     }
+
+	@Override
+	public Tuple<SourceType, DestType> copy() {
+		return new Tuple<>(source.copy(), dest.copy());
+	}
 }

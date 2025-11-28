@@ -1,7 +1,9 @@
 package io.github.H20man13.DeClan.common.arm.descriptor;
 
+import io.github.H20man13.DeClan.common.CopyStr;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
 public class ArmAddressElement implements ArmElement {
 	private String label;
@@ -34,7 +36,7 @@ public class ArmAddressElement implements ArmElement {
 		return new ArmAddressElement(label, type);
 	}
 
-	public Tuple<String, ICode.Type> toTuple() {
-		return new Tuple<String, ICode.Type>(label, type);
+	public Tuple<CopyStr, ICode.Type> toTuple() {
+		return new Tuple<CopyStr, ICode.Type>(ConversionUtils.newS(label), type);
 	}
 }

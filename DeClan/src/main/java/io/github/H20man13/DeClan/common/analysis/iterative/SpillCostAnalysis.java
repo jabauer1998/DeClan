@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.Config;
+import io.github.H20man13.DeClan.common.CopyInt;
+import io.github.H20man13.DeClan.common.CopyStr;
 import io.github.H20man13.DeClan.common.CustomMeet;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
@@ -27,12 +29,13 @@ import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.inline.Inline;
 import io.github.H20man13.DeClan.common.icode.inline.InlineParam;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
+import io.github.H20man13.DeClan.common.util.ConversionUtils;
 import io.github.H20man13.DeClan.common.util.Utils;
 
-public class SpillCostAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<String, Integer>>>, HashSet<Tuple<String, Integer>>, Tuple<String, Integer>>
-implements CustomMeet<HashSet<Tuple<String, Integer>>>{
+public class SpillCostAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<CopyStr, CopyInt>>>, HashSet<Tuple<CopyStr, CopyInt>>, Tuple<CopyStr, CopyInt>>
+implements CustomMeet<HashSet<Tuple<CopyStr, CopyInt>>>{
 	private HashMap<ICode, HashSet<String>> defSets;
-	private HashMap<ICode, HashSet<Tuple<String, Integer>>> useSets;
+	private HashMap<ICode, HashSet<Tuple<CopyStr, CopyInt>>> useSets;
 	private Lib orig;
 	
 	public SpillCostAnalysis(Lib orig, FlowGraph flowGraph, Config cfg) {
@@ -44,22 +47,22 @@ implements CustomMeet<HashSet<Tuple<String, Integer>>>{
         for(BlockNode block : flowGraph.getBlocks()){
             for(ICode code : block.getICode()){
                 HashSet<String> instructionDef = new HashSet<String>();
-                HashSet<Tuple<String, Integer>> instructionUse = newSet();
+                HashSet<Tuple<CopyStr, CopyInt>> instructionUse = newSet();
                 if(code instanceof Assign){
                     Assign assCode = (Assign)code;
                     instructionDef.add(assCode.place);
                     if(assCode.value instanceof BinExp){
                         BinExp defPlace = (BinExp)assCode.value;
                         
-                        instructionUse.add(new Tuple<>(defPlace.left.ident, 0));
-                        instructionUse.add(new Tuple<>(defPlace.right.ident, 0));
+                        instructionUse.add(new Tuple<>(ConversionUtils.newS(defPlace.left.ident), ConversionUtils.newI(0)));
+                        instructionUse.add(new Tuple<>(ConversionUtils.newS(defPlace.right.ident), ConversionUtils.newI(0)));
                     } else if(assCode.value instanceof UnExp){
                         UnExp defPlace = (UnExp)assCode.value;
                         
-                        instructionUse.add(new Tuple<>(defPlace.right.ident, 0));
+                        instructionUse.add(new Tuple<>(ConversionUtils.newS(defPlace.right.ident), ConversionUtils.newI(0)));
                     } else if(assCode.value instanceof IdentExp){
                         IdentExp defPlace = (IdentExp)assCode.value;
-                        instructionUse.add(new Tuple<>(defPlace.ident, 0));
+                        instructionUse.add(new Tuple<>(ConversionUtils.newS(defPlace.ident), ConversionUtils.newI(0)));
                     }
                 } else if(code instanceof Def){
                 	Def assCode = (Def)code;
@@ -67,21 +70,21 @@ implements CustomMeet<HashSet<Tuple<String, Integer>>>{
                     if(assCode.val instanceof BinExp){
                         BinExp defPlace = (BinExp)assCode.val;
                         
-                        instructionUse.add(new Tuple<>(defPlace.left.ident, 0));
-                        instructionUse.add(new Tuple<>(defPlace.right.ident, 0));
+                        instructionUse.add(new Tuple<>(ConversionUtils.newS(defPlace.left.ident), ConversionUtils.newI(0)));
+                        instructionUse.add(new Tuple<>(ConversionUtils.newS(defPlace.right.ident), ConversionUtils.newI(0)));
                     } else if(assCode.val instanceof UnExp){
                         UnExp defPlace = (UnExp)assCode.val;
                         
-                        instructionUse.add(new Tuple<>(defPlace.right.ident, 0));
+                        instructionUse.add(new Tuple<>(ConversionUtils.newS(defPlace.right.ident), ConversionUtils.newI(0)));
                     } else if(assCode.val instanceof IdentExp){
                         IdentExp defPlace = (IdentExp)assCode.val;
-                        instructionUse.add(new Tuple<>(defPlace.ident, 0));
+                        instructionUse.add(new Tuple<>(ConversionUtils.newS(defPlace.ident), ConversionUtils.newI(0)));
                     }
                 } else if(code instanceof If){
                     BinExp exp = ((If)code).exp;
                     
-                    instructionUse.add(new Tuple<>(exp.left.ident, 0));
-                    instructionUse.add(new Tuple<>(exp.right.ident, 0));
+                    instructionUse.add(new Tuple<>(ConversionUtils.newS(exp.left.ident), ConversionUtils.newI(0)));
+                    instructionUse.add(new Tuple<>(ConversionUtils.newS(exp.right.ident), ConversionUtils.newI(0)));
                 } else if(code instanceof Call){
                     Call placement = (Call)code;
                     
@@ -95,14 +98,14 @@ implements CustomMeet<HashSet<Tuple<String, Integer>>>{
                         
                         if(arg.val instanceof IdentExp) {
                         	IdentExp expIdent = (IdentExp)arg.val;
-                        	instructionUse.add(new Tuple<>(expIdent.ident, 0));
+                        	instructionUse.add(new Tuple<>(ConversionUtils.newS(expIdent.ident), ConversionUtils.newI(0)));
                         } else if(arg.val instanceof UnExp){
                         	UnExp unaryExpression = (UnExp)arg.val;
-                        	instructionUse.add(new Tuple<>(unaryExpression.right.ident, 0));
+                        	instructionUse.add(new Tuple<>(ConversionUtils.newS(unaryExpression.right.ident), ConversionUtils.newI(0)));
                         } else if(arg.val instanceof BinExp) {
                         	BinExp binaryExpression = (BinExp)arg.val;
-                        	instructionUse.add(new Tuple<>(binaryExpression.left.ident, 0));
-                        	instructionUse.add(new Tuple<>(binaryExpression.right.ident, 0));
+                        	instructionUse.add(new Tuple<>(ConversionUtils.newS(binaryExpression.left.ident), ConversionUtils.newI(0)));
+                        	instructionUse.add(new Tuple<>(ConversionUtils.newS(binaryExpression.right.ident), ConversionUtils.newI(0)));
                         }
                     }
                 } else if(code instanceof Inline) {
@@ -112,7 +115,7 @@ implements CustomMeet<HashSet<Tuple<String, Integer>>>{
                 		if(param.containsAllQual(InlineParam.IS_DEFINITION))
                 			instructionDef.add(param.name.ident);
                 		else if(param.containsAllQual(InlineParam.IS_USE))
-                			instructionUse.add(new Tuple<>(param.name.ident, 0));
+                			instructionUse.add(new Tuple<>(ConversionUtils.newS(param.name.ident), ConversionUtils.newI(0)));
                 	}
                 } else if(code instanceof Spill) {
                 	Spill mySpill = (Spill)code;
@@ -124,52 +127,52 @@ implements CustomMeet<HashSet<Tuple<String, Integer>>>{
         }
 	}
 	
-	private static boolean setContainsLabel(HashSet<Tuple<String, Integer>> set, String label) {
-		for(Tuple<String, Integer> elem: set)
-			if(elem.source.equals(label))
+	private static boolean setContainsLabel(HashSet<Tuple<CopyStr, CopyInt>> set, String label) {
+		for(Tuple<CopyStr, CopyInt> elem: set)
+			if(elem.source.toString().equals(label))
 				return true;
 		return false;
 	}
 	
-	private static Tuple<String, Integer> getLabel(HashSet<Tuple<String, Integer>> set, String label) {
-		for(Tuple<String, Integer> elem: set)
-			if(elem.source.equals(label))
+	private static Tuple<CopyStr, CopyInt> getLabel(HashSet<Tuple<CopyStr, CopyInt>> set, String label) {
+		for(Tuple<CopyStr, CopyInt> elem: set)
+			if(elem.source.toString().equals(label))
 				return elem;
 		return null;
 	}
 
 	@Override
-	public HashSet<Tuple<String, Integer>> transferFunction(ICode instr, HashSet<Tuple<String, Integer>> inputSet) {
-		HashSet<Tuple<String, Integer>> use = useSets.get(instr);
+	public HashSet<Tuple<CopyStr, CopyInt>> transferFunction(ICode instr, HashSet<Tuple<CopyStr, CopyInt>> inputSet) {
+		HashSet<Tuple<CopyStr, CopyInt>> use = useSets.get(instr);
 		HashSet<String> def = defSets.get(instr);
-		HashSet<Tuple<String, Integer>> newSet = newSet();
+		HashSet<Tuple<CopyStr, CopyInt>> newSet = newSet();
 		
-		for(Tuple<String, Integer> in: inputSet)
+		for(Tuple<CopyStr, CopyInt> in: inputSet)
 			if(!def.contains(in.source))
-				newSet.add(in);
+				newSet.add(in.copy());
 		
-		HashSet<Tuple<String, Integer>> newish = newSet();
-		for(Tuple<String, Integer> newElem: newSet)
-			if(!setContainsLabel(use, newElem.source))
-				newish.add(getLabel(use, newElem.source));
+		HashSet<Tuple<CopyStr, CopyInt>> newish = newSet();
+		for(Tuple<CopyStr, CopyInt> newElem: newSet)
+			if(!setContainsLabel(use, newElem.source.toString()))
+				newish.add(getLabel(use, newElem.source.toString()));
 		
 		newish.addAll(use);
-		for(Tuple<String, Integer> tup: newish){
-			tup.dest = tup.dest + 1;
+		for(Tuple<CopyStr, CopyInt> tup: newish){
+			tup.dest = ConversionUtils.newI(tup.dest.asInt() + 1);
 		}
 		
 		return newish;
 	}
 	
 	@Override
-	public HashSet<Tuple<String, Integer>> performMeet(List<HashSet<Tuple<String, Integer>>> list) {
-		HashSet<Tuple<String, Integer>> hash = newSet();
+	public HashSet<Tuple<CopyStr, CopyInt>> performMeet(List<HashSet<Tuple<CopyStr, CopyInt>>> list) {
+		HashSet<Tuple<CopyStr, CopyInt>> hash = newSet();
 		
-		for(HashSet<Tuple<String, Integer>> elem: list) {
-			for(Tuple<String, Integer> myElem: elem)
-				if(setContainsLabel(hash, myElem.source)) {
-					Tuple<String, Integer> source = getLabel(hash, myElem.source);
-					source.dest = (source.dest + myElem.dest) / 2;
+		for(HashSet<Tuple<CopyStr, CopyInt>> elem: list) {
+			for(Tuple<CopyStr, CopyInt> myElem: elem)
+				if(setContainsLabel(hash, myElem.source.toString())) {
+					Tuple<CopyStr, CopyInt> source = getLabel(hash, myElem.source.toString());
+					source.dest = ConversionUtils.newI((source.dest.asInt() + myElem.dest.asInt()) / 2);
 				} else {
 					hash.add(new Tuple<>(myElem.source, myElem.dest));
 				}
