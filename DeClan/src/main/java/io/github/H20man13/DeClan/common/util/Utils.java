@@ -535,4 +535,20 @@ public class Utils {
 		throw new RuntimeException(exp);
 	}
   }
+
+  public static boolean setContainsNullableTupleWithExp(HashSet<Tuple<CopyStr, NullableExp>> globals, NullableExp dest) {
+	for(Tuple<CopyStr, NullableExp> nully: globals) {
+		if(nully.dest.equals(dest))
+			return true;
+	}
+	return false;
+  }
+
+  public static CopyStr getNullableTupleWithExp(HashSet<Tuple<CopyStr, NullableExp>> globals, NullableExp dest) {
+	  for(Tuple<CopyStr, NullableExp> nully: globals) {
+			if(nully.dest.equals(dest))
+				return nully.source;
+	  }
+	  throw new RuntimeException();
+  }
 }

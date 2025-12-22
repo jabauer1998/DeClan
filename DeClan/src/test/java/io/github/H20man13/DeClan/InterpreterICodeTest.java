@@ -71,6 +71,7 @@ public class InterpreterICodeTest {
             	optt.performConstantPropogation();
             	optt.performDeadCodeElimination();
             	optt.performPartialRedundancyElimination();
+            	optt.performMoveConstants();
             	Prog optProg = optt.getICode();
             	
             	MyICodeMachine optimizedRun = new MyICodeMachine(errLog, optOut, errOut, standardInOpt);

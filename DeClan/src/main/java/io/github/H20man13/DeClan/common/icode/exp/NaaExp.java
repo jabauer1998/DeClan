@@ -25,4 +25,9 @@ public class NaaExp implements NullableExp{
 	public boolean equals(Object obj) {
 		return obj instanceof NaaExp;
 	}
+	@Override
+	public boolean isZero() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

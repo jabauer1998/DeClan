@@ -53,6 +53,7 @@ public enum IrTokenType {
     ENTRY,
     BSS,
     FROM,
+    SPILL,
     
     //Operators
     ASSIGN,
@@ -156,6 +157,7 @@ public enum IrTokenType {
         addKeyword(ENTRY);
         addKeyword(BSS);
         addKeyword(FROM);
+        addKeyword(SPILL);
 
         dualOperators = new HashMap<>();
         addDualOp(":=", ASSIGN);

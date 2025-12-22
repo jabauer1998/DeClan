@@ -190,4 +190,12 @@ public class FlowGraph implements Iterable<BlockNode>{
     public Iterator<BlockNode> iterator() {
         return blockNodes.iterator();
     }
+
+	public BlockNode findBssEnd() {
+		return entryNode.findEndBss();
+	}
+	
+	public BlockNode findDataEnd() {
+		return entryNode.findEndData();
+	}
 }

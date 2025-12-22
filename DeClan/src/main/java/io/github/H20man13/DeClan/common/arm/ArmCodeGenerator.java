@@ -41,50 +41,45 @@ public class ArmCodeGenerator {
         this.finalFile = fileName;
         Utils.createFile(this.finalFile);
         this.finalOutputWriter = new FileWriter(this.finalFile);
-        this.codeWritten = false;
     }
 
     public void addVariable(String varName, VariableLength length, int variableValue) throws IOException{
-        if(!codeWritten){
-            if(length == VariableLength.BYTE){
-                this.variableWriter.append(varName + ": .BYTE " + variableValue + "\r\n");
-                totalBytes += 1;
-            } else {
-                this.variableWriter.append(varName + ": .WORD " + variableValue + "\r\n");
-                totalBytes += 4;
-            }
-        }
-    }
-
-    public void addVariable(String varName, float variableValue) throws IOException{
-        if(!codeWritten){
+        if(length == VariableLength.BYTE){
+            this.variableWriter.append(varName + ": .BYTE " + variableValue + "\r\n");
+            totalBytes += 1;
+        } else {
             this.variableWriter.append(varName + ": .WORD " + variableValue + "\r\n");
             totalBytes += 4;
         }
+        variableWriter.flush();
+    }
+
+    public void addVariable(String varName, float variableValue) throws IOException{
+        this.variableWriter.append(varName + ": .WORD " + variableValue + "\r\n");
+        totalBytes += 4;
+        variableWriter.flush();
     }
 
     public void addVariable(VariableLength length, int variableValue) throws IOException{
-        if(!codeWritten){
-            if(length == VariableLength.BYTE){
-                this.variableWriter.append(".BYTE " + variableValue + "\r\n");
-                totalBytes += 1;
-            } else {
-                this.variableWriter.append(".WORD " + variableValue + "\r\n");
-                totalBytes += 4;
-            }
+        if(length == VariableLength.BYTE){
+            this.variableWriter.append(".BYTE " + variableValue + "\r\n");
+            totalBytes += 1;
+        } else {
+            this.variableWriter.append(".WORD " + variableValue + "\r\n");
+            totalBytes += 4;
         }
+        variableWriter.flush();
     }
 
     public void addVariable(String variableName, VariableLength length) throws IOException{
-        if(!codeWritten){
-            if(length == VariableLength.BYTE){
-                this.variableWriter.append(variableName + ": .BYTE 0\r\n");
-                totalBytes += 1;
-            } else {
-                this.variableWriter.append(variableName + ": .WORD 0\r\n");
-                totalBytes += 4;
-            }
+        if(length == VariableLength.BYTE){
+            this.variableWriter.append(variableName + ": .BYTE 0\r\n");
+            totalBytes += 1;
+        } else {
+            this.variableWriter.append(variableName + ": .WORD 0\r\n");
+            totalBytes += 4;
         }
+        variableWriter.flush();
     }
     
     public void addVariable(String place, VariableLength word, String string) throws IOException {
@@ -95,28 +90,26 @@ public class ArmCodeGenerator {
             this.variableWriter.append(place + ": .WORD " + string + "\r\n");
             totalBytes += 4;
         }
+    	variableWriter.flush();
 	}
 
     public void addInstruction(String instr) throws IOException{
-        if(!codeWritten){
-            if(this.label == null){
-                this.instructionWriter.append(instr + "\r\n");
-            } else {
-                this.instructionWriter.append(this.label + ": " + instr + "\r\n");
-            }
-            this.totalBytes += 4;
-            this.label = null;
+        if(this.label == null){
+            this.instructionWriter.append(instr + "\r\n");
+        } else {
+            this.instructionWriter.append(this.label + ": " + instr + "\r\n");
         }
+        this.totalBytes += 4;
+        this.label = null;
+        instructionWriter.flush();
     }
 
     public void setLabel(String label) throws IOException{
-        if(!codeWritten){
-            if(this.label != null){
-                addInstruction("MOV R0, R0");
-                this.label = null;
-            }
-            this.label = label;
+        if(this.label != null){
+            addInstruction("MOV R0, R0");
+            this.label = null;
         }
+        this.label = label;
     }
 
     public void writeToStream() throws IOException{

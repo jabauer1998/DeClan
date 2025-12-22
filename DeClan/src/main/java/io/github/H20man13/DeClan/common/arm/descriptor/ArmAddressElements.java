@@ -32,4 +32,16 @@ public class ArmAddressElements implements Iterable<ArmAddressElement> {
 	public Iterator<ArmAddressElement> iterator() {
 		return elems.iterator();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof ArmAddressElements) {
+			ArmAddressElements myElems = (ArmAddressElements)obj;
+			if(myElems.elems.size() != elems.size())
+				return false;
+			
+			return myElems.elems.equals(elems);
+		}
+		return false;
+	}
 }

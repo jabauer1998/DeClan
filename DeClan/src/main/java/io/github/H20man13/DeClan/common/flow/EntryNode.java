@@ -30,4 +30,25 @@ public class EntryNode implements FlowGraphNode {
 	public FlowGraphNode copy() {
 		return new EntryNode(entry);
 	}
+
+	@Override
+	public BlockNode findEndData() {
+		return entry.findEndData();
+	}
+
+	@Override
+	public BlockNode findEndBss() {
+		return entry.findEndBss();
+	}
+
+	@Override
+	public boolean checkEndData() {
+		return false;
+	}
+
+	@Override
+	public boolean checkEndBss() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

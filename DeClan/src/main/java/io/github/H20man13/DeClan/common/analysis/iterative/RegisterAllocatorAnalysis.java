@@ -41,16 +41,12 @@ import io.github.H20man13.DeClan.main.MyOptimizer;
 
 public class RegisterAllocatorAnalysis extends IterativeAnalysis<ICode, HashMap<ICode, ArmDescriptorState>, ArmDescriptorState> implements 
 CustomMeet<ArmDescriptorState> {
-	private InterferenceGraph graph;
 	private LiveVariableAnalysis anal;
-	private SpillCostAnalysis spillAnal;
 	
 	public RegisterAllocatorAnalysis(MyOptimizer optimizer, Config cfg){
 		super(genFlowGraph(optimizer), Direction.FORWARDS, new ArmDescriptorState(), false, cfg, Utils.getClassType(HashMap.class));
-		this.graph = new InterferenceGraph(optimizer.getICode(), optimizer.getLiveVariableAnalysis());
 		this.anal = optimizer.getLiveVariableAnalysis();
-		this.spillAnal = new SpillCostAnalysis(optimizer.getICode(), optimizer.getFlowGraph(), cfg);
-		this.spillAnal.run();
+		this.anal.run();
 	}
 	
 	private static FlowGraph genFlowGraph(MyOptimizer opt) {
@@ -79,7 +75,7 @@ CustomMeet<ArmDescriptorState> {
 	private static boolean canidateIsResultAndSingleOperand(String reg, String defOp, ICode.Type type, String  otherOp1, ICode.Type op1Type, String  otherOp2, ICode.Type op2Type, ArmDescriptorState state) {
 		Set<Tuple<CopyStr, ICode.Type>> addressesInR = state.getCandidateAddresses(reg);
 		for(Tuple<CopyStr, ICode.Type> addr: addressesInR) {
-			if(!addr.equals(defOp) && !(addr.equals(otherOp1) || addr.equals(otherOp2)))
+			if(!addr.source.toString().equals(defOp) && !(addr.source.toString().equals(otherOp1) || addr.toString().equals(otherOp2)))
 				return false; //TODO -- NEED TO FIX
 		}
 		return true;
@@ -88,7 +84,7 @@ CustomMeet<ArmDescriptorState> {
 	private boolean candidateIsAllDead(String reg, ICode instr, ArmDescriptorState state) {
 		Set<Tuple<CopyStr, ICode.Type>> addressesInR = state.getCandidateAddresses(reg);
 		for(Tuple<CopyStr, ICode.Type> addr: addressesInR){
-			if(anal.getOutputSet(instr).contains(addr.source))
+			if(anal.getOutputSet(instr).contains(addr.source.toString()))
 				return false;
 		}
 		return true;
@@ -134,32 +130,19 @@ CustomMeet<ArmDescriptorState> {
 			}
 			
 			if(regOk == false){
-				Map<String, Integer> savedCosts = new HashMap<String, Integer>();
-				Set<Tuple<CopyStr, CopyInt>> actualCosts = this.spillAnal.getOutputSet(icode);
+				int lowest = Integer.MAX_VALUE;
+				String myReg = null;
 				for(String reg: state.getCanditateRegs()) {
 					Set<Tuple<CopyStr, ICode.Type>> addrs = state.getCandidateAddresses(reg);
-					int totalCost = 0;
-					for(Tuple<CopyStr, ICode.Type> addr: addrs) {
-						for(Tuple<CopyStr, CopyInt> actualCost : actualCosts) {
-							if(actualCost.source.equals(addr)) {
-								totalCost = (totalCost + actualCost.dest.asInt()) / 2;
-								break;
-							}
-						}
+					if(addrs.size() < lowest) {
+						myReg = reg;
+						lowest = addrs.size();
 					}
-					savedCosts.put(reg, totalCost);
 				}
 				
-				Tuple<CopyStr, CopyInt> savedCost = null;
-				for(String reg: savedCosts.keySet()){
-					Integer cost = savedCosts.get(reg);
-					if(savedCost == null || cost > savedCost.dest.asInt())
-						savedCost = new Tuple<CopyStr, CopyInt>(ConversionUtils.newS(reg), ConversionUtils.newI(cost));
-						
-				}
-				
-				if(savedCost != null) {
-					for(Tuple<CopyStr, ICode.Type> addr: state.getCandidateAddresses(savedCost.source.toString())) {
+				if(myReg != null) {
+					Set<Tuple<CopyStr, ICode.Type>> addrs = state.getCandidateAddresses(myReg);
+					for(Tuple<CopyStr, ICode.Type> addr: addrs) {
 						state.addSpill(addr.source.toString(), addr.dest);
 					}
 				}
@@ -207,32 +190,19 @@ CustomMeet<ArmDescriptorState> {
 			}
 			
 			if(regOk == false){
-				Map<String, Integer> savedCosts = new HashMap<String, Integer>();
-				Set<Tuple<CopyStr,CopyInt>> actualCosts = this.spillAnal.getOutputSet(icode);
+				int lowest = Integer.MAX_VALUE;
+				String myReg = null;
 				for(String reg: state.getCanditateRegs()) {
 					Set<Tuple<CopyStr, ICode.Type>> addrs = state.getCandidateAddresses(reg);
-					int totalCost = 0;
-					for(Tuple<CopyStr, ICode.Type> addr: addrs) {
-						for(Tuple<CopyStr, CopyInt> actualCost : actualCosts) {
-							if(actualCost.source.equals(addr)) {
-								totalCost = (totalCost + actualCost.dest.asInt()) / 2;
-								break;
-							}
-						}
+					if(addrs.size() < lowest) {
+						myReg = reg;
+						lowest = addrs.size();
 					}
-					savedCosts.put(reg, totalCost);
 				}
 				
-				Tuple<CopyStr, CopyInt> savedCost = null;
-				for(String reg: savedCosts.keySet()){
-					Integer cost = savedCosts.get(reg);
-					if(savedCost == null || cost > savedCost.dest.asInt())
-						savedCost = new Tuple<CopyStr, CopyInt>(ConversionUtils.newS(reg), ConversionUtils.newI(cost));
-						
-				}
-				
-				if(savedCost != null) {
-					for(Tuple<CopyStr, ICode.Type> addr: state.getCandidateAddresses(savedCost.source.toString())) {
+				if(myReg != null) {
+					Set<Tuple<CopyStr, ICode.Type>> addrs = state.getCandidateAddresses(myReg);
+					for(Tuple<CopyStr, ICode.Type> addr: addrs) {
 						state.addSpill(addr.source.toString(), addr.dest);
 					}
 				}

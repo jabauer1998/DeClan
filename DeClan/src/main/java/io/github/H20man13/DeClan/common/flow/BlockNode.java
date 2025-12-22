@@ -31,6 +31,10 @@ import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
 import io.github.H20man13.DeClan.common.icode.inline.Inline;
 import io.github.H20man13.DeClan.common.icode.label.Label;
+import io.github.H20man13.DeClan.common.icode.section.BssSec;
+import io.github.H20man13.DeClan.common.icode.section.CodeSec;
+import io.github.H20man13.DeClan.common.icode.section.DataSec;
+import io.github.H20man13.DeClan.common.icode.section.ProcSec;
 import io.github.H20man13.DeClan.common.symboltable.Environment;
 import io.github.H20man13.DeClan.common.symboltable.entry.LiveInfo;
 import io.github.H20man13.DeClan.common.util.Utils;
@@ -108,5 +112,79 @@ public class BlockNode implements FlowGraphNode, Iterable<ICode> {
 	@Override
 	public FlowGraphNode copy() {
 		return new BlockNode(block, successors, predecessors);
+	}
+
+	@Override
+	public BlockNode findEndData() {
+		if(!this.block.getIcode().isEmpty()) {
+			ICode icode = this.block.getIcode().get(0);
+			if(icode instanceof CodeSec) {
+				for(FlowGraphNode flow: this.predecessors) {
+					if(flow.checkEndData())
+						return (BlockNode)flow;
+				}
+			} else if(icode instanceof ProcSec) {
+				for(FlowGraphNode flow: this.predecessors) {
+					if(flow.checkEndData())
+						return (BlockNode)flow;
+				}
+			}
+		}
+		
+		for(FlowGraphNode node: this.successors) {
+			BlockNode b = node.findEndData();
+			if(b != null)
+				return b;
+		}
+		
+		return null;
+	}
+
+	@Override
+	public BlockNode findEndBss() {
+		if(!this.block.getIcode().isEmpty()) {
+			ICode icode = this.block.getIcode().get(0);
+			if(icode instanceof CodeSec) {
+				for(FlowGraphNode flow: this.predecessors) {
+					if(flow.checkEndBss())
+						return (BlockNode)flow;
+				}
+			} else if(icode instanceof ProcSec) {
+				for(FlowGraphNode flow: this.predecessors) {
+					if(flow.checkEndBss())
+						return (BlockNode)flow;
+				}
+			}
+		}
+		
+		for(FlowGraphNode node: this.successors) {
+			BlockNode b = node.findEndBss();
+			if(b != null)
+				return b;
+		}
+		
+		return null;
+	}
+
+	@Override
+	public boolean checkEndData() {
+		for(ICode icode: this.block)
+			if(icode instanceof DataSec)
+				return true;
+		for(FlowGraphNode node: this.predecessors)
+			if(node.checkEndData())
+				return true;
+		return false;
+	}
+
+	@Override
+	public boolean checkEndBss() {
+		for(ICode icode: this.block)
+			if(icode instanceof BssSec)
+				return true;
+		for(FlowGraphNode node: this.predecessors)
+			if(node.checkEndBss())
+				return true;
+		return false;
 	}
 }

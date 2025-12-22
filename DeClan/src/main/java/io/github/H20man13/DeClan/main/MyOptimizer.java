@@ -16,11 +16,14 @@ import io.github.H20man13.DeClan.common.analysis.iterative.AnticipatedExpression
 import io.github.H20man13.DeClan.common.analysis.iterative.AvailableExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.ConstantPropogationAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.DominatorAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.ExpectedConstantAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.LiveVariableAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.MovedConstantAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.PostponableExpressionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.ReachingDefinitionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.SavedExpressionAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.UsedExpressionAnalysis;
+import io.github.H20man13.DeClan.common.analysis.iterative.UsedGlobalVariableAnalysis;
 import io.github.H20man13.DeClan.common.dag.DagGraph;
 import io.github.H20man13.DeClan.common.dag.DagIgnoredInstruction;
 import io.github.H20man13.DeClan.common.dag.DagNode;
@@ -101,10 +104,15 @@ public class MyOptimizer {
     private DominatorAnalysis domAnal;
     private AvailableExpressionsAnalysis availableAnal;
     private SavedExpressionAnalysis savedAnal;
+    private UsedGlobalVariableAnalysis usedGlobalAnal;
+    private ExpectedConstantAnalysis expectedConstAnal;
+    private MovedConstantAnalysis movedConstAnal;
     private Map<ICode, Set<Tuple<NullableExp, ICode.Type>>> earliestSets;
     private Map<ICode, Set<Tuple<NullableExp, ICode.Type>>> latestSets;
     private Map<ICode, Set<Tuple<NullableExp, ICode.Type>>> usedSets;
     private HashSet<Tuple<NullableExp, ICode.Type>> globalExpressionSet;
+    private HashSet<Tuple<CopyStr, CopyStr>> globalConstDelayedSet;
+    private HashSet<Tuple<CopyStr, NullableExp>> globalConstAddSet;
     private IrRegisterGenerator iGen;
     private DepthFirstSpanningTree dfst;
     private List<BlockNode> origBlocks;
@@ -116,7 +124,8 @@ public class MyOptimizer {
         COMMON_SUB_EXPRESSION_ELIMINATION,
         CONSTANT_PROPOGATION,
         DEAD_CODE_ELIMINATION,
-        PARTIAL_REDUNDANCY_ELIMINATION
+        PARTIAL_REDUNDANCY_ELIMINATION,
+        MOVE_CONSTANTS_TO_GLOBAL
     }
 
     public MyOptimizer(Config cfg, Prog intermediateCode){
@@ -190,6 +199,36 @@ public class MyOptimizer {
     	
     	return toRet;
     }
+    
+    private static Map<String, BlockNode> findSectionEntryPoints(List<BlockNode> nodeList){
+    	Map<String, BlockNode> toRet = new HashMap<String, BlockNode>();
+    	
+    	for(int i = 0; i < nodeList.size(); i++) {
+    		BlockNode node = nodeList.get(i);
+    		BasicBlock block = node.getBlock();
+    		if(Utils.beginningOfBlockIsSection(block)) {
+    			ICode first = block.getIcode().getFirst();
+    			if(first instanceof SymSec){
+    				BlockNode previous = nodeList.get(i);
+    				toRet.put("SymSec", previous);
+    			} else if(first instanceof DataSec) {
+    				BlockNode previous = nodeList.get(i);
+    				toRet.put("DataSec", previous);
+    			} else if(first instanceof BssSec) {
+    				BlockNode previous = nodeList.get(i);
+    				toRet.put("BssSec", previous);
+    			} else if(first instanceof CodeSec) {
+    				BlockNode previous = nodeList.get(i);
+    				toRet.put("CodeSec", previous);
+    			} else if(first instanceof ProcSec) {
+    				BlockNode previous = nodeList.get(i);
+    				toRet.put("ProcSec", previous);
+    			}
+    		}
+    	}
+    	
+    	return toRet;
+    }
 
     private static Map<String, BlockNode> findBranchEntryPoints(List<BlockNode> nodes){
         Map<String, BlockNode> toRet = new HashMap<String, BlockNode>();
@@ -244,7 +283,7 @@ public class MyOptimizer {
         }
     }
     
-    private static void linkUpSections(List<BlockNode> nodes, Map<String, BlockNode> sectionTails) {
+    private static void linkUpSections(List<BlockNode> nodes, Map<String, BlockNode> sectionTails, Map<String, BlockNode> sectionHeads){
     	for(int i = 0; i < nodes.size(); i++) {
     		BlockNode current = nodes.get(i);
     		BasicBlock block = current.getBlock();
@@ -266,15 +305,20 @@ public class MyOptimizer {
     				current.addPredecessor(bssSec);
     				dataSec.addSuccessor(current);
     				bssSec.addSuccessor(current);
+    			} else if(icodeFirst instanceof ProcSec) {
+    				BlockNode bssSec = sectionTails.get("BssSec");
+    				BlockNode dataSec = sectionTails.get("DataSec");
+    				
+    				current.addPredecessor(dataSec);
+    				current.addPredecessor(bssSec);
+    				dataSec.addSuccessor(current);
+    				bssSec.addSuccessor(current);
     			}
     		} else if(Utils.beginningOfBlockIsProcedureHeader(block)) {
-    			BlockNode bssSec = sectionTails.get("BssSec");
-    			BlockNode dataSec = sectionTails.get("DataSec");
+    			BlockNode procSec = sectionHeads.get("ProcSec");
     			
-    			bssSec.addSuccessor(current);
-    			dataSec.addSuccessor(current);
-    			current.addPredecessor(bssSec);
-    			current.addPredecessor(dataSec);
+    			procSec.addSuccessor(current);
+    			current.addPredecessor(procSec);
     		}
     	}
     }
@@ -396,7 +440,8 @@ public class MyOptimizer {
         linkUpJumps(nodeList, codeLabeledNodes);
         
         Map<String, BlockNode> sectionExitPoints = findSectionExitPoints(nodeList);
-        linkUpSections(nodeList, sectionExitPoints);
+        Map<String, BlockNode> sectionEntryPoints = findSectionEntryPoints(nodeList);
+        linkUpSections(nodeList, sectionExitPoints, sectionEntryPoints);
 
         /*
         Map<String, BlockNode> procedureExitNodes = findProcedureExitPoints(nodeList);
@@ -528,6 +573,14 @@ public class MyOptimizer {
     	} while(this.intermediateCode.containsPlace(genResult)); 
     }
     
+    private String genNext() {
+    	String genResult;
+    	do {
+    		genResult = iGen.genNext();
+    	} while(this.intermediateCode.containsPlace(genResult)); 
+    	return genResult;
+    }
+    
     private void resetRegisterGenerator() {
     	this.iGen = null;
     }
@@ -567,6 +620,15 @@ public class MyOptimizer {
             	resetUsedAnalysis();
             	resetRegisterGenerator();
             	resetSavedExpressionAnalysis();
+            	break;
+            case MOVE_CONSTANTS_TO_GLOBAL:
+            	unsortFlowGraph();
+            	rebuildFromFlowGraph();
+            	resetFlowGraph();
+            	resetUsedGlobalVariableAnalysis();
+            	resetExpectedConstantAnalysis();
+            	resetRegisterGenerator();
+            	resetMovedConstantAnalysis();
             	break;
         }
     }
@@ -616,7 +678,61 @@ public class MyOptimizer {
             	setUpRegisterGenerator();
             	runSavedExpressionAnalysis();
             	break;
+            case MOVE_CONSTANTS_TO_GLOBAL:
+            	buildFlowGraph();
+            	copyOrigBlocks();
+            	runDominatorAnalysis();
+            	buildDfst();
+            	sortFlowGraph();
+            	runUsedGlobalVariableAnalysis();
+            	runExpectedConstantAnalysis();
+            	setUpRegisterGenerator();
+            	buildGlobalConstSets();
+            	runMovedConstantAnalysis();
+            	break;
         }
+    }
+    
+    private void buildGlobalConstSets() {
+    	if(this.usedGlobalAnal == null)
+    		runUsedGlobalVariableAnalysis();
+    	
+    	if(this.expectedConstAnal == null)
+    		runExpectedConstantAnalysis();
+    	
+    	if(this.iGen == null)
+    		this.setUpRegisterGenerator();
+    	
+    	this.globalConstDelayedSet = new HashSet<Tuple<CopyStr, CopyStr>>();
+    	int index = intermediateCode.endOfDataSection();
+    	ICode dataMinusOne = intermediateCode.getInstruction(index);
+    	index = intermediateCode.endOfBssSection();
+    	ICode bssMinusOne = intermediateCode.getInstruction(index);
+    	
+    	
+    	this.globalConstAddSet = new HashSet<Tuple<CopyStr, NullableExp>>();
+    	HashSet<Tuple<CopyStr, NullableExp>> unionOfUsed = new HashSet<Tuple<CopyStr, NullableExp>>();
+    	HashSet<Tuple<CopyStr, NullableExp>> dataMinusOneOutput = this.usedGlobalAnal.getOutputSet(dataMinusOne);
+    	HashSet<Tuple<CopyStr, NullableExp>> bssMinusOneOutput = this.usedGlobalAnal.getOutputSet(bssMinusOne);
+    	unionOfUsed.addAll(dataMinusOneOutput);
+    	unionOfUsed.addAll(bssMinusOneOutput);
+    	
+    	HashSet<Tuple<CopyStr, NullableExp>> unionOfExpected = new HashSet<Tuple<CopyStr, NullableExp>>();
+    	dataMinusOneOutput = this.expectedConstAnal.getOutputSet(dataMinusOne);
+    	bssMinusOneOutput = this.expectedConstAnal.getOutputSet(bssMinusOne);
+    	unionOfExpected.addAll(dataMinusOneOutput);
+    	unionOfExpected.addAll(bssMinusOneOutput);
+    	
+    	for(Tuple<CopyStr, NullableExp> expectedElem: unionOfExpected){
+			if(Utils.setContainsNullableTupleWithExp(unionOfUsed, expectedElem.dest))
+				this.globalConstDelayedSet.add(new Tuple<>(expectedElem.source, Utils.getNullableTupleWithExp(unionOfUsed, expectedElem.dest)));
+			else {
+				String next = genNext();
+				this.globalConstAddSet.add(new Tuple<>(new CopyStr(next), expectedElem.dest));
+				this.globalConstDelayedSet.add(new Tuple<>(expectedElem.source, new CopyStr(next)));
+				unionOfUsed.add(new Tuple<>(new CopyStr(next), expectedElem.dest));
+			}
+		}
     }
     
     private void removeUnusedBlocks() {
@@ -994,6 +1110,51 @@ public class MyOptimizer {
 
         return firsts;
     }
+    
+    private void runUsedGlobalVariableAnalysis() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	
+    	this.usedGlobalAnal = new UsedGlobalVariableAnalysis(globalFlowGraph, cfg);
+    	this.usedGlobalAnal.run();
+    }
+    
+    private void runExpectedConstantAnalysis() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	
+    	this.expectedConstAnal = new ExpectedConstantAnalysis(globalFlowGraph, cfg);
+    	this.expectedConstAnal.run();
+    }
+    
+    private void runMovedConstantAnalysis() {
+    	if(this.globalFlowGraph == null)
+    		buildFlowGraph();
+    	
+    	if(this.usedGlobalAnal == null)
+    		runUsedGlobalVariableAnalysis();
+    	
+    	if(this.expectedConstAnal == null)
+    		runExpectedConstantAnalysis();
+    	
+    	if(this.globalConstDelayedSet == null)
+    		buildGlobalConstSets();
+    	
+    	this.movedConstAnal = new MovedConstantAnalysis(intermediateCode, globalFlowGraph, this.globalConstDelayedSet, cfg);
+    	this.movedConstAnal.run();
+    }
+    
+    private void resetUsedGlobalVariableAnalysis() {
+    	this.usedGlobalAnal = null;
+    }
+    
+    private void resetExpectedConstantAnalysis() {
+    	this.expectedConstAnal = null;
+    }
+    
+    private void resetMovedConstantAnalysis() {
+    	this.movedConstAnal = null;
+    }
 
     private void runConstantPropogationAnalysis(){
         if(this.globalFlowGraph == null){
@@ -1287,7 +1448,6 @@ public class MyOptimizer {
         while(changes) {
         	changes = false;
         	setUpOptimization(OptName.DEAD_CODE_ELIMINATION);
-        	Set<BlockNode> blocksToDelete = new HashSet<BlockNode>();
         	for(BlockNode block : this.globalFlowGraph.getBlocks()){
                 List<ICode> result = new LinkedList<ICode>();
                 for(ICode icode : block.getICode()){
@@ -1295,11 +1455,11 @@ public class MyOptimizer {
                         Assign assICode = (Assign)icode;
                         Set<String> defsReached = this.defAnal.getInputSet(icode);
                         Set<String> liveVar = this.liveAnal.getOutputSet(icode);
-                        if((defsReached.contains(assICode.place) && liveVar.contains(assICode.place) || assICode.getScope() == Scope.GLOBAL)){
-                            result.add(assICode);
-                        } else if(liveVar.contains(assICode.place) || assICode.getScope() == Scope.GLOBAL){
-                        	result.add(new Def(assICode.getScope(), assICode.place, assICode.value, assICode.getType()));
-                        	changes = true;
+                        if((defsReached.contains(assICode.place) && liveVar.contains(assICode.place) && assICode.getScope() != Scope.GLOBAL)){
+                            result.add(new Def(assICode.getScope(), assICode.place, assICode.value, assICode.getType()));
+                            changes = true;
+                        } else if(liveVar.contains(assICode.place)){
+                        	result.add(assICode);
                         } else {
                         	changes = true;
                         }
@@ -1337,6 +1497,59 @@ public class MyOptimizer {
     			Utils.createFile("test/temp/DeadCodeEliminationICode.txt");
     			Utils.writeToFile("test/temp/DeadCodeEliminationICode.txt", this.intermediateCode.toString());
     		}
+    }
+    
+    public void performMoveConstants() {
+    	setUpOptimization(OptName.MOVE_CONSTANTS_TO_GLOBAL);
+    	
+    	BlockNode bssEnd = this.globalFlowGraph.findBssEnd();
+    	BlockNode dataEnd = this.globalFlowGraph.findDataEnd();
+    	
+    	for(Tuple<CopyStr, NullableExp> val: this.globalConstAddSet) {
+    		if(val.dest.isZero())
+    			bssEnd.getICode().add(new Def(Scope.GLOBAL, val.source.toString(), (Exp)val.dest, ConversionUtils.getTypeFromConstExp(val.dest)));
+    		else
+    			dataEnd.getICode().add(new Def(Scope.GLOBAL, val.source.toString(), (Exp)val.dest, ConversionUtils.getTypeFromConstExp(val.dest)));
+    	}
+    	
+    	for(BlockNode block: globalFlowGraph) {
+    		for(int i = 0; i < block.getICode().size(); i++){
+    			ICode instr = block.getICode().get(i);
+    			if(instr instanceof Def){
+    				Def def = (Def)instr;
+    				if((def.scope != ICode.Scope.GLOBAL) && def.isConstant()) {
+    					HashSet<Tuple<CopyStr, CopyStr>> options = this.movedConstAnal.getInputSet(instr);
+    					boolean found = false;
+    					for(Tuple<CopyStr, CopyStr> tup: options) {
+    						if(tup.source.toString().equals(def.label)) {
+    							def.val = new IdentExp(ICode.Scope.GLOBAL, tup.dest.toString());
+    							found = true;
+    						}
+    					}
+    					if(!found)
+    						throw new RuntimeException("Error expected value for contant in " + def.toString() + " but couldnt find it");
+    				}
+    			} else if(instr instanceof Call) {
+    				Call myCall = (Call)instr;
+    				for(Def def: myCall.params) {
+    					if((def.scope != ICode.Scope.GLOBAL) && def.isConstant()) {
+        					HashSet<Tuple<CopyStr, CopyStr>> options = this.movedConstAnal.getInputSet(instr);
+        					boolean found = false;
+        					for(Tuple<CopyStr, CopyStr> tup: options) {
+        						if(tup.source.toString().equals(def.label)) {
+        							def.val = new IdentExp(ICode.Scope.GLOBAL, tup.dest.toString());
+        							found = true;
+        						}
+        					}
+        					if(!found)
+        						throw new RuntimeException("Error expected value for contant in " + def.toString() + " but couldnt find it");
+        				}
+    				}
+    			}
+    		}
+    	}
+    	
+    	cleanUpOptimization(OptName.MOVE_CONSTANTS_TO_GLOBAL);
     }
 
     public void performConstantPropogation(){

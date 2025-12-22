@@ -92,4 +92,10 @@ public class IdentExp implements Exp{
     public int hashCode() {
     	return Objects.hash(ident, scope);
     }
+
+	@Override
+	public boolean isZero() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

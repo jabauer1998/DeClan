@@ -28,6 +28,7 @@ import io.github.H20man13.DeClan.common.icode.exp.BoolExp;
 import io.github.H20man13.DeClan.common.icode.exp.Exp;
 import io.github.H20man13.DeClan.common.icode.exp.IdentExp;
 import io.github.H20man13.DeClan.common.icode.exp.IntExp;
+import io.github.H20man13.DeClan.common.icode.exp.NullableExp;
 import io.github.H20man13.DeClan.common.icode.exp.RealExp;
 import io.github.H20man13.DeClan.common.icode.exp.StrExp;
 import io.github.H20man13.DeClan.common.icode.exp.UnExp;
@@ -330,5 +331,18 @@ public class ConversionUtils {
 	
 	public static CopyBool newB(boolean b) {
 		return new CopyBool(b);
+	}
+	
+	public static Type getTypeFromConstExp(NullableExp dest) {
+		if(dest instanceof IntExp)
+			return ICode.Type.INT;
+		else if(dest instanceof RealExp)
+			return ICode.Type.REAL;
+		else if(dest instanceof BoolExp)
+			return ICode.Type.BOOL;
+		else if(dest instanceof StrExp)
+			return ICode.Type.STRING;
+		else
+			throw new RuntimeException();
 	}
 }

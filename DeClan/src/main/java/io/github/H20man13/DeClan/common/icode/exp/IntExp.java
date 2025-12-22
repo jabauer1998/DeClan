@@ -64,4 +64,9 @@ public class IntExp implements Exp {
 	public Exp copy() {
 		return new IntExp(value);
 	}
+
+	@Override
+	public boolean isZero() {
+		return value == 0;
+	}
 }

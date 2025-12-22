@@ -1,5 +1,7 @@
 package io.github.H20man13.DeClan.common.arm.descriptor;
 
+import java.util.Objects;
+
 import io.github.H20man13.DeClan.common.CopyStr;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.ICode;
@@ -18,13 +20,14 @@ public class ArmAddressElement implements ArmElement {
 	public boolean equals(Object other) {
 		if(other instanceof ArmAddressElement) {
 			ArmAddressElement elem = (ArmAddressElement)other;
-			return elem.label.equals(label);
+			if(elem.label.equals(label))
+				return elem.type == type;
 		}
 		return false;
 	}
 	
 	public int hashCode() {
-		return label.hashCode();
+		return Objects.hash(label, type);
 	}
 	
 	public String toString(){

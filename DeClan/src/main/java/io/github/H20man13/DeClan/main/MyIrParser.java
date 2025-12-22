@@ -14,6 +14,7 @@ import io.github.H20man13.DeClan.common.icode.Goto;
 import io.github.H20man13.DeClan.common.icode.ICode;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Lib;
+import io.github.H20man13.DeClan.common.icode.Spill;
 import io.github.H20man13.DeClan.common.icode.Prog;
 import io.github.H20man13.DeClan.common.icode.Return;
 import io.github.H20man13.DeClan.common.icode.exp.BinExp;
@@ -308,9 +309,18 @@ public class MyIrParser {
             return parseProcedureCall();  
         } else if(willMatch(IrTokenType.DEF)){
             return parseDefinition();  
+        } else if(willMatch(IrTokenType.SPILL)){
+        	return parseSpill();
         } else {
             return parseAssignment();
         }
+    }
+    
+    private Spill parseSpill() {
+    	match(IrTokenType.SPILL);
+    	IrToken id = match(IrTokenType.ID);
+    	ICode.Type type = parseType();
+    	return new Spill(id.toString(), type);
     }
     
     private InlineParam parseInlineParam() {

@@ -77,4 +77,10 @@ public class UnExp implements Exp {
 	public NullableExp copy() {
 		return new UnExp(op, (IdentExp)right.copy());
 	}
+
+	@Override
+	public boolean isZero() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

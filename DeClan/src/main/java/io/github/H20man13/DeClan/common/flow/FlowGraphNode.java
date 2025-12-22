@@ -13,4 +13,8 @@ public interface FlowGraphNode extends Copyable<FlowGraphNode>{
     @Override
     public String toString();
 	FlowGraphNode copy();
+	BlockNode findEndData();
+	BlockNode findEndBss();
+	public boolean checkEndData();
+	public boolean checkEndBss();
 }

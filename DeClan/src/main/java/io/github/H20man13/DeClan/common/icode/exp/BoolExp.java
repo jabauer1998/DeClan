@@ -64,4 +64,9 @@ public class BoolExp implements Exp {
 	public NullableExp copy() {
 		return new BoolExp(trueFalse);
 	}
+
+	@Override
+	public boolean isZero() {
+		return !trueFalse;
+	}
 }

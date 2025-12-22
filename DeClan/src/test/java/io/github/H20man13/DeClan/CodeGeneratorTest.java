@@ -75,6 +75,11 @@ public class CodeGeneratorTest {
     public void testConversions() throws Exception{
         testDeclanFile("test/ir/optimized/conversions.ir");
     }
+    
+    @Test
+    public void testBoolExpression1() throws Exception {
+    	testDeclanFile("test/ir/optimized/BoolExpression1.ir");
+    }
 
     @Test
     public void testExpressions() throws Exception{

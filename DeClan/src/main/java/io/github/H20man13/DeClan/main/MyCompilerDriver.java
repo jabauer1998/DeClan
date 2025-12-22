@@ -541,6 +541,7 @@ public class MyCompilerDriver {
                                 optimizer.performConstantPropogation();
                                 optimizer.performDeadCodeElimination();
                                 optimizer.performPartialRedundancyElimination();
+                                optimizer.performMoveConstants();
                                 prog = optimizer.getICode();
                             }
                         }
@@ -579,6 +580,7 @@ public class MyCompilerDriver {
                             optimizer.performCommonSubExpressionElimination();
                             optimizer.performConstantPropogation();
                             optimizer.performDeadCodeElimination();
+                            optimizer.performMoveConstants();
                             prog = optimizer.getICode();
                         } else {
                             optimizer.runLiveVariableAnalysis();

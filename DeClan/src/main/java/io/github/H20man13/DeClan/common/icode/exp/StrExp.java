@@ -62,4 +62,9 @@ public class StrExp implements Exp{
 	public NullableExp copy() {
 		return new StrExp(value);
 	}
+
+	@Override
+	public boolean isZero() {
+		return this.value.isEmpty();
+	}
 }

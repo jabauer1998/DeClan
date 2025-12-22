@@ -28,4 +28,27 @@ public class ExitNode implements FlowGraphNode{
 	public FlowGraphNode copy() {
 		return new ExitNode(exit);
 	}
+
+	@Override
+	public BlockNode findEndData() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BlockNode findEndBss() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean checkEndData() {
+		return false;
+	}
+
+	@Override
+	public boolean checkEndBss() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

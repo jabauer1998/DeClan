@@ -64,4 +64,9 @@ public class RealExp implements Exp {
 	public NullableExp copy() {
 		return new RealExp(realValue);
 	}
+
+	@Override
+	public boolean isZero() {
+		return realValue == 0.0;
+	}
 }
