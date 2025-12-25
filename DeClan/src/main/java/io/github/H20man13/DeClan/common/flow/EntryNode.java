@@ -51,4 +51,22 @@ public class EntryNode implements FlowGraphNode {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	@Override
+	public boolean checkStartData() {
+		return false;
+	}
+	
+	@Override
+	public boolean checkStartBss() {
+		return false;
+	}
+
+	public BlockNode findStartBss() {
+		return entry.findStartBss();
+	}
+	
+	public BlockNode findStartData() {
+		return entry.findStartData();
+	}
 }

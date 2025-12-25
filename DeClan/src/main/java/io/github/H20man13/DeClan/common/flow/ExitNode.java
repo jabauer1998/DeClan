@@ -51,4 +51,25 @@ public class ExitNode implements FlowGraphNode{
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public BlockNode findStartBss() {
+		return null;
+	}
+
+	@Override
+	public BlockNode findStartData() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean checkStartData() {
+		return false;
+	}
+
+	@Override
+	public boolean checkStartBss() {
+		return false;
+	}
 }

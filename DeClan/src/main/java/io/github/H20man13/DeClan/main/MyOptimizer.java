@@ -23,7 +23,6 @@ import io.github.H20man13.DeClan.common.analysis.iterative.PostponableExpression
 import io.github.H20man13.DeClan.common.analysis.iterative.ReachingDefinitionsAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.SavedExpressionAnalysis;
 import io.github.H20man13.DeClan.common.analysis.iterative.UsedExpressionAnalysis;
-import io.github.H20man13.DeClan.common.analysis.iterative.UsedGlobalVariableAnalysis;
 import io.github.H20man13.DeClan.common.dag.DagGraph;
 import io.github.H20man13.DeClan.common.dag.DagIgnoredInstruction;
 import io.github.H20man13.DeClan.common.dag.DagNode;
@@ -104,7 +103,6 @@ public class MyOptimizer {
     private DominatorAnalysis domAnal;
     private AvailableExpressionsAnalysis availableAnal;
     private SavedExpressionAnalysis savedAnal;
-    private UsedGlobalVariableAnalysis usedGlobalAnal;
     private ExpectedConstantAnalysis expectedConstAnal;
     private MovedConstantAnalysis movedConstAnal;
     private Map<ICode, Set<Tuple<NullableExp, ICode.Type>>> earliestSets;
@@ -625,7 +623,6 @@ public class MyOptimizer {
             	unsortFlowGraph();
             	rebuildFromFlowGraph();
             	resetFlowGraph();
-            	resetUsedGlobalVariableAnalysis();
             	resetExpectedConstantAnalysis();
             	resetRegisterGenerator();
             	resetMovedConstantAnalysis();
@@ -684,7 +681,6 @@ public class MyOptimizer {
             	runDominatorAnalysis();
             	buildDfst();
             	sortFlowGraph();
-            	runUsedGlobalVariableAnalysis();
             	runExpectedConstantAnalysis();
             	setUpRegisterGenerator();
             	buildGlobalConstSets();
@@ -693,33 +689,25 @@ public class MyOptimizer {
         }
     }
     
-    private void buildGlobalConstSets() {
-    	if(this.usedGlobalAnal == null)
-    		runUsedGlobalVariableAnalysis();
-    	
+    private void buildGlobalConstSets() {   	
     	if(this.expectedConstAnal == null)
     		runExpectedConstantAnalysis();
     	
     	if(this.iGen == null)
     		this.setUpRegisterGenerator();
     	
+    	this.globalConstAddSet = new HashSet<Tuple<CopyStr, NullableExp>>();
     	this.globalConstDelayedSet = new HashSet<Tuple<CopyStr, CopyStr>>();
-    	int index = intermediateCode.endOfDataSection();
+    	int index = intermediateCode.beginningOfDataSection();
     	ICode dataMinusOne = intermediateCode.getInstruction(index);
-    	index = intermediateCode.endOfBssSection();
+    	index = intermediateCode.beginningOfBssSection();
     	ICode bssMinusOne = intermediateCode.getInstruction(index);
     	
-    	
-    	this.globalConstAddSet = new HashSet<Tuple<CopyStr, NullableExp>>();
     	HashSet<Tuple<CopyStr, NullableExp>> unionOfUsed = new HashSet<Tuple<CopyStr, NullableExp>>();
-    	HashSet<Tuple<CopyStr, NullableExp>> dataMinusOneOutput = this.usedGlobalAnal.getOutputSet(dataMinusOne);
-    	HashSet<Tuple<CopyStr, NullableExp>> bssMinusOneOutput = this.usedGlobalAnal.getOutputSet(bssMinusOne);
-    	unionOfUsed.addAll(dataMinusOneOutput);
-    	unionOfUsed.addAll(bssMinusOneOutput);
     	
     	HashSet<Tuple<CopyStr, NullableExp>> unionOfExpected = new HashSet<Tuple<CopyStr, NullableExp>>();
-    	dataMinusOneOutput = this.expectedConstAnal.getOutputSet(dataMinusOne);
-    	bssMinusOneOutput = this.expectedConstAnal.getOutputSet(bssMinusOne);
+    	Set<Tuple<CopyStr, NullableExp>> dataMinusOneOutput = this.expectedConstAnal.getInputSet(dataMinusOne);
+    	Set<Tuple<CopyStr, NullableExp>> bssMinusOneOutput = this.expectedConstAnal.getInputSet(bssMinusOne);
     	unionOfExpected.addAll(dataMinusOneOutput);
     	unionOfExpected.addAll(bssMinusOneOutput);
     	
@@ -1111,14 +1099,6 @@ public class MyOptimizer {
         return firsts;
     }
     
-    private void runUsedGlobalVariableAnalysis() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	
-    	this.usedGlobalAnal = new UsedGlobalVariableAnalysis(globalFlowGraph, cfg);
-    	this.usedGlobalAnal.run();
-    }
-    
     private void runExpectedConstantAnalysis() {
     	if(this.globalFlowGraph == null)
     		buildFlowGraph();
@@ -1131,9 +1111,6 @@ public class MyOptimizer {
     	if(this.globalFlowGraph == null)
     		buildFlowGraph();
     	
-    	if(this.usedGlobalAnal == null)
-    		runUsedGlobalVariableAnalysis();
-    	
     	if(this.expectedConstAnal == null)
     		runExpectedConstantAnalysis();
     	
@@ -1142,10 +1119,6 @@ public class MyOptimizer {
     	
     	this.movedConstAnal = new MovedConstantAnalysis(intermediateCode, globalFlowGraph, this.globalConstDelayedSet, cfg);
     	this.movedConstAnal.run();
-    }
-    
-    private void resetUsedGlobalVariableAnalysis() {
-    	this.usedGlobalAnal = null;
     }
     
     private void resetExpectedConstantAnalysis() {
@@ -1502,16 +1475,6 @@ public class MyOptimizer {
     public void performMoveConstants() {
     	setUpOptimization(OptName.MOVE_CONSTANTS_TO_GLOBAL);
     	
-    	BlockNode bssEnd = this.globalFlowGraph.findBssEnd();
-    	BlockNode dataEnd = this.globalFlowGraph.findDataEnd();
-    	
-    	for(Tuple<CopyStr, NullableExp> val: this.globalConstAddSet) {
-    		if(val.dest.isZero())
-    			bssEnd.getICode().add(new Def(Scope.GLOBAL, val.source.toString(), (Exp)val.dest, ConversionUtils.getTypeFromConstExp(val.dest)));
-    		else
-    			dataEnd.getICode().add(new Def(Scope.GLOBAL, val.source.toString(), (Exp)val.dest, ConversionUtils.getTypeFromConstExp(val.dest)));
-    	}
-    	
     	for(BlockNode block: globalFlowGraph) {
     		for(int i = 0; i < block.getICode().size(); i++){
     			ICode instr = block.getICode().get(i);
@@ -1531,9 +1494,9 @@ public class MyOptimizer {
     				}
     			} else if(instr instanceof Call) {
     				Call myCall = (Call)instr;
+    				HashSet<Tuple<CopyStr, CopyStr>> options = this.movedConstAnal.getInputSet(instr);
     				for(Def def: myCall.params) {
     					if((def.scope != ICode.Scope.GLOBAL) && def.isConstant()) {
-        					HashSet<Tuple<CopyStr, CopyStr>> options = this.movedConstAnal.getInputSet(instr);
         					boolean found = false;
         					for(Tuple<CopyStr, CopyStr> tup: options) {
         						if(tup.source.toString().equals(def.label)) {
@@ -1547,9 +1510,25 @@ public class MyOptimizer {
     				}
     			}
     		}
+    		
+    		BlockNode bssStart = this.dfst.startOfBss();
+        	BlockNode dataStart = this.dfst.startOfData();
+    		
+    		for(Tuple<CopyStr, NullableExp> val: this.globalConstAddSet) {
+        		if(val.dest.isZero())
+        			bssStart.getICode().add(1, new Def(Scope.GLOBAL, val.source.toString(), (Exp)val.dest, ConversionUtils.getTypeFromConstExp(val.dest)));
+        		else
+        			dataStart.getICode().add(1, new Def(Scope.GLOBAL, val.source.toString(), (Exp)val.dest, ConversionUtils.getTypeFromConstExp(val.dest)));
+        	}
     	}
     	
     	cleanUpOptimization(OptName.MOVE_CONSTANTS_TO_GLOBAL);
+    	
+    	if(cfg != null)
+    		if(cfg.containsFlag("debug")) {
+    			Utils.createFile("test/temp/MoveConstants.txt");
+    			Utils.writeToFile("test/temp/MoveConstants.txt", this.intermediateCode.toString());
+    		}
     }
 
     public void performConstantPropogation(){

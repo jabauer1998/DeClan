@@ -187,4 +187,52 @@ public class BlockNode implements FlowGraphNode, Iterable<ICode> {
 				return true;
 		return false;
 	}
+
+	@Override
+	public BlockNode findStartBss() {
+		if(!this.block.getIcode().isEmpty()) {
+			ICode icode = this.block.getIcode().get(0);
+			if(icode instanceof BssSec) {
+				return this;
+			}
+		}
+		
+		for(FlowGraphNode node: this.successors) {
+			BlockNode b = node.findStartBss();
+			if(b != null)
+				return b;
+		}
+		
+		return null;
+	}
+
+	@Override
+	public BlockNode findStartData() {
+		if(!this.block.getIcode().isEmpty()) {
+			ICode icode = this.block.getIcode().get(0);
+			if(icode instanceof DataSec) {
+				return this;
+			}
+		}
+		
+		for(FlowGraphNode node: this.successors) {
+			BlockNode b = node.findStartData();
+			if(b != null)
+				return b;
+		}
+		
+		return null;
+	}
+
+	@Override
+	public boolean checkStartData() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean checkStartBss() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

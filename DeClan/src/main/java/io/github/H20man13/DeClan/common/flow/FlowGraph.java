@@ -198,4 +198,12 @@ public class FlowGraph implements Iterable<BlockNode>{
 	public BlockNode findDataEnd() {
 		return entryNode.findEndData();
 	}
+	
+	public BlockNode findBssBegin() {
+		return entryNode.findStartBss();
+	}
+	
+	public BlockNode findDataBegin() {
+		return entryNode.findStartData();
+	}
 }

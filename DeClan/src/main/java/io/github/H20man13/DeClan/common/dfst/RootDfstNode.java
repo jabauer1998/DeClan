@@ -9,6 +9,8 @@ import io.github.H20man13.DeClan.common.Copyable;
 import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.flow.BasicBlock;
 import io.github.H20man13.DeClan.common.flow.BlockNode;
+import io.github.H20man13.DeClan.common.icode.section.BssSec;
+import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.util.Utils;
 
 public class RootDfstNode implements Iterable<DfstNode>, Copyable<RootDfstNode>{
@@ -73,5 +75,33 @@ public class RootDfstNode implements Iterable<DfstNode>, Copyable<RootDfstNode>{
 	@Override
 	public RootDfstNode copy() {
 		return new RootDfstNode(block, advancingEdges);
+	}
+
+	public BlockNode startOfData() {
+		if(this.block.getICode().get(0) instanceof DataSec) {
+			return this.block;
+		} else {
+			for(DfstNode node: this.advancingEdges) {
+				BlockNode data = node.startOfData();
+				if(data != null)
+					return data;
+			}
+			
+			return null;
+		}
+	}
+	
+	public BlockNode startOfBss() {
+		if(this.block.getICode().get(0) instanceof BssSec) {
+			return this.block;
+		} else {
+			for(DfstNode node: this.advancingEdges) {
+				BlockNode data = node.startOfBss();
+				if(data != null)
+					return data;
+			}
+			
+			return null;
+		}
 	}
 }

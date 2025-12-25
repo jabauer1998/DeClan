@@ -229,4 +229,12 @@ public class DepthFirstSpanningTree {
 		
 		return new Tuple<CopyStr, CopyInt>(ConversionUtils.newS(sb.toString()), ConversionUtils.newI(currentNumber));
 	}
+	
+	public BlockNode startOfData() {
+		return this.root.startOfData();
+	}
+	
+	public BlockNode startOfBss() {
+		return this.root.startOfBss();
+	}
 }
