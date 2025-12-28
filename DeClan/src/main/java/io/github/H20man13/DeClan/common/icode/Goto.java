@@ -9,13 +9,16 @@ import io.github.H20man13.DeClan.common.pat.P;
 public class Goto extends ICode {
 	private static Set<Goto> gotos = new HashSet<Goto>();
 	
+	public static void clearGotos() {
+		gotos = new HashSet<>();
+	}
+	
 	public String label;
 	private int seqNum;
 
 	public Goto(String label) {
 		this.label = label;
-		for(seqNum = 0; gotos.contains(this); ++this.seqNum);
-		gotos.add(this);
+		recalculateIdentNumber();
 	}
 	
 	private Goto(Goto other) {
@@ -78,6 +81,11 @@ public class Goto extends ICode {
 	@Override
 	public int hashCode() {
 		return Objects.hash(label, seqNum);
+	}
+	
+	public void recalculateIdentNumber() {
+		for(seqNum = 0; gotos.contains(this); ++this.seqNum);
+		gotos.add(this);
 	}
 
 	@Override

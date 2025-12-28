@@ -10,6 +10,14 @@ import io.github.H20man13.DeClan.common.util.ConversionUtils;
 
 public class Def extends ICode {
     private static HashSet<Def> allDefs = new HashSet<Def>();
+    
+    public static void resetDefs() {
+    	allDefs = new HashSet<Def>();
+    }
+    
+    public static void addDef(Def def) {
+    	allDefs.add(def);
+    }
 	
 	public String label;
     public Type type;
@@ -22,7 +30,7 @@ public class Def extends ICode {
         this.label = label;
         this.type = type;
         this.val = val;
-        for(this.seq = 0; allDefs.contains(this); this.seq++);
+        this.recalculateIdentNumber();
         allDefs.add(this);
     }
     
@@ -127,5 +135,10 @@ public class Def extends ICode {
 	@Override
 	public ICode copy() {
 		return new Def(this);
+	}
+
+	public void recalculateIdentNumber() {
+		for(this.seq = 0; allDefs.contains(this); this.seq++);
+		allDefs.add(this);
 	}
 }

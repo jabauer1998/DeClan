@@ -25,8 +25,7 @@ public class Assign extends ICode{
         this.place = place;
         this.value = value;
         this.type = type;
-        for(this.time = 0; times.contains(this); ++this.time);
-        times.add(this);
+        recalculateIdentNumber();
     }
     
     private Assign(Assign other) {
@@ -35,6 +34,10 @@ public class Assign extends ICode{
     	this.time = other.time;
     	this.place = other.place;
     	this.value = (Exp)other.value.copy();
+    }
+    
+    public static void resetAssigns() {
+    	times = new HashSet<Assign>();
     }
 
     public Scope getScope(){
@@ -65,6 +68,30 @@ public class Assign extends ICode{
         sb.append(" <");
         sb.append(this.type);
         sb.append('>');
+        return sb.toString();
+	}
+    
+	public String toAccurateString() {
+        StringBuilder sb = new StringBuilder();
+
+        if(this.scope == Scope.GLOBAL){
+            sb.append("GLOBAL ");
+        } else if(this.scope == Scope.PARAM) {
+        	sb.append("PARAM ");
+        } else if(this.scope == Scope.RETURN) {
+        	sb.append("RETURN ");
+        } else if(this.scope != Scope.LOCAL){
+            throw new ICodeFormatException(this, "Invalid scope type for assignment " + scope);
+        }
+
+        sb.append(place);
+        sb.append(" := ");
+        sb.append(value.toString());
+        sb.append(" <");
+        sb.append(this.type);
+        sb.append("> #");
+        sb.append(time);
+        
         return sb.toString();
 	}
 
@@ -126,6 +153,11 @@ public class Assign extends ICode{
     @Override
     public int hashCode(){
     	return Objects.hash(place, value, scope, type, time);
+    }
+    
+    public void recalculateIdentNumber() {
+    	for(this.time = 0; times.contains(this); ++this.time);
+    	times.add(this);
     }
 
 	@Override

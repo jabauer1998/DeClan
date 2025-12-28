@@ -71,7 +71,7 @@ public abstract class IterativeSetAnalysis<AnalysisType extends Copyable<Analysi
     }
     
     protected boolean changesHaveOccuredOnOutputs(MapType cached){
-    	if(cfg == null || !cfg.containsFlag("debug")){
+    	//if(cfg == null || !cfg.containsFlag("debug")){
 			Set<AnalysisType> keys = cached.keySet();
 	        for(AnalysisType key : keys){
 	            if(!containsOutputKey(key)){
@@ -90,7 +90,7 @@ public abstract class IterativeSetAnalysis<AnalysisType extends Copyable<Analysi
 	            }
 	        }
 	        return false;
-    	} else {
+    	/*} else {
     		Utils.createFile("test/temp/AnalysisCacheLog.txt");
     		boolean result = false;
     		Set<AnalysisType> keys = cached.keySet();
@@ -124,7 +124,7 @@ public abstract class IterativeSetAnalysis<AnalysisType extends Copyable<Analysi
 	        }
 	        
 	        return result;
-    	}
+    	}*/
     }
     
     @Override

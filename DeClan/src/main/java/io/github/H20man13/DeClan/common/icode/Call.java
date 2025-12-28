@@ -12,6 +12,10 @@ import io.github.H20man13.DeClan.common.pat.P;
 public class Call extends ICode {
 	private static Set<Call> calls = new HashSet<Call>();
 	
+	public static void resetCalls() {
+		calls = new HashSet<Call>();
+	}
+	
 	public String pname;
 	public List<Def> params;
 	private int seqNum;
@@ -19,7 +23,14 @@ public class Call extends ICode {
 	public Call(String pname, List<Def> params) {
 		this.pname = pname;
 		this.params = params;
+		recalclulateIdentNumber();
+	}
+	
+	public void recalclulateIdentNumber() {
 		for(this.seqNum = 0; calls.contains(this); ++this.seqNum);
+		for(Def param: params) {
+			param.recalculateIdentNumber();
+		}
 		calls.add(this);
 	}
 	
