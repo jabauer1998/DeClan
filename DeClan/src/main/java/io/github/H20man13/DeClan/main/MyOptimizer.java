@@ -728,9 +728,7 @@ public class MyOptimizer {
     	HashSet<Tuple<CopyStr, NullableExp>> unionOfUsed = new HashSet<Tuple<CopyStr, NullableExp>>();
     	
     	HashSet<Tuple<ICode, Tuple<CopyStr, NullableExp>>> unionOfExpected = new HashSet<Tuple<ICode, Tuple<CopyStr, NullableExp>>>();
-    	Set<Tuple<ICode, Tuple<CopyStr, NullableExp>>> dataMinusOneOutput = this.expectedConstAnal.getInputSet(dataMinusOne);
     	Set<Tuple<ICode, Tuple<CopyStr, NullableExp>>> bssMinusOneOutput = this.expectedConstAnal.getInputSet(bssMinusOne);
-    	unionOfExpected.addAll(dataMinusOneOutput);
     	unionOfExpected.addAll(bssMinusOneOutput);
     	
     	for(Tuple<ICode, Tuple<CopyStr, NullableExp>> expectedElem: unionOfExpected){
@@ -1454,7 +1452,7 @@ public class MyOptimizer {
                         if((defsReached.contains(assICode.place) && liveVar.contains(assICode.place) && assICode.getScope() != Scope.GLOBAL)){
                             result.add(new Def(assICode.getScope(), assICode.place, assICode.value, assICode.getType()));
                             changes = true;
-                        } else if(liveVar.contains(assICode.place)){
+                        } else if(liveVar.contains(assICode.place) || assICode.getScope() == Scope.GLOBAL){
                         	result.add(assICode);
                         } else {
                         	changes = true;

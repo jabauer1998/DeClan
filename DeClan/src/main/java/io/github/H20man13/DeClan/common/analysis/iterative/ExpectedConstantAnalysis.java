@@ -58,10 +58,7 @@ private Map<ICode, HashSet<Tuple<ICode, Tuple<CopyStr, NullableExp>>>> map;
 			HashSet<Tuple<ICode, Tuple<CopyStr, NullableExp>>> inputSet) {
 		HashSet<Tuple<ICode, Tuple<CopyStr, NullableExp>>> newSet = newSet();
 		
-		if(instr instanceof DataSec) {
-			//Return the Null new Set
-			return newSet;
-		} else if(instr instanceof BssSec){
+		if(instr instanceof BssSec){
 			return newSet;
 		} else {
 			newSet.addAll(map.get(instr));
