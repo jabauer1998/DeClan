@@ -1,7 +1,7 @@
 SYMBOL SECTION
- ENTRY f25 CONST INTERNAL GLOBAL six  <INT>
- ENTRY f27 CONST INTERNAL GLOBAL seven  <INT>
- ENTRY f28 INTERNAL GLOBAL answer  <INT>
+ ENTRY f24 INTERNAL GLOBAL answer  <INT>
+ ENTRY f26 CONST INTERNAL GLOBAL six  <INT>
+ ENTRY f28 CONST INTERNAL GLOBAL seven  <INT>
  ENTRY f41 INTERNAL addressHolder WriteString <INT>
  ENTRY f42 INTERNAL offsetHolder WriteString <INT>
  ENTRY f43 INTERNAL valueHolder WriteString <INT>
@@ -118,36 +118,36 @@ SYMBOL SECTION
  ENTRY h44 INTERNAL RETURN RMul <REAL>
  ENTRY h48 INTERNAL tempReg WriteReal <INT>
  ENTRY h49 INTERNAL PARAM r WriteReal 0 <REAL>
+BSS SECTION
+ DEF GLOBAL f24 := 0 <INT>
 DATA SECTION
- DEF f24 := 6 <INT>
- DEF GLOBAL f25 := f24 <INT>
- DEF f26 := 7 <INT>
- DEF GLOBAL f27 := f26 <INT>
+ DEF f25 := 6 <INT>
+ DEF GLOBAL f26 := f25 <INT>
+ DEF f27 := 7 <INT>
+ DEF GLOBAL f28 := f27 <INT>
  DEF g60 := 127 <INT>
  DEF GLOBAL h43 := g60 <INT>
-BSS SECTION
- DEF GLOBAL f28 := 0 <INT>
 CODE SECTION
- CALL gcd([(GLOBAL f25) -> f30]<INT>, [(GLOBAL f27) -> f31]<INT>)
+ CALL gcd([(GLOBAL f26) -> f30]<INT>, [(GLOBAL f28) -> f31]<INT>)
  DEF f39 := (RETURN f38) <INT>
- GLOBAL f28 := f39 <INT>
+ GLOBAL f24 := f39 <INT>
  DEF f40 := "Answer is " <STRING>
  CALL WriteString([f40 -> f66]<STRING>)
- CALL WriteInt([(GLOBAL f28) -> f68]<INT>)
+ CALL WriteInt([(GLOBAL f24) -> f68]<INT>)
  CALL WriteLn()
- CALL WriteInt([(GLOBAL f25) -> f68]<INT>)
- CALL WriteInt([(GLOBAL f27) -> f68]<INT>)
+ CALL WriteInt([(GLOBAL f26) -> f68]<INT>)
  CALL WriteInt([(GLOBAL f28) -> f68]<INT>)
- CALL Multiply([(GLOBAL f25) -> f71]<INT>, [(GLOBAL f27) -> f72]<INT>)
+ CALL WriteInt([(GLOBAL f24) -> f68]<INT>)
+ CALL Multiply([(GLOBAL f26) -> f71]<INT>, [(GLOBAL f28) -> f72]<INT>)
  DEF f74 := (RETURN f73) <INT>
- CALL Multiply([f74 -> f71]<INT>, [(GLOBAL f28) -> f72]<INT>)
+ CALL Multiply([f74 -> f71]<INT>, [(GLOBAL f24) -> f72]<INT>)
  DEF f75 := (RETURN f73) <INT>
- GLOBAL f28 := f75 <INT>
+ GLOBAL f24 := f75 <INT>
  DEF f76 := "Answer is " <STRING>
  CALL WriteString([f76 -> f66]<STRING>)
- CALL WriteInt([(GLOBAL f28) -> f68]<INT>)
+ CALL WriteInt([(GLOBAL f24) -> f68]<INT>)
  DEF f77 := 1.0 <REAL>
- CALL IntToReal([(GLOBAL f28) -> g79]<INT>)
+ CALL IntToReal([(GLOBAL f24) -> g79]<INT>)
  DEF g80 := (RETURN g78) <REAL>
  CALL RMul([g80 -> h45]<REAL>, [f77 -> h46]<REAL>)
  DEF h47 := (RETURN h44) <REAL>

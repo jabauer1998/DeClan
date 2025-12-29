@@ -1,23 +1,23 @@
 SYMBOL SECTION
- ENTRY f25 CONST INTERNAL GLOBAL a  <INT>
- ENTRY f27 CONST INTERNAL GLOBAL b  <REAL>
+ ENTRY f24 INTERNAL GLOBAL result  <BOOL>
+ ENTRY f26 CONST INTERNAL GLOBAL a  <INT>
+ ENTRY f28 CONST INTERNAL GLOBAL b  <REAL>
  ENTRY b48 INTERNAL lastBit RNeg <INT>
  ENTRY b49 INTERNAL intN RNeg <INT>
  ENTRY b50 INTERNAL result RNeg <REAL>
  ENTRY b51 INTERNAL intResult RNeg <INT>
- ENTRY f29 INTERNAL result RealBinaryAsInt <INT>
- ENTRY f30 INTERNAL temp RealBinaryAsInt <REAL>
- ENTRY f31 INTERNAL PARAM r RealBinaryAsInt 0 <REAL>
- ENTRY f32 INTERNAL RETURN RealBinaryAsInt <INT>
- ENTRY f38 INTERNAL PARAM n RNeg 0 <REAL>
- ENTRY f33 INTERNAL result IntBinaryAsReal <REAL>
- ENTRY f34 INTERNAL temp IntBinaryAsReal <INT>
- ENTRY f35 INTERNAL PARAM n IntBinaryAsReal 0 <INT>
- ENTRY f36 INTERNAL RETURN IntBinaryAsReal <REAL>
- ENTRY f37 INTERNAL RETURN RNeg <REAL>
- ENTRY f40 CONST INTERNAL GLOBAL c  <REAL>
- ENTRY f42 CONST INTERNAL GLOBAL d  <INT>
- ENTRY f43 INTERNAL GLOBAL result  <BOOL>
+ ENTRY f30 INTERNAL result RealBinaryAsInt <INT>
+ ENTRY f31 INTERNAL temp RealBinaryAsInt <REAL>
+ ENTRY f32 INTERNAL PARAM r RealBinaryAsInt 0 <REAL>
+ ENTRY f33 INTERNAL RETURN RealBinaryAsInt <INT>
+ ENTRY f39 INTERNAL PARAM n RNeg 0 <REAL>
+ ENTRY f34 INTERNAL result IntBinaryAsReal <REAL>
+ ENTRY f35 INTERNAL temp IntBinaryAsReal <INT>
+ ENTRY f36 INTERNAL PARAM n IntBinaryAsReal 0 <INT>
+ ENTRY f37 INTERNAL RETURN IntBinaryAsReal <REAL>
+ ENTRY f38 INTERNAL RETURN RNeg <REAL>
+ ENTRY f41 CONST INTERNAL GLOBAL c  <REAL>
+ ENTRY f43 CONST INTERNAL GLOBAL d  <INT>
  ENTRY f44 INTERNAL result IntToReal <REAL>
  ENTRY f45 INTERNAL absN IntToReal <INT>
  ENTRY f46 INTERNAL isNeg IntToReal <BOOL>
@@ -171,34 +171,34 @@ SYMBOL SECTION
  ENTRY h69 INTERNAL RETURN RNotEqualTo <BOOL>
  ENTRY h73 INTERNAL tempReg WriteBool <INT>
  ENTRY h74 INTERNAL PARAM b WriteBool 0 <BOOL>
+BSS SECTION
+ DEF GLOBAL f24 := FALSE <BOOL>
 DATA SECTION
- DEF f24 := 0 <INT>
- DEF GLOBAL f25 := f24 <INT>
- DEF f26 := 1.2 <REAL>
- DEF GLOBAL f27 := f26 <REAL>
- DEF f28 := 3.14 <REAL>
- CALL RNeg([f28 -> f38]<REAL>)
- DEF f39 := (RETURN f37) <REAL>
- DEF GLOBAL f40 := f39 <REAL>
- DEF f41 := 42 <INT>
- DEF GLOBAL f42 := f41 <INT>
+ DEF f25 := 0 <INT>
+ DEF GLOBAL f26 := f25 <INT>
+ DEF f27 := 1.2 <REAL>
+ DEF GLOBAL f28 := f27 <REAL>
+ DEF f29 := 3.14 <REAL>
+ CALL RNeg([f29 -> f39]<REAL>)
+ DEF f40 := (RETURN f38) <REAL>
+ DEF GLOBAL f41 := f40 <REAL>
+ DEF f42 := 42 <INT>
+ DEF GLOBAL f43 := f42 <INT>
  DEF g34 := 127 <INT>
  DEF GLOBAL h64 := g34 <INT>
-BSS SECTION
- DEF GLOBAL f43 := FALSE <BOOL>
 CODE SECTION
- CALL IntToReal([(GLOBAL f25) -> g49]<INT>)
+ CALL IntToReal([(GLOBAL f26) -> g49]<INT>)
  DEF g50 := (RETURN g48) <REAL>
- CALL RMul([g50 -> h11]<REAL>, [(GLOBAL f27) -> h12]<REAL>)
+ CALL RMul([g50 -> h11]<REAL>, [(GLOBAL f28) -> h12]<REAL>)
  DEF h13 := (RETURN h10) <REAL>
- CALL IntToReal([(GLOBAL f42) -> g49]<INT>)
+ CALL IntToReal([(GLOBAL f43) -> g49]<INT>)
  DEF h14 := (RETURN g48) <REAL>
- CALL RDivide([(GLOBAL f40) -> h66]<REAL>, [h14 -> h67]<REAL>)
+ CALL RDivide([(GLOBAL f41) -> h66]<REAL>, [h14 -> h67]<REAL>)
  DEF h68 := (RETURN h65) <REAL>
  CALL RNotEqualTo([h13 -> h70]<REAL>, [h68 -> h71]<REAL>)
  DEF h72 := (RETURN h69) <BOOL>
- GLOBAL f43 := h72 <BOOL>
- CALL WriteBool([(GLOBAL f43) -> h74]<BOOL>)
+ GLOBAL f24 := h72 <BOOL>
+ CALL WriteBool([(GLOBAL f24) -> h74]<BOOL>)
 END
 PROC SECTION
  PROC LABEL RNeg
@@ -210,37 +210,37 @@ PROC SECTION
   DEF b53 := 31 <INT>
   DEF b54 := b52 ILSHIFT b53 <INT>
   b48 := b54 <INT>
-  CALL RealBinaryAsInt([(PARAM f38) -> f31]<REAL>)
-  DEF b57 := (RETURN f32) <INT>
+  CALL RealBinaryAsInt([(PARAM f39) -> f32]<REAL>)
+  DEF b57 := (RETURN f33) <INT>
   b49 := b57 <INT>
   DEF b58 := b49 IXOR b48 <INT>
   b51 := b58 <INT>
-  CALL IntBinaryAsReal([b51 -> f35]<INT>)
-  DEF b59 := (RETURN f36) <REAL>
+  CALL IntBinaryAsReal([b51 -> f36]<INT>)
+  DEF b59 := (RETURN f37) <REAL>
   b50 := b59 <REAL>
-  DEF RETURN f37 := b50 <REAL>
+  DEF RETURN f38 := b50 <REAL>
  RETURN FROM RNeg
  PROC LABEL RealBinaryAsInt
-  DEF f29 := 0 <INT>
-  DEF f30 := 0.0 <REAL>
-  IPARAM f30 <REAL> %dr
-  IPARAM (PARAM f31) <REAL> %a
+  DEF f30 := 0 <INT>
+  DEF f31 := 0.0 <REAL>
+  IPARAM f31 <REAL> %dr
+  IPARAM (PARAM f32) <REAL> %a
   IASM "LDR %dr, %ua"
-  IPARAM f30 <REAL> %r
-  IPARAM f29 <INT> %da
+  IPARAM f31 <REAL> %r
+  IPARAM f30 <INT> %da
   IASM "STR %ur, %da"
-  DEF RETURN f32 := f29 <INT>
+  DEF RETURN f33 := f30 <INT>
  RETURN FROM RealBinaryAsInt
  PROC LABEL IntBinaryAsReal
-  DEF f33 := 0.0 <REAL>
-  DEF f34 := 0 <INT>
-  IPARAM f34 <INT> %dr
-  IPARAM (PARAM f35) <INT> %a
+  DEF f34 := 0.0 <REAL>
+  DEF f35 := 0 <INT>
+  IPARAM f35 <INT> %dr
+  IPARAM (PARAM f36) <INT> %a
   IASM "LDR %dr, %ua"
-  IPARAM f34 <INT> %r
-  IPARAM f33 <REAL> %da
+  IPARAM f35 <INT> %r
+  IPARAM f34 <REAL> %da
   IASM "STR %ur, %da"
-  DEF RETURN f36 := f33 <REAL>
+  DEF RETURN f37 := f34 <REAL>
  RETURN FROM IntBinaryAsReal
  PROC LABEL IntToReal
   DEF f44 := 0.0 <REAL>
@@ -369,8 +369,8 @@ PROC SECTION
   GOTO IFEND_0_LEVEL_0_1
   LABEL IFNEXT_0_SEQ_1_LEVEL_0_1
   LABEL IFEND_0_LEVEL_0_1
-  CALL IntBinaryAsReal([f47 -> f35]<INT>)
-  DEF g47 := (RETURN f36) <REAL>
+  CALL IntBinaryAsReal([f47 -> f36]<INT>)
+  DEF g47 := (RETURN f37) <REAL>
   f44 := g47 <REAL>
   DEF RETURN g48 := f44 <REAL>
  RETURN FROM IntToReal
@@ -1163,16 +1163,16 @@ PROC SECTION
   GOTO IFEND_10_LEVEL_0_0
   LABEL IFNEXT_10_SEQ_0_LEVEL_0_0
   LABEL IFEND_10_LEVEL_0_0
-  CALL IntBinaryAsReal([k9 -> f35]<INT>)
-  DEF T2 := (RETURN f36) <REAL>
+  CALL IntBinaryAsReal([k9 -> f36]<INT>)
+  DEF T2 := (RETURN f37) <REAL>
   k8 := T2 <REAL>
   DEF RETURN h10 := k8 <REAL>
  RETURN FROM RMul
  PROC LABEL RealSign
   DEF g51 := 0 <INT>
   DEF g52 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM g59) -> f31]<REAL>)
-  DEF g53 := (RETURN f32) <INT>
+  CALL RealBinaryAsInt([(PARAM g59) -> f32]<REAL>)
+  DEF g53 := (RETURN f33) <INT>
   g52 := g53 <INT>
   DEF g54 := 31 <INT>
   DEF g55 := g52 IRSHIFT g54 <INT>
@@ -1185,8 +1185,8 @@ PROC SECTION
   DEF g60 := 0 <INT>
   DEF g61 := 0 <INT>
   DEF g62 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM g72) -> f31]<REAL>)
-  DEF g63 := (RETURN f32) <INT>
+  CALL RealBinaryAsInt([(PARAM g72) -> f32]<REAL>)
+  DEF g63 := (RETURN f33) <INT>
   g61 := g63 <INT>
   DEF g64 := 23 <INT>
   DEF g65 := g61 IRSHIFT g64 <INT>
@@ -1202,8 +1202,8 @@ PROC SECTION
   DEF g74 := 0 <INT>
   DEF g75 := 0 <INT>
   DEF g76 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM g98) -> f31]<REAL>)
-  DEF g77 := (RETURN f32) <INT>
+  CALL RealBinaryAsInt([(PARAM g98) -> f32]<REAL>)
+  DEF g77 := (RETURN f33) <INT>
   g74 := g77 <INT>
   DEF g78 := 8388607 <INT>
   DEF g79 := g74 IAND g78 <INT>
@@ -1230,8 +1230,8 @@ PROC SECTION
   DEF g80 := FALSE <BOOL>
   DEF g81 := 0 <INT>
   DEF g82 := 0 <INT>
-  CALL RealBinaryAsInt([(PARAM g92) -> f31]<REAL>)
-  DEF g83 := (RETURN f32) <INT>
+  CALL RealBinaryAsInt([(PARAM g92) -> f32]<REAL>)
+  DEF g83 := (RETURN f33) <INT>
   g82 := g83 <INT>
   DEF g84 := 2147483647 <INT>
   DEF g85 := g82 IAND g84 <INT>
@@ -1642,8 +1642,8 @@ PROC SECTION
   GOTO IFEND_30_LEVEL_0
   LABEL IFNEXT_30_SEQ_3_LEVEL_0
   LABEL IFEND_30_LEVEL_0
-  CALL IntBinaryAsReal([T4 -> f35]<INT>)
-  DEF b33 := (RETURN f36) <REAL>
+  CALL IntBinaryAsReal([T4 -> f36]<INT>)
+  DEF b33 := (RETURN f37) <REAL>
   T3 := b33 <REAL>
   DEF RETURN h65 := T3 <REAL>
  RETURN FROM RDivide
@@ -1775,11 +1775,11 @@ PROC SECTION
   e95 := f15 <BOOL>
   GOTO IFEND_87_LEVEL_0
   LABEL IFNEXT_87_SEQ_0_LEVEL_0
-  CALL RealBinaryAsInt([(PARAM h70) -> f31]<REAL>)
-  DEF f16 := (RETURN f32) <INT>
+  CALL RealBinaryAsInt([(PARAM h70) -> f32]<REAL>)
+  DEF f16 := (RETURN f33) <INT>
   e99 := f16 <INT>
-  CALL RealBinaryAsInt([(PARAM h71) -> f31]<REAL>)
-  DEF f17 := (RETURN f32) <INT>
+  CALL RealBinaryAsInt([(PARAM h71) -> f32]<REAL>)
+  DEF f17 := (RETURN f33) <INT>
   f10 := f17 <INT>
   DEF f18 := e99 IXOR f10 <INT>
   e98 := f18 <INT>

@@ -1,7 +1,7 @@
 SYMBOL SECTION
- ENTRY b CONST INTERNAL GLOBAL six  <INT>
- ENTRY d CONST INTERNAL GLOBAL seven  <INT>
- ENTRY e INTERNAL GLOBAL answer  <INT>
+ ENTRY a INTERNAL GLOBAL answer  <INT>
+ ENTRY c CONST INTERNAL GLOBAL six  <INT>
+ ENTRY e CONST INTERNAL GLOBAL seven  <INT>
  ENTRY f INTERNAL PARAM a gcd 0 <INT>
  ENTRY g INTERNAL PARAM b gcd 1 <INT>
  ENTRY h INTERNAL RETURN gcd <INT>
@@ -16,34 +16,34 @@ SYMBOL SECTION
  ENTRY x EXTERNAL PARAM RMul 1 <REAL>
  ENTRY y EXTERNAL RETURN RMul <REAL>
  ENTRY A EXTERNAL PARAM WriteReal 0 <REAL>
-DATA SECTION
- DEF a := 6 <INT>
- DEF GLOBAL b := a <INT>
- DEF c := 7 <INT>
- DEF GLOBAL d := c <INT>
 BSS SECTION
- DEF GLOBAL e := 0 <INT>
+ DEF GLOBAL a := 0 <INT>
+DATA SECTION
+ DEF b := 6 <INT>
+ DEF GLOBAL c := b <INT>
+ DEF d := 7 <INT>
+ DEF GLOBAL e := d <INT>
 CODE SECTION
- CALL gcd([(GLOBAL b) -> f]<INT>, [(GLOBAL d) -> g]<INT>)
+ CALL gcd([(GLOBAL c) -> f]<INT>, [(GLOBAL e) -> g]<INT>)
  DEF i := (RETURN h) <INT>
- GLOBAL e := i <INT>
+ GLOBAL a := i <INT>
  DEF j := "Answer is " <STRING>
  CALL WriteString([j -> k]<STRING>)
- CALL WriteInt([(GLOBAL e) -> l]<INT>)
+ CALL WriteInt([(GLOBAL a) -> l]<INT>)
  CALL WriteLn()
- CALL WriteInt([(GLOBAL b) -> l]<INT>)
- CALL WriteInt([(GLOBAL d) -> l]<INT>)
+ CALL WriteInt([(GLOBAL c) -> l]<INT>)
  CALL WriteInt([(GLOBAL e) -> l]<INT>)
- CALL Multiply([(GLOBAL b) -> m]<INT>, [(GLOBAL d) -> n]<INT>)
+ CALL WriteInt([(GLOBAL a) -> l]<INT>)
+ CALL Multiply([(GLOBAL c) -> m]<INT>, [(GLOBAL e) -> n]<INT>)
  DEF p := (RETURN o) <INT>
- CALL Multiply([p -> m]<INT>, [(GLOBAL e) -> n]<INT>)
+ CALL Multiply([p -> m]<INT>, [(GLOBAL a) -> n]<INT>)
  DEF q := (RETURN o) <INT>
- GLOBAL e := q <INT>
+ GLOBAL a := q <INT>
  DEF r := "Answer is " <STRING>
  CALL WriteString([r -> k]<STRING>)
- CALL WriteInt([(GLOBAL e) -> l]<INT>)
+ CALL WriteInt([(GLOBAL a) -> l]<INT>)
  DEF s := 1.0 <REAL>
- CALL IntToReal([(GLOBAL e) -> t]<INT>)
+ CALL IntToReal([(GLOBAL a) -> t]<INT>)
  DEF v := (RETURN u) <REAL>
  CALL RMul([v -> w]<REAL>, [s -> x]<REAL>)
  DEF z := (RETURN y) <REAL>
