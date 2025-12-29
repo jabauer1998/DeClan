@@ -18,8 +18,8 @@ public class Prog extends Lib {
         super(false);
         if(insertHeaders){
             instructions.add(new SymSec());
-            instructions.add(new DataSec());
             instructions.add(new BssSec());
+            instructions.add(new DataSec());
             instructions.add(new CodeSec());
             instructions.add(new ProcSec());
         }
@@ -80,17 +80,6 @@ public class Prog extends Lib {
                     }
                     break;
                 case SYMBOL_SECTION:
-                    if(instruction instanceof DataSec){
-                        state = State.DATA_SECTION;
-                        sb.append(instruction.toString());
-                        sb.append("\r\n");
-                    } else {
-                        sb.append(' ');
-                        sb.append(instruction.toString());
-                        sb.append("\r\n");
-                    }
-                    break;
-                case DATA_SECTION: 
                     if(instruction instanceof BssSec){
                         state = State.BSS_SECTION;
                         sb.append(instruction.toString());
@@ -102,6 +91,17 @@ public class Prog extends Lib {
                     }
                     break;
                 case BSS_SECTION:
+                    if(instruction instanceof DataSec){
+                        state = State.DATA_SECTION;
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    } else {
+                        sb.append(' ');
+                        sb.append(instruction.toString());
+                        sb.append("\r\n");
+                    }
+                    break;
+                case DATA_SECTION: 
                     if(instruction instanceof CodeSec){
                         state = State.CODE_SECTION;
                         sb.append(instruction.toString());
@@ -150,14 +150,14 @@ public class Prog extends Lib {
     public List<ICode> getExecutableCode(){
     	LinkedList<ICode> toRet = new LinkedList<ICode>();
     	
-    	int beginningOfData = this.beginningOfDataSection();
-    	int endOfData = this.endOfDataSection();
-    	for(int i = beginningOfData; i <= endOfData; i++) {
-    		toRet.add(getInstruction(i));
-    	}
     	int beginningOfBss = this.beginningOfBssSection();
     	int endOfBss = this.endOfBssSection();
     	for(int i = beginningOfBss; i <= endOfBss; i++) {
+    		toRet.add(getInstruction(i));
+    	}
+    	int beginningOfData = this.beginningOfDataSection();
+    	int endOfData = this.endOfDataSection();
+    	for(int i = beginningOfData; i <= endOfData; i++) {
     		toRet.add(getInstruction(i));
     	}
     	int beginningOfCode = this.beginningOfCodeSection();
@@ -173,13 +173,25 @@ public class Prog extends Lib {
     	
     	return toRet;
     }
+    
+    @Override
+    public int endOfSymbolSection() {
+    	int begin = beginningOfSymbolSection();
+    	for(int i = begin; i < instructions.size(); i++) {
+    		ICode instruction = instructions.get(i);
+    		if(instruction instanceof BssSec) {
+    			return i - 1;
+    		}
+    	}
+    	return -1;
+    }
 
     @Override
     public int endOfDataSection(){
         int begin = beginningOfDataSection();
         for(int i = begin; i < instructions.size(); i++){
             ICode instruction = instructions.get(i);
-            if(instruction instanceof BssSec){
+            if(instruction instanceof CodeSec){
                 return i - 1;
             }
         }
@@ -187,7 +199,7 @@ public class Prog extends Lib {
     }
 
     public int beginningOfBssSection(){
-        int begin = endOfDataSection();
+        int begin = endOfSymbolSection();
         for(int i = begin; i < instructions.size(); i++){
             ICode instruction = instructions.get(i);
             if(instruction instanceof BssSec){
@@ -201,7 +213,7 @@ public class Prog extends Lib {
         int begin = beginningOfBssSection();
         for(int i = begin; i < instructions.size(); i++){
             ICode instruction = instructions.get(i);
-            if(instruction instanceof CodeSec){
+            if(instruction instanceof DataSec){
                 return i - 1;
             }
         }

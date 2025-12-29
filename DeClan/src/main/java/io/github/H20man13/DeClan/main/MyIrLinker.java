@@ -4218,8 +4218,8 @@ public class MyIrLinker {
 
     public Prog performLinkage(Prog program, Lib... libraries){
         Prog newProg = new Prog(true);
-        linkDataSections(program, libraries, newProg);
         linkBssSection(program, libraries, newProg);
+        linkDataSections(program, libraries, newProg);
         linkCodeSection(program, libraries, newProg);
         if(this.cfg != null)
         	if(this.cfg.containsFlag("debug"))

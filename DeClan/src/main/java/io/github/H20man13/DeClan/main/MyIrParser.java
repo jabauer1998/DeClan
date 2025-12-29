@@ -116,16 +116,16 @@ public class MyIrParser {
             icode = parseSymbolEntry();
             toRet.add(icode);
         }
-        icode = parseDataSection();
-        toRet.add(icode);
-        while(willMatch(IrTokenType.CALL) || willMatch(IrTokenType.DEF)){
-            icode = parseInstruction();
-            toRet.add(icode);
-        }
         icode = parseBssSection();
         toRet.add(icode);
         while(willMatch(IrTokenType.DEF)){
             icode = parseDefinition();
+            toRet.add(icode);
+        }
+        icode = parseDataSection();
+        toRet.add(icode);
+        while(willMatch(IrTokenType.CALL) || willMatch(IrTokenType.DEF)){
+            icode = parseInstruction();
             toRet.add(icode);
         }
         icode = parseCodeSection();

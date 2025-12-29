@@ -109,7 +109,7 @@ public class MyOptimizer {
     private Map<ICode, Set<Tuple<NullableExp, ICode.Type>>> latestSets;
     private Map<ICode, Set<Tuple<NullableExp, ICode.Type>>> usedSets;
     private HashSet<Tuple<NullableExp, ICode.Type>> globalExpressionSet;
-    private HashSet<Tuple<CopyStr, CopyStr>> globalConstDelayedSet;
+    private HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>> globalConstDelayedSet;
     private HashSet<Tuple<CopyStr, NullableExp>> globalConstAddSet;
     private IrRegisterGenerator iGen;
     private DepthFirstSpanningTree dfst;
@@ -287,30 +287,24 @@ public class MyOptimizer {
     		BasicBlock block = current.getBlock();
     		if(Utils.beginningOfBlockIsSection(block)){
     			ICode icodeFirst = block.getIcode().getFirst();
-    			if(icodeFirst instanceof DataSec) {
+    			if(icodeFirst instanceof BssSec) {
     				BlockNode previous = sectionTails.get("SymSec");
     				previous.addSuccessor(current);
     				current.addPredecessor(previous);
-    			} else if(icodeFirst instanceof BssSec) {
-    				BlockNode previous = sectionTails.get("SymSec");
+    			} else if(icodeFirst instanceof DataSec) {
+    				BlockNode previous = sectionTails.get("BssSec");
     				previous.addSuccessor(current);
     				current.addPredecessor(previous);
     			} else if(icodeFirst instanceof CodeSec) {
-    				BlockNode bssSec = sectionTails.get("BssSec");
     				BlockNode dataSec = sectionTails.get("DataSec");
     				
     				current.addPredecessor(dataSec);
-    				current.addPredecessor(bssSec);
     				dataSec.addSuccessor(current);
-    				bssSec.addSuccessor(current);
     			} else if(icodeFirst instanceof ProcSec) {
-    				BlockNode bssSec = sectionTails.get("BssSec");
     				BlockNode dataSec = sectionTails.get("DataSec");
     				
     				current.addPredecessor(dataSec);
-    				current.addPredecessor(bssSec);
     				dataSec.addSuccessor(current);
-    				bssSec.addSuccessor(current);
     			}
     		} else if(Utils.beginningOfBlockIsProcedureHeader(block)) {
     			BlockNode procSec = sectionHeads.get("ProcSec");
@@ -590,12 +584,14 @@ public class MyOptimizer {
             	rebuildFromFlowGraph();
             	resetFlowGraph();
                 resetLiveVariableAnalysis();
+                regenerateUniqueNumbers();
                 break;
             case CONSTANT_PROPOGATION:
             	unsortFlowGraph();
             	rebuildFromFlowGraph();
                 resetConstantPropogationAnalysis();
                 resetFlowGraph();
+                regenerateUniqueNumbers();
                 break;
             case DEAD_CODE_ELIMINATION:
             	unsortFlowGraph();
@@ -603,6 +599,7 @@ public class MyOptimizer {
             	resetFlowGraph();
                 resetLiveVariableAnalysis();
                 resetReachingDefinitionsAnalysis();
+                regenerateUniqueNumbers();
                 break;
             case PARTIAL_REDUNDANCY_ELIMINATION:
             	unsortFlowGraph();
@@ -618,6 +615,7 @@ public class MyOptimizer {
             	resetUsedAnalysis();
             	resetRegisterGenerator();
             	resetSavedExpressionAnalysis();
+            	regenerateUniqueNumbers();
             	break;
             case MOVE_CONSTANTS_TO_GLOBAL:
             	unsortFlowGraph();
@@ -626,8 +624,32 @@ public class MyOptimizer {
             	resetExpectedConstantAnalysis();
             	resetRegisterGenerator();
             	resetMovedConstantAnalysis();
+            	regenerateUniqueNumbers();
             	break;
         }
+    }
+    
+    private void regenerateUniqueNumbers() {
+    	Def.resetDefs();
+    	Assign.resetAssigns();
+    	Goto.clearGotos();
+    	Call.resetCalls();
+    	
+    	for(ICode icode: this.intermediateCode) {
+    		if(icode instanceof Assign) {
+    			Assign assign = (Assign)icode;
+    			assign.recalculateIdentNumber();
+    		} else if(icode instanceof Def) {
+    			Def def = (Def)icode;
+    			def.recalculateIdentNumber();
+    		} else if(icode instanceof Goto) {
+    			Goto go = (Goto)icode;
+    			go.recalculateIdentNumber();
+    		} else if(icode instanceof Call) {
+    			Call go = (Call)icode;
+    			go.recalclulateIdentNumber();
+    		}
+    	}
     }
 
     private void setUpOptimization(OptName name){
@@ -697,7 +719,7 @@ public class MyOptimizer {
     		this.setUpRegisterGenerator();
     	
     	this.globalConstAddSet = new HashSet<Tuple<CopyStr, NullableExp>>();
-    	this.globalConstDelayedSet = new HashSet<Tuple<CopyStr, CopyStr>>();
+    	this.globalConstDelayedSet = new HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>>();
     	int index = intermediateCode.beginningOfDataSection();
     	ICode dataMinusOne = intermediateCode.getInstruction(index);
     	index = intermediateCode.beginningOfBssSection();
@@ -705,20 +727,21 @@ public class MyOptimizer {
     	
     	HashSet<Tuple<CopyStr, NullableExp>> unionOfUsed = new HashSet<Tuple<CopyStr, NullableExp>>();
     	
-    	HashSet<Tuple<CopyStr, NullableExp>> unionOfExpected = new HashSet<Tuple<CopyStr, NullableExp>>();
-    	Set<Tuple<CopyStr, NullableExp>> dataMinusOneOutput = this.expectedConstAnal.getInputSet(dataMinusOne);
-    	Set<Tuple<CopyStr, NullableExp>> bssMinusOneOutput = this.expectedConstAnal.getInputSet(bssMinusOne);
+    	HashSet<Tuple<ICode, Tuple<CopyStr, NullableExp>>> unionOfExpected = new HashSet<Tuple<ICode, Tuple<CopyStr, NullableExp>>>();
+    	Set<Tuple<ICode, Tuple<CopyStr, NullableExp>>> dataMinusOneOutput = this.expectedConstAnal.getInputSet(dataMinusOne);
+    	Set<Tuple<ICode, Tuple<CopyStr, NullableExp>>> bssMinusOneOutput = this.expectedConstAnal.getInputSet(bssMinusOne);
     	unionOfExpected.addAll(dataMinusOneOutput);
     	unionOfExpected.addAll(bssMinusOneOutput);
     	
-    	for(Tuple<CopyStr, NullableExp> expectedElem: unionOfExpected){
-			if(Utils.setContainsNullableTupleWithExp(unionOfUsed, expectedElem.dest))
-				this.globalConstDelayedSet.add(new Tuple<>(expectedElem.source, Utils.getNullableTupleWithExp(unionOfUsed, expectedElem.dest)));
-			else {
+    	for(Tuple<ICode, Tuple<CopyStr, NullableExp>> expectedElem: unionOfExpected){
+			if(Utils.setContainsNullableTupleWithExp(unionOfUsed, expectedElem.dest.dest)){
+				CopyStr res = Utils.getNullableTupleWithExp(unionOfUsed, expectedElem.dest.dest);
+				this.globalConstDelayedSet.add(new Tuple<>(expectedElem.source, new Tuple<>(expectedElem.dest.source, res)));
+    	    } else {
 				String next = genNext();
-				this.globalConstAddSet.add(new Tuple<>(new CopyStr(next), expectedElem.dest));
-				this.globalConstDelayedSet.add(new Tuple<>(expectedElem.source, new CopyStr(next)));
-				unionOfUsed.add(new Tuple<>(new CopyStr(next), expectedElem.dest));
+				this.globalConstAddSet.add(new Tuple<>(new CopyStr(next), expectedElem.dest.dest));
+				this.globalConstDelayedSet.add(new Tuple<>(expectedElem.source, new Tuple<>(expectedElem.dest.source, new CopyStr(next))));
+				unionOfUsed.add(new Tuple<>(new CopyStr(next), expectedElem.dest.dest));
 			}
 		}
     }
@@ -1481,11 +1504,25 @@ public class MyOptimizer {
     			if(instr instanceof Def){
     				Def def = (Def)instr;
     				if((def.scope != ICode.Scope.GLOBAL) && def.isConstant()) {
-    					HashSet<Tuple<CopyStr, CopyStr>> options = this.movedConstAnal.getInputSet(instr);
+    					HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>> options = this.movedConstAnal.getInputSet(instr);
     					boolean found = false;
-    					for(Tuple<CopyStr, CopyStr> tup: options) {
-    						if(tup.source.toString().equals(def.label)) {
-    							def.val = new IdentExp(ICode.Scope.GLOBAL, tup.dest.toString());
+    					for(Tuple<ICode, Tuple<CopyStr, CopyStr>> tup: options) {
+    						if(tup.source.equals(def)) {
+    							def.val = new IdentExp(ICode.Scope.GLOBAL, tup.dest.dest.toString());
+    							found = true;
+    						}
+    					}
+    					if(!found)
+    						throw new RuntimeException("Error expected value for contant in " + def.toString() + " but couldnt find it");
+    				}
+    			} else if(instr instanceof Assign){
+    				Assign def = (Assign)instr;
+    				if((def.getScope() != ICode.Scope.GLOBAL) && def.isConstant()) {
+    					HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>> options = this.movedConstAnal.getInputSet(instr);
+    					boolean found = false;
+    					for(Tuple<ICode, Tuple<CopyStr, CopyStr>> tup: options) {
+    						if(tup.source.equals(def)) {
+    							def.value = new IdentExp(ICode.Scope.GLOBAL, tup.dest.dest.toString());
     							found = true;
     						}
     					}
@@ -1494,13 +1531,13 @@ public class MyOptimizer {
     				}
     			} else if(instr instanceof Call) {
     				Call myCall = (Call)instr;
-    				HashSet<Tuple<CopyStr, CopyStr>> options = this.movedConstAnal.getInputSet(instr);
-    				for(Def def: myCall.params) {
+    				HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>> options = this.movedConstAnal.getInputSet(myCall);
+      				for(Def def: myCall.params) {
     					if((def.scope != ICode.Scope.GLOBAL) && def.isConstant()) {
         					boolean found = false;
-        					for(Tuple<CopyStr, CopyStr> tup: options) {
-        						if(tup.source.toString().equals(def.label)) {
-        							def.val = new IdentExp(ICode.Scope.GLOBAL, tup.dest.toString());
+        					for(Tuple<ICode, Tuple<CopyStr, CopyStr>> tup: options) {
+        						if(tup.source.equals(def)) {
+        							def.val = new IdentExp(ICode.Scope.GLOBAL, tup.dest.dest.toString());
         							found = true;
         						}
         					}
@@ -1510,16 +1547,16 @@ public class MyOptimizer {
     				}
     			}
     		}
-    		
-    		BlockNode bssStart = this.dfst.startOfBss();
-        	BlockNode dataStart = this.dfst.startOfData();
-    		
-    		for(Tuple<CopyStr, NullableExp> val: this.globalConstAddSet) {
-        		if(val.dest.isZero())
-        			bssStart.getICode().add(1, new Def(Scope.GLOBAL, val.source.toString(), (Exp)val.dest, ConversionUtils.getTypeFromConstExp(val.dest)));
-        		else
-        			dataStart.getICode().add(1, new Def(Scope.GLOBAL, val.source.toString(), (Exp)val.dest, ConversionUtils.getTypeFromConstExp(val.dest)));
-        	}
+    	}
+    	
+    	BlockNode bssStart = this.dfst.startOfBss();
+    	BlockNode dataStart = this.dfst.startOfData();
+		
+		for(Tuple<CopyStr, NullableExp> val: this.globalConstAddSet) {
+    		if(val.dest.isZero())
+    			bssStart.getICode().add(1, new Def(Scope.GLOBAL, val.source.toString(), (Exp)val.dest, ConversionUtils.getTypeFromConstExp(val.dest)));
+    		else
+    			dataStart.getICode().add(1, new Def(Scope.GLOBAL, val.source.toString(), (Exp)val.dest, ConversionUtils.getTypeFromConstExp(val.dest)));
     	}
     	
     	cleanUpOptimization(OptName.MOVE_CONSTANTS_TO_GLOBAL);
@@ -1586,6 +1623,7 @@ public class MyOptimizer {
                                         Object rightValEq = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultEq = OpUtil.equal(leftValEq, rightValEq);
                                         varICode.value = ConversionUtils.valueToExp(resultEq);
+                                        
                                         changes = true;
                                         break;
                                     case INE:
@@ -1593,6 +1631,7 @@ public class MyOptimizer {
                                         Object rightValNe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultNe = OpUtil.notEqual(leftValNe, rightValNe);
                                         varICode.value = ConversionUtils.valueToExp(resultNe);
+                                        
                                         changes = true;
                                         break;
                                     case BEQ:
@@ -1600,6 +1639,7 @@ public class MyOptimizer {
                                         Object rightValEq1 = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultEq1 = OpUtil.equal(leftValEq1, rightValEq1);
                                         varICode.value = ConversionUtils.valueToExp(resultEq1);
+                                        
                                         changes = true;
                                         break;
                                     case BNE:
@@ -1607,6 +1647,7 @@ public class MyOptimizer {
                                         Object rightValNe1 = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultNe1 = OpUtil.notEqual(leftValNe1, rightValNe1);
                                         varICode.value = ConversionUtils.valueToExp(resultNe1);
+                                        
                                         changes = true;
                                         break;
                                     case IADD:
@@ -1614,6 +1655,7 @@ public class MyOptimizer {
                                         Object rightValueIAdd = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIAdd = OpUtil.iAdd(leftValueIAdd, rightValueIAdd);
                                         varICode.value = ConversionUtils.valueToExp(resultIAdd);
+                                        
                                         changes = true;
                                         break;
                                     case ISUB:
@@ -1621,6 +1663,7 @@ public class MyOptimizer {
                                         Object rightValueISub = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultISub = OpUtil.iSub(leftValueISub, rightValueISub);
                                         varICode.value = ConversionUtils.valueToExp(resultISub);
+                                        
                                         changes = true;
                                         break;
                                     case ILSHIFT:
@@ -1628,6 +1671,7 @@ public class MyOptimizer {
                                         Object rightValueILShift = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultILShift = OpUtil.leftShift(leftValueILShift, rightValueILShift);
                                         varICode.value = ConversionUtils.valueToExp(resultILShift);
+                                        
                                         changes = true;
                                         break;
                                     case IRSHIFT:
@@ -1635,6 +1679,7 @@ public class MyOptimizer {
                                         Object rightValueIRShift = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIRShift = OpUtil.rightShift(leftValueIRShift, rightValueIRShift);
                                         varICode.value = ConversionUtils.valueToExp(resultIRShift);
+                                        
                                         changes = true;
                                         break;
                                     case IAND: 
@@ -1642,6 +1687,7 @@ public class MyOptimizer {
                                         Object rightValueIAnd = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIAnd = OpUtil.bitwiseAnd(leftValueIAnd, rightValueIAnd);
                                         varICode.value = ConversionUtils.valueToExp(resultIAnd);
+                                        
                                         changes = true;
                                         break;
                                     case IOR:
@@ -1649,6 +1695,7 @@ public class MyOptimizer {
                                         Object rightValueIOr = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIOr = OpUtil.bitwiseOr(leftValueIOr, rightValueIOr);
                                         varICode.value = ConversionUtils.valueToExp(resultIOr);
+                                        
                                         changes = true;
                                         break;
                                     case IXOR:
@@ -1656,6 +1703,7 @@ public class MyOptimizer {
                                         Object rightValueXOr = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultXor = OpUtil.bitwiseXor(leftValueXOr, rightValueXOr);
                                         varICode.value = ConversionUtils.valueToExp(resultXor);
+                                        
                                         changes = true;
                                         break;
                                     case GE:
@@ -1663,6 +1711,7 @@ public class MyOptimizer {
                                         Object rightValueGe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultValueGe = OpUtil.greaterThanOrEqualTo(leftValueGe, rightValueGe);
                                         varICode.value = ConversionUtils.valueToExp(resultValueGe);
+                                        
                                         changes = true;
                                         break;
                                     case GT:
@@ -1670,6 +1719,7 @@ public class MyOptimizer {
                                         Object rightValueGt = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultValueGt = OpUtil.greaterThan(leftValueGt, rightValueGt);
                                         varICode.value = ConversionUtils.valueToExp(resultValueGt);
+                                        
                                         changes = true;
                                         break;
                                     case LE:
@@ -1677,6 +1727,7 @@ public class MyOptimizer {
                                         Object rightValueLe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLe = OpUtil.lessThanOrEqualTo(leftValueLe, rightValueLe);
                                         varICode.value = ConversionUtils.valueToExp(resultLe);
+                                        
                                         changes = true;
                                         break;
                                     case LT:
@@ -1684,6 +1735,7 @@ public class MyOptimizer {
                                         Object rightValueLt = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLt = OpUtil.lessThan(leftValueLt, rightValueLt);
                                         varICode.value = ConversionUtils.valueToExp(resultLt);
+                                        
                                         changes = true;
                                         break;
                                     case LAND:
@@ -1691,6 +1743,7 @@ public class MyOptimizer {
                                         Object rightValueLand = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLand = OpUtil.and(leftValueLand, rightValueLand);
                                         varICode.value = ConversionUtils.valueToExp(resultLand);
+                                        
                                         changes = true;
                                         break;
                                     case LOR:
@@ -1698,6 +1751,7 @@ public class MyOptimizer {
                                         Object rightValueLor = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLor = OpUtil.or(leftValueLor, rightValueLor);
                                         varICode.value = ConversionUtils.valueToExp(resultLor);
+                                        
                                         changes = true;
                                         break;
                                     default:
@@ -1727,12 +1781,14 @@ public class MyOptimizer {
                                         Object rightValueINot = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultINot = OpUtil.bitwiseNot(rightValueINot);
                                         varICode.value = ConversionUtils.valueToExp(resultINot);
+                                        
                                         changes = true;
                                         break;
                                     case BNOT:
                                         Object rightValueBNot = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultBNot = OpUtil.not(rightValueBNot);
                                         varICode.value = ConversionUtils.valueToExp(resultBNot);
+                                        
                                         changes = true;
                                         break;
                                     default:
@@ -1743,12 +1799,14 @@ public class MyOptimizer {
                             	if(!newExp.equals(unExpVal)) {
                             		changes = true;
                             		varICode.value = newExp;
+                            		
                             	}
                             } else {
                             	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.source);
                             	if(!newExp.equals(unExpVal)) {
                             		changes = true;
                             		varICode.value = newExp;
+                            		
                             	}
                             }
                         }
@@ -1769,11 +1827,13 @@ public class MyOptimizer {
                             	if(!identVal.equals(sourceDestRight.dest)) {
                             		changes = true;
                             		varICode.val = (Exp)sourceDestRight.dest;
+                            		
                             	}
                             } else {
                             	if(!identVal.equals(sourceDestRight.source)) {
                             		changes = true;
                             		varICode.val = (Exp)sourceDestRight.source;
+                            		
                             	}
                             }
                         } else if(varICode.val instanceof BinExp){
@@ -1796,6 +1856,7 @@ public class MyOptimizer {
                                         Object rightValEq = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultEq = OpUtil.equal(leftValEq, rightValEq);
                                         varICode.val = ConversionUtils.valueToExp(resultEq);
+                                        
                                         changes = true;
                                         break;
                                     case INE:
@@ -1803,6 +1864,7 @@ public class MyOptimizer {
                                         Object rightValNe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultNe = OpUtil.notEqual(leftValNe, rightValNe);
                                         varICode.val = ConversionUtils.valueToExp(resultNe);
+                                        
                                         changes = true;
                                         break;
                                     case BEQ:
@@ -1810,6 +1872,7 @@ public class MyOptimizer {
                                         Object rightValEq1 = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultEq1 = OpUtil.equal(leftValEq1, rightValEq1);
                                         varICode.val = ConversionUtils.valueToExp(resultEq1);
+                                        
                                         changes = true;
                                         break;
                                     case BNE:
@@ -1817,6 +1880,7 @@ public class MyOptimizer {
                                         Object rightValNe1 = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultNe1 = OpUtil.notEqual(leftValNe1, rightValNe1);
                                         varICode.val = ConversionUtils.valueToExp(resultNe1);
+                                        
                                         changes = true;
                                         break;
                                     case IADD:
@@ -1824,6 +1888,7 @@ public class MyOptimizer {
                                         Object rightValueIAdd = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIAdd = OpUtil.iAdd(leftValueIAdd, rightValueIAdd);
                                         varICode.val = ConversionUtils.valueToExp(resultIAdd);
+                                        
                                         changes = true;
                                         break;
                                     case ISUB:
@@ -1831,6 +1896,7 @@ public class MyOptimizer {
                                         Object rightValueISub = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultISub = OpUtil.iSub(leftValueISub, rightValueISub);
                                         varICode.val = ConversionUtils.valueToExp(resultISub);
+                                        
                                         changes = true;
                                         break;
                                     case ILSHIFT:
@@ -1838,6 +1904,7 @@ public class MyOptimizer {
                                         Object rightValueILShift = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultILShift = OpUtil.leftShift(leftValueILShift, rightValueILShift);
                                         varICode.val = ConversionUtils.valueToExp(resultILShift);
+                                        
                                         changes = true;
                                         break;
                                     case IRSHIFT:
@@ -1845,6 +1912,7 @@ public class MyOptimizer {
                                         Object rightValueIRShift = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIRShift = OpUtil.rightShift(leftValueIRShift, rightValueIRShift);
                                         varICode.val = ConversionUtils.valueToExp(resultIRShift);
+                                        
                                         changes = true;
                                         break;
                                     case IAND: 
@@ -1852,6 +1920,7 @@ public class MyOptimizer {
                                         Object rightValueIAnd = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIAnd = OpUtil.bitwiseAnd(leftValueIAnd, rightValueIAnd);
                                         varICode.val = ConversionUtils.valueToExp(resultIAnd);
+                                        
                                         changes = true;
                                         break;
                                     case IOR:
@@ -1859,6 +1928,7 @@ public class MyOptimizer {
                                         Object rightValueIOr = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultIOr = OpUtil.bitwiseOr(leftValueIOr, rightValueIOr);
                                         varICode.val = ConversionUtils.valueToExp(resultIOr);
+                                        
                                         changes = true;
                                         break;
                                     case IXOR:
@@ -1866,6 +1936,7 @@ public class MyOptimizer {
                                         Object rightValueXOr = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultXor = OpUtil.bitwiseXor(leftValueXOr, rightValueXOr);
                                         varICode.val = ConversionUtils.valueToExp(resultXor);
+                                        
                                         changes = true;
                                         break;
                                     case GE:
@@ -1873,6 +1944,7 @@ public class MyOptimizer {
                                         Object rightValueGe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultValueGe = OpUtil.greaterThanOrEqualTo(leftValueGe, rightValueGe);
                                         varICode.val = ConversionUtils.valueToExp(resultValueGe);
+                                        
                                         changes = true;
                                         break;
                                     case GT:
@@ -1880,6 +1952,7 @@ public class MyOptimizer {
                                         Object rightValueGt = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultValueGt = OpUtil.greaterThan(leftValueGt, rightValueGt);
                                         varICode.val = ConversionUtils.valueToExp(resultValueGt);
+                                        
                                         changes = true;
                                         break;
                                     case LE:
@@ -1887,6 +1960,7 @@ public class MyOptimizer {
                                         Object rightValueLe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLe = OpUtil.lessThanOrEqualTo(leftValueLe, rightValueLe);
                                         varICode.val = ConversionUtils.valueToExp(resultLe);
+                                        
                                         changes = true;
                                         break;
                                     case LT:
@@ -1894,6 +1968,7 @@ public class MyOptimizer {
                                         Object rightValueLt = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLt = OpUtil.lessThan(leftValueLt, rightValueLt);
                                         varICode.val = ConversionUtils.valueToExp(resultLt);
+                                        
                                         changes = true;
                                         break;
                                     case LAND:
@@ -1901,6 +1976,7 @@ public class MyOptimizer {
                                         Object rightValueLand = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLand = OpUtil.and(leftValueLand, rightValueLand);
                                         varICode.val = ConversionUtils.valueToExp(resultLand);
+                                        
                                         changes = true;
                                         break;
                                     case LOR:
@@ -1908,6 +1984,7 @@ public class MyOptimizer {
                                         Object rightValueLor = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultLor = OpUtil.or(leftValueLor, rightValueLor);
                                         varICode.val = ConversionUtils.valueToExp(resultLor);
+                                        
                                         changes = true;
                                         break;
                                     default:
@@ -1920,6 +1997,7 @@ public class MyOptimizer {
                                 BinExp val = new BinExp(leftExp, binExpVal.op, rightExp);
                                 if(!val.equals(binExpVal)) {
                                 	varICode.val = val;
+                                	
                                 	changes = true;	
                                 }
                             }
@@ -1937,12 +2015,14 @@ public class MyOptimizer {
                                         Object rightValueINot = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultINot = OpUtil.bitwiseNot(rightValueINot);
                                         varICode.val = ConversionUtils.valueToExp(resultINot);
+                                        
                                         changes = true;
                                         break;
                                     case BNOT:
                                         Object rightValueBNot = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                         Object resultBNot = OpUtil.not(rightValueBNot);
                                         varICode.val = ConversionUtils.valueToExp(resultBNot);
+                                        
                                         changes = true;
                                         break;
                                     default:
@@ -1953,6 +2033,7 @@ public class MyOptimizer {
                             	if(!newExp.equals(unExpVal)) {
                             		changes = true;
                             		varICode.val = newExp;
+                            		
                             	}
                             } else {
                             	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.source);
@@ -2031,6 +2112,7 @@ public class MyOptimizer {
                                             Object rightValEq = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultEq = OpUtil.equal(leftValEq, rightValEq);
                                             param.val = ConversionUtils.valueToExp(resultEq);
+                                            
                                             changes = true;
                                             break;
                                         case INE:
@@ -2038,6 +2120,7 @@ public class MyOptimizer {
                                             Object rightValNe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultNe = OpUtil.notEqual(leftValNe, rightValNe);
                                             param.val = ConversionUtils.valueToExp(resultNe);
+                                            
                                             changes = true;
                                             break;
                                         case BEQ:
@@ -2045,6 +2128,7 @@ public class MyOptimizer {
                                             Object rightValEq1 = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultEq1 = OpUtil.equal(leftValEq1, rightValEq1);
                                             param.val = ConversionUtils.valueToExp(resultEq1);
+                                            
                                             changes = true;
                                             break;
                                         case BNE:
@@ -2052,6 +2136,7 @@ public class MyOptimizer {
                                             Object rightValNe1 = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultNe1 = OpUtil.notEqual(leftValNe1, rightValNe1);
                                             param.val = ConversionUtils.valueToExp(resultNe1);
+                                            
                                             changes = true;
                                             break;
                                         case IADD:
@@ -2059,6 +2144,7 @@ public class MyOptimizer {
                                             Object rightValueIAdd = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultIAdd = OpUtil.iAdd(leftValueIAdd, rightValueIAdd);
                                             param.val = ConversionUtils.valueToExp(resultIAdd);
+                                            
                                             changes = true;
                                             break;
                                         case ISUB:
@@ -2066,6 +2152,7 @@ public class MyOptimizer {
                                             Object rightValueISub = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultISub = OpUtil.iSub(leftValueISub, rightValueISub);
                                             param.val = ConversionUtils.valueToExp(resultISub);
+                                            
                                             changes = true;
                                             break;
                                         case ILSHIFT:
@@ -2073,6 +2160,7 @@ public class MyOptimizer {
                                             Object rightValueILShift = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultILShift = OpUtil.leftShift(leftValueILShift, rightValueILShift);
                                             param.val = ConversionUtils.valueToExp(resultILShift);
+                                            
                                             changes = true;
                                             break;
                                         case IRSHIFT:
@@ -2080,6 +2168,7 @@ public class MyOptimizer {
                                             Object rightValueIRShift = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultIRShift = OpUtil.rightShift(leftValueIRShift, rightValueIRShift);
                                             param.val = ConversionUtils.valueToExp(resultIRShift);
+                                            
                                             changes = true;
                                             break;
                                         case IAND: 
@@ -2087,6 +2176,7 @@ public class MyOptimizer {
                                             Object rightValueIAnd = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultIAnd = OpUtil.bitwiseAnd(leftValueIAnd, rightValueIAnd);
                                             param.val = ConversionUtils.valueToExp(resultIAnd);
+                                            
                                             changes = true;
                                             break;
                                         case IOR:
@@ -2094,6 +2184,7 @@ public class MyOptimizer {
                                             Object rightValueIOr = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultIOr = OpUtil.bitwiseOr(leftValueIOr, rightValueIOr);
                                             param.val = ConversionUtils.valueToExp(resultIOr);
+                                            
                                             changes = true;
                                             break;
                                         case IXOR:
@@ -2101,6 +2192,7 @@ public class MyOptimizer {
                                             Object rightValueXOr = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultXor = OpUtil.bitwiseXor(leftValueXOr, rightValueXOr);
                                             param.val = ConversionUtils.valueToExp(resultXor);
+                                            
                                             changes = true;
                                             break;
                                         case GE:
@@ -2108,6 +2200,7 @@ public class MyOptimizer {
                                             Object rightValueGe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultValueGe = OpUtil.greaterThanOrEqualTo(leftValueGe, rightValueGe);
                                             param.val = ConversionUtils.valueToExp(resultValueGe);
+                                            
                                             changes = true;
                                             break;
                                         case GT:
@@ -2115,6 +2208,7 @@ public class MyOptimizer {
                                             Object rightValueGt = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultValueGt = OpUtil.greaterThan(leftValueGt, rightValueGt);
                                             param.val = ConversionUtils.valueToExp(resultValueGt);
+                                            
                                             changes = true;
                                             break;
                                         case LE:
@@ -2122,6 +2216,7 @@ public class MyOptimizer {
                                             Object rightValueLe = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultLe = OpUtil.lessThanOrEqualTo(leftValueLe, rightValueLe);
                                             param.val = ConversionUtils.valueToExp(resultLe);
+                                            
                                             changes = true;
                                             break;
                                         case LT:
@@ -2129,6 +2224,7 @@ public class MyOptimizer {
                                             Object rightValueLt = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultLt = OpUtil.lessThan(leftValueLt, rightValueLt);
                                             param.val = ConversionUtils.valueToExp(resultLt);
+                                            
                                             changes = true;
                                             break;
                                         case LAND:
@@ -2136,6 +2232,7 @@ public class MyOptimizer {
                                             Object rightValueLand = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultLand = OpUtil.and(leftValueLand, rightValueLand);
                                             param.val = ConversionUtils.valueToExp(resultLand);
+                                            
                                             changes = true;
                                             break;
                                         case LOR:
@@ -2143,6 +2240,7 @@ public class MyOptimizer {
                                             Object rightValueLor = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultLor = OpUtil.or(leftValueLor, rightValueLor);
                                             param.val = ConversionUtils.valueToExp(resultLor);
+                                            
                                             changes = true;
                                             break;
                                         default:
@@ -2155,6 +2253,7 @@ public class MyOptimizer {
                                     BinExp val = new BinExp(leftExp, binExpVal.op, rightExp);
                                     if(!val.equals(binExpVal)) {
                                     	param.val = val;
+                                    	
                                     	changes = true;	
                                     }
                                 }
@@ -2172,12 +2271,14 @@ public class MyOptimizer {
                                             Object rightValueINot = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultINot = OpUtil.bitwiseNot(rightValueINot);
                                             param.val = ConversionUtils.valueToExp(resultINot);
+                                            
                                             changes = true;
                                             break;
                                         case BNOT:
                                             Object rightValueBNot = ConversionUtils.getValue((Exp)sourceDestRight.dest);
                                             Object resultBNot = OpUtil.not(rightValueBNot);
                                             param.val = ConversionUtils.valueToExp(resultBNot);
+                                            
                                             changes = true;
                                             break;
                                         default:
@@ -2187,12 +2288,14 @@ public class MyOptimizer {
                                 	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.dest);
                                 	if(!newExp.equals(unExpVal)) {
                                 		changes = true;
+                                		
                                 		param.val = newExp;
                                 	}
                                 } else {
                                 	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.source);
                                 	if(!newExp.equals(unExpVal)) {
                                 		changes = true;
+                                		
                                 		param.val = newExp;
                                 	}
                                 }
@@ -2284,11 +2387,13 @@ public class MyOptimizer {
     							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
     								String name = Utils.getVar(savedVars, myTuple.source);
     								assign.value = new IdentExp(Scope.LOCAL, name);
+    								assign.recalculateIdentNumber();
     							}
     						}
     					} else if(Utils.containsExpInSet(savedVars, myTuple.source)) {
 							String name = Utils.getVar(savedVars, myTuple.source);
 							assign.value = new IdentExp(Scope.LOCAL, name);
+							assign.recalculateIdentNumber();
 						}
     				}
     			} else if(icode instanceof Def){
@@ -2300,12 +2405,14 @@ public class MyOptimizer {
 							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
 								String name = Utils.getVar(savedVars, myTuple.source);
 								assign.val = new IdentExp(Scope.LOCAL, name);
+								assign.recalculateIdentNumber();
 							}
 						}
 					} else {
 						if(Utils.containsExpInSet(savedVars, myTuple.source)) {
 							String name = Utils.getVar(savedVars, myTuple.source);
 							assign.val = new IdentExp(Scope.LOCAL, name);
+							assign.recalculateIdentNumber();
 						}
 					}
     			} else if(icode instanceof Call) {
@@ -2320,11 +2427,13 @@ public class MyOptimizer {
         							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
         								String name = Utils.getVar(savedVars, myTuple.source);
         								param.val = new IdentExp(Scope.LOCAL, name);
+        								
         							}
         						}
         					} else if(Utils.containsExpInSet(savedVars, myTuple.source)) {
 								String name = Utils.getVar(savedVars, myTuple.source);
 								param.val = new IdentExp(Scope.LOCAL, name);
+								
 							}
         				}
     				}

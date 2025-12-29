@@ -87,8 +87,11 @@ public class BaseBuilder {
     public int endOfSymbolTable(){
         int index = 0;
         for(ICode icode: intermediateCode){
-            if(icode instanceof DataSec)
+            if(icode instanceof BssSec)
                 return index - 1;
+            else if(icode instanceof DataSec) {
+            	return index - 1;
+            }
             index++;
         }
         return -1;
@@ -117,7 +120,7 @@ public class BaseBuilder {
     public int endOfDataSection(){
         int index = 0;
         for(ICode icode: intermediateCode){
-            if(icode instanceof BssSec)
+            if(icode instanceof CodeSec)
                 return index - 1;
             index++;
         }
@@ -137,9 +140,7 @@ public class BaseBuilder {
     public int endOfBssSection(){
         int index = 0;
         for(ICode icode: intermediateCode){
-            if(icode instanceof CodeSec)
-                return index - 1;
-            else if(icode instanceof ProcSec)
+            if(icode instanceof DataSec)
                 return index - 1;
             index++;
         }

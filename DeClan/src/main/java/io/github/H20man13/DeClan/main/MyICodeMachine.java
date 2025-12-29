@@ -236,7 +236,7 @@ public class MyICodeMachine {
 
     private void interpretAssignment(Assign assign){
         String place = assign.place;
-        Object result = interpretExpression(assign.value);
+        Object result = interpretExpression(assign.value, assign);
         if(result != null){
             if(this.variableValues.entryExists(place)){
                 VariableEntry entry = this.variableValues.getEntry(place);
@@ -251,7 +251,7 @@ public class MyICodeMachine {
 
     private void interpretDefinition(Def def){
         String place = def.label;
-        Object result = interpretExpression(def.val);
+        Object result = interpretExpression(def.val, def);
         if(result != null){
             this.variableValues.addEntry(place, new VariableEntry(false, result));
         } else {
@@ -283,7 +283,7 @@ public class MyICodeMachine {
     }
 
     private void interpretIfStatement(If statIf){
-        Object valueExp = interpretBinExp(statIf.exp);
+        Object valueExp = interpretBinExp(statIf.exp, statIf);
 
         if(valueExp instanceof Boolean){
             boolean value = (Boolean)valueExp;
@@ -533,29 +533,30 @@ public class MyICodeMachine {
         }
     }
 
-    private Object interpretExpression(Exp expression){
-        if(expression instanceof BinExp) return interpretBinExp((BinExp)expression);
-        else if(expression instanceof UnExp) return interpretUnExp((UnExp)expression);
-        else if(expression instanceof IdentExp) return interpretIdentExp((IdentExp)expression);
+    private Object interpretExpression(Exp expression, ICode icode){
+        if(expression instanceof BinExp) return interpretBinExp((BinExp)expression, icode);
+        else if(expression instanceof UnExp) return interpretUnExp((UnExp)expression, icode);
+        else if(expression instanceof IdentExp) return interpretIdentExp((IdentExp)expression, icode);
+        else if(expression.isConstant()) return ConversionUtils.getValue(expression);
         else {
-            return ConversionUtils.getValue(expression);
+        	throw new ICodeVmException(icode, this.programCounter, "Error unexpected Expression Found");
         }
     }
 
-    private Object interpretIdentExp(IdentExp exp){
+    private Object interpretIdentExp(IdentExp exp, ICode icode){
         if(variableValues.entryExists(exp.ident)){
             VariableEntry entry = variableValues.getEntry(exp.ident);
             if(entry != null){
                 return entry.getValue();
             } else {
-                throw new ICodeVmException(exp, this.programCounter, "Error entry for " + exp + " is null ");
+                throw new ICodeVmException(exp, this.programCounter, "Error entry for " + exp + " is null in instruction " + icode);
             }
         } else {
-            throw new ICodeVmException(exp, this.programCounter, "Error cant find value for variable " + exp.ident);
+            throw new ICodeVmException(icode, this.programCounter, "Error cant find value for variable " + exp.ident + " in instruction " + icode);
         }
     }
 
-    private Object interpretUnExp(UnExp expression){
+    private Object interpretUnExp(UnExp expression, ICode icode){
         Object right = null;
 
         if(expression.right.isConstant()){
@@ -566,10 +567,10 @@ public class MyICodeMachine {
                 VariableEntry entry = variableValues.getEntry(expressionRight.ident);
                 right = entry.getValue();
             } else {
-                throw new ICodeVmException(expression, programCounter, "Variable on right hand side of unary expression does not exist");
+                throw new ICodeVmException(expression, programCounter, "Variable on right hand side of unary expression does not exist in instruction " + icode);
             }
         } else {
-            throw new ICodeVmException(expression, programCounter, "In expression " + expression + " cant find value on right hand side of the expression " + expression.right.toString());
+            throw new ICodeVmException(expression, programCounter, "In expression " + expression + " cant find value on right hand side of the expression " + expression.right.toString() + " inside instruction " + icode);
         }
 
         if(right != null){
@@ -577,14 +578,14 @@ public class MyICodeMachine {
                 case BNOT: return OpUtil.not(right);
                 case INOT: return OpUtil.bitwiseNot(right);
                 default: 
-                    throw new ICodeVmException(expression, programCounter, "Unknown unary operation " + expression);
+                    throw new ICodeVmException(expression, programCounter, "Unknown unary operation " + expression + "inside instruction " + icode);
             }
         } else {
-            throw new ICodeVmException(expression, programCounter, "Right hand side value inary unary operation is a Null value");
+            throw new ICodeVmException(expression, programCounter, "Right hand side value inary unary operation is a Null value in instruction " + icode);
         }
     }
 
-    private Object interpretBinExp(BinExp expression){
+    private Object interpretBinExp(BinExp expression, ICode icode){
         Object left = null;
         Object right = null;
         IdentExp leftIdent = expression.left;
@@ -592,7 +593,7 @@ public class MyICodeMachine {
             VariableEntry entry = variableValues.getEntry(leftIdent.ident);
             left = entry.getValue();
         } else {
-            throw new ICodeVmException(expression, this.programCounter, "In Expression " + expression + " cant find value on the left hand side of the expression " + expression.left.toString());
+            throw new ICodeVmException(expression, this.programCounter, "In Expression " + expression + " cant find value on the left hand side of the expression " + expression.left.toString() + " inside instruction " + icode);
         }
 
         IdentExp rightIdent = expression.right;
@@ -600,7 +601,7 @@ public class MyICodeMachine {
             VariableEntry entry = variableValues.getEntry(rightIdent.ident);
             right = entry.getValue();
         } else {
-            throw new ICodeVmException(expression, this.programCounter, "In Expression " + expression + " cant find value on the right hand side of the expression " + expression.right.toString());
+            throw new ICodeVmException(expression, this.programCounter, "In Expression " + expression + " cant find value on the right hand side of the expression " + expression.right.toString() + " inside instruction " + icode);
         }
 
         if(left != null && right != null){
@@ -623,10 +624,10 @@ public class MyICodeMachine {
                 case LAND: return OpUtil.and(left, right);
                 case LOR: return OpUtil.or(left, right);
                 default:
-                    throw new ICodeVmException(expression, this.programCounter, "Unknown Binary operation"); 
+                    throw new ICodeVmException(expression, this.programCounter, "Unknown Binary operation inside icode " + icode.toString()); 
             }
         } else {
-            throw new ICodeVmException(expression, programCounter, "");
+            throw new ICodeVmException(expression, programCounter, "left or right = null in instruction " + icode);
         }
     }
 }

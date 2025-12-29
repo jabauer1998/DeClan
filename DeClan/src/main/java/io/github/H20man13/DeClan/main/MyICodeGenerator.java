@@ -148,16 +148,16 @@ public class MyICodeGenerator{
 
     builder.buildSymbolSectionHeader();
 
-    builder.buildDataSectionHeader();
-    for(ConstDeclaration decl : program.getConstDecls()){
-      decl.accept(typeChecker);
-      generateConstantIr(Scope.GLOBAL, decl, builder);      
-    }
-
     builder.buildBssSectionHeader();
     for (VariableDeclaration decl : program.getVarDecls()) {
       decl.accept(typeChecker);
       generateVariableIr(Scope.GLOBAL, decl, builder);
+    }
+    
+    builder.buildDataSectionHeader();
+    for(ConstDeclaration decl : program.getConstDecls()){
+      decl.accept(typeChecker);
+      generateConstantIr(Scope.GLOBAL, decl, builder);      
     }
 
     loadFunctions(program.getProcDecls(), builder);
@@ -775,6 +775,7 @@ public class MyICodeGenerator{
 		} else {
 			throw new ICodeGeneratorException(assignment, "Error no variable was found with attributes selected");
 		}
+		
 	    Expression exp = assignment.getVariableValue();
 	    IdentExp value = generateExpressionIr(exp, builder);
 	    TypeCheckerQualities qual = exp.acceptResult(typeChecker);
