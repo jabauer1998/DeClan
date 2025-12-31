@@ -117,4 +117,21 @@ public class ArmDescriptorState implements Copyable<ArmDescriptorState> {
 	public List<Tuple<CopyStr, ICode.Type>> getSpill() {
 		return this.spill;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Register Descriptor: \n");
+		sb.append("---------------------\n");
+		sb.append(this.regDesc.toString());
+		sb.append("---------------------\n");
+		sb.append("AddressDescriptor: \n");
+		sb.append("---------------------\n");
+		sb.append(this.addrDesc.toString());
+		sb.append("---------------------\n");
+		sb.append("Spills: \n");
+		sb.append("---------------------\n");
+		sb.append(this.spill.toString());
+		return sb.toString();
+	}
 }

@@ -30,8 +30,9 @@ public class ArmAddressElement implements ArmElement {
 		return Objects.hash(label, type);
 	}
 	
+	@Override
 	public String toString(){
-		return label;
+		return "(" + label + ", " + type + ")";
 	}
 
 	@Override

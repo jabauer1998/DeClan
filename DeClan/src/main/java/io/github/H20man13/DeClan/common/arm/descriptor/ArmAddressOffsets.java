@@ -76,6 +76,20 @@ public class ArmAddressOffsets{
 		}
 		return false;
 	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		for(int i = this.frameStack.size() - 1; i >= 0; i--) {
+			OffsetFrame frame = this.frameStack.get(i);
+			sb.append("----------------------------\n");
+			sb.append(frame.toString());
+			sb.append("\n");
+			sb.append("----------------------------\n");
+		}
+		
+		return sb.toString();
+	}
 
 	public void popFrame() {
 		this.frameStack.pop();

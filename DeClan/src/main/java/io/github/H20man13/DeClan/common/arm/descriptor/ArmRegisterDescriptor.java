@@ -117,4 +117,18 @@ public class ArmRegisterDescriptor implements Iterable<ArmRegisterElement>{
 		}
 		throw new RuntimeException();
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		for(ArmRegisterElement elem: this.descriptorMap.keySet()) {
+			sb.append(elem.toString());
+			sb.append("->");
+			sb.append(this.descriptorMap.get(elem).toString());
+			sb.append("\n");
+		}
+		
+		return sb.toString();
+	}
 }

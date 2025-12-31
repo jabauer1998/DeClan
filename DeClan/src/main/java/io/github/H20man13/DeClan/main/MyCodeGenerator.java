@@ -59,6 +59,7 @@ import io.github.H20man13.DeClan.common.icode.section.BssSec;
 import io.github.H20man13.DeClan.common.icode.section.CodeSec;
 import io.github.H20man13.DeClan.common.icode.section.DataSec;
 import io.github.H20man13.DeClan.common.icode.section.ProcSec;
+import io.github.H20man13.DeClan.common.icode.section.SymSec;
 import io.github.H20man13.DeClan.common.icode.symbols.SymEntry;
 import io.github.H20man13.DeClan.common.icode.symbols.VarSymEntry;
 
@@ -79,6 +80,7 @@ public class MyCodeGenerator {
 		this.offset = new ArmAddressOffsets();
 		this.cGen = new ArmCodeGenerator(outputFile);
 		this.rGen = new RegisterAllocatorAnalysis(opt, cfg);
+		this.rGen.run();
 		this.iGen = new IrRegisterGenerator();
 		String place;
 		do {
@@ -119,7 +121,7 @@ public class MyCodeGenerator {
 	private void skipSymbolTable() {
 		i = 0;
 		ICode instruction = intermediateCode.getInstruction(i);
-		while(!(instruction instanceof DataSec)) {
+		while(!(instruction instanceof BssSec)) {
 			i++;
 			instruction = intermediateCode.getInstruction(i);
 		}
@@ -758,7 +760,7 @@ public class MyCodeGenerator {
 				cGen.addInstruction("STRB " + temp + ", [R13, -" + offset.findOffset(returnPlacement.label, returnPlacement.type) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp, returnPlacement.type) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset("returnAddr", ICode.Type.INT) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -805,7 +807,7 @@ public class MyCodeGenerator {
 				cGen.addInstruction("STRB " + temp + ", [R13, -" + offset.findOffset(returnPlacement.place, returnPlacement.getType()) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp, returnPlacement.getType()) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset("returnAddr", ICode.Type.INT) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -840,7 +842,7 @@ public class MyCodeGenerator {
 						int offset1 = offset.findOffset(sourceDest.label, ICode.Type.BOOL);
 						cGen.addInstruction("STRB " + oldReg + ", [R13, #-" + offset1 + "]");
 					} else {
-						int offset1 = offset.findOffset(sourceDest.label, ICode.Type.INT);
+						int offset1 = offset.findOffset(sourceDest.label, sourceDest.type);
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
@@ -899,7 +901,7 @@ public class MyCodeGenerator {
 				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.place, returnPlacement.getType()) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp, ICode.Type.INT) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset("returnAddr", ICode.Type.INT) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -947,7 +949,7 @@ public class MyCodeGenerator {
 				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.label, returnPlacement.type) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp, ICode.Type.INT) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset("returnAddr", ICode.Type.INT) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -994,7 +996,7 @@ public class MyCodeGenerator {
 				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.place, returnPlacement.getType()) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp, ICode.Type.INT) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset("returnAddr", ICode.Type.INT) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -1041,7 +1043,7 @@ public class MyCodeGenerator {
 				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.label, returnPlacement.type) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp, ICode.Type.INT) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset("returnAddr", ICode.Type.INT) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -1089,7 +1091,7 @@ public class MyCodeGenerator {
 				cGen.addInstruction("STR " + temp + ", [R13, -" + offset.findOffset(returnPlacement.place, returnPlacement.getType()) + ']');
 
 				// Now to load the Return address from the Stack back into the Link Register R14
-				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset(temp, ICode.Type.INT) +"]");
+				cGen.addInstruction("LDR R14, [R13, #-"+ offset.findOffset("returnAddr", ICode.Type.INT) +"]");
 				
 				cGen.addInstruction("SUB R13, R13, #" + totalStackFrameLength);
 				offset.popFrame();
@@ -3590,6 +3592,7 @@ public class MyCodeGenerator {
 				ICode icode = intermediateCode.getInstruction(i);
 				ProcLabel labelICode = (ProcLabel) icode;
 				
+				//Allocate the Params and return addresses and values on the stack
 				offset.pushFrame();
 				
 				offset.pushAddress("returnAddr", ICode.Type.INT);
@@ -3605,6 +3608,8 @@ public class MyCodeGenerator {
 					offset.pushAddress(entry.icodePlace, entry.codeType);
 					paramNum++;
 				}
+				
+				//Now allocate the Local Defs on a new stack frame
 				
 				int toAllocate = 0;
 				offset.pushFrame();
@@ -3641,8 +3646,8 @@ public class MyCodeGenerator {
 		});
 	}
 	
-	private void initDataSectionHeader() {
-		codeGenFunctions.put(Pattern.dataSectionHeader, new Callable<Void>() {
+	private void initBssSectionHeader() {
+		codeGenFunctions.put(Pattern.bssSectionHeader, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
 				int x = i + 1;
@@ -3672,7 +3677,7 @@ public class MyCodeGenerator {
 						}
 					}
 					x++;
-				} while (!(instruction instanceof BssSec));
+				} while (!(instruction instanceof DataSec));
 				
 				cGen.addInstruction("ADD R13, R13, #" + toAllocate);
 				
@@ -3681,10 +3686,75 @@ public class MyCodeGenerator {
 		});
 	}
 	
-	private void initBssSectionHeader() {
-		codeGenFunctions.put(Pattern.bssSectionHeader, new Callable<Void>() {
+	private void initDataSectionHeader() {
+		codeGenFunctions.put(Pattern.dataSectionHeader, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
+				//Pop the previous Stack (The BSS Stack)
+				int x = i - 1;
+				ICode instruction = null;
+				int localStack = 0;
+				
+				do {
+					instruction = intermediateCode.getInstruction(x);
+					if(instruction instanceof Def) {
+						Def definition = (Def)instruction;
+						if(definition.scope == ICode.Scope.LOCAL) {
+							if(definition.type == ICode.Type.BOOL)
+								localStack += 1;
+							else
+								localStack += 4;
+						}
+					}
+					x--;
+				} while(!(instruction instanceof BssSec));
+				
+				cGen.addInstruction("SUB R13, R13, #" + localStack);
+				
+				offset.popFrame();
+				
+				//Now add the new Stack
+				
+				x = i + 1;
+				int toAllocate = 0;
+				
+				offset.pushFrame();
+				
+				do {
+					instruction = intermediateCode.getInstruction(x);
+					if (instruction instanceof Def) {
+						Def definition = (Def) instruction;
+						if (definition.scope == ICode.Scope.LOCAL) {
+							if (definition.type == ICode.Type.BOOL) {
+								toAllocate += 1;
+								offset.pushAddress(definition.label, ICode.Type.BOOL);
+							} else if(definition.type == ICode.Type.STRING) {
+								toAllocate += 4;
+								offset.pushAddress(definition.label, ICode.Type.STRING);
+							} else if(definition.type == ICode.Type.REAL){
+								toAllocate += 4;
+								offset.pushAddress(definition.label, ICode.Type.REAL);
+							} else if(definition.type == ICode.Type.INT){
+								toAllocate += 4;
+								offset.pushAddress(definition.label, ICode.Type.INT);
+							}
+						}
+					}
+					x++;
+				} while (!(instruction instanceof CodeSec));
+				
+				cGen.addInstruction("ADD R13, R13, #" + localStack);
+				
+				return null;
+			}
+		});
+	}
+	
+	private void initCodeSectionHeader() {
+		codeGenFunctions.put(Pattern.codeSectionHeader, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				//Deallocate the Data Stack
 				int x = i - 1;
 				ICode instruction = null;
 				int localStack = 0;
@@ -3706,18 +3776,11 @@ public class MyCodeGenerator {
 				cGen.addInstruction("SUB R13, R13, #" + localStack);
 				offset.popFrame();
 				
-				return null;
-			}
-		});
-	}
-	
-	private void initCodeSectionHeader() {
-		codeGenFunctions.put(Pattern.codeSectionHeader, new Callable<Void>() {
-			@Override
-			public Void call() throws Exception {
-				int x = i + 1;
+				//Now allocate the new Stack
+				
+				x = i + 1;
 				int toAllocate = 0;
-				ICode instruction = null;
+				instruction = null;
 				
 				offset.pushFrame();
 				
@@ -3755,6 +3818,7 @@ public class MyCodeGenerator {
 		codeGenFunctions.put(Pattern.end0, new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
+				//Deallocate the old stack
 				int x = i - 1;
 				ICode instruction = null;
 				int localStack = 0;
@@ -3901,6 +3965,8 @@ public class MyCodeGenerator {
 				} while(!(instruction instanceof ProcLabel));
 				
 				cGen.addInstruction("SUB R13, R13, #" + localStack);
+				offset.popFrame();
+				
 				cGen.addInstruction("MOV R15, R14");
 				offset.popFrame();
 				

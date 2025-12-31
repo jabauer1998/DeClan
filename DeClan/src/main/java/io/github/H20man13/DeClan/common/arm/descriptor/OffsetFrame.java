@@ -218,4 +218,23 @@ public class OffsetFrame {
 		ArmAddressElements myActualElems = new ArmAddressElements(myElems);
 		return containsOffsetForAllElems(myActualElems);
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Frame offset=");
+		sb.append(offset);
+		sb.append("\n");
+		for(int i = elementStack.size() - 1; i >= 0; i--){
+			sb.append("Elem " + elementStack.get(i));
+			sb.append(" at offset ");
+			sb.append(offSet.get(i));
+			sb.append(" with size " + size.get(i));
+			sb.append("\n");
+			if(i > 0) {
+				sb.append("|\nV\n");
+			}
+		}
+		return sb.toString();
+	}
 }

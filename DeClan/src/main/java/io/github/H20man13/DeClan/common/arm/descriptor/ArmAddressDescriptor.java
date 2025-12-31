@@ -97,4 +97,16 @@ public class ArmAddressDescriptor implements Copyable<ArmAddressDescriptor> {
 		}
 		return new ArmAddressDescriptor(newMap);
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(ArmAddressElement elem: this.discriptorMap.keySet()) {
+			sb.append(elem.toString());
+			sb.append("->");
+			sb.append(this.discriptorMap.get(elem).toString());
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
 }
