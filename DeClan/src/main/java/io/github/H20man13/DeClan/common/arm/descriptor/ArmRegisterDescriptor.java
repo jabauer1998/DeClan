@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.interfere.Color;
@@ -116,6 +117,27 @@ public class ArmRegisterDescriptor implements Iterable<ArmRegisterElement>{
 				return elem;
 		}
 		throw new RuntimeException();
+	}
+	
+	public int hashCode() {
+		return Objects.hash(this.descriptorMap, this.regNumberToIdent);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof ArmRegisterDescriptor) {
+			ArmRegisterDescriptor other = (ArmRegisterDescriptor)obj;
+			
+			if((this.descriptorMap != null && other.descriptorMap == null)
+			||(this.descriptorMap == null && other.descriptorMap != null))
+				return false;
+			
+			if(this.descriptorMap.size() != other.descriptorMap.size())
+				return false;
+			
+			return this.descriptorMap.equals(other.descriptorMap);
+		}
+		return false;
 	}
 	
 	@Override

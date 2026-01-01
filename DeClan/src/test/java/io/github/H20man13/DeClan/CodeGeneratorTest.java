@@ -53,7 +53,11 @@ public class CodeGeneratorTest {
         parser.close();
 
         MyOptimizer optimizer = new MyOptimizer(null, program);
-        optimizer.runLiveVariableAnalysis();
+        optimizer.performCommonSubExpressionElimination();
+        optimizer.performConstantPropogation();
+        optimizer.performDeadCodeElimination();
+        optimizer.performPartialRedundancyElimination();
+        optimizer.performMoveConstants();
 
         MyCodeGenerator codeGenerator = new MyCodeGenerator(expectedResultFile, program, optimizer, errLog, null); 
         codeGenerator.codeGen();

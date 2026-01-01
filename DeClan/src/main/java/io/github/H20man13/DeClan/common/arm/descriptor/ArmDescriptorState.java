@@ -3,6 +3,7 @@ package io.github.H20man13.DeClan.common.arm.descriptor;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import io.github.H20man13.DeClan.common.CopyStr;
@@ -116,6 +117,20 @@ public class ArmDescriptorState implements Copyable<ArmDescriptorState> {
 
 	public List<Tuple<CopyStr, ICode.Type>> getSpill() {
 		return this.spill;
+	}
+	
+	public int hashCode() {
+		return Objects.hash(this.spill, regDesc, addrDesc);
+	}
+	
+	public boolean equals(Object obj){
+		if(obj instanceof ArmDescriptorState) {
+			ArmDescriptorState other = (ArmDescriptorState)obj;
+			if(this.spill.equals(other.spill))
+				if(this.regDesc.equals(other.regDesc))
+					return this.addrDesc.equals(other.addrDesc);
+		}
+		return false;
 	}
 	
 	@Override

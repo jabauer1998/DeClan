@@ -23,6 +23,26 @@ public class ArmAddressDescriptor implements Copyable<ArmAddressDescriptor> {
 		return new HashSet<ArmElement>();
 	}
 	
+	public int hashCode() {
+		return this.discriptorMap.hashCode();
+	}
+	
+	public boolean equals(Object obj) {
+		if(obj instanceof ArmAddressDescriptor) {
+			ArmAddressDescriptor other = (ArmAddressDescriptor)obj;
+			
+			if((this.discriptorMap == null && other.discriptorMap != null)
+			|| (this.discriptorMap != null && other.discriptorMap == null))
+				return false;
+				
+			if(this.discriptorMap.size() != other.discriptorMap.size())
+				return false;
+			
+			return this.discriptorMap.equals(other.discriptorMap);
+		}
+		return false;
+	}
+	
 	public Set<ArmRegisterElement> getRegisters(ArmAddressElement elem){
 		HashSet<ArmRegisterElement> regs = new HashSet<ArmRegisterElement>();
 		if(discriptorMap.containsKey(elem))

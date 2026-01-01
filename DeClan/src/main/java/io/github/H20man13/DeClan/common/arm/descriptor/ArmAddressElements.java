@@ -39,6 +39,11 @@ public class ArmAddressElements implements Iterable<ArmAddressElement> {
 	}
 	
 	@Override
+	public int hashCode() {
+		return elems.hashCode();
+	}
+	
+	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof ArmAddressElements) {
 			ArmAddressElements myElems = (ArmAddressElements)obj;

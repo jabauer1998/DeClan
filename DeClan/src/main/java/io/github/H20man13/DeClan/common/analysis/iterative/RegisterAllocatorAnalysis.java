@@ -45,8 +45,8 @@ CustomMeet<ArmDescriptorState> {
 	
 	public RegisterAllocatorAnalysis(MyOptimizer optimizer, Config cfg){
 		super(genFlowGraph(optimizer), Direction.FORWARDS, new ArmDescriptorState(), false, cfg, Utils.getClassType(HashMap.class));
+		optimizer.runLiveVariableAnalysis();
 		this.anal = optimizer.getLiveVariableAnalysis();
-		this.anal.run();
 	}
 	
 	private static FlowGraph genFlowGraph(MyOptimizer opt) {
