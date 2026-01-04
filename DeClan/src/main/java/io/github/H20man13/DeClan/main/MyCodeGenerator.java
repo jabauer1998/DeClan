@@ -737,6 +737,8 @@ public class MyCodeGenerator {
 				ArmRegisterResult pre = rGen.getFilteredInputSet(procICode);
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
+				
+				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
 				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
@@ -752,6 +754,8 @@ public class MyCodeGenerator {
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
+				
+				cGen.addInstruction("BL " + procICode.pname);
 
 				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
 				ArmRegisterResult preRes2 = rGen.getFilteredInputSet(returnPlacement);
@@ -784,6 +788,7 @@ public class MyCodeGenerator {
 				ArmRegisterResult pre = rGen.getFilteredInputSet(procICode);
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
+				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
 				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
@@ -799,6 +804,8 @@ public class MyCodeGenerator {
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
+				
+				cGen.addInstruction("BL " + procICode.pname);
 
 				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
 				ArmRegisterResult pre2 = rGen.getFilteredInputSet(returnPlacement);
@@ -831,6 +838,7 @@ public class MyCodeGenerator {
 				ArmRegisterResult pre1 = rGen.getFilteredInputSet(procICode);
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
+				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
 				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
@@ -846,6 +854,8 @@ public class MyCodeGenerator {
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
+				
+				cGen.addInstruction("BL " + procICode.pname);
 
 				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
 				ArmRegisterResult pre2 = rGen.getFilteredInputSet(returnPlacement);
@@ -877,6 +887,7 @@ public class MyCodeGenerator {
 				ArmRegisterResult res1 = rGen.getFilteredOutputSet(procICode);
 				ArmRegisterResult pre1 = rGen.getFilteredInputSet(procICode);
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
+				
 				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
 				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
@@ -926,6 +937,7 @@ public class MyCodeGenerator {
 				
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
+				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
 				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
@@ -941,6 +953,8 @@ public class MyCodeGenerator {
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
+				
+				cGen.addInstruction("BL " + procICode.pname);
 
 				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
 				ArmRegisterResult pre2 = rGen.getFilteredInputSet(returnPlacement);
@@ -973,6 +987,7 @@ public class MyCodeGenerator {
 				ArmRegisterResult pre1 = rGen.getFilteredInputSet(procICode);
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
+				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
 				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
@@ -988,6 +1003,8 @@ public class MyCodeGenerator {
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
+				
+				cGen.addInstruction("BL " + procICode.pname);
 
 				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
 				ArmRegisterResult pre2 = rGen.getFilteredInputSet(returnPlacement);
@@ -1020,6 +1037,7 @@ public class MyCodeGenerator {
 				ArmRegisterResult pre1 = rGen.getFilteredInputSet(procICode);
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
+				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
 				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
@@ -1035,6 +1053,8 @@ public class MyCodeGenerator {
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
+				
+				cGen.addInstruction("BL " + procICode.pname);
 
 				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
 				ArmRegisterResult pre2 = rGen.getFilteredInputSet(returnPlacement);
@@ -1067,6 +1087,7 @@ public class MyCodeGenerator {
 				ArmRegisterResult pre1 = rGen.getFilteredInputSet(procICode);
 				int totalStackFrameLength = getStackFrameLength(procICode, returnPlacement);
 				
+				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
 				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
@@ -1082,6 +1103,8 @@ public class MyCodeGenerator {
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
+				
+				cGen.addInstruction("BL " + procICode.pname);
 
 				ArmRegisterResult res2 = rGen.getFilteredOutputSet(returnPlacement);
 				ArmRegisterResult pre2 = rGen.getFilteredInputSet(returnPlacement);
@@ -1106,7 +1129,8 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredOutputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -1114,9 +1138,10 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 				
-				String destReg = regs.getRegister(assignICode.label);
-				String leftReg = regs.getRegister(leftIdent.ident);
-				String rightReg = regs.getRegister(rightIdent.ident);
+				
+				String destReg = res.getRegister(assignICode.label);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, pre, res);
 
 				cGen.addInstruction("ADD " + destReg + ", " + leftReg + ", " + rightReg);
 
@@ -1144,7 +1169,8 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -1152,9 +1178,9 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 				
-				String destReg = regs.getRegister(assignICode.place);
-				String leftReg = regs.getRegister(leftIdent.ident);
-				String rightReg = regs.getRegister(rightIdent.ident);
+				String destReg = res.getRegister(assignICode.place);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, pre, res);
 
 				cGen.addInstruction("ADD " + destReg + ", " + leftReg + ", " + rightReg);
 
@@ -1182,7 +1208,8 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredInputSet(icode);
 				
 				Def assignICode = (Def) icode;
 				BinExp assignExp = (BinExp) assignICode.val;
@@ -1190,9 +1217,9 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 				
-				String destReg = regs.getRegister(assignICode.label);
-				String leftReg = regs.getRegister(leftIdent.ident);
-				String rightReg = regs.getRegister(rightIdent.ident);
+				String destReg = res.getRegister(assignICode.label);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, pre, res);
 
 				cGen.addInstruction("SUB " + destReg + ", " + leftReg + ", " + rightReg);
 
@@ -1221,7 +1248,8 @@ public class MyCodeGenerator {
 			public Void call() throws Exception {
 				ICode icode = intermediateCode.getInstruction(i);
 				
-				ArmRegisterResult regs = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
+				ArmRegisterResult pre = rGen.getFilteredOutputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
 				BinExp assignExp = (BinExp) assignICode.value;
@@ -1229,9 +1257,9 @@ public class MyCodeGenerator {
 				IdentExp leftIdent = (IdentExp) assignExp.left;
 				IdentExp rightIdent = (IdentExp) assignExp.right;
 				
-				String destReg = regs.getRegister(assignICode.place);
-				String leftReg = regs.getRegister(leftIdent.ident);
-				String rightReg = regs.getRegister(rightIdent.ident);
+				String destReg = res.getRegister(assignICode.place);
+				String leftReg = loadVariableToReg(leftIdent, ICode.Type.INT, pre, res);
+				String rightReg = loadVariableToReg(rightIdent, ICode.Type.INT, pre, res);
 
 				cGen.addInstruction("ADD " + destReg + ", " + leftReg + ", " + rightReg);
 
@@ -2641,7 +2669,7 @@ public class MyCodeGenerator {
 				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
 				
 				Assign assignICode = (Assign)icode;
-				BoolExp assignExp = (BoolExp) assignICode.value;
+				BoolExp assignExp = (BoolExp)assignICode.value;
 
 				
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
@@ -3639,6 +3667,7 @@ public class MyCodeGenerator {
 					x++;
 				} while (!(instruction instanceof Return));
 				
+				cGen.setLabel(labelICode.label);
 				cGen.addInstruction("ADD R13, R13, #" + toAllocate);
 				
 				return null;
@@ -3989,6 +4018,7 @@ public class MyCodeGenerator {
 				
 				int totalStackFrameLength = getStackFrameLength(procICode);
 				
+				
 				cGen.addInstruction("ADD R13, R13, #" + totalStackFrameLength);
 				cGen.addInstruction("STR R14, [R13, #-" + offset.findOffset("returnAddr", ICode.Type.INT) + "]");
 
@@ -4004,6 +4034,8 @@ public class MyCodeGenerator {
 						cGen.addInstruction("STR " + oldReg + ", [R13, #-" + offset1 + "]");
 					}
 				}
+				
+				cGen.addInstruction("BL " + procICode.pname);
 
 				// Now to load the Return address from the Stack back into the Link Register R14
 				int off = offset.findOffset("returnAddr", ICode.Type.INT);

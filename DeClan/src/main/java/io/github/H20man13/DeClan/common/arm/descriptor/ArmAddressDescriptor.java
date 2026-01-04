@@ -5,8 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.H20man13.DeClan.common.CopyStr;
 import io.github.H20man13.DeClan.common.Copyable;
+import io.github.H20man13.DeClan.common.Tuple;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.ICode.Type;
 
 public class ArmAddressDescriptor implements Copyable<ArmAddressDescriptor> {
 	private Map<ArmAddressElement, Set<ArmElement>> discriptorMap;
@@ -17,6 +20,10 @@ public class ArmAddressDescriptor implements Copyable<ArmAddressDescriptor> {
 	
 	private ArmAddressDescriptor(Map<ArmAddressElement, Set<ArmElement>> myMap){
 		this.discriptorMap = myMap;
+	}
+	
+	public Set<ArmAddressElement> getAddressKeys() {
+		return discriptorMap.keySet();
 	}
 	
 	private Set<ArmElement> newSet() {
@@ -128,5 +135,21 @@ public class ArmAddressDescriptor implements Copyable<ArmAddressDescriptor> {
 			sb.append("\n");
 		}
 		return sb.toString();
+	}
+
+	public Set<ArmAddressElement> getAddresses(ArmAddressElement armAddressElement) {
+		Set<ArmAddressElement> mySet = new HashSet<ArmAddressElement>();
+		for(ArmElement elem: this.discriptorMap.get(armAddressElement))
+			if(elem instanceof ArmAddressElement)
+				mySet.add((ArmAddressElement)elem);
+		return mySet;
+	}
+
+	public void addAddressPair(ArmAddressElement armAddressElement, ArmAddressElement armAddressElement2) {
+		if(!this.discriptorMap.containsKey(armAddressElement))
+			this.discriptorMap.put(armAddressElement, newSet());
+			
+		Set<ArmElement> elems = this.discriptorMap.get(armAddressElement);
+		elems.add(armAddressElement2);
 	}
 }

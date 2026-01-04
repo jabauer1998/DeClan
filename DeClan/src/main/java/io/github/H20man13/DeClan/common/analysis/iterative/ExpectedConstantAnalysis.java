@@ -38,7 +38,7 @@ private Map<ICode, HashSet<Tuple<ICode, Tuple<CopyStr, NullableExp>>>> map;
 						hash.add(new Tuple<>(def, new Tuple<CopyStr, NullableExp>(new CopyStr(def.label), def.val)));
 				} else if(instr instanceof Assign) {
 					Assign ass = (Assign)instr;
-					if(ass.getScope() != Scope.GLOBAL && ass.isConstant()) {
+					if(ass.isConstant()) {
 						hash.add(new Tuple<>(ass, new Tuple<>(new CopyStr(ass.place), ass.value)));
 					}
 				} else  if(instr instanceof Call) {

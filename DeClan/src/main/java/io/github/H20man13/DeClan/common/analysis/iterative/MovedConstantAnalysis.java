@@ -46,7 +46,7 @@ public class MovedConstantAnalysis extends InstructionAnalysis<HashMap<ICode, Ha
 							toRemove.add(def);
 					} else if(instr instanceof Assign) {
 						Assign ass = (Assign)instr;
-						if(ass.getScope() != Scope.GLOBAL && ass.isConstant())
+						if(ass.isConstant())
 							toRemove.add(ass);
 					} else if(instr instanceof Call) {
 						Call call = (Call)instr;

@@ -1515,7 +1515,7 @@ public class MyOptimizer {
     				}
     			} else if(instr instanceof Assign){
     				Assign def = (Assign)instr;
-    				if((def.getScope() != ICode.Scope.GLOBAL) && def.isConstant()) {
+    				if(def.isConstant()) {
     					HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>> options = this.movedConstAnal.getInputSet(instr);
     					boolean found = false;
     					for(Tuple<ICode, Tuple<CopyStr, CopyStr>> tup: options) {

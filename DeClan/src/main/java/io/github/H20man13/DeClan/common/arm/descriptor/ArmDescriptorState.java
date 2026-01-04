@@ -149,4 +149,30 @@ public class ArmDescriptorState implements Copyable<ArmDescriptorState> {
 		sb.append(this.spill.toString());
 		return sb.toString();
 	}
+
+	public void addAddress(String label, Type type) {
+		ArmAddressElement elem = new ArmAddressElement(label, type);
+		this.addrDesc.addAddress(elem, elem);
+	}
+
+	public Set<Tuple<CopyStr, ICode.Type>> getAllAdresses() {
+		Set<ArmAddressElement> elems = this.addrDesc.getAddressKeys();
+		HashSet<Tuple<CopyStr, ICode.Type>> ret = new HashSet<>();
+		for(ArmAddressElement elem: elems) {
+			ret.add(elem.toTuple());
+		}
+		return ret;
+	}
+
+	public Set<Tuple<CopyStr, Type>> getAddressesWithPlace(String string, Type dest) {
+		Set<ArmAddressElement> elems = this.addrDesc.getAddresses(new ArmAddressElement(string, dest));
+		HashSet<Tuple<CopyStr, Type>> newSet = new HashSet<Tuple<CopyStr, Type>>();
+		for(ArmAddressElement elem : elems)
+			newSet.add(elem.toTuple());
+		return newSet;
+	}
+
+	public void addAddressPair(String string, Type dest, String string2, Type dest2) {
+		this.addrDesc.addAddressPair(new ArmAddressElement(string, dest), new ArmAddressElement(string2, dest2));
+	}
 }

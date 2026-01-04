@@ -33,4 +33,8 @@ public class ArmRegisterResult {
 		}
 		return false;
 	}
+	
+	public String toString() {
+		return this.tupSet.toString();
+	}
 }

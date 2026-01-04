@@ -96,8 +96,14 @@ public class ArmRegisterDescriptor implements Iterable<ArmRegisterElement>{
 
 	public ArmRegisterDescriptor copy() {
 		Map<ArmRegisterElement, Set<ArmAddressElement>> newMap = new HashMap<ArmRegisterElement, Set<ArmAddressElement>>();
-		for(ArmRegisterElement key : this.descriptorMap.keySet())
-			newMap.put(key, this.descriptorMap.get(key));
+		for(ArmRegisterElement key : this.descriptorMap.keySet()) {
+			Set<ArmAddressElement> elems = this.descriptorMap.get(key);
+			Set<ArmAddressElement> copy = new HashSet<ArmAddressElement>();
+			for(ArmAddressElement elem: elems) {
+				copy.add((ArmAddressElement)elem.copy());
+			}
+			newMap.put(key, copy);
+		}
 		return new ArmRegisterDescriptor(newMap, this.regNumberToIdent);
 	}
 

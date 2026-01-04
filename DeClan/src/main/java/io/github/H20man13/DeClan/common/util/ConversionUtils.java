@@ -289,7 +289,7 @@ public class ConversionUtils {
     
     public static boolean setContainsName(Set<Tuple<CopyStr, ICode.Type>> set, String name) {
     	for(Tuple<CopyStr, ICode.Type> elem: set) {
-    		if(elem.source.equals(name))
+    		if(elem.source.equals(new CopyStr(name)))
     			return true;
     	}
     	return false;
