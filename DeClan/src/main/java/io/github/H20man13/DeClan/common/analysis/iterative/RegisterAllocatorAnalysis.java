@@ -575,18 +575,69 @@ CustomMeet<ArmDescriptorState> {
 	@Override
 	public ArmDescriptorState performMeet(List<ArmDescriptorState> li) {
 		ArmDescriptorState state = new ArmDescriptorState();
+		Map<String, HashSet<Set<Tuple<CopyStr, ICode.Type>>>> data = new HashMap<>();
+		for(String myReg : state.getCanditateRegs()) {
+			Set<Tuple<CopyStr, ICode.Type>> myData = state.getCandidateAddresses(myReg);
+			if(!data.containsKey(myReg))
+				data.put(myReg, new HashSet<>());
+			
+			HashSet<Set<Tuple<CopyStr, ICode.Type>>> sets = data.get(myReg);
+			boolean setFound = false;
+			for(Set<Tuple<CopyStr, ICode.Type>> set: sets){
+				if(set.containsAll(myData)) {
+					setFound = true;
+				} else if(myData.containsAll(set)){
+					set.addAll(myData);
+					setFound = true;
+				}
+			}
+			
+			if(!setFound) {
+				sets.add(myData);
+			}
+		}
 		
-		for(ArmDescriptorState myState : li){
-			for(String myReg : myState.getCanditateRegs()) {
-				Set<Tuple<CopyStr, ICode.Type>> armAddresses = myState.getCandidateAddresses(myReg);
-				Set<Tuple<CopyStr, ICode.Type>> curAddresses = state.getCandidateAddresses(myReg);
-				if(curAddresses.isEmpty())
-					for(Tuple<CopyStr, ICode.Type> addr: armAddresses)
-						state.addRegValuePair(addr.source.toString(), addr.dest, myReg);
-				else if(!curAddresses.equals(armAddresses)) {
-					for(Tuple<CopyStr, ICode.Type> addr: armAddresses){
-						state.addSpill(addr.source.toString(), addr.dest);
+		HashSet<String> freeRegs = new HashSet<String>();
+		for(String myReg: state.getCanditateRegs()) {
+			HashSet<Set<Tuple<CopyStr, ICode.Type>>> newSet = data.get(myReg);
+			if(newSet.isEmpty()) {
+				freeRegs.add(myReg);
+			}
+		}
+		
+		for(String myReg: state.getCanditateRegs()) {
+			HashSet<Set<Tuple<CopyStr, ICode.Type>>> newSet = data.get(myReg);
+			if(newSet.size() == 1) {
+				for(Set<Tuple<CopyStr, ICode.Type>> mySet: newSet){
+					for(Tuple<CopyStr, ICode.Type> tup: mySet){
+						state.addRegValuePair(myReg, tup.dest, tup.source.toString());
 					}
+					break;
+				}
+			} else if(newSet.size() > 1) {
+				int count = 0;
+				for(Set<Tuple<CopyStr, ICode.Type>> mySet: newSet){
+					if(count == 0) {
+						for(Tuple<CopyStr, ICode.Type> tup: mySet){
+							state.addRegValuePair(myReg, tup.dest, tup.source.toString());
+						}
+					} else if(!freeRegs.isEmpty()) {
+						String Teg = null;
+						for(String reg: freeRegs) {
+							Teg = reg;
+							break;
+						}
+						freeRegs.remove(Teg);
+						
+						for(Tuple<CopyStr, ICode.Type> tup: mySet) {
+							state.addRegValuePair(Teg, tup.dest, tup.source.toString());
+						}
+					} else {
+						for(Tuple<CopyStr, ICode.Type> tup: mySet) {
+							state.addSpill(tup.source.toString(), tup.dest);
+						}
+					}
+					count++;
 				}
 			}
 		}
