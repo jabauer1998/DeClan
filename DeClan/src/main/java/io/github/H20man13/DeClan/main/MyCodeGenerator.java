@@ -3674,6 +3674,25 @@ public class MyCodeGenerator {
 								offset.pushAddress(definition.label, ICode.Type.INT);
 							}
 						}
+					} else if (instruction instanceof Inline) {
+						Inline inline = (Inline) instruction;
+						for (InlineParam param : inline.params) {
+							if (param.containsAllQual(InlineParam.IS_DEFINITION)) {
+								if (param.type == ICode.Type.BOOL) {
+									toAllocate += 1;
+									offset.pushAddress(param.name.ident, ICode.Type.BOOL);
+								} else if (param.type == ICode.Type.STRING) {
+									toAllocate += 4;
+									offset.pushAddress(param.name.ident, ICode.Type.STRING);
+								} else if (param.type == ICode.Type.INT) {
+									toAllocate += 4;
+									offset.pushAddress(param.name.ident, ICode.Type.INT);
+								} else {
+									toAllocate += 4;
+									offset.pushAddress(param.name.ident, ICode.Type.REAL);
+								}
+							}
+						}
 					}
 					x++;
 				} while (!(instruction instanceof Return));
@@ -3779,6 +3798,25 @@ public class MyCodeGenerator {
 								offset.pushAddress(definition.label, ICode.Type.INT);
 							}
 						}
+					} else if (instruction instanceof Inline) {
+						Inline inline = (Inline) instruction;
+						for (InlineParam param : inline.params) {
+							if (param.containsAllQual(InlineParam.IS_DEFINITION)) {
+								if (param.type == ICode.Type.BOOL) {
+									toAllocate += 1;
+									offset.pushAddress(param.name.ident, ICode.Type.BOOL);
+								} else if (param.type == ICode.Type.STRING) {
+									toAllocate += 4;
+									offset.pushAddress(param.name.ident, ICode.Type.STRING);
+								} else if (param.type == ICode.Type.INT) {
+									toAllocate += 4;
+									offset.pushAddress(param.name.ident, ICode.Type.INT);
+								} else {
+									toAllocate += 4;
+									offset.pushAddress(param.name.ident, ICode.Type.REAL);
+								}
+							}
+						}
 					}
 					x++;
 				} while (!(instruction instanceof CodeSec));
@@ -3843,6 +3881,25 @@ public class MyCodeGenerator {
 								offset.pushAddress(definition.label, ICode.Type.INT);
 							}
 						}
+					} else if (instruction instanceof Inline) {
+						Inline inline = (Inline) instruction;
+						for (InlineParam param : inline.params) {
+							if (param.containsAllQual(InlineParam.IS_DEFINITION)) {
+								if (param.type == ICode.Type.BOOL) {
+									toAllocate += 1;
+									offset.pushAddress(param.name.ident, ICode.Type.BOOL);
+								} else if (param.type == ICode.Type.STRING) {
+									toAllocate += 4;
+									offset.pushAddress(param.name.ident, ICode.Type.STRING);
+								} else if (param.type == ICode.Type.INT) {
+									toAllocate += 4;
+									offset.pushAddress(param.name.ident, ICode.Type.INT);
+								} else {
+									toAllocate += 4;
+									offset.pushAddress(param.name.ident, ICode.Type.REAL);
+								}
+							}
+						}
 					}
 					x++;
 				} while (!(instruction instanceof End));
@@ -3850,6 +3907,7 @@ public class MyCodeGenerator {
 				cGen.addInstruction("ADD R13, R13, #" + toAllocate);
 
 				return null;
+
 			}
 		});
 	}

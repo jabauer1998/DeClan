@@ -373,6 +373,23 @@ CustomMeet<ArmDescriptorState> {
 					loadNewReg(def.name.ident, def.type, in, null, null, null, null, state);
 				}
 			}
+		} else if(icode instanceof Spill) {
+			Spill spill = (Spill)icode;
+			Set<String> regsToEmpty = new HashSet<String>();
+			
+			for(String reg: state.getCanditateRegs()){
+				Set<Tuple<CopyStr, ICode.Type>> addrs = state.getCandidateAddresses(reg);
+				for(Tuple<CopyStr, ICode.Type> addr: addrs){
+					if(addr.source.toString().equals(spill.name)){
+						regsToEmpty.add(reg);
+						break;
+					}
+				}
+			}
+			
+			for(String reg: regsToEmpty) {
+				state.clearRegisterAddresses(reg);
+			}
 		}
 	}
 
