@@ -574,7 +574,7 @@ public class MyCodeGenerator {
 				this.offset.pushAddress(param.label, ICode.Type.INT);
 				totalLength += 4;
 			} else if (param.type == ICode.Type.STRING) {
-				this.offset.pushAddress(param.label, ICode.Type.INT);
+				this.offset.pushAddress(param.label, ICode.Type.STRING);
 			}
 		}
 
