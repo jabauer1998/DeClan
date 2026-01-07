@@ -20,7 +20,7 @@ public class CopyStr implements Copyable<CopyStr>{
 	public boolean equals(Object myCpy) {
 		if(myCpy instanceof CopyStr) {
 			CopyStr str = (CopyStr)myCpy;
-			if(str.data.equals(data))
+			if(data.equals(str.data))
 				return true;
 		}
 		return false;

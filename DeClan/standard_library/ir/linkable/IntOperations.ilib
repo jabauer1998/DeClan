@@ -199,8 +199,8 @@ PROC SECTION
   DEF d6 := 0 <INT>
   IPARAM d5 <INT> %dr
   IPARAM d6 <INT> %dr
-  IPARAM (PARAM l) <INT> %r
-  IPARAM (PARAM m) <INT> %r
+  IPARAM (PARAM l) <INT> %ur
+  IPARAM (PARAM m) <INT> %ur
   IASM "MULL %dr, %dr, %ur, %ur"
   DEF RETURN n := d5 <INT>
  RETURN FROM Multiply

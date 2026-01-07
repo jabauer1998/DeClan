@@ -27,6 +27,7 @@ import io.github.H20man13.DeClan.common.icode.Assign;
 import io.github.H20man13.DeClan.common.icode.Call;
 import io.github.H20man13.DeClan.common.icode.Def;
 import io.github.H20man13.DeClan.common.icode.ICode;
+import io.github.H20man13.DeClan.common.icode.ICode.Type;
 import io.github.H20man13.DeClan.common.icode.If;
 import io.github.H20man13.DeClan.common.icode.Lib;
 import io.github.H20man13.DeClan.common.icode.Spill;
@@ -67,7 +68,9 @@ CustomMeet<ArmDescriptorState> {
 	private static boolean canidateIsResultAndOnlyOperand(String reg, String defOp, ICode.Type type1, String otherOp, ICode.Type type2, ArmDescriptorState state) {
 		Set<Tuple<CopyStr, ICode.Type>> addressesInR = state.getCandidateAddresses(reg);
 		for(Tuple<CopyStr, ICode.Type> addr: addressesInR){
-			if(!(addr.equals(new Tuple<CopyStr, ICode.Type>(ConversionUtils.newS(defOp), type1)) && !addr.equals(new Tuple<CopyStr, ICode.Type>(ConversionUtils.newS(otherOp), type2))));
+			boolean fstHalf = addr.equals(new Tuple<CopyStr, ICode.Type>(ConversionUtils.newS(defOp), type1));
+			boolean sndHalf = !addr.equals(new Tuple<CopyStr, ICode.Type>(ConversionUtils.newS(otherOp), type2));
+			if(!(fstHalf && sndHalf))
 				return false;
 		}
 		return true;
@@ -113,7 +116,7 @@ CustomMeet<ArmDescriptorState> {
 					state.addRegValuePair(place, type, reg);
 					regOk = true;
 					break;
-				} else if(canidateIsResultAndOnlyOperand(reg, defPlace, typeDef, otherPlace, otherType, state)) {
+				} else if(defOrOperandArentNull(defPlace, typeDef, otherPlace, otherType) && canidateIsResultAndOnlyOperand(reg, defPlace, typeDef, otherPlace, otherType, state)) {
 					Set<Tuple<CopyStr, ICode.Type>> str = state.getCandidateAddresses(reg);
 					state.clearRegisterAddresses(reg);
 					for(Tuple<CopyStr, ICode.Type> addr: str){
@@ -155,6 +158,10 @@ CustomMeet<ArmDescriptorState> {
 		}
 	}
 	
+	private boolean defOrOperandArentNull(String defPlace, ICode.Type typeDef, String otherPlace, ICode.Type otherType) {
+		return (defPlace != null && typeDef != null) || (otherPlace != null && otherType != null);
+	}
+
 	private void loadNewReg(String place, ICode.Type type, ICode icode, String operand1, ICode.Type op1Type, String operand2Opt,  ICode.Type op2Type, ArmDescriptorState state) {
 		if(state.containsOnlyPlaceInAReg(place, type)){
 			//Do nothing
@@ -173,7 +180,7 @@ CustomMeet<ArmDescriptorState> {
 					state.addRegValuePair(place, type, reg);
 					regOk = true;
 					break;
-				} else if(canidateIsResultAndSingleOperand(reg, place, type, operand1, op1Type, operand2Opt, op2Type, state)) {
+				} else if(((operand1 != null && op1Type != null) || (operand2Opt != null && op2Type != null)) && canidateIsResultAndSingleOperand(reg, place, type, operand1, op1Type, operand2Opt, op2Type, state)) {
 					Set<Tuple<CopyStr, ICode.Type>> str = state.getCandidateAddresses(reg);
 					state.clearRegisterAddresses(reg);
 					for(Tuple<CopyStr, ICode.Type> addr: str){
@@ -262,7 +269,7 @@ CustomMeet<ArmDescriptorState> {
 				IdentExp exp = (IdentExp)def.val;
 				
 				loadUseReg(exp.ident, def.type, icode, def.label, def.type, null, null, state);
-				loadNewReg(def.label, def.type, icode, exp.ident, def.type, null, null, state);
+				loadDataToReg(exp.ident, def.type, def.label, def.type, state);
 			} else {
 				addToMemory(def.label, def.type, state);
 			}
@@ -282,7 +289,7 @@ CustomMeet<ArmDescriptorState> {
 				IdentExp exp = (IdentExp)def.value;
 				
 				loadUseReg(exp.ident, def.getType(), icode, def.place, def.getType(), null, null, state);
-				loadNewReg(def.place, def.getType(), icode, exp.ident, def.getType(), null, null, state);
+				loadDataToReg(exp.ident, def.getType(), def.place, def.getType(), state);
 			} else {
 				throw new RuntimeException();
 			}
@@ -302,7 +309,7 @@ CustomMeet<ArmDescriptorState> {
 					IdentExp exp = (IdentExp)param.val;
 					
 					loadUseReg(exp.ident, param.type, icode, param.label, param.type, null, null, state);
-					loadNewReg(param.label, param.type, icode, exp.ident, param.type, null, null, state);
+					loadDataToReg(exp.ident, param.type, param.label, param.type, state);
 				} else {
 					throw new RuntimeException();
 				}
@@ -316,11 +323,67 @@ CustomMeet<ArmDescriptorState> {
 		} else if(icode instanceof Inline) {
 			Inline in = (Inline)icode;
 			
+			List<InlineParam> uses = new LinkedList<InlineParam>();
+			List<InlineParam> defs = new LinkedList<InlineParam>();
 			for(InlineParam param: in.params) {
 				if(param.containsAllQual(InlineParam.IS_DEFINITION | InlineParam.IS_REGISTER)) {
-					loadNewReg(param.name.ident, param.type, in, null, null, null, null, state);
+					defs.add(param);
+					
 				} else if(param.containsAllQual(InlineParam.IS_USE | InlineParam.IS_REGISTER)) {
+					uses.add(param);
 					loadUseReg(param.name.ident, param.type, in, null, null, null, null, state);
+				}
+			}
+			
+			if(defs.isEmpty()) {
+				if(uses.size() > 1) {
+					InlineParam use1 = uses.get(0);
+					InlineParam use2 = uses.get(1);
+					
+					loadUseReg(use1.name.ident, use1.type, icode, null, null, use2.name.ident, use2.type, state);
+				} else if(!uses.isEmpty()) {
+					InlineParam use1 = uses.get(0);
+					
+					loadUseReg(use1.name.ident, use1.type, icode, null, null, null, null, state);
+				}
+			} else {
+				if(uses.size() > 1) {
+					InlineParam def = defs.get(0);
+					InlineParam use1 = uses.get(0);
+					InlineParam use2 = uses.get(1);
+					
+					loadUseReg(use1.name.ident, use1.type, icode, def.name.ident, def.type, use2.name.ident, use2.type, state);
+				} else if(!uses.isEmpty()) {
+					InlineParam def = defs.get(0);
+					InlineParam use1 = uses.get(0);
+					
+					loadUseReg(use1.name.ident, use1.type, icode, def.name.ident, def.type, null, null, state);
+				}
+			}
+			
+			for(InlineParam def: defs) {
+				if(uses.size() > 1) {
+					InlineParam uses1 = uses.get(0);
+					InlineParam uses2 = uses.get(1);
+					loadNewReg(def.name.ident, def.type, in, uses1.name.ident, uses1.type, uses2.name.ident, uses2.type, state);
+				} else if(!uses.isEmpty()) {
+					InlineParam uses1 = uses.get(0);
+					loadNewReg(def.name.ident, def.type, in, uses1.name.ident, uses1.type, null, null, state);
+				} else {
+					loadNewReg(def.name.ident, def.type, in, null, null, null, null, state);
+				}
+			}
+		}
+	}
+
+	private void loadDataToReg(String ident, Type type, String label, Type type2, ArmDescriptorState state){
+		for(String reg: state.getCanditateRegs()){
+			Set<Tuple<CopyStr, Type>> addrs = state.getCandidateAddresses(reg);
+			for(Tuple<CopyStr, Type> addr: addrs){
+				if(addr.source.toString().equals(ident)){
+					if(addr.dest == type){
+						state.addRegValuePair(label, type2, reg);
+					}
 				}
 			}
 		}
@@ -677,9 +740,11 @@ CustomMeet<ArmDescriptorState> {
 					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.label)){
 						retSet.addResult(def.label, elem);
-					} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
+					}
+					if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
 						retSet.addResult(exp.left.ident, elem);
-					} else if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
+					}
+					if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
 						retSet.addResult(exp.right.ident, elem);
 					}
 				}
@@ -689,7 +754,8 @@ CustomMeet<ArmDescriptorState> {
 					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.label)){
 						retSet.addResult(def.label, elem);
-					} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
+					}
+					if(ConversionUtils.setContainsName(addr, un.right.ident)) {
 						retSet.addResult(un.right.ident, elem);
 					}
 				}
@@ -699,7 +765,8 @@ CustomMeet<ArmDescriptorState> {
 					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.label)){
 						retSet.addResult(def.label, elem);
-					} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
+					}
+					if(ConversionUtils.setContainsName(addr, ident.ident)) {
 						retSet.addResult(ident.ident, elem);
 					}
 				}
@@ -712,9 +779,11 @@ CustomMeet<ArmDescriptorState> {
 					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.place)){
 						retSet.addResult(def.place, elem);
-					} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
+					}
+					if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
 						retSet.addResult(exp.left.ident, elem);
-					} else if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
+					}
+					if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
 						retSet.addResult(exp.right.ident, elem);
 					}
 				}
@@ -724,7 +793,8 @@ CustomMeet<ArmDescriptorState> {
 					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.place)){
 						retSet.addResult(def.place, elem);
-					} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
+					}
+					if(ConversionUtils.setContainsName(addr, un.right.ident)) {
 						retSet.addResult(un.right.ident, elem);
 					}
 				}
@@ -734,7 +804,8 @@ CustomMeet<ArmDescriptorState> {
 					Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 					if(ConversionUtils.setContainsName(addr, def.place)){
 						retSet.addResult(def.place, elem);
-					} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
+					}
+					if(ConversionUtils.setContainsName(addr, ident.ident)) {
 						retSet.addResult(ident.ident, elem);
 					}
 				}
@@ -748,9 +819,11 @@ CustomMeet<ArmDescriptorState> {
 						Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 						if(ConversionUtils.setContainsName(addr, def.label)){
 							retSet.addResult(def.label, elem);
-						} else if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
+						}
+						if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
 							retSet.addResult(exp.left.ident, elem);
-						} else if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
+						}
+						if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
 							retSet.addResult(exp.right.ident, elem);
 						}
 					}
@@ -760,7 +833,8 @@ CustomMeet<ArmDescriptorState> {
 						Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 						if(ConversionUtils.setContainsName(addr, def.label)){
 							retSet.addResult(def.label, elem);
-						} else if(ConversionUtils.setContainsName(addr, un.right.ident)) {
+						}
+						if(ConversionUtils.setContainsName(addr, un.right.ident)) {
 							retSet.addResult(un.right.ident, elem);
 						}
 					}
@@ -770,7 +844,8 @@ CustomMeet<ArmDescriptorState> {
 						Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 						if(ConversionUtils.setContainsName(addr, def.label)){
 							retSet.addResult(def.label, elem);
-						} else if(ConversionUtils.setContainsName(addr, ident.ident)) {
+						}
+						if(ConversionUtils.setContainsName(addr, ident.ident)) {
 							retSet.addResult(ident.ident, elem);
 						}
 					}
@@ -784,7 +859,8 @@ CustomMeet<ArmDescriptorState> {
 				Set<Tuple<CopyStr, ICode.Type>> addr = state.getCandidateAddresses(elem);
 				if(ConversionUtils.setContainsName(addr, exp.left.ident)) {
 					retSet.addResult(exp.left.ident, elem);
-				} else if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
+				}
+				if(ConversionUtils.setContainsName(addr, exp.right.ident)) {
 					retSet.addResult(exp.right.ident, elem);
 				}
 			}

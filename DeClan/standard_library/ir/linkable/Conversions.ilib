@@ -351,9 +351,9 @@ PROC SECTION
   DEF i8 := 0 <INT>
   DEF i9 := 0.0 <REAL>
   IPARAM i9 <REAL> %dr
-  IPARAM (PARAM m) <REAL> %a
+  IPARAM (PARAM m) <REAL> %ua
   IASM "LDR %dr, %ua"
-  IPARAM i9 <REAL> %r
+  IPARAM i9 <REAL> %ur
   IPARAM i8 <INT> %da
   IASM "STR %ur, %da"
   DEF RETURN n := i8 <INT>
@@ -362,9 +362,9 @@ PROC SECTION
   DEF j0 := 0.0 <REAL>
   DEF j1 := 0 <INT>
   IPARAM j1 <INT> %dr
-  IPARAM (PARAM o) <INT> %a
+  IPARAM (PARAM o) <INT> %ua
   IASM "LDR %dr, %ua"
-  IPARAM j1 <INT> %r
+  IPARAM j1 <INT> %ur
   IPARAM j0 <REAL> %da
   IASM "STR %ur, %da"
   DEF RETURN p := j0 <REAL>
@@ -373,9 +373,9 @@ PROC SECTION
   DEF j2 := 0.0 <REAL>
   DEF j3 := 0 <INT>
   IPARAM j3 <INT> %dr
-  IPARAM (PARAM q) <BOOL> %a
+  IPARAM (PARAM q) <BOOL> %ua
   IASM "LDRB %dr, %ua"
-  IPARAM j3 <INT> %r
+  IPARAM j3 <INT> %ur
   IPARAM j2 <REAL> %da
   IASM "STR %ur, %da"
   DEF RETURN r := j2 <REAL>
@@ -384,9 +384,9 @@ PROC SECTION
   DEF j4 := FALSE <BOOL>
   DEF j5 := 0 <INT>
   IPARAM j5 <INT> %dr
-  IPARAM (PARAM s) <REAL> %a
+  IPARAM (PARAM s) <REAL> %ua
   IASM "LDR %dr, %ua"
-  IPARAM j5 <INT> %r
+  IPARAM j5 <INT> %ur
   IPARAM j4 <BOOL> %da
   IASM "STRB %ur, %da"
   DEF RETURN t := j4 <BOOL>
@@ -395,9 +395,9 @@ PROC SECTION
   DEF j6 := 0 <INT>
   DEF j7 := 0 <INT>
   IPARAM j7 <INT> %dr
-  IPARAM (PARAM u) <BOOL> %a
+  IPARAM (PARAM u) <BOOL> %ua
   IASM "LDRB %dr, %ua"
-  IPARAM j7 <INT> %r
+  IPARAM j7 <INT> %ur
   IPARAM j6 <INT> %da
   IASM "STR %ur, %da"
   DEF RETURN v := j6 <INT>
@@ -406,9 +406,9 @@ PROC SECTION
   DEF j8 := FALSE <BOOL>
   DEF j9 := 0 <INT>
   IPARAM j9 <INT> %dr
-  IPARAM (PARAM w) <INT> %a
+  IPARAM (PARAM w) <INT> %ua
   IASM "LDR %dr, %ua"
-  IPARAM j9 <INT> %r
+  IPARAM j9 <INT> %ur
   IPARAM j8 <BOOL> %da
   IASM "STRB %ur, %da"
   DEF RETURN x := j8 <BOOL>
@@ -417,9 +417,9 @@ PROC SECTION
   DEF k0 := 0 <INT>
   DEF k1 := 0 <INT>
   IPARAM k1 <INT> %dr
-  IPARAM (PARAM y) <STRING> %a
+  IPARAM (PARAM y) <STRING> %ua
   IASM "LDR %dr, %ua"
-  IPARAM k1 <INT> %r
+  IPARAM k1 <INT> %ur
   IPARAM k0 <INT> %da
   IASM "STR %ur, %da"
   DEF RETURN z := k0 <INT>

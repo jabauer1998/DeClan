@@ -714,13 +714,13 @@ PROC SECTION
   l8 := v6 <INT>
   IPARAM n4 <INT> %dr
   IPARAM n3 <INT> %dr
-  IPARAM l4 <INT> %r
-  IPARAM l5 <INT> %r
+  IPARAM l4 <INT> %ur
+  IPARAM l5 <INT> %ur
   IASM "MULL %dr, %dr, %ur, %ur"
-  IPARAM n3 <INT> %r
+  IPARAM n3 <INT> %ur
   IPARAM n3 <INT> %da
   IASM "STR %ur, %da"
-  IPARAM n4 <INT> %r
+  IPARAM n4 <INT> %ur
   IPARAM n4 <INT> %da
   IASM "STR %ur, %da"
   DEF v7 := 0 <INT>

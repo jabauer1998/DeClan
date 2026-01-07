@@ -149,7 +149,7 @@ public class MyIrParser {
             || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) 
             || willMatch(IrTokenType.IASM) || willMatch(IrTokenType.IPARAM) 
             || willMatch(IrTokenType.CALL) || willMatch(IrTokenType.GLOBAL) 
-            || willMatch(IrTokenType.DEF)){
+            || willMatch(IrTokenType.DEF) || willMatch(IrTokenType.PARAM)){
                 icode = parseInstruction();
                 toRet.add(icode);
             }

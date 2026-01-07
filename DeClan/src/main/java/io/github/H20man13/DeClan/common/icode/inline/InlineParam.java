@@ -51,6 +51,8 @@ public class InlineParam implements Copyable<InlineParam>{
 		
 		if(containsAnyQual(IS_DEFINITION))
 			toString.append("d");
+		else if(containsAnyQual(IS_USE))
+			toString.append("u");
 		
 		if(containsAnyQual(IS_ADDRESS))
 			toString.append('a');
