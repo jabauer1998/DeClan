@@ -716,7 +716,7 @@ PROC SECTION
   IPARAM n3 <INT> %dr
   IPARAM l4 <INT> %ur
   IPARAM l5 <INT> %ur
-  IASM "MULL %dr, %dr, %ur, %ur"
+  IASM "SMULL %dr, %dr, %ur, %ur"
   IPARAM n3 <INT> %ur
   IPARAM n3 <INT> %da
   IASM "STR %ur, %da"

@@ -36,7 +36,6 @@ SYMBOL SECTION
  ENTRY c5 INTERNAL total Mod <INT>
  ENTRY c6 INTERNAL result Mod <INT>
  ENTRY d5 INTERNAL low Multiply <INT>
- ENTRY d6 INTERNAL high Multiply <INT>
 DATA SECTION
 PROC SECTION
  PROC LABEL INeg
@@ -196,11 +195,9 @@ PROC SECTION
  RETURN FROM Mod
  PROC LABEL Multiply
   DEF d5 := 0 <INT>
-  DEF d6 := 0 <INT>
   IPARAM d5 <INT> %dr
-  IPARAM d6 <INT> %dr
   IPARAM (PARAM l) <INT> %ur
   IPARAM (PARAM m) <INT> %ur
-  IASM "MULL %dr, %dr, %ur, %ur"
+  IASM "MUL %dr, %ur, %ur"
   DEF RETURN n := d5 <INT>
  RETURN FROM Multiply
