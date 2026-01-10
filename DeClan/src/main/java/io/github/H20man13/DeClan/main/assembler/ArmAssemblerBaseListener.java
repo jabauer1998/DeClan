@@ -173,6 +173,19 @@ public class ArmAssemblerBaseListener implements ArmAssemblerListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterMullInstr(@NotNull ArmAssemblerParser.MullInstrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMullInstr(@NotNull ArmAssemblerParser.MullInstrContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterBxInstr(@NotNull ArmAssemblerParser.BxInstrContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -531,6 +544,19 @@ public class ArmAssemblerBaseListener implements ArmAssemblerListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSubInstr(@NotNull ArmAssemblerParser.SubInstrContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMlalInstr(@NotNull ArmAssemblerParser.MlalInstrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMlalInstr(@NotNull ArmAssemblerParser.MlalInstrContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

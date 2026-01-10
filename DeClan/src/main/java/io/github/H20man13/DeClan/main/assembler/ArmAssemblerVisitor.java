@@ -96,6 +96,13 @@ public interface ArmAssemblerVisitor<T> extends ParseTreeVisitor<T> {
 	T visitMulInstr(@NotNull ArmAssemblerParser.MulInstrContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link ArmAssemblerParser#mullInstr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMullInstr(@NotNull ArmAssemblerParser.MullInstrContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link ArmAssemblerParser#bxInstr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -290,6 +297,13 @@ public interface ArmAssemblerVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSubInstr(@NotNull ArmAssemblerParser.SubInstrContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link ArmAssemblerParser#mlalInstr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMlalInstr(@NotNull ArmAssemblerParser.MlalInstrContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link ArmAssemblerParser#instructionOrDirective}.

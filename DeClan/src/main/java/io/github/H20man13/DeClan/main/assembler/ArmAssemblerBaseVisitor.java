@@ -114,6 +114,14 @@ public class ArmAssemblerBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitMullInstr(@NotNull ArmAssemblerParser.MullInstrContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitBxInstr(@NotNull ArmAssemblerParser.BxInstrContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -331,6 +339,14 @@ public class ArmAssemblerBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitSubInstr(@NotNull ArmAssemblerParser.SubInstrContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitMlalInstr(@NotNull ArmAssemblerParser.MlalInstrContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}

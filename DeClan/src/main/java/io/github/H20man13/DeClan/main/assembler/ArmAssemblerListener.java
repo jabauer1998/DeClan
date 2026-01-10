@@ -141,6 +141,17 @@ public interface ArmAssemblerListener extends ParseTreeListener {
 	void exitMulInstr(@NotNull ArmAssemblerParser.MulInstrContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link ArmAssemblerParser#mullInstr}.
+	 * @param ctx the parse tree
+	 */
+	void enterMullInstr(@NotNull ArmAssemblerParser.MullInstrContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ArmAssemblerParser#mullInstr}.
+	 * @param ctx the parse tree
+	 */
+	void exitMullInstr(@NotNull ArmAssemblerParser.MullInstrContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link ArmAssemblerParser#bxInstr}.
 	 * @param ctx the parse tree
 	 */
@@ -447,6 +458,17 @@ public interface ArmAssemblerListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSubInstr(@NotNull ArmAssemblerParser.SubInstrContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link ArmAssemblerParser#mlalInstr}.
+	 * @param ctx the parse tree
+	 */
+	void enterMlalInstr(@NotNull ArmAssemblerParser.MlalInstrContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ArmAssemblerParser#mlalInstr}.
+	 * @param ctx the parse tree
+	 */
+	void exitMlalInstr(@NotNull ArmAssemblerParser.MlalInstrContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link ArmAssemblerParser#instructionOrDirective}.

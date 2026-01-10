@@ -33,11 +33,13 @@ import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.LdmInstrConte
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.LdrDefInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.LdrSignedInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MlaInstrContext;
+import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MlalInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MovInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MrsInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MsrDefInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MsrPrivInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MulInstrContext;
+import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MullInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MvnInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.NumberContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.Op2Context;
@@ -1990,4 +1992,86 @@ public class AssemblerVisitor implements ArmAssemblerVisitor<Integer> {
         Float value = Float.parseFloat(number);
         return Float.floatToRawIntBits(value);
     }
+
+	@Override
+	public Integer visitMullInstr(MullInstrContext ctx) {
+		Integer toRet = 0;
+		
+		AntlrToken<Integer> MULTIPLY_LONG = Factory.decorateToken(ctx.MULTIPLY_LONG());
+
+        Integer result = getConditionCode(MULTIPLY_LONG.getText(), 5);
+        
+        boolean condS = false;
+        if(result == (14 << 28)) {
+        	condS = containsS(MULTIPLY_LONG.getText(), 5);	
+        } else {
+        	condS = containsS(MULTIPLY_LONG.getText(), 7);
+        }
+
+        //Set Instruction Bits to hi
+        result |= 0b1001 << 4;
+        result |= 0b0001 << 23;
+
+        //Set the S bit to hi
+        if(condS){
+            result |= 1 << 20;
+        }
+
+        //Set RD to some value
+        Integer regD = generateNumberFromReg(ctx.REG(0).getText());
+        result |= regD << 16;
+
+        Integer regM = generateNumberFromReg(ctx.REG(1).getText());
+        result |= regM << 0;
+
+        Integer regS = generateNumberFromReg(ctx.REG(2).getText());
+        result |= regS << 8;
+
+        Integer regN = generateNumberFromReg(ctx.REG(3).getText());
+        result |= regN << 12;
+
+		return result;
+	}
+
+	@Override
+	public Integer visitMlalInstr(MlalInstrContext ctx) {
+		AntlrToken<Integer> MULTIPLY_AND_ACUMULATE_LONG = Factory.decorateToken(ctx.MULTIPLY_AND_ACUMULATE_LONG());
+
+        Integer result = getConditionCode(MULTIPLY_AND_ACUMULATE_LONG.getText(), 5);
+
+        
+        boolean condS = false;
+        if(result == (14 << 28)) {
+        	condS = containsS(MULTIPLY_AND_ACUMULATE_LONG.getText(), 5);	
+        } else {
+        	condS = containsS(MULTIPLY_AND_ACUMULATE_LONG.getText(), 7);
+        }
+
+        //Set Instruction Bits to hi
+        result |= 0b1001 << 4;
+        result |= 0b0001 << 23;
+
+        //Set the Acumulate Bit to hi
+        result |= (1 << 21);
+
+        //Set the S bit to hi
+        if(condS){
+            result |= 1 << 20;
+        }
+
+        //Set RD to some value
+        Integer regD = generateNumberFromReg(ctx.REG(0).getText());
+        result |= regD << 16;
+
+        Integer regM = generateNumberFromReg(ctx.REG(1).getText());
+        result |= regM << 0;
+
+        Integer regS = generateNumberFromReg(ctx.REG(2).getText());
+        result |= regS << 8;
+
+        Integer regN = generateNumberFromReg(ctx.REG(3).getText());
+        result |= regN << 12;
+
+        return result;
+	}
 }

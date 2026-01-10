@@ -33,11 +33,13 @@ import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.LdmInstrConte
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.LdrDefInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.LdrSignedInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MlaInstrContext;
+import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MlalInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MovInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MrsInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MsrDefInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MsrPrivInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MulInstrContext;
+import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MullInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.MvnInstrContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.NumberContext;
 import io.github.H20man13.DeClan.main.assembler.ArmAssemblerParser.Op2Context;
@@ -457,4 +459,16 @@ public class AddressCalculatorVisitor implements ArmAssemblerVisitor<Integer> {
     public Integer visitRealNumber(RealNumberContext ctx) {
         return null;
     }
+
+	@Override
+	public Integer visitMullInstr(MullInstrContext ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visitMlalInstr(MlalInstrContext ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

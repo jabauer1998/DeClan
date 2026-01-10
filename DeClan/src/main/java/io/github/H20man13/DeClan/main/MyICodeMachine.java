@@ -189,7 +189,7 @@ public class MyICodeMachine {
     }
 
     private void interpretInlineAssembly(Inline instruction) {
-        if(instruction.inlineAssembly.startsWith("MULL")){
+        if(instruction.inlineAssembly.startsWith("MUL")){
             //Then it is a multiply long instruction and we have to simulate that here
             List<InlineParam> paramaters = instruction.params;
             if(paramaters.size() == 4){
@@ -211,22 +211,11 @@ public class MyICodeMachine {
                 Integer int1 = (Integer)obj1;
                 Integer int2 = (Integer)obj2;
 
-                Long long1 = int1.longValue();
-                Long long2 = int2.longValue();
+                int result = int1 * int2;
 
-                Long result = long1 * long2;
-
-                Long smallLongMask = 0x7fffffffl;
-                Long smallLong = result & smallLongMask;
-                Long largeLong = (result >> 31) & smallLongMask;
-
-                Integer smallInt = smallLong.intValue();
-                Integer largeInt = largeLong.intValue();
-
-                String largeRegister = paramaters.get(1).name.ident;
                 String smallRegister = paramaters.get(0).name.ident;
-                variableValues.addEntry(largeRegister, new VariableEntry(false, largeInt));
-                variableValues.addEntry(smallRegister, new VariableEntry(false, smallInt));
+                
+                variableValues.addEntry(smallRegister, new VariableEntry(false, result));
             } else {
                 throw new ICodeVmException(instruction, this.programCounter, "Error in MULL function in inline assembly expected 4 arguments but found " + paramaters.size());
             }

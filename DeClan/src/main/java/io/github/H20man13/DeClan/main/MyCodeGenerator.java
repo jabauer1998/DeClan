@@ -70,7 +70,6 @@ public class MyCodeGenerator {
 	private IrRegisterGenerator iGen;
 	private ErrorLog errorLog;
 	private Map<P, Callable<Void>> codeGenFunctions;
-	private FlowGraph flow;
 	private ArmAddressOffsets offset;
 	private int i;
 	private int offsetNum;
@@ -2352,7 +2351,7 @@ public class MyCodeGenerator {
 				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, pre, res);
 				String finalPlace = res.getRegister(assignICode.label);
 
-				cGen.addInstruction("ANDB " + finalPlace + ", " + leftReg + ", " + rightReg);
+				cGen.addInstruction("AND " + finalPlace + ", " + leftReg + ", " + rightReg);
 
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addVariable(assignICode.label, VariableLength.WORD);
@@ -2391,7 +2390,7 @@ public class MyCodeGenerator {
 				String rightReg = loadVariableToReg(rightIdent, ICode.Type.BOOL, pre, res);
 				String finalPlace = res.getRegister(assignICode.place);
 
-				cGen.addInstruction("ANDB " + finalPlace + ", " + leftReg + ", " + rightReg);
+				cGen.addInstruction("AND " + finalPlace + ", " + leftReg + ", " + rightReg);
 
 				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
 					cGen.addVariable(assignICode.place, VariableLength.WORD);
