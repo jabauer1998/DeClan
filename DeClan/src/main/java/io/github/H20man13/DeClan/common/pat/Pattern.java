@@ -99,19 +99,15 @@ public class Pattern {
     
     //Boolean Init/Assign Patterns
     public static P bool0 = P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.BOOL()), P.BOOL());
-    public static P bool1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.BOOL()), P.BOOL());
     
     //Real Init/Assign Patterns
     public static P real0 = P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.REAL()), P.REAL());
-    public static P real1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.REAL()), P.REAL());
     
     //Int Init/Assign Patterns
     public static P int0 = P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.INT()), P.INT());
-    public static P int1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.INT()), P.INT());
     
     //String Init/Assign Patterns
     public static P str0 = P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.STR()), P.STR());
-    public static P str1 = P.PAT(P.ID(), P.ASSIGN(), P.PAT(P.STR()), P.STR());
     
     //Identifier Assignments Patterns
     public static P id0 = P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.ID()), P.BOOL());

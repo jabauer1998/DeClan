@@ -1924,21 +1924,15 @@ public class AssemblerVisitor implements ArmAssemblerVisitor<Integer> {
 
     @Override
     public Integer visitByteDirective(ByteDirectiveContext ctx) {
-        AntlrToken<Integer> number = Factory.decorateToken(ctx.number());
+        AntlrToken<Integer> single = Factory.decorateToken(ctx.single());
         isByteValue = true;
-        return number.accept(this) & 0xff;
+        return single.accept(this) & 0xff;
     }
 
     @Override
     public Integer visitWordDirective(WordDirectiveContext ctx) {
-        AntlrToken<Integer> number = Factory.decorateToken(ctx.number());
-        AntlrToken<Integer> realNumber = Factory.decorateToken(ctx.realNumber());
-
-        if(Matcher.match(number)){
-            return number.accept(this);
-        } else {
-            return realNumber.accept(this);
-        }
+        AntlrToken<Integer> single = Factory.decorateToken(ctx.single());
+        return single.accept(this);
     }
 
     @Override

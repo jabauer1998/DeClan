@@ -133,7 +133,7 @@ PROCEDURE RMul(n1: REAL; n2: REAL);
 		END;
 
 		resultExp := n1Exp + n2Exp;
-		asm("MULL %dr, %dr, %ur, %ur": lowBase, hiBase, n1Base, n2Base);
+		asm("SMULL %dr, %dr, %ur, %ur": lowBase, hiBase, n1Base, n2Base);
 		asm("STR %ur, %da": hiBase, hiBase);
 		asm("STR %ur, %da": lowBase, lowBase);
 

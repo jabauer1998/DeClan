@@ -41,8 +41,8 @@ instruction : bInstr
 			| stopInstr
 			;
 
-wordDirective: DOT_WORD (number | realNumber);
-byteDirective: DOT_BYTE (number | realNumber);
+wordDirective: DOT_WORD single;
+byteDirective: DOT_BYTE single;
 
 bInstr : BRANCH expression;
 blInstr : BRANCH_WITH_LINK expression;

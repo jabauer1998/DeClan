@@ -236,19 +236,15 @@ public class MyCodeGenerator {
 
 		// Initialize Bool Constant Patterns
 		initBool0();
-		initBool1();
 
 		// Initialize Real Constant Patterns
 		initReal0();
-		initReal1();
 
 		// Initialize Int Constant Patterns
 		initInt0();
-		initInt1();
 
 		// Initialize String Constant Patterns
 		initStr0();
-		initStr1();
 
 		// Initialize Id Patterns
 		initId0();
@@ -675,12 +671,12 @@ public class MyCodeGenerator {
 			for (int i = 0; i < exp.value.length(); i++) {
 				char letter = exp.value.charAt(i);
 				if (i == 0)
-					cGen.addVariable(newPlace + "_value", VariableLength.BYTE, (int) letter);
+					cGen.addVariable(newPlace + "Value", VariableLength.BYTE, (int) letter);
 				else
 					cGen.addVariable(VariableLength.BYTE, (int) letter);
 			}
 			cGen.addVariable(VariableLength.BYTE, (int) '\0');
-			cGen.addVariable(newPlace, VariableLength.WORD, newPlace + "_value");
+			cGen.addVariable(newPlace, VariableLength.WORD, newPlace + "Value");
 			return res.getRegister(newPlace);
 		} else if (expression instanceof BinExp) {
 			BinExp exp = (BinExp) expression;
@@ -2650,63 +2646,8 @@ public class MyCodeGenerator {
 
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addVariable(assignICode.label, VariableLength.BYTE, assignExp.trueFalse ? 1 : 0);
-				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.label, assignICode.type);
-					String reg = res.getRegister(assignICode.label);
-
-					cGen.addInstruction("MOV " + reg + ", #" + (assignExp.trueFalse ? 1 : 0));
-					cGen.addInstruction("STRB " + reg + ", [R13, #-" + off + ']');
-				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.label, assignICode.type);
-					String reg = res.getRegister(assignICode.label);
-
-					cGen.addInstruction("MOV " + reg + ", #" + (assignExp.trueFalse ? 1 : 0));
-					cGen.addInstruction("STRB " + reg + ", [R13, #-" + off + ']');
 				} else {
-					int off = offset.findOffset(assignICode.label, assignICode.type);
-					String reg = res.getRegister(assignICode.label);
-
-					cGen.addInstruction("MOV " + reg + ", #" + (assignExp.trueFalse ? 1 : 0));
-					cGen.addInstruction("STRB " + reg + ", [R13, #-" + off + ']');
-				}
-
-				return null;
-			}
-		});
-	}
-
-	private void initBool1() {
-		codeGenFunctions.put(Pattern.bool1, new Callable<Void>() {
-			@Override
-			public Void call() throws Exception {
-				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
-
-				Assign assignICode = (Assign) icode;
-				BoolExp assignExp = (BoolExp) assignICode.value;
-
-				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
-					String reg = res.getRegister(assignICode.place);
-					cGen.addInstruction("MOV " + reg + ", #" + (assignExp.trueFalse ? 1 : 0));
-					cGen.addInstruction("STRB " + reg + ", " + assignICode.place);
-				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					int off = offset.findOffset(assignICode.place, assignICode.getType());
-					String reg = res.getRegister(assignICode.place);
-
-					cGen.addInstruction("MOV " + reg + ", #" + (assignExp.trueFalse ? 1 : 0));
-					cGen.addInstruction("STRB " + reg + ", [R13, #-" + off + ']');
-				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					int off = offset.findOffset(assignICode.place, assignICode.getType());
-					String reg = res.getRegister(assignICode.place);
-
-					cGen.addInstruction("MOV " + reg + ", #" + (assignExp.trueFalse ? 1 : 0));
-					cGen.addInstruction("STRB " + reg + ", [R13, #-" + off + ']');
-				} else {
-					int off = offset.findOffset(assignICode.place, assignICode.getType());
-					String reg = res.getRegister(assignICode.place);
-
-					cGen.addInstruction("MOV " + reg + ", #" + (assignExp.trueFalse ? 1 : 0));
-					cGen.addInstruction("STRB " + reg + ", [R13, #-" + off + ']');
+					errorLog.add("Error pattern " + icode.toString() + " must be of type global", new Position(i, i));
 				}
 
 				return null;
@@ -2726,105 +2667,8 @@ public class MyCodeGenerator {
 
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addVariable(assignICode.label, VariableLength.WORD, assignExp.value);
-				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					String tempValue = res.getRegister(assignICode.label);
-
-					if (assignExp.value > 255 || assignExp.value < -255) {
-						cGen.addVariable(assignICode.label, VariableLength.WORD, assignExp.value);
-						cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label);
-					} else {
-						cGen.addInstruction("MOV " + tempValue + ", #" + assignExp.value);
-					}
-
-					int off = offset.findOffset(assignICode.label, assignICode.type);
-					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
-				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					String tempValue = res.getRegister(assignICode.label);
-
-					if (assignExp.value > 255 || assignExp.value < -255) {
-						cGen.addVariable(assignICode.label, VariableLength.WORD, assignExp.value);
-						cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label);
-					} else {
-						cGen.addInstruction("MOV " + tempValue + ", #" + assignExp.value);
-					}
-
-					int off = offset.findOffset(assignICode.label, assignICode.type);
-					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
 				} else {
-					String tempValue = res.getRegister(assignICode.label);
-
-					if (assignExp.value > 255 || assignExp.value < -255) {
-						cGen.addVariable(assignICode.label, VariableLength.WORD, assignExp.value);
-						cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label);
-					} else {
-						cGen.addInstruction("MOV " + tempValue + ", #" + assignExp.value);
-					}
-
-					int off = offset.findOffset(assignICode.label, assignICode.type);
-					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
-				}
-
-				return null;
-			}
-		});
-	}
-
-	private void initInt1() {
-		codeGenFunctions.put(Pattern.int1, new Callable<Void>() {
-			@Override
-			public Void call() throws Exception {
-				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
-
-				Assign assignICode = (Assign) icode;
-				IntExp assignExp = (IntExp) assignICode.value;
-
-				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
-					String tempValue = res.getRegister(assignICode.place);
-					if (assignExp.value > 255 || assignExp.value < -255) {
-						cGen.addVariable(assignICode.place + "_value", VariableLength.WORD, assignExp.value);
-						cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place + "_value");
-					} else {
-						cGen.addInstruction("MOV " + tempValue + ", #" + assignExp.value);
-					}
-
-					cGen.addInstruction("STR " + tempValue + ", " + assignICode.place);
-				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					String tempValue = res.getRegister(assignICode.place);
-
-					if (assignExp.value > 255 || assignExp.value < -255) {
-						cGen.addVariable(assignICode.place, VariableLength.WORD, assignExp.value);
-						cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place);
-					} else {
-						cGen.addInstruction("MOV " + tempValue + ", #" + assignExp.value);
-					}
-
-					int off = offset.findOffset(assignICode.place, assignICode.getType());
-					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
-				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					String tempValue = res.getRegister(assignICode.place);
-
-					if (assignExp.value > 255 || assignExp.value < -255) {
-						cGen.addVariable(assignICode.place, VariableLength.WORD, assignExp.value);
-						cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place);
-					} else {
-						cGen.addInstruction("MOV " + tempValue + ", #" + assignExp.value);
-					}
-
-					int off = offset.findOffset(assignICode.place, assignICode.getType());
-					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
-				} else {
-					String tempValue = res.getRegister(assignICode.place);
-
-					if (assignExp.value > 255 || assignExp.value < -255) {
-						cGen.addVariable(assignICode.place, VariableLength.WORD, assignExp.value);
-						cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place);
-					} else {
-						cGen.addInstruction("MOV " + tempValue + ", #" + assignExp.value);
-					}
-
-					int off = offset.findOffset(assignICode.place, assignICode.getType());
-					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
+					errorLog.add("Error cant assign constant to non global value " + icode.toString(), new Position(i, i));
 				}
 
 				return null;
@@ -2844,77 +2688,8 @@ public class MyCodeGenerator {
 
 				if (assignICode.scope == ICode.Scope.GLOBAL) {
 					cGen.addVariable(assignICode.label, assignExp.realValue);
-				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					String tempValue = res.getRegister(assignICode.label);
-
-					cGen.addVariable(assignICode.label, assignExp.realValue);
-					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label);
-
-					int off = offset.findOffset(assignICode.label, assignICode.type);
-					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
-				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					String tempValue = res.getRegister(assignICode.label);
-
-					cGen.addVariable(assignICode.label, assignExp.realValue);
-					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label);
-
-					int off = offset.findOffset(assignICode.label, assignICode.type);
-					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
 				} else {
-					String tempValue = res.getRegister(assignICode.label);
-
-					cGen.addVariable(assignICode.label, assignExp.realValue);
-					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.label);
-
-					int off = offset.findOffset(assignICode.label, assignICode.type);
-					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
-				}
-
-				return null;
-			}
-		});
-	}
-
-	private void initReal1() {
-		codeGenFunctions.put(Pattern.real1, new Callable<Void>() {
-			@Override
-			public Void call() throws Exception {
-				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
-
-				Assign assignICode = (Assign) icode;
-				RealExp assignExp = (RealExp) assignICode.value;
-
-				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
-					String tempValue = res.getRegister(assignICode.place);
-					cGen.addVariable(assignICode.place + "_value", assignExp.realValue);
-					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place + "_value");
-
-					cGen.addInstruction("STR " + tempValue + ", " + assignICode.place);
-				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					String tempValue = res.getRegister(assignICode.place);
-
-					cGen.addVariable(assignICode.place, assignExp.realValue);
-					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place);
-
-					int off = offset.findOffset(assignICode.place, assignICode.getType());
-					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
-				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					String tempValue = res.getRegister(assignICode.place);
-
-					cGen.addVariable(assignICode.place, assignExp.realValue);
-					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place);
-
-					int off = offset.findOffset(assignICode.place, assignICode.getType());
-					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
-				} else {
-					String tempValue = res.getRegister(assignICode.place);
-
-					cGen.addVariable(assignICode.place, assignExp.realValue);
-					cGen.addInstruction("LDR " + tempValue + ", " + assignICode.place);
-
-					int off = offset.findOffset(assignICode.place, assignICode.getType());
-					cGen.addInstruction("STR " + tempValue + ", [R13, #-" + off + ']');
+					errorLog.add("Error cant assign constant to non global value in " + icode.toString(), new Position(i, i));
 				}
 
 				return null;
@@ -2937,7 +2712,7 @@ public class MyCodeGenerator {
 					for (int i = 0; i < strToMem.length(); i++) {
 						char letter = strToMem.charAt(i);
 						if (i == 0) {
-							cGen.addVariable(assignICode.label + "_value", VariableLength.BYTE, (int) letter);
+							cGen.addVariable(assignICode.label + "Value", VariableLength.BYTE, (int) letter);
 						} else {
 							cGen.addVariable(VariableLength.BYTE, (int) letter);
 						}
@@ -2946,187 +2721,12 @@ public class MyCodeGenerator {
 					if (strToMem.length() > 0) {
 						cGen.addVariable(VariableLength.BYTE, (int) '\0');
 					} else {
-						cGen.addVariable(assignICode.label + "_value", VariableLength.BYTE, (int) '\0');
+						cGen.addVariable(assignICode.label + "Value", VariableLength.BYTE, (int) '\0');
 					}
 
-					cGen.addVariable(assignICode.label, VariableLength.WORD, assignICode.label + "_value");
-				} else if (assignICode.scope == ICode.Scope.PARAM) {
-					String strToMem = assignExp.value;
-					for (int i = 0; i < strToMem.length(); i++) {
-						char letter = strToMem.charAt(i);
-						if (i == 0) {
-							cGen.addVariable(assignICode.label + "_value", VariableLength.BYTE, (int) letter);
-						} else {
-							cGen.addVariable(VariableLength.BYTE, (int) letter);
-						}
-					}
-
-					if (strToMem.length() > 0) {
-						cGen.addVariable(VariableLength.BYTE, (int) '\0');
-					} else {
-						cGen.addVariable(assignICode.label + "_value", VariableLength.BYTE, (int) '\0');
-					}
-
-					cGen.addVariable(assignICode.label, VariableLength.WORD, assignICode.label + "_value");
-
-					String reg = res.getRegister(assignICode.label);
-					int off = offset.findOffset(assignICode.label, assignICode.type);
-
-					cGen.addInstruction("LDR " + reg + ", " + assignICode.label);
-					cGen.addInstruction("STR " + reg + ", [R13, #-" + off + ']');
-				} else if (assignICode.scope == ICode.Scope.RETURN) {
-					String strToMem = assignExp.value;
-					for (int i = 0; i < strToMem.length(); i++) {
-						char letter = strToMem.charAt(i);
-						if (i == 0) {
-							cGen.addVariable(assignICode.label + "_value", VariableLength.BYTE, (int) letter);
-						} else {
-							cGen.addVariable(VariableLength.BYTE, (int) letter);
-						}
-					}
-
-					if (strToMem.length() > 0) {
-						cGen.addVariable(VariableLength.BYTE, (int) '\0');
-					} else {
-						cGen.addVariable(assignICode.label + "_value", VariableLength.BYTE, (int) '\0');
-					}
-
-					cGen.addVariable(assignICode.label, VariableLength.WORD, assignICode.label + "_value");
-
-					String reg = res.getRegister(assignICode.label);
-					int off = offset.findOffset(assignICode.label, assignICode.type);
-
-					cGen.addInstruction("LDR " + reg + ", " + assignICode.label);
-					cGen.addInstruction("STR " + reg + ", [R13, #-" + off + ']');
+					cGen.addVariable(assignICode.label, VariableLength.WORD, assignICode.label + "Value");
 				} else {
-					String strToMem = assignExp.value;
-					for (int i = 0; i < strToMem.length(); i++) {
-						char letter = strToMem.charAt(i);
-						if (i == 0) {
-							cGen.addVariable(assignICode.label + "_value", VariableLength.BYTE, (int) letter);
-						} else {
-							cGen.addVariable(VariableLength.BYTE, (int) letter);
-						}
-					}
-
-					if (strToMem.length() > 0) {
-						cGen.addVariable(VariableLength.BYTE, (int) '\0');
-					} else {
-						cGen.addVariable(assignICode.label + "_value", VariableLength.BYTE, (int) '\0');
-					}
-
-					cGen.addVariable(assignICode.label, VariableLength.WORD, assignICode.label + "_value");
-
-					String reg = res.getRegister(assignICode.label);
-					int off = offset.findOffset(assignICode.label, assignICode.type);
-
-					cGen.addInstruction("LDR " + reg + ", " + assignICode.label);
-					cGen.addInstruction("STR " + reg + ", [R13, #-" + off + ']');
-				}
-
-				return null;
-			}
-		});
-	}
-
-	private void initStr1() {
-		codeGenFunctions.put(Pattern.str1, new Callable<Void>() {
-			@Override
-			public Void call() throws Exception {
-				ICode icode = intermediateCode.getInstruction(i);
-				ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
-
-				Assign assignICode = (Assign) icode;
-				StrExp assignExp = (StrExp) assignICode.value;
-
-				if (assignICode.getScope() == ICode.Scope.GLOBAL) {
-					String strToMem = assignExp.value;
-					for (int i = 0; i < strToMem.length(); i++) {
-						char letter = strToMem.charAt(i);
-						if (i == 0) {
-							cGen.addVariable(assignICode.place + "_value", VariableLength.BYTE, (int) letter);
-						} else {
-							cGen.addVariable(VariableLength.BYTE, (int) letter);
-						}
-					}
-
-					if (strToMem.length() > 0) {
-						cGen.addVariable(VariableLength.BYTE, (int) '\0');
-					} else {
-						cGen.addVariable(assignICode.place + "_value", VariableLength.BYTE, (int) '\0');
-					}
-				} else if (assignICode.getScope() == ICode.Scope.PARAM) {
-					String strToMem = assignExp.value;
-					for (int i = 0; i < strToMem.length(); i++) {
-						char letter = strToMem.charAt(i);
-						if (i == 0) {
-							cGen.addVariable(assignICode.place + "_value", VariableLength.BYTE, (int) letter);
-						} else {
-							cGen.addVariable(VariableLength.BYTE, (int) letter);
-						}
-					}
-
-					if (strToMem.length() > 0) {
-						cGen.addVariable(VariableLength.BYTE, (int) '\0');
-					} else {
-						cGen.addVariable(assignICode.place + "_value", VariableLength.BYTE, (int) '\0');
-					}
-
-					cGen.addVariable(assignICode.place, VariableLength.WORD, assignICode.place + "_value");
-
-					String reg = res.getRegister(assignICode.place);
-					int off = offset.findOffset(assignICode.place, assignICode.getType());
-
-					cGen.addInstruction("LDR " + reg + ", " + assignICode.place);
-					cGen.addInstruction("STR " + reg + ", [R13, #-" + off + ']');
-				} else if (assignICode.getScope() == ICode.Scope.RETURN) {
-					String strToMem = assignExp.value;
-					for (int i = 0; i < strToMem.length(); i++) {
-						char letter = strToMem.charAt(i);
-						if (i == 0) {
-							cGen.addVariable(assignICode.place + "_value", VariableLength.BYTE, (int) letter);
-						} else {
-							cGen.addVariable(VariableLength.BYTE, (int) letter);
-						}
-					}
-
-					if (strToMem.length() > 0) {
-						cGen.addVariable(VariableLength.BYTE, (int) '\0');
-					} else {
-						cGen.addVariable(assignICode.place + "_value", VariableLength.BYTE, (int) '\0');
-					}
-
-					cGen.addVariable(assignICode.place, VariableLength.WORD, assignICode.place + "_value");
-
-					String reg = res.getRegister(assignICode.place);
-					int off = offset.findOffset(assignICode.place, assignICode.getType());
-
-					cGen.addInstruction("LDR " + reg + ", " + assignICode.place);
-					cGen.addInstruction("STR " + reg + ", [R13, #-" + off + ']');
-				} else {
-					String strToMem = assignExp.value;
-					for (int i = 0; i < strToMem.length(); i++) {
-						char letter = strToMem.charAt(i);
-						if (i == 0) {
-							cGen.addVariable(assignICode.place + "_value", VariableLength.BYTE, (int) letter);
-						} else {
-							cGen.addVariable(VariableLength.BYTE, (int) letter);
-						}
-					}
-
-					if (strToMem.length() > 0) {
-						cGen.addVariable(VariableLength.BYTE, (int) '\0');
-					} else {
-						cGen.addVariable(assignICode.place + "_value", VariableLength.BYTE, (int) '\0');
-					}
-
-					cGen.addVariable(assignICode.place, VariableLength.WORD, assignICode.place + "_value");
-
-					String reg = res.getRegister(assignICode.place);
-					int off = offset.findOffset(assignICode.place, assignICode.getType());
-
-					cGen.addInstruction("LDR " + reg + ", " + assignICode.place);
-					cGen.addInstruction("STR " + reg + ", [R13, #-" + off + ']');
+					errorLog.add("Cant assign non global to constant in " + icode.toString(), new Position(i, 0));
 				}
 
 				return null;
