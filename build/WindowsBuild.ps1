@@ -17,6 +17,15 @@ if($javaExists -ne ""){
         Write-Host "Command is $command"
         if($command -eq "build"){
             $srcRoot = Get-Location
+            Write-Host "Generating ANTLR sources..."
+            $antlrOut = "src\java\declan\backend\assembler"
+            $g4Files = Get-ChildItem -Path "src\antlr" -Filter *.g4 -File
+            foreach ($g4 in $g4Files) {
+                Copy-Item $g4.FullName -Destination "$antlrOut\$($g4.Name)"
+                java -jar lib\antlr-4.13.2-complete.jar "$antlrOut\$($g4.Name)" -package declan.backend.assembler -visitor -listener
+                Remove-Item -Force "$antlrOut\$($g4.Name)"
+                Remove-Item -Force "$antlrOut\*.interp", "$antlrOut\*.tokens" -ErrorAction SilentlyContinue
+            }
             if(Test-Path -Path build\BuildList.txt){
                 Remove-Item -Force build\BuildList.txt
             }

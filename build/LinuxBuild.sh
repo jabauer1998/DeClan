@@ -19,6 +19,17 @@ if [ -n "$javaExists" ]; then
         echo "Command is $command"
         if [ "$command" = "build" ]; then
             srcRoot=$(pwd)
+            echo "Generating ANTLR sources..."
+            ANTLR_OUT="src/java/declan/backend/assembler"
+            for g4 in src/antlr/*.g4; do
+                if [ -f "$g4" ]; then
+                    g4name=$(basename "$g4")
+                    cp "$g4" "$ANTLR_OUT/$g4name"
+                    java -jar lib/antlr-4.13.2-complete.jar "$ANTLR_OUT/$g4name" -package declan.backend.assembler -visitor -listener
+                    rm -f "$ANTLR_OUT/$g4name"
+                    rm -f "$ANTLR_OUT"/*.interp "$ANTLR_OUT"/*.tokens
+                fi
+            done
             if [ -f build/BuildList.txt ]; then
                 rm -f build/BuildList.txt
             fi

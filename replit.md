@@ -27,9 +27,11 @@ DeClan (Depauw Compilers Language) is a compiler for a subset of the Oberon prog
 
 ## Build & Run
 - **Language**: Java 19 (GraalVM CE 22.3.1)
-- **Build**: `bash build/LinuxBuild.sh build`
+- **Build**: `bash build/LinuxBuild.sh build` (generates ANTLR sources from `src/antlr/*.g4`, then compiles all Java)
+- **Test**: `bash build/LinuxBuild.sh test` (builds first, then compiles and runs JUnit tests)
 - **Run**: `java -cp 'tmp:lib/*' declan.driver.MyCompilerDriver`
 - **Clean**: `bash build/LinuxBuild.sh clean`
+- **Environment**: Set `DECLIB=src/declan/std/lib` for standard library resolution
 
 ## Package Structure
 All packages now use the `declan.*` prefix matching the directory layout:
@@ -40,6 +42,10 @@ All packages now use the `declan.*` prefix matching the directory layout:
 - `declan.utils.*` - Exceptions, flow, matcher, position, source, symboltable
 
 ## Recent Changes
+- 2026-02-18: Added ANTLR code generation step to build scripts (generates from `src/antlr/*.g4` into `declan.backend.assembler`)
+- 2026-02-18: Added test command to build scripts using JUnit Platform Console Standalone
+- 2026-02-18: Updated test file paths from `test/` to `src/declan/test/declan` and `src/ir/` directories
+- 2026-02-18: Fixed Windows backslash path separators in MyStandardLibrary.java and MyStandardLibTest.java for Linux compatibility
 - 2026-02-18: Refactored all package paths from `io.github.h20man13.DeClan.*` to `declan.*` to match directory structure
 - 2026-02-18: Fixed Java 21+ API compatibility (replaced `getFirst()`, `getLast()`, `reversed()` with Java 19 compatible alternatives)
 - 2026-02-18: Initial Replit environment setup

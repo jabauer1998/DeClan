@@ -1,6 +1,5 @@
-// Generated from io\github\H20man13\DeClan\main\assembler\ArmAssembler.g4 by ANTLR 4.3
+// Generated from src/java/declan/backend/assembler/ArmAssembler.g4 by ANTLR 4.13.2
 package declan.backend.assembler;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
@@ -11,6 +10,7 @@ import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
  * @param <T> The return type of the visit operation. Use {@link Void} for
  * operations with no return type.
  */
+@SuppressWarnings("CheckReturnValue")
 public class ArmAssemblerBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ArmAssemblerVisitor<T> {
 	/**
 	 * {@inheritDoc}
@@ -18,493 +18,432 @@ public class ArmAssemblerBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitCmnInstr(@NotNull ArmAssemblerParser.CmnInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitProgram(ArmAssemblerParser.ProgramContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitShift(@NotNull ArmAssemblerParser.ShiftContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitInstructionOrDirective(ArmAssemblerParser.InstructionOrDirectiveContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitTstInstr(@NotNull ArmAssemblerParser.TstInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitInstruction(ArmAssemblerParser.InstructionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitProgram(@NotNull ArmAssemblerParser.ProgramContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitWordDirective(ArmAssemblerParser.WordDirectiveContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitUnary(@NotNull ArmAssemblerParser.UnaryContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitByteDirective(ArmAssemblerParser.ByteDirectiveContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitRsbInstr(@NotNull ArmAssemblerParser.RsbInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitBInstr(ArmAssemblerParser.BInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLdrDefInstr(@NotNull ArmAssemblerParser.LdrDefInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitBlInstr(ArmAssemblerParser.BlInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitRscInstr(@NotNull ArmAssemblerParser.RscInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitBxInstr(ArmAssemblerParser.BxInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitNumber(@NotNull ArmAssemblerParser.NumberContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitLdmInstr(ArmAssemblerParser.LdmInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitShiftName(@NotNull ArmAssemblerParser.ShiftNameContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitLdrSignedInstr(ArmAssemblerParser.LdrSignedInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitStmInstr(@NotNull ArmAssemblerParser.StmInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitLdrDefInstr(ArmAssemblerParser.LdrDefInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMulInstr(@NotNull ArmAssemblerParser.MulInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitMlaInstr(ArmAssemblerParser.MlaInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMullInstr(@NotNull ArmAssemblerParser.MullInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitMlalInstr(ArmAssemblerParser.MlalInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitBxInstr(@NotNull ArmAssemblerParser.BxInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitMrsInstr(ArmAssemblerParser.MrsInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitBicInstr(@NotNull ArmAssemblerParser.BicInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitMsrDefInstr(ArmAssemblerParser.MsrDefInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitIdentifier(@NotNull ArmAssemblerParser.IdentifierContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitMsrPrivInstr(ArmAssemblerParser.MsrPrivInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitSbcInstr(@NotNull ArmAssemblerParser.SbcInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitMulInstr(ArmAssemblerParser.MulInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitEorInstr(@NotNull ArmAssemblerParser.EorInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitMullInstr(ArmAssemblerParser.MullInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitCmpInstr(@NotNull ArmAssemblerParser.CmpInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitStmInstr(ArmAssemblerParser.StmInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPrimary(@NotNull ArmAssemblerParser.PrimaryContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitStrSignedInstr(ArmAssemblerParser.StrSignedInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMrsInstr(@NotNull ArmAssemblerParser.MrsInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitStrDefInstr(ArmAssemblerParser.StrDefInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitSwpInstr(@NotNull ArmAssemblerParser.SwpInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitSwiInstr(ArmAssemblerParser.SwiInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPsrf(@NotNull ArmAssemblerParser.PsrfContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitSwpInstr(ArmAssemblerParser.SwpInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAdcInstr(@NotNull ArmAssemblerParser.AdcInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitAddInstr(ArmAssemblerParser.AddInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitTeqInstr(@NotNull ArmAssemblerParser.TeqInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitAndInstr(ArmAssemblerParser.AndInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPoundExpression(@NotNull ArmAssemblerParser.PoundExpressionContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitEorInstr(ArmAssemblerParser.EorInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAndInstr(@NotNull ArmAssemblerParser.AndInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitSubInstr(ArmAssemblerParser.SubInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLdrSignedInstr(@NotNull ArmAssemblerParser.LdrSignedInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitRsbInstr(ArmAssemblerParser.RsbInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPsr(@NotNull ArmAssemblerParser.PsrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitAdcInstr(ArmAssemblerParser.AdcInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMsrDefInstr(@NotNull ArmAssemblerParser.MsrDefInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitSbcInstr(ArmAssemblerParser.SbcInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLdmInstr(@NotNull ArmAssemblerParser.LdmInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitRscInstr(ArmAssemblerParser.RscInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitStrDefInstr(@NotNull ArmAssemblerParser.StrDefInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitOrrInstr(ArmAssemblerParser.OrrInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitOrrInstr(@NotNull ArmAssemblerParser.OrrInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitBicInstr(ArmAssemblerParser.BicInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMlaInstr(@NotNull ArmAssemblerParser.MlaInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitTstInstr(ArmAssemblerParser.TstInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAddInstr(@NotNull ArmAssemblerParser.AddInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitTeqInstr(ArmAssemblerParser.TeqInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitBitwise(@NotNull ArmAssemblerParser.BitwiseContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitCmpInstr(ArmAssemblerParser.CmpInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPostIndexedAddressing(@NotNull ArmAssemblerParser.PostIndexedAddressingContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitCmnInstr(ArmAssemblerParser.CmnInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitBInstr(@NotNull ArmAssemblerParser.BInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitMovInstr(ArmAssemblerParser.MovInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitRList(@NotNull ArmAssemblerParser.RListContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitMvnInstr(ArmAssemblerParser.MvnInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitTerm(@NotNull ArmAssemblerParser.TermContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitStopInstr(ArmAssemblerParser.StopInstrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitSubInstr(@NotNull ArmAssemblerParser.SubInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitOp2(ArmAssemblerParser.Op2Context ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMlalInstr(@NotNull ArmAssemblerParser.MlalInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitShift(ArmAssemblerParser.ShiftContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitInstructionOrDirective(@NotNull ArmAssemblerParser.InstructionOrDirectiveContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitRList(ArmAssemblerParser.RListContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitStrSignedInstr(@NotNull ArmAssemblerParser.StrSignedInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitRValue(ArmAssemblerParser.RValueContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExpression(@NotNull ArmAssemblerParser.ExpressionContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitPoundExpression(ArmAssemblerParser.PoundExpressionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitRealNumber(@NotNull ArmAssemblerParser.RealNumberContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitExpression(ArmAssemblerParser.ExpressionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAddress(@NotNull ArmAssemblerParser.AddressContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitAndExpr(ArmAssemblerParser.AndExprContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitBlInstr(@NotNull ArmAssemblerParser.BlInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitRelational(ArmAssemblerParser.RelationalContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitByteDirective(@NotNull ArmAssemblerParser.ByteDirectiveContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitPrimary(ArmAssemblerParser.PrimaryContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMvnInstr(@NotNull ArmAssemblerParser.MvnInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitBitwise(ArmAssemblerParser.BitwiseContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitWordDirective(@NotNull ArmAssemblerParser.WordDirectiveContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitTerm(ArmAssemblerParser.TermContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitRValue(@NotNull ArmAssemblerParser.RValueContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitUnary(ArmAssemblerParser.UnaryContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMsrPrivInstr(@NotNull ArmAssemblerParser.MsrPrivInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitSingle(ArmAssemblerParser.SingleContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMovInstr(@NotNull ArmAssemblerParser.MovInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitIdentifier(ArmAssemblerParser.IdentifierContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitOp2(@NotNull ArmAssemblerParser.Op2Context ctx) { return visitChildren(ctx); }
-
+	@Override public T visitRealNumber(ArmAssemblerParser.RealNumberContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitSingle(@NotNull ArmAssemblerParser.SingleContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitNumber(ArmAssemblerParser.NumberContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitInstruction(@NotNull ArmAssemblerParser.InstructionContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitAddress(ArmAssemblerParser.AddressContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitSwiInstr(@NotNull ArmAssemblerParser.SwiInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitPreIndexedAddressing(ArmAssemblerParser.PreIndexedAddressingContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitRelational(@NotNull ArmAssemblerParser.RelationalContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitPostIndexedAddressing(ArmAssemblerParser.PostIndexedAddressingContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitStopInstr(@NotNull ArmAssemblerParser.StopInstrContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitShiftName(ArmAssemblerParser.ShiftNameContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPreIndexedAddressing(@NotNull ArmAssemblerParser.PreIndexedAddressingContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitPsr(ArmAssemblerParser.PsrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAndExpr(@NotNull ArmAssemblerParser.AndExprContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPsrf(ArmAssemblerParser.PsrfContext ctx) { return visitChildren(ctx); }
 }
