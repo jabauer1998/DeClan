@@ -28,7 +28,7 @@ public class BaseBuilder {
     }
     
     protected ICode getLastInstruction() {
-    	return intermediateCode.getLast();
+        return intermediateCode.get(intermediateCode.size() - 1);
     }
 
     protected ICode getInstruction(int index){
@@ -44,43 +44,43 @@ public class BaseBuilder {
     }
     
     public String symbolTableToString() {
-    	StringBuilder sb = new StringBuilder();
-    	for(int i = beginningOfSymbolTable(); i <= endOfSymbolTable(); i++) {
-    		ICode instruction = getInstruction(i);
-    		sb.append(instruction.toString());
-    		sb.append("\r\n");
-    	}
-    	return sb.toString();
+        StringBuilder sb = new StringBuilder();
+        for(int i = beginningOfSymbolTable(); i <= endOfSymbolTable(); i++) {
+                ICode instruction = getInstruction(i);
+                sb.append(instruction.toString());
+                sb.append("\r\n");
+        }
+        return sb.toString();
     }
     
     public String dataSectionToString() {
-    	StringBuilder sb = new StringBuilder();
-    	for(int i = beginningOfDataSection(); i <= endOfDataSection(); i++) {
-    		ICode instruction = getInstruction(i);
-    		sb.append(instruction.toString());
-    		sb.append("\r\n");
-    	}
-    	return sb.toString();
+        StringBuilder sb = new StringBuilder();
+        for(int i = beginningOfDataSection(); i <= endOfDataSection(); i++) {
+                ICode instruction = getInstruction(i);
+                sb.append(instruction.toString());
+                sb.append("\r\n");
+        }
+        return sb.toString();
     }
     
     public String codeSectionToString() {
-    	StringBuilder sb = new StringBuilder();
-    	for(int i = beginningOfCodeSection(); i <= endOfCodeSection(); i++) {
-    		ICode instruction = getInstruction(i);
-    		sb.append(instruction.toString());
-    		sb.append("\r\n");
-    	}
-    	return sb.toString();
+        StringBuilder sb = new StringBuilder();
+        for(int i = beginningOfCodeSection(); i <= endOfCodeSection(); i++) {
+                ICode instruction = getInstruction(i);
+                sb.append(instruction.toString());
+                sb.append("\r\n");
+        }
+        return sb.toString();
     }
     
     public String procedureSectionToString() {
-    	StringBuilder sb = new StringBuilder();
-    	for(int i = beginningOfProcedureSection(); i < endingOfProcedureSection(); i++){
-    		ICode instruction = getInstruction(i);
-    		sb.append(instruction.toString());
-    		sb.append("\r\n");
-    	}
-    	return sb.toString();
+        StringBuilder sb = new StringBuilder();
+        for(int i = beginningOfProcedureSection(); i < endingOfProcedureSection(); i++){
+                ICode instruction = getInstruction(i);
+                sb.append(instruction.toString());
+                sb.append("\r\n");
+        }
+        return sb.toString();
     }
     
 
@@ -90,7 +90,7 @@ public class BaseBuilder {
             if(icode instanceof BssSec)
                 return index - 1;
             else if(icode instanceof DataSec) {
-            	return index - 1;
+                return index - 1;
             }
             index++;
         }

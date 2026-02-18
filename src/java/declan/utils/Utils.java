@@ -85,72 +85,72 @@ public class Utils {
     }
 
     public static NullableExp getExpFromSet(Set<Tuple<CopyStr, NullableExp>> tuples, NullableExp name){
-    	if(name instanceof IdentExp) {
-    		IdentExp nExp = (IdentExp)name;
-    		for(Tuple<CopyStr, NullableExp> tuple : tuples){
+        if(name instanceof IdentExp) {
+                IdentExp nExp = (IdentExp)name;
+                for(Tuple<CopyStr, NullableExp> tuple : tuples){
                 if(tuple.source.toString().equals(nExp.ident)){
                     return tuple.dest;
                 }
             }
-    	}
+        }
         
         throw new UtilityException("getExpFromSet", "Tuple with name " + name + " was not found");
     }
     
     public static boolean containsExpInSet(Set<Tuple<NullableExp, Type>> opSet, String string) {
-    	for(Tuple<NullableExp, ICode.Type> tuple : opSet){
+        for(Tuple<NullableExp, ICode.Type> tuple : opSet){
             if(tuple.source instanceof IdentExp){
-            	IdentExp source = (IdentExp)tuple.source;
-            	if(source.ident.equals(string))
-            		return true;
+                IdentExp source = (IdentExp)tuple.source;
+                if(source.ident.equals(string))
+                        return true;
             }
         }
-    	return false;
+        return false;
     }
 
     public static boolean containsExpInSet(Set<Tuple<CopyStr, NullableExp>> tuples, NullableExp name){
-    	if(name instanceof IdentExp) {
-    		IdentExp nExp = (IdentExp)name;
-    		for(Tuple<CopyStr, NullableExp> tuple : tuples){
+        if(name instanceof IdentExp) {
+                IdentExp nExp = (IdentExp)name;
+                for(Tuple<CopyStr, NullableExp> tuple : tuples){
                 if(tuple.source.toString().equals(nExp.ident)){
                     return true;
                 }
             }
-    	}
+        }
         return false;
     }
     
     public static boolean containsExpInSet(HashSet<Tuple<CopyStr, NullableExp>> killSet, String resTest) {
-		for(Tuple<CopyStr, NullableExp> tuple : killSet){
+                for(Tuple<CopyStr, NullableExp> tuple : killSet){
             if(tuple.source.toString().equals(resTest)){
                 return true;
             }
-		}
-		return false;
+                }
+                return false;
     }
     
     public static boolean containsNullExpInSet(Set<Tuple<NullableExp, ICode.Type>> set, NullableExp toSearch) {
-    	for(Tuple<NullableExp, ICode.Type> tuple: set) {
-    		if(tuple.source.equals(toSearch))
-    			return true;
-    	}
-    	return false;
+        for(Tuple<NullableExp, ICode.Type> tuple: set) {
+                if(tuple.source.equals(toSearch))
+                        return true;
+        }
+        return false;
     }
     
     public static boolean containsExpInSet(HashSet<Tuple<NullableExp, CopyStr>> set, NullableExp toSearch) {
-    	for(Tuple<NullableExp, CopyStr> tuple: set) {
-    		if(tuple.source.equals(toSearch))
-    			return true;
-    	}
-    	return false;
+        for(Tuple<NullableExp, CopyStr> tuple: set) {
+                if(tuple.source.equals(toSearch))
+                        return true;
+        }
+        return false;
     }
     
     public static String getVar(Set<Tuple<NullableExp, CopyStr>> set, NullableExp toSearch) {
-    	for(Tuple<NullableExp, CopyStr> tuple: set) {
-    		if(tuple.source.equals(toSearch))
-    			return tuple.dest.toString();
-    	}
-    	throw new UtilityException("getVar", "Error expression [" + toSearch.toString() + "] not found in set\n" + set.toString());
+        for(Tuple<NullableExp, CopyStr> tuple: set) {
+                if(tuple.source.equals(toSearch))
+                        return tuple.dest.toString();
+        }
+        throw new UtilityException("getVar", "Error expression [" + toSearch.toString() + "] not found in set\n" + set.toString());
     }
     
     
@@ -231,8 +231,8 @@ public class Utils {
     }
     
     public static boolean endOfBlockIsProcedureCall(BasicBlock block) {
-    	List<ICode> codeInBlock = block.getIcode();
-    	if(codeInBlock.size() > 0){
+        List<ICode> codeInBlock = block.getIcode();
+        if(codeInBlock.size() > 0){
             ICode lastICode = codeInBlock.get(codeInBlock.size() - 1);
             if(lastICode instanceof Call){
                 return true;
@@ -255,9 +255,9 @@ public class Utils {
             } else if(lastICode instanceof Call){
                 return true;
             } else if(lastICode instanceof Return){
-            	return true;
+                return true;
             } else if(lastICode instanceof End){
-            	return true;
+                return true;
             } else {
                 return false;
             }
@@ -271,7 +271,7 @@ public class Utils {
         if(codeInBlock.size() > 0){
             ICode lastICode = codeInBlock.get(codeInBlock.size() - 1);
             if(lastICode instanceof End){
-            	return true;
+                return true;
             } else {
                 return false;
             }
@@ -358,32 +358,32 @@ public class Utils {
   }
   
   public enum WhiteSpaceType{
-	  TRAILING,
-	  LEADING
+          TRAILING,
+          LEADING
   }
   
   public static String padWhiteSpace(String input, int expectedLength, WhiteSpaceType type) {
-	  int actualLength = input.length();
-	  if(actualLength > expectedLength)
-		  throw new UtilityException("padWhiteSpace", "The actual length of string-\n" + input.toString() + "(Length=" + actualLength + ")\n exceded the expected length " + expectedLength);
-	  
-	  if(actualLength == expectedLength)
-		  return input;
-	  
-	  int numSpaces = expectedLength - actualLength;
-	  StringBuilder sb = new StringBuilder();
-	  
-	  if(type == WhiteSpaceType.LEADING)
-		  for(int i = 0; i < numSpaces; i++)
-			  sb.append(' ');
-	  
-	  sb.append(input);
-	  
-	  if(type == WhiteSpaceType.TRAILING)
-		 for(int i = 0; i < numSpaces; i++)
-			 sb.append(' ');
-	  
-	  return sb.toString();
+          int actualLength = input.length();
+          if(actualLength > expectedLength)
+                  throw new UtilityException("padWhiteSpace", "The actual length of string-\n" + input.toString() + "(Length=" + actualLength + ")\n exceded the expected length " + expectedLength);
+          
+          if(actualLength == expectedLength)
+                  return input;
+          
+          int numSpaces = expectedLength - actualLength;
+          StringBuilder sb = new StringBuilder();
+          
+          if(type == WhiteSpaceType.LEADING)
+                  for(int i = 0; i < numSpaces; i++)
+                          sb.append(' ');
+          
+          sb.append(input);
+          
+          if(type == WhiteSpaceType.TRAILING)
+                 for(int i = 0; i < numSpaces; i++)
+                         sb.append(' ');
+          
+          return sb.toString();
   }
 
   public static String to32BitBinary(Float realValue){
@@ -399,156 +399,156 @@ public class Utils {
   }
   
   public static void createFile(String fileName) {
-	  Utils.deleteFile(fileName);
-	  File file = new File(fileName);
-	  try {
-		  file.createNewFile();
-	  } catch(IOException exp) {
-		  throw new RuntimeException(exp.toString());
-	  }
+          Utils.deleteFile(fileName);
+          File file = new File(fileName);
+          try {
+                  file.createNewFile();
+          } catch(IOException exp) {
+                  throw new RuntimeException(exp.toString());
+          }
   }
   
   public static void appendToFile(String fileName, String textToAppend) {
-	  File file = new File(fileName);
-	  try {
-		FileWriter writer = new FileWriter(file, true);
-		for(int i = 0; i < textToAppend.length(); i++) {
-			char c = textToAppend.charAt(i);
-			writer.append(c);
-		}
-		writer.flush();
-		writer.close();
-	} catch (IOException e) {
-		throw new RuntimeException(e.toString());
-	}
+          File file = new File(fileName);
+          try {
+                FileWriter writer = new FileWriter(file, true);
+                for(int i = 0; i < textToAppend.length(); i++) {
+                        char c = textToAppend.charAt(i);
+                        writer.append(c);
+                }
+                writer.flush();
+                writer.close();
+        } catch (IOException e) {
+                throw new RuntimeException(e.toString());
+        }
   }
   
   public static void writeToFile(String fileName, String textToAppend) {
-	  File file = new File(fileName);
-	  try {
-		  FileWriter writer = new FileWriter(file);
-		  for(int i = 0; i < textToAppend.length(); i++) {
-			  char c = textToAppend.charAt(i);
-			  writer.write(c);
-		  }
-		  writer.flush();
-		  writer.close();
-	  } catch(IOException exp) {
-		  throw new RuntimeException(exp.toString());
-	  }
+          File file = new File(fileName);
+          try {
+                  FileWriter writer = new FileWriter(file);
+                  for(int i = 0; i < textToAppend.length(); i++) {
+                          char c = textToAppend.charAt(i);
+                          writer.write(c);
+                  }
+                  writer.flush();
+                  writer.close();
+          } catch(IOException exp) {
+                  throw new RuntimeException(exp.toString());
+          }
   }
   
   public static int getLengthOfUnsignedNumber(int number) {
-	  int count = 1;
-	  while(number >= 10) {
-		  count++;
-		  number /= 10;
-	  }
-	  return count;
+          int count = 1;
+          while(number >= 10) {
+                  count++;
+                  number /= 10;
+          }
+          return count;
   }
   
   @SuppressWarnings("unchecked")
   public static <ClassType> Class<ClassType> getClassType(Class<?> type){
-	  return (Class<ClassType>)type;
+          return (Class<ClassType>)type;
   }
 
   public static boolean scopeIsGlobal(NullableExp dest) {
-	if(dest instanceof IdentExp) {
-		IdentExp ident = (IdentExp)dest;
-		if(ident.scope == ICode.Scope.GLOBAL)
-			return true;
-	}
-	return false;
+        if(dest instanceof IdentExp) {
+                IdentExp ident = (IdentExp)dest;
+                if(ident.scope == ICode.Scope.GLOBAL)
+                        return true;
+        }
+        return false;
   }
 
   public static boolean beginningOfBlockIsSection(BasicBlock block) {
-	List<ICode> intermediateCode = block.getIcode();
-	if(intermediateCode.size() > 0) {
-		ICode first = intermediateCode.getFirst();
-		if(first instanceof SymSec)
-			return true;
-		else if(first instanceof DataSec)
-			return true;
-		else if(first instanceof BssSec)
-			return true;
-		else if(first instanceof CodeSec)
-			return true;
-		else if(first instanceof ProcSec)
-			return true;
-	}
-	return false;
+        List<ICode> intermediateCode = block.getIcode();
+        if(intermediateCode.size() > 0) {
+                ICode first = intermediateCode.get(0);
+                if(first instanceof SymSec)
+                        return true;
+                else if(first instanceof DataSec)
+                        return true;
+                else if(first instanceof BssSec)
+                        return true;
+                else if(first instanceof CodeSec)
+                        return true;
+                else if(first instanceof ProcSec)
+                        return true;
+        }
+        return false;
   }
   
   public static List<String> viewCommonElements(Prog program) {
-	  LinkedList<String> myList = new LinkedList<String>();
-	  for(int i = 0; i < program.getICode().size(); i++) {
-		  ICode instruction = program.getInstruction(i);
-		  if(instruction instanceof Assign) {
-			  for(int j = i + 1; j < program.getICode().size(); j++) {
-				  ICode instruction2 = program.getInstruction(j);
-				  if(instruction2 instanceof Assign) {
-					  if(instruction.equals(instruction2)) {
-						  myList.add("Instruction " + instruction.toString() + " at " + i + " is also at " + j + "\n");
-					  }
-				  }
-			  }
-		  } else if(instruction instanceof Call) {
-			  for(int j = i + 1; j < program.getICode().size(); j++) {
-				  ICode instruction2 = program.getInstruction(j);
-				  if(instruction2 instanceof Call) {
-					  if(instruction.equals(instruction2)) {
-						  myList.add("Instruction " + instruction.toString() + " at " + i + " is also at " + j + "\n");
-					  }
-				  }
-			  }
-		  } else if(instruction instanceof Goto) {
-			  for(int j = i + 1; j < program.getICode().size(); j++) {
-				  ICode instruction2 = program.getInstruction(j);
-				  if(instruction2 instanceof Goto) {
-					  if(instruction.equals(instruction2)) {
-						  myList.add("Instruction " + instruction.toString() + " at " + i + " is also at " + j + "\n");
-					  }
-				  }
-			  }
-		  }
-	  }
-	  return myList;
+          LinkedList<String> myList = new LinkedList<String>();
+          for(int i = 0; i < program.getICode().size(); i++) {
+                  ICode instruction = program.getInstruction(i);
+                  if(instruction instanceof Assign) {
+                          for(int j = i + 1; j < program.getICode().size(); j++) {
+                                  ICode instruction2 = program.getInstruction(j);
+                                  if(instruction2 instanceof Assign) {
+                                          if(instruction.equals(instruction2)) {
+                                                  myList.add("Instruction " + instruction.toString() + " at " + i + " is also at " + j + "\n");
+                                          }
+                                  }
+                          }
+                  } else if(instruction instanceof Call) {
+                          for(int j = i + 1; j < program.getICode().size(); j++) {
+                                  ICode instruction2 = program.getInstruction(j);
+                                  if(instruction2 instanceof Call) {
+                                          if(instruction.equals(instruction2)) {
+                                                  myList.add("Instruction " + instruction.toString() + " at " + i + " is also at " + j + "\n");
+                                          }
+                                  }
+                          }
+                  } else if(instruction instanceof Goto) {
+                          for(int j = i + 1; j < program.getICode().size(); j++) {
+                                  ICode instruction2 = program.getInstruction(j);
+                                  if(instruction2 instanceof Goto) {
+                                          if(instruction.equals(instruction2)) {
+                                                  myList.add("Instruction " + instruction.toString() + " at " + i + " is also at " + j + "\n");
+                                          }
+                                  }
+                          }
+                  }
+          }
+          return myList;
   }
 
   public static int posOf(String str, char c, int count) {
-	int myCount = 0;
-	for(int i = 0; i < str.length(); i++) {
-		char at = str.charAt(i);
-		if(at == c) {
-			myCount++;
-			if(myCount == count)
-				return i;
-		}
-	}
-	throw new UtilityException("posOf", "Cant find " + count + " of " + c + " in " + "\"" + str + "\"");
+        int myCount = 0;
+        for(int i = 0; i < str.length(); i++) {
+                char at = str.charAt(i);
+                if(at == c) {
+                        myCount++;
+                        if(myCount == count)
+                                return i;
+                }
+        }
+        throw new UtilityException("posOf", "Cant find " + count + " of " + c + " in " + "\"" + str + "\"");
   }
 
   public static <SetType extends Set<?>> SetType createNewSet(Class<SetType> setClass) {
-	try {
-		return setClass.newInstance();
-	} catch(Exception exp) {
-		throw new RuntimeException(exp);
-	}
+        try {
+                return setClass.newInstance();
+        } catch(Exception exp) {
+                throw new RuntimeException(exp);
+        }
   }
 
   public static boolean setContainsNullableTupleWithExp(HashSet<Tuple<CopyStr, NullableExp>> globals, NullableExp dest) {
-	for(Tuple<CopyStr, NullableExp> nully: globals) {
-		if(nully.dest.equals(dest))
-			return true;
-	}
-	return false;
+        for(Tuple<CopyStr, NullableExp> nully: globals) {
+                if(nully.dest.equals(dest))
+                        return true;
+        }
+        return false;
   }
 
   public static CopyStr getNullableTupleWithExp(HashSet<Tuple<CopyStr, NullableExp>> globals, NullableExp dest) {
-	  for(Tuple<CopyStr, NullableExp> nully: globals) {
-			if(nully.dest.equals(dest))
-				return nully.source;
-	  }
-	  throw new RuntimeException();
+          for(Tuple<CopyStr, NullableExp> nully: globals) {
+                        if(nully.dest.equals(dest))
+                                return nully.source;
+          }
+          throw new RuntimeException();
   }
 }

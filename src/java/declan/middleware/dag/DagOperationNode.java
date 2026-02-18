@@ -121,42 +121,42 @@ public class DagOperationNode implements DagNode {
     
     @Override
     public String toString() {
-    	StringBuilder sb = new StringBuilder();
-    	sb.append(identifiers.toString());
-    	int maxChildLength = 0;
-    	for(DagNode child: children) {
-    		maxChildLength += child.getIdentifiers().toString().length();
-    	}
-    	maxChildLength -= (identifiers.toString().length() + children.getLast().getIdentifiers().toString().length()) - 1;
-    	
-    	for(int i = 0; i < maxChildLength; i++) {
-    		sb.append('-');
-    	}
-    	sb.append('\n');
-    	for(int x = 0; x < 2; x++) {
-    		sb.append('|');
-    		for(int i = 1; i < children.size(); i++) {
-    			DagNode pastChild = children.get(i - 1);
-    			for(int z = 0; z < pastChild.getIdentifiers().toString().length() - 1; z++) {
-    				sb.append(' ');
-    			}
-    			sb.append('|');
-        	}
-    		sb.append('\n');
-    	}
-    	sb.append('V');
-		for(int i = 1; i < children.size(); i++) {
-			DagNode pastChild = children.get(i - 1);
-			for(int z = 0; z < pastChild.getIdentifiers().toString().length() - 1; z++) {
-				sb.append(' ');
-			}
-			sb.append('V');
-			sb.append('\n');
-    	}
-    	for(DagNode child: children) {
-    		sb.append(child.getIdentifiers().toString());
-    	}
-    	return sb.toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append(identifiers.toString());
+        int maxChildLength = 0;
+        for(DagNode child: children) {
+                maxChildLength += child.getIdentifiers().toString().length();
+        }
+        maxChildLength -= (identifiers.toString().length() + children.get(children.size() - 1).getIdentifiers().toString().length()) - 1;
+        
+        for(int i = 0; i < maxChildLength; i++) {
+                sb.append('-');
+        }
+        sb.append('\n');
+        for(int x = 0; x < 2; x++) {
+                sb.append('|');
+                for(int i = 1; i < children.size(); i++) {
+                        DagNode pastChild = children.get(i - 1);
+                        for(int z = 0; z < pastChild.getIdentifiers().toString().length() - 1; z++) {
+                                sb.append(' ');
+                        }
+                        sb.append('|');
+                }
+                sb.append('\n');
+        }
+        sb.append('V');
+                for(int i = 1; i < children.size(); i++) {
+                        DagNode pastChild = children.get(i - 1);
+                        for(int z = 0; z < pastChild.getIdentifiers().toString().length() - 1; z++) {
+                                sb.append(' ');
+                        }
+                        sb.append('V');
+                        sb.append('\n');
+        }
+        for(DagNode child: children) {
+                sb.append(child.getIdentifiers().toString());
+        }
+        return sb.toString();
     }
     public Op getOperator(){
         return this.operation;
@@ -173,6 +173,6 @@ public class DagOperationNode implements DagNode {
     }
     
     public boolean isDef() {
-    	return isDefinition;
+        return isDefinition;
     }
 }

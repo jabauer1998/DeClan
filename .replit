@@ -1,0 +1,29 @@
+modules = ["java-graalvm22.3", "bash"]
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Build DeClan Compiler"
+
+[[workflows.workflow]]
+name = "Build DeClan Compiler"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd /home/runner/workspace && bash build/LinuxBuild.sh build && echo \"Build complete! Run with: java -cp 'tmp:lib/*' io.github.h20man13.DeClan.main.MyCompilerDriver\""
+
+[workflows.workflow.metadata]
+outputType = "console"

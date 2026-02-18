@@ -4,3 +4,16 @@
 DeClan/target
 DeClan/test/temp/
 /.project
+
+# Java build output
+tmp/
+*.jar.bak
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

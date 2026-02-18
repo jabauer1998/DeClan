@@ -163,69 +163,69 @@ public class MyOptimizer {
     }
     
     private static Map<String, BlockNode> findSectionExitPoints(List<BlockNode> nodeList){
-    	Map<String, BlockNode> toRet = new HashMap<String, BlockNode>();
-    	String lastBlockNode = null;
-    	for(int i = 0; i < nodeList.size(); i++) {
-    		BlockNode node = nodeList.get(i);
-    		BasicBlock block = node.getBlock();
-    		if(Utils.beginningOfBlockIsSection(block)) {
-    			ICode first = block.getIcode().getFirst();
-    			if(first instanceof SymSec){
-    				lastBlockNode = "SymSec";
-    			} else if(first instanceof DataSec) {
-    				BlockNode previous = nodeList.get(i - 1);
-    				toRet.put(lastBlockNode, previous);
-    				lastBlockNode = "DataSec";
-    			} else if(first instanceof BssSec) {
-    				BlockNode previous = nodeList.get(i - 1);
-    				toRet.put(lastBlockNode, previous);
-    				lastBlockNode = "BssSec";
-    			} else if(first instanceof CodeSec) {
-    				BlockNode previous = nodeList.get(i - 1);
-    				toRet.put(lastBlockNode, previous);
-    				lastBlockNode = "CodeSec";
-    			} else if(first instanceof ProcSec) {
-    				BlockNode previous = nodeList.get(i - 1);
-    				toRet.put(lastBlockNode, previous);
-    				lastBlockNode = "ProcSec";
-    			}
-    		}
-    	}
-    	
-    	BlockNode lastNode = nodeList.getLast();
-    	toRet.put(lastBlockNode, lastNode);
-    	
-    	return toRet;
+        Map<String, BlockNode> toRet = new HashMap<String, BlockNode>();
+        String lastBlockNode = null;
+        for(int i = 0; i < nodeList.size(); i++) {
+                BlockNode node = nodeList.get(i);
+                BasicBlock block = node.getBlock();
+                if(Utils.beginningOfBlockIsSection(block)) {
+                        ICode first = block.getIcode().get(0);
+                        if(first instanceof SymSec){
+                                lastBlockNode = "SymSec";
+                        } else if(first instanceof DataSec) {
+                                BlockNode previous = nodeList.get(i - 1);
+                                toRet.put(lastBlockNode, previous);
+                                lastBlockNode = "DataSec";
+                        } else if(first instanceof BssSec) {
+                                BlockNode previous = nodeList.get(i - 1);
+                                toRet.put(lastBlockNode, previous);
+                                lastBlockNode = "BssSec";
+                        } else if(first instanceof CodeSec) {
+                                BlockNode previous = nodeList.get(i - 1);
+                                toRet.put(lastBlockNode, previous);
+                                lastBlockNode = "CodeSec";
+                        } else if(first instanceof ProcSec) {
+                                BlockNode previous = nodeList.get(i - 1);
+                                toRet.put(lastBlockNode, previous);
+                                lastBlockNode = "ProcSec";
+                        }
+                }
+        }
+        
+        BlockNode lastNode = nodeList.get(nodeList.size() - 1);
+        toRet.put(lastBlockNode, lastNode);
+        
+        return toRet;
     }
     
     private static Map<String, BlockNode> findSectionEntryPoints(List<BlockNode> nodeList){
-    	Map<String, BlockNode> toRet = new HashMap<String, BlockNode>();
-    	
-    	for(int i = 0; i < nodeList.size(); i++) {
-    		BlockNode node = nodeList.get(i);
-    		BasicBlock block = node.getBlock();
-    		if(Utils.beginningOfBlockIsSection(block)) {
-    			ICode first = block.getIcode().getFirst();
-    			if(first instanceof SymSec){
-    				BlockNode previous = nodeList.get(i);
-    				toRet.put("SymSec", previous);
-    			} else if(first instanceof DataSec) {
-    				BlockNode previous = nodeList.get(i);
-    				toRet.put("DataSec", previous);
-    			} else if(first instanceof BssSec) {
-    				BlockNode previous = nodeList.get(i);
-    				toRet.put("BssSec", previous);
-    			} else if(first instanceof CodeSec) {
-    				BlockNode previous = nodeList.get(i);
-    				toRet.put("CodeSec", previous);
-    			} else if(first instanceof ProcSec) {
-    				BlockNode previous = nodeList.get(i);
-    				toRet.put("ProcSec", previous);
-    			}
-    		}
-    	}
-    	
-    	return toRet;
+        Map<String, BlockNode> toRet = new HashMap<String, BlockNode>();
+        
+        for(int i = 0; i < nodeList.size(); i++) {
+                BlockNode node = nodeList.get(i);
+                BasicBlock block = node.getBlock();
+                if(Utils.beginningOfBlockIsSection(block)) {
+                        ICode first = block.getIcode().get(0);
+                        if(first instanceof SymSec){
+                                BlockNode previous = nodeList.get(i);
+                                toRet.put("SymSec", previous);
+                        } else if(first instanceof DataSec) {
+                                BlockNode previous = nodeList.get(i);
+                                toRet.put("DataSec", previous);
+                        } else if(first instanceof BssSec) {
+                                BlockNode previous = nodeList.get(i);
+                                toRet.put("BssSec", previous);
+                        } else if(first instanceof CodeSec) {
+                                BlockNode previous = nodeList.get(i);
+                                toRet.put("CodeSec", previous);
+                        } else if(first instanceof ProcSec) {
+                                BlockNode previous = nodeList.get(i);
+                                toRet.put("ProcSec", previous);
+                        }
+                }
+        }
+        
+        return toRet;
     }
 
     private static Map<String, BlockNode> findBranchEntryPoints(List<BlockNode> nodes){
@@ -260,8 +260,8 @@ public class MyOptimizer {
 
     private static void linkUpFunctionCalls(List<BlockNode> nodes, Map<String, BlockNode> functionBlocks){
         int nodeSize = nodes.size();
-    	for(int i = 0; i < nodeSize; i++){
-        	BlockNode node = nodes.get(i);
+        for(int i = 0; i < nodeSize; i++){
+                BlockNode node = nodes.get(i);
             BasicBlock block = node.getBlock();
             if(Utils.endOfBlockIsJump(block)){
                 ICode lastCode = block.getIcode().get(block.getIcode().size() - 1);
@@ -272,9 +272,9 @@ public class MyOptimizer {
                         node.addSuccessor(labeledNode);
                         labeledNode.addPredecessor(node);
                     } else if(i + 1 < nodeSize) {
-                    	BlockNode retNode = nodes.get(i + 1);
-                    	node.addSuccessor(retNode);
-                    	retNode.addPredecessor(node);
+                        BlockNode retNode = nodes.get(i + 1);
+                        node.addSuccessor(retNode);
+                        retNode.addPredecessor(node);
                     }
                 }
             }
@@ -282,37 +282,37 @@ public class MyOptimizer {
     }
     
     private static void linkUpSections(List<BlockNode> nodes, Map<String, BlockNode> sectionTails, Map<String, BlockNode> sectionHeads){
-    	for(int i = 0; i < nodes.size(); i++) {
-    		BlockNode current = nodes.get(i);
-    		BasicBlock block = current.getBlock();
-    		if(Utils.beginningOfBlockIsSection(block)){
-    			ICode icodeFirst = block.getIcode().getFirst();
-    			if(icodeFirst instanceof BssSec) {
-    				BlockNode previous = sectionTails.get("SymSec");
-    				previous.addSuccessor(current);
-    				current.addPredecessor(previous);
-    			} else if(icodeFirst instanceof DataSec) {
-    				BlockNode previous = sectionTails.get("BssSec");
-    				previous.addSuccessor(current);
-    				current.addPredecessor(previous);
-    			} else if(icodeFirst instanceof CodeSec) {
-    				BlockNode dataSec = sectionTails.get("DataSec");
-    				
-    				current.addPredecessor(dataSec);
-    				dataSec.addSuccessor(current);
-    			} else if(icodeFirst instanceof ProcSec) {
-    				BlockNode dataSec = sectionTails.get("DataSec");
-    				
-    				current.addPredecessor(dataSec);
-    				dataSec.addSuccessor(current);
-    			}
-    		} else if(Utils.beginningOfBlockIsProcedureHeader(block)) {
-    			BlockNode procSec = sectionHeads.get("ProcSec");
-    			
-    			procSec.addSuccessor(current);
-    			current.addPredecessor(procSec);
-    		}
-    	}
+        for(int i = 0; i < nodes.size(); i++) {
+                BlockNode current = nodes.get(i);
+                BasicBlock block = current.getBlock();
+                if(Utils.beginningOfBlockIsSection(block)){
+                        ICode icodeFirst = block.getIcode().get(0);
+                        if(icodeFirst instanceof BssSec) {
+                                BlockNode previous = sectionTails.get("SymSec");
+                                previous.addSuccessor(current);
+                                current.addPredecessor(previous);
+                        } else if(icodeFirst instanceof DataSec) {
+                                BlockNode previous = sectionTails.get("BssSec");
+                                previous.addSuccessor(current);
+                                current.addPredecessor(previous);
+                        } else if(icodeFirst instanceof CodeSec) {
+                                BlockNode dataSec = sectionTails.get("DataSec");
+                                
+                                current.addPredecessor(dataSec);
+                                dataSec.addSuccessor(current);
+                        } else if(icodeFirst instanceof ProcSec) {
+                                BlockNode dataSec = sectionTails.get("DataSec");
+                                
+                                current.addPredecessor(dataSec);
+                                dataSec.addSuccessor(current);
+                        }
+                } else if(Utils.beginningOfBlockIsProcedureHeader(block)) {
+                        BlockNode procSec = sectionHeads.get("ProcSec");
+                        
+                        procSec.addSuccessor(current);
+                        current.addPredecessor(procSec);
+                }
+        }
     }
 
     private static void linkUpJumps(List<BlockNode> nodes, Map<String, BlockNode> branchLabels){
@@ -364,25 +364,25 @@ public class MyOptimizer {
     }
     
     private static void linkUpFollowThrough(List<BlockNode> nodes) {
-    	for(int i = 0; i < nodes.size() - 1; i++) {
-    		BlockNode current = nodes.get(i);
-    		BasicBlock currentBlock = current.getBlock();
-    		if(!Utils.endOfBlockIsJump(currentBlock)) {
-    			BlockNode nextNode = nodes.get(i + 1);
-    			BasicBlock nextBlock = nextNode.getBlock();
-    			if(!Utils.beginningOfBlockIsSection(nextBlock)) {
-    				nextNode.addPredecessor(current);
-    				current.addSuccessor(nextNode);
-    			}
-    		} else if(Utils.endOfBlockIsProcedureCall(currentBlock)) {
-    			BlockNode nextNode = nodes.get(i + 1);
-    			BasicBlock nextBlock = nextNode.getBlock();
-    			if(!Utils.beginningOfBlockIsSection(nextBlock)) {
-    				nextNode.addPredecessor(current);
-    				current.addSuccessor(nextNode);
-    			}
-    		}
-    	}
+        for(int i = 0; i < nodes.size() - 1; i++) {
+                BlockNode current = nodes.get(i);
+                BasicBlock currentBlock = current.getBlock();
+                if(!Utils.endOfBlockIsJump(currentBlock)) {
+                        BlockNode nextNode = nodes.get(i + 1);
+                        BasicBlock nextBlock = nextNode.getBlock();
+                        if(!Utils.beginningOfBlockIsSection(nextBlock)) {
+                                nextNode.addPredecessor(current);
+                                current.addSuccessor(nextNode);
+                        }
+                } else if(Utils.endOfBlockIsProcedureCall(currentBlock)) {
+                        BlockNode nextNode = nodes.get(i + 1);
+                        BasicBlock nextBlock = nextNode.getBlock();
+                        if(!Utils.beginningOfBlockIsSection(nextBlock)) {
+                                nextNode.addPredecessor(current);
+                                current.addSuccessor(nextNode);
+                        }
+                }
+        }
     }
 
     private List<BasicBlock> buildBlocks(){
@@ -457,26 +457,26 @@ public class MyOptimizer {
         FlowGraph flowGraph = new FlowGraph(entry, nodeList, exit);
         
         if(cfg != null)
-        	if(cfg.containsFlag("debug")) {
-        		Utils.createFile("test/temp/flow.txt");
-        		Utils.writeToFile("test/temp/flow.txt", flowGraph.toString());
-        	}
-        		
+                if(cfg.containsFlag("debug")) {
+                        Utils.createFile("test/temp/flow.txt");
+                        Utils.writeToFile("test/temp/flow.txt", flowGraph.toString());
+                }
+                        
         this.globalFlowGraph = flowGraph;
     }
     
     public FlowGraph getFlowGraph() {
-    	return this.globalFlowGraph;
+        return this.globalFlowGraph;
     }
     
     private static BlockNode findEndingBlock(List<BlockNode> blocks) {
-    	for(BlockNode block: blocks) {
-    		if(Utils.endOfBlockIsEnd(block.getBlock())) {
-    			return block;
-    		}
-    	}
-    	
-    	throw new OptimizerException("findEndingBlock", "Cant find block with End Exception");
+        for(BlockNode block: blocks) {
+                if(Utils.endOfBlockIsEnd(block.getBlock())) {
+                        return block;
+                }
+        }
+        
+        throw new OptimizerException("findEndingBlock", "Cant find block with End Exception");
     }
 
     public void rebuildFromFlowGraph(){
@@ -498,158 +498,158 @@ public class MyOptimizer {
             }
             cleanUpOptimization(OptName.COMMON_SUB_EXPRESSION_ELIMINATION);
             if(cfg != null)
-        		if(cfg.containsFlag("debug")) {
-        			Utils.createFile("test/temp/CommonSubExpressionEliminationICode.txt");
-        			Utils.writeToFile("test/temp/CommonSubExpressionEliminationICode.txt", this.intermediateCode.toString());
-        		}
+                        if(cfg.containsFlag("debug")) {
+                                Utils.createFile("test/temp/CommonSubExpressionEliminationICode.txt");
+                                Utils.writeToFile("test/temp/CommonSubExpressionEliminationICode.txt", this.intermediateCode.toString());
+                        }
     }
     
     private void resetLiveVariableAnalysis() {
-    	this.liveAnal = null;
+        this.liveAnal = null;
     }
     
     private void resetReachingDefinitionsAnalysis() {
-    	this.defAnal = null;
+        this.defAnal = null;
     }
     
     private void resetFlowGraph() {
-    	this.globalFlowGraph = null;
+        this.globalFlowGraph = null;
     }
     
     private void resetConstantPropogationAnalysis() {
-    	this.propAnal = null;
+        this.propAnal = null;
     }
     
     private void resetAvailableExpressionAnalysis() {
-    	this.availableAnal = null;
+        this.availableAnal = null;
     }
     
     private void resetSavedExpressionAnalysis() {
-    	this.savedAnal = null;
+        this.savedAnal = null;
     }
     
     private void resetAnticipatedExpressionAnalysis() {
-    	this.anticipatedAnal = null;
+        this.anticipatedAnal = null;
     }
     
     private void resetEarliestSets() {
-    	this.earliestSets = null;
+        this.earliestSets = null;
     }
     
     private void resetLatestSets() {
-    	this.latestSets = null;
+        this.latestSets = null;
     }
     
     private void resetUsedSets() {
-    	this.usedSets = null;
+        this.usedSets = null;
     }
     
     private void resetPostponableExpressionAnalysis() {
-    	this.posponableAnal = null;
+        this.posponableAnal = null;
     }
     
     private void resetUsedAnalysis() {
-    	this.usedAnal = null;
+        this.usedAnal = null;
     }
     
     private void resetGlobalFlowSet() {
-    	this.globalExpressionSet = null;
+        this.globalExpressionSet = null;
     }
     
     private void setUpRegisterGenerator() {
-    	if(this.iGen == null)
-    		this.iGen = new IrRegisterGenerator();
-    	String genResult;
-    	do {
-    		genResult = iGen.genNext();
-    	} while(this.intermediateCode.containsPlace(genResult)); 
+        if(this.iGen == null)
+                this.iGen = new IrRegisterGenerator();
+        String genResult;
+        do {
+                genResult = iGen.genNext();
+        } while(this.intermediateCode.containsPlace(genResult)); 
     }
     
     private String genNext() {
-    	String genResult;
-    	do {
-    		genResult = iGen.genNext();
-    	} while(this.intermediateCode.containsPlace(genResult)); 
-    	return genResult;
+        String genResult;
+        do {
+                genResult = iGen.genNext();
+        } while(this.intermediateCode.containsPlace(genResult)); 
+        return genResult;
     }
     
     private void resetRegisterGenerator() {
-    	this.iGen = null;
+        this.iGen = null;
     }
 
     private void cleanUpOptimization(OptName name){
         switch(name){
             case COMMON_SUB_EXPRESSION_ELIMINATION:
-            	unsortFlowGraph();
-            	rebuildFromFlowGraph();
-            	resetFlowGraph();
+                unsortFlowGraph();
+                rebuildFromFlowGraph();
+                resetFlowGraph();
                 resetLiveVariableAnalysis();
                 regenerateUniqueNumbers();
                 break;
             case CONSTANT_PROPOGATION:
-            	unsortFlowGraph();
-            	rebuildFromFlowGraph();
+                unsortFlowGraph();
+                rebuildFromFlowGraph();
                 resetConstantPropogationAnalysis();
                 resetFlowGraph();
                 regenerateUniqueNumbers();
                 break;
             case DEAD_CODE_ELIMINATION:
-            	unsortFlowGraph();
-            	rebuildFromFlowGraph();
-            	resetFlowGraph();
+                unsortFlowGraph();
+                rebuildFromFlowGraph();
+                resetFlowGraph();
                 resetLiveVariableAnalysis();
                 resetReachingDefinitionsAnalysis();
                 regenerateUniqueNumbers();
                 break;
             case PARTIAL_REDUNDANCY_ELIMINATION:
-            	unsortFlowGraph();
-            	rebuildFromFlowGraph();
-            	resetFlowGraph();
-            	resetGlobalFlowSet();
-            	resetAvailableExpressionAnalysis();
-            	resetAnticipatedExpressionAnalysis();
-            	resetEarliestSets();
-            	resetUsedSets();
-            	resetPostponableExpressionAnalysis();
-            	resetLatestSets();
-            	resetUsedAnalysis();
-            	resetRegisterGenerator();
-            	resetSavedExpressionAnalysis();
-            	regenerateUniqueNumbers();
-            	break;
+                unsortFlowGraph();
+                rebuildFromFlowGraph();
+                resetFlowGraph();
+                resetGlobalFlowSet();
+                resetAvailableExpressionAnalysis();
+                resetAnticipatedExpressionAnalysis();
+                resetEarliestSets();
+                resetUsedSets();
+                resetPostponableExpressionAnalysis();
+                resetLatestSets();
+                resetUsedAnalysis();
+                resetRegisterGenerator();
+                resetSavedExpressionAnalysis();
+                regenerateUniqueNumbers();
+                break;
             case MOVE_CONSTANTS_TO_GLOBAL:
-            	unsortFlowGraph();
-            	rebuildFromFlowGraph();
-            	resetFlowGraph();
-            	resetExpectedConstantAnalysis();
-            	resetRegisterGenerator();
-            	resetMovedConstantAnalysis();
-            	regenerateUniqueNumbers();
-            	break;
+                unsortFlowGraph();
+                rebuildFromFlowGraph();
+                resetFlowGraph();
+                resetExpectedConstantAnalysis();
+                resetRegisterGenerator();
+                resetMovedConstantAnalysis();
+                regenerateUniqueNumbers();
+                break;
         }
     }
     
     private void regenerateUniqueNumbers() {
-    	Def.resetDefs();
-    	Assign.resetAssigns();
-    	Goto.clearGotos();
-    	Call.resetCalls();
-    	
-    	for(ICode icode: this.intermediateCode) {
-    		if(icode instanceof Assign) {
-    			Assign assign = (Assign)icode;
-    			assign.recalculateIdentNumber();
-    		} else if(icode instanceof Def) {
-    			Def def = (Def)icode;
-    			def.recalculateIdentNumber();
-    		} else if(icode instanceof Goto) {
-    			Goto go = (Goto)icode;
-    			go.recalculateIdentNumber();
-    		} else if(icode instanceof Call) {
-    			Call go = (Call)icode;
-    			go.recalclulateIdentNumber();
-    		}
-    	}
+        Def.resetDefs();
+        Assign.resetAssigns();
+        Goto.clearGotos();
+        Call.resetCalls();
+        
+        for(ICode icode: this.intermediateCode) {
+                if(icode instanceof Assign) {
+                        Assign assign = (Assign)icode;
+                        assign.recalculateIdentNumber();
+                } else if(icode instanceof Def) {
+                        Def def = (Def)icode;
+                        def.recalculateIdentNumber();
+                } else if(icode instanceof Goto) {
+                        Goto go = (Goto)icode;
+                        go.recalculateIdentNumber();
+                } else if(icode instanceof Call) {
+                        Call go = (Call)icode;
+                        go.recalclulateIdentNumber();
+                }
+        }
     }
 
     private void setUpOptimization(OptName name){
@@ -681,127 +681,127 @@ public class MyOptimizer {
                 runReachingDefinitionsAnalysis();
                 break;
             case PARTIAL_REDUNDANCY_ELIMINATION:
-            	buildFlowGraph();
-            	copyOrigBlocks();
-            	runDominatorAnalysis();
-            	buildDfst();
-            	sortFlowGraph();
-            	buildGlobalExpressionsSemilattice();
-            	runAnticipatedExpressionsAnalysis();
-            	runAvailableExpressionsAnalysis();
-            	buildEarliestSets();
-            	buildUsedExpressionSets();
-            	runPostponableExpressionAnalysis();
-            	buildLatestSets();
-            	runUsedExpressionAnalysis();
-            	setUpRegisterGenerator();
-            	runSavedExpressionAnalysis();
-            	break;
+                buildFlowGraph();
+                copyOrigBlocks();
+                runDominatorAnalysis();
+                buildDfst();
+                sortFlowGraph();
+                buildGlobalExpressionsSemilattice();
+                runAnticipatedExpressionsAnalysis();
+                runAvailableExpressionsAnalysis();
+                buildEarliestSets();
+                buildUsedExpressionSets();
+                runPostponableExpressionAnalysis();
+                buildLatestSets();
+                runUsedExpressionAnalysis();
+                setUpRegisterGenerator();
+                runSavedExpressionAnalysis();
+                break;
             case MOVE_CONSTANTS_TO_GLOBAL:
-            	buildFlowGraph();
-            	copyOrigBlocks();
-            	runDominatorAnalysis();
-            	buildDfst();
-            	sortFlowGraph();
-            	runExpectedConstantAnalysis();
-            	setUpRegisterGenerator();
-            	buildGlobalConstSets();
-            	runMovedConstantAnalysis();
-            	break;
+                buildFlowGraph();
+                copyOrigBlocks();
+                runDominatorAnalysis();
+                buildDfst();
+                sortFlowGraph();
+                runExpectedConstantAnalysis();
+                setUpRegisterGenerator();
+                buildGlobalConstSets();
+                runMovedConstantAnalysis();
+                break;
         }
     }
     
-    private void buildGlobalConstSets() {   	
-    	if(this.expectedConstAnal == null)
-    		runExpectedConstantAnalysis();
-    	
-    	if(this.iGen == null)
-    		this.setUpRegisterGenerator();
-    	
-    	this.globalConstAddSet = new HashSet<Tuple<CopyStr, NullableExp>>();
-    	this.globalConstDelayedSet = new HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>>();
-    	int index = intermediateCode.beginningOfDataSection();
-    	ICode dataMinusOne = intermediateCode.getInstruction(index);
-    	index = intermediateCode.beginningOfBssSection();
-    	ICode bssMinusOne = intermediateCode.getInstruction(index);
-    	
-    	HashSet<Tuple<CopyStr, NullableExp>> unionOfUsed = new HashSet<Tuple<CopyStr, NullableExp>>();
-    	
-    	HashSet<Tuple<ICode, Tuple<CopyStr, NullableExp>>> unionOfExpected = new HashSet<Tuple<ICode, Tuple<CopyStr, NullableExp>>>();
-    	Set<Tuple<ICode, Tuple<CopyStr, NullableExp>>> bssMinusOneOutput = this.expectedConstAnal.getInputSet(bssMinusOne);
-    	unionOfExpected.addAll(bssMinusOneOutput);
-    	
-    	for(Tuple<ICode, Tuple<CopyStr, NullableExp>> expectedElem: unionOfExpected){
-			if(Utils.setContainsNullableTupleWithExp(unionOfUsed, expectedElem.dest.dest)){
-				CopyStr res = Utils.getNullableTupleWithExp(unionOfUsed, expectedElem.dest.dest);
-				this.globalConstDelayedSet.add(new Tuple<>(expectedElem.source, new Tuple<>(expectedElem.dest.source, res)));
-    	    } else {
-				String next = genNext();
-				this.globalConstAddSet.add(new Tuple<>(new CopyStr(next), expectedElem.dest.dest));
-				this.globalConstDelayedSet.add(new Tuple<>(expectedElem.source, new Tuple<>(expectedElem.dest.source, new CopyStr(next))));
-				unionOfUsed.add(new Tuple<>(new CopyStr(next), expectedElem.dest.dest));
-			}
-		}
+    private void buildGlobalConstSets() {       
+        if(this.expectedConstAnal == null)
+                runExpectedConstantAnalysis();
+        
+        if(this.iGen == null)
+                this.setUpRegisterGenerator();
+        
+        this.globalConstAddSet = new HashSet<Tuple<CopyStr, NullableExp>>();
+        this.globalConstDelayedSet = new HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>>();
+        int index = intermediateCode.beginningOfDataSection();
+        ICode dataMinusOne = intermediateCode.getInstruction(index);
+        index = intermediateCode.beginningOfBssSection();
+        ICode bssMinusOne = intermediateCode.getInstruction(index);
+        
+        HashSet<Tuple<CopyStr, NullableExp>> unionOfUsed = new HashSet<Tuple<CopyStr, NullableExp>>();
+        
+        HashSet<Tuple<ICode, Tuple<CopyStr, NullableExp>>> unionOfExpected = new HashSet<Tuple<ICode, Tuple<CopyStr, NullableExp>>>();
+        Set<Tuple<ICode, Tuple<CopyStr, NullableExp>>> bssMinusOneOutput = this.expectedConstAnal.getInputSet(bssMinusOne);
+        unionOfExpected.addAll(bssMinusOneOutput);
+        
+        for(Tuple<ICode, Tuple<CopyStr, NullableExp>> expectedElem: unionOfExpected){
+                        if(Utils.setContainsNullableTupleWithExp(unionOfUsed, expectedElem.dest.dest)){
+                                CopyStr res = Utils.getNullableTupleWithExp(unionOfUsed, expectedElem.dest.dest);
+                                this.globalConstDelayedSet.add(new Tuple<>(expectedElem.source, new Tuple<>(expectedElem.dest.source, res)));
+            } else {
+                                String next = genNext();
+                                this.globalConstAddSet.add(new Tuple<>(new CopyStr(next), expectedElem.dest.dest));
+                                this.globalConstDelayedSet.add(new Tuple<>(expectedElem.source, new Tuple<>(expectedElem.dest.source, new CopyStr(next))));
+                                unionOfUsed.add(new Tuple<>(new CopyStr(next), expectedElem.dest.dest));
+                        }
+                }
     }
     
     private void removeUnusedBlocks() {
-    	LinkedList<BlockNode> newBlocks = new LinkedList<BlockNode>();
-    	
-    	for(int blockNum = 0; blockNum < this.globalFlowGraph.getBlocks().size(); blockNum++){
-    		BlockNode getBlock = this.globalFlowGraph.getBlocks().get(blockNum);
-    		if(getBlock.getPredecessors().size() > 0 
-    		|| this.globalFlowGraph.getEntry().equals(getBlock)){
-    			newBlocks.add(getBlock);
-    		} else if(getBlock.getICode().size() > 0){
-    			ICode header = getBlock.getICode().getFirst();
-    			if(header instanceof SymSec)
-    				newBlocks.add(getBlock);
-    			else if(header instanceof ProcSec)
-    				newBlocks.add(getBlock);
-    			else if(header instanceof DataSec)
-    				newBlocks.add(getBlock);
-    			else if(header instanceof End){
-    				newBlocks.add(getBlock);
-    			} else {
-    				for(int flowNode = 0; flowNode < getBlock.getSuccessors().size(); flowNode++) {
-        				FlowGraphNode block2 = getBlock.getSuccessors().get(flowNode);
-        				if(block2 instanceof BlockNode) {
-        					BlockNode block2Block = (BlockNode)block2;
-        					block2Block.removePredecessor(getBlock);
-        					getBlock.removeSuccessor(block2Block);
-        				}
-        			}
-    			}
-    		} else {
-    			for(int flowNode = 0; flowNode < getBlock.getSuccessors().size(); flowNode++) {
-    				FlowGraphNode block2 = getBlock.getSuccessors().get(flowNode);
-    				if(block2 instanceof BlockNode) {
-    					BlockNode block2Block = (BlockNode)block2;
-    					block2Block.removePredecessor(getBlock);
-    					getBlock.removeSuccessor(block2Block);
-    				}
-    			}
-    		}
-    	}
-    	
-    	this.globalFlowGraph.setBlocks(newBlocks);
+        LinkedList<BlockNode> newBlocks = new LinkedList<BlockNode>();
+        
+        for(int blockNum = 0; blockNum < this.globalFlowGraph.getBlocks().size(); blockNum++){
+                BlockNode getBlock = this.globalFlowGraph.getBlocks().get(blockNum);
+                if(getBlock.getPredecessors().size() > 0 
+                || this.globalFlowGraph.getEntry().equals(getBlock)){
+                        newBlocks.add(getBlock);
+                } else if(getBlock.getICode().size() > 0){
+                        ICode header = getBlock.getICode().get(0);
+                        if(header instanceof SymSec)
+                                newBlocks.add(getBlock);
+                        else if(header instanceof ProcSec)
+                                newBlocks.add(getBlock);
+                        else if(header instanceof DataSec)
+                                newBlocks.add(getBlock);
+                        else if(header instanceof End){
+                                newBlocks.add(getBlock);
+                        } else {
+                                for(int flowNode = 0; flowNode < getBlock.getSuccessors().size(); flowNode++) {
+                                        FlowGraphNode block2 = getBlock.getSuccessors().get(flowNode);
+                                        if(block2 instanceof BlockNode) {
+                                                BlockNode block2Block = (BlockNode)block2;
+                                                block2Block.removePredecessor(getBlock);
+                                                getBlock.removeSuccessor(block2Block);
+                                        }
+                                }
+                        }
+                } else {
+                        for(int flowNode = 0; flowNode < getBlock.getSuccessors().size(); flowNode++) {
+                                FlowGraphNode block2 = getBlock.getSuccessors().get(flowNode);
+                                if(block2 instanceof BlockNode) {
+                                        BlockNode block2Block = (BlockNode)block2;
+                                        block2Block.removePredecessor(getBlock);
+                                        getBlock.removeSuccessor(block2Block);
+                                }
+                        }
+                }
+        }
+        
+        this.globalFlowGraph.setBlocks(newBlocks);
     }
 
     private void regenerateICodeForBlock(BlockNode block, DagGraph dag){
         List<ICode> result = new LinkedList<ICode>();
         List<ICode> initialList = block.getICode();
 
-        Set<String> liveAtEndOfBlock = this.liveAnal.getInputSet(initialList.getLast());
+        Set<String> liveAtEndOfBlock = this.liveAnal.getInputSet(initialList.get(initialList.size() - 1));
 
         for(DagNode node : dag.getDagNodes()){
-        	if(node instanceof DagIgnoredInstruction) {
-        		DagIgnoredInstruction ignored = (DagIgnoredInstruction)node;
-            	result.add(ignored.getIgnoredInstruction());
-        	} else {
-        		List<String> isAlive = new LinkedList<String>();
+                if(node instanceof DagIgnoredInstruction) {
+                        DagIgnoredInstruction ignored = (DagIgnoredInstruction)node;
+                result.add(ignored.getIgnoredInstruction());
+                } else {
+                        List<String> isAlive = new LinkedList<String>();
                 for(String identifier: node.getIdentifiers()){
                     if(liveAtEndOfBlock.contains(identifier)){
-                    	isAlive.add(identifier);
+                        isAlive.add(identifier);
                     }
                 }
 
@@ -832,9 +832,9 @@ public class MyOptimizer {
                         BinExp binExp = new BinExp(identifier1, op2, identifier2);
                         
                         if(node2.isDef()) {
-                        	result.add(new Def(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, binExp, ConversionUtils.dagValueTypeToAssignType(type)));
+                                result.add(new Def(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, binExp, ConversionUtils.dagValueTypeToAssignType(type)));
                         } else {
-                        	result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, binExp, ConversionUtils.dagValueTypeToAssignType(type)));
+                                result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, binExp, ConversionUtils.dagValueTypeToAssignType(type)));
                         }
                     } else if(node2.getChildren().size() == 1) {
                         //Its a Unary Operation
@@ -848,9 +848,9 @@ public class MyOptimizer {
                         UnExp unExp = new UnExp(op2, identifier1);
                         
                         if(node2.isDef()) {
-                        	result.add(new Def(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, unExp, ConversionUtils.dagValueTypeToAssignType(type)));
+                                result.add(new Def(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, unExp, ConversionUtils.dagValueTypeToAssignType(type)));
                         } else {
-                        	result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, unExp, ConversionUtils.dagValueTypeToAssignType(type)));
+                                result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, unExp, ConversionUtils.dagValueTypeToAssignType(type)));
                         }
                     }
                 } else if(node instanceof DagValueNode){
@@ -859,9 +859,9 @@ public class MyOptimizer {
                     Exp resultExp = ConversionUtils.valueToExp(value);
                     
                     if(valNode.isDef()) {
-                    	result.add(new Def(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, resultExp, ConversionUtils.dagValueTypeToAssignType(type)));
+                        result.add(new Def(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, resultExp, ConversionUtils.dagValueTypeToAssignType(type)));
                     } else {
-                    	result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, resultExp, ConversionUtils.dagValueTypeToAssignType(type)));
+                        result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, resultExp, ConversionUtils.dagValueTypeToAssignType(type)));
                     }
                 } else if(node instanceof DagVariableNode){
                     DagVariableNode varNode = (DagVariableNode)node;
@@ -869,9 +869,9 @@ public class MyOptimizer {
                     IdentExp identifier1 = getIdentifier(child, liveAtEndOfBlock);
                     
                     if(varNode.isDef()) {
-                    	result.add(new Def(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, identifier1, ConversionUtils.dagValueTypeToAssignType(type)));
+                        result.add(new Def(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, identifier1, ConversionUtils.dagValueTypeToAssignType(type)));
                     } else {
-                    	result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, identifier1, ConversionUtils.dagValueTypeToAssignType(type)));
+                        result.add(new Assign(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier, identifier1, ConversionUtils.dagValueTypeToAssignType(type)));
                     }
                 }
                 
@@ -879,7 +879,7 @@ public class MyOptimizer {
                     IdentExp ident1 = new IdentExp(ConversionUtils.dagScopeTypeToAssignScope(scope), identifier);
                     result.add(new Def(ConversionUtils.dagScopeTypeToAssignScope(scope), ident, ident1, ConversionUtils.dagValueTypeToAssignType(type)));
                 }
-        	}
+                }
         }
         
         block.getBlock().setICode(result);
@@ -890,13 +890,13 @@ public class MyOptimizer {
         ScopeType scope = node.getScopeType();
         for(String identifier : identifiers){
             if(table.contains(identifier)){
-            	ICode.Scope convScope = ConversionUtils.dagScopeTypeToAssignScope(scope);
-            	return new IdentExp(convScope, identifier);
+                ICode.Scope convScope = ConversionUtils.dagScopeTypeToAssignScope(scope);
+                return new IdentExp(convScope, identifier);
             }
         }
 
         if(identifiers.size() > 0){
-        	ICode.Scope convScope = ConversionUtils.dagScopeTypeToAssignScope(scope);
+                ICode.Scope convScope = ConversionUtils.dagScopeTypeToAssignScope(scope);
             return new IdentExp(convScope, identifiers.get(0));
         } else {
             return null;
@@ -1069,7 +1069,7 @@ public class MyOptimizer {
                     dag.addDagNode(newNode);
                 }
             } else {
-            	dag.addDagNode(new DagIgnoredInstruction(icode));
+                dag.addDagNode(new DagIgnoredInstruction(icode));
             }
         }
 
@@ -1091,13 +1091,13 @@ public class MyOptimizer {
                 //Target of Jumps are allways leaders
                 firsts.add(i);
             } else if(intermediateInstruction instanceof BssSec) {
-            	firsts.add(i);
+                firsts.add(i);
             } else if(intermediateInstruction instanceof DataSec){
-            	firsts.add(i);
+                firsts.add(i);
             } else if(intermediateInstruction instanceof CodeSec){
-            	firsts.add(i);
+                firsts.add(i);
             } else if(intermediateInstruction instanceof SymSec) {
-            	firsts.add(i);
+                firsts.add(i);
             } else if(i + 1 < intermediateCode.size() && intermediateInstruction.isBranch()){
                 //First instruction following an If/Goto/Proc/Call are leaders
                 firsts.add(i + 1);
@@ -1106,13 +1106,13 @@ public class MyOptimizer {
                 if(nextInstruction instanceof Label){
                     i++;
                 } else if(nextInstruction instanceof SymSec) {
-                	i++;
+                        i++;
                 } else if(nextInstruction instanceof DataSec) {
-                	i++;
+                        i++;
                 } else if(nextInstruction instanceof BssSec) {
-                	i++;
+                        i++;
                 } else if(nextInstruction instanceof CodeSec) {
-                	i++;
+                        i++;
                 }
             }
         }
@@ -1121,33 +1121,33 @@ public class MyOptimizer {
     }
     
     private void runExpectedConstantAnalysis() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	
-    	this.expectedConstAnal = new ExpectedConstantAnalysis(globalFlowGraph, cfg);
-    	this.expectedConstAnal.run();
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        
+        this.expectedConstAnal = new ExpectedConstantAnalysis(globalFlowGraph, cfg);
+        this.expectedConstAnal.run();
     }
     
     private void runMovedConstantAnalysis() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	
-    	if(this.expectedConstAnal == null)
-    		runExpectedConstantAnalysis();
-    	
-    	if(this.globalConstDelayedSet == null)
-    		buildGlobalConstSets();
-    	
-    	this.movedConstAnal = new MovedConstantAnalysis(intermediateCode, globalFlowGraph, this.globalConstDelayedSet, cfg);
-    	this.movedConstAnal.run();
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        
+        if(this.expectedConstAnal == null)
+                runExpectedConstantAnalysis();
+        
+        if(this.globalConstDelayedSet == null)
+                buildGlobalConstSets();
+        
+        this.movedConstAnal = new MovedConstantAnalysis(intermediateCode, globalFlowGraph, this.globalConstDelayedSet, cfg);
+        this.movedConstAnal.run();
     }
     
     private void resetExpectedConstantAnalysis() {
-    	this.expectedConstAnal = null;
+        this.expectedConstAnal = null;
     }
     
     private void resetMovedConstantAnalysis() {
-    	this.movedConstAnal = null;
+        this.movedConstAnal = null;
     }
 
     private void runConstantPropogationAnalysis(){
@@ -1158,10 +1158,10 @@ public class MyOptimizer {
         this.propAnal.run();
         
         if(this.cfg != null)
-        	if(this.cfg.containsFlag("debug")){
-        		Utils.createFile("test/temp/constProp.txt");
-        		Utils.writeToFile("test/temp/constProp.txt", this.propAnal.toString());
-        	}
+                if(this.cfg.containsFlag("debug")){
+                        Utils.createFile("test/temp/constProp.txt");
+                        Utils.writeToFile("test/temp/constProp.txt", this.propAnal.toString());
+                }
     }
 
     public void runLiveVariableAnalysis(){
@@ -1172,267 +1172,267 @@ public class MyOptimizer {
         this.liveAnal.run();
         
         if(this.cfg != null)
-        	if(this.cfg.containsFlag("debug")){
-        		Utils.createFile("test/temp/liveAnal.txt");
-        		Utils.writeToFile("test/temp/liveAnal.txt", this.liveAnal.toString());
-        	}
+                if(this.cfg.containsFlag("debug")){
+                        Utils.createFile("test/temp/liveAnal.txt");
+                        Utils.writeToFile("test/temp/liveAnal.txt", this.liveAnal.toString());
+                }
     }
     
     public void runReachingDefinitionsAnalysis(){
         if(this.globalFlowGraph == null)
             buildFlowGraph();
         if(this.liveAnal == null)
-        	runLiveVariableAnalysis();
+                runLiveVariableAnalysis();
         this.defAnal = new ReachingDefinitionsAnalysis(this.globalFlowGraph, this.liveAnal, this.cfg);
         this.defAnal.run();
         
         if(this.cfg != null)
-        	if(this.cfg.containsFlag("debug")){
-        		Utils.createFile("test/temp/reachDef.txt");
-        		Utils.writeToFile("test/temp/reachDef.txt", this.defAnal.toString());
-        	}
+                if(this.cfg.containsFlag("debug")){
+                        Utils.createFile("test/temp/reachDef.txt");
+                        Utils.writeToFile("test/temp/reachDef.txt", this.defAnal.toString());
+                }
     }
     
     private void buildGlobalExpressionsSemilattice(){
-    	this.globalExpressionSet = new HashSet<Tuple<NullableExp, ICode.Type>>();
-    	for(FlowGraphNode node: this.globalFlowGraph.getBlocks()) {
-    		for(ICode icode: node.getICode()) {
-    			if(icode instanceof Def) {
-    				Def definition = (Def)icode;
-    				this.globalExpressionSet.add(new Tuple<NullableExp, ICode.Type>(definition.val, definition.type));
-    			} else if(icode instanceof Assign) {
-    				Assign assignment = (Assign)icode;
-    				this.globalExpressionSet.add(new Tuple<NullableExp, ICode.Type>(assignment.value, assignment.getType()));
-    			} else if(icode instanceof If) {
-    				If stat = (If)icode;
-    				this.globalExpressionSet.add(new Tuple<NullableExp, ICode.Type>(stat.exp, ICode.Type.BOOL));
-    			} else if(icode instanceof Call) {
-    				Call call = (Call)icode;
-    				for(Def def: call.params) {
-    					this.globalExpressionSet.add(new Tuple<NullableExp, ICode.Type>(def.val, def.type));
-    				}
-    			}
-    		}
-    	}
+        this.globalExpressionSet = new HashSet<Tuple<NullableExp, ICode.Type>>();
+        for(FlowGraphNode node: this.globalFlowGraph.getBlocks()) {
+                for(ICode icode: node.getICode()) {
+                        if(icode instanceof Def) {
+                                Def definition = (Def)icode;
+                                this.globalExpressionSet.add(new Tuple<NullableExp, ICode.Type>(definition.val, definition.type));
+                        } else if(icode instanceof Assign) {
+                                Assign assignment = (Assign)icode;
+                                this.globalExpressionSet.add(new Tuple<NullableExp, ICode.Type>(assignment.value, assignment.getType()));
+                        } else if(icode instanceof If) {
+                                If stat = (If)icode;
+                                this.globalExpressionSet.add(new Tuple<NullableExp, ICode.Type>(stat.exp, ICode.Type.BOOL));
+                        } else if(icode instanceof Call) {
+                                Call call = (Call)icode;
+                                for(Def def: call.params) {
+                                        this.globalExpressionSet.add(new Tuple<NullableExp, ICode.Type>(def.val, def.type));
+                                }
+                        }
+                }
+        }
     }
     
     private void runDominatorAnalysis() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	this.domAnal = new DominatorAnalysis(this.globalFlowGraph, this.cfg);
-    	this.domAnal.run();
-    	
-    	if(this.cfg != null)
-        	if(this.cfg.containsFlag("debug")){
-        		Utils.createFile("test/temp/dominator.txt");
-        		Utils.writeToFile("test/temp/dominator.txt", this.domAnal.toString());
-        	}
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        this.domAnal = new DominatorAnalysis(this.globalFlowGraph, this.cfg);
+        this.domAnal.run();
+        
+        if(this.cfg != null)
+                if(this.cfg.containsFlag("debug")){
+                        Utils.createFile("test/temp/dominator.txt");
+                        Utils.writeToFile("test/temp/dominator.txt", this.domAnal.toString());
+                }
     }
     
     private void runAvailableExpressionsAnalysis() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	if(this.globalExpressionSet == null)
-    		buildGlobalExpressionsSemilattice();
-    	if(this.anticipatedAnal == null)
-    		runAnticipatedExpressionsAnalysis();
-    	this.availableAnal = new AvailableExpressionsAnalysis(this.globalFlowGraph, this.anticipatedAnal, this.globalExpressionSet, this.cfg);
-    	this.availableAnal.run();
-    	
-    	if(this.cfg != null)
-        	if(this.cfg.containsFlag("debug")){
-        		Utils.createFile("test/temp/availableAnal.txt");
-        		Utils.writeToFile("test/temp/availableAnal.txt", this.availableAnal.toString());
-        	}
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        if(this.globalExpressionSet == null)
+                buildGlobalExpressionsSemilattice();
+        if(this.anticipatedAnal == null)
+                runAnticipatedExpressionsAnalysis();
+        this.availableAnal = new AvailableExpressionsAnalysis(this.globalFlowGraph, this.anticipatedAnal, this.globalExpressionSet, this.cfg);
+        this.availableAnal.run();
+        
+        if(this.cfg != null)
+                if(this.cfg.containsFlag("debug")){
+                        Utils.createFile("test/temp/availableAnal.txt");
+                        Utils.writeToFile("test/temp/availableAnal.txt", this.availableAnal.toString());
+                }
     }
     
     private void runAnticipatedExpressionsAnalysis() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	if(this.globalExpressionSet == null)
-    		buildGlobalExpressionsSemilattice();
-    	
-    	this.anticipatedAnal = new AnticipatedExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet, this.cfg);
-    	this.anticipatedAnal.run();
-    	
-    	if(this.cfg != null)
-        	if(this.cfg.containsFlag("debug")){
-        		Utils.createFile("test/temp/anticipatedAnal.txt");
-        		Utils.writeToFile("test/temp/anticipatedAnal.txt", this.anticipatedAnal.toString());
-        	}
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        if(this.globalExpressionSet == null)
+                buildGlobalExpressionsSemilattice();
+        
+        this.anticipatedAnal = new AnticipatedExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet, this.cfg);
+        this.anticipatedAnal.run();
+        
+        if(this.cfg != null)
+                if(this.cfg.containsFlag("debug")){
+                        Utils.createFile("test/temp/anticipatedAnal.txt");
+                        Utils.writeToFile("test/temp/anticipatedAnal.txt", this.anticipatedAnal.toString());
+                }
     }
     
     private void copyOrigBlocks() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	this.origBlocks = new LinkedList<BlockNode>();
-    	List<BlockNode> node = this.globalFlowGraph.getBlocks();
-    	this.origBlocks.addAll(node);
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        this.origBlocks = new LinkedList<BlockNode>();
+        List<BlockNode> node = this.globalFlowGraph.getBlocks();
+        this.origBlocks.addAll(node);
     }
     
     private void buildEarliestSets() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	if(this.anticipatedAnal == null)
-    		runAnticipatedExpressionsAnalysis();
-    	if(this.availableAnal == null)
-    		runAvailableExpressionsAnalysis();
-    	this.earliestSets = new HashMap<ICode, Set<Tuple<NullableExp, ICode.Type>>>();
-    	for(FlowGraphNode block: this.globalFlowGraph.getBlocks()){
-    		for(ICode icode: block.getICode()) {
-    			Set<Tuple<NullableExp, ICode.Type>> earliestSet = new HashSet<Tuple<NullableExp, ICode.Type>>();
-        		Set<Tuple<NullableExp, ICode.Type>> anticipatedSet = this.anticipatedAnal.getInputSet(icode);
-        		Set<Tuple<NullableExp, ICode.Type>> availableSet = this.availableAnal.getInputSet(icode);
-        		for(Tuple<NullableExp, ICode.Type> anticipatedExp: anticipatedSet) {
-        			if(!availableSet.contains(anticipatedExp))
-        				earliestSet.add(anticipatedExp);
-        		}
-        		this.earliestSets.put(icode.copy(), earliestSet);
-    		}
-    	}
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        if(this.anticipatedAnal == null)
+                runAnticipatedExpressionsAnalysis();
+        if(this.availableAnal == null)
+                runAvailableExpressionsAnalysis();
+        this.earliestSets = new HashMap<ICode, Set<Tuple<NullableExp, ICode.Type>>>();
+        for(FlowGraphNode block: this.globalFlowGraph.getBlocks()){
+                for(ICode icode: block.getICode()) {
+                        Set<Tuple<NullableExp, ICode.Type>> earliestSet = new HashSet<Tuple<NullableExp, ICode.Type>>();
+                        Set<Tuple<NullableExp, ICode.Type>> anticipatedSet = this.anticipatedAnal.getInputSet(icode);
+                        Set<Tuple<NullableExp, ICode.Type>> availableSet = this.availableAnal.getInputSet(icode);
+                        for(Tuple<NullableExp, ICode.Type> anticipatedExp: anticipatedSet) {
+                                if(!availableSet.contains(anticipatedExp))
+                                        earliestSet.add(anticipatedExp);
+                        }
+                        this.earliestSets.put(icode.copy(), earliestSet);
+                }
+        }
     }
     
     private void buildUsedExpressionSets() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	this.usedSets = new HashMap<ICode, Set<Tuple<NullableExp, ICode.Type>>>();
-    	for(FlowGraphNode block: this.globalFlowGraph) {
-    		for(ICode icode: block.getICode()) {
-    			Set<Tuple<NullableExp, ICode.Type>> toAdd = new HashSet<Tuple<NullableExp, ICode.Type>>();
-    			if(icode instanceof Def) {
-    				Def definition = (Def)icode;
-    				toAdd.add(new Tuple<NullableExp, ICode.Type>(definition.val, definition.type));
-    			} else if(icode instanceof Assign) {
-    				Assign ass = (Assign)icode;
-    				toAdd.add(new Tuple<NullableExp, ICode.Type>(ass.value, ass.getType()));
-    			} else if(icode instanceof If) {
-    				If ifStat = (If)icode;
-    				toAdd.add(new Tuple<NullableExp, ICode.Type>(ifStat.exp, ICode.Type.BOOL));
-    			} else if(icode instanceof Call) {
-    				Call call = (Call)icode;
-    				for(Def param: call.params) {
-    					toAdd.add(new Tuple<NullableExp, ICode.Type>(param.val, param.type));
-    				}
-    			}
-    			this.usedSets.put(icode.copy(), toAdd);
-    		}
-    	}
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        this.usedSets = new HashMap<ICode, Set<Tuple<NullableExp, ICode.Type>>>();
+        for(FlowGraphNode block: this.globalFlowGraph) {
+                for(ICode icode: block.getICode()) {
+                        Set<Tuple<NullableExp, ICode.Type>> toAdd = new HashSet<Tuple<NullableExp, ICode.Type>>();
+                        if(icode instanceof Def) {
+                                Def definition = (Def)icode;
+                                toAdd.add(new Tuple<NullableExp, ICode.Type>(definition.val, definition.type));
+                        } else if(icode instanceof Assign) {
+                                Assign ass = (Assign)icode;
+                                toAdd.add(new Tuple<NullableExp, ICode.Type>(ass.value, ass.getType()));
+                        } else if(icode instanceof If) {
+                                If ifStat = (If)icode;
+                                toAdd.add(new Tuple<NullableExp, ICode.Type>(ifStat.exp, ICode.Type.BOOL));
+                        } else if(icode instanceof Call) {
+                                Call call = (Call)icode;
+                                for(Def param: call.params) {
+                                        toAdd.add(new Tuple<NullableExp, ICode.Type>(param.val, param.type));
+                                }
+                        }
+                        this.usedSets.put(icode.copy(), toAdd);
+                }
+        }
     }
     
     private void runPostponableExpressionAnalysis() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	if(this.usedSets == null)
-    		buildUsedExpressionSets();
-    	if(this.anticipatedAnal == null)
-    		runAnticipatedExpressionsAnalysis();
-    	if(this.earliestSets == null)
-    		buildEarliestSets();
-    	this.posponableAnal = new PostponableExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet, this.earliestSets, this.usedSets, this.anticipatedAnal, cfg);
-    	this.posponableAnal.run();
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        if(this.usedSets == null)
+                buildUsedExpressionSets();
+        if(this.anticipatedAnal == null)
+                runAnticipatedExpressionsAnalysis();
+        if(this.earliestSets == null)
+                buildEarliestSets();
+        this.posponableAnal = new PostponableExpressionsAnalysis(this.globalFlowGraph, this.globalExpressionSet, this.earliestSets, this.usedSets, this.anticipatedAnal, cfg);
+        this.posponableAnal.run();
     }
     
     private void buildLatestSets() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	if(this.earliestSets == null)
-    		buildEarliestSets();
-    	if(this.globalExpressionSet == null)
-    		this.buildGlobalExpressionsSemilattice();
-    	if(this.usedSets == null)
-    		buildUsedExpressionSets();
-    	if(this.posponableAnal == null)
-    		runPostponableExpressionAnalysis();
-    	
-    	this.latestSets = new HashMap<ICode, Set<Tuple<NullableExp, ICode.Type>>>();
-    	
-    	for(BlockNode block: this.globalFlowGraph.getBlocks()) {
-    		int blockLength = block.getICode().size();
-    		for(int i = blockLength - 1; i >= 0; i--) {
-    			ICode instruction = block.getICode().get(i);
-    			//Earliest[B] U Postponable[B].in
-        		Set<Tuple<NullableExp, ICode.Type>> firstPartOfEquation = new HashSet<Tuple<NullableExp, ICode.Type>>();
-        		Set<Tuple<NullableExp, ICode.Type>> earliestPart = earliestSets.get(instruction);
-        		Set<Tuple<NullableExp, ICode.Type>> postponablePart = posponableAnal.getInputSet(instruction);
-        		firstPartOfEquation.addAll(earliestPart);
-        		firstPartOfEquation.addAll(postponablePart);
-        		
-        		Set<Tuple<NullableExp, ICode.Type>> thirdPartOfEquation = new HashSet<Tuple<NullableExp, ICode.Type>>();
-        		
-        		if(i + 1 >= blockLength) {
-        			//Intersection of sucessors of earliest union postponable
-        			List<FlowGraphNode> successors = block.getSuccessors();
-            		if(!successors.isEmpty()) {
-            			FlowGraphNode sucessor = successors.getFirst();
-            			Set<Tuple<NullableExp, ICode.Type>> sucessorEarliestUnionPostponable = new HashSet<Tuple<NullableExp, ICode.Type>>();
-            			ICode sucessorICode = sucessor.getICode().getFirst();
-            			Set<Tuple<NullableExp, ICode.Type>> earliestOfSucessor = earliestSets.get(sucessorICode);
-            			sucessorEarliestUnionPostponable.addAll(earliestOfSucessor);
-            			sucessorEarliestUnionPostponable.addAll(this.posponableAnal.getInputSet(sucessorICode));
-            			thirdPartOfEquation.addAll(sucessorEarliestUnionPostponable);
-            			
-            			for(int x = 1; x < successors.size(); x++) {
-            				sucessor = successors.get(x);
-            				sucessorICode = sucessor.getICode().getFirst();
-                			sucessorEarliestUnionPostponable = new HashSet<Tuple<NullableExp, ICode.Type>>();
-                			sucessorEarliestUnionPostponable.addAll(earliestSets.get(sucessorICode));
-                			sucessorEarliestUnionPostponable.addAll(this.posponableAnal.getInputSet(sucessorICode));
-                			thirdPartOfEquation.retainAll(sucessorEarliestUnionPostponable);
-                		}
-            		}
-        		} else {
-        			ICode singleSuccessor = block.getICode().get(i + 1);
-        			Set<Tuple<NullableExp, ICode.Type>> sucessorEarliestUnionPostponable = new HashSet<Tuple<NullableExp, ICode.Type>>();
-        			sucessorEarliestUnionPostponable.addAll(this.earliestSets.get(singleSuccessor));
-        			sucessorEarliestUnionPostponable.addAll(this.posponableAnal.getInputSet(singleSuccessor));
-        			
-        			thirdPartOfEquation.addAll(sucessorEarliestUnionPostponable);
-        		}
-        		
-        		
-        		
-        		//Compliment of previous intersection
-        		Set<Tuple<NullableExp, ICode.Type>> forthPartOfEquation = new HashSet<Tuple<NullableExp, ICode.Type>>();
-        		for(Tuple<NullableExp, ICode.Type> exp: this.globalExpressionSet) {
-        			if(!thirdPartOfEquation.contains(exp))
-        				forthPartOfEquation.add(exp);
-        		}
-        		
-        		forthPartOfEquation.addAll(this.usedSets.get(instruction));
-        		
-        		Set<Tuple<NullableExp, ICode.Type>> secondPartOfEquation = new HashSet<Tuple<NullableExp, ICode.Type>>();
-        		secondPartOfEquation.addAll(firstPartOfEquation);
-        		secondPartOfEquation.retainAll(forthPartOfEquation);
-        		
-        		this.latestSets.put(instruction.copy(), secondPartOfEquation);
-        	}
-    	}
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        if(this.earliestSets == null)
+                buildEarliestSets();
+        if(this.globalExpressionSet == null)
+                this.buildGlobalExpressionsSemilattice();
+        if(this.usedSets == null)
+                buildUsedExpressionSets();
+        if(this.posponableAnal == null)
+                runPostponableExpressionAnalysis();
+        
+        this.latestSets = new HashMap<ICode, Set<Tuple<NullableExp, ICode.Type>>>();
+        
+        for(BlockNode block: this.globalFlowGraph.getBlocks()) {
+                int blockLength = block.getICode().size();
+                for(int i = blockLength - 1; i >= 0; i--) {
+                        ICode instruction = block.getICode().get(i);
+                        //Earliest[B] U Postponable[B].in
+                        Set<Tuple<NullableExp, ICode.Type>> firstPartOfEquation = new HashSet<Tuple<NullableExp, ICode.Type>>();
+                        Set<Tuple<NullableExp, ICode.Type>> earliestPart = earliestSets.get(instruction);
+                        Set<Tuple<NullableExp, ICode.Type>> postponablePart = posponableAnal.getInputSet(instruction);
+                        firstPartOfEquation.addAll(earliestPart);
+                        firstPartOfEquation.addAll(postponablePart);
+                        
+                        Set<Tuple<NullableExp, ICode.Type>> thirdPartOfEquation = new HashSet<Tuple<NullableExp, ICode.Type>>();
+                        
+                        if(i + 1 >= blockLength) {
+                                //Intersection of sucessors of earliest union postponable
+                                List<FlowGraphNode> successors = block.getSuccessors();
+                        if(!successors.isEmpty()) {
+                                FlowGraphNode sucessor = successors.get(0);
+                                Set<Tuple<NullableExp, ICode.Type>> sucessorEarliestUnionPostponable = new HashSet<Tuple<NullableExp, ICode.Type>>();
+                                ICode sucessorICode = sucessor.getICode().get(0);
+                                Set<Tuple<NullableExp, ICode.Type>> earliestOfSucessor = earliestSets.get(sucessorICode);
+                                sucessorEarliestUnionPostponable.addAll(earliestOfSucessor);
+                                sucessorEarliestUnionPostponable.addAll(this.posponableAnal.getInputSet(sucessorICode));
+                                thirdPartOfEquation.addAll(sucessorEarliestUnionPostponable);
+                                
+                                for(int x = 1; x < successors.size(); x++) {
+                                        sucessor = successors.get(x);
+                                        sucessorICode = sucessor.getICode().get(0);
+                                        sucessorEarliestUnionPostponable = new HashSet<Tuple<NullableExp, ICode.Type>>();
+                                        sucessorEarliestUnionPostponable.addAll(earliestSets.get(sucessorICode));
+                                        sucessorEarliestUnionPostponable.addAll(this.posponableAnal.getInputSet(sucessorICode));
+                                        thirdPartOfEquation.retainAll(sucessorEarliestUnionPostponable);
+                                }
+                        }
+                        } else {
+                                ICode singleSuccessor = block.getICode().get(i + 1);
+                                Set<Tuple<NullableExp, ICode.Type>> sucessorEarliestUnionPostponable = new HashSet<Tuple<NullableExp, ICode.Type>>();
+                                sucessorEarliestUnionPostponable.addAll(this.earliestSets.get(singleSuccessor));
+                                sucessorEarliestUnionPostponable.addAll(this.posponableAnal.getInputSet(singleSuccessor));
+                                
+                                thirdPartOfEquation.addAll(sucessorEarliestUnionPostponable);
+                        }
+                        
+                        
+                        
+                        //Compliment of previous intersection
+                        Set<Tuple<NullableExp, ICode.Type>> forthPartOfEquation = new HashSet<Tuple<NullableExp, ICode.Type>>();
+                        for(Tuple<NullableExp, ICode.Type> exp: this.globalExpressionSet) {
+                                if(!thirdPartOfEquation.contains(exp))
+                                        forthPartOfEquation.add(exp);
+                        }
+                        
+                        forthPartOfEquation.addAll(this.usedSets.get(instruction));
+                        
+                        Set<Tuple<NullableExp, ICode.Type>> secondPartOfEquation = new HashSet<Tuple<NullableExp, ICode.Type>>();
+                        secondPartOfEquation.addAll(firstPartOfEquation);
+                        secondPartOfEquation.retainAll(forthPartOfEquation);
+                        
+                        this.latestSets.put(instruction.copy(), secondPartOfEquation);
+                }
+        }
     }
     
     private void runUsedExpressionAnalysis() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	if(this.usedSets == null)
-    		this.buildUsedExpressionSets();
-    	if(this.latestSets == null)
-    		this.buildLatestSets();
-    	
-    	this.usedAnal = new UsedExpressionAnalysis(this.globalFlowGraph, this.usedSets, this.latestSets, this.cfg);
-    	this.usedAnal.run();
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        if(this.usedSets == null)
+                this.buildUsedExpressionSets();
+        if(this.latestSets == null)
+                this.buildLatestSets();
+        
+        this.usedAnal = new UsedExpressionAnalysis(this.globalFlowGraph, this.usedSets, this.latestSets, this.cfg);
+        this.usedAnal.run();
     }
     
     private void runSavedExpressionAnalysis() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	if(this.latestSets == null)
-    		buildLatestSets();
-    	if(this.usedAnal == null)
-    		this.runUsedExpressionAnalysis();
-    	if(this.iGen == null)
-    		this.setUpRegisterGenerator();
-    	
-    	this.savedAnal = new SavedExpressionAnalysis(this.intermediateCode, this.iGen, this.globalFlowGraph, this.latestSets, this.usedAnal, this.cfg);
-    	this.savedAnal.run();
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        if(this.latestSets == null)
+                buildLatestSets();
+        if(this.usedAnal == null)
+                this.runUsedExpressionAnalysis();
+        if(this.iGen == null)
+                this.setUpRegisterGenerator();
+        
+        this.savedAnal = new SavedExpressionAnalysis(this.intermediateCode, this.iGen, this.globalFlowGraph, this.latestSets, this.usedAnal, this.cfg);
+        this.savedAnal.run();
     }
     
     
@@ -1440,9 +1440,9 @@ public class MyOptimizer {
     public void performDeadCodeElimination(){
         boolean changes = true;
         while(changes) {
-        	changes = false;
-        	setUpOptimization(OptName.DEAD_CODE_ELIMINATION);
-        	for(BlockNode block : this.globalFlowGraph.getBlocks()){
+                changes = false;
+                setUpOptimization(OptName.DEAD_CODE_ELIMINATION);
+                for(BlockNode block : this.globalFlowGraph.getBlocks()){
                 List<ICode> result = new LinkedList<ICode>();
                 for(ICode icode : block.getICode()){
                     if(icode instanceof Assign){
@@ -1453,125 +1453,125 @@ public class MyOptimizer {
                             result.add(new Def(assICode.getScope(), assICode.place, assICode.value, assICode.getType()));
                             changes = true;
                         } else if(liveVar.contains(assICode.place) || assICode.getScope() == Scope.GLOBAL){
-                        	result.add(assICode);
+                                result.add(assICode);
                         } else {
-                        	changes = true;
+                                changes = true;
                         }
                     } else if(icode instanceof Def){
-                    	Def assICode = (Def)icode;
-                    	Set<String> liveVariables = this.liveAnal.getOutputSet(icode);
+                        Def assICode = (Def)icode;
+                        Set<String> liveVariables = this.liveAnal.getOutputSet(icode);
                         if(assICode.scope == Scope.RETURN || assICode.scope == Scope.GLOBAL || liveVariables.contains(assICode.label)){
                             result.add(assICode);
                         } else {
-                        	changes = true;
+                                changes = true;
                         }
                     } else if(icode instanceof Call){
-                    	Call myCall = (Call)icode;
-                    	if(this.intermediateCode.containsEntry(myCall.pname, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME)) {
-                    		SymEntry data = this.intermediateCode.getVariableData(myCall.pname, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME);
-                    		Set<String> liveVariables = this.liveAnal.getOutputSet(icode);
-                    		if(liveVariables.contains(data.icodePlace)) {
-                    			result.add(icode);
-                    		} else {
-                    			changes = true;
-                    		}
-                    	} else {
-                    		result.add(icode);
-                    	}
+                        Call myCall = (Call)icode;
+                        if(this.intermediateCode.containsEntry(myCall.pname, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME)) {
+                                SymEntry data = this.intermediateCode.getVariableData(myCall.pname, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_FUNCTION_NAME);
+                                Set<String> liveVariables = this.liveAnal.getOutputSet(icode);
+                                if(liveVariables.contains(data.icodePlace)) {
+                                        result.add(icode);
+                                } else {
+                                        changes = true;
+                                }
+                        } else {
+                                result.add(icode);
+                        }
                     } else {
                         result.add(icode);
                     }
                 }
                 block.getBlock().setICode(result);
             }
-        	cleanUpOptimization(OptName.DEAD_CODE_ELIMINATION);
+                cleanUpOptimization(OptName.DEAD_CODE_ELIMINATION);
         }
         if(cfg != null)
-    		if(cfg.containsFlag("debug")) {
-    			Utils.createFile("test/temp/DeadCodeEliminationICode.txt");
-    			Utils.writeToFile("test/temp/DeadCodeEliminationICode.txt", this.intermediateCode.toString());
-    		}
+                if(cfg.containsFlag("debug")) {
+                        Utils.createFile("test/temp/DeadCodeEliminationICode.txt");
+                        Utils.writeToFile("test/temp/DeadCodeEliminationICode.txt", this.intermediateCode.toString());
+                }
     }
     
     public void performMoveConstants() {
-    	setUpOptimization(OptName.MOVE_CONSTANTS_TO_GLOBAL);
-    	
-    	for(BlockNode block: globalFlowGraph) {
-    		for(int i = 0; i < block.getICode().size(); i++){
-    			ICode instr = block.getICode().get(i);
-    			if(instr instanceof Def){
-    				Def def = (Def)instr;
-    				if((def.scope != ICode.Scope.GLOBAL) && def.isConstant()) {
-    					HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>> options = this.movedConstAnal.getInputSet(instr);
-    					boolean found = false;
-    					for(Tuple<ICode, Tuple<CopyStr, CopyStr>> tup: options) {
-    						if(tup.source.equals(def)) {
-    							def.val = new IdentExp(ICode.Scope.GLOBAL, tup.dest.dest.toString());
-    							found = true;
-    						}
-    					}
-    					if(!found)
-    						throw new RuntimeException("Error expected value for contant in " + def.toString() + " but couldnt find it");
-    				}
-    			} else if(instr instanceof Assign){
-    				Assign def = (Assign)instr;
-    				if(def.isConstant()) {
-    					HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>> options = this.movedConstAnal.getInputSet(instr);
-    					boolean found = false;
-    					for(Tuple<ICode, Tuple<CopyStr, CopyStr>> tup: options) {
-    						if(tup.source.equals(def)) {
-    							def.value = new IdentExp(ICode.Scope.GLOBAL, tup.dest.dest.toString());
-    							found = true;
-    						}
-    					}
-    					if(!found)
-    						throw new RuntimeException("Error expected value for contant in " + def.toString() + " but couldnt find it");
-    				}
-    			} else if(instr instanceof Call) {
-    				Call myCall = (Call)instr;
-    				HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>> options = this.movedConstAnal.getInputSet(myCall);
-      				for(Def def: myCall.params) {
-    					if((def.scope != ICode.Scope.GLOBAL) && def.isConstant()) {
-        					boolean found = false;
-        					for(Tuple<ICode, Tuple<CopyStr, CopyStr>> tup: options) {
-        						if(tup.source.equals(def)) {
-        							def.val = new IdentExp(ICode.Scope.GLOBAL, tup.dest.dest.toString());
-        							found = true;
-        						}
-        					}
-        					if(!found)
-        						throw new RuntimeException("Error expected value for contant in " + def.toString() + " but couldnt find it");
-        				}
-    				}
-    			}
-    		}
-    	}
-    	
-    	BlockNode bssStart = this.dfst.startOfBss();
-    	BlockNode dataStart = this.dfst.startOfData();
-		
-		for(Tuple<CopyStr, NullableExp> val: this.globalConstAddSet) {
-    		if(val.dest.isZero())
-    			bssStart.getICode().add(1, new Def(Scope.GLOBAL, val.source.toString(), (Exp)val.dest, ConversionUtils.getTypeFromConstExp(val.dest)));
-    		else
-    			dataStart.getICode().add(1, new Def(Scope.GLOBAL, val.source.toString(), (Exp)val.dest, ConversionUtils.getTypeFromConstExp(val.dest)));
-    	}
-    	
-    	cleanUpOptimization(OptName.MOVE_CONSTANTS_TO_GLOBAL);
-    	
-    	if(cfg != null)
-    		if(cfg.containsFlag("debug")) {
-    			Utils.createFile("test/temp/MoveConstants.txt");
-    			Utils.writeToFile("test/temp/MoveConstants.txt", this.intermediateCode.toString());
-    		}
+        setUpOptimization(OptName.MOVE_CONSTANTS_TO_GLOBAL);
+        
+        for(BlockNode block: globalFlowGraph) {
+                for(int i = 0; i < block.getICode().size(); i++){
+                        ICode instr = block.getICode().get(i);
+                        if(instr instanceof Def){
+                                Def def = (Def)instr;
+                                if((def.scope != ICode.Scope.GLOBAL) && def.isConstant()) {
+                                        HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>> options = this.movedConstAnal.getInputSet(instr);
+                                        boolean found = false;
+                                        for(Tuple<ICode, Tuple<CopyStr, CopyStr>> tup: options) {
+                                                if(tup.source.equals(def)) {
+                                                        def.val = new IdentExp(ICode.Scope.GLOBAL, tup.dest.dest.toString());
+                                                        found = true;
+                                                }
+                                        }
+                                        if(!found)
+                                                throw new RuntimeException("Error expected value for contant in " + def.toString() + " but couldnt find it");
+                                }
+                        } else if(instr instanceof Assign){
+                                Assign def = (Assign)instr;
+                                if(def.isConstant()) {
+                                        HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>> options = this.movedConstAnal.getInputSet(instr);
+                                        boolean found = false;
+                                        for(Tuple<ICode, Tuple<CopyStr, CopyStr>> tup: options) {
+                                                if(tup.source.equals(def)) {
+                                                        def.value = new IdentExp(ICode.Scope.GLOBAL, tup.dest.dest.toString());
+                                                        found = true;
+                                                }
+                                        }
+                                        if(!found)
+                                                throw new RuntimeException("Error expected value for contant in " + def.toString() + " but couldnt find it");
+                                }
+                        } else if(instr instanceof Call) {
+                                Call myCall = (Call)instr;
+                                HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>> options = this.movedConstAnal.getInputSet(myCall);
+                                for(Def def: myCall.params) {
+                                        if((def.scope != ICode.Scope.GLOBAL) && def.isConstant()) {
+                                                boolean found = false;
+                                                for(Tuple<ICode, Tuple<CopyStr, CopyStr>> tup: options) {
+                                                        if(tup.source.equals(def)) {
+                                                                def.val = new IdentExp(ICode.Scope.GLOBAL, tup.dest.dest.toString());
+                                                                found = true;
+                                                        }
+                                                }
+                                                if(!found)
+                                                        throw new RuntimeException("Error expected value for contant in " + def.toString() + " but couldnt find it");
+                                        }
+                                }
+                        }
+                }
+        }
+        
+        BlockNode bssStart = this.dfst.startOfBss();
+        BlockNode dataStart = this.dfst.startOfData();
+                
+                for(Tuple<CopyStr, NullableExp> val: this.globalConstAddSet) {
+                if(val.dest.isZero())
+                        bssStart.getICode().add(1, new Def(Scope.GLOBAL, val.source.toString(), (Exp)val.dest, ConversionUtils.getTypeFromConstExp(val.dest)));
+                else
+                        dataStart.getICode().add(1, new Def(Scope.GLOBAL, val.source.toString(), (Exp)val.dest, ConversionUtils.getTypeFromConstExp(val.dest)));
+        }
+        
+        cleanUpOptimization(OptName.MOVE_CONSTANTS_TO_GLOBAL);
+        
+        if(cfg != null)
+                if(cfg.containsFlag("debug")) {
+                        Utils.createFile("test/temp/MoveConstants.txt");
+                        Utils.writeToFile("test/temp/MoveConstants.txt", this.intermediateCode.toString());
+                }
     }
 
     public void performConstantPropogation(){
         boolean changes = true;
         int time = 0;
         while(changes) {
-        	changes = false;
-        	setUpOptimization(OptName.CONSTANT_PROPOGATION);
+                changes = false;
+                setUpOptimization(OptName.CONSTANT_PROPOGATION);
             for(BlockNode block : this.globalFlowGraph.getBlocks()){
                 List<ICode> icodeList = block.getICode();
                 for(int i = 0; i < icodeList.size(); i++){
@@ -1588,18 +1588,18 @@ public class MyOptimizer {
                             }
                             
                             if(sourceDestRight.dest.isConstant()) {
-                            	changes = true;
-                            	varICode.value = (Exp)sourceDestRight.dest;
+                                changes = true;
+                                varICode.value = (Exp)sourceDestRight.dest;
                             } else if(sourceDestRight.dest instanceof IdentExp) {
-                            	if(!identVal.equals(sourceDestRight.dest)) {
-                            		changes = true;
-                            		varICode.value = (Exp)sourceDestRight.dest;
-                            	}
+                                if(!identVal.equals(sourceDestRight.dest)) {
+                                        changes = true;
+                                        varICode.value = (Exp)sourceDestRight.dest;
+                                }
                             } else {
-                            	if(!identVal.equals(sourceDestRight.source)) {
-                            		changes = true;
-                            		varICode.value = (Exp)sourceDestRight.source;
-                            	}
+                                if(!identVal.equals(sourceDestRight.source)) {
+                                        changes = true;
+                                        varICode.value = (Exp)sourceDestRight.source;
+                                }
                             }
                         } else if(varICode.value instanceof BinExp){
                             BinExp binExpVal = (BinExp)varICode.value;
@@ -1756,13 +1756,13 @@ public class MyOptimizer {
                                         throw new OptimizerException(icode.getClass().getEnclosingMethod().getName(), "UnExpected binary operation found when optomizing expression " + varICode.value);
                                 }
                             } else {
-                            	IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant() || sourceDestLeft.dest instanceof NaaExp) ? sourceDestLeft.source : sourceDestLeft.dest);
-                            	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : sourceDestRight.dest);
-                            	
+                                IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant() || sourceDestLeft.dest instanceof NaaExp) ? sourceDestLeft.source : sourceDestLeft.dest);
+                                IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : sourceDestRight.dest);
+                                
                                 BinExp val = new BinExp(leftExp, binExpVal.op, rightExp);
                                 if(!val.equals(binExpVal)) {
-                                	varICode.value = val;
-                                	changes = true;	
+                                        varICode.value = val;
+                                        changes = true; 
                                 }
                             }
                         } else if(varICode.value instanceof UnExp){
@@ -1793,19 +1793,19 @@ public class MyOptimizer {
                                         throw new OptimizerException(sourceDestRight.dest.getClass().getEnclosingMethod().getName(), "Error invalid operation in " + unExpVal);
                                 }
                             } else if(sourceDestRight.dest instanceof IdentExp) {
-                            	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.dest);
-                            	if(!newExp.equals(unExpVal)) {
-                            		changes = true;
-                            		varICode.value = newExp;
-                            		
-                            	}
+                                UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.dest);
+                                if(!newExp.equals(unExpVal)) {
+                                        changes = true;
+                                        varICode.value = newExp;
+                                        
+                                }
                             } else {
-                            	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.source);
-                            	if(!newExp.equals(unExpVal)) {
-                            		changes = true;
-                            		varICode.value = newExp;
-                            		
-                            	}
+                                UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.source);
+                                if(!newExp.equals(unExpVal)) {
+                                        changes = true;
+                                        varICode.value = newExp;
+                                        
+                                }
                             }
                         }
                     } else if(icode instanceof Def){
@@ -1819,20 +1819,20 @@ public class MyOptimizer {
                             }
                             
                             if(sourceDestRight.dest.isConstant()) {
-                            	changes = true;
-                            	varICode.val = (Exp)sourceDestRight.dest;
+                                changes = true;
+                                varICode.val = (Exp)sourceDestRight.dest;
                             } else if(sourceDestRight.dest instanceof IdentExp) {
-                            	if(!identVal.equals(sourceDestRight.dest)) {
-                            		changes = true;
-                            		varICode.val = (Exp)sourceDestRight.dest;
-                            		
-                            	}
+                                if(!identVal.equals(sourceDestRight.dest)) {
+                                        changes = true;
+                                        varICode.val = (Exp)sourceDestRight.dest;
+                                        
+                                }
                             } else {
-                            	if(!identVal.equals(sourceDestRight.source)) {
-                            		changes = true;
-                            		varICode.val = (Exp)sourceDestRight.source;
-                            		
-                            	}
+                                if(!identVal.equals(sourceDestRight.source)) {
+                                        changes = true;
+                                        varICode.val = (Exp)sourceDestRight.source;
+                                        
+                                }
                             }
                         } else if(varICode.val instanceof BinExp){
                             BinExp binExpVal = (BinExp)varICode.val;
@@ -1989,14 +1989,14 @@ public class MyOptimizer {
                                         throw new OptimizerException(icode.getClass().getEnclosingMethod().getName(), "UnExpected binary operation found when optomizing expression " + varICode.val);
                                 }
                             } else {
-                            	IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant() || sourceDestLeft.dest instanceof NaaExp) ? sourceDestLeft.source : sourceDestLeft.dest);
-                            	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : sourceDestRight.dest);
-                            	
+                                IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant() || sourceDestLeft.dest instanceof NaaExp) ? sourceDestLeft.source : sourceDestLeft.dest);
+                                IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : sourceDestRight.dest);
+                                
                                 BinExp val = new BinExp(leftExp, binExpVal.op, rightExp);
                                 if(!val.equals(binExpVal)) {
-                                	varICode.val = val;
-                                	
-                                	changes = true;	
+                                        varICode.val = val;
+                                        
+                                        changes = true; 
                                 }
                             }
                         } else if(varICode.val instanceof UnExp){
@@ -2027,25 +2027,25 @@ public class MyOptimizer {
                                         throw new OptimizerException(sourceDestRight.dest.getClass().getEnclosingMethod().getName(), "Error invalid operation in " + unExpVal);
                                 }
                             } else if(sourceDestRight.dest instanceof IdentExp) {
-                            	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.dest);
-                            	if(!newExp.equals(unExpVal)) {
-                            		changes = true;
-                            		varICode.val = newExp;
-                            		
-                            	}
+                                UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.dest);
+                                if(!newExp.equals(unExpVal)) {
+                                        changes = true;
+                                        varICode.val = newExp;
+                                        
+                                }
                             } else {
-                            	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.source);
-                            	if(!newExp.equals(unExpVal)) {
-                            		changes = true;
-                            		varICode.val = newExp;
-                            	}
+                                UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.source);
+                                if(!newExp.equals(unExpVal)) {
+                                        changes = true;
+                                        varICode.val = newExp;
+                                }
                             }
                         }
                     } else if(icode instanceof If) {
-                    	If ifStat = (If)icode;
-                    	BinExp exp = ifStat.exp;
-                    	
-                    	Tuple<NullableExp, NullableExp> sourceDestLeft = new Tuple<NullableExp, NullableExp>(exp.left, exp.left);
+                        If ifStat = (If)icode;
+                        BinExp exp = ifStat.exp;
+                        
+                        Tuple<NullableExp, NullableExp> sourceDestLeft = new Tuple<NullableExp, NullableExp>(exp.left, exp.left);
                         while(Utils.containsExpInSet(values, sourceDestLeft.dest) && !Utils.scopeIsGlobal(sourceDestLeft.dest)){
                             sourceDestLeft = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestLeft.dest, Utils.getExpFromSet(values, sourceDestLeft.dest));
                         }
@@ -2056,19 +2056,19 @@ public class MyOptimizer {
                         }
                         
                         IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant() || sourceDestLeft.dest instanceof NaaExp) ? sourceDestLeft.source : sourceDestLeft.dest);
-                    	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : sourceDestRight.dest);
-                    	
-                    	BinExp newExp = new BinExp(leftExp, exp.op, rightExp);
-                    	
-                    	if(!newExp.equals(exp)) {
-                    		changes = true;
-                    		ifStat.exp = newExp;
-                    	}
+                        IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : sourceDestRight.dest);
+                        
+                        BinExp newExp = new BinExp(leftExp, exp.op, rightExp);
+                        
+                        if(!newExp.equals(exp)) {
+                                changes = true;
+                                ifStat.exp = newExp;
+                        }
                     } else if(icode instanceof Call) {
-                    	Call call = (Call)icode;
-                    	
-                    	for(Def param: call.params){
-                    		if(param.val instanceof IdentExp){
+                        Call call = (Call)icode;
+                        
+                        for(Def param: call.params){
+                                if(param.val instanceof IdentExp){
                                 IdentExp identVal = (IdentExp)param.val;
                                 
                                 Tuple<NullableExp, NullableExp> sourceDestRight = new Tuple<NullableExp, NullableExp>(identVal, identVal);
@@ -2077,18 +2077,18 @@ public class MyOptimizer {
                                 }
                                 
                                 if(sourceDestRight.dest.isConstant()) {
-                                	changes = true;
-                                	param.val = (Exp)sourceDestRight.dest;
+                                        changes = true;
+                                        param.val = (Exp)sourceDestRight.dest;
                                 } else if(sourceDestRight.dest instanceof IdentExp) {
-                                	if(!identVal.equals(sourceDestRight.dest)) {
-                                		changes = true;
-                                		param.val = (Exp)sourceDestRight.dest;
-                                	}
+                                        if(!identVal.equals(sourceDestRight.dest)) {
+                                                changes = true;
+                                                param.val = (Exp)sourceDestRight.dest;
+                                        }
                                 } else {
-                                	if(!identVal.equals(sourceDestRight.source)) {
-                                		changes = true;
-                                		param.val = (Exp)sourceDestRight.source;
-                                	}
+                                        if(!identVal.equals(sourceDestRight.source)) {
+                                                changes = true;
+                                                param.val = (Exp)sourceDestRight.source;
+                                        }
                                 }
                             } else if(param.val instanceof BinExp){
                                 BinExp binExpVal = (BinExp)param.val;
@@ -2245,14 +2245,14 @@ public class MyOptimizer {
                                             throw new OptimizerException(icode.getClass().getEnclosingMethod().getName(), "UnExpected binary operation found when optomizing expression " + param.val);
                                     }
                                 } else {
-                                	IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant() || sourceDestLeft.dest instanceof NaaExp) ? sourceDestLeft.source : sourceDestLeft.dest);
-                                	IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : sourceDestRight.dest);
-                                	
+                                        IdentExp leftExp = (IdentExp)((sourceDestLeft.dest.isConstant() || sourceDestLeft.dest instanceof NaaExp) ? sourceDestLeft.source : sourceDestLeft.dest);
+                                        IdentExp rightExp = (IdentExp)((sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? sourceDestRight.source : sourceDestRight.dest);
+                                        
                                     BinExp val = new BinExp(leftExp, binExpVal.op, rightExp);
                                     if(!val.equals(binExpVal)) {
-                                    	param.val = val;
-                                    	
-                                    	changes = true;	
+                                        param.val = val;
+                                        
+                                        changes = true; 
                                     }
                                 }
                             } else if(param.val instanceof UnExp){
@@ -2283,43 +2283,43 @@ public class MyOptimizer {
                                             throw new OptimizerException(sourceDestRight.dest.getClass().getEnclosingMethod().getName(), "Error invalid operation in " + unExpVal);
                                     }
                                 } else if(sourceDestRight.dest instanceof IdentExp) {
-                                	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.dest);
-                                	if(!newExp.equals(unExpVal)) {
-                                		changes = true;
-                                		
-                                		param.val = newExp;
-                                	}
+                                        UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.dest);
+                                        if(!newExp.equals(unExpVal)) {
+                                                changes = true;
+                                                
+                                                param.val = newExp;
+                                        }
                                 } else {
-                                	UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.source);
-                                	if(!newExp.equals(unExpVal)) {
-                                		changes = true;
-                                		
-                                		param.val = newExp;
-                                	}
+                                        UnExp newExp = new UnExp(unExpVal.op, (IdentExp)sourceDestRight.source);
+                                        if(!newExp.equals(unExpVal)) {
+                                                changes = true;
+                                                
+                                                param.val = newExp;
+                                        }
                                 }
                             }
-                    	}
+                        }
                     } else if(icode instanceof Inline) {
-                    	Inline inline = (Inline)icode;
-                    	LinkedList<InlineParam> newParams = new LinkedList<InlineParam>();
+                        Inline inline = (Inline)icode;
+                        LinkedList<InlineParam> newParams = new LinkedList<InlineParam>();
                         
-                    	for(InlineParam param: inline.params) {
-                    		if(param.containsAllQual(InlineParam.IS_USE)) {
-                    			Tuple<NullableExp, NullableExp> sourceDestRight = new Tuple<NullableExp, NullableExp>(param.name, param.name);
+                        for(InlineParam param: inline.params) {
+                                if(param.containsAllQual(InlineParam.IS_USE)) {
+                                        Tuple<NullableExp, NullableExp> sourceDestRight = new Tuple<NullableExp, NullableExp>(param.name, param.name);
                                 while(Utils.containsExpInSet(values, sourceDestRight.dest) && !Utils.scopeIsGlobal(sourceDestRight.dest)){
                                     sourceDestRight = new Tuple<NullableExp, NullableExp>((IdentExp)sourceDestRight.dest, Utils.getExpFromSet(values, sourceDestRight.dest));
                                 }
                                 
                                 IdentExp finalExp = (sourceDestRight.dest.isConstant() || sourceDestRight.dest instanceof NaaExp) ? (IdentExp)sourceDestRight.source : (IdentExp)sourceDestRight.dest;
                                 if(!finalExp.equals(param.name))
-                                	changes = true;
+                                        changes = true;
                                 newParams.add(new InlineParam(finalExp, param.type, param.qual));
-                    		} else {
-                    			newParams.add(param.copy());
-                    		}
-                    	}
-                    	
-                    	inline.params = newParams;
+                                } else {
+                                        newParams.add(param.copy());
+                                }
+                        }
+                        
+                        inline.params = newParams;
                     }
                 }
             }
@@ -2327,392 +2327,392 @@ public class MyOptimizer {
             time++;
         }
         if(cfg != null)
-    		if(cfg.containsFlag("debug")) {
-    			Utils.createFile("test/temp/ConstantPropogationICode.txt");
-    			Utils.writeToFile("test/temp/ConstantPropogationICode.txt", this.intermediateCode.toString());
-    		}
+                if(cfg.containsFlag("debug")) {
+                        Utils.createFile("test/temp/ConstantPropogationICode.txt");
+                        Utils.writeToFile("test/temp/ConstantPropogationICode.txt", this.intermediateCode.toString());
+                }
     }
     
     public void performPartialRedundancyElimination() {
-    	setUpOptimization(OptName.PARTIAL_REDUNDANCY_ELIMINATION);
-    	
-    	for(BlockNode block: this.globalFlowGraph.getBlocks()) {
-    		List<ICode> oldICode = block.getICode();
-    		List<ICode> newICode = new LinkedList<ICode>();
-    		
-    		for(ICode icode: oldICode) {
-    			Set<Tuple<NullableExp, ICode.Type>> newExpSet = new HashSet<Tuple<NullableExp, ICode.Type>>();
-	    		Set<Tuple<NullableExp, ICode.Type>> latestOfBlock = this.latestSets.get(icode);
-	    		Set<Tuple<NullableExp, ICode.Type>> usedAnalBlock = this.usedAnal.getOutputSet(icode);
-	    		HashSet<Tuple<NullableExp, CopyStr>> savedVars = this.savedAnal.getOutputSet(icode);
-	    		newExpSet.addAll(latestOfBlock);
-	    		newExpSet.retainAll(usedAnalBlock);
-	    		
-	    		for(Tuple<NullableExp, ICode.Type> expression: newExpSet) {
-	    			if(expression.source instanceof IdentExp) {
-	    				IdentExp ident = (IdentExp)expression.source;
-	    				if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL) {
-	    					if(Utils.containsExpInSet(savedVars, ident)) {
-	    						String name = Utils.getVar(savedVars, ident);
-	    						newICode.add(new Def(ICode.Scope.LOCAL, name.toString(), (Exp)expression.source, expression.dest));
-	    					}
-	    				}
-	    			} else if(Utils.containsExpInSet(savedVars, expression.source)) {
-						String name = Utils.getVar(savedVars, expression.source);
-						newICode.add(new Def(ICode.Scope.LOCAL, name.toString(), (Exp)expression.source, expression.dest));
-	    			}
-	    		}
-	    		
-	    		Set<Tuple<NullableExp, ICode.Type>> newVarSet = new HashSet<Tuple<NullableExp, ICode.Type>>();
-	    		newVarSet.addAll(usedAnalBlock);
-	    		
-	    		for(Tuple<NullableExp, ICode.Type> semiLatticeElem: this.globalExpressionSet) {
-	    			if(!latestOfBlock.contains(semiLatticeElem)) {
-	    				newVarSet.add(semiLatticeElem);
-	    			}
-	    		}
-	    		
-	    		Set<Tuple<NullableExp, ICode.Type>> usedSet = this.usedSets.get(icode);
-	    		newVarSet.retainAll(usedSet);
-	    		
-    			if(icode instanceof Assign){
-    				Assign assign = (Assign)icode;
-    				Tuple<NullableExp, ICode.Type> myTuple = new Tuple<NullableExp, ICode.Type>(assign.value, assign.getType());
-    				if(newVarSet.contains(myTuple)) {
-    					if(myTuple.source instanceof IdentExp) {
-    						IdentExp ident = (IdentExp)myTuple.source;
-    						if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL) {
-    							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
-    								String name = Utils.getVar(savedVars, myTuple.source);
-    								assign.value = new IdentExp(Scope.LOCAL, name);
-    								assign.recalculateIdentNumber();
-    							}
-    						}
-    					} else if(Utils.containsExpInSet(savedVars, myTuple.source)) {
-							String name = Utils.getVar(savedVars, myTuple.source);
-							assign.value = new IdentExp(Scope.LOCAL, name);
-							assign.recalculateIdentNumber();
-						}
-    				}
-    			} else if(icode instanceof Def){
-    				Def assign = (Def)icode;
-    				Tuple<NullableExp, ICode.Type> myTuple = new Tuple<NullableExp, ICode.Type>(assign.val, assign.type);
-    				if(myTuple.source instanceof IdentExp) {
-						IdentExp ident = (IdentExp)myTuple.source;
-						if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL) {
-							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
-								String name = Utils.getVar(savedVars, myTuple.source);
-								assign.val = new IdentExp(Scope.LOCAL, name);
-								assign.recalculateIdentNumber();
-							}
-						}
-					} else {
-						if(Utils.containsExpInSet(savedVars, myTuple.source)) {
-							String name = Utils.getVar(savedVars, myTuple.source);
-							assign.val = new IdentExp(Scope.LOCAL, name);
-							assign.recalculateIdentNumber();
-						}
-					}
-    			} else if(icode instanceof Call) {
-    				Call assign = (Call)icode;
-    				
-    				for(Def param: assign.params) {
-    					Tuple<NullableExp, ICode.Type> myTuple = new Tuple<NullableExp, ICode.Type>(param.val, param.type);
-        				if(newVarSet.contains(myTuple)) {
-        					if(myTuple.source instanceof IdentExp) {
-        						IdentExp ident = (IdentExp)myTuple.source;
-        						if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL) {
-        							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
-        								String name = Utils.getVar(savedVars, myTuple.source);
-        								param.val = new IdentExp(Scope.LOCAL, name);
-        								
-        							}
-        						}
-        					} else if(Utils.containsExpInSet(savedVars, myTuple.source)) {
-								String name = Utils.getVar(savedVars, myTuple.source);
-								param.val = new IdentExp(Scope.LOCAL, name);
-								
-							}
-        				}
-    				}
-    			} else if(icode instanceof Inline) {
-    				Inline inline = (Inline)icode;
-    				
-    				for(InlineParam param: inline.params){
-    					if(param.containsAllQual(InlineParam.IS_USE)) {
-    						Tuple<NullableExp, ICode.Type> myTuple = new Tuple<NullableExp, ICode.Type>(param.name, param.type);
-    						if(newVarSet.contains(myTuple)) {
-            					if(myTuple.source instanceof IdentExp) {
-            						IdentExp ident = (IdentExp)myTuple.source;
-            						if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL){
-            							if(Utils.containsExpInSet(savedVars, myTuple.source)) {
-            								String name = Utils.getVar(savedVars, myTuple.source);
-            								param.name = new IdentExp(Scope.LOCAL, name);
-            							}
-            						}
-            					}
-            				}
-    					}
-    				}
-    			}
-    			newICode.add(icode);
-    		}
-    		block.getBlock().setICode(newICode);
-    	}
-    	cleanUpOptimization(OptName.PARTIAL_REDUNDANCY_ELIMINATION);
-    	if(cfg != null)
-    		if(cfg.containsFlag("debug")) {
-    			Utils.createFile("test/temp/PartialRedundancyEliminationICode.txt");
-    			Utils.writeToFile("test/temp/PartialRedundancyEliminationICode.txt", this.intermediateCode.toString());
-    		}
+        setUpOptimization(OptName.PARTIAL_REDUNDANCY_ELIMINATION);
+        
+        for(BlockNode block: this.globalFlowGraph.getBlocks()) {
+                List<ICode> oldICode = block.getICode();
+                List<ICode> newICode = new LinkedList<ICode>();
+                
+                for(ICode icode: oldICode) {
+                        Set<Tuple<NullableExp, ICode.Type>> newExpSet = new HashSet<Tuple<NullableExp, ICode.Type>>();
+                        Set<Tuple<NullableExp, ICode.Type>> latestOfBlock = this.latestSets.get(icode);
+                        Set<Tuple<NullableExp, ICode.Type>> usedAnalBlock = this.usedAnal.getOutputSet(icode);
+                        HashSet<Tuple<NullableExp, CopyStr>> savedVars = this.savedAnal.getOutputSet(icode);
+                        newExpSet.addAll(latestOfBlock);
+                        newExpSet.retainAll(usedAnalBlock);
+                        
+                        for(Tuple<NullableExp, ICode.Type> expression: newExpSet) {
+                                if(expression.source instanceof IdentExp) {
+                                        IdentExp ident = (IdentExp)expression.source;
+                                        if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL) {
+                                                if(Utils.containsExpInSet(savedVars, ident)) {
+                                                        String name = Utils.getVar(savedVars, ident);
+                                                        newICode.add(new Def(ICode.Scope.LOCAL, name.toString(), (Exp)expression.source, expression.dest));
+                                                }
+                                        }
+                                } else if(Utils.containsExpInSet(savedVars, expression.source)) {
+                                                String name = Utils.getVar(savedVars, expression.source);
+                                                newICode.add(new Def(ICode.Scope.LOCAL, name.toString(), (Exp)expression.source, expression.dest));
+                                }
+                        }
+                        
+                        Set<Tuple<NullableExp, ICode.Type>> newVarSet = new HashSet<Tuple<NullableExp, ICode.Type>>();
+                        newVarSet.addAll(usedAnalBlock);
+                        
+                        for(Tuple<NullableExp, ICode.Type> semiLatticeElem: this.globalExpressionSet) {
+                                if(!latestOfBlock.contains(semiLatticeElem)) {
+                                        newVarSet.add(semiLatticeElem);
+                                }
+                        }
+                        
+                        Set<Tuple<NullableExp, ICode.Type>> usedSet = this.usedSets.get(icode);
+                        newVarSet.retainAll(usedSet);
+                        
+                        if(icode instanceof Assign){
+                                Assign assign = (Assign)icode;
+                                Tuple<NullableExp, ICode.Type> myTuple = new Tuple<NullableExp, ICode.Type>(assign.value, assign.getType());
+                                if(newVarSet.contains(myTuple)) {
+                                        if(myTuple.source instanceof IdentExp) {
+                                                IdentExp ident = (IdentExp)myTuple.source;
+                                                if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL) {
+                                                        if(Utils.containsExpInSet(savedVars, myTuple.source)) {
+                                                                String name = Utils.getVar(savedVars, myTuple.source);
+                                                                assign.value = new IdentExp(Scope.LOCAL, name);
+                                                                assign.recalculateIdentNumber();
+                                                        }
+                                                }
+                                        } else if(Utils.containsExpInSet(savedVars, myTuple.source)) {
+                                                        String name = Utils.getVar(savedVars, myTuple.source);
+                                                        assign.value = new IdentExp(Scope.LOCAL, name);
+                                                        assign.recalculateIdentNumber();
+                                                }
+                                }
+                        } else if(icode instanceof Def){
+                                Def assign = (Def)icode;
+                                Tuple<NullableExp, ICode.Type> myTuple = new Tuple<NullableExp, ICode.Type>(assign.val, assign.type);
+                                if(myTuple.source instanceof IdentExp) {
+                                                IdentExp ident = (IdentExp)myTuple.source;
+                                                if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL) {
+                                                        if(Utils.containsExpInSet(savedVars, myTuple.source)) {
+                                                                String name = Utils.getVar(savedVars, myTuple.source);
+                                                                assign.val = new IdentExp(Scope.LOCAL, name);
+                                                                assign.recalculateIdentNumber();
+                                                        }
+                                                }
+                                        } else {
+                                                if(Utils.containsExpInSet(savedVars, myTuple.source)) {
+                                                        String name = Utils.getVar(savedVars, myTuple.source);
+                                                        assign.val = new IdentExp(Scope.LOCAL, name);
+                                                        assign.recalculateIdentNumber();
+                                                }
+                                        }
+                        } else if(icode instanceof Call) {
+                                Call assign = (Call)icode;
+                                
+                                for(Def param: assign.params) {
+                                        Tuple<NullableExp, ICode.Type> myTuple = new Tuple<NullableExp, ICode.Type>(param.val, param.type);
+                                        if(newVarSet.contains(myTuple)) {
+                                                if(myTuple.source instanceof IdentExp) {
+                                                        IdentExp ident = (IdentExp)myTuple.source;
+                                                        if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL) {
+                                                                if(Utils.containsExpInSet(savedVars, myTuple.source)) {
+                                                                        String name = Utils.getVar(savedVars, myTuple.source);
+                                                                        param.val = new IdentExp(Scope.LOCAL, name);
+                                                                        
+                                                                }
+                                                        }
+                                                } else if(Utils.containsExpInSet(savedVars, myTuple.source)) {
+                                                                String name = Utils.getVar(savedVars, myTuple.source);
+                                                                param.val = new IdentExp(Scope.LOCAL, name);
+                                                                
+                                                        }
+                                        }
+                                }
+                        } else if(icode instanceof Inline) {
+                                Inline inline = (Inline)icode;
+                                
+                                for(InlineParam param: inline.params){
+                                        if(param.containsAllQual(InlineParam.IS_USE)) {
+                                                Tuple<NullableExp, ICode.Type> myTuple = new Tuple<NullableExp, ICode.Type>(param.name, param.type);
+                                                if(newVarSet.contains(myTuple)) {
+                                                if(myTuple.source instanceof IdentExp) {
+                                                        IdentExp ident = (IdentExp)myTuple.source;
+                                                        if(ident.scope != ICode.Scope.RETURN && ident.scope != ICode.Scope.GLOBAL){
+                                                                if(Utils.containsExpInSet(savedVars, myTuple.source)) {
+                                                                        String name = Utils.getVar(savedVars, myTuple.source);
+                                                                        param.name = new IdentExp(Scope.LOCAL, name);
+                                                                }
+                                                        }
+                                                }
+                                        }
+                                        }
+                                }
+                        }
+                        newICode.add(icode);
+                }
+                block.getBlock().setICode(newICode);
+        }
+        cleanUpOptimization(OptName.PARTIAL_REDUNDANCY_ELIMINATION);
+        if(cfg != null)
+                if(cfg.containsFlag("debug")) {
+                        Utils.createFile("test/temp/PartialRedundancyEliminationICode.txt");
+                        Utils.writeToFile("test/temp/PartialRedundancyEliminationICode.txt", this.intermediateCode.toString());
+                }
     }
     
     private void buildDfst() {
-    	if(this.globalFlowGraph == null)
-    		this.buildFlowGraph();
-    	if(this.domAnal == null)
-    		this.runDominatorAnalysis();
-    	
-    	FlowGraph fg = this.globalFlowGraph;
-    	EntryNode entryPoint = fg.getEntry();
-    	BlockNode entryNode = (BlockNode)entryPoint.entry;
-    	RootDfstNode root = new RootDfstNode(entryNode);
-    	this.dfst = new DepthFirstSpanningTree(root);
-    	
-    	HashSet<RootDfstNode> visited = new HashSet<RootDfstNode>();
-    	visited.add(root);
-    	
-    	buildDfst(entryNode, root, visited);
+        if(this.globalFlowGraph == null)
+                this.buildFlowGraph();
+        if(this.domAnal == null)
+                this.runDominatorAnalysis();
+        
+        FlowGraph fg = this.globalFlowGraph;
+        EntryNode entryPoint = fg.getEntry();
+        BlockNode entryNode = (BlockNode)entryPoint.entry;
+        RootDfstNode root = new RootDfstNode(entryNode);
+        this.dfst = new DepthFirstSpanningTree(root);
+        
+        HashSet<RootDfstNode> visited = new HashSet<RootDfstNode>();
+        visited.add(root);
+        
+        buildDfst(entryNode, root, visited);
     }
     
     private void buildDfst(BlockNode subRoot, RootDfstNode childNode, HashSet<RootDfstNode> visited) {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	if(this.domAnal == null)
-    		runDominatorAnalysis();
-    	for(FlowGraphNode sucessor: subRoot.getSuccessors()) {
-    		if(sucessor instanceof BlockNode) {
-    			BlockNode child = (BlockNode)sucessor;
-    			DfstNode childChildNode = new DfstNode(child);
-    			if(childChildNode.isAncestorOf(childNode)){
-    				for(RootDfstNode visitedNode: visited) {
-    					if(visitedNode.equals(childChildNode) && visitedNode instanceof DfstNode) {
-    						childChildNode = (DfstNode)visitedNode;
-    						break;
-    					}
-    				}
-    				if(this.domAnal.getInputSet(subRoot).contains(child)) {
-    					this.dfst.addBackEdge(childNode, childChildNode);
-    				} else {
-    					this.dfst.addRetreatingEdge(childNode, childChildNode);
-    				}
-    			} else if(visited.contains(childChildNode)) {
-    				for(RootDfstNode visitedNode: visited) {
-    					if(visitedNode.equals(childChildNode)) {
-    						RootDfstNode actualChildNode = visitedNode;
-    						this.dfst.addCrossEdge(childNode, actualChildNode);
-    						break;
-    					}
-    				}
-    			} else {
-    				visited.add(childChildNode);
-    				childNode.addTreeEdge(childChildNode);
-    				buildDfst(child, childChildNode, visited);
-    			}
-    		}
-    	}
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        if(this.domAnal == null)
+                runDominatorAnalysis();
+        for(FlowGraphNode sucessor: subRoot.getSuccessors()) {
+                if(sucessor instanceof BlockNode) {
+                        BlockNode child = (BlockNode)sucessor;
+                        DfstNode childChildNode = new DfstNode(child);
+                        if(childChildNode.isAncestorOf(childNode)){
+                                for(RootDfstNode visitedNode: visited) {
+                                        if(visitedNode.equals(childChildNode) && visitedNode instanceof DfstNode) {
+                                                childChildNode = (DfstNode)visitedNode;
+                                                break;
+                                        }
+                                }
+                                if(this.domAnal.getInputSet(subRoot).contains(child)) {
+                                        this.dfst.addBackEdge(childNode, childChildNode);
+                                } else {
+                                        this.dfst.addRetreatingEdge(childNode, childChildNode);
+                                }
+                        } else if(visited.contains(childChildNode)) {
+                                for(RootDfstNode visitedNode: visited) {
+                                        if(visitedNode.equals(childChildNode)) {
+                                                RootDfstNode actualChildNode = visitedNode;
+                                                this.dfst.addCrossEdge(childNode, actualChildNode);
+                                                break;
+                                        }
+                                }
+                        } else {
+                                visited.add(childChildNode);
+                                childNode.addTreeEdge(childChildNode);
+                                buildDfst(child, childChildNode, visited);
+                        }
+                }
+        }
     }
     
     private void defineLoops() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	if(this.domAnal == null)
-    		runDominatorAnalysis();
-    	if(this.dfst == null)
-    		buildDfst();
-    	
-    	this.loops = this.dfst.identifyLoops();
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        if(this.domAnal == null)
+                runDominatorAnalysis();
+        if(this.dfst == null)
+                buildDfst();
+        
+        this.loops = this.dfst.identifyLoops();
     }
     
     private void unsortFlowGraph() {
-    	if(this.globalFlowGraph != null)
-    		if(this.origBlocks != null) {
-    			this.globalFlowGraph.unsortFromCopy(this.origBlocks);
-    			this.origBlocks = null;
-    		}
+        if(this.globalFlowGraph != null)
+                if(this.origBlocks != null) {
+                        this.globalFlowGraph.unsortFromCopy(this.origBlocks);
+                        this.origBlocks = null;
+                }
     }
     
     private void sortFlowGraph() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	if(this.domAnal == null)
-    		runDominatorAnalysis();
-    	if(this.dfst == null)
-    		buildDfst();
-    	
-    	this.globalFlowGraph.dfstSort(this.dfst);
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        if(this.domAnal == null)
+                runDominatorAnalysis();
+        if(this.dfst == null)
+                buildDfst();
+        
+        this.globalFlowGraph.dfstSort(this.dfst);
     }
     
     private void buildRegionGraph() {
-    	if(this.globalFlowGraph == null)
-    		buildFlowGraph();
-    	if(this.domAnal == null)
-    		runDominatorAnalysis();
-    	if(this.dfst == null)
-    		buildDfst();
-    	if(this.loops == null)
-    		this.defineLoops();
-    	
-    	List<RegionBase> resultRegionList = new LinkedList<RegionBase>();
-    	Map<FlowGraphNode, RegionBase> mapToRegions = new HashMap<FlowGraphNode, RegionBase>();
-    	for(BlockNode block: globalFlowGraph.getBlocks()) {
-    		List<RegionBase> subRegions = new LinkedList<RegionBase>();
-    		Map<ICode, RegionBase> icodeToRegion = new HashMap<ICode, RegionBase>();
-    		for(ICode icode: block.getICode()) {
-    			InstructionRegion region = new InstructionRegion(icode);
-    			subRegions.add(region);
-    			icodeToRegion.put(icode, region);
-    		}
-    		BlockRegion region = new BlockRegion(block.getBlock(), icodeToRegion.get(block.getICode().getFirst()), subRegions);
-    		mapToRegions.put(block, region);
-    		resultRegionList.add(region);
-    	}
-    	
-    	Map<Tuple<FlowGraphNode, FlowGraphNode>, BackEdgeLoop> loops = this.loops;
-    	Map<Tuple<FlowGraphNode, FlowGraphNode>, List<Tuple<FlowGraphNode, FlowGraphNode>>> dependsOn = new HashMap<Tuple<FlowGraphNode, FlowGraphNode>, List<Tuple<FlowGraphNode, FlowGraphNode>>>();
-    	Set<Tuple<FlowGraphNode, FlowGraphNode>> visited = new HashSet<Tuple<FlowGraphNode, FlowGraphNode>>();
-    	
-    	for(Tuple<FlowGraphNode, FlowGraphNode> backEdge: loops.keySet()) {
-    		for(Tuple<FlowGraphNode, FlowGraphNode> otherEdge: loops.keySet()){
-    			if(!backEdge.equals(otherEdge)) {
-    				BackEdgeLoop loop = loops.get(backEdge);
-    				BackEdgeLoop otherLoop = loops.get(otherEdge);
-    				if(loop.containsSubLoop(otherLoop)) {
-    					if(!dependsOn.containsKey(backEdge)) {
-    						dependsOn.put(backEdge, new LinkedList<Tuple<FlowGraphNode, FlowGraphNode>>());
-    					}
-    					List<Tuple<FlowGraphNode, FlowGraphNode>> loopList = dependsOn.get(backEdge);
-    					loopList.add(otherEdge);
-    				}
-    			}
-    		}
-    	}
-    	
-    	generateResultRegionLoops(resultRegionList, mapToRegions, loops, dependsOn, visited);
-    	
-    	List<RegionBase> finalSubRegionList = new LinkedList<RegionBase>();
-    	List<BlockNode> blocks = this.globalFlowGraph.getBlocks();
-    	for(int i = 0; i < blocks.size(); i++) {
-    		BlockNode currentBlock = blocks.get(i);
-    		RegionBase reg = mapToRegions.get(currentBlock);
-    		finalSubRegionList.add(reg);
-    		if(containsLoopWithHeader(currentBlock)){
-    			BlockNode end = getSrcNode(currentBlock);
-    			while(!currentBlock.equals(end) && i < blocks.size()) {
-    				i++;
-    				currentBlock = blocks.get(i);
-    			}
-    		}
-    	}
-    	
-    	if(finalSubRegionList.size() > 1) {
-    		BaseRegion newRegion = new BaseRegion(finalSubRegionList.get(0), finalSubRegionList);
-    		resultRegionList.add(newRegion);
-    	}
-    	
-    	this.regions = new RegionGraph(resultRegionList);
+        if(this.globalFlowGraph == null)
+                buildFlowGraph();
+        if(this.domAnal == null)
+                runDominatorAnalysis();
+        if(this.dfst == null)
+                buildDfst();
+        if(this.loops == null)
+                this.defineLoops();
+        
+        List<RegionBase> resultRegionList = new LinkedList<RegionBase>();
+        Map<FlowGraphNode, RegionBase> mapToRegions = new HashMap<FlowGraphNode, RegionBase>();
+        for(BlockNode block: globalFlowGraph.getBlocks()) {
+                List<RegionBase> subRegions = new LinkedList<RegionBase>();
+                Map<ICode, RegionBase> icodeToRegion = new HashMap<ICode, RegionBase>();
+                for(ICode icode: block.getICode()) {
+                        InstructionRegion region = new InstructionRegion(icode);
+                        subRegions.add(region);
+                        icodeToRegion.put(icode, region);
+                }
+                BlockRegion region = new BlockRegion(block.getBlock(), icodeToRegion.get(block.getICode().get(0)), subRegions);
+                mapToRegions.put(block, region);
+                resultRegionList.add(region);
+        }
+        
+        Map<Tuple<FlowGraphNode, FlowGraphNode>, BackEdgeLoop> loops = this.loops;
+        Map<Tuple<FlowGraphNode, FlowGraphNode>, List<Tuple<FlowGraphNode, FlowGraphNode>>> dependsOn = new HashMap<Tuple<FlowGraphNode, FlowGraphNode>, List<Tuple<FlowGraphNode, FlowGraphNode>>>();
+        Set<Tuple<FlowGraphNode, FlowGraphNode>> visited = new HashSet<Tuple<FlowGraphNode, FlowGraphNode>>();
+        
+        for(Tuple<FlowGraphNode, FlowGraphNode> backEdge: loops.keySet()) {
+                for(Tuple<FlowGraphNode, FlowGraphNode> otherEdge: loops.keySet()){
+                        if(!backEdge.equals(otherEdge)) {
+                                BackEdgeLoop loop = loops.get(backEdge);
+                                BackEdgeLoop otherLoop = loops.get(otherEdge);
+                                if(loop.containsSubLoop(otherLoop)) {
+                                        if(!dependsOn.containsKey(backEdge)) {
+                                                dependsOn.put(backEdge, new LinkedList<Tuple<FlowGraphNode, FlowGraphNode>>());
+                                        }
+                                        List<Tuple<FlowGraphNode, FlowGraphNode>> loopList = dependsOn.get(backEdge);
+                                        loopList.add(otherEdge);
+                                }
+                        }
+                }
+        }
+        
+        generateResultRegionLoops(resultRegionList, mapToRegions, loops, dependsOn, visited);
+        
+        List<RegionBase> finalSubRegionList = new LinkedList<RegionBase>();
+        List<BlockNode> blocks = this.globalFlowGraph.getBlocks();
+        for(int i = 0; i < blocks.size(); i++) {
+                BlockNode currentBlock = blocks.get(i);
+                RegionBase reg = mapToRegions.get(currentBlock);
+                finalSubRegionList.add(reg);
+                if(containsLoopWithHeader(currentBlock)){
+                        BlockNode end = getSrcNode(currentBlock);
+                        while(!currentBlock.equals(end) && i < blocks.size()) {
+                                i++;
+                                currentBlock = blocks.get(i);
+                        }
+                }
+        }
+        
+        if(finalSubRegionList.size() > 1) {
+                BaseRegion newRegion = new BaseRegion(finalSubRegionList.get(0), finalSubRegionList);
+                resultRegionList.add(newRegion);
+        }
+        
+        this.regions = new RegionGraph(resultRegionList);
     }
     
     private boolean containsLoopWithHeader(BlockNode node) {
-    	for(Tuple<FlowGraphNode, FlowGraphNode> loop: loops.keySet()){
-    		if(loop.dest.equals(node))
-    			return true;
-    	}
-    	return false;
+        for(Tuple<FlowGraphNode, FlowGraphNode> loop: loops.keySet()){
+                if(loop.dest.equals(node))
+                        return true;
+        }
+        return false;
     }
     
     private BlockNode getSrcNode(BlockNode toSearch) {
-    	for(Tuple<FlowGraphNode, FlowGraphNode> loop: loops.keySet()){
-    		if(loop.dest.equals(toSearch))
-    			return (BlockNode)loop.source;
-    	}
-    	throw new OptimizerException("getSrcNode", "No dest node found with " + toSearch);
+        for(Tuple<FlowGraphNode, FlowGraphNode> loop: loops.keySet()){
+                if(loop.dest.equals(toSearch))
+                        return (BlockNode)loop.source;
+        }
+        throw new OptimizerException("getSrcNode", "No dest node found with " + toSearch);
     }
 
-	private void generateResultRegionLoops(List<RegionBase> resultRegionList, Map<FlowGraphNode, RegionBase> mapToRegions,
-			Map<Tuple<FlowGraphNode, FlowGraphNode>, BackEdgeLoop> loops2,
-			Map<Tuple<FlowGraphNode, FlowGraphNode>, List<Tuple<FlowGraphNode, FlowGraphNode>>> dependsOn,
-			Set<Tuple<FlowGraphNode, FlowGraphNode>> visited) {
-		for(Tuple<FlowGraphNode, FlowGraphNode> loopEdge: loops2.keySet()) {
-			if(!visited.contains(loopEdge)) {
-				if(dependsOn.containsKey(loopEdge)) {
-					for(Tuple<FlowGraphNode, FlowGraphNode> loop: dependsOn.get(loopEdge)){
-						generateDependentRegion(loop, resultRegionList, mapToRegions, loops2, dependsOn, visited);
-					}
-				}
-				
-				List<RegionBase> insideBody = new LinkedList<RegionBase>();
-				for(BlockNode bodyNode: loops2.get(loopEdge)) {
-					insideBody.add(mapToRegions.get(bodyNode));
-				}
-				LoopBodyRegion bodyRegion = new LoopBodyRegion(mapToRegions.get(loopEdge.dest), insideBody);
-				
-				for(RegionBase insideBodyRegion: insideBody) {
-					if(insideBodyRegion instanceof BaseRegion) {
-						BaseRegion reg = (BaseRegion)insideBodyRegion;
-						for(RegionBase sourceRegion: reg.getInputsOutsideRegion(insideBodyRegion)) {
-			    			bodyRegion.addEntryEdge(sourceRegion, insideBodyRegion);
-			    		}
-			    		for(RegionBase destRegion: reg.getTargetsOutsideRegion(insideBodyRegion)) {
-			    			bodyRegion.addExitEdge(insideBodyRegion, destRegion);
-			    		}
-					}
-		    	}
-				
-				resultRegionList.add(bodyRegion);
-				LoopRegion bodyCasing = new LoopRegion(bodyRegion);
-				bodyCasing.addInnerEdge(bodyRegion, bodyRegion);
-				mapToRegions.put(loopEdge.dest, bodyCasing);
-				resultRegionList.add(bodyCasing);
-				visited.add(loopEdge);
-			}
-		}
-	}
+        private void generateResultRegionLoops(List<RegionBase> resultRegionList, Map<FlowGraphNode, RegionBase> mapToRegions,
+                        Map<Tuple<FlowGraphNode, FlowGraphNode>, BackEdgeLoop> loops2,
+                        Map<Tuple<FlowGraphNode, FlowGraphNode>, List<Tuple<FlowGraphNode, FlowGraphNode>>> dependsOn,
+                        Set<Tuple<FlowGraphNode, FlowGraphNode>> visited) {
+                for(Tuple<FlowGraphNode, FlowGraphNode> loopEdge: loops2.keySet()) {
+                        if(!visited.contains(loopEdge)) {
+                                if(dependsOn.containsKey(loopEdge)) {
+                                        for(Tuple<FlowGraphNode, FlowGraphNode> loop: dependsOn.get(loopEdge)){
+                                                generateDependentRegion(loop, resultRegionList, mapToRegions, loops2, dependsOn, visited);
+                                        }
+                                }
+                                
+                                List<RegionBase> insideBody = new LinkedList<RegionBase>();
+                                for(BlockNode bodyNode: loops2.get(loopEdge)) {
+                                        insideBody.add(mapToRegions.get(bodyNode));
+                                }
+                                LoopBodyRegion bodyRegion = new LoopBodyRegion(mapToRegions.get(loopEdge.dest), insideBody);
+                                
+                                for(RegionBase insideBodyRegion: insideBody) {
+                                        if(insideBodyRegion instanceof BaseRegion) {
+                                                BaseRegion reg = (BaseRegion)insideBodyRegion;
+                                                for(RegionBase sourceRegion: reg.getInputsOutsideRegion(insideBodyRegion)) {
+                                                bodyRegion.addEntryEdge(sourceRegion, insideBodyRegion);
+                                        }
+                                        for(RegionBase destRegion: reg.getTargetsOutsideRegion(insideBodyRegion)) {
+                                                bodyRegion.addExitEdge(insideBodyRegion, destRegion);
+                                        }
+                                        }
+                        }
+                                
+                                resultRegionList.add(bodyRegion);
+                                LoopRegion bodyCasing = new LoopRegion(bodyRegion);
+                                bodyCasing.addInnerEdge(bodyRegion, bodyRegion);
+                                mapToRegions.put(loopEdge.dest, bodyCasing);
+                                resultRegionList.add(bodyCasing);
+                                visited.add(loopEdge);
+                        }
+                }
+        }
 
-	private void generateDependentRegion(Tuple<FlowGraphNode, FlowGraphNode> loop, List<RegionBase> resultRegionList,
-			Map<FlowGraphNode, RegionBase> mapToRegions, Map<Tuple<FlowGraphNode, FlowGraphNode>, BackEdgeLoop> loops2,
-			Map<Tuple<FlowGraphNode, FlowGraphNode>, List<Tuple<FlowGraphNode, FlowGraphNode>>> dependsOn,
-			Set<Tuple<FlowGraphNode, FlowGraphNode>> visited) {
-		if(!visited.contains(loop)) {
-			if(dependsOn.containsKey(loop)) {
-				for(Tuple<FlowGraphNode, FlowGraphNode> loopEdge: dependsOn.get(loop)){
-					generateDependentRegion(loopEdge, resultRegionList, mapToRegions, loops2, dependsOn, visited);
-				}
-			}
-			
-			List<RegionBase> insideBody = new LinkedList<RegionBase>();
-			for(BlockNode bodyNode: loops2.get(loop)) {
-				insideBody.add(mapToRegions.get(bodyNode));
-			}
-			LoopBodyRegion bodyRegion = new LoopBodyRegion(mapToRegions.get(loop.dest), insideBody);
-			
-			for(RegionBase insideBodyRegion: insideBody) {
-				if(insideBodyRegion instanceof BaseRegion) {
-					BaseRegion base = (BaseRegion)insideBodyRegion;
-					for(RegionBase sourceRegion: base.getInputsOutsideRegion(insideBodyRegion)) {
-		    			bodyRegion.addEntryEdge(sourceRegion, insideBodyRegion);
-		    		}
-		    		for(RegionBase destRegion: base.getTargetsOutsideRegion(insideBodyRegion)) {
-		    			bodyRegion.addExitEdge(insideBodyRegion, destRegion);
-		    		}
-				}
-	    	}
-			
-			resultRegionList.add(bodyRegion);
-			LoopRegion bodyCasing = new LoopRegion(bodyRegion);
-			bodyCasing.addInnerEdge(bodyRegion, bodyRegion);
-			resultRegionList.add(bodyCasing);
-			visited.add(loop);
-		}
-	}
+        private void generateDependentRegion(Tuple<FlowGraphNode, FlowGraphNode> loop, List<RegionBase> resultRegionList,
+                        Map<FlowGraphNode, RegionBase> mapToRegions, Map<Tuple<FlowGraphNode, FlowGraphNode>, BackEdgeLoop> loops2,
+                        Map<Tuple<FlowGraphNode, FlowGraphNode>, List<Tuple<FlowGraphNode, FlowGraphNode>>> dependsOn,
+                        Set<Tuple<FlowGraphNode, FlowGraphNode>> visited) {
+                if(!visited.contains(loop)) {
+                        if(dependsOn.containsKey(loop)) {
+                                for(Tuple<FlowGraphNode, FlowGraphNode> loopEdge: dependsOn.get(loop)){
+                                        generateDependentRegion(loopEdge, resultRegionList, mapToRegions, loops2, dependsOn, visited);
+                                }
+                        }
+                        
+                        List<RegionBase> insideBody = new LinkedList<RegionBase>();
+                        for(BlockNode bodyNode: loops2.get(loop)) {
+                                insideBody.add(mapToRegions.get(bodyNode));
+                        }
+                        LoopBodyRegion bodyRegion = new LoopBodyRegion(mapToRegions.get(loop.dest), insideBody);
+                        
+                        for(RegionBase insideBodyRegion: insideBody) {
+                                if(insideBodyRegion instanceof BaseRegion) {
+                                        BaseRegion base = (BaseRegion)insideBodyRegion;
+                                        for(RegionBase sourceRegion: base.getInputsOutsideRegion(insideBodyRegion)) {
+                                        bodyRegion.addEntryEdge(sourceRegion, insideBodyRegion);
+                                }
+                                for(RegionBase destRegion: base.getTargetsOutsideRegion(insideBodyRegion)) {
+                                        bodyRegion.addExitEdge(insideBodyRegion, destRegion);
+                                }
+                                }
+                }
+                        
+                        resultRegionList.add(bodyRegion);
+                        LoopRegion bodyCasing = new LoopRegion(bodyRegion);
+                        bodyCasing.addInnerEdge(bodyRegion, bodyRegion);
+                        resultRegionList.add(bodyCasing);
+                        visited.add(loop);
+                }
+        }
 }
