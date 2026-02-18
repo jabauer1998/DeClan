@@ -42,6 +42,7 @@ All packages now use the `declan.*` prefix matching the directory layout:
 - `declan.utils.*` - Exceptions, flow, matcher, position, source, symboltable
 
 ## Recent Changes
+- 2026-02-18: Updated tools/Updater.ps1 to use direct `java -cp` calls to MyCompilerDriver instead of Maven (`mvn exec:java`)
 - 2026-02-18: Added ANTLR code generation step to build scripts (generates from `src/antlr/*.g4` into `declan.backend.assembler`)
 - 2026-02-18: Added test command to build scripts using JUnit Platform Console Standalone
 - 2026-02-18: Updated test file paths from `test/` to `src/declan/test/declan` and `src/ir/` directories

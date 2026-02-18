@@ -1,3 +1,5 @@
+$CLASSPATH = "tmp;lib\*"
+
 function clean_src{
     param($directory)
     Get-ChildItem -Directory "$directory" |
@@ -19,8 +21,8 @@ function compile_file_into_ir{
     if ($nolink){
         $out = "$src".replace(".declib", ".ilib").replace(".dcl", ".ir").replace("standard_library\declan", "standard_library\ir\linkable").replace("test\declan", "test\ir\linkable")
     } elseif ($optimized){
-		$out = "$src".replace(".dcl", ".ir").replace("test\declan", "test\ir\optimized")
-	} else {
+                $out = "$src".replace(".dcl", ".ir").replace("test\declan", "test\ir\optimized")
+        } else {
         $out = "$src".replace(".dcl", ".ir").replace("test\declan", "test\ir\linked")
     }
     Write-Host "to output-"
@@ -28,14 +30,14 @@ function compile_file_into_ir{
     Write-Host "---------Output-Window-----------"
     if($out.Contains(".ir")){
         if (($nolink -eq '') -and ($optimized -eq '')){
-            Invoke-Expression "mvn exec:java -e -q -f '$PSScriptRoot/pom.xml' -P ir -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+            Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -e -p '$src' -f '$out' -std" -ErrorVariable $errorOutput
         } elseif ($nolink -eq ''){
-			Invoke-Expression "mvn exec:java -e -q -f '$PSScriptRoot/pom.xml' -P ir-optimized -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
-		} else {
-            Invoke-Expression "mvn exec:java -e -q -f '$PSScriptRoot/pom.xml' -P ir-nolink -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+            Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -e -o -p '$src' -f '$out' -std" -ErrorVariable $errorOutput
+        } else {
+            Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -e -n -p '$src' -f '$out'" -ErrorVariable $errorOutput
         }
     } elseif ($out.Contains(".ilib")){
-        Invoke-Expression "mvn exec:java -e -q -f '$PSScriptRoot/pom.xml' -P ir-nolink-lib -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+        Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -e -n -l '$src' -f '$out'" -ErrorVariable $errorOutput
     }
     
     Write-Host "--------End-Output-Window--------"
@@ -59,7 +61,7 @@ function compile_file_into_assembly{
     Write-Host "to output assembly at-"
     Write-Host "$out"
     Write-Host "---------Output-Window-----------"
-    Invoke-Expression "mvn exec:java -e -q -f '$PSScriptRoot/pom.xml' -P assembly -e -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+    Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -a -p '$src' -f '$out' -std" -ErrorVariable $errorOutput
     Write-Host "--------End-Output-Window--------"
     if ([string]::IsNullOrWhiteSpace($errorOutput)) {
         Write-Host "Source-"
@@ -81,7 +83,7 @@ function compile_file_into_binary{
     Write-Host "to output binary at-"
     Write-Host "$out"
     Write-Host "---------Output-Window-----------"
-    Invoke-Expression "mvn exec:java -e -f '$PSScriptRoot/pom.xml' -q -e -P binary -Dout='$out' -Dsrc='$src'" -ErrorVariable $errorOutput
+    Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -p '$src' -f '$out' -std" -ErrorVariable $errorOutput
     Write-Host "--------End-Output-Window--------"
     if ([string]::IsNullOrWhiteSpace($errorOutput)) {
         Write-Host "Source-"
@@ -96,19 +98,18 @@ function compile_file_into_binary{
 }
 
 function check_dependencies(){
-    if (!(Get-Command mvn)){
-        Write-Error "Mvn command does not exist!!!"
-        return -1
-    } else {
-        Write-Host "Mvn command was found successfully!!!"
-        return 0
-    }
-
     if(!(Get-Command java)){
         Write-Error "Java command does not exist!!!"
         return -1
     } else {
         Write-Host "Java command was found successfully!!!"
+    }
+
+    if(!(Test-Path "tmp")){
+        Write-Error "Compiled classes not found in tmp directory. Run build first!!!"
+        return -1
+    } else {
+        Write-Host "Compiled classes found in tmp directory!!!"
         return 0
     }
 }
