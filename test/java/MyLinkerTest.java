@@ -38,7 +38,7 @@ public class MyLinkerTest {
             MyStandardLibrary lib = new MyStandardLibrary(log);
             MyIrLinker linker = new MyIrLinker(null, log);
             Prog irCode = linker.performLinkage(program, lib.irIoLibrary(), lib.irMathLibrary(), lib.irConversionsLibrary(), lib.irIntLibrary(), lib.irRealLibrary(), lib.irUtilsLibrary());
-            String outputFile = prgSrc.replace("test/declan", "test/ir/linked").replace(".dcl", ".ir");
+            String outputFile = prgSrc.replace("src/declan/test/declan", "src/ir/linked").replace(".dcl", ".ir");
             FileReader fileReader = new FileReader(outputFile);
             expectedScanner = new Scanner(fileReader);
             StringReader sReader = new StringReader(irCode.toString());
@@ -453,175 +453,175 @@ public class MyLinkerTest {
 
     @Test
     public void testConversions(){
-        String progSrc = "test/declan/conversions.dcl";
+        String progSrc = "src/declan/test/declan/conversions.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testExpressions(){
-        String progSrc = "test/declan/expressions.dcl";;
+        String progSrc = "src/declan/test/declan/expressions.dcl";;
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testForLoopAdvanced(){
-        String progSrc = "test/declan/ForLoopAdvanced.dcl";
+        String progSrc = "src/declan/test/declan/ForLoopAdvanced.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testForLoopBasic(){
-        String progSrc = "test/declan/ForLoopBasic.dcl";
+        String progSrc = "src/declan/test/declan/ForLoopBasic.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testFoorLoopBasic2(){
-        String progSrc = "test/declan/ForLoopBasic2.dcl";
+        String progSrc = "src/declan/test/declan/ForLoopBasic2.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testForLoopBasic3(){
-        String progSrc = "test/declan/ForLoopBasic3.dcl";
+        String progSrc = "src/declan/test/declan/ForLoopBasic3.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testIfStatementAdvanced(){
-        String progSrc = "test/declan/IfStatementAdvanced.dcl";
+        String progSrc = "src/declan/test/declan/IfStatementAdvanced.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testIfStatementBasic(){
-        String progSrc = "test/declan/IfStatementBasic.dcl";
+        String progSrc = "src/declan/test/declan/IfStatementBasic.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testLoops(){
-        String progSrc = "test/declan/loops.dcl";
+        String progSrc = "src/declan/test/declan/loops.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testRepeatLoop(){
-        String progSrc = "test/declan/RepeatLoopBasic.dcl";
+        String progSrc = "src/declan/test/declan/RepeatLoopBasic.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testSample(){
-        String progSrc = "test/declan/Sample.dcl";
+        String progSrc = "src/declan/test/declan/Sample.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testTest(){
-        String progSrc = "test/declan/test.dcl";
+        String progSrc = "src/declan/test/declan/test.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testTest2(){
-        String progSrc = "test/declan/test2.dcl";
+        String progSrc = "src/declan/test/declan/test2.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testTest3(){
-        String progSrc = "test/declan/test3.dcl";
+        String progSrc = "src/declan/test/declan/test3.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testTest4(){
-        String progSrc = "test/declan/test4.dcl";
+        String progSrc = "src/declan/test/declan/test4.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testWhileLoopAdvanced(){
-        String progSrc = "test/declan/WhileLoopAdvanced.dcl";
+        String progSrc = "src/declan/test/declan/WhileLoopAdvanced.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testWhileLoopBasic(){
-        String progSrc = "test/declan/WhileLoopBasic.dcl";
+        String progSrc = "src/declan/test/declan/WhileLoopBasic.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testSingleConversion(){
-        String progSrc = "test/declan/SingleConversion.dcl";
+        String progSrc = "src/declan/test/declan/SingleConversion.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testSingleConversion2(){
-        String progSrc = "test/declan/SingleConversion2.dcl";
+        String progSrc = "src/declan/test/declan/SingleConversion2.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testRealAddition(){
-        String progSrc = "test/declan/RealAddition.dcl";
+        String progSrc = "src/declan/test/declan/RealAddition.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testRealAddition2(){
-        String progSrc = "test/declan/RealAddition2.dcl";
+        String progSrc = "src/declan/test/declan/RealAddition2.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testRealAddition3(){
-        String progSrc = "test/declan/RealAddition3.dcl";
+        String progSrc = "src/declan/test/declan/RealAddition3.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testRealMultiplication(){
-        String progSrc = "test/declan/RealMultiplication.dcl";
+        String progSrc = "src/declan/test/declan/RealMultiplication.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testRealMultiplication2(){
-        String progSrc = "test/declan/RealMultiplication2.dcl";
+        String progSrc = "src/declan/test/declan/RealMultiplication2.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testRealMultiplication3(){
-        String progSrc = "test/declan/RealMultiplication3.dcl";
+        String progSrc = "src/declan/test/declan/RealMultiplication3.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testIntegerDiv(){
-        String progSrc = "test/declan/IntegerDiv.dcl";
+        String progSrc = "src/declan/test/declan/IntegerDiv.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testIntegerDiv2(){
-        String progSrc = "test/declan/IntegerDiv2.dcl";
+        String progSrc = "src/declan/test/declan/IntegerDiv2.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testRealDivision(){
-        String progSrc = "test/declan/RealDivision.dcl";
+        String progSrc = "src/declan/test/declan/RealDivision.dcl";
         linkTestProgram(progSrc);
     }
 
     @Test
     public void testRealDivision4(){
-        String progSrc = "test/declan/RealDivision4.dcl";
+        String progSrc = "src/declan/test/declan/RealDivision4.dcl";
         linkTestProgram(progSrc);
     }
 }

@@ -24,13 +24,13 @@ public class MyStandardLibTest {
         String locLib = System.getenv("DECLIB");
         assertTrue("Environment variable DECLIB is not set!!!", !(locLib == null));
 
-        String declanDir = locLib + "\\declan";
-        String irDir = locLib +"\\ir\\linkable";
+        String declanDir = locLib + "/declan";
+        String irDir = locLib +"/ir/linkable";
 
-        String declanFile = declanDir + '\\' + libName + ".declib";
+        String declanFile = declanDir + '/' + libName + ".declib";
         Lib declanLib = parseAndGenerateDeclanSource(declanFile, errLog);
 
-        String irFile = irDir + '\\' + libName + ".ilib";
+        String irFile = irDir + '/' + libName + ".ilib";
         Lib irLib = parseIrSource(irFile, errLog);
 
         assertTrue("Number of instructions in irLib not equal to number of ir instructions in generated declan lib \nirLib: " + irLib.getSize() + "\ndeclanLib: " + declanLib.getSize(), irLib.getSize() == declanLib.getSize());

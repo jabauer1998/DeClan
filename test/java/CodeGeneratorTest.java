@@ -43,7 +43,7 @@ import declan.backend.assembler.ArmAssemblerParser;
 public class CodeGeneratorTest {
     private void testIrFile(String fileName) throws Exception{
         ErrorLog errLog = new ErrorLog();
-        String expectedResultFile = fileName.replace("test/ir/optimized", "test/temp").replace(".ir", ".a");
+        String expectedResultFile = fileName.replace("src/ir/optimized", "test/temp").replace(".ir", ".a");
         FileReader input = new FileReader(fileName);
         ReaderSource source = new ElaborateReaderSource(fileName, input);
         MyIrLexer lexer = new MyIrLexer(source, errLog);
@@ -70,96 +70,96 @@ public class CodeGeneratorTest {
     
     @Test
     public void testCodeGeneratorExample() throws Exception {
-        testIrFile("test/ir/optimized/CodeGeneratorExample.ir");
+        testIrFile("src/ir/optimized/CodeGeneratorExample.ir");
     }
 
     @Test
     public void testConversions() throws Exception{
-        testIrFile("test/ir/optimized/conversions.ir");
+        testIrFile("src/ir/optimized/conversions.ir");
     }
     
     @Test
     public void testBoolExpression1() throws Exception {
-        testIrFile("test/ir/optimized/BoolExpression1.ir");
+        testIrFile("src/ir/optimized/BoolExpression1.ir");
     }
 
     @Test
     public void testExpressions() throws Exception{
-        testIrFile("test/ir/optimized/expressions.ir");
+        testIrFile("src/ir/optimized/expressions.ir");
     }
 
     @Test
     public void testForLoopAdvanced() throws Exception{
-        testIrFile("test/ir/optimized/ForLoopAdvanced.ir");
+        testIrFile("src/ir/optimized/ForLoopAdvanced.ir");
     }
 
     @Test
     public void testForLoopBasic() throws Exception{
-        testIrFile("test/ir/optimized/ForLoopBasic.ir");
+        testIrFile("src/ir/optimized/ForLoopBasic.ir");
     }
 
     @Test
     public void testForLoopBasic2() throws Exception{
-        testIrFile("test/ir/optimized/ForLoopBasic2.ir");
+        testIrFile("src/ir/optimized/ForLoopBasic2.ir");
     }
 
     @Test
     public void testForLoopBasic3() throws Exception{
-        testIrFile("test/ir/optimized/ForLoopBasic3.ir");
+        testIrFile("src/ir/optimized/ForLoopBasic3.ir");
     }
 
     @Test
     public void testIfStatementAdvanced() throws Exception{
-        testIrFile("test/ir/optimized/IfStatementAdvanced.ir");
+        testIrFile("src/ir/optimized/IfStatementAdvanced.ir");
     }
 
     @Test
     public void testIfStatementBasic() throws Exception{
-        testIrFile("test/ir/optimized/IfStatementBasic.ir");
+        testIrFile("src/ir/optimized/IfStatementBasic.ir");
     }
 
     @Test
     public void testLoops() throws Exception{
-        testIrFile("test/ir/optimized/loops.ir");
+        testIrFile("src/ir/optimized/loops.ir");
     }
 
     @Test
     public void testRepeatLoopBasic() throws Exception{
-        testIrFile("test/ir/optimized/RepeatLoopBasic.ir");
+        testIrFile("src/ir/optimized/RepeatLoopBasic.ir");
     }
 
     @Test
     public void testSample() throws Exception{
-        testIrFile("test/ir/optimized/sample.ir");
+        testIrFile("src/ir/optimized/sample.ir");
     }
 
     @Test
     public void testTest() throws Exception{
-        testIrFile("test/ir/optimized/test.ir");
+        testIrFile("src/ir/optimized/test.ir");
     }
 
     @Test
     public void testTest2() throws Exception{
-        testIrFile("test/ir/optimized/test2.ir");
+        testIrFile("src/ir/optimized/test2.ir");
     }
 
     @Test
     public void testTest3() throws Exception{
-        testIrFile("test/ir/optimized/test3.ir");
+        testIrFile("src/ir/optimized/test3.ir");
     }
 
     @Test
     public void testTest4() throws Exception{
-        testIrFile("test/ir/optimized/test4.ir");
+        testIrFile("src/ir/optimized/test4.ir");
     }
 
     @Test
     public void testWhileLoopAdvanced() throws Exception{
-        testIrFile("test/ir/optimized/WhileLoopAdvanced.ir");
+        testIrFile("src/ir/optimized/WhileLoopAdvanced.ir");
     }
 
     @Test
     public void testWhileLoopBasic() throws Exception{
-        testIrFile("test/ir/optimized/WhileLoopBasic.ir");
+        testIrFile("src/ir/optimized/WhileLoopBasic.ir");
     }
 }

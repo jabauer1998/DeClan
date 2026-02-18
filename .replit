@@ -27,3 +27,8 @@ outputType = "console"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd /home/runner/workspace && bash build/LinuxBuild.sh build && echo \"Build complete! Run with: java -cp 'tmp:lib/*' declan.driver.MyCompilerDriver\""
+
+[userenv]
+
+[userenv.shared]
+DECLIB = "src/declan/std/lib"

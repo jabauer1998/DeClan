@@ -32,8 +32,8 @@ public class MyStandardLibrary {
             declanDirFound = false;
             irDirFound = false;
         } else {
-            irDir = locLib + "\\ir\\linkable";
-            declanDir = locLib + "\\declan";
+            irDir = locLib + "/ir/linkable";
+            declanDir = locLib + "/declan";
             File irDirAsFile = new File(irDir);
             File declanDirAsFile = new File(declanDir);
             
@@ -53,7 +53,7 @@ public class MyStandardLibrary {
 
     private Library parseDeclanSource(String fileName){
         if(declanDirFound){
-            String declanSrcFile = declanDir + '\\' + fileName + ".declib";
+            String declanSrcFile = declanDir + '/' + fileName + ".declib";
             File file = new File(declanSrcFile);
             if(!file.exists())
                 throw new RuntimeException("Error file at path-\n" + declanSrcFile + "\ndoes not exist!!!\n");
@@ -79,7 +79,7 @@ public class MyStandardLibrary {
             throw new RuntimeException("No library paths found");
 
         if(irDirFound){
-            String irFileString = irDir + '\\' + fileName + ".ilib";
+            String irFileString = irDir + '/' + fileName + ".ilib";
             File irFile = new File(irFileString);
             if(irFile.exists()){
                 try{

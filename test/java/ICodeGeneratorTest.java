@@ -65,7 +65,7 @@ public class ICodeGeneratorTest {
     }
     
     private static void testStandardLibraryOnICode(String programName){
-        String expectedOutput = programName.replace(".declib", ".ilib").replace("standard_library/declan", "standard_library/ir/linkable");
+        String expectedOutput = programName.replace(".declib", ".ilib").replace("src/declan/std/lib/declan", "src/declan/std/lib/ir/linkable");
         try{
             Source mySource = new ReaderSource(new FileReader(programName));
             ErrorLog errLog = new ErrorLog();
@@ -85,7 +85,7 @@ public class ICodeGeneratorTest {
     }
 
     private static void testDeclanFileOnICode(String programName){
-        String expectedOutput = programName.replace(".dcl", ".ir").replace("test/declan", "test/ir/linkable");
+        String expectedOutput = programName.replace(".dcl", ".ir").replace("src/declan/test/declan", "src/ir/linkable");
         try{
             Source mySource = new ReaderSource(new FileReader(programName));
             ErrorLog errLog = new ErrorLog();
@@ -296,188 +296,188 @@ public class ICodeGeneratorTest {
     
     @Test
     public void testDeclanConversions(){
-        String programName = "test/declan/conversions.dcl";
+        String programName = "src/declan/test/declan/conversions.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testExpressions(){
-        String programName = "test/declan/expressions.dcl";
+        String programName = "src/declan/test/declan/expressions.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testForLoopAdvanced(){
-        String programName = "test/declan/ForLoopBasic.dcl";
+        String programName = "src/declan/test/declan/ForLoopBasic.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testForLoopBasic(){
-        String programName = "test/declan/ForLoopBasic.dcl";
+        String programName = "src/declan/test/declan/ForLoopBasic.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testForLoopBasic2(){
-        String programName = "test/declan/ForLoopBasic2.dcl";
+        String programName = "src/declan/test/declan/ForLoopBasic2.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testForLoopBasic3(){
-        String programName = "test/declan/ForLoopBasic3.dcl";
+        String programName = "src/declan/test/declan/ForLoopBasic3.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testIfStatementAdvanced(){
-        String programName = "test/declan/IfStatementAdvanced.dcl";
+        String programName = "src/declan/test/declan/IfStatementAdvanced.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testIfStatementBasic(){
-        String programName = "test/declan/IfStatementBasic.dcl";
+        String programName = "src/declan/test/declan/IfStatementBasic.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testLoops(){
-        String programName = "test/declan/loops.dcl";
+        String programName = "src/declan/test/declan/loops.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testRepeatLoopBasic(){
-        String programName = "test/declan/RepeatLoopBasic.dcl";
+        String programName = "src/declan/test/declan/RepeatLoopBasic.dcl";
        testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testSample(){
-        String programName = "test/declan/sample.dcl";
+        String programName = "src/declan/test/declan/sample.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testTest(){
-        String programName = "test/declan/test.dcl";
+        String programName = "src/declan/test/declan/test.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testTest2(){
-        String programName = "test/declan/test2.dcl";
+        String programName = "src/declan/test/declan/test2.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testTest3(){
-        String programName = "test/declan/test3.dcl";
+        String programName = "src/declan/test/declan/test3.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testTest4(){
-        String programName = "test/declan/test4.dcl";
+        String programName = "src/declan/test/declan/test4.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testWhileLoopAdvanced(){
-        String programName = "test/declan/WhileLoopAdvanced.dcl";
+        String programName = "src/declan/test/declan/WhileLoopAdvanced.dcl";
         testDeclanFileOnICode(programName);
     }
 
 
     @Test
     public void testWhileLoopBasic(){
-        String programName = "test/declan/WhileLoopBasic.dcl";
+        String programName = "src/declan/test/declan/WhileLoopBasic.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testSingleConversion(){
-        String programName = "test/declan/SingleConversion.dcl";
+        String programName = "src/declan/test/declan/SingleConversion.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testSingleConversion2(){
-        String programName = "test/declan/SingleConversion2.dcl";
+        String programName = "src/declan/test/declan/SingleConversion2.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testRealAddition(){
-        String programName = "test/declan/RealAddition.dcl";
+        String programName = "src/declan/test/declan/RealAddition.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testRealAddition2(){
-        String programName = "test/declan/RealAddition2.dcl";
+        String programName = "src/declan/test/declan/RealAddition2.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testRealAddition3(){
-        String programName = "test/declan/RealAddition3.dcl";
+        String programName = "src/declan/test/declan/RealAddition3.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testRealMultiplication(){
-        String programName = "test/declan/RealMultiplication.dcl";
+        String programName = "src/declan/test/declan/RealMultiplication.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testRealMultiplication2(){
-        String programName = "test/declan/RealMultiplication2.dcl";
+        String programName = "src/declan/test/declan/RealMultiplication2.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testRealMultipliation3(){
-        String programName = "test/declan/RealMultiplication3.dcl";
+        String programName = "src/declan/test/declan/RealMultiplication3.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testIntegerDiv(){
-        String programName = "test/declan/IntegerDiv.dcl";
+        String programName = "src/declan/test/declan/IntegerDiv.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testIntegerDiv2(){
-        String programName = "test/declan/IntegerDiv2.dcl";
+        String programName = "src/declan/test/declan/IntegerDiv2.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testRealDivision(){
-        String programName = "test/declan/RealDivision.dcl";
+        String programName = "src/declan/test/declan/RealDivision.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testRealDivision2(){
-        String programName = "test/declan/RealDivision2.dcl";
+        String programName = "src/declan/test/declan/RealDivision2.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testRealDivision3(){
-        String programName = "test/declan/RealDivision3.dcl";
+        String programName = "src/declan/test/declan/RealDivision3.dcl";
         testDeclanFileOnICode(programName);
     }
 
     @Test
     public void testRealDivision4(){
-        String programName = "test/declan/RealDivision4.dcl";
+        String programName = "src/declan/test/declan/RealDivision4.dcl";
         testDeclanFileOnICode(programName);
     }
     
@@ -485,37 +485,37 @@ public class ICodeGeneratorTest {
     
     @Test
     public void testConversions(){
-        String programName = "standard_library/declan/Conversions.declib";
+        String programName = "src/declan/std/lib/declan/Conversions.declib";
         testStandardLibraryOnICode(programName);
     }
     
     @Test
     public void testIntOperations() {
-    	String programName = "standard_library/declan/IntOperations.declib";
-    	testStandardLibraryOnICode(programName);
+        String programName = "src/declan/std/lib/declan/IntOperations.declib";
+        testStandardLibraryOnICode(programName);
     }
     
     @Test
     public void testIo() {
-    	String programName =  "standard_library/declan/Io.declib";
-    	testStandardLibraryOnICode(programName);
+        String programName =  "src/declan/std/lib/declan/Io.declib";
+        testStandardLibraryOnICode(programName);
     }
     
     @Test
     public void testMath() {
-    	String programName = "standard_library/declan/Math.declib";
-    	testStandardLibraryOnICode(programName);
+        String programName = "src/declan/std/lib/declan/Math.declib";
+        testStandardLibraryOnICode(programName);
     }
     
     @Test
     public void testRealOperations() {
-    	String programName = "standard_library/declan/RealOperations.declib";
-    	testStandardLibraryOnICode(programName);
+        String programName = "src/declan/std/lib/declan/RealOperations.declib";
+        testStandardLibraryOnICode(programName);
     }
     
     @Test
     public void testUtils() {
-    	String programName = "standard_library/declan/Utils.declib";
-    	testStandardLibraryOnICode(programName);
+        String programName = "src/declan/std/lib/declan/Utils.declib";
+        testStandardLibraryOnICode(programName);
     }
 }
