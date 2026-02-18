@@ -16,7 +16,6 @@ import java.util.concurrent.Future;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.TestRig;
-import org.antlr.v4.runtime.tree.gui.TreeViewer;
 import org.junit.Test;
 
 import declan.utils.ErrorLog;
@@ -71,7 +70,7 @@ public class CodeGeneratorTest {
     
     @Test
     public void testCodeGeneratorExample() throws Exception {
-    	testIrFile("test/ir/optimized/CodeGeneratorExample.ir");
+        testIrFile("test/ir/optimized/CodeGeneratorExample.ir");
     }
 
     @Test
@@ -81,7 +80,7 @@ public class CodeGeneratorTest {
     
     @Test
     public void testBoolExpression1() throws Exception {
-    	testIrFile("test/ir/optimized/BoolExpression1.ir");
+        testIrFile("test/ir/optimized/BoolExpression1.ir");
     }
 
     @Test

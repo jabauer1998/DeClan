@@ -13,7 +13,7 @@ if [ -n "$javaExists" ]; then
     echo "Searching for Command..."
     if [ $# -eq 0 ]; then
         echo "No command found, expected 1 argument..."
-        echo "Example of command can be 'build', 'publish' or 'clean'"
+        echo "Example of command can be 'build', 'test', 'publish' or 'clean'"
     else
         command=$1
         echo "Command is $command"
@@ -45,6 +45,36 @@ if [ -n "$javaExists" ]; then
             else
                 javac "@build/BuildList.txt" -sourcepath "./src" -d "tmp" -encoding "UTF-8"
             fi
+        elif [ "$command" = "test" ]; then
+            echo "Building main sources first..."
+            bash "$SCRIPT_DIR/LinuxBuild.sh" build
+            srcRoot=$(pwd)
+            if [ -f build/TestBuildList.txt ]; then
+                rm -f build/TestBuildList.txt
+            fi
+            touch build/TestBuildList.txt
+            find "$srcRoot/test/java" -type f -name "*.java" ! -name "#*" ! -name "*~" > build/TestBuildList.txt
+            for line in $(cat build/TestBuildList.txt); do
+                if [ -f "$line" ]; then
+                    sed -i '1s/^\xEF\xBB\xBF//' "$line"
+                fi
+            done
+            cat "build/TestBuildList.txt"
+            CLASSPATH="tmp"
+            for jar in lib/*.jar; do
+                if [ -f "$jar" ]; then
+                    CLASSPATH="$CLASSPATH:$jar"
+                fi
+            done
+            javac "@build/TestBuildList.txt" -sourcepath "./test/java" -classpath "$CLASSPATH" -d "tmp" -encoding "UTF-8"
+            rm -f build/TestBuildList.txt
+            RUNPATH="tmp"
+            for jar in lib/*.jar; do
+                if [ -f "$jar" ]; then
+                    RUNPATH="$RUNPATH:$jar"
+                fi
+            done
+            java -jar lib/junit-platform-console-standalone-6.0.3.jar execute --classpath "$RUNPATH" --scan-classpath tmp
         elif [ "$command" = "clean" ]; then
             rm -rf bin/*
             rm -rf tmp/*
