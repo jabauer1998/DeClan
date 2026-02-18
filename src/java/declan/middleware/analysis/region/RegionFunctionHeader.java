@@ -1,10 +1,10 @@
-package io.github.h20man13.DeClan.common.analysis.region;
+package declan.middleware.analysis.region;
 
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.flow.FlowGraphNode;
-import io.github.h20man13.DeClan.common.region.Region;
-import io.github.h20man13.DeClan.common.region.RegionBase;
+import declan.utils.flow.FlowGraphNode;
+import declan.middleware.region.Region;
+import declan.middleware.region.RegionBase;
 
 public class RegionFunctionHeader {
 	public enum Direction{

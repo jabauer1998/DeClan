@@ -1,6 +1,6 @@
-package io.github.h20man13.DeClan.common.arm.descriptor;
+package declan.backend.arm.descriptor;
 
-import io.github.h20man13.DeClan.common.Copyable;
+import declan.utils.Copyable;
 
 public interface ArmElement extends Copyable<ArmElement> {
 	public String toString();

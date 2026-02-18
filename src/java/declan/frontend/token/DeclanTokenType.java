@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.token;
+package declan.frontend.token;
 
 import java.util.TreeMap;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.matcher;
+package declan.utils.matcher;
 
 public class AntlrTokenMatcher<ReturnType> {
     public AntlrTokenMatcher(){

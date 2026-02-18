@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.position;
+package declan.utils.position;
 
 public class FilePosition extends Position {
     private String fileName;

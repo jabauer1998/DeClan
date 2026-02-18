@@ -1,14 +1,14 @@
-package io.github.h20man13.DeClan.common.arm.descriptor;
+package declan.backend.arm.descriptor;
 
 import java.lang.StackWalker.StackFrame;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.exception.OffsetNotFound;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.ICode.Type;
+import declan.utils.Tuple;
+import declan.utils.exception.OffsetNotFound;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.ICode.Type;
 
 public class ArmAddressOffsets{
 	private Stack<OffsetFrame> frameStack;

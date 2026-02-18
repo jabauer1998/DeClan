@@ -1,8 +1,8 @@
-package io.github.h20man13.DeClan.common.icode;
+package declan.middleware.icode;
 
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.pat.P;
+import declan.utils.pat.P;
 
 public class Spill extends ICode {
 	public String name;

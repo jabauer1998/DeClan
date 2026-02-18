@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.region;
+package declan.middleware.region;
 
 import java.util.Iterator;
 import java.util.List;

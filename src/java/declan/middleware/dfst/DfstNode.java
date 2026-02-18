@@ -1,12 +1,12 @@
-package io.github.h20man13.DeClan.common.dfst;
+package declan.middleware.dfst;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.flow.BasicBlock;
-import io.github.h20man13.DeClan.common.flow.BlockNode;
-import io.github.h20man13.DeClan.common.flow.FlowGraphNode;
+import declan.utils.flow.BasicBlock;
+import declan.utils.flow.BlockNode;
+import declan.utils.flow.FlowGraphNode;
 
 public class DfstNode extends RootDfstNode {
 	private RootDfstNode parent;

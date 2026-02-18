@@ -1,10 +1,10 @@
-package io.github.h20man13.DeClan.common.icode;
+package declan.middleware.icode;
 
 import java.util.List;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.Copyable;
-import io.github.h20man13.DeClan.common.pat.P;
+import declan.utils.Copyable;
+import declan.utils.pat.P;
 
 public abstract class ICode implements Copyable<ICode>{
     public enum Scope{

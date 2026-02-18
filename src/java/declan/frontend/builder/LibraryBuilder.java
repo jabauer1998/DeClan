@@ -1,11 +1,11 @@
-package io.github.h20man13.DeClan.common.builder;
+package declan.frontend.builder;
 
-import io.github.h20man13.DeClan.common.builder.template.CompletableBuilder;
-import io.github.h20man13.DeClan.common.gen.IrRegisterGenerator;
-import io.github.h20man13.DeClan.common.icode.Lib;
-import io.github.h20man13.DeClan.common.icode.section.DataSec;
-import io.github.h20man13.DeClan.common.icode.section.ProcSec;
-import io.github.h20man13.DeClan.common.icode.section.SymSec;
+import declan.frontend.builder.template.CompletableBuilder;
+import declan.frontend.IrRegisterGenerator;
+import declan.middleware.icode.Lib;
+import declan.middleware.icode.section.DataSec;
+import declan.middleware.icode.section.ProcSec;
+import declan.middleware.icode.section.SymSec;
 
 public class LibraryBuilder extends StatementBuilder implements CompletableBuilder<Lib> {
 

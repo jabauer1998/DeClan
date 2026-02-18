@@ -1,17 +1,17 @@
-package io.github.h20man13.DeClan.common.icode;
+package declan.middleware.icode;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.exception.ICodeFormatException;
-import io.github.h20man13.DeClan.common.icode.label.ProcLabel;
-import io.github.h20man13.DeClan.common.icode.section.BssSec;
-import io.github.h20man13.DeClan.common.icode.section.CodeSec;
-import io.github.h20man13.DeClan.common.icode.section.DataSec;
-import io.github.h20man13.DeClan.common.icode.section.ProcSec;
-import io.github.h20man13.DeClan.common.icode.section.SymSec;
-import io.github.h20man13.DeClan.common.pat.P;
-import io.github.h20man13.DeClan.common.util.Utils;
+import declan.utils.exception.ICodeFormatException;
+import declan.middleware.icode.label.ProcLabel;
+import declan.middleware.icode.section.BssSec;
+import declan.middleware.icode.section.CodeSec;
+import declan.middleware.icode.section.DataSec;
+import declan.middleware.icode.section.ProcSec;
+import declan.middleware.icode.section.SymSec;
+import declan.utils.pat.P;
+import declan.utils.Utils;
 
 public class Prog extends Lib {
     public Prog(boolean insertHeaders){

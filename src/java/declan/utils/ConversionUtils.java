@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.util;
+package declan.utils;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -6,36 +6,36 @@ import java.util.Set;
 
 import javax.naming.spi.DirStateFactory.Result;
 
-import io.github.h20man13.DeClan.common.dag.DagNode.ScopeType;
-import io.github.h20man13.DeClan.common.dag.DagNode.ValueType;
-import io.github.h20man13.DeClan.common.CopyBool;
-import io.github.h20man13.DeClan.common.CopyInt;
-import io.github.h20man13.DeClan.common.CopyStr;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.analysis.region.expr.Expr;
-import io.github.h20man13.DeClan.common.analysis.region.expr.IntExpr;
-import io.github.h20man13.DeClan.common.analysis.region.expr.RefVar;
-import io.github.h20man13.DeClan.common.ast.BoolValue;
-import io.github.h20man13.DeClan.common.ast.Expression;
-import io.github.h20man13.DeClan.common.ast.NumValue;
-import io.github.h20man13.DeClan.common.ast.StrValue;
-import io.github.h20man13.DeClan.common.dag.DagOperationNode;
-import io.github.h20man13.DeClan.common.exception.ConversionException;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.ICode.Type;
-import io.github.h20man13.DeClan.common.icode.exp.BinExp;
-import io.github.h20man13.DeClan.common.icode.exp.BoolExp;
-import io.github.h20man13.DeClan.common.icode.exp.Exp;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.icode.exp.IntExp;
-import io.github.h20man13.DeClan.common.icode.exp.NullableExp;
-import io.github.h20man13.DeClan.common.icode.exp.RealExp;
-import io.github.h20man13.DeClan.common.icode.exp.StrExp;
-import io.github.h20man13.DeClan.common.icode.exp.UnExp;
-import io.github.h20man13.DeClan.common.pat.P;
-import io.github.h20man13.DeClan.common.position.Position;
-import io.github.h20man13.DeClan.common.symboltable.entry.TypeCheckerQualities;
-import io.github.h20man13.DeClan.common.token.IrTokenType;
+import declan.middleware.dag.DagNode.ScopeType;
+import declan.middleware.dag.DagNode.ValueType;
+import declan.utils.CopyBool;
+import declan.utils.CopyInt;
+import declan.utils.CopyStr;
+import declan.utils.Tuple;
+import declan.middleware.analysis.region.expr.Expr;
+import declan.middleware.analysis.region.expr.IntExpr;
+import declan.middleware.analysis.region.expr.RefVar;
+import declan.frontend.ast.BoolValue;
+import declan.frontend.ast.Expression;
+import declan.frontend.ast.NumValue;
+import declan.frontend.ast.StrValue;
+import declan.middleware.dag.DagOperationNode;
+import declan.utils.exception.ConversionException;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.ICode.Type;
+import declan.middleware.icode.exp.BinExp;
+import declan.middleware.icode.exp.BoolExp;
+import declan.middleware.icode.exp.Exp;
+import declan.middleware.icode.exp.IdentExp;
+import declan.middleware.icode.exp.IntExp;
+import declan.middleware.icode.exp.NullableExp;
+import declan.middleware.icode.exp.RealExp;
+import declan.middleware.icode.exp.StrExp;
+import declan.middleware.icode.exp.UnExp;
+import declan.utils.pat.P;
+import declan.utils.position.Position;
+import declan.utils.symboltable.entry.TypeCheckerQualities;
+import declan.frontend.token.IrTokenType;
 
 public class ConversionUtils {
     public static BinExp.Operator getBinOp(DagOperationNode.Op op){

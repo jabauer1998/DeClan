@@ -1,11 +1,11 @@
-package io.github.h20man13.DeClan.main;
+package declan.frontend;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.Lexer;
-import io.github.h20man13.DeClan.common.position.Position;
-import io.github.h20man13.DeClan.common.source.Source;
-import io.github.h20man13.DeClan.common.token.IrToken;
-import io.github.h20man13.DeClan.common.token.IrTokenType;
+import declan.utils.ErrorLog;
+import declan.frontend.Lexer;
+import declan.utils.position.Position;
+import declan.utils.source.Source;
+import declan.frontend.token.IrToken;
+import declan.frontend.token.IrTokenType;
 
 public class MyIrLexer implements Lexer<IrToken> {
     private Source source;

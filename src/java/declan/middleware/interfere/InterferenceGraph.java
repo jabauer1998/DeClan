@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.interfere;
+package declan.middleware.interfere;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,14 +10,14 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.function.Predicate;
 
-import io.github.h20man13.DeClan.common.CopyStr;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.analysis.iterative.LiveVariableAnalysis;
-import io.github.h20man13.DeClan.common.icode.Assign;
-import io.github.h20man13.DeClan.common.icode.Def;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.Lib;
-import io.github.h20man13.DeClan.common.util.ConversionUtils;
+import declan.utils.CopyStr;
+import declan.utils.Tuple;
+import declan.middleware.analysis.iterative.LiveVariableAnalysis;
+import declan.middleware.icode.Assign;
+import declan.middleware.icode.Def;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.Lib;
+import declan.utils.ConversionUtils;
 
 public class InterferenceGraph {
         private Set<Tuple<CopyStr, CopyStr>> edges;

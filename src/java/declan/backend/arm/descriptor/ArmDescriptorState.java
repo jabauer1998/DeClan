@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.arm.descriptor;
+package declan.backend.arm.descriptor;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.CopyStr;
-import io.github.h20man13.DeClan.common.Copyable;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.ICode.Type;
-import io.github.h20man13.DeClan.common.icode.Spill;
-import io.github.h20man13.DeClan.common.icode.exp.BinExp.Operator;
+import declan.utils.CopyStr;
+import declan.utils.Copyable;
+import declan.utils.Tuple;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.ICode.Type;
+import declan.middleware.icode.Spill;
+import declan.middleware.icode.exp.BinExp.Operator;
 
 public class ArmDescriptorState implements Copyable<ArmDescriptorState> {
 	private ArmRegisterDescriptor regDesc;

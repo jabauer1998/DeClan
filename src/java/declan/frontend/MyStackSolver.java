@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.main;
+package declan.frontend;
 
 import java.util.ArrayList;
 import java.util.Stack;

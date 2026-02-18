@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan;
+package declan;
 
 import static org.junit.Assert.assertTrue;
 
@@ -7,11 +7,11 @@ import java.io.FileReader;
 
 import org.junit.Test;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.source.ReaderSource;
-import io.github.h20man13.DeClan.common.source.Source;
-import io.github.h20man13.DeClan.main.MyDeClanLexer;
-import io.github.h20man13.DeClan.main.MyDeClanParser;
+import declan.utils.ErrorLog;
+import declan.utils.source.ReaderSource;
+import declan.utils.source.Source;
+import declan.frontend.MyDeClanLexer;
+import declan.frontend.MyDeClanParser;
 
 public class MyParserBasicTest {
     public void runParserOnSource(String sourcePath){

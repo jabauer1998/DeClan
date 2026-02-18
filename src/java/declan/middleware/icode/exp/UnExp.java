@@ -1,10 +1,10 @@
-package io.github.h20man13.DeClan.common.icode.exp;
+package declan.middleware.icode.exp;
 
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.pat.P;
-import io.github.h20man13.DeClan.common.util.ConversionUtils;
-import io.github.h20man13.DeClan.common.util.Utils;
+import declan.utils.pat.P;
+import declan.utils.ConversionUtils;
+import declan.utils.Utils;
 
 public class UnExp implements Exp {
     public IdentExp right;

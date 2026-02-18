@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.exception;
+package declan.utils.exception;
 
 class AnalysisException extends RuntimeException {
 	public AnalysisException(String methodName, String analysisType, String message) {

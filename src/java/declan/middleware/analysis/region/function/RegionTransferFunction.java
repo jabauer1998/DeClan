@@ -1,8 +1,8 @@
-package io.github.h20man13.DeClan.common.analysis.region.function;
+package declan.middleware.analysis.region.function;
 
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.Computable;
+import declan.utils.Computable;
 
 public class RegionTransferFunction<SetType> implements Computable<Set<SetType>>{
 	private SetExpression<SetType> setExpression;

@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.matcher;
+package declan.utils.matcher;
 
 import java.util.LinkedList;
 import java.util.List;

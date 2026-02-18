@@ -1,5 +1,5 @@
 // Generated from io\github\H20man13\DeClan\main\assembler\ArmAssembler.g4 by ANTLR 4.3
-package io.github.h20man13.DeClan.main.assembler;
+package declan.backend.assembler;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

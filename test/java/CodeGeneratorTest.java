@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan;
+package declan;
 
 import static org.junit.Assert.assertTrue;
 
@@ -19,27 +19,27 @@ import org.antlr.v4.runtime.misc.TestRig;
 import org.antlr.v4.runtime.tree.gui.TreeViewer;
 import org.junit.Test;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.ErrorLog.LogItem;
-import io.github.h20man13.DeClan.common.ast.Program;
-import io.github.h20man13.DeClan.common.gen.IrRegisterGenerator;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.Lib;
-import io.github.h20man13.DeClan.common.icode.Prog;
-import io.github.h20man13.DeClan.common.source.ElaborateReaderSource;
-import io.github.h20man13.DeClan.common.source.ReaderSource;
-import io.github.h20man13.DeClan.common.util.Utils;
-import io.github.h20man13.DeClan.main.MyCodeGenerator;
-import io.github.h20man13.DeClan.main.MyDeClanLexer;
-import io.github.h20man13.DeClan.main.MyDeClanParser;
-import io.github.h20man13.DeClan.main.MyICodeGenerator;
-import io.github.h20man13.DeClan.main.MyIrLexer;
-import io.github.h20man13.DeClan.main.MyIrLinker;
-import io.github.h20man13.DeClan.main.MyIrParser;
-import io.github.h20man13.DeClan.main.MyOptimizer;
-import io.github.h20man13.DeClan.main.MyStandardLibrary;
-import io.github.h20man13.DeClan.main.assembler.ArmAssemblerLexer;
-import io.github.h20man13.DeClan.main.assembler.ArmAssemblerParser;
+import declan.utils.ErrorLog;
+import declan.utils.ErrorLog.LogItem;
+import declan.frontend.ast.Program;
+import declan.frontend.IrRegisterGenerator;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.Lib;
+import declan.middleware.icode.Prog;
+import declan.utils.source.ElaborateReaderSource;
+import declan.utils.source.ReaderSource;
+import declan.utils.Utils;
+import declan.backend.MyCodeGenerator;
+import declan.frontend.MyDeClanLexer;
+import declan.frontend.MyDeClanParser;
+import declan.frontend.MyICodeGenerator;
+import declan.frontend.MyIrLexer;
+import declan.middleware.MyIrLinker;
+import declan.frontend.MyIrParser;
+import declan.middleware.MyOptimizer;
+import declan.utils.MyStandardLibrary;
+import declan.backend.assembler.ArmAssemblerLexer;
+import declan.backend.assembler.ArmAssemblerParser;
 
 public class CodeGeneratorTest {
     private void testIrFile(String fileName) throws Exception{

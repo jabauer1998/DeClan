@@ -1,12 +1,12 @@
-package io.github.h20man13.DeClan.common.dag;
+package declan.middleware.dag;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.util.ConversionUtils;
+import declan.middleware.icode.exp.IdentExp;
+import declan.utils.ConversionUtils;
 
 public class DagValueNode implements DagNode{
 

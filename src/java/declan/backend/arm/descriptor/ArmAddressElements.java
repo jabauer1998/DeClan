@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.arm.descriptor;
+package declan.backend.arm.descriptor;
 
 import java.util.Collection;
 import java.util.HashSet;

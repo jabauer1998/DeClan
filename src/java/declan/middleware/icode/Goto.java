@@ -1,10 +1,10 @@
-package io.github.h20man13.DeClan.common.icode;
+package declan.middleware.icode;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.pat.P;
+import declan.utils.pat.P;
 
 public class Goto extends ICode {
 	private static Set<Goto> gotos = new HashSet<Goto>();

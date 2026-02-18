@@ -1,12 +1,12 @@
-package io.github.h20man13.DeClan.common.flow;
+package declan.utils.flow;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.Copyable;
-import io.github.h20man13.DeClan.common.icode.ICode;
+import declan.utils.Copyable;
+import declan.middleware.icode.ICode;
 
 public interface FlowGraphNode extends Copyable<FlowGraphNode>{
     public List<ICode> getICode();

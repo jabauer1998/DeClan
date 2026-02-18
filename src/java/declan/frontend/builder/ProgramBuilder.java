@@ -1,18 +1,18 @@
-package io.github.h20man13.DeClan.common.builder;
+package declan.frontend.builder;
 
 import java.util.Collections;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.builder.template.CompletableBuilder;
-import io.github.h20man13.DeClan.common.gen.IrRegisterGenerator;
-import io.github.h20man13.DeClan.common.icode.End;
-import io.github.h20man13.DeClan.common.icode.Lib;
-import io.github.h20man13.DeClan.common.icode.Prog;
-import io.github.h20man13.DeClan.common.icode.section.BssSec;
-import io.github.h20man13.DeClan.common.icode.section.CodeSec;
-import io.github.h20man13.DeClan.common.icode.section.DataSec;
-import io.github.h20man13.DeClan.common.icode.section.ProcSec;
-import io.github.h20man13.DeClan.common.icode.section.SymSec;
+import declan.utils.ErrorLog;
+import declan.frontend.builder.template.CompletableBuilder;
+import declan.frontend.IrRegisterGenerator;
+import declan.middleware.icode.End;
+import declan.middleware.icode.Lib;
+import declan.middleware.icode.Prog;
+import declan.middleware.icode.section.BssSec;
+import declan.middleware.icode.section.CodeSec;
+import declan.middleware.icode.section.DataSec;
+import declan.middleware.icode.section.ProcSec;
+import declan.middleware.icode.section.SymSec;
 
 public class ProgramBuilder extends StatementBuilder implements CompletableBuilder<Prog> {
     public ProgramBuilder(IrBuilderContext ctx, IrRegisterGenerator gen){

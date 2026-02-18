@@ -1,6 +1,6 @@
-package io.github.h20man13.DeClan.common.icode.exp;
+package declan.middleware.icode.exp;
 
-import io.github.h20man13.DeClan.common.Copyable;
+import declan.utils.Copyable;
 
 public interface NullableExp extends Copyable<NullableExp> {
 	@Override

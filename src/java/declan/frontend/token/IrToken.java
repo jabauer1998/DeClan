@@ -1,8 +1,8 @@
-package io.github.h20man13.DeClan.common.token;
+package declan.frontend.token;
 
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.position.Position;
+import declan.utils.position.Position;
 
 public class IrToken implements Token{
     private final IrTokenType type;

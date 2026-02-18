@@ -1,7 +1,7 @@
-package io.github.h20man13.DeClan.common.dfst;
+package declan.middleware.dfst;
 
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.flow.BlockNode;
+import declan.utils.Tuple;
+import declan.utils.flow.BlockNode;
 
 public class DepthFirstMetaEdge extends Tuple<RootDfstNode, RootDfstNode> {
 	public DepthFirstMetaEdge(RootDfstNode source, RootDfstNode dest) {

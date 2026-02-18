@@ -1,10 +1,10 @@
-package io.github.h20man13.DeClan.common.pat;
+package declan.utils.pat;
 
 import java.lang.reflect.InaccessibleObjectException;
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.exp.Exp;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.exp.Exp;
 
 public abstract class P {
     private static class IADD extends P{

@@ -1,6 +1,6 @@
-package io.github.h20man13.DeClan.common.source;
+package declan.utils.source;
 
-import io.github.h20man13.DeClan.common.position.Position;
+import declan.utils.position.Position;
 
 /**
  * A Source object wraps an input source of characters with the

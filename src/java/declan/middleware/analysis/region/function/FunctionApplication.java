@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.analysis.region.function;
+package declan.middleware.analysis.region.function;
 
 import java.util.Set;
 

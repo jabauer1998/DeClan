@@ -1,18 +1,18 @@
-package io.github.h20man13.DeClan.common.symboltable.entry;
+package declan.utils.symboltable.entry;
 
-import static io.github.h20man13.DeClan.main.MyIO.*;
+import static declan.utils.MyIO.*;
 
 import java.lang.String;
 import java.lang.StringBuilder;
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.Copyable;
-import io.github.h20man13.DeClan.common.position.Position;
-import io.github.h20man13.DeClan.common.ast.Declaration;
-import io.github.h20man13.DeClan.common.ast.Expression;
-import io.github.h20man13.DeClan.common.ast.ParamaterDeclaration;
-import io.github.h20man13.DeClan.common.ast.Statement;
-import io.github.h20man13.DeClan.common.ast.VariableDeclaration;
+import declan.utils.Copyable;
+import declan.utils.position.Position;
+import declan.frontend.ast.Declaration;
+import declan.frontend.ast.Expression;
+import declan.frontend.ast.ParamaterDeclaration;
+import declan.frontend.ast.Statement;
+import declan.frontend.ast.VariableDeclaration;
 
 import java.util.ArrayList;
 

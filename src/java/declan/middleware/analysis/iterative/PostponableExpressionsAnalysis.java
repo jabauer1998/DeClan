@@ -1,26 +1,26 @@
-package io.github.h20man13.DeClan.common.analysis.iterative;
+package declan.middleware.analysis.iterative;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.Config;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.flow.BlockNode;
-import io.github.h20man13.DeClan.common.flow.FlowGraph;
-import io.github.h20man13.DeClan.common.flow.FlowGraphNode;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.exp.BinExp;
-import io.github.h20man13.DeClan.common.icode.exp.BoolExp;
-import io.github.h20man13.DeClan.common.icode.exp.Exp;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.icode.exp.IntExp;
-import io.github.h20man13.DeClan.common.icode.exp.NullableExp;
-import io.github.h20man13.DeClan.common.icode.exp.RealExp;
-import io.github.h20man13.DeClan.common.icode.exp.StrExp;
-import io.github.h20man13.DeClan.common.icode.exp.UnExp;
-import io.github.h20man13.DeClan.common.util.Utils;
+import declan.driver.Config;
+import declan.utils.Tuple;
+import declan.utils.flow.BlockNode;
+import declan.utils.flow.FlowGraph;
+import declan.utils.flow.FlowGraphNode;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.exp.BinExp;
+import declan.middleware.icode.exp.BoolExp;
+import declan.middleware.icode.exp.Exp;
+import declan.middleware.icode.exp.IdentExp;
+import declan.middleware.icode.exp.IntExp;
+import declan.middleware.icode.exp.NullableExp;
+import declan.middleware.icode.exp.RealExp;
+import declan.middleware.icode.exp.StrExp;
+import declan.middleware.icode.exp.UnExp;
+import declan.utils.Utils;
 
 public class PostponableExpressionsAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<NullableExp, ICode.Type>>>, HashSet<Tuple<NullableExp, ICode.Type>>, Tuple<NullableExp, ICode.Type>> {
     private Map<ICode, Set<Tuple<NullableExp, ICode.Type>>> usedSets;

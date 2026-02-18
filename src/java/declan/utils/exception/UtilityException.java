@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.exception;
+package declan.utils.exception;
 
 public class UtilityException extends RuntimeException {
     public UtilityException(String method, String message){

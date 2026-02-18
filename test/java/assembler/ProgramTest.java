@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.assembler;
+package declan.assembler;
 
 import org.junit.Test;
 

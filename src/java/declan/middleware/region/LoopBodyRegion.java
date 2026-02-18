@@ -1,11 +1,11 @@
-package io.github.h20man13.DeClan.common.region;
+package declan.middleware.region;
 
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.flow.BlockNode;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.If;
-import io.github.h20man13.DeClan.common.icode.exp.BinExp;
+import declan.utils.flow.BlockNode;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.If;
+import declan.middleware.icode.exp.BinExp;
 
 public class LoopBodyRegion extends Region {
 	public LoopBodyRegion(RegionBase dest, List<RegionBase> subRegions) {

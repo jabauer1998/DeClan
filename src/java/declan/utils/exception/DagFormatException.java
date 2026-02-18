@@ -1,6 +1,6 @@
-package io.github.h20man13.DeClan.common.exception;
+package declan.utils.exception;
 
-import io.github.h20man13.DeClan.common.dag.DagNode;
+import declan.middleware.dag.DagNode;
 
 public class DagFormatException extends RuntimeException {
     public DagFormatException(DagNode node, String message){

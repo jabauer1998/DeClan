@@ -1,9 +1,9 @@
-package io.github.h20man13.DeClan.common.analysis.region.expr;
+package declan.middleware.analysis.region.expr;
 
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.icode.exp.Exp;
+import declan.utils.Tuple;
+import declan.middleware.icode.exp.Exp;
 
 public class NaaExpr implements Expr {
 	public NaaExpr() {}

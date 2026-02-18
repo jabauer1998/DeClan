@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.pat;
+package declan.utils.pat;
 
 public class Pattern {
     //The Next pattern we will initialize is a Function call followed by a return Placement

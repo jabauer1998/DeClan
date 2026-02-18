@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.arm.descriptor;
+package declan.backend.arm.descriptor;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.interfere.Color;
-import io.github.h20man13.DeClan.common.interfere.InterferenceGraph;
+import declan.middleware.interfere.Color;
+import declan.middleware.interfere.InterferenceGraph;
 
 public class ArmRegisterDescriptor implements Iterable<ArmRegisterElement>{
 	private Map<ArmRegisterElement, Set<ArmAddressElement>> descriptorMap;

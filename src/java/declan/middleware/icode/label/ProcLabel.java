@@ -1,12 +1,12 @@
-package io.github.h20man13.DeClan.common.icode.label;
+package declan.middleware.icode.label;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.pat.P;
+import declan.middleware.icode.ICode;
+import declan.utils.pat.P;
 
 public class ProcLabel extends Label {
     public ProcLabel(String label) {

@@ -1,8 +1,8 @@
-package io.github.h20man13.DeClan.common.ast;
+package declan.frontend.ast;
 
 import java.lang.String;
 
-import io.github.h20man13.DeClan.common.position.Position;
+import declan.utils.position.Position;
 
 /**
  * An ASTNode representing a String literal. It is stored here as a lexeme

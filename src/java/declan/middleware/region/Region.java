@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.region;
+package declan.middleware.region;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.CopyInt;
-import io.github.h20man13.DeClan.common.CopyStr;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.util.ConversionUtils;
+import declan.utils.CopyInt;
+import declan.utils.CopyStr;
+import declan.utils.Tuple;
+import declan.utils.ConversionUtils;
 
 public class Region extends BaseRegion implements Iterable<RegionBase>{
 	private RegionBase parent;

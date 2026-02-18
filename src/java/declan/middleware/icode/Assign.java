@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.icode;
+package declan.middleware.icode;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.exception.ICodeFormatException;
-import io.github.h20man13.DeClan.common.icode.exp.Exp;
-import io.github.h20man13.DeClan.common.pat.P;
-import io.github.h20man13.DeClan.common.util.ConversionUtils;
+import declan.utils.exception.ICodeFormatException;
+import declan.middleware.icode.exp.Exp;
+import declan.utils.pat.P;
+import declan.utils.ConversionUtils;
 
 public class Assign extends ICode{
 	private static Set<Assign> times = new HashSet<Assign>();

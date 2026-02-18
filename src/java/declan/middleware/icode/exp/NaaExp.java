@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.icode.exp;
+package declan.middleware.icode.exp;
 
 public class NaaExp implements NullableExp{
 	public NaaExp(){}

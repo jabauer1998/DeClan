@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.analysis.region.symbolic;
+package declan.middleware.analysis.region.symbolic;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.CopyStr;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.analysis.region.expr.Expr;
-import io.github.h20man13.DeClan.common.analysis.region.expr.NaaExpr;
-import io.github.h20man13.DeClan.common.analysis.region.function.SetExpression;
-import io.github.h20man13.DeClan.common.util.ConversionUtils;
+import declan.utils.CopyStr;
+import declan.utils.Tuple;
+import declan.middleware.analysis.region.expr.Expr;
+import declan.middleware.analysis.region.expr.NaaExpr;
+import declan.middleware.analysis.region.function.SetExpression;
+import declan.utils.ConversionUtils;
 
 public class SymbolicMeetOperator implements SetExpression<Tuple<CopyStr, Expr>> {
 	private SetExpression<Tuple<CopyStr, Expr>> exp1;

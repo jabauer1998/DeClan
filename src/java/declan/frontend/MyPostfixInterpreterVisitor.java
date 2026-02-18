@@ -1,38 +1,38 @@
-package io.github.h20man13.DeClan.main;
+package declan.frontend;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import io.github.h20man13.DeClan.common.ast.ASTVisitor;
-import io.github.h20man13.DeClan.common.ast.Asm;
-import io.github.h20man13.DeClan.common.ast.Assignment;
-import io.github.h20man13.DeClan.common.ast.BinaryOperation;
-import io.github.h20man13.DeClan.common.ast.BoolValue;
-import io.github.h20man13.DeClan.common.ast.Branch;
-import io.github.h20man13.DeClan.common.ast.ConstDeclaration;
-import io.github.h20man13.DeClan.common.ast.Declaration;
-import io.github.h20man13.DeClan.common.ast.ElseBranch;
-import io.github.h20man13.DeClan.common.ast.EmptyStatement;
-import io.github.h20man13.DeClan.common.ast.Expression;
-import io.github.h20man13.DeClan.common.ast.ForBranch;
-import io.github.h20man13.DeClan.common.ast.FunctionCall;
-import io.github.h20man13.DeClan.common.ast.Identifier;
-import io.github.h20man13.DeClan.common.ast.IfElifBranch;
-import io.github.h20man13.DeClan.common.ast.Library;
-import io.github.h20man13.DeClan.common.ast.NumValue;
-import io.github.h20man13.DeClan.common.ast.ParamaterDeclaration;
-import io.github.h20man13.DeClan.common.ast.ProcedureCall;
-import io.github.h20man13.DeClan.common.ast.ProcedureDeclaration;
-import io.github.h20man13.DeClan.common.ast.Program;
-import io.github.h20man13.DeClan.common.ast.RepeatBranch;
-import io.github.h20man13.DeClan.common.ast.Statement;
-import io.github.h20man13.DeClan.common.ast.StrValue;
-import io.github.h20man13.DeClan.common.ast.UnaryOperation;
-import io.github.h20man13.DeClan.common.ast.VariableDeclaration;
-import io.github.h20man13.DeClan.common.ast.WhileElifBranch;
-import io.github.h20man13.DeClan.common.symboltable.entry.VariableEntry;
+import declan.frontend.ast.ASTVisitor;
+import declan.frontend.ast.Asm;
+import declan.frontend.ast.Assignment;
+import declan.frontend.ast.BinaryOperation;
+import declan.frontend.ast.BoolValue;
+import declan.frontend.ast.Branch;
+import declan.frontend.ast.ConstDeclaration;
+import declan.frontend.ast.Declaration;
+import declan.frontend.ast.ElseBranch;
+import declan.frontend.ast.EmptyStatement;
+import declan.frontend.ast.Expression;
+import declan.frontend.ast.ForBranch;
+import declan.frontend.ast.FunctionCall;
+import declan.frontend.ast.Identifier;
+import declan.frontend.ast.IfElifBranch;
+import declan.frontend.ast.Library;
+import declan.frontend.ast.NumValue;
+import declan.frontend.ast.ParamaterDeclaration;
+import declan.frontend.ast.ProcedureCall;
+import declan.frontend.ast.ProcedureDeclaration;
+import declan.frontend.ast.Program;
+import declan.frontend.ast.RepeatBranch;
+import declan.frontend.ast.Statement;
+import declan.frontend.ast.StrValue;
+import declan.frontend.ast.UnaryOperation;
+import declan.frontend.ast.VariableDeclaration;
+import declan.frontend.ast.WhileElifBranch;
+import declan.utils.symboltable.entry.VariableEntry;
 
 /**
  * This is an implementation of the ASTVisitor that encapsulates the algorithm

@@ -1,11 +1,11 @@
-package io.github.h20man13.DeClan.common.arm.descriptor;
+package declan.backend.arm.descriptor;
 
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.CopyStr;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.util.ConversionUtils;
+import declan.utils.CopyStr;
+import declan.utils.Tuple;
+import declan.middleware.icode.ICode;
+import declan.utils.ConversionUtils;
 
 public class ArmAddressElement implements ArmElement {
 	private String label;

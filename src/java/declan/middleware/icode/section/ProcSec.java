@@ -1,7 +1,7 @@
-package io.github.h20man13.DeClan.common.icode.section;
+package declan.middleware.icode.section;
 
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.pat.P;
+import declan.middleware.icode.ICode;
+import declan.utils.pat.P;
 
 public class ProcSec extends ICode {
     public ProcSec(){

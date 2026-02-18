@@ -1,12 +1,12 @@
-package io.github.h20man13.DeClan.common.arm.descriptor;
+package declan.backend.arm.descriptor;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.exception.NoDataFoundInFrameException;
-import io.github.h20man13.DeClan.common.icode.ICode;
+import declan.utils.Tuple;
+import declan.utils.exception.NoDataFoundInFrameException;
+import declan.middleware.icode.ICode;
 
 public class OffsetFrame {
 	private Stack<ArmAddressElements> elementStack;

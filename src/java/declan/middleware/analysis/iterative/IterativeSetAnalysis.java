@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.analysis.iterative;
+package declan.middleware.analysis.iterative;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,17 +7,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import io.github.h20man13.DeClan.common.Config;
-import io.github.h20man13.DeClan.common.Copyable;
-import io.github.h20man13.DeClan.common.CustomMeet;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.analysis.AnalysisBase.Direction;
-import io.github.h20man13.DeClan.common.analysis.AnalysisBase.Meet;
-import io.github.h20man13.DeClan.common.exception.IterativeAnalysisException;
-import io.github.h20man13.DeClan.common.flow.FlowGraph;
-import io.github.h20man13.DeClan.common.icode.exp.NaaExp;
-import io.github.h20man13.DeClan.common.icode.exp.NullableExp;
-import io.github.h20man13.DeClan.common.util.Utils;
+import declan.driver.Config;
+import declan.utils.Copyable;
+import declan.utils.CustomMeet;
+import declan.utils.Tuple;
+import declan.middleware.analysis.AnalysisBase.Direction;
+import declan.middleware.analysis.AnalysisBase.Meet;
+import declan.utils.exception.IterativeAnalysisException;
+import declan.utils.flow.FlowGraph;
+import declan.middleware.icode.exp.NaaExp;
+import declan.middleware.icode.exp.NullableExp;
+import declan.utils.Utils;
 
 public abstract class IterativeSetAnalysis<AnalysisType extends Copyable<AnalysisType>,
 								  MapType extends Map<AnalysisType, SetType>,

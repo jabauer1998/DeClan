@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.builder;
+package declan.frontend.builder;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.gen.IrRegisterGenerator;
-import io.github.h20man13.DeClan.common.icode.Assign;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.exp.BinExp;
-import io.github.h20man13.DeClan.common.icode.exp.Exp;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.icode.exp.UnExp;
-import io.github.h20man13.DeClan.common.icode.exp.UnExp.Operator;
+import declan.utils.ErrorLog;
+import declan.utils.Tuple;
+import declan.frontend.IrRegisterGenerator;
+import declan.middleware.icode.Assign;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.exp.BinExp;
+import declan.middleware.icode.exp.Exp;
+import declan.middleware.icode.exp.IdentExp;
+import declan.middleware.icode.exp.UnExp;
+import declan.middleware.icode.exp.UnExp.Operator;
 
 public class IrBuilderContext {
     private int nextForLoopNumber;

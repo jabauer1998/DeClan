@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan;
+package declan;
 
 import static org.junit.Assert.assertTrue;
 
@@ -8,13 +8,13 @@ import java.util.List;
 
 import org.junit.Test;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.ErrorLog.LogItem;
-import io.github.h20man13.DeClan.common.source.ReaderSource;
-import io.github.h20man13.DeClan.common.source.Source;
-import io.github.h20man13.DeClan.common.token.IrToken;
-import io.github.h20man13.DeClan.common.token.IrTokenType;
-import io.github.h20man13.DeClan.main.MyIrLexer;
+import declan.utils.ErrorLog;
+import declan.utils.ErrorLog.LogItem;
+import declan.utils.source.ReaderSource;
+import declan.utils.source.Source;
+import declan.frontend.token.IrToken;
+import declan.frontend.token.IrTokenType;
+import declan.frontend.MyIrLexer;
 
 public class IrLexerTest {
 

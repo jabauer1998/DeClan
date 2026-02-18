@@ -1,12 +1,12 @@
-package io.github.h20man13.DeClan.common.region;
+package declan.middleware.region;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.exception.RegionAnalysisException;
-import io.github.h20man13.DeClan.common.icode.ICode;
+import declan.utils.Tuple;
+import declan.utils.exception.RegionAnalysisException;
+import declan.middleware.icode.ICode;
 
 public class BaseRegion implements RegionBase, Iterable<RegionBase> {
 	protected RegionBase header;

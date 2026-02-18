@@ -28,9 +28,18 @@ DeClan (Depauw Compilers Language) is a compiler for a subset of the Oberon prog
 ## Build & Run
 - **Language**: Java 19 (GraalVM CE 22.3.1)
 - **Build**: `bash build/LinuxBuild.sh build`
-- **Run**: `java -cp 'tmp:lib/*' io.github.h20man13.DeClan.main.MyCompilerDriver`
+- **Run**: `java -cp 'tmp:lib/*' declan.driver.MyCompilerDriver`
 - **Clean**: `bash build/LinuxBuild.sh clean`
 
+## Package Structure
+All packages now use the `declan.*` prefix matching the directory layout:
+- `declan.frontend.*` - Lexer, parser, AST, type checker, code generators
+- `declan.middleware.*` - Optimizer, analysis, DAG, DFST, icode, region, interfere
+- `declan.backend.*` - ARM code generator, assembler
+- `declan.driver.*` - Main driver and config
+- `declan.utils.*` - Exceptions, flow, matcher, position, source, symboltable
+
 ## Recent Changes
+- 2026-02-18: Refactored all package paths from `io.github.h20man13.DeClan.*` to `declan.*` to match directory structure
 - 2026-02-18: Fixed Java 21+ API compatibility (replaced `getFirst()`, `getLast()`, `reversed()` with Java 19 compatible alternatives)
 - 2026-02-18: Initial Replit environment setup

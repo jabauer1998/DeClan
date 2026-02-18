@@ -1,30 +1,30 @@
-package io.github.h20man13.DeClan.common.analysis.iterative;
+package declan.middleware.analysis.iterative;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import io.github.h20man13.DeClan.common.Config;
-import io.github.h20man13.DeClan.common.CopyStr;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.analysis.AnalysisBase.Direction;
-import io.github.h20man13.DeClan.common.analysis.AnalysisBase.Meet;
-import io.github.h20man13.DeClan.common.flow.BlockNode;
-import io.github.h20man13.DeClan.common.flow.FlowGraph;
-import io.github.h20man13.DeClan.common.gen.IrRegisterGenerator;
-import io.github.h20man13.DeClan.common.icode.Assign;
-import io.github.h20man13.DeClan.common.icode.Call;
-import io.github.h20man13.DeClan.common.icode.Def;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.ICode.Scope;
-import io.github.h20man13.DeClan.common.icode.Lib;
-import io.github.h20man13.DeClan.common.icode.Prog;
-import io.github.h20man13.DeClan.common.icode.exp.Exp;
-import io.github.h20man13.DeClan.common.icode.exp.NullableExp;
-import io.github.h20man13.DeClan.common.icode.section.CodeSec;
-import io.github.h20man13.DeClan.common.icode.section.ProcSec;
-import io.github.h20man13.DeClan.common.util.ConversionUtils;
-import io.github.h20man13.DeClan.common.util.Utils;
+import declan.driver.Config;
+import declan.utils.CopyStr;
+import declan.utils.Tuple;
+import declan.middleware.analysis.AnalysisBase.Direction;
+import declan.middleware.analysis.AnalysisBase.Meet;
+import declan.utils.flow.BlockNode;
+import declan.utils.flow.FlowGraph;
+import declan.frontend.IrRegisterGenerator;
+import declan.middleware.icode.Assign;
+import declan.middleware.icode.Call;
+import declan.middleware.icode.Def;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.ICode.Scope;
+import declan.middleware.icode.Lib;
+import declan.middleware.icode.Prog;
+import declan.middleware.icode.exp.Exp;
+import declan.middleware.icode.exp.NullableExp;
+import declan.middleware.icode.section.CodeSec;
+import declan.middleware.icode.section.ProcSec;
+import declan.utils.ConversionUtils;
+import declan.utils.Utils;
 
 public class MovedConstantAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>>>, HashSet<Tuple<ICode, Tuple<CopyStr, CopyStr>>>, Tuple<ICode, Tuple<CopyStr, CopyStr>>> {
     private Map<ICode, HashSet<ICode>> toRemove;

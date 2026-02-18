@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan;
+package declan;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,18 +8,18 @@ import java.util.Scanner;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.ast.Library;
-import io.github.h20man13.DeClan.common.ast.Program;
-import io.github.h20man13.DeClan.common.icode.Lib;
-import io.github.h20man13.DeClan.common.icode.Prog;
-import io.github.h20man13.DeClan.common.source.ReaderSource;
-import io.github.h20man13.DeClan.common.source.Source;
-import io.github.h20man13.DeClan.main.MyDeClanLexer;
-import io.github.h20man13.DeClan.main.MyDeClanParser;
-import io.github.h20man13.DeClan.main.MyICodeGenerator;
-import io.github.h20man13.DeClan.main.MyIrLexer;
-import io.github.h20man13.DeClan.main.MyIrParser;
+import declan.utils.ErrorLog;
+import declan.frontend.ast.Library;
+import declan.frontend.ast.Program;
+import declan.middleware.icode.Lib;
+import declan.middleware.icode.Prog;
+import declan.utils.source.ReaderSource;
+import declan.utils.source.Source;
+import declan.frontend.MyDeClanLexer;
+import declan.frontend.MyDeClanParser;
+import declan.frontend.MyICodeGenerator;
+import declan.frontend.MyIrLexer;
+import declan.frontend.MyIrParser;
 
 public class ICodeGeneratorTest {
     public static void testReaderFile(Lib program, String programInput){

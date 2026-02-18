@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.ast;
+package declan.frontend.ast;
 
 /**
  * As part of the Visitor pattern, an ASTVisitor encapsulates an algorithm that

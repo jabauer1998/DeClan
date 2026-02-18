@@ -1,14 +1,14 @@
-package io.github.h20man13.DeClan.common.icode.symbols;
+package declan.middleware.icode.symbols;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.Copyable;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.pat.P;
+import declan.utils.Copyable;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.exp.IdentExp;
+import declan.utils.pat.P;
 
 public abstract class SymEntry extends ICode{
     private int symType;

@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.flow;
+package declan.utils.flow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.dfst.DepthFirstSpanningTree;
-import io.github.h20man13.DeClan.common.dfst.DfstNode;
-import io.github.h20man13.DeClan.common.dfst.RootDfstNode;
-import io.github.h20man13.DeClan.common.util.Utils;
-import io.github.h20man13.DeClan.common.util.Utils.WhiteSpaceType;
+import declan.middleware.dfst.DepthFirstSpanningTree;
+import declan.middleware.dfst.DfstNode;
+import declan.middleware.dfst.RootDfstNode;
+import declan.utils.Utils;
+import declan.utils.Utils.WhiteSpaceType;
 
 public class FlowGraph implements Iterable<BlockNode>{
     private EntryNode entryNode;

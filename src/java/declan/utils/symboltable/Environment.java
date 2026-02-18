@@ -1,12 +1,12 @@
-package io.github.h20man13.DeClan.common.symboltable;
+package declan.utils.symboltable;
 
 import java.util.Stack;
 
-import io.github.h20man13.DeClan.common.Copyable;
+import declan.utils.Copyable;
 
 import java.util.HashMap;
 
-import static io.github.h20man13.DeClan.main.MyIO.*;
+import static declan.utils.MyIO.*;
 
 import java.lang.String;
 import java.lang.StringBuilder;

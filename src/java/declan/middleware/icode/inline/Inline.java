@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.icode.inline;
+package declan.middleware.icode.inline;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.ICode.Type;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.pat.P;
+import declan.utils.Tuple;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.ICode.Type;
+import declan.middleware.icode.exp.IdentExp;
+import declan.utils.pat.P;
 
 public class Inline extends ICode{
     public String inlineAssembly;

@@ -1,9 +1,9 @@
-package io.github.h20man13.DeClan.common.source;
+package declan.utils.source;
 
 import java.io.Reader;
 
-import io.github.h20man13.DeClan.common.position.Position;
-import io.github.h20man13.DeClan.common.position.FilePosition;
+import declan.utils.position.Position;
+import declan.utils.position.FilePosition;
 
 public class ElaborateReaderSource extends ReaderSource{
     private String fileName;

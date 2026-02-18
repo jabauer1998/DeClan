@@ -1,8 +1,8 @@
-package io.github.h20man13.DeClan.main;
+package declan.frontend;
 
 import java.io.Closeable;
 
-import static io.github.h20man13.DeClan.main.MyIO.*;
+import static declan.utils.MyIO.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,14 +10,14 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.Parser;
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.ast.*;
-import io.github.h20man13.DeClan.common.exception.ParseException;
-import io.github.h20man13.DeClan.common.position.Position;
-import io.github.h20man13.DeClan.common.token.DeclanToken;
-import io.github.h20man13.DeClan.common.token.DeclanTokenType;
-import io.github.h20man13.DeClan.main.MyDeClanLexer;
+import declan.frontend.Parser;
+import declan.utils.ErrorLog;
+import declan.frontend.ast.*;
+import declan.utils.exception.ParseException;
+import declan.utils.position.Position;
+import declan.frontend.token.DeclanToken;
+import declan.frontend.token.DeclanTokenType;
+import declan.frontend.MyDeClanLexer;
 
 /**
  * A parser for a subset of DeCLan consisting only of integer constant

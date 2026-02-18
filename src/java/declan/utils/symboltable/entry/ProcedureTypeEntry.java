@@ -1,8 +1,8 @@
-package io.github.h20man13.DeClan.common.symboltable.entry;
+package declan.utils.symboltable.entry;
 
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.Copyable;
+import declan.utils.Copyable;
 
 public class ProcedureTypeEntry implements Copyable<ProcedureTypeEntry> {
     private TypeCheckerQualities returnType;

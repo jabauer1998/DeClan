@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan;
+package declan;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -10,19 +10,19 @@ import java.io.StringWriter;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.ErrorLog.LogItem;
-import io.github.h20man13.DeClan.common.ast.Program;
-import io.github.h20man13.DeClan.common.icode.Prog;
-import io.github.h20man13.DeClan.common.source.ReaderSource;
-import io.github.h20man13.DeClan.common.source.Source;
-import io.github.h20man13.DeClan.main.MyDeClanLexer;
-import io.github.h20man13.DeClan.main.MyDeClanParser;
-import io.github.h20man13.DeClan.main.MyICodeMachine;
-import io.github.h20man13.DeClan.main.MyInterpreter;
-import io.github.h20man13.DeClan.main.MyIrLinker;
-import io.github.h20man13.DeClan.main.MyOptimizer;
-import io.github.h20man13.DeClan.main.MyStandardLibrary;
+import declan.utils.ErrorLog;
+import declan.utils.ErrorLog.LogItem;
+import declan.frontend.ast.Program;
+import declan.middleware.icode.Prog;
+import declan.utils.source.ReaderSource;
+import declan.utils.source.Source;
+import declan.frontend.MyDeClanLexer;
+import declan.frontend.MyDeClanParser;
+import declan.middleware.MyICodeMachine;
+import declan.frontend.MyInterpreter;
+import declan.middleware.MyIrLinker;
+import declan.middleware.MyOptimizer;
+import declan.utils.MyStandardLibrary;
 
 public class InterpreterICodeTest {
     private static StringReader nullReader = new StringReader("");

@@ -1,12 +1,12 @@
-package io.github.h20man13.DeClan.common.builder;
+package declan.frontend.builder;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.icode.symbols.SymEntry;
-import io.github.h20man13.DeClan.common.icode.symbols.VarSymEntry;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.exp.IdentExp;
+import declan.middleware.icode.symbols.SymEntry;
+import declan.middleware.icode.symbols.VarSymEntry;
 
 public class SymbolBuilder extends BaseBuilder {
     public SymbolBuilder(){

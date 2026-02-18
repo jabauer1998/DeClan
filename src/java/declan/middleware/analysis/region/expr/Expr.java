@@ -1,8 +1,8 @@
-package io.github.h20man13.DeClan.common.analysis.region.expr;
+package declan.middleware.analysis.region.expr;
 
-import io.github.h20man13.DeClan.common.Copyable;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.ast.ExpressionVisitor;
+import declan.utils.Copyable;
+import declan.utils.Tuple;
+import declan.frontend.ast.ExpressionVisitor;
 
 public interface Expr extends Copyable<Expr>{
 	@Override

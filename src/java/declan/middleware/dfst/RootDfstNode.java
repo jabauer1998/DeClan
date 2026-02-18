@@ -1,17 +1,17 @@
-package io.github.h20man13.DeClan.common.dfst;
+package declan.middleware.dfst;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.Copyable;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.flow.BasicBlock;
-import io.github.h20man13.DeClan.common.flow.BlockNode;
-import io.github.h20man13.DeClan.common.icode.section.BssSec;
-import io.github.h20man13.DeClan.common.icode.section.DataSec;
-import io.github.h20man13.DeClan.common.util.Utils;
+import declan.utils.Copyable;
+import declan.utils.Tuple;
+import declan.utils.flow.BasicBlock;
+import declan.utils.flow.BlockNode;
+import declan.middleware.icode.section.BssSec;
+import declan.middleware.icode.section.DataSec;
+import declan.utils.Utils;
 
 public class RootDfstNode implements Iterable<DfstNode>, Copyable<RootDfstNode>{
 	private BlockNode block;

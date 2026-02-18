@@ -1,6 +1,6 @@
-package io.github.h20man13.DeClan.common.region;
+package declan.middleware.region;
 
-import io.github.h20man13.DeClan.common.icode.ICode;
+import declan.middleware.icode.ICode;
 
 public class InstructionRegion implements RegionBase {
 	public ICode instruction;

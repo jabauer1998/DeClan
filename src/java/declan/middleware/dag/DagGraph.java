@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.dag;
+package declan.middleware.dag;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,9 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.util.Utils;
+import declan.utils.Tuple;
+import declan.middleware.icode.exp.IdentExp;
+import declan.utils.Utils;
 
 public class DagGraph{
     private List<DagNode> dagNodes;

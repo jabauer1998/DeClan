@@ -1,11 +1,11 @@
-package io.github.h20man13.DeClan.common.flow;
+package declan.utils.flow;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.icode.ICode;
+import declan.middleware.icode.ICode;
 
 public class ExitNode implements FlowGraphNode{
     public FlowGraphNode exit;

@@ -1,8 +1,8 @@
-package io.github.h20man13.DeClan.common.analysis.region.expr;
+package declan.middleware.analysis.region.expr;
 
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.Tuple;
+import declan.utils.Tuple;
 
 public class IntExpr implements Expr{
 	public int value;

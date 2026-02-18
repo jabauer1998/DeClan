@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan;
+package declan;
 
 import static org.junit.Assert.assertTrue;
 
@@ -7,13 +7,13 @@ import java.util.List;
 
 import org.junit.Test;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.Prog;
-import io.github.h20man13.DeClan.common.source.ReaderSource;
-import io.github.h20man13.DeClan.main.MyIrLexer;
-import io.github.h20man13.DeClan.main.MyIrParser;
-import io.github.h20man13.DeClan.main.MyOptimizer;
+import declan.utils.ErrorLog;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.Prog;
+import declan.utils.source.ReaderSource;
+import declan.frontend.MyIrLexer;
+import declan.frontend.MyIrParser;
+import declan.middleware.MyOptimizer;
 
 public class MyOptimizerTest {
     private void comparePrograms(Prog optimized, String expected){

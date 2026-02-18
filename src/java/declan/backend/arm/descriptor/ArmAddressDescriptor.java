@@ -1,15 +1,15 @@
-package io.github.h20man13.DeClan.common.arm.descriptor;
+package declan.backend.arm.descriptor;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.CopyStr;
-import io.github.h20man13.DeClan.common.Copyable;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.ICode.Type;
+import declan.utils.CopyStr;
+import declan.utils.Copyable;
+import declan.utils.Tuple;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.ICode.Type;
 
 public class ArmAddressDescriptor implements Copyable<ArmAddressDescriptor> {
 	private Map<ArmAddressElement, Set<ArmElement>> discriptorMap;

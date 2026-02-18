@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.assembler;
+package declan.assembler;
 
 import static org.junit.Assert.assertTrue;
 
@@ -10,10 +10,10 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.Test;
 
-import io.github.h20man13.DeClan.main.assembler.ArmAssemblerLexer;
-import io.github.h20man13.DeClan.main.assembler.ArmAssemblerParser;
-import io.github.h20man13.DeClan.main.assembler.AssemblerVisitor;
-import io.github.h20man13.DeClan.main.assembler.ArmAssemblerParser.ProgramContext;
+import declan.backend.assembler.ArmAssemblerLexer;
+import declan.backend.assembler.ArmAssemblerParser;
+import declan.backend.assembler.AssemblerVisitor;
+import declan.backend.assembler.ArmAssemblerParser.ProgramContext;
 
 /**
  * Unit test for simple App.

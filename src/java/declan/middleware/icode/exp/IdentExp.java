@@ -1,12 +1,12 @@
-package io.github.h20man13.DeClan.common.icode.exp;
+package declan.middleware.icode.exp;
 
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.Copyable;
-import io.github.h20man13.DeClan.common.exception.ICodeFormatException;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.ICode.Scope;
-import io.github.h20man13.DeClan.common.pat.P;
+import declan.utils.Copyable;
+import declan.utils.exception.ICodeFormatException;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.ICode.Scope;
+import declan.utils.pat.P;
 
 public class IdentExp implements Exp{
     public String ident;

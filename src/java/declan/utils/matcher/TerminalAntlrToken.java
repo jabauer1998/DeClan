@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.matcher;
+package declan.utils.matcher;
 
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import org.antlr.v4.runtime.tree.TerminalNode;

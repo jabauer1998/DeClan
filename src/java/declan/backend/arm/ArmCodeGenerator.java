@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.arm;
+package declan.backend.arm;
 
 import java.io.File;
 import java.io.FileReader;
@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-import io.github.h20man13.DeClan.common.util.Utils;
+import declan.utils.Utils;
 
 public class ArmCodeGenerator {
     private String label;

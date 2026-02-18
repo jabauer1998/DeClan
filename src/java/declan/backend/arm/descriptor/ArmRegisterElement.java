@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.arm.descriptor;
+package declan.backend.arm.descriptor;
 
 public class ArmRegisterElement implements ArmElement {
 	private String label;

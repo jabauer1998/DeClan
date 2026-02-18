@@ -1,15 +1,15 @@
-package io.github.h20man13.DeClan.common.util;
+package declan.utils;
 
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.ast.Expression;
-import io.github.h20man13.DeClan.common.ast.FunctionCall;
-import io.github.h20man13.DeClan.common.ast.Identifier;
-import io.github.h20man13.DeClan.common.exception.ConversionException;
-import io.github.h20man13.DeClan.common.exception.OperationException;
-import io.github.h20man13.DeClan.common.position.Position;
+import declan.frontend.ast.Expression;
+import declan.frontend.ast.FunctionCall;
+import declan.frontend.ast.Identifier;
+import declan.utils.exception.ConversionException;
+import declan.utils.exception.OperationException;
+import declan.utils.position.Position;
 
 public class OpUtil {
     public static Object negate(Object val){

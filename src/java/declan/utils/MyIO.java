@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.main;
+package declan.utils;
 import java.lang.*;
 
 /**

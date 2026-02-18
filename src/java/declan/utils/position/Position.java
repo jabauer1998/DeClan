@@ -1,6 +1,6 @@
-package io.github.h20man13.DeClan.common.position;
+package declan.utils.position;
 
-import io.github.h20man13.DeClan.common.Copyable;
+import declan.utils.Copyable;
 import java.util.Objects;
 
 /**

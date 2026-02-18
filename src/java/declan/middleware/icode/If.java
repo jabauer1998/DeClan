@@ -1,9 +1,9 @@
-package io.github.h20man13.DeClan.common.icode;
+package declan.middleware.icode;
 
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.icode.exp.BinExp;
-import io.github.h20man13.DeClan.common.pat.P;
+import declan.middleware.icode.exp.BinExp;
+import declan.utils.pat.P;
 
 public class If extends ICode {
 	public BinExp exp;

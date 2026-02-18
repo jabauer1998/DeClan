@@ -1,6 +1,6 @@
-package io.github.h20man13.DeClan.common.exception;
+package declan.utils.exception;
 
-import io.github.h20man13.DeClan.common.region.RegionBase;
+import declan.middleware.region.RegionBase;
 
 public class MalformedRegionException extends RuntimeException {
 	public MalformedRegionException(String funcName, RegionBase region, String message) {

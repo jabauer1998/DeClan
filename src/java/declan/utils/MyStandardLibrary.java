@@ -1,16 +1,21 @@
-package io.github.h20man13.DeClan.main;
+package declan.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.position.Position;
-import io.github.h20man13.DeClan.common.ast.Library;
-import io.github.h20man13.DeClan.common.icode.Lib;
-import io.github.h20man13.DeClan.common.position.Position;
-import io.github.h20man13.DeClan.common.source.ElaborateReaderSource;
-import io.github.h20man13.DeClan.common.source.Source;
+import declan.frontend.MyDeClanLexer;
+import declan.frontend.MyDeClanParser;
+import declan.frontend.MyICodeGenerator;
+import declan.frontend.MyIrLexer;
+import declan.frontend.MyIrParser;
+import declan.utils.ErrorLog;
+import declan.utils.position.Position;
+import declan.frontend.ast.Library;
+import declan.middleware.icode.Lib;
+import declan.utils.position.Position;
+import declan.utils.source.ElaborateReaderSource;
+import declan.utils.source.Source;
 
 public class MyStandardLibrary {
     private ErrorLog errLog;

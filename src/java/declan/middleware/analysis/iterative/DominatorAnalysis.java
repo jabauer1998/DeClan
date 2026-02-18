@@ -1,15 +1,15 @@
-package io.github.h20man13.DeClan.common.analysis.iterative;
+package declan.middleware.analysis.iterative;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.Config;
-import io.github.h20man13.DeClan.common.analysis.AnalysisBase.Direction;
-import io.github.h20man13.DeClan.common.analysis.AnalysisBase.Meet;
-import io.github.h20man13.DeClan.common.flow.FlowGraph;
-import io.github.h20man13.DeClan.common.flow.FlowGraphNode;
-import io.github.h20man13.DeClan.common.util.Utils;
+import declan.driver.Config;
+import declan.middleware.analysis.AnalysisBase.Direction;
+import declan.middleware.analysis.AnalysisBase.Meet;
+import declan.utils.flow.FlowGraph;
+import declan.utils.flow.FlowGraphNode;
+import declan.utils.Utils;
 
 public class DominatorAnalysis extends BasicBlockAnalysis<HashMap<FlowGraphNode, HashSet<FlowGraphNode>>, HashSet<FlowGraphNode>, FlowGraphNode> {
 	public DominatorAnalysis(FlowGraph flowGraph, Config cfg) {

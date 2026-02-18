@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.gen;
+package declan.frontend;
 
 public interface Generator {
     public String genNext();

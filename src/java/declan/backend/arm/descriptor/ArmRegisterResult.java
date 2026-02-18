@@ -1,11 +1,11 @@
-package io.github.h20man13.DeClan.common.arm.descriptor;
+package declan.backend.arm.descriptor;
 
 import java.util.HashSet;
 
-import io.github.h20man13.DeClan.common.CopyStr;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.util.ConversionUtils;
+import declan.utils.CopyStr;
+import declan.utils.Tuple;
+import declan.middleware.icode.exp.IdentExp;
+import declan.utils.ConversionUtils;
 
 public class ArmRegisterResult {
 	private HashSet<Tuple<CopyStr, CopyStr>> tupSet;

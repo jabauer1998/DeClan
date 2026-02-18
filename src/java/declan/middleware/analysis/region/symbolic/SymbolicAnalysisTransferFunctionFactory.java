@@ -1,10 +1,10 @@
-package io.github.h20man13.DeClan.common.analysis.region.symbolic;
+package declan.middleware.analysis.region.symbolic;
 
-import io.github.h20man13.DeClan.common.CopyStr;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.analysis.region.expr.Expr;
-import io.github.h20man13.DeClan.common.analysis.region.function.RegionTransferFunctionFactory;
-import io.github.h20man13.DeClan.common.analysis.region.function.SetExpression;
+import declan.utils.CopyStr;
+import declan.utils.Tuple;
+import declan.middleware.analysis.region.expr.Expr;
+import declan.middleware.analysis.region.function.RegionTransferFunctionFactory;
+import declan.middleware.analysis.region.function.SetExpression;
 
 public class SymbolicAnalysisTransferFunctionFactory extends RegionTransferFunctionFactory<Tuple<CopyStr, Expr>> {
 	public SymbolicAnalysisTransferFunctionFactory() {

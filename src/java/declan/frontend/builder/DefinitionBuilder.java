@@ -1,25 +1,25 @@
-package io.github.h20man13.DeClan.common.builder;
+package declan.frontend.builder;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.builder.template.ResetableBuilder;
-import io.github.h20man13.DeClan.common.gen.IrRegisterGenerator;
-import io.github.h20man13.DeClan.common.icode.Assign;
-import io.github.h20man13.DeClan.common.icode.Call;
-import io.github.h20man13.DeClan.common.icode.Def;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.ICode.Scope;
-import io.github.h20man13.DeClan.common.icode.exp.BinExp;
-import io.github.h20man13.DeClan.common.icode.exp.Exp;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.icode.exp.NullableExp;
-import io.github.h20man13.DeClan.common.icode.exp.UnExp;
-import io.github.h20man13.DeClan.common.icode.exp.UnExp.Operator;
-import io.github.h20man13.DeClan.common.icode.symbols.SymEntry;
+import declan.utils.ErrorLog;
+import declan.utils.Tuple;
+import declan.frontend.builder.template.ResetableBuilder;
+import declan.frontend.IrRegisterGenerator;
+import declan.middleware.icode.Assign;
+import declan.middleware.icode.Call;
+import declan.middleware.icode.Def;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.ICode.Scope;
+import declan.middleware.icode.exp.BinExp;
+import declan.middleware.icode.exp.Exp;
+import declan.middleware.icode.exp.IdentExp;
+import declan.middleware.icode.exp.NullableExp;
+import declan.middleware.icode.exp.UnExp;
+import declan.middleware.icode.exp.UnExp.Operator;
+import declan.middleware.icode.symbols.SymEntry;
 
 public class DefinitionBuilder extends SymbolBuilder{
     protected IrRegisterGenerator gen;

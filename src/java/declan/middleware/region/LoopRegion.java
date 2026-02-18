@@ -1,18 +1,18 @@
-package io.github.h20man13.DeClan.common.region;
+package declan.middleware.region;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.CopyBool;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.icode.Assign;
-import io.github.h20man13.DeClan.common.icode.Def;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.exp.BinExp;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.icode.exp.IntExp;
-import io.github.h20man13.DeClan.common.util.ConversionUtils;
+import declan.utils.CopyBool;
+import declan.utils.Tuple;
+import declan.middleware.icode.Assign;
+import declan.middleware.icode.Def;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.exp.BinExp;
+import declan.middleware.icode.exp.IdentExp;
+import declan.middleware.icode.exp.IntExp;
+import declan.utils.ConversionUtils;
 
 public class LoopRegion extends Region {
 	public LoopRegion(LoopBodyRegion region) {

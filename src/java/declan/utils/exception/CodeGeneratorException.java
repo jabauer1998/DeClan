@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.exception;
+package declan.utils.exception;
 
 public class CodeGeneratorException extends RuntimeException{
 	public CodeGeneratorException(String method, String message) {

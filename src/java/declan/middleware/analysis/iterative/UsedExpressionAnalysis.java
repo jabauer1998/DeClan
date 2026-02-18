@@ -1,18 +1,18 @@
-package io.github.h20man13.DeClan.common.analysis.iterative;
+package declan.middleware.analysis.iterative;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.Config;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.flow.FlowGraph;
-import io.github.h20man13.DeClan.common.flow.FlowGraphNode;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.exp.Exp;
-import io.github.h20man13.DeClan.common.icode.exp.NullableExp;
-import io.github.h20man13.DeClan.common.util.Utils;
+import declan.driver.Config;
+import declan.utils.Tuple;
+import declan.utils.flow.FlowGraph;
+import declan.utils.flow.FlowGraphNode;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.exp.Exp;
+import declan.middleware.icode.exp.NullableExp;
+import declan.utils.Utils;
 
 public class UsedExpressionAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<NullableExp, ICode.Type>>>, HashSet<Tuple<NullableExp, ICode.Type>>, Tuple<NullableExp, ICode.Type>> {
     private Map<ICode, Set<Tuple<NullableExp, ICode.Type>>> usedSets;

@@ -1,12 +1,12 @@
-package io.github.h20man13.DeClan.common.region;
+package declan.middleware.region;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.exception.MalformedRegionException;
-import io.github.h20man13.DeClan.common.flow.BasicBlock;
-import io.github.h20man13.DeClan.common.icode.ICode;
+import declan.utils.Tuple;
+import declan.utils.exception.MalformedRegionException;
+import declan.utils.flow.BasicBlock;
+import declan.middleware.icode.ICode;
 
 public class BlockRegion extends Region {
         private BasicBlock block;

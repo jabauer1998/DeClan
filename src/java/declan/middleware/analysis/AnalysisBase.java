@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.analysis;
+package declan.middleware.analysis;
 
 public interface AnalysisBase {
 	public void run();

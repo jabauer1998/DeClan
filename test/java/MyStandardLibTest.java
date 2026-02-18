@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan;
+package declan;
 
 import java.io.File;
 import java.io.FileReader;
@@ -6,17 +6,17 @@ import java.io.FileReader;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.ast.Library;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.Lib;
-import io.github.h20man13.DeClan.common.source.ElaborateReaderSource;
-import io.github.h20man13.DeClan.common.source.Source;
-import io.github.h20man13.DeClan.main.MyDeClanLexer;
-import io.github.h20man13.DeClan.main.MyDeClanParser;
-import io.github.h20man13.DeClan.main.MyICodeGenerator;
-import io.github.h20man13.DeClan.main.MyIrLexer;
-import io.github.h20man13.DeClan.main.MyIrParser;
+import declan.utils.ErrorLog;
+import declan.frontend.ast.Library;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.Lib;
+import declan.utils.source.ElaborateReaderSource;
+import declan.utils.source.Source;
+import declan.frontend.MyDeClanLexer;
+import declan.frontend.MyDeClanParser;
+import declan.frontend.MyICodeGenerator;
+import declan.frontend.MyIrLexer;
+import declan.frontend.MyIrParser;
 
 public class MyStandardLibTest {
     private static void compareLibs(String libName){

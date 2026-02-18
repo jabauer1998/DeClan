@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.main;
+package declan.driver;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,23 +12,38 @@ import java.util.Scanner;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-import io.github.h20man13.DeClan.common.Config;
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.ErrorLog.LogItem;
-import io.github.h20man13.DeClan.common.ast.Library;
-import io.github.h20man13.DeClan.common.ast.Program;
-import io.github.h20man13.DeClan.common.gen.IrRegisterGenerator;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.Lib;
-import io.github.h20man13.DeClan.common.icode.Prog;
-import io.github.h20man13.DeClan.common.source.ElaborateReaderSource;
-import io.github.h20man13.DeClan.common.source.ReaderSource;
-import io.github.h20man13.DeClan.common.source.Source;
-import io.github.h20man13.DeClan.common.util.Utils;
-import io.github.h20man13.DeClan.main.assembler.ArmAssemblerLexer;
-import io.github.h20man13.DeClan.main.assembler.ArmAssemblerParser;
-import io.github.h20man13.DeClan.main.assembler.ArmAssemblerParser.ProgramContext;
-import io.github.h20man13.DeClan.main.assembler.AssemblerVisitor;
+import declan.backend.MyCodeGenerator;
+import declan.driver.Config;
+import declan.frontend.MyDeClanLexer;
+import declan.frontend.MyDeClanParser;
+import declan.frontend.MyICodeGenerator;
+import declan.frontend.MyIndexer;
+import declan.frontend.MyInterpreter;
+import declan.frontend.MyIrLexer;
+import declan.frontend.MyIrParser;
+import declan.frontend.MyTypeChecker;
+import declan.middleware.MyICodeMachine;
+import declan.middleware.MyICodeTypeChecker;
+import declan.middleware.MyIrLinker;
+import declan.middleware.MyOptimizer;
+import declan.utils.ErrorLog;
+import declan.utils.MyIO;
+import declan.utils.MyStandardLibrary;
+import declan.utils.ErrorLog.LogItem;
+import declan.frontend.ast.Library;
+import declan.frontend.ast.Program;
+import declan.frontend.IrRegisterGenerator;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.Lib;
+import declan.middleware.icode.Prog;
+import declan.utils.source.ElaborateReaderSource;
+import declan.utils.source.ReaderSource;
+import declan.utils.source.Source;
+import declan.utils.Utils;
+import declan.backend.assembler.ArmAssemblerLexer;
+import declan.backend.assembler.ArmAssemblerParser;
+import declan.backend.assembler.ArmAssemblerParser.ProgramContext;
+import declan.backend.assembler.AssemblerVisitor;
 
 public class MyCompilerDriver {
     private static Config parseConfig(String[] args){
@@ -479,7 +494,7 @@ public class MyCompilerDriver {
         return toRet;
     }
     public static void main(String[] args) throws Exception{
-    	
+        
         Config cfg = parseConfig(args);
         
         ErrorLog errLog = new ErrorLog();
@@ -590,8 +605,8 @@ public class MyCompilerDriver {
                     MyCodeGenerator cGen = new MyCodeGenerator(outputDestination, prog, optimizer, errLog, cfg);
                     cGen.codeGen();
                     
-                	for(LogItem item: errLog) {
-                    	System.err.println(item);
+                        for(LogItem item: errLog) {
+                        System.err.println(item);
                     }
                 }
             } else {
@@ -664,7 +679,7 @@ public class MyCompilerDriver {
                     if(noLink){
                         String library = libString;
                         Library lib = parseLibrary(library, cfg, errLog);
-                        	
+                                
                         MyICodeGenerator iCodeGenerator = new MyICodeGenerator(cfg, errLog);
                         Lib genedLib = iCodeGenerator.generateLibraryIr(lib);
                         File outputFile = new File(outputDestination);
@@ -676,7 +691,7 @@ public class MyCompilerDriver {
                         writer.append(genedLib.toString());
                         writer.close();
                     } else {
-                    	String[] libraries = libString.split("#");
+                        String[] libraries = libString.split("#");
                         for(String libPath: libraries){
                             Library lib = parseLibrary(libPath, null, errLog);
                             Lib lib2 = generateLibrary(lib, null, errLog);

@@ -1,11 +1,11 @@
-package io.github.h20man13.DeClan.common.analysis.region.expr;
+package declan.middleware.analysis.region.expr;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.util.ConversionUtils;
+import declan.utils.Tuple;
+import declan.utils.ConversionUtils;
 
 public class OpExpr implements Expr{
 	public Expr[] arguments;

@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common;
+package declan.driver;
 
 import java.util.HashMap;
 

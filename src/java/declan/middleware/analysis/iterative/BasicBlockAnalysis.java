@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.analysis.iterative;
+package declan.middleware.analysis.iterative;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,14 +9,14 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
-import io.github.h20man13.DeClan.common.Config;
-import io.github.h20man13.DeClan.common.analysis.AnalysisBase;
-import io.github.h20man13.DeClan.common.analysis.AnalysisBase.Direction;
-import io.github.h20man13.DeClan.common.analysis.AnalysisBase.Meet;
-import io.github.h20man13.DeClan.common.flow.BlockNode;
-import io.github.h20man13.DeClan.common.flow.FlowGraph;
-import io.github.h20man13.DeClan.common.flow.FlowGraphNode;
-import io.github.h20man13.DeClan.common.icode.ICode;
+import declan.driver.Config;
+import declan.middleware.analysis.AnalysisBase;
+import declan.middleware.analysis.AnalysisBase.Direction;
+import declan.middleware.analysis.AnalysisBase.Meet;
+import declan.utils.flow.BlockNode;
+import declan.utils.flow.FlowGraph;
+import declan.utils.flow.FlowGraphNode;
+import declan.middleware.icode.ICode;
 
 public abstract class BasicBlockAnalysis<MapType extends Map<FlowGraphNode, SetType>, SetType extends Set<DataType>, DataType> extends IterativeSetAnalysis<FlowGraphNode, MapType, SetType, DataType> {
     public BasicBlockAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, SetType semiLattice, boolean toCopy, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){

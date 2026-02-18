@@ -1,13 +1,13 @@
-package io.github.h20man13.DeClan.common.dag;
+package declan.middleware.dag;
 
 import java.util.LinkedList;
 
-import io.github.h20man13.DeClan.common.dag.DagNode.ScopeType;
-import io.github.h20man13.DeClan.common.dag.DagNode.ValueType;
-import io.github.h20man13.DeClan.common.icode.Assign;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.util.ConversionUtils;
+import declan.middleware.dag.DagNode.ScopeType;
+import declan.middleware.dag.DagNode.ValueType;
+import declan.middleware.icode.Assign;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.exp.IdentExp;
+import declan.utils.ConversionUtils;
 
 public class DagNodeFactory {
     public DagNodeFactory(){}

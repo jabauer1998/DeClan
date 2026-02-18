@@ -1,11 +1,11 @@
-package io.github.h20man13.DeClan.common.ast;
+package declan.frontend.ast;
 
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.exception.InterpreterException;
-import io.github.h20man13.DeClan.common.position.Position;
-import io.github.h20man13.DeClan.main.MyInterpreter;
+import declan.utils.ErrorLog;
+import declan.utils.exception.InterpreterException;
+import declan.utils.position.Position;
+import declan.frontend.MyInterpreter;
 
 import java.io.StringReader;
 import java.io.StringWriter;

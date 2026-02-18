@@ -1,12 +1,12 @@
-package io.github.h20man13.DeClan.common.symboltable.entry;
+package declan.utils.symboltable.entry;
 
-import static io.github.h20man13.DeClan.main.MyIO.*;
+import static declan.utils.MyIO.*;
 
 import java.lang.String;
 import java.lang.StringBuilder;
 
-import io.github.h20man13.DeClan.common.Copyable;
-import io.github.h20man13.DeClan.common.position.Position;
+import declan.utils.Copyable;
+import declan.utils.position.Position;
 
 public class VariableEntry implements Copyable<VariableEntry>{
     

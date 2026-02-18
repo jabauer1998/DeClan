@@ -1,7 +1,7 @@
-package io.github.h20man13.DeClan.common.region;
+package declan.middleware.region;
 
-import io.github.h20man13.DeClan.common.Copyable;
-import io.github.h20man13.DeClan.common.icode.ICode;
+import declan.utils.Copyable;
+import declan.middleware.icode.ICode;
 
 public interface RegionBase extends Copyable<RegionBase> {
 	@Override

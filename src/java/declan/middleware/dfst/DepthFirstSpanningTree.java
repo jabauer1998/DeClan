@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.dfst;
+package declan.middleware.dfst;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,13 +9,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import io.github.h20man13.DeClan.common.CopyInt;
-import io.github.h20man13.DeClan.common.CopyStr;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.flow.BlockNode;
-import io.github.h20man13.DeClan.common.flow.FlowGraphNode;
-import io.github.h20man13.DeClan.common.util.ConversionUtils;
-import io.github.h20man13.DeClan.common.util.Utils;
+import declan.utils.CopyInt;
+import declan.utils.CopyStr;
+import declan.utils.Tuple;
+import declan.utils.flow.BlockNode;
+import declan.utils.flow.FlowGraphNode;
+import declan.utils.ConversionUtils;
+import declan.utils.Utils;
 
 public class DepthFirstSpanningTree {
         private RootDfstNode root; //Root of the tree should be the entry block node of the program

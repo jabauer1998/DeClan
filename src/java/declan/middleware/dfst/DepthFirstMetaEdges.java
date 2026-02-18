@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.dfst;
+package declan.middleware.dfst;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.analysis.iterative;
+package declan.middleware.analysis.iterative;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -6,11 +6,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import io.github.h20man13.DeClan.common.Config;
-import io.github.h20man13.DeClan.common.flow.BlockNode;
-import io.github.h20man13.DeClan.common.flow.FlowGraph;
-import io.github.h20man13.DeClan.common.flow.FlowGraphNode;
-import io.github.h20man13.DeClan.common.icode.ICode;
+import declan.driver.Config;
+import declan.utils.flow.BlockNode;
+import declan.utils.flow.FlowGraph;
+import declan.utils.flow.FlowGraphNode;
+import declan.middleware.icode.ICode;
 
 public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, SetType extends Set<DataType>, DataType> extends IterativeSetAnalysis<ICode, MapType, SetType, DataType> {
     public InstructionAnalysis(FlowGraph flowGraph, Direction direction, Meet meetOperation, SetType semiLattice, boolean copyKey, Config cfg, Class<MapType> mapClass, Class<SetType> setClass){

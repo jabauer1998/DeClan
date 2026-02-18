@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan;
+package declan;
 
 import static org.junit.Assert.assertTrue;
 
@@ -6,14 +6,14 @@ import java.io.FileReader;
 
 import org.junit.Test;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.ErrorLog.LogItem;
-import io.github.h20man13.DeClan.common.ast.Program;
-import io.github.h20man13.DeClan.common.source.ElaborateReaderSource;
-import io.github.h20man13.DeClan.common.source.Source;
-import io.github.h20man13.DeClan.main.MyDeClanLexer;
-import io.github.h20man13.DeClan.main.MyDeClanParser;
-import io.github.h20man13.DeClan.main.MyTypeChecker;
+import declan.utils.ErrorLog;
+import declan.utils.ErrorLog.LogItem;
+import declan.frontend.ast.Program;
+import declan.utils.source.ElaborateReaderSource;
+import declan.utils.source.Source;
+import declan.frontend.MyDeClanLexer;
+import declan.frontend.MyDeClanParser;
+import declan.frontend.MyTypeChecker;
 
 public class MyTypeCheckerTest {
     private static void runTypeCheckerOnSource(String fileSource){

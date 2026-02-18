@@ -1,10 +1,10 @@
-package io.github.h20man13.DeClan.common.icode.symbols;
+package declan.middleware.icode.symbols;
 
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.pat.P;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.exp.IdentExp;
+import declan.utils.pat.P;
 
 public class VarSymEntry extends SymEntry {
     public String declanIdent;

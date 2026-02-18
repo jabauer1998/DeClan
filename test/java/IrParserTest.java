@@ -1,16 +1,16 @@
-package io.github.h20man13.DeClan;
+package declan;
 
 import java.io.StringReader;
 
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.ErrorLog.LogItem;
-import io.github.h20man13.DeClan.common.source.ReaderSource;
-import io.github.h20man13.DeClan.common.source.Source;
-import io.github.h20man13.DeClan.main.MyIrLexer;
-import io.github.h20man13.DeClan.main.MyIrParser;
+import declan.utils.ErrorLog;
+import declan.utils.ErrorLog.LogItem;
+import declan.utils.source.ReaderSource;
+import declan.utils.source.Source;
+import declan.frontend.MyIrLexer;
+import declan.frontend.MyIrParser;
 
 public class IrParserTest {
 

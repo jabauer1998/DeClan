@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.ast;
+package declan.frontend.ast;
 
 /**
  * This serves as a common supertype for all of the expression-like ASTNode

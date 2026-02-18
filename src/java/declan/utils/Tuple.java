@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common;
+package declan.utils;
 
 import java.util.Objects;
 

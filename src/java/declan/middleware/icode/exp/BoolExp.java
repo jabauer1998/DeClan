@@ -1,8 +1,8 @@
-package io.github.h20man13.DeClan.common.icode.exp;
+package declan.middleware.icode.exp;
 
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.pat.P;
+import declan.utils.pat.P;
 
 public class BoolExp implements Exp {
     public boolean trueFalse;

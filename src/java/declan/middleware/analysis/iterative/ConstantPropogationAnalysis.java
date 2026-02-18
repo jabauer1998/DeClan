@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.analysis.iterative;
+package declan.middleware.analysis.iterative;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -6,21 +6,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.h20man13.DeClan.common.Config;
-import io.github.h20man13.DeClan.common.CopyStr;
-import io.github.h20man13.DeClan.common.CustomMeet;
-import io.github.h20man13.DeClan.common.Tuple;
-import io.github.h20man13.DeClan.common.flow.BlockNode;
-import io.github.h20man13.DeClan.common.flow.FlowGraph;
-import io.github.h20man13.DeClan.common.icode.Assign;
-import io.github.h20man13.DeClan.common.icode.Def;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.icode.exp.NaaExp;
-import io.github.h20man13.DeClan.common.icode.exp.NullableExp;
-import io.github.h20man13.DeClan.common.icode.inline.Inline;
-import io.github.h20man13.DeClan.common.icode.inline.InlineParam;
-import io.github.h20man13.DeClan.common.util.Utils;
+import declan.driver.Config;
+import declan.utils.CopyStr;
+import declan.utils.CustomMeet;
+import declan.utils.Tuple;
+import declan.utils.flow.BlockNode;
+import declan.utils.flow.FlowGraph;
+import declan.middleware.icode.Assign;
+import declan.middleware.icode.Def;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.exp.IdentExp;
+import declan.middleware.icode.exp.NaaExp;
+import declan.middleware.icode.exp.NullableExp;
+import declan.middleware.icode.inline.Inline;
+import declan.middleware.icode.inline.InlineParam;
+import declan.utils.Utils;
 
 public class ConstantPropogationAnalysis extends InstructionAnalysis<HashMap<ICode, HashSet<Tuple<CopyStr, NullableExp>>>, HashSet<Tuple<CopyStr, NullableExp>>, Tuple<CopyStr, NullableExp>> 
 implements CustomMeet<HashSet<Tuple<CopyStr, NullableExp>>>{

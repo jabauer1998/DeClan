@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.analysis.iterative;
+package declan.middleware.analysis.iterative;
 
 import java.lang.reflect.MalformedParameterizedTypeException;
 import java.util.HashMap;
@@ -9,17 +9,17 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 
-import io.github.h20man13.DeClan.common.Config;
-import io.github.h20man13.DeClan.common.Copyable;
-import io.github.h20man13.DeClan.common.CustomMeet;
-import io.github.h20man13.DeClan.common.analysis.AnalysisBase;
-import io.github.h20man13.DeClan.common.analysis.AnalysisBase.Direction;
-import io.github.h20man13.DeClan.common.analysis.AnalysisBase.Meet;
-import io.github.h20man13.DeClan.common.exception.IterativeAnalysisException;
-import io.github.h20man13.DeClan.common.flow.FlowGraph;
-import io.github.h20man13.DeClan.common.flow.FlowGraphNode;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.util.Utils;
+import declan.driver.Config;
+import declan.utils.Copyable;
+import declan.utils.CustomMeet;
+import declan.middleware.analysis.AnalysisBase;
+import declan.middleware.analysis.AnalysisBase.Direction;
+import declan.middleware.analysis.AnalysisBase.Meet;
+import declan.utils.exception.IterativeAnalysisException;
+import declan.utils.flow.FlowGraph;
+import declan.utils.flow.FlowGraphNode;
+import declan.middleware.icode.ICode;
+import declan.utils.Utils;
 
 public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisType>, 
 										MapType extends Map<AnalysisType, DataType>, 

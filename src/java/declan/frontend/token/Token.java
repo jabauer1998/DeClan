@@ -1,6 +1,6 @@
-package io.github.h20man13.DeClan.common.token;
+package declan.frontend.token;
 
-import io.github.h20man13.DeClan.common.position.Position;
+import declan.utils.position.Position;
 
 public interface Token{
     public String getLexeme();

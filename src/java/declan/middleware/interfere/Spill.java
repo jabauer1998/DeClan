@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.interfere;
+package declan.middleware.interfere;
 
 public class Spill implements ColorType {
 	public Spill() {}

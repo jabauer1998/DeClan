@@ -1,17 +1,17 @@
-package io.github.h20man13.DeClan.main;
+package declan.frontend;
 
 import java.util.NoSuchElementException;
 
-import io.github.h20man13.DeClan.common.Lexer;
-import io.github.h20man13.DeClan.common.Config;
-import io.github.h20man13.DeClan.common.ErrorLog;
-import io.github.h20man13.DeClan.common.position.Position;
-import io.github.h20man13.DeClan.common.source.Source;
-import io.github.h20man13.DeClan.common.token.DeclanToken;
-import io.github.h20man13.DeClan.common.util.Utils;
+import declan.frontend.Lexer;
+import declan.driver.Config;
+import declan.utils.ErrorLog;
+import declan.utils.position.Position;
+import declan.utils.source.Source;
+import declan.frontend.token.DeclanToken;
+import declan.utils.Utils;
 
-import static io.github.h20man13.DeClan.common.token.DeclanTokenType.*;
-import static io.github.h20man13.DeClan.main.MyIO.*;
+import static declan.frontend.token.DeclanTokenType.*;
+import static declan.utils.MyIO.*;
 
 /**
  * The MyLexer class is the lexer for the Declan Language

@@ -1,20 +1,20 @@
-package io.github.h20man13.DeClan.common.builder;
+package declan.frontend.builder;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.icode.Def;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.Return;
-import io.github.h20man13.DeClan.common.icode.ICode.Scope;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
-import io.github.h20man13.DeClan.common.icode.label.ProcLabel;
-import io.github.h20man13.DeClan.common.icode.section.BssSec;
-import io.github.h20man13.DeClan.common.icode.section.CodeSec;
-import io.github.h20man13.DeClan.common.icode.section.DataSec;
-import io.github.h20man13.DeClan.common.icode.section.ProcSec;
-import io.github.h20man13.DeClan.common.icode.section.SymSec;
+import declan.middleware.icode.Def;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.Return;
+import declan.middleware.icode.ICode.Scope;
+import declan.middleware.icode.exp.IdentExp;
+import declan.middleware.icode.label.ProcLabel;
+import declan.middleware.icode.section.BssSec;
+import declan.middleware.icode.section.CodeSec;
+import declan.middleware.icode.section.DataSec;
+import declan.middleware.icode.section.ProcSec;
+import declan.middleware.icode.section.SymSec;
 
 public class BaseBuilder {
     private List<ICode> intermediateCode;

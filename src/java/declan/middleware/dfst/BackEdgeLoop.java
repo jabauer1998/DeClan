@@ -1,9 +1,9 @@
-package io.github.h20man13.DeClan.common.dfst;
+package declan.middleware.dfst;
 
 import java.util.Iterator;
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.flow.BlockNode;
+import declan.utils.flow.BlockNode;
 
 public class BackEdgeLoop implements Iterable<BlockNode>{
 	private List<BlockNode> loopElems;

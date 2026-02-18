@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.interfere;
+package declan.middleware.interfere;
 
 public interface ColorType {
 	public String toString();

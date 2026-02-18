@@ -1,10 +1,10 @@
-package io.github.h20man13.DeClan.common.dag;
+package declan.middleware.dag;
 
 import java.util.List;
 
-import io.github.h20man13.DeClan.common.exception.DagException;
-import io.github.h20man13.DeClan.common.icode.ICode;
-import io.github.h20man13.DeClan.common.icode.exp.IdentExp;
+import declan.utils.exception.DagException;
+import declan.middleware.icode.ICode;
+import declan.middleware.icode.exp.IdentExp;
 
 public class DagIgnoredInstruction implements DagNode {
 	private ICode icode;

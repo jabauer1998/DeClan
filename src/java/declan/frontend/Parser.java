@@ -1,6 +1,6 @@
-package io.github.h20man13.DeClan.common;
+package declan.frontend;
 
-import io.github.h20man13.DeClan.common.ast.Program;
+import declan.frontend.ast.Program;
 
 /**
  * A Parser is able to parse a DeCLan program into an abstract syntax tree. It

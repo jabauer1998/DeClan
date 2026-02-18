@@ -1,4 +1,4 @@
-package io.github.h20man13.DeClan.common.exception;
+package declan.utils.exception;
 
 /**
  * An unchecked exception class that may be thrown during interpretation.

@@ -1,12 +1,12 @@
-package io.github.h20man13.DeClan.common.icode;
+package declan.middleware.icode;
 
 import java.util.HashSet;
 import java.util.Objects;
 
-import io.github.h20man13.DeClan.common.exception.ICodeFormatException;
-import io.github.h20man13.DeClan.common.icode.exp.Exp;
-import io.github.h20man13.DeClan.common.pat.P;
-import io.github.h20man13.DeClan.common.util.ConversionUtils;
+import declan.utils.exception.ICodeFormatException;
+import declan.middleware.icode.exp.Exp;
+import declan.utils.pat.P;
+import declan.utils.ConversionUtils;
 
 public class Def extends ICode {
     private static HashSet<Def> allDefs = new HashSet<Def>();
