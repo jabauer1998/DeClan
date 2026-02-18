@@ -1,0 +1,8 @@
+package io.github.h20man13.DeClan.common;
+
+import java.util.List;
+import java.util.Set;
+
+public interface CustomMeet<DataType> {
+	public DataType performMeet(List<DataType> li);
+}

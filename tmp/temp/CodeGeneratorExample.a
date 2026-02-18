@@ -1,0 +1,57 @@
+LDR R13, totalBytes
+ADD R13, R13, #0
+SUB R13, R13, #0
+ADD R13, R13, #0
+SUB R13, R13, #0
+ADD R13, R13, #16
+LDR R2, b
+STR R2, f26
+LDR R3, c
+STR R3, f28
+LDR R4, f30
+SUB R5, R2, R4
+STR R5, [R13, #-16]
+STR R5, f27
+LDR R6, f32
+SUB R7, R2, R6
+STR R7, [R13, #-12]
+STR R7, f24
+ADD R8, R5, R7
+STR R8, [R13, #-8]
+STR R8, f25
+STR R3, f26
+ADD R9, R8, R7
+STR R9, [R13, #-4]
+STR R9, f28
+ADD R13, R13, #8
+STR R14, [R13, #-8]
+STR R9, [R13, #-4]
+BL WriteInt
+LDR R14, [R13, #-8]
+SUB R13, R13, #8
+ADD R13, R13, #8
+STR R14, [R13, #-8]
+LDR R2, f26
+STR R2, [R13, #-4]
+BL WriteInt
+LDR R14, [R13, #-8]
+SUB R13, R13, #8
+SUB R13, R13, #16
+STP
+WriteInt: ADD R13, R13, #4
+MOV R2, R0
+LDR R0, f40
+SWI 1
+MOV R0, R2
+SUB R13, R13, #0
+MOV R15, R14
+f24: .WORD 0
+f25: .WORD 0
+f26: .WORD 0
+f27: .WORD 0
+f28: .WORD 0
+b: .WORD 80
+c: .WORD 40
+f30: .WORD 1
+f32: .WORD 8
+totalBytes: .WORD 232
