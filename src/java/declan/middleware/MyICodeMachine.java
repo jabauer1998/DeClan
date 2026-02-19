@@ -192,20 +192,20 @@ public class MyICodeMachine {
         if(instruction.inlineAssembly.startsWith("MUL")){
             //Then it is a multiply long instruction and we have to simulate that here
             List<InlineParam> paramaters = instruction.params;
-            if(paramaters.size() == 4){
+            if(paramaters.size() == 3){
                 //First get the two source paramaters
-                IdentExp param1 = paramaters.get(2).name;
+                IdentExp param1 = paramaters.get(1).name;
                 VariableEntry entry1 = variableValues.getEntry(param1.ident);
-                IdentExp param2 = paramaters.get(3).name;
+                IdentExp param2 = paramaters.get(2).name;
                 VariableEntry entry2 = variableValues.getEntry(param2.ident);
 
                 Object obj1 = entry1.getValue();
                 Object obj2 = entry2.getValue();
 
                 if(!(obj1 instanceof Integer)){
-                    throw new ICodeVmException(instruction, this.programCounter, "Error in MULL function inline assembly expected both arguments to be of type Integer but found " + param1.ident + "=" + obj1.getClass().getName());
+                    throw new ICodeVmException(instruction, this.programCounter, "Error in MUL function inline assembly expected both arguments to be of type Integer but found " + param1.ident + "=" + obj1.getClass().getName());
                 } else if(!(obj2 instanceof Integer)){
-                    throw new ICodeVmException(instruction, this.programCounter, "Error in MULL function inline assembly expected both arguments to be of type Integer but found " + param2.ident + "=" + obj2.getClass().getName());
+                    throw new ICodeVmException(instruction, this.programCounter, "Error in MUL function inline assembly expected both arguments to be of type Integer but found " + param2.ident + "=" + obj2.getClass().getName());
                 }
 
                 Integer int1 = (Integer)obj1;
@@ -217,7 +217,7 @@ public class MyICodeMachine {
                 
                 variableValues.addEntry(smallRegister, new VariableEntry(false, result));
             } else {
-                throw new ICodeVmException(instruction, this.programCounter, "Error in MULL function in inline assembly expected 4 arguments but found " + paramaters.size());
+                throw new ICodeVmException(instruction, this.programCounter, "Error in MUL function in inline assembly expected 4 arguments but found " + paramaters.size());
             }
         }
         //Otherwise we just ignore the instruction

@@ -72,14 +72,10 @@ if($javaExists -ne ""){
                 [System.IO.File]::WriteAllText($line, $content, $Utf8NoBomEncoding)
             }
             cat "build/TestBuildList.txt"
-            javac "@build/TestBuildList.txt" -sourcepath "./test/java" -classpath "./tmp;./lib/*" -d "tmp" -encoding "UTF-8"
+            javac "@build/TestBuildList.txt" -sourcepath "./test/java" -classpath "./bin/*" -d "tmp" -encoding "UTF-8"
             Remove-Item -Force build\TestBuildList.txt
-            $runClasspath = "tmp"
-            $dependencyJars = Get-ChildItem -Path "./lib" -Filter *.jar
-            foreach ($jar in $dependencyJars) {
-                $runClasspath = "$runClasspath;$($jar.FullName)"
-            }
-            java -jar lib/junit-platform-console-standalone-6.0.3.jar execute --classpath "$runClasspath" --scan-classpath tmp
+            java -jar lib/junit-platform-console-standalone-6.0.3.jar execute --classpath "./bin/Declan.jar;./tmp" --scan-classpath
+	    Remove-Item -Force -Recurse -Path "./tmp/*"
         } else {
             Write-Host "Unknown command '$command'"
         }

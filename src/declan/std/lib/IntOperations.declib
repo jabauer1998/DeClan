@@ -1,0 +1,62 @@
+PROCEDURE INeg(n: INTEGER);
+    VAR result: INTEGER;
+    BEGIN
+	result := (BNOT n) + 1;
+	RETURN result
+    END INeg;
+PROCEDURE Div (dividend: INTEGER; divisor: INTEGER);
+    VAR total: INTEGER; result: INTEGER; tempDividend: INTEGER; dividendLastOne: INTEGER; dividendLastDigit: INTEGER; dividendCount: INTEGER; dividendIndex: INTEGER; bitAtIndex: INTEGER; remainder: INTEGER;
+    BEGIN
+	tempDividend := dividend;
+	dividendCount := 0;
+	dividendLastOne := 0;
+	WHILE(~IntIsZero(tempDividend)) DO
+	    dividendLastDigit := tempDividend BAND 1;
+	    IF (dividendLastDigit = 1) THEN
+	        dividendLastOne := dividendCount; 
+	    END;
+	    dividendCount := dividendCount + 1;
+	    tempDividend := tempDividend >> 1
+	END;
+
+	dividendIndex := dividendLastOne;
+	
+	tempDividend := dividend;
+	remainder := 0;
+	result := 0;
+	
+	WHILE(dividendIndex >= 0) DO
+	    bitAtIndex := (tempDividend >> dividendIndex) BAND 1;
+	    remainder := (remainder << 1) BOR bitAtIndex;
+	    IF (remainder >= divisor) THEN
+	        result := result BOR (1 << dividendIndex);
+			remainder := remainder - divisor;
+	    END;
+	    dividendIndex := dividendIndex - 1;
+	END;
+	
+	RETURN result
+    END Div;
+PROCEDURE Divide (dividend: INTEGER; divisor: INTEGER);
+    VAR divResult: REAL; realDividend: REAL; realDivisor: REAL;
+    BEGIN
+	realDividend := IntToReal(dividend);
+	realDivisor := IntToReal(divisor);
+	divResult := RDivide(realDividend, realDivisor);
+	RETURN divResult
+    END Divide;
+PROCEDURE Mod (dividend: INTEGER; divisor: INTEGER);
+    VAR total: INTEGER; result: INTEGER;
+    BEGIN
+	total := dividend;
+	WHILE((total - divisor) >= 0) DO
+    	total := total - divisor
+	END
+	RETURN total
+    END Mod;
+PROCEDURE Multiply (a: INTEGER; b: INTEGER);
+	VAR low: INTEGER;
+	BEGIN
+	asm("MUL %dr, %ur, %ur": low, a, b);
+	RETURN low
+	END Multiply;

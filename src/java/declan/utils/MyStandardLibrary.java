@@ -26,28 +26,21 @@ public class MyStandardLibrary {
 
     public MyStandardLibrary(ErrorLog errLog){
         this.errLog = errLog;
-        String locLib = System.getenv("DECLIB");
-        if(locLib == null){
-            errLog.add("Error: Cannot find environment variable DECLIB", new Position(0, 0));
-            declanDirFound = false;
-            irDirFound = false;
-        } else {
-            irDir = locLib + "/ir/linkable";
-            declanDir = locLib + "/declan";
-            File irDirAsFile = new File(irDir);
-            File declanDirAsFile = new File(declanDir);
-            
-            if(irDirAsFile.exists()){
-                irDirFound = true;
-            } else {
-                irDirFound = false;
-            }
+        irDir = "./src/ir/std/lib";
+        declanDir = "./src/declan/std/lib";
+        File irDirAsFile = new File(irDir);
+        File declanDirAsFile = new File(declanDir);
 
-            if(declanDirAsFile.exists()){
-                declanDirFound = true;
-            } else{
-                declanDirFound = false;
-            }
+        if(irDirAsFile.exists()){
+            irDirFound = true;
+        } else {
+            irDirFound = false;
+        }
+
+        if(declanDirAsFile.exists()){
+            declanDirFound = true;
+        } else{
+            declanDirFound = false;
         }
     }
 
@@ -55,6 +48,9 @@ public class MyStandardLibrary {
         if(declanDirFound){
             String declanSrcFile = declanDir + '/' + fileName + ".declib";
             File file = new File(declanSrcFile);
+
+	    System.out.println("File is " + file.getAbsolutePath());
+
             if(!file.exists())
                 throw new RuntimeException("Error file at path-\n" + declanSrcFile + "\ndoes not exist!!!\n");
 
