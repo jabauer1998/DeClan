@@ -39,15 +39,10 @@ if($javaExists -ne ""){
                 [System.IO.File]::WriteAllText($line, $content, $Utf8NoBomEncoding)
             }
             cat "build/BuildList.txt"
-            javac "@build/BuildList.txt" -d "./tmp" -sourcepath "./src" -cp "./lib/*" -encoding "UTF-8"
-            $dependencyJars = Get-ChildItem -Path "./lib" -Filter *.jar
-            Write-Host $dependencyJars
-            foreach ($jar in $dependencyJars) {
-                # Extract contents of each dependency JAR into the temp directory
-                jar xf $jar.FullName -C "./tmp"
-                if (Test-Path ".\tmp\META-INF\MANIFEST.MF") {
-                    Remove-Item ".\tmp\META-INF\MANIFEST.MF"
-                }
+            javac "@build/BuildList.txt" -d "./tmp" -sourcepath "./src" -cp "./lib/antlr-4.13.2-complete.jar" -encoding "UTF-8"
+            jar xf "./lib/antlr-4.13.2-complete.jar" -C "./tmp"
+            if (Test-Path ".\tmp\META-INF\MANIFEST.MF") {
+                Remove-Item ".\tmp\META-INF\MANIFEST.MF"
             }
             jar cf "./bin/Declan.jar" -C "./tmp" "."
             Remove-Item -Path ./tmp/* -Recurse -Force
@@ -72,9 +67,9 @@ if($javaExists -ne ""){
                 [System.IO.File]::WriteAllText($line, $content, $Utf8NoBomEncoding)
             }
             cat "build/TestBuildList.txt"
-            javac "@build/TestBuildList.txt" -sourcepath "./test/java" -classpath "./bin/*" -d "tmp" -encoding "UTF-8"
+            javac "@build/TestBuildList.txt" -sourcepath "./test/java" -classpath "./bin/*;./lib/junit-platform-console-standalone-6.0.3.jar" -d "tmp" -encoding "UTF-8"
             Remove-Item -Force build\TestBuildList.txt
-            java -jar lib/junit-platform-console-standalone-6.0.3.jar execute --classpath "./bin/Declan.jar;./tmp" --scan-classpath
+            java -jar lib/junit-platform-console-standalone-6.0.3.jar execute --classpath "./bin/Declan.jar;./lib/junit-platform-console-standalone-6.0.3.jar;./tmp" --scan-classpath
 	    Remove-Item -Force -Recurse -Path "./tmp/*"
         } else {
             Write-Host "Unknown command '$command'"

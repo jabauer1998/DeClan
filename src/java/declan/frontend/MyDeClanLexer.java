@@ -31,7 +31,7 @@ public class MyDeClanLexer implements Lexer<DeclanToken> {
 		this.cfg = cfg;
 		if(this.cfg != null)
 			if(this.cfg.containsFlag("debug"))
-				Utils.createFile("test/temp/tokens.txt");
+				Utils.createFile("./tmp/tokens.txt");
 	}
 
 	public boolean hasNext() {
@@ -53,7 +53,7 @@ public class MyDeClanLexer implements Lexer<DeclanToken> {
 		
 		if(cfg != null)
 			if(cfg.containsFlag("debug"))
-				Utils.appendToFile("test/temp/tokens.txt", result.toString() + "\r\n");
+				Utils.appendToFile("./tmp/tokens.txt", result.toString() + "\r\n");
 		
 		return result;
 	}

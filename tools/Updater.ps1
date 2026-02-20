@@ -1,4 +1,8 @@
-$CLASSPATH = "tmp;lib\*"
+$CLASSPATH = "bin/Declan.jar;lib/antlr-4.13.2-complete.jar"
+$location = Get-Location
+
+$runPath = $PSScriptRoot
+cd $runPath/..
 
 function clean_src{
     param($directory)
@@ -19,11 +23,11 @@ function compile_file_into_ir{
     Write-Host "Compiling Ir with src-"
     Write-Host "$src"
     if ($nolink){
-        $out = "$src".replace(".declib", ".ilib").replace(".dcl", ".ir").replace("standard_library\declan", "standard_library\ir\linkable").replace("test\declan", "test\ir\linkable")
+        $out = "$src".replace(".declib", ".ilib").replace(".dcl", ".ir").replace("src\declan\std\lib", "src\ir\std\lib\linkable").replace("src/declan/test", "src\ir\linkable")
     } elseif ($optimized){
-                $out = "$src".replace(".dcl", ".ir").replace("test\declan", "test\ir\optimized")
-        } else {
-        $out = "$src".replace(".dcl", ".ir").replace("test\declan", "test\ir\linked")
+        $out = "$src".replace(".dcl", ".ir").replace("src\declan\test", "src\ir\optimized")
+    } else {
+        $out = "$src".replace(".dcl", ".ir").replace("test\declan\test", "src\ir\linked")
     }
     Write-Host "to output-"
     Write-Host "$out"
@@ -57,7 +61,7 @@ function compile_file_into_assembly{
     param($src)
     Write-Host "Compiling Declan in src-"
     Write-Host "$src"
-    $out = "$src".replace(".dcl", ".a").replace("test\declan", "test\assembly")
+    $out = "$src".replace(".dcl", ".a").replace("src\declan\test", "src\asm")
     Write-Host "to output assembly at-"
     Write-Host "$out"
     Write-Host "---------Output-Window-----------"
@@ -79,7 +83,7 @@ function compile_file_into_binary{
     param($src)
     Write-Host "Compiling Declan in src-"
     Write-Host "$src"
-    $out = "$src".replace(".dcl", ".bin").replace("test\declan", "test\binary")
+    $out = "$src".replace(".dcl", ".bin").replace("src\declan\test", "src\bin")
     Write-Host "to output binary at-"
     Write-Host "$out"
     Write-Host "---------Output-Window-----------"
@@ -170,21 +174,21 @@ if($commands["help"] -eq $true){
 } else {
     $noArgs = $args.Count -eq 0
     if(($noArgs -eq $true) -or ($commands["all"] -eq $true) -or ($commands["clean"] -eq $true)){
-        clean_src -directory "$PSScriptRoot/assembly"
-        clean_src -directory "$PSScriptRoot/binary"
-        clean_src -directory "$PSScriptRoot/ir"
-        clean_src -directory "$PSScriptRoot/temp"
+        clean_src -directory "$PSScriptRoot/../src/asm"
+        clean_src -directory "$PSScriptRoot/../src/bin"
+        clean_src -directory "$PSScriptRoot/../src/ir"
+        clean_src -directory "$PSScriptRoot/../tmp"
     }
 
     $depends = check_dependencies
     if ($depends -eq 0) {
         if($noArgs -or $commands["all"] -or $commands["std"]){
-            Get-ChildItem -File "$PSScriptRoot/standard_library/declan" |
+            Get-ChildItem -File "$PSScriptRoot/../src/declan/std/lib" |
             Foreach-Object {
                 compile_file_into_ir -src $_.FullName -nolink $true -optimized $false
             }
         }
-        Get-ChildItem -File "$PSScriptRoot/test/declan" |
+        Get-ChildItem -File "$PSScriptRoot/../src/declan/test" |
         Foreach-Object {
             if($noArgs -or $commands["all"] -or ($commands["ir"] -and $commands["no_link"])){
                 compile_file_into_ir -src $_.FullName -nolink $true -optimized $false
@@ -206,3 +210,5 @@ if($commands["help"] -eq $true){
         Write-Error "Dependency Check Failed!!!"
     }
 }
+
+cd $location
