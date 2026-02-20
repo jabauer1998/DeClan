@@ -47,7 +47,7 @@ public class MyIrLinker {
         this.cfg = cfg;
         if(this.cfg != null)
                 if(this.cfg.containsFlag("debug"))
-                        Utils.createFile("test/temp/linked.txt");
+                        Utils.createFile("./tmp/linked.txt");
     }
 
     private static Prog generateProgram(ErrorLog errorLog, Program prog){
@@ -4515,7 +4515,7 @@ public class MyIrLinker {
         linkCodeSection(program, libraries, newProg);
         if(this.cfg != null)
                 if(this.cfg.containsFlag("debug"))
-                        Utils.writeToFile("test/temp/linked.txt", newProg.toString());
+                        Utils.writeToFile("./tmp/linked.txt", newProg.toString());
         return newProg;
     }
 

@@ -458,8 +458,8 @@ public class MyOptimizer {
         
         if(cfg != null)
                 if(cfg.containsFlag("debug")) {
-                        Utils.createFile("test/temp/flow.txt");
-                        Utils.writeToFile("test/temp/flow.txt", flowGraph.toString());
+                        Utils.createFile("./tmp/flow.txt");
+                        Utils.writeToFile("./tmp/flow.txt", flowGraph.toString());
                 }
                         
         this.globalFlowGraph = flowGraph;
@@ -499,8 +499,8 @@ public class MyOptimizer {
             cleanUpOptimization(OptName.COMMON_SUB_EXPRESSION_ELIMINATION);
             if(cfg != null)
                         if(cfg.containsFlag("debug")) {
-                                Utils.createFile("test/temp/CommonSubExpressionEliminationICode.txt");
-                                Utils.writeToFile("test/temp/CommonSubExpressionEliminationICode.txt", this.intermediateCode.toString());
+                                Utils.createFile("./tmp/CommonSubExpressionEliminationICode.txt");
+                                Utils.writeToFile("./tmp/CommonSubExpressionEliminationICode.txt", this.intermediateCode.toString());
                         }
     }
     
@@ -1159,8 +1159,8 @@ public class MyOptimizer {
         
         if(this.cfg != null)
                 if(this.cfg.containsFlag("debug")){
-                        Utils.createFile("test/temp/constProp.txt");
-                        Utils.writeToFile("test/temp/constProp.txt", this.propAnal.toString());
+                        Utils.createFile("./tmp/constProp.txt");
+                        Utils.writeToFile("./tmp/constProp.txt", this.propAnal.toString());
                 }
     }
 
@@ -1173,8 +1173,8 @@ public class MyOptimizer {
         
         if(this.cfg != null)
                 if(this.cfg.containsFlag("debug")){
-                        Utils.createFile("test/temp/liveAnal.txt");
-                        Utils.writeToFile("test/temp/liveAnal.txt", this.liveAnal.toString());
+                        Utils.createFile("./tmp/liveAnal.txt");
+                        Utils.writeToFile("./tmp/liveAnal.txt", this.liveAnal.toString());
                 }
     }
     
@@ -1188,8 +1188,8 @@ public class MyOptimizer {
         
         if(this.cfg != null)
                 if(this.cfg.containsFlag("debug")){
-                        Utils.createFile("test/temp/reachDef.txt");
-                        Utils.writeToFile("test/temp/reachDef.txt", this.defAnal.toString());
+                        Utils.createFile("./tmp/reachDef.txt");
+                        Utils.writeToFile("./tmp/reachDef.txt", this.defAnal.toString());
                 }
     }
     
@@ -1224,8 +1224,8 @@ public class MyOptimizer {
         
         if(this.cfg != null)
                 if(this.cfg.containsFlag("debug")){
-                        Utils.createFile("test/temp/dominator.txt");
-                        Utils.writeToFile("test/temp/dominator.txt", this.domAnal.toString());
+                        Utils.createFile("./tmp/dominator.txt");
+                        Utils.writeToFile("./tmp/dominator.txt", this.domAnal.toString());
                 }
     }
     
@@ -1241,8 +1241,8 @@ public class MyOptimizer {
         
         if(this.cfg != null)
                 if(this.cfg.containsFlag("debug")){
-                        Utils.createFile("test/temp/availableAnal.txt");
-                        Utils.writeToFile("test/temp/availableAnal.txt", this.availableAnal.toString());
+                        Utils.createFile("./tmp/availableAnal.txt");
+                        Utils.writeToFile("./tmp/availableAnal.txt", this.availableAnal.toString());
                 }
     }
     
@@ -1257,8 +1257,8 @@ public class MyOptimizer {
         
         if(this.cfg != null)
                 if(this.cfg.containsFlag("debug")){
-                        Utils.createFile("test/temp/anticipatedAnal.txt");
-                        Utils.writeToFile("test/temp/anticipatedAnal.txt", this.anticipatedAnal.toString());
+                        Utils.createFile("./tmp/anticipatedAnal.txt");
+                        Utils.writeToFile("./tmp/anticipatedAnal.txt", this.anticipatedAnal.toString());
                 }
     }
     
@@ -1488,8 +1488,8 @@ public class MyOptimizer {
         }
         if(cfg != null)
                 if(cfg.containsFlag("debug")) {
-                        Utils.createFile("test/temp/DeadCodeEliminationICode.txt");
-                        Utils.writeToFile("test/temp/DeadCodeEliminationICode.txt", this.intermediateCode.toString());
+                        Utils.createFile("./tmp/DeadCodeEliminationICode.txt");
+                        Utils.writeToFile("./tmp/DeadCodeEliminationICode.txt", this.intermediateCode.toString());
                 }
     }
     
@@ -1561,8 +1561,8 @@ public class MyOptimizer {
         
         if(cfg != null)
                 if(cfg.containsFlag("debug")) {
-                        Utils.createFile("test/temp/MoveConstants.txt");
-                        Utils.writeToFile("test/temp/MoveConstants.txt", this.intermediateCode.toString());
+                        Utils.createFile("./tmp/MoveConstants.txt");
+                        Utils.writeToFile("./tmp/MoveConstants.txt", this.intermediateCode.toString());
                 }
     }
 
@@ -2328,8 +2328,8 @@ public class MyOptimizer {
         }
         if(cfg != null)
                 if(cfg.containsFlag("debug")) {
-                        Utils.createFile("test/temp/ConstantPropogationICode.txt");
-                        Utils.writeToFile("test/temp/ConstantPropogationICode.txt", this.intermediateCode.toString());
+                        Utils.createFile("./tmp/ConstantPropogationICode.txt");
+                        Utils.writeToFile("./tmp/ConstantPropogationICode.txt", this.intermediateCode.toString());
                 }
     }
     
@@ -2462,8 +2462,8 @@ public class MyOptimizer {
         cleanUpOptimization(OptName.PARTIAL_REDUNDANCY_ELIMINATION);
         if(cfg != null)
                 if(cfg.containsFlag("debug")) {
-                        Utils.createFile("test/temp/PartialRedundancyEliminationICode.txt");
-                        Utils.writeToFile("test/temp/PartialRedundancyEliminationICode.txt", this.intermediateCode.toString());
+                        Utils.createFile("./tmp/PartialRedundancyEliminationICode.txt");
+                        Utils.writeToFile("./tmp/PartialRedundancyEliminationICode.txt", this.intermediateCode.toString());
                 }
     }
     

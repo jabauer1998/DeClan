@@ -462,12 +462,12 @@ CustomMeet<ArmDescriptorState> {
                 }
                 return false;
         } else {
-                Utils.createFile("test/temp/AnalysisCacheLog.txt");
+                Utils.createFile("./tmp/AnalysisCacheLog.txt");
                 boolean result = false;
                 Set<ICode> keys = cached.keySet();
                 for(ICode key : keys){
                     if(!containsOutputKey(key)){
-                        Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "Actual map contains " + key + " and cached data does not\r\n");
+                        Utils.appendToFile("./tmp/AnalysisCacheLog.txt", "Actual map contains " + key + " and cached data does not\r\n");
                         result = true;
                         continue;
                     }
@@ -476,9 +476,9 @@ CustomMeet<ArmDescriptorState> {
                     ArmDescriptorState cachedData = cached.get(key);
 
                     if(!actualData.equals(cachedData)){
-                        Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "For " + key + " actual data not equal to cache data\r\n");
-                        Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "Actual data: " + actualData.toString() + "\r\n");
-                        Utils.appendToFile("test/temp/AnalysisCacheLog.txt", "Cached data: " + cachedData.toString() + "\r\n");
+                        Utils.appendToFile("./tmp/AnalysisCacheLog.txt", "For " + key + " actual data not equal to cache data\r\n");
+                        Utils.appendToFile("./tmp/AnalysisCacheLog.txt", "Actual data: " + actualData.toString() + "\r\n");
+                        Utils.appendToFile("./tmp/AnalysisCacheLog.txt", "Cached data: " + cachedData.toString() + "\r\n");
                         result = true;
                         continue;
                     }
