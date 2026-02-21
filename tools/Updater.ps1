@@ -22,12 +22,17 @@ function compile_file_into_ir{
     param($src, $nolink, $optimized)
     Write-Host "Compiling Ir with src-"
     Write-Host "$src"
+    Write-Host "no link is $nolink"
     if ($nolink){
-        $out = "$src".replace(".declib", ".ilib").replace(".dcl", ".ir").replace("src\declan\std\lib", "src\ir\std\lib\linkable").replace("src/declan/test", "src\ir\linkable")
+        $out = "$src".replace(".declib", ".ilib").replace(".dcl", ".ir")
+	$out = $out -replace "src[\\/]declan[\\/]std[\\/]lib",  "src\ir\std\lib\linkable"
+	$out = $out -replace "src[\\/]declan[\\/]test", "src\ir\linkable"
     } elseif ($optimized){
-        $out = "$src".replace(".dcl", ".ir").replace("src\declan\test", "src\ir\optimized")
+        $out = "$src".replace(".dcl", ".ir")
+	$out = $out -replace "src[\\/]declan[\\/]test", "src\ir\optimized"
     } else {
-        $out = "$src".replace(".dcl", ".ir").replace("test\declan\test", "src\ir\linked")
+        $out = "$src".replace(".dcl", ".ir")
+	$out = $out -replace "src[\\/]declan[\\/]test", "src\ir\linked"
     }
     Write-Host "to output-"
     Write-Host "$out"
