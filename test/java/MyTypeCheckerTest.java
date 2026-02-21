@@ -43,103 +43,103 @@ public class MyTypeCheckerTest {
 
     @Test
     public void testConversions(){
-        String fileSource = "src/declan/test/declan/conversions.dcl";
+        String fileSource = "src/declan/test/conversions.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testExpressions(){
-        String fileSource = "src/declan/test/declan/expressions.dcl";
+        String fileSource = "src/declan/test/expressions.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testForLoopAdvanced(){
-        String fileSource = "src/declan/test/declan/ForLoopAdvanced.dcl";
+        String fileSource = "src/declan/test/ForLoopAdvanced.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testForLoopBasic(){
-        String fileSource = "src/declan/test/declan/ForLoopBasic.dcl";
+        String fileSource = "src/declan/test/ForLoopBasic.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testForLoopBasic2(){
-        String fileSource = "src/declan/test/declan/ForLoopBasic2.dcl";
+        String fileSource = "src/declan/test/ForLoopBasic2.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testForLoopBasic3(){
-        String fileSource = "src/declan/test/declan/ForLoopBasic3.dcl";
+        String fileSource = "src/declan/test/ForLoopBasic3.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testIfStatementAdvanced(){
-        String fileSource = "src/declan/test/declan/IfStatementAdvanced.dcl";
+        String fileSource = "src/declan/test/IfStatementAdvanced.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testIfStatementBasic(){
-        String fileSource = "src/declan/test/declan/IfStatementBasic.dcl";
+        String fileSource = "src/declan/test/IfStatementBasic.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testLoops(){
-        String fileSource = "src/declan/test/declan/loops.dcl";
+        String fileSource = "src/declan/test/loops.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testRepeatLoopBasic(){
-        String fileSource = "src/declan/test/declan/RepeatLoopBasic.dcl";
+        String fileSource = "src/declan/test/RepeatLoopBasic.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testSample(){
-        String fileSource = "src/declan/test/declan/sample.dcl";
+        String fileSource = "src/declan/test/sample.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testTest(){
-        String fileSource = "src/declan/test/declan/test.dcl";
+        String fileSource = "src/declan/test/test.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testTest2(){
-        String fileSource = "src/declan/test/declan/test2.dcl";
+        String fileSource = "src/declan/test/test2.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testTest3(){
-        String fileSource = "src/declan/test/declan/test3.dcl";
+        String fileSource = "src/declan/test/test3.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testTest4(){
-        String fileSource = "src/declan/test/declan/test4.dcl";
+        String fileSource = "src/declan/test/test4.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testWhileLoopAdvanced(){
-        String fileSource = "src/declan/test/declan/WhileLoopAdvanced.dcl";
+        String fileSource = "src/declan/test/WhileLoopAdvanced.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 
     @Test
     public void testWhileLoopBasic(){
-        String fileSource = "src/declan/test/declan/WhileLoopBasic.dcl";
+        String fileSource = "src/declan/test/WhileLoopBasic.dcl";
         runTypeCheckerOnSource(fileSource);
     }
 }

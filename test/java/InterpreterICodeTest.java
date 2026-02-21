@@ -96,92 +96,92 @@ public class InterpreterICodeTest {
 
     @Test
     public void testConversions(){
-        testInterpreterWithICode("src/declan/test/declan/conversions.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/conversions.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testExpressions(){
-        testInterpreterWithICode("src/declan/test/declan/expressions.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/expressions.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testIfStatementBasic(){
-        testInterpreterWithICode("src/declan/test/declan/IfStatementBasic.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/IfStatementBasic.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testIfStatementAdvanced(){
-        testInterpreterWithICode("src/declan/test/declan/IfStatementAdvanced.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/IfStatementAdvanced.dcl", nullReader, nullReader, nullReader, false);
     }
 
     
     @Test
     public void testLoops(){
-        testInterpreterWithICode("src/declan/test/declan/loops.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/loops.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testWhileLoopBasic(){
-        testInterpreterWithICode("src/declan/test/declan/WhileLoopBasic.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/WhileLoopBasic.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testWhileLoopAdvanced(){
-        testInterpreterWithICode("src/declan/test/declan/WhileLoopAdvanced.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/WhileLoopAdvanced.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testForLoopBasic(){
-        testInterpreterWithICode("src/declan/test/declan/ForLoopBasic.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/ForLoopBasic.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testForLoopBasic2(){
-        testInterpreterWithICode("src/declan/test/declan/ForLoopBasic2.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/ForLoopBasic2.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testForLoopBasic3(){
-        testInterpreterWithICode("src/declan/test/declan/ForLoopBasic3.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/ForLoopBasic3.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testForLoopAdvanced(){
-        testInterpreterWithICode("src/declan/test/declan/ForLoopAdvanced.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/ForLoopAdvanced.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testRepeatLoopBasic(){
-        testInterpreterWithICode("src/declan/test/declan/RepeatLoopBasic.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/RepeatLoopBasic.dcl", nullReader, nullReader, nullReader, false);
     }
     @Test
     public void testSample(){
-        testInterpreterWithICode("src/declan/test/declan/sample.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/sample.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testTest(){
-        testInterpreterWithICode("src/declan/test/declan/test.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/test.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testTest2(){
-        testInterpreterWithICode("src/declan/test/declan/test2.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/test2.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testTest3(){
-        testInterpreterWithICode("src/declan/test/declan/test3.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/test3.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testSimpleConversion(){
-        testInterpreterWithICode("src/declan/test/declan/SingleConversion.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/SingleConversion.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testSimpleConversion2(){
-        testInterpreterWithICode("src/declan/test/declan/SingleConversion2.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/SingleConversion2.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
@@ -189,182 +189,182 @@ public class InterpreterICodeTest {
         StringReader intReader = new StringReader("2\n");
         StringReader icodeReader = new StringReader("2\n");
         StringReader optReader = new StringReader("2\n");
-        testInterpreterWithICode("src/declan/test/declan/test4.dcl", intReader, icodeReader, optReader, false);
+        testInterpreterWithICode("src/declan/test/test4.dcl", intReader, icodeReader, optReader, false);
     }
 
     @Test
     public void testBooleanExpression1(){
-        testInterpreterWithICode("src/declan/test/declan/BoolExpression1.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/BoolExpression1.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testBooleanExpression2(){
-        testInterpreterWithICode("src/declan/test/declan/BoolExpression2.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/BoolExpression2.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testRealAddition(){
-        testInterpreterWithICode("src/declan/test/declan/RealAddition.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/RealAddition.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testRealAddition2(){
-        testInterpreterWithICode("src/declan/test/declan/RealAddition2.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/RealAddition2.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testRealAddition3(){
-        testInterpreterWithICode("src/declan/test/declan/RealAddition3.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/RealAddition3.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testRealAddition4(){
-        testInterpreterWithICode("src/declan/test/declan/RealAddition4.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/RealAddition4.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testRealExpression(){
-        testInterpreterWithICode("src/declan/test/declan/RealExpression.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/RealExpression.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testRealMultiplication(){
-        testInterpreterWithICode("src/declan/test/declan/RealMultiplication.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/RealMultiplication.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testRealMultiplication2(){
-        testInterpreterWithICode("src/declan/test/declan/RealMultiplication2.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/RealMultiplication2.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testRealMultiplication3(){
-        testInterpreterWithICode("src/declan/test/declan/RealMultiplication3.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/RealMultiplication3.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testIntegerDiv(){
-        testInterpreterWithICode("src/declan/test/declan/IntegerDiv.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/IntegerDiv.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testIntegerDiv2(){
-        testInterpreterWithICode("src/declan/test/declan/IntegerDiv2.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/IntegerDiv2.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testRealDivision(){
-        testInterpreterWithICode("src/declan/test/declan/RealDivision.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/RealDivision.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testRealDivision2(){
-        testInterpreterWithICode("src/declan/test/declan/RealDivision2.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/RealDivision2.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testRealDivision3(){
-        testInterpreterWithICode("src/declan/test/declan/RealDivision3.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/RealDivision3.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testRealDivision4(){
-        testInterpreterWithICode("src/declan/test/declan/RealDivision4.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/RealDivision4.dcl", nullReader, nullReader, nullReader, false);
     }
 
     @Test
     public void testRealDivision5(){
-        testInterpreterWithICode("src/declan/test/declan/RealDivision5.dcl", nullReader, nullReader, nullReader, false);
+        testInterpreterWithICode("src/declan/test/RealDivision5.dcl", nullReader, nullReader, nullReader, false);
     }
     
     @Test
     public void testConversionsOpt(){
-        testInterpreterWithICode("src/declan/test/declan/conversions.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/conversions.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testExpressionsOpt(){
-        testInterpreterWithICode("src/declan/test/declan/expressions.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/expressions.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testIfStatementBasicOpt(){
-        testInterpreterWithICode("src/declan/test/declan/IfStatementBasic.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/IfStatementBasic.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testIfStatementAdvancedOpt(){
-        testInterpreterWithICode("src/declan/test/declan/IfStatementAdvanced.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/IfStatementAdvanced.dcl", nullReader, nullReader, nullReader, true);
     }
 
     
     @Test
     public void testLoopsOpt(){
-        testInterpreterWithICode("src/declan/test/declan/loops.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/loops.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testWhileLoopBasicOpt(){
-        testInterpreterWithICode("src/declan/test/declan/WhileLoopBasic.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/WhileLoopBasic.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testWhileLoopAdvancedOpt(){
-        testInterpreterWithICode("src/declan/test/declan/WhileLoopAdvanced.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/WhileLoopAdvanced.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testForLoopBasicOpt(){
-        testInterpreterWithICode("src/declan/test/declan/ForLoopBasic.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/ForLoopBasic.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testForLoopBasic2Opt(){
-        testInterpreterWithICode("src/declan/test/declan/ForLoopBasic2.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/ForLoopBasic2.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testForLoopBasic3Opt(){
-        testInterpreterWithICode("src/declan/test/declan/ForLoopBasic3.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/ForLoopBasic3.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testForLoopAdvancedOpt(){
-        testInterpreterWithICode("src/declan/test/declan/ForLoopAdvanced.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/ForLoopAdvanced.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testRepeatLoopBasicOpt(){
-        testInterpreterWithICode("src/declan/test/declan/RepeatLoopBasic.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/RepeatLoopBasic.dcl", nullReader, nullReader, nullReader, true);
     }
     @Test
     public void testSampleOpt(){
-        testInterpreterWithICode("src/declan/test/declan/sample.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/sample.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testTestOpt(){
-        testInterpreterWithICode("src/declan/test/declan/test.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/test.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testTest2Opt(){
-        testInterpreterWithICode("src/declan/test/declan/test2.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/test2.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testTest3Opt(){
-        testInterpreterWithICode("src/declan/test/declan/test3.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/test3.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testSimpleConversionOpt(){
-        testInterpreterWithICode("src/declan/test/declan/SingleConversion.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/SingleConversion.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testSimpleConversion2Opt(){
-        testInterpreterWithICode("src/declan/test/declan/SingleConversion2.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/SingleConversion2.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
@@ -372,91 +372,91 @@ public class InterpreterICodeTest {
         StringReader intReader = new StringReader("2\n");
         StringReader icodeReader = new StringReader("2\n");
         StringReader optReader = new StringReader("2\n");
-        testInterpreterWithICode("src/declan/test/declan/test4.dcl", intReader, icodeReader, optReader, true);
+        testInterpreterWithICode("src/declan/test/test4.dcl", intReader, icodeReader, optReader, true);
     }
 
     @Test
     public void testBooleanExpression1Opt(){
-        testInterpreterWithICode("src/declan/test/declan/BoolExpression1.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/BoolExpression1.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testBooleanExpression2Opt(){
-        testInterpreterWithICode("src/declan/test/declan/BoolExpression2.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/BoolExpression2.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testRealAdditionOpt(){
-        testInterpreterWithICode("src/declan/test/declan/RealAddition.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/RealAddition.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testRealAddition2Opt(){
-        testInterpreterWithICode("src/declan/test/declan/RealAddition2.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/RealAddition2.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testRealAddition3Opt(){
-        testInterpreterWithICode("src/declan/test/declan/RealAddition3.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/RealAddition3.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testRealAddition4Opt(){
-        testInterpreterWithICode("src/declan/test/declan/RealAddition4.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/RealAddition4.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testRealExpressionOpt(){
-        testInterpreterWithICode("src/declan/test/declan/RealExpression.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/RealExpression.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testRealMultiplicationOpt(){
-        testInterpreterWithICode("src/declan/test/declan/RealMultiplication.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/RealMultiplication.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testRealMultiplication2Opt(){
-        testInterpreterWithICode("src/declan/test/declan/RealMultiplication2.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/RealMultiplication2.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testRealMultiplication3Opt(){
-        testInterpreterWithICode("src/declan/test/declan/RealMultiplication3.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/RealMultiplication3.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testIntegerDivOpt(){
-        testInterpreterWithICode("src/declan/test/declan/IntegerDiv.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/IntegerDiv.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testIntegerDiv2Opt(){
-        testInterpreterWithICode("src/declan/test/declan/IntegerDiv2.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/IntegerDiv2.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testRealDivisionOpt(){
-        testInterpreterWithICode("src/declan/test/declan/RealDivision.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/RealDivision.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testRealDivision2Opt(){
-        testInterpreterWithICode("src/declan/test/declan/RealDivision2.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/RealDivision2.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testRealDivision3Opt(){
-        testInterpreterWithICode("src/declan/test/declan/RealDivision3.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/RealDivision3.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testRealDivision4Opt(){
-        testInterpreterWithICode("src/declan/test/declan/RealDivision4.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/RealDivision4.dcl", nullReader, nullReader, nullReader, true);
     }
 
     @Test
     public void testRealDivision5Opt(){
-        testInterpreterWithICode("src/declan/test/declan/RealDivision5.dcl", nullReader, nullReader, nullReader, true);
+        testInterpreterWithICode("src/declan/test/RealDivision5.dcl", nullReader, nullReader, nullReader, true);
     }
 }

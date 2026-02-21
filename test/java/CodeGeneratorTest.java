@@ -43,7 +43,7 @@ import declan.backend.assembler.ArmAssemblerParser;
 public class CodeGeneratorTest {
     private void testIrFile(String fileName) throws Exception{
         ErrorLog errLog = new ErrorLog();
-        String expectedResultFile = fileName.replace("src/ir/optimized", "test/temp").replace(".ir", ".a");
+        String expectedResultFile = fileName.replace("src/ir/optimized", "./tmp").replace(".ir", ".a");
         FileReader input = new FileReader(fileName);
         ReaderSource source = new ElaborateReaderSource(fileName, input);
         MyIrLexer lexer = new MyIrLexer(source, errLog);

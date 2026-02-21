@@ -24,8 +24,8 @@ public class MyStandardLibTest {
         String locLib = System.getenv("DECLIB");
         assertTrue("Environment variable DECLIB is not set!!!", !(locLib == null));
 
-        String declanDir = locLib + "/declan";
-        String irDir = locLib +"/ir/linkable";
+        String declanDir = locLib;
+        String irDir = "src/ir/std/lib/linkable";
 
         String declanFile = declanDir + '/' + libName + ".declib";
         Lib declanLib = parseAndGenerateDeclanSource(declanFile, errLog);

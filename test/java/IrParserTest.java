@@ -17,8 +17,8 @@ public class IrParserTest {
     @Test
     public void testBinaryOp(){
         String program = "SYMBOL SECTION\n"
-                       + "DATA SECTION\n"
                        + "BSS SECTION\n"
+                       + "DATA SECTION\n"
                        + "CODE SECTION\n"
                        + "x := 456 <INT>\n"
                        + "z := 48393 <INT>\n"
@@ -59,8 +59,8 @@ public class IrParserTest {
     @Test
     public void testUnaryOp(){
         String program = "SYMBOL SECTION\n"
-                       + "DATA SECTION\n"
                        + "BSS SECTION\n"
+                       + "DATA SECTION\n"
                        + "CODE SECTION\n"
                        + "x := 38393 <INT>\n"
                        + "y := INOT x <INT>\n"
@@ -84,8 +84,8 @@ public class IrParserTest {
     @Test
     public void testBooleanAssignment(){
         String program = "SYMBOL SECTION\n"
-                       + "DATA SECTION\n"
                        + "BSS SECTION\n"
+                       + "DATA SECTION\n"
                        + "CODE SECTION\n"
                        + "v := FALSE <BOOL>\n"
                        + "z := TRUE <BOOL>\n"
@@ -109,8 +109,8 @@ public class IrParserTest {
     @Test
     public void testNumAssignment(){
         String program = "SYMBOL SECTION\n"
-                       + "DATA SECTION\n"
                        + "BSS SECTION\n"
+                       + "DATA SECTION\n"
                        + "CODE SECTION\n"
                        + "x := 89309 <INT>\n"
                        + "z := 438.343 <INT>\n"
@@ -134,11 +134,11 @@ public class IrParserTest {
     @Test
     public void testProcedureCall(){
         String program = "SYMBOL SECTION\n" 
-                       + "DATA SECTION\n"
+                       + "BSS SECTION\n"
                        + "DEF GLOBAL t := 899 <INT>\n"
                        + "DEF GLOBAL g := 89 <INT>\n"
                        + "DEF GLOBAL f := 98 <INT>\n"
-                       + "BSS SECTION\n"
+                       + "DATA SECTION\n"
                        + "CODE SECTION\n"
                        + "CALL func ([t -> x]<INT>, [g -> y]<INT>, [f -> z]<INT>)\n"
                        + "END\n"
@@ -166,9 +166,9 @@ public class IrParserTest {
     @Test
     public void testStringDecl(){
         String program = "SYMBOL SECTION\n"
-                       + "DATA SECTION\n"
-                       + "DEF GLOBAL t := \"Text Here\" <STRING>\n"
                        + "BSS SECTION\n"
+                       + "DEF GLOBAL t := \"Text Here\" <STRING>\n"
+                       + "DATA SECTION\n"
                        + "CODE SECTION\n"
                        + "t := \"Text Here Too\" <STRING>\n"
                        + "END\n"
@@ -191,9 +191,9 @@ public class IrParserTest {
     @Test
     public void testIfStatement(){
         String program = "SYMBOL SECTION\n"
-                       + "DATA SECTION\n"
-                       + "DEF GLOBAL trueVal := TRUE <BOOL>\n"
                        + "BSS SECTION\n"
+                       + "DEF GLOBAL trueVal := TRUE <BOOL>\n"
+                       + "DATA SECTION\n"
                        + "CODE SECTION\n"
                        + "LABEL y\n"
                        + "IF x BEQ trueVal THEN z ELSE y\n"
@@ -218,8 +218,8 @@ public class IrParserTest {
     @Test
     public void testInlineAssembly(){
         String program = "SYMBOL SECTION\n"
-                       + "DATA SECTION\n"
                        + "BSS SECTION\n"
+                       + "DATA SECTION\n"
                        + "CODE SECTION\n"
                        + "IPARAM x <INT> %dr\n"
                        + "IPARAM z <INT> %ua\n"

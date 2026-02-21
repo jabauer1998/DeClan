@@ -95,17 +95,17 @@ public class MyICodeTypeCheckerTest {
     @Test
     public void testProg1(){
         String source = "SYMBOL SECTION\n"
-                      + "DATA SECTION\n"
+                      + "BSS SECTION\n"
                       + "DEF GLOBAL a := 456 <INT>\n"
                       + "DEF GLOBAL b := 48393 <INT>\n"
                       + "DEF GLOBAL c := 8.23 <REAL>\n"
                       + "DEF GLOBAL c2 := TRUE <BOOL>\n"
                       + "DEF GLOBAL c3 := FALSE <BOOL>\n"
+                      + "DATA SECTION\n"
                       + "DEF d := a IADD b <INT>\n"
                       + "DEF e := b ISUB a <INT>\n"
                       + "DEF k := (GLOBAL c2) LOR (GLOBAL c3) <BOOL>\n"
                       + "DEF l := (GLOBAL b) IOR g <INT>\n"
-                      + "BSS SECTION\n"
                       + "CODE SECTION\n"
                       + "DEF o := k LAND (GLOBAL c3) <BOOL>\n"
                       + "DEF p := (GLOBAL a) IAND (GLOBAL a) <INT>\n"
@@ -134,8 +134,8 @@ public class MyICodeTypeCheckerTest {
     @Test
     public void testProg2(){
         String source = "SYMBOL SECTION\n"
-                      + "DATA SECTION\n"
                       + "BSS SECTION\n"
+                      + "DATA SECTION\n"
                       + "CODE SECTION\n"
                       + "DEF g := 30 <INT>\n"
                       + "CALL func1 ([g -> param1]<INT>)\n"
@@ -169,73 +169,73 @@ public class MyICodeTypeCheckerTest {
 
     @Test
     public void testConversions(){
-        String source = "src/declan/test/declan/conversions.dcl";
+        String source = "src/declan/test/conversions.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testExpressions(){
-        String source = "src/declan/test/declan/expressions.dcl";
+        String source = "src/declan/test/expressions.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testForLoopAdvanced(){
-        String source = "src/declan/test/declan/ForLoopAdvanced.dcl";
+        String source = "src/declan/test/ForLoopAdvanced.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testForLoopBasic(){
-        String source = "src/declan/test/declan/ForLoopBasic.dcl";
+        String source = "src/declan/test/ForLoopBasic.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testForLoopBasic2(){
-        String source = "src/declan/test/declan/ForLoopBasic2.dcl";
+        String source = "src/declan/test/ForLoopBasic2.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testForLoopBasic3(){
-        String source = "src/declan/test/declan/ForLoopBasic.dcl";
+        String source = "src/declan/test/ForLoopBasic.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void ifStatementAdvanced(){
-        String source = "src/declan/test/declan/IfStatementAdvanced.dcl";
+        String source = "src/declan/test/IfStatementAdvanced.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void ifStatementBasic(){
-        String source = "src/declan/test/declan/IfStatementBasic.dcl";
+        String source = "src/declan/test/IfStatementBasic.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testLoops(){
-        String source = "src/declan/test/declan/loops.dcl";
+        String source = "src/declan/test/loops.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testRepeatLoopBasic(){
-        String source = "src/declan/test/declan/RepeatLoopBasic.dcl";
+        String source = "src/declan/test/RepeatLoopBasic.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testSample(){
-        String source = "src/declan/test/declan/sample.dcl";
+        String source = "src/declan/test/sample.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 
     @Test
     public void testTest(){
-        String source = "src/declan/test/declan/test.dcl";
+        String source = "src/declan/test/test.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
 }
