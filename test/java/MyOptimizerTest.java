@@ -25,12 +25,12 @@ public class MyOptimizerTest {
     public void testSimpleCommonSubExpressionElimination(){
         String inputSource = "SYMBOL SECTION\n"
                            + "BSS SECTION\n"
+                           + "DATA SECTION\n"
                            + "DEF a := 1 <INT>\n"
                            + "DEF b := 2 <INT>\n" 
                            + "DEF GLOBAL i := a IADD b <INT>\n"
                            + "DEF GLOBAL z := a IADD b <INT>\n"
                            + "DEF GLOBAL f := (GLOBAL z) IADD (GLOBAL i) <INT>\n"
-                           + "DATA SECTION\n"
                            + "CODE SECTION\n"
                            + "END\n"
                            + "PROC SECTION\n";
@@ -65,8 +65,8 @@ public class MyOptimizerTest {
     public void testComplexCommonSubExpressionElimination(){
         String inputSource = "SYMBOL SECTION\n"
                            + "BSS SECTION\n"
-                           + " DEF GLOBAL t := TRUE <BOOL>\n"
                            + "DATA SECTION\n"
+                           + " DEF GLOBAL t := TRUE <BOOL>\n"
                            + "CODE SECTION\n"
                            + " LABEL block1\n"
                            + " DEF a := 1 <INT>\n"
@@ -117,8 +117,8 @@ public class MyOptimizerTest {
     public void testDeadCodeElimination(){
         String inputSource = "SYMBOL SECTION\n"
                            + "BSS SECTION\n"
-                           + " DEF GLOBAL g := TRUE <BOOL>\n"
                            + "DATA SECTION\n"
+                           + " DEF GLOBAL g := TRUE <BOOL>\n"
                            + "CODE SECTION\n"
                            + "LABEL block1\n"
                            + "DEF a := 1 <INT>\n"
@@ -165,9 +165,9 @@ public class MyOptimizerTest {
     public void testDeadCodeElimination2(){
         String inputSource = "SYMBOL SECTION\n"
                            + "BSS SECTION\n"
-                           + " DEF GLOBAL g := TRUE <BOOL>\n"
-                           + " DEF GLOBAL b := 2 <INT>"
                            + "DATA SECTION\n"
+                           + " DEF GLOBAL g := TRUE <BOOL>\n"
+                           + " DEF GLOBAL b := 2 <INT>\n"
                            + "CODE SECTION\n"
                            + "LABEL block1\n"
                            + "DEF a := 1 <INT>\n"
@@ -216,8 +216,8 @@ public class MyOptimizerTest {
     public void testDeadCodeElimination3() {
         String inputSource = "SYMBOL SECTION\n"
                 + "BSS SECTION\n"
-                + " DEF GLOBAL b := 2 <INT>"
                 + "DATA SECTION\n"
+                + " DEF GLOBAL b := 2 <INT>\n"
                 + "CODE SECTION\n"
                 + "DEF a := 1 <INT>\n"
                 + "a := a IADD (GLOBAL b) <INT>\n" 
@@ -276,9 +276,9 @@ public class MyOptimizerTest {
     public void testConstantPropogation(){
         String inputSource = "SYMBOL SECTION\n"
                            + "BSS SECTION\n" 
+                           + "DATA SECTION\n"
                            + " DEF GLOBAL a := 1 <INT>\n"
                            + " DEF GLOBAL b := 2 <INT>\n"
-                           + "DATA SECTION\n"
                            + "CODE SECTION\n"
                            + " DEF i := a IADD b <INT>\n"
                            + " DEF z := a IADD i <INT>\n"
@@ -317,9 +317,9 @@ public class MyOptimizerTest {
     public void testConstantToGlobal() {
         String inputSrc = "SYMBOL SECTION\r\n"
                                 + "BSS SECTION\r\n"
+                                + "DATA SECTION\r\n"
                                 + " DEF GLOBAL a := 1 <INT>\r\n"
                                 + " DEF GLOBAL b := 2 <INT>\r\n"
-                                + "DATA SECTION\r\n"
                                 + "CODE SECTION\r\n"
                                 + " DEF i := 3 <INT>\r\n"
                                 + " DEF z := 4 <INT>\r\n"

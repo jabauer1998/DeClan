@@ -96,12 +96,12 @@ public class MyICodeTypeCheckerTest {
     public void testProg1(){
         String source = "SYMBOL SECTION\n"
                       + "BSS SECTION\n"
+                      + "DATA SECTION\n"
                       + "DEF GLOBAL a := 456 <INT>\n"
                       + "DEF GLOBAL b := 48393 <INT>\n"
                       + "DEF GLOBAL c := 8.23 <REAL>\n"
                       + "DEF GLOBAL c2 := TRUE <BOOL>\n"
                       + "DEF GLOBAL c3 := FALSE <BOOL>\n"
-                      + "DATA SECTION\n"
                       + "DEF d := a IADD b <INT>\n"
                       + "DEF e := b ISUB a <INT>\n"
                       + "DEF k := (GLOBAL c2) LOR (GLOBAL c3) <BOOL>\n"

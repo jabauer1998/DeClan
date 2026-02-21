@@ -147,9 +147,9 @@ public class ICodeGeneratorTest {
     public void testUnaryOp(){
         String program = "SYMBOL SECTION\r\n"
                        + "BSS SECTION\r\n"
+                       + "DATA SECTION\r\n"
                        + " DEF GLOBAL x := 38393 <INT>\r\n"
                        + " DEF GLOBAL z := BNOT y <BOOL>\r\n"
-                       + "DATA SECTION\r\n"
                        + "CODE SECTION\r\n"
                        + "END\r\n"
                        + "PROC SECTION\r\n";
@@ -170,9 +170,9 @@ public class ICodeGeneratorTest {
     public void testBooleanAssignment(){
         String program = "SYMBOL SECTION\r\n"
                        + "BSS SECTION\r\n"
+                       + "DATA SECTION\r\n"
                        + " DEF GLOBAL v := FALSE <BOOL>\r\n"
                        + " DEF GLOBAL z := TRUE <BOOL>\r\n"
-                       + "DATA SECTION\r\n"
                        + "CODE SECTION\r\n"
                        + "END\r\n"
                        + "PROC SECTION\r\n";
@@ -193,9 +193,9 @@ public class ICodeGeneratorTest {
     public void testNumAssignment(){
         String program = "SYMBOL SECTION\r\n"
                        + "BSS SECTION\r\n"
+                       + "DATA SECTION\r\n"
                        + " DEF GLOBAL x := 89309 <INT>\r\n"
                        + " DEF GLOBAL z := 438.343 <INT>\r\n"
-                       + "DATA SECTION\r\n"
                        + "CODE SECTION\r\n"
                        + "END\r\n"
                        + "PROC SECTION\r\n";
@@ -248,8 +248,8 @@ public class ICodeGeneratorTest {
     public void testStringDecl(){
         String program = "SYMBOL SECTION\r\n"
                        + "BSS SECTION\r\n"
-                       + " DEF GLOBAL t := \"Text Here\" <STRING>\r\n"
                        + "DATA SECTION\r\n"
+                       + " DEF GLOBAL t := \"Text Here\" <STRING>\r\n"
                        + "CODE SECTION\r\n"
                        + "END\r\n"
                        + "PROC SECTION\r\n";
@@ -270,8 +270,8 @@ public class ICodeGeneratorTest {
     public void testIfStatement(){
         String program = "SYMBOL SECTION\r\n"
                        + "BSS SECTION\r\n"
-                       + " DEF GLOBAL trueVal := TRUE <BOOL>\r\n"
                        + "DATA SECTION\r\n"
+                       + " DEF GLOBAL trueVal := TRUE <BOOL>\r\n"
                        + "CODE SECTION\n"
                        + " LABEL y\r\n"
                        + " IF x BEQ trueVal\r\n"
