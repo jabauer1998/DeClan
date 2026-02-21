@@ -23,13 +23,14 @@ DeClan (Depauw Compilers Language) is a compiler for a subset of the Oberon prog
 - `test/java/` - JUnit test files
 - `lib/` - Dependencies (ANTLR 4.13.2, JUnit 6.0.3)
 - `build/` - Build scripts (Linux shell, Windows PowerShell)
-- `tmp/` - Compiled output directory
+- `bin/` - Packaged JAR output (`Declan.jar` with ANTLR runtime bundled)
+- `tmp/` - Temporary compilation output directory (debug dumps)
 
 ## Build & Run
 - **Language**: Java 19 (GraalVM CE 22.3.1)
-- **Build**: `bash build/LinuxBuild.sh build` (generates ANTLR sources from `src/antlr/*.g4`, then compiles all Java)
+- **Build**: `bash build/LinuxBuild.sh build` (generates ANTLR sources, compiles Java, packages `bin/Declan.jar`)
 - **Test**: `bash build/LinuxBuild.sh test` (builds first, then compiles and runs JUnit tests)
-- **Run**: `java -cp 'tmp:lib/*' declan.driver.MyCompilerDriver`
+- **Run**: `java -cp 'bin/Declan.jar' declan.driver.MyCompilerDriver`
 - **Clean**: `bash build/LinuxBuild.sh clean`
 - **Environment**: Set `DECLIB=src/declan/std/lib` for standard library resolution
 
@@ -42,6 +43,7 @@ All packages now use the `declan.*` prefix matching the directory layout:
 - `declan.utils.*` - Exceptions, flow, matcher, position, source, symboltable
 
 ## Recent Changes
+- 2026-02-21: Updated LinuxBuild.sh to match WindowsBuild.ps1 (JAR packaging, ANTLR runtime bundling, classpath alignment)
 - 2026-02-18: Updated tools/Updater.ps1 to use direct `java -cp` calls to MyCompilerDriver instead of Maven (`mvn exec:java`)
 - 2026-02-18: Added ANTLR code generation step to build scripts (generates from `src/antlr/*.g4` into `declan.backend.assembler`)
 - 2026-02-18: Added test command to build scripts using JUnit Platform Console Standalone

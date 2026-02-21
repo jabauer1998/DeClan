@@ -41,21 +41,15 @@ if [ -n "$javaExists" ]; then
                 fi
             done
             cat "build/BuildList.txt"
-            CLASSPATH=""
-            for jar in lib/*.jar; do
-                if [ -f "$jar" ]; then
-                    if [ -n "$CLASSPATH" ]; then
-                        CLASSPATH="$CLASSPATH:"
-                    fi
-                    CLASSPATH="$CLASSPATH$jar"
-                fi
-            done
             mkdir -p tmp
-            if [ -n "$CLASSPATH" ]; then
-                javac "@build/BuildList.txt" -sourcepath "./src" -classpath "$CLASSPATH" -d "tmp" -encoding "UTF-8"
-            else
-                javac "@build/BuildList.txt" -sourcepath "./src" -d "tmp" -encoding "UTF-8"
+            mkdir -p bin
+            javac "@build/BuildList.txt" -d "./tmp" -sourcepath "./src" -cp "./lib/antlr-4.13.2-complete.jar" -encoding "UTF-8"
+            cd tmp && jar xf "../lib/antlr-4.13.2-complete.jar" && cd ..
+            if [ -f "./tmp/META-INF/MANIFEST.MF" ]; then
+                rm -f "./tmp/META-INF/MANIFEST.MF"
             fi
+            jar cf "./bin/Declan.jar" -C "./tmp" "."
+            rm -rf ./tmp/*
         elif [ "$command" = "test" ]; then
             echo "Building main sources first..."
             bash "$SCRIPT_DIR/LinuxBuild.sh" build
@@ -71,22 +65,14 @@ if [ -n "$javaExists" ]; then
                 fi
             done
             cat "build/TestBuildList.txt"
-            CLASSPATH="tmp"
-            for jar in lib/*.jar; do
-                if [ -f "$jar" ]; then
-                    CLASSPATH="$CLASSPATH:$jar"
-                fi
-            done
+            CLASSPATH="./bin/*:./lib/junit-platform-console-standalone-6.0.3.jar"
+            mkdir -p tmp
             javac "@build/TestBuildList.txt" -sourcepath "./test/java" -classpath "$CLASSPATH" -d "tmp" -encoding "UTF-8"
             rm -f build/TestBuildList.txt
-            RUNPATH="tmp"
-            for jar in lib/*.jar; do
-                if [ -f "$jar" ]; then
-                    RUNPATH="$RUNPATH:$jar"
-                fi
-            done
-            java -jar lib/junit-platform-console-standalone-6.0.3.jar execute --classpath "$RUNPATH" --scan-classpath tmp
+            java -jar lib/junit-platform-console-standalone-6.0.3.jar execute --classpath "./bin/Declan.jar:./lib/junit-platform-console-standalone-6.0.3.jar:./tmp" --scan-classpath
+            rm -rf ./tmp/*
         elif [ "$command" = "clean" ]; then
+            find ./src -name "*.class" -type f -delete
             rm -rf bin/*
             rm -rf tmp/*
         elif [ "$command" = "publish" ]; then
