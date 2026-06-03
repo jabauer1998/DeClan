@@ -18,6 +18,7 @@ public class TypeCheckerQualities implements Copyable<TypeCheckerQualities> {
     public static final int NEG = 0b00001000000;
     public static final int NULL = 0b0010000000;
     public static final int CONST = 0b100000000;
+    public static final int CHAR = 0b1000000000;
 
     public boolean containsQualities(int quality){
         return (quality & this.val) == quality;
@@ -37,7 +38,7 @@ public class TypeCheckerQualities implements Copyable<TypeCheckerQualities> {
         } else if(this.containsQualities(TypeCheckerQualities.VOID)){
             sb.append("VOID");  
         } else if(this.containsQualities(TypeCheckerQualities.BOOLEAN)){
-            sb.append("BOOLEAN");  
+            sb.append("BOOLEAN");
         } else {
 
             boolean first = true;
@@ -76,7 +77,14 @@ public class TypeCheckerQualities implements Copyable<TypeCheckerQualities> {
                 } else {
                     sb.append(" INTEGER");
                 }
-            }
+            } else if(this.containsQualities(TypeCheckerQualities.CHAR)){
+		if(first){
+		    first = false;
+		    sb.append("CHAR");
+		} else {
+		    sb.append(" CHAR");
+		}
+	    }
         }
 
         return sb.toString();

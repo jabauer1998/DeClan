@@ -21,6 +21,7 @@ import declan.middleware.icode.exp.NullableExp;
 import declan.middleware.icode.exp.RealExp;
 import declan.middleware.icode.exp.StrExp;
 import declan.middleware.icode.exp.UnExp;
+import declan.middleware.icode.exp.CharExp;
 import declan.middleware.icode.label.Label;
 import declan.middleware.icode.symbols.SymEntry;
 import declan.driver.Config;
@@ -55,6 +56,7 @@ import declan.frontend.ast.StrValue;
 import declan.frontend.ast.UnaryOperation;
 import declan.frontend.ast.VariableDeclaration;
 import declan.frontend.ast.WhileElifBranch;
+import declan.frontend.ast.CharValue;
 import declan.frontend.builder.AssignmentBuilder;
 import declan.frontend.builder.DefinitionBuilder;
 import declan.frontend.builder.IrBuilderContext;
@@ -839,6 +841,7 @@ public class MyICodeGenerator{
     else if(exp instanceof NumValue) return generateNumberIr((NumValue)exp, builder);
     else if(exp instanceof BoolValue) return generateBooleanIr((BoolValue)exp, builder);
     else if(exp instanceof StrValue) return generateStringIr((StrValue)exp, builder);
+    else if(exp instanceof CharValue) return generateCharIr((CharValue)exp, builder);
     else {
       throw new RuntimeException("Error Invalid Expression Type found when generating Ir at" + exp.getStart().toString());
     }
@@ -852,6 +855,7 @@ public class MyICodeGenerator{
             else if(exp instanceof NumValue) return generateNumberIr((NumValue)exp, builder);
             else if(exp instanceof BoolValue) return generateBooleanIr((BoolValue)exp, builder);
             else if(exp instanceof StrValue) return generateStringIr((StrValue)exp, builder);
+	    else if(exp instanceof CharValue) return generateCharIr((CharValue)exp, builder);
             else {
               throw new RuntimeException("Error Invalid Expression Type found when generating Ir at" + exp.getStart().toString());
             }
@@ -1202,6 +1206,11 @@ public class MyICodeGenerator{
   public IdentExp generateBooleanIr(BoolValue boolValue, DefinitionBuilder builder){
       String lexeme = boolValue.getLexeme(); //change to hex if you need to otherwise unchanged
       return builder.buildDefinition(Scope.LOCAL, new BoolExp(Boolean.parseBoolean(lexeme)), ICode.Type.BOOL);
+  }
+
+  public IdentExp generateCharIr(CharValue chrValue, DefinitionBuilder builder){
+      String lexeme = chrValue.getLexeme();
+      return builder.buildDefinition(Scope.LOCAL, new CharExp(lexeme.charAt(0)), ICode.Type.CHAR);
   }
 
   public IdentExp generateStringIr(StrValue strValue, DefinitionBuilder builder){

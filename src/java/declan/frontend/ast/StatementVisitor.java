@@ -18,6 +18,8 @@ public interface StatementVisitor<R> {
 
         R visitResult(Assignment Assignment);
 
+        R visitResult(ElementAssignment assign);
+
         R visitResult(ForBranch forbranch);
 
         R visitResult(IfElifBranch ifs);

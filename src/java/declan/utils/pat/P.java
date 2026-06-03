@@ -367,6 +367,13 @@ public abstract class P {
         }
     }
 
+    private static class CHAR extends P{
+	@Override
+	public boolean equals(Object obj){
+	    return obj instanceof CHAR;
+	}
+    }
+
     private static class PAT extends P{
         private P[] pattern;
 
@@ -590,6 +597,9 @@ public abstract class P {
     }
     public static RELOAD RELOAD() {
     	return new RELOAD();
+    }
+    public static CHAR CHAR(){
+	return new CHAR();
     }
 
     @Override

@@ -63,7 +63,7 @@ public class MyDeClanLexer implements Lexer<DeclanToken> {
 	}
 
 	private static enum State {
-	    INIT, IDENT, OP, STRING, COMMENT, NUM, HEX, EXP, REAL
+	    INIT, IDENT, OP, STRING, COMMENT, NUM, HEX, EXP, REAL, CHAR
 	}
 
 	/**
@@ -88,6 +88,11 @@ public class MyDeClanLexer implements Lexer<DeclanToken> {
 				    state = State.STRING;
 				    position = source.getPosition();
 				    source.advance();
+				    continue;
+				} else if (c == '\''){
+				    position = source.getPosition();
+				    source.advance();
+				    state = State.CHAR;
 				    continue;
 				} else if (Character.isLetter(c)){
 				    state = State.IDENT;
@@ -122,6 +127,16 @@ public class MyDeClanLexer implements Lexer<DeclanToken> {
 				    nextToken = DeclanToken.createId(lexeme.toString(), position);
 				    return;
 				}
+			case CHAR:
+			    if(c != '\''){
+				source.advance();
+				lexeme.append(c);
+				continue;
+			    } else {
+				nextToken = DeclanToken.createChar(lexeme.toString(), position);
+				source.advance();
+				return;
+			    }
 			case STRING:
 			    if(c != '\"'){
 					source.advance();

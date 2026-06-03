@@ -680,7 +680,7 @@ public class AssemblerVisitor implements ArmAssemblerVisitor<Integer> {
         }
 
         Integer offsetRaw = address.accept(this);
-        result |= offsetRaw;
+	result |= offsetRaw;
 
         Integer regNum = generateNumberFromReg(REG.getText());
         result |= regNum << 12;
@@ -1194,16 +1194,17 @@ public class AssemblerVisitor implements ArmAssemblerVisitor<Integer> {
         if(Matcher.match(expression)) {
             Integer targetAdress = expression.accept(this);
             Integer currentAddress = instructionOrDirectiveAdresses.get(this.currentInstructionOrDirective);
+	    
             Integer offset = targetAdress - (currentAddress + 4);
-
+	    
             if(offset >= 0){
                 result |= (1 << 23);
             } else {
                 result |= (0 << 23);
             }
 
-            offset = Math.abs(offset);
-            result |= ((offset & 0xfff) << 0);
+            offset = (offset >= 0) ? offset : -offset;
+            result |= (offset & 0xfff);
 
             result |= (0 << 25);
 
@@ -1940,8 +1941,10 @@ public class AssemblerVisitor implements ArmAssemblerVisitor<Integer> {
         AntlrToken<Integer> IDENT = Factory.decorateToken(ctx.IDENT());
 
         if(this.labelAdresses.containsKey(ctx.getText())){
+	    System.out.println("Label Addresses for " + ctx.getText() + " " + this.labelAdresses.get(ctx.getText()));
             return this.labelAdresses.get(ctx.getText());
         } else {
+	    System.out.println("Error no Addresses for " + ctx.getText());
             return 0;
         }
     }
@@ -1950,12 +1953,15 @@ public class AssemblerVisitor implements ArmAssemblerVisitor<Integer> {
     public Integer visitSingle(SingleContext ctx) {
         AntlrToken<Integer> identifier = Factory.decorateToken(ctx.identifier());
         AntlrToken<Integer> number = Factory.decorateToken(ctx.number());
+	AntlrToken<Integer> realNumber = Factory.decorateToken(ctx.realNumber());
 
         if(Matcher.match(identifier)){
             return identifier.accept(this);
         } else if(Matcher.match(number)){
             return number.accept(this);
-        } else {
+        } else if(Matcher.match(realNumber)){
+	    return realNumber.accept(this);
+	} else {
             return 0;
         }
     }

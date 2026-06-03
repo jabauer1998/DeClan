@@ -108,6 +108,9 @@ public class Pattern {
     
     //String Init/Assign Patterns
     public static P str0 = P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.STR()), P.STR());
+
+    //Char Assign Pattern
+    public static P char0 = P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.CHAR()), P.CHAR());
     
     //Identifier Assignments Patterns
     public static P id0 = P.PAT(P.DEF(), P.ID(), P.ASSIGN(), P.PAT(P.ID()), P.BOOL());

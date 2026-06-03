@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
 import declan.frontend.Parser;
 import declan.utils.ErrorLog;
 import declan.frontend.ast.*;
@@ -358,6 +357,8 @@ public class MyDeClanParser implements Parser{
       Identifier ident = parseIdentifier();
       if(willMatch(DeclanTokenType.ASSIGN)) {
 	      statement = parseAssignment(ident);
+      } else if(willMatch(DeclanTokenType.LBRACK)){
+	      statement = parseElementAssignment(ident);
       } else {
 	      statement = parseProcedureCall(ident);
       }
@@ -519,6 +520,17 @@ public class MyDeClanParser implements Parser{
     return new Assignment(start, toBeAssigned, exp);
   }
 
+  //ElementAssignment -> ident [ Expression ] := Expression
+  private ElementAssignment parseElementAssignment(Identifier ident){
+      Position start = currentPosition;
+      match(DeclanTokenType.LBRACK);
+      Expression index = parseExpression();
+      match(DeclanTokenType.RBRACK);
+      match(DeclanTokenType.ASSIGN);
+      Expression exp = parseExpression();
+      return new ElementAssignment(start, ident, index, exp);
+  }
+
   //ExpList -> Expression ExpListRest
   //ExpListRest -> , Expression
   //ExpListRest ->
@@ -675,19 +687,23 @@ public class MyDeClanParser implements Parser{
       return BinaryOperation.OpType.MOD;
     }
   }
-  // Factor -> number | ident | string | functioncall | TRUE | FALSE | ~FACTOR
+  // Factor -> number | ident | string | character | functioncall | TRUE | FALSE | ~FACTOR
   // Factor -> ( Expression )
   private Expression parseFactor(){
     if(willMatch(DeclanTokenType.NUM)){
       return parseNumValue(); 
     } else if (willMatch(DeclanTokenType.TRUE) || willMatch(DeclanTokenType.FALSE)){
       return parseBoolValue();
+    } else if (willMatch(DeclanTokenType.CHAR)){
+      return parseCharValue();
     } else if(willMatch(DeclanTokenType.ID)){
       DeclanToken id = skip();
       Position start = currentPosition;
       if(willMatch(DeclanTokenType.LPAR)){
 	      List<Expression> expList = parseActualParameters();
 	      return new FunctionCall(start, new Identifier(start, id.getLexeme()), expList);
+      } else if(willMatch(DeclanTokenType.LBRACK)){
+	      return parseElementAccess(id);
       } else {
 	      return parseIdentifier(id);
       }
@@ -716,7 +732,14 @@ public class MyDeClanParser implements Parser{
     Position start = currentPosition;
     return new Identifier(start, id.getLexeme());
   }
-  
+  //ElementAccess -> IDENT [ Expression ]
+  private ElementAccess parseElementAccess(DeclanToken id){
+    Position start = currentPosition;
+    match(DeclanTokenType.LBRACK);
+    Expression index = parseExpression();
+    match(DeclanTokenType.RBRACK);
+    return new ElementAccess(start, id.getLexeme(), index); 
+  }
   //number -> NUM
   private NumValue parseNumValue() {
     DeclanToken num = match(DeclanTokenType.NUM);
@@ -724,13 +747,19 @@ public class MyDeClanParser implements Parser{
     return new NumValue(start, num.getLexeme());
   }
 
+  //Character -> CHAR
+  private CharValue parseCharValue(){
+      DeclanToken chr = match(DeclanTokenType.CHAR);
+      Position start = currentPosition;
+      return new CharValue(start, chr.getLexeme());
+  }
   //string -> STRING
   private StrValue parseStrValue() {
     DeclanToken str = match(DeclanTokenType.STRING);
     Position start = currentPosition;
     return new StrValue(start, str.getLexeme());
   }
-  //Number == true of false
+  //Bool == true or false
   private BoolValue parseBoolValue() {
     if(willMatch(DeclanTokenType.TRUE)){
       skip();

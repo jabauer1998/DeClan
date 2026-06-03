@@ -89,6 +89,19 @@ public class DeclanToken implements Token {
 		return new DeclanToken(position, DeclanTokenType.STRING, lexeme);
 	}
 
+        /**
+	 * Create a Token for a string literal. The lexeme is just the contents of the
+	 * string (without surrounding quotes).
+	 * 
+	 * @param lexeme
+	 * @param line
+	 * @param column
+	 * @return
+	 */
+	public static DeclanToken createChar(String lexeme, Position position) {
+		return new DeclanToken(position, DeclanTokenType.CHAR, lexeme);
+	}
+
 	/**
 	 * Create a Token for a numeric literal.
 	 * 

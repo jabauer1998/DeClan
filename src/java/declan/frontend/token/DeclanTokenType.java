@@ -7,7 +7,8 @@ import java.util.Map;
 public enum DeclanTokenType {
 	ID, // identifier, such as a variable name
 	NUM, // numeric literal
-	STRING, // string literal
+	STRING,
+	CHAR,
 	LT, // less than "<"
 	LE, // less than or equal "<="
 	GT, // greater than ">"
@@ -27,6 +28,8 @@ public enum DeclanTokenType {
 	SEMI, // semicolon ";"
 	COMMA, // comma ","
 	PERIOD, // period "."
+	RBRACK, // right bracket [
+	LBRACK, // left bracket ]
 	// the rest are reserved words whose lexeme matches their name
 	BEGIN, BY, CONST, DIV, DO, ELSE, ELSIF, END, FALSE, FOR, IF, MOD, OR, PROCEDURE, REPEAT, RETURN, THEN, TO, TRUE, UNTIL, VAR, WHILE, BAND, BOR, BXOR, LSHIFT, RSHIFT, BNOT;
 
@@ -143,6 +146,8 @@ public enum DeclanTokenType {
 		addSingleOp(';', SEMI);
 		addSingleOp(',', COMMA);
 		addSingleOp('.', PERIOD);
+		addSingleOp('[', LBRACK);
+	        addSingleOp(']', RBRACK);
 		
 		dualOperators = new TreeMap<>();
 		addDualOp(">=", GE);

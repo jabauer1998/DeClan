@@ -32,6 +32,9 @@ import declan.frontend.ast.StrValue;
 import declan.frontend.ast.UnaryOperation;
 import declan.frontend.ast.VariableDeclaration;
 import declan.frontend.ast.WhileElifBranch;
+import declan.frontend.ast.CharValue;
+import declan.frontend.ast.ElementAccess;
+import declan.frontend.ast.ElementAssignment;
 import declan.frontend.ast.BinaryOperation.OpType;
 import declan.utils.symboltable.Environment;
 import declan.utils.symboltable.entry.ProcedureEntry;
@@ -96,6 +99,8 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 	    return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 	} else if (str.equals("VOID")){
 	    return new TypeCheckerQualities(TypeCheckerQualities.VOID);
+	} else if(str.equals("CHAR")) {
+	    return new TypeCheckerQualities(TypeCheckerQualities.CHAR);
 	} else {
 	    return new TypeCheckerQualities(TypeCheckerQualities.NA);
 	}
@@ -367,12 +372,35 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 			|| (expression.containsQualities(TypeCheckerQualities.STRING) && entry.missingQualities(TypeCheckerQualities.STRING))
 			|| (entry.containsQualities(TypeCheckerQualities.STRING) && expression.missingQualities(TypeCheckerQualities.STRING))
 			|| (entry.containsQualities(TypeCheckerQualities.BOOLEAN) && expression.missingQualities(TypeCheckerQualities.BOOLEAN))
-			|| (expression.containsQualities(TypeCheckerQualities.BOOLEAN) && entry.missingQualities(TypeCheckerQualities.BOOLEAN))){
+		        || (expression.containsQualities(TypeCheckerQualities.BOOLEAN) && entry.missingQualities(TypeCheckerQualities.BOOLEAN))
+			|| (expression.containsQualities(TypeCheckerQualities.CHAR) && entry.missingQualities(TypeCheckerQualities.CHAR))
+			|| (entry.containsQualities(TypeCheckerQualities.CHAR) && expression.missingQualities(TypeCheckerQualities.CHAR))){
 				errorLog.add("Variable in Assignment " + name + " is of type " + entry + " but expression is of type " + expression, assignment.getStart());
 			}
 		} else {
 			errorLog.add("Undeclared Variable " + assignment.getVariableName().toString() + " in " + assignment.toString(), assignment.getStart());
 		}
+    }
+
+    @Override
+    public void visit(ElementAssignment assignment) {
+	String name = assignment.getVariableName().getLexeme();
+		if(varEnvironment.entryExists(name)){
+			TypeCheckerQualities entry = varEnvironment.getEntry(name);
+			TypeCheckerQualities expression = assignment.getVariableValue().acceptResult(this);
+			
+			if(expression.containsQualities(TypeCheckerQualities.VOID) || expression.containsQualities(TypeCheckerQualities.NA) || expression.containsQualities(TypeCheckerQualities.NULL)
+			   || (expression.containsQualities(TypeCheckerQualities.CHAR) && entry.missingQualities(TypeCheckerQualities.STRING))){
+				errorLog.add("Variable in Element Assignment " + name + " is of type " + entry + " but expression is of type " + expression, assignment.getStart());
+			}
+		} else {
+			errorLog.add("Undeclared Variable " + assignment.getVariableName().toString() + " in " + assignment.toString(), assignment.getStart());
+		}
+
+		TypeCheckerQualities index = assignment.getVariableIndex().acceptResult(this);
+
+		if(index.missingQualities(TypeCheckerQualities.INTEGER))
+		    errorLog.add("Expected index for " + name + " to be of type INTEGER", assignment.getStart());
     }
   
     @Override
@@ -397,6 +425,11 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
     @Override
     public void visit(StrValue numValue) {
 	// Not used
+    }
+
+    @Override
+    public void visit(CharValue val){
+	//not used
     }
 
     @Override
@@ -1186,6 +1219,33 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
     }
 
     @Override
+    public TypeCheckerQualities visitResult(ElementAccess ident){
+		if(!varEnvironment.entryExists(ident.getLexeme())){
+			errorLog.add("Couldnt find entry for " + ident.getLexeme(), ident.getStart());
+			return new TypeCheckerQualities(TypeCheckerQualities.NULL);
+		}
+
+		TypeCheckerQualities qual = varEnvironment.getEntry(ident.getLexeme());
+
+		TypeCheckerQualities index = ident.getExpression().acceptResult(this);
+
+		if(index.missingQualities(TypeCheckerQualities.INTEGER))
+		    errorLog.add("Expected qualities for " + ident.getLexeme() + " to be of type integer because it is an index!!!", ident.getStart());
+
+		if(qual.containsQualities(TypeCheckerQualities.STRING))
+		    return new TypeCheckerQualities(TypeCheckerQualities.CHAR);
+		else
+		    errorLog.add("Qualities for " + ident.getLexeme() + " is not an array type!!!", ident.getStart());
+
+		return new TypeCheckerQualities(TypeCheckerQualities.NULL);
+    }
+
+    @Override
+    public void visit(ElementAccess acc){
+	//Do nothing
+    }
+
+    @Override
     public TypeCheckerQualities visitResult(NumValue numValue){
 		String lexeme = numValue.getLexeme();
 		int result = 0;
@@ -1209,6 +1269,11 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
     @Override
     public TypeCheckerQualities visitResult(StrValue strValue){
 		return new TypeCheckerQualities(TypeCheckerQualities.STRING);
+    }
+
+    @Override
+    public TypeCheckerQualities visitResult(CharValue charVal){
+	return new TypeCheckerQualities(TypeCheckerQualities.CHAR);
     }
 
 	@Override

@@ -32,7 +32,10 @@ import declan.frontend.ast.StrValue;
 import declan.frontend.ast.UnaryOperation;
 import declan.frontend.ast.VariableDeclaration;
 import declan.frontend.ast.WhileElifBranch;
+import declan.frontend.ast.CharValue;
 import declan.utils.symboltable.entry.VariableEntry;
+import declan.frontend.ast.ElementAccess;
+import declan.frontend.ast.ElementAssignment;
 
 /**
  * This is an implementation of the ASTVisitor that encapsulates the algorithm
@@ -138,6 +141,11 @@ public class MyPostfixInterpreterVisitor implements ASTVisitor {
 	}
 
         @Override
+	public void visit(ElementAssignment assignment){
+	    //Do nothing at this point
+	}
+
+        @Override
 	public void visit(ForBranch assignment) {
 	    //do nothing this is not needed yet
 	}
@@ -193,6 +201,11 @@ public class MyPostfixInterpreterVisitor implements ASTVisitor {
 	}
 
         @Override
+	public void visit(CharValue val){
+	    
+	}
+
+        @Override
 	public void visit(StrValue strValue) {
 	   
 	}
@@ -200,6 +213,11 @@ public class MyPostfixInterpreterVisitor implements ASTVisitor {
         @Override
 	public void visit(BoolValue boolValue) {
 	   
+	}
+
+        @Override
+	public void visit(ElementAccess access){
+	    //Do nothing
 	}
 
 	@Override

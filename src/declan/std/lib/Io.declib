@@ -1,79 +1,216 @@
 PROCEDURE WriteLn();
     BEGIN
-		asm("SWI 4");
+	WriteChar('\n');
     END WriteLn;
-
-PROCEDURE WriteString(s: STRING);
-    VAR addressHolder: INTEGER; offsetHolder: INTEGER; valueHolder: INTEGER; tempHolder: INTEGER;
+PROCEDURE WriteChar(c: CHAR);
     BEGIN
-	addressHolder := StringAsAddress(s);
-	offsetHolder := 0;
-	asm("LDRB %dr, [%ur, +%ur]": valueHolder, addressHolder, offsetHolder);
-	asm("STR %ur, %da": valueHolder, valueHolder);
-	WHILE(~IntIsZero(valueHolder)) DO
-	   asm("MOV %dr, R0": tempHolder);
-	   asm("MOV R0, %ur": valueHolder);
-	   asm("SWI 6");
-	   offsetHolder := offsetHolder + 1;
-	   asm("LDRB %dr, [%ur, +%ur]": valueHolder, addressHolder, offsetHolder);
-	   asm("STR %ur, %da": valueHolder, valueHolder);
-	   asm("MOV R0, %ur": tempHolder)
+        asm("LDRB R0, %ua": c);
+	asm("SWI WriteChar");
+    END WriteChar;
+PROCEUDRE ReadChar(): CHAR;
+    VAR c: CHAR;
+    BEGIN
+	asm("SWI ReadChar");
+	asm("STR R0, %da": c);
+	RETURN c
+    END ReadChar;
+PROCEDURE WriteString(s: STRING);
+    VAR index: INTEGER;
+    BEGIN
+	index := 0;
+	WHILE (s[index] != '\0') BEGIN
+	     WriteChar(s[index]);
+	     index = index + 1
 	END
     END WriteString;
-
 PROCEDURE WriteInt(i: INTEGER);
-	VAR tempReg: INTEGER;
+    VAR modRes: INTEGER; byteRes: CHAR;
     BEGIN
-		asm("MOV %dr, R0": tempReg);
-		asm("LDR R0, %ua": i);
-		asm("SWI 1");
-		asm("MOV R0, %ur": tempReg)
+	WHILE(i > 0) BEGIN
+	     modRes := i MOD 10;
+	     byteRes := IntToByte(modRes);
+	     byteRes := byteRes | '0';
+	     WriteChar(byteRes);
+	     i := i DIV 10
+	END
     END WriteInt;
 
 PROCEDURE WriteReal(r: REAL);
-	VAR tempReg: INTEGER;
+    VAR intR: INTEGER;
     BEGIN
-		asm("MOV %dr, R0": tempReg);
-		asm("LDR R0, %ua": r);
-		asm("SWI 2");
-		asm("MOV R0, %ur": tempReg)
+	intR := RealToInt(r);
+	WriteInt(intR);
+	r := r - IntToReal(intR);
+	r := RMul(r, IntToReal(Pow(10, 6)));
+	intR := RealToInt(r);
+	WriteInt(intR)
     END WriteReal;
 
 PROCEDURE WriteBool(b: BOOLEAN);
-	VAR tempReg: INTEGER;
+    VAR tempReg: INTEGER;
     BEGIN
-		asm("MOV %dr, R0": tempReg);
-		asm("LDRB R0, %ua": b);
-		asm("SWI 6");
-		asm("MOV R0, %ur": tempReg)
-	END WriteBool;
+	IF b THEN
+	   WriteString("TRUE");
+	ELSE 
+	   WriteString("FALSE");
+	END
+    END WriteBool;
 
-PROCEDURE ReadInt();
-    VAR result: INTEGER; tempReg: INTEGER;
+PROCEDURE ReadString(str: STRING);
+    VAR index: INTEGER; c: CHAR;
     BEGIN
-		asm("MOV %dr, R0": tempReg);
-		asm("SWI 3");
-		asm("STR R0, %da": result);
-		asm("MOV R0, %ur": tempReg)
-		RETURN result
+	SkipWhiteSpace();
+	c := PeekChar();
+	WHILE (~AtEoI() & c != ' ' & c != '\t' & c != '\r') DO
+	    str[index] := c;
+	    index := index + 1;
+	    c := ReadChar()
+	END;
+	str[index] := '\0'
+    END ReadString;
+    
+PROCEDURE IsDigit(c: CHAR): BOOLEAN;
+    VAR result: BOOLEAN;
+    BEGIN
+         RETURN (c >= '0') & (c <= '9')
+    END IsDigit;
+    
+    
+PROCEDURE ReadDigit(): INTEGER;
+    VAR result: INTEGER; res: CHAR;
+    BEGIN
+	res := '\0';
+	IF ~AtEoI() THEN
+	   res := PeekChar();
+	   IF IsDigit(res) THEN
+	       res := ReadChar()
+	   ELSE
+	       res := '\0'
+	   END
+	END;
+
+	IF (res == '\0') THEN
+	    result := -1
+	ELSE
+	    result := res - '0'
+	END;
+	
+	RETURN result
+    END ReadDigit;
+
+PROCEDURE ReadInt(): INTEGER;
+    VAR result: INTEGER; digitChar: CHAR;
+    BEGIN
+	SkipWhiteSpace();
+	result := 0;
+	digitChar := PeekChar();
+	WHILE(IsDigit(digitChar)) DO
+	    result := result * 10;
+	    result := result + ReadDigit();
+	    digitChar := PeekChar()
+	END;
     END ReadInt;
 
-PROCEDURE ReadReal();
-    VAR result: REAL; tempReg: INTEGER;
+PROCEDURE ReadReal(): REAL;
+    VAR result: REAL; beforeDot: INTEGER; dot: CHAR; str: STRING; index: INTEGER; digit: CHAR;
     BEGIN
-		asm("MOV %dr, R0": tempReg);
-        asm("SWI 5");
-        asm("STR R0, %da": result);
-		asm("MOV R0, %ur": tempReg)
-		RETURN result
+        beforeDot := ReadInt();
+	IF PeekChar() = '.' THEN
+	   SkipChar();
+	   digit := PeekChar();
+	   index := 1
+	   result := beforeDot;
+	   WHILE (IsDigit(digit)) DO
+	       result := result + (ReadDigit() / (10^index));
+	       index := index + 1;
+	       digit := PeekChar()
+	   END
+	ELSE
+	   result := beforeDot
+	END;
+	RETURN result
     END ReadReal;
 
-PROCEDURE ReadBool();
-	VAR result: BOOLEAN; tempReg: INTEGER;
+PROCEDURE AtEoI(): BOOLEAN;
+	 VAR c: CHAR;
+         BEGIN
+	     c := PeekChar();
+	     RETURN c == '\0';
+         END
+	 
+PROCEUDRE PeekWhiteSpace(): BOOLEAN;
+	VAR c: CHAR; VAR b: RESULT;
 	BEGIN
-		asm("MOV %dr, R0": tempReg);
-		asm("SWI 7");
-		asm("STRB R0, %da": result);
-		asm("MOV R0, %ur": tempReg)
-		RETURN result
+	    IF atEoI() THEN
+	       b := FALSE
+	    ELSE
+	       c := PeekChar();
+	       b := c == ' ' || c == '\t' || c == '\r' || c == '\n'
+	    END;
+	    RETURN b
+	END
+
+PROCEUDRE SkipChar(): BOOLEAN;
+	  BEGIN
+	      asm("SWI SkipChar");
+	  END
+	
+PROCEUDRE SkipToWhiteSpace();
+	VAR c: CHAR;
+	BEGIN
+	    WHILE (~PeekWhiteSpace()) DO
+	    	  SkipChar();
+	    END
+	END
+
+PROCEDURE SkipWhiteSpace();
+	VAR c: CHAR;
+	BEGIN
+	    WHILE (PeekWhiteSpace()) DO
+	    	  SkipChar();
+	    END
+	END
+
+PROCEDURE ReadBool();
+	VAR result: BOOLEAN; found: BOOLEAN; c: CHAR;
+	BEGIN
+	    found := FALSE;
+	    result := FALSE;
+	    c := '\0';
+	    WHILE (~found) DO
+		SkipWhiteSpace();
+                IF c == 'T' THEN
+		   c := ReadChar();
+		   IF c == 'R' THEN
+		       c := ReadChar();
+		       IF c == 'U' THEN
+		       	  c := ReadChar();
+			  IF c == 'E' THEN
+			      found := TRUE;
+			      result := TRUE;
+			  END;
+		       END
+		   END
+		ELSIF c == 'F' THEN
+		    c := ReadChar();
+		    IF c == 'A' THEN
+		       c := ReadChar();
+		       IF c == 'L' THEN
+		       	  c := ReadChar();
+			  IF c == 'S' THEN
+			     c := ReadChar();
+			     IF c == 'e' THEN
+			         found := TRUE;
+				 result := FALSE;
+			     END
+			  END
+		       END
+		    END
+		END;
+		IF ~found THEN
+		   SkipToWhiteSpace()
+		END
+	    END
+	    
+	    RETURN result
 	END ReadBool;

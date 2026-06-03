@@ -113,17 +113,6 @@ SYMBOL SECTION
  ENTRY h45 INTERNAL PARAM divisor Div 1 <INT>
  ENTRY h55 INTERNAL RETURN Div <INT>
  ENTRY h57 INTERNAL RETURN RDivide <REAL>
- ENTRY h62 INTERNAL addressHolder WriteString <INT>
- ENTRY h63 INTERNAL offsetHolder WriteString <INT>
- ENTRY h64 INTERNAL valueHolder WriteString <INT>
- ENTRY h65 INTERNAL tempHolder WriteString <INT>
- ENTRY h66 INTERNAL result StringAsAddress <INT>
- ENTRY h67 INTERNAL temp StringAsAddress <INT>
- ENTRY h68 INTERNAL PARAM s StringAsAddress 0 <STRING>
- ENTRY h69 INTERNAL RETURN StringAsAddress <INT>
- ENTRY h79 INTERNAL PARAM s WriteString 0 <STRING>
- ENTRY h80 INTERNAL tempReg WriteReal <INT>
- ENTRY h81 INTERNAL PARAM r WriteReal 0 <REAL>
 BSS SECTION
  DEF GLOBAL f24 := 0.0 <REAL>
  DEF GLOBAL f25 := 0.0 <REAL>
@@ -148,8 +137,8 @@ CODE SECTION
  DEF h60 := (RETURN h57) <REAL>
  GLOBAL f24 := h60 <REAL>
  DEF h61 := "Result as real: " <STRING>
- CALL WriteString([h61 -> h79]<STRING>)
- CALL WriteReal([(GLOBAL f24) -> h81]<REAL>)
+ CALL WriteString([h61 -> h62]<STRING>)
+ CALL WriteReal([(GLOBAL f24) -> h63]<REAL>)
  CALL WriteLn()
 END
 PROC SECTION
@@ -965,81 +954,12 @@ PROC SECTION
   LABEL WHILEEND_2_LEVEL_0_0
   DEF RETURN h55 := g98 <INT>
  RETURN FROM Div
- PROC LABEL WriteString
-  DEF h62 := 0 <INT>
-  DEF h63 := 0 <INT>
-  DEF h64 := 0 <INT>
-  DEF h65 := 0 <INT>
-  CALL StringAsAddress([(PARAM h79) -> h68]<STRING>)
-  DEF h70 := (RETURN h69) <INT>
-  h62 := h70 <INT>
-  DEF h71 := 0 <INT>
-  h63 := h71 <INT>
-  IPARAM h64 <INT> %dr
-  IPARAM h62 <INT> %ur
-  IPARAM h63 <INT> %ur
-  IASM "LDRB %dr, [%ur, +%ur]"
-  IPARAM h64 <INT> %ur
-  IPARAM h64 <INT> %da
-  IASM "STR %ur, %da"
-  CALL IntIsZero([h64 -> f78]<INT>)
-  DEF h72 := (RETURN f82) <BOOL>
-  DEF h73 := BNOT h72 <BOOL>
-  DEF h74 := TRUE <BOOL>
-  IF h73 BEQ h74
-  THEN WHILESTAT_0_SEQ_0_LEVEL_0_2
-  ELSE WHILENEXT_0_SEQ_0_LEVEL_0_2
-  LABEL WHILECOND_0_SEQ_0_LEVEL_0_2
-  IF h73 BEQ h74
-  THEN WHILESTAT_0_SEQ_0_LEVEL_0_2
-  ELSE WHILEEND_0_LEVEL_0_2
-  LABEL WHILESTAT_0_SEQ_0_LEVEL_0_2
-  IPARAM h65 <INT> %dr
-  IASM "MOV %dr, R0"
-  IPARAM h64 <INT> %ur
-  IASM "MOV R0, %ur"
-  IASM "SWI 6"
-  DEF h75 := 1 <INT>
-  DEF h76 := h63 IADD h75 <INT>
-  h63 := h76 <INT>
-  IPARAM h64 <INT> %dr
-  IPARAM h62 <INT> %ur
-  IPARAM h63 <INT> %ur
-  IASM "LDRB %dr, [%ur, +%ur]"
-  IPARAM h64 <INT> %ur
-  IPARAM h64 <INT> %da
-  IASM "STR %ur, %da"
-  IPARAM h65 <INT> %ur
-  IASM "MOV R0, %ur"
-  CALL IntIsZero([h64 -> f78]<INT>)
-  DEF h77 := (RETURN f82) <BOOL>
-  DEF h78 := BNOT h77 <BOOL>
-  h73 := h78 <BOOL>
-  GOTO WHILECOND_0_SEQ_0_LEVEL_0_2
-  LABEL WHILENEXT_0_SEQ_0_LEVEL_0_2
-  LABEL WHILEEND_0_LEVEL_0_2
- RETURN FROM WriteString
- PROC LABEL StringAsAddress
-  DEF h66 := 0 <INT>
-  DEF h67 := 0 <INT>
-  IPARAM h67 <INT> %dr
-  IPARAM (PARAM h68) <STRING> %ua
-  IASM "LDR %dr, %ua"
-  IPARAM h67 <INT> %ur
-  IPARAM h66 <INT> %da
-  IASM "STR %ur, %da"
-  DEF RETURN h69 := h66 <INT>
- RETURN FROM StringAsAddress
- PROC LABEL WriteReal
-  DEF h80 := 0 <INT>
-  IPARAM h80 <INT> %dr
-  IASM "MOV %dr, R0"
-  IPARAM (PARAM h81) <REAL> %ua
-  IASM "LDR R0, %ua"
-  IASM "SWI 2"
-  IPARAM h80 <INT> %ur
-  IASM "MOV R0, %ur"
- RETURN FROM WriteReal
  PROC LABEL WriteLn
-  IASM "SWI 4"
+  DEF h64 := \ <CHAR>
+  CALL WriteChar([h64 -> h65]<CHAR>)
  RETURN FROM WriteLn
+ PROC LABEL WriteChar
+  IPARAM (PARAM h65) <CHAR> %ua
+  IASM "LDRB R0, %ua"
+  IASM "SWI WriteChar"
+ RETURN FROM WriteChar

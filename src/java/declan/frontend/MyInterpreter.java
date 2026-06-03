@@ -29,12 +29,15 @@ import declan.frontend.ast.Program;
 import declan.frontend.ast.RepeatBranch;
 import declan.frontend.ast.Statement;
 import declan.frontend.ast.StrValue;
+import declan.frontend.ast.CharValue;
 import declan.frontend.ast.UnaryOperation;
 import declan.frontend.ast.VariableDeclaration;
 import declan.frontend.ast.WhileElifBranch;
 import declan.utils.symboltable.Environment;
 import declan.utils.symboltable.entry.ProcedureEntry;
 import declan.utils.symboltable.entry.VariableEntry;
+import declan.frontend.ast.ElementAssignment;
+import declan.frontend.ast.ElementAccess;
 
 import java.lang.Object;
 import java.io.IOException;
@@ -120,8 +123,12 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	    varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, false));
     } else if (type.equals("REAL")){
 	    varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, 0.0f));
-    } else {
+    } else if (type.equals("INTEGER")){
 	    varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, 0));
+    } else if(type.equals("STRING")){
+	    varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, ""));
+    } else if(type.equals("CHAR")){
+	    varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, '\0'));
     }
   }
 
@@ -162,6 +169,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
          standardOutput.append(val.toString());
         }catch(IOException exp){}
     } else if(procName.equals("WriteString") || procName.equals("PrintString")) {
+      Object value = (Object)procedureCall.getArguments().get(0).acceptResult(this);
+      try{
+        standardOutput.append(value.toString());
+      }catch(IOException exp){}
+    } else if(procName.equals("WriteChar")) {
       Object value = (Object)procedureCall.getArguments().get(0).acceptResult(this);
       try{
         standardOutput.append(value.toString());
@@ -395,6 +407,27 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       }
     }
   }
+
+  @Override
+  public void visit(ElementAssignment assignment) {
+    String name = assignment.getVariableName().getLexeme();
+    if(varEnvironment.entryExists(name)){
+      VariableEntry entry = varEnvironment.getEntry(name);
+      if(entry.isConst()){
+	      errorLog.add("Variable " + assignment.getVariableName().getLexeme() + " declared as const ", assignment.getVariableName().getStart());
+      } else if(entry.getValue() instanceof String){
+        Object value = assignment.getVariableValue().acceptResult(this);
+	Object index = assignment.getVariableIndex().acceptResult(this);
+        if(value instanceof Character && index instanceof Integer){
+	    char valChar = (char)value;
+	    String original = (String)entry.getValue();
+	    StringBuilder sb = new StringBuilder(original);
+	    sb.setCharAt((int)index, valChar);
+	    entry.setValue(sb.toString());
+	}
+      }
+    }
+  }
   
   @Override
   public void visit(EmptyStatement emptyStatement) {
@@ -418,6 +451,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   @Override
   public void visit(StrValue numValue) {
     // Not used
+  }
+
+  @Override
+  public void visit(CharValue cVal) {
+      //not used
   }
 
   @Override
@@ -489,6 +527,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       String line = scanner.nextLine();
       scanner.close();
       return Boolean.parseBoolean(line);
+    } else if(funcName.equals("readChar") || funcName.equals("ReadChar")) {
+      Scanner scanner = new Scanner(standardIn);
+      String line = scanner.nextLine();
+      scanner.close();
+      return line.charAt(0);
     } else if(funcName.equals("realBinaryAsInt") || funcName.equals("RealBinaryAsInt")){
       float argument = ConversionUtils.toReal(funcCall.getArguments().get(0).acceptResult(this));
       return Float.floatToRawIntBits(argument);
@@ -547,6 +590,22 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       default: return null;
     }
   }
+
+  @Override
+  public Object visitResult(ElementAccess access){
+    VariableEntry ident = varEnvironment.getEntry(access.getLexeme());
+    Object value = ident.getValue();
+    Object index = access.getExpression().acceptResult(this);
+
+    if(value instanceof String && index instanceof Integer){
+	String valText = (String)value;
+	int index2 = (int)index;
+
+	return valText.charAt(index2);
+    } else {
+	return null;
+    }
+  }
     
   @Override
   public Object visitResult(Identifier identifier){
@@ -576,6 +635,16 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   }
 
   @Override
+  public Object visitResult(CharValue chrValue){
+      String lexeme = chrValue.getLexeme();
+      if(!lexeme.isEmpty()){
+	  return lexeme.charAt(0);
+      } else {
+	  return '\0';
+      }
+  }
+
+  @Override
   public Object visitResult(StrValue strValue){
     return strValue.getLexeme();
   }
@@ -596,5 +665,9 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 
   @Override
   public void visit(Asm asm) {
+  }
+
+  @Override
+  public void visit(ElementAccess access){
   }
 }

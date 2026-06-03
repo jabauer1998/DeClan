@@ -49,6 +49,8 @@ public interface ASTVisitor {
 
 	void visit(Identifier identifier);
 
+        void visit(CharValue val);
+
         void visit(FunctionCall functionCall);
 
         void visit(ParamaterDeclaration declaration);
@@ -56,4 +58,8 @@ public interface ASTVisitor {
         void visit(Library library);
 
         void visit(Asm asm);
+
+        void visit(ElementAssignment assign);
+
+        void visit(ElementAccess elem);
 }

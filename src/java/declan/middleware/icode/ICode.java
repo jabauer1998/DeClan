@@ -18,7 +18,8 @@ public abstract class ICode implements Copyable<ICode>{
          BOOL,
          REAL,
          INT,
-         STRING;
+         STRING,
+	 CHAR;
 
 		@Override
 		public Type copy() {

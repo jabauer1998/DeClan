@@ -13,7 +13,7 @@ public interface DagNode {
     }
 
     public enum ValueType{
-        STRING, INT, REAL, BOOL 
+        STRING, INT, REAL, BOOL, CHAR
     }
 
     public boolean containsId(IdentExp ident);

@@ -29,6 +29,9 @@ import declan.frontend.ast.StrValue;
 import declan.frontend.ast.UnaryOperation;
 import declan.frontend.ast.VariableDeclaration;
 import declan.frontend.ast.WhileElifBranch;
+import declan.frontend.ast.CharValue;
+import declan.frontend.ast.ElementAccess;
+import declan.frontend.ast.ElementAssignment;
 import declan.utils.symboltable.Environment;
 
 import java.lang.Number;
@@ -214,6 +217,16 @@ public class MyIndexer implements ASTVisitor {
 	  id.accept(this);
 	  exp.accept(this);
 	}
+
+        @Override
+	public void visit(ElementAssignment elem){
+	    Identifier id = elem.getVariableName();
+	    Expression index = elem.getVariableIndex();
+	    Expression exp = elem.getVariableValue();
+	    id.accept(this);
+	    index.accept(this);
+	    exp.accept(this);
+	}
   
 	@Override
 	public void visit(ProcedureCall procedureCall){
@@ -243,6 +256,11 @@ public class MyIndexer implements ASTVisitor {
         @Override
 	public void visit(EmptyStatement emptyStatement) {
 		// Do nothing
+	}
+
+        @Override
+	public void visit(CharValue chVal){
+	    //Do nothing
 	}
     
 	@Override
@@ -280,6 +298,16 @@ public class MyIndexer implements ASTVisitor {
 		printIndexMessage("USE", id.getStart(), id.getLexeme() + ", declared at " + varEnvironment.getEntry(id.getLexeme()).toString());
 	    } else {
 		errorLog.add("Entry " + id.getLexeme() + " doesnt exist", id.getStart());
+	    }
+	}
+
+        @Override
+	public void visit(ElementAccess elem){
+	    elem.getExpression().accept(this);
+	    if(varEnvironment.entryExists(elem.getLexeme())){
+		printIndexMessage("USE", elem.getStart(), elem.getLexeme() + ", declared at " + varEnvironment.getEntry(elem.getLexeme()).toString());
+	    } else {
+		errorLog.add("Entry " + elem.getLexeme() + " doesnt exist", elem.getStart());
 	    }
 	}
 

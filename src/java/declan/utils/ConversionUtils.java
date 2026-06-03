@@ -32,6 +32,7 @@ import declan.middleware.icode.exp.NullableExp;
 import declan.middleware.icode.exp.RealExp;
 import declan.middleware.icode.exp.StrExp;
 import declan.middleware.icode.exp.UnExp;
+import declan.middleware.icode.exp.CharExp;
 import declan.utils.pat.P;
 import declan.utils.position.Position;
 import declan.utils.symboltable.entry.TypeCheckerQualities;
@@ -110,7 +111,9 @@ public class ConversionUtils {
             return ((RealExp)value).realValue;
         } else if(value instanceof StrExp){
             return ((StrExp)value).value;
-        } else {
+        } else if(value instanceof CharExp){
+	    return ((CharExp)value).c;
+	} else {
             throw new ConversionException("getValue", Exp.class.getName(), Object.class.getName());
         }
     }
@@ -151,6 +154,7 @@ public class ConversionUtils {
         else if(type.containsQualities(TypeCheckerQualities.STRING)) return ICode.Type.STRING;
         else if(type.containsQualities(TypeCheckerQualities.REAL)) return ICode.Type.REAL;
         else if(type.containsQualities(TypeCheckerQualities.INTEGER)) return ICode.Type.INT;
+	else if(type.containsQualities(TypeCheckerQualities.CHAR)) return ICode.Type.CHAR;
         else throw new ConversionException("typeCheckerQualitiesToAssignType", "TypeCheckerQualities", ICode.Type.class.getName());
     }
 
@@ -159,6 +163,7 @@ public class ConversionUtils {
         else if(type == ICode.Type.BOOL) return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
         else if(type == ICode.Type.REAL) return new TypeCheckerQualities(TypeCheckerQualities.REAL);
         else if(type == ICode.Type.STRING) return new TypeCheckerQualities(TypeCheckerQualities.STRING);
+	else if(type == ICode.Type.CHAR) return new TypeCheckerQualities(TypeCheckerQualities.CHAR);
         throw new ConversionException("assignTypeToTypeCheckerQualities", ICode.Type.class.getName(), "TypeCheckerQualities");
     }
 
@@ -167,6 +172,7 @@ public class ConversionUtils {
         else if(type == ICode.Type.STRING) return ValueType.STRING;
         else if(type == ICode.Type.REAL) return ValueType.REAL;
         else if(type == ICode.Type.INT) return ValueType.INT;
+	else if(type == ICode.Type.CHAR) return ValueType.CHAR;
         else throw new ConversionException("assignTypeToDagValueType", ICode.Type.class.getName(), ValueType.class.getName());
     }
 
@@ -191,6 +197,7 @@ public class ConversionUtils {
         else if(type == ValueType.STRING) return ICode.Type.STRING;
         else if(type == ValueType.REAL) return ICode.Type.REAL;
         else if(type == ValueType.INT) return ICode.Type.INT;
+	else if(type == ValueType.CHAR) return ICode.Type.CHAR;
         else throw new ConversionException("dagValueTypeToAssignType", ValueType.class.getName(), ICode.Type.class.getName());
     }
 
@@ -317,6 +324,7 @@ public class ConversionUtils {
 		case REAL: return P.REAL();
 		case BOOL: return P.BOOL();
 		case STRING: return P.STR();
+		case CHAR: return P.CHAR();
 		default: throw new ConversionException("typeToPattern", type.toString(), P.class.getSimpleName());
 		}
 	}
@@ -342,6 +350,8 @@ public class ConversionUtils {
 			return ICode.Type.BOOL;
 		else if(dest instanceof StrExp)
 			return ICode.Type.STRING;
+		else if(dest instanceof CharExp)
+		        return ICode.Type.CHAR;
 		else
 			throw new RuntimeException();
 	}

@@ -54,6 +54,16 @@ PROCEDURE Mod (dividend: INTEGER; divisor: INTEGER);
 	END
 	RETURN total
     END Mod;
+PROCEDURE Pow (a: INTEGER; b: INTEGER);
+    VAR res: INTEGER;
+    BEGIN
+	res := 1;
+	WHILE (b > 0) DO
+	    res := Multiply(res, a);
+	    b := b - 1
+	END
+	RETURN res
+    END Pow;
 PROCEDURE Multiply (a: INTEGER; b: INTEGER);
 	VAR low: INTEGER;
 	BEGIN

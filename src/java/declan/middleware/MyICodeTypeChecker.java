@@ -23,6 +23,7 @@ import declan.middleware.icode.exp.Exp;
 import declan.middleware.icode.exp.IdentExp;
 import declan.middleware.icode.exp.IntExp;
 import declan.middleware.icode.exp.RealExp;
+import declan.middleware.icode.exp.CharExp;
 import declan.middleware.icode.exp.StrExp;
 import declan.middleware.icode.exp.UnExp;
 import declan.middleware.icode.label.Label;
@@ -125,7 +126,8 @@ public class MyICodeTypeChecker {
         if((qual.containsQualities(TypeCheckerQualities.INTEGER) && displayedType != Assign.Type.INT)
         || (qual.containsQualities(TypeCheckerQualities.REAL) && displayedType != Assign.Type.REAL)
         || (qual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedType != Assign.Type.BOOL)
-        || (qual.containsQualities(TypeCheckerQualities.STRING) && displayedType != Assign.Type.STRING)){
+        || (qual.containsQualities(TypeCheckerQualities.STRING) && displayedType != Assign.Type.STRING)
+	|| (qual.containsQualities(TypeCheckerQualities.CHAR) && displayedType != Assign.Type.CHAR)){
             throw new ICodeTypeCheckerException("typeCheckPossibleDefinition", assign, instructionNumber, "Error invalid operation between types: \nType 1: " + qual.toString() + "\nType 2: " + displayedType);
         }
 
@@ -144,7 +146,8 @@ public class MyICodeTypeChecker {
         if((qual.containsQualities(TypeCheckerQualities.INTEGER) && displayedType != Assign.Type.INT)
         || (qual.containsQualities(TypeCheckerQualities.REAL) && displayedType != Assign.Type.REAL)
         || (qual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedType != Assign.Type.BOOL)
-        || (qual.containsQualities(TypeCheckerQualities.STRING) && displayedType != Assign.Type.STRING)){
+        || (qual.containsQualities(TypeCheckerQualities.STRING) && displayedType != Assign.Type.STRING)
+	|| (qual.containsQualities(TypeCheckerQualities.CHAR) && displayedType != Assign.Type.CHAR)){
             throw new ICodeTypeCheckerException("typeCheckPossibleAssignment", assign, instructionNumber, "Error in assignment " + assign + " expression is of type " + qual.toString() + " but is utilized in assignment of type " + displayedType);
         }
 
@@ -167,7 +170,8 @@ public class MyICodeTypeChecker {
                     if((sourceQual.containsQualities(TypeCheckerQualities.INTEGER) && displayedParamType != Assign.Type.INT)
                     || (sourceQual.containsQualities(TypeCheckerQualities.REAL) && displayedParamType != Assign.Type.REAL)
                     || (sourceQual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedParamType != Assign.Type.BOOL)
-                    || (sourceQual.containsQualities(TypeCheckerQualities.STRING) && displayedParamType != Assign.Type.STRING)){
+                    || (sourceQual.containsQualities(TypeCheckerQualities.STRING) && displayedParamType != Assign.Type.STRING)
+		    || (sourceQual.containsQualities(TypeCheckerQualities.CHAR) && displayedParamType != Assign.Type.CHAR)){
                         throw new ICodeTypeCheckerException("typeCheckPossibleParamaters", proc, instructionNumber, "Error in function call " + proc.pname + ": param " + exp.ident + " is of type " + sourceQual.toString() + " but it is used in paramater assignment of type " + displayedParamType.toString());
                     }
                     if(!variableQualities.entryExists(param.label)){
@@ -177,7 +181,8 @@ public class MyICodeTypeChecker {
                         if((qual.containsQualities(TypeCheckerQualities.INTEGER) && displayedParamType != Assign.Type.INT)
                         || (qual.containsQualities(TypeCheckerQualities.BOOLEAN) && displayedParamType != Assign.Type.BOOL)
                         || (qual.containsQualities(TypeCheckerQualities.STRING) && displayedParamType != Assign.Type.STRING)
-                        || (qual.containsQualities(TypeCheckerQualities.REAL) && displayedParamType != Assign.Type.REAL)){
+                        || (qual.containsQualities(TypeCheckerQualities.REAL) && displayedParamType != Assign.Type.REAL)
+			|| (qual.containsQualities(TypeCheckerQualities.CHAR) && displayedParamType != Assign.Type.CHAR)){
                             throw new ICodeTypeCheckerException("typeCheckPossibleParamaters", proc, instructionNumber, "Error in function call " + proc.pname + ": param " + param.label + " is of type " + sourceQual.toString() + " but it is given a value in paramater assignment of type " + displayedParamType.toString());
                         }
                     }
@@ -229,6 +234,7 @@ public class MyICodeTypeChecker {
         else if(expression instanceof IntExp) return typeCheckInteger();
         else if(expression instanceof RealExp) return typeCheckReal();
         else if(expression instanceof StrExp) return typeCheckString();
+	else if(expression instanceof CharExp) return typeCheckChar();
         else if(expression instanceof BoolExp) return typeCheckBoolean();
         else {
             return new TypeCheckerQualities(TypeCheckerQualities.NA);
@@ -292,6 +298,10 @@ public class MyICodeTypeChecker {
 
     private TypeCheckerQualities typeCheckString(){
         return new TypeCheckerQualities(TypeCheckerQualities.STRING);
+    }
+
+    private TypeCheckerQualities typeCheckChar(){
+	return new TypeCheckerQualities(TypeCheckerQualities.CHAR);
     }
 
     private TypeCheckerQualities typeCheckReal(){
