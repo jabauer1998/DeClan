@@ -37,6 +37,7 @@ import declan.frontend.ast.ElementAccess;
 import declan.frontend.ast.ElementAssignment;
 import declan.frontend.ast.BinaryOperation.OpType;
 import declan.utils.symboltable.Environment;
+import declan.frontend.ast.ArrayDeclaration;
 import declan.utils.symboltable.entry.ProcedureEntry;
 import declan.utils.symboltable.entry.ProcedureTypeEntry;
 import declan.utils.symboltable.entry.TypeCheckerQualities;
@@ -89,9 +90,7 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 	}
 
     private TypeCheckerQualities StringToType(String str){
-	if(str.equals("STRING")){
-	    return new TypeCheckerQualities(TypeCheckerQualities.STRING);
-	} else if (str.equals("INTEGER")) {
+	if (str.equals("INTEGER")) {
 	    return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
 	} else if (str.equals("REAL")){
 	    return new TypeCheckerQualities(TypeCheckerQualities.REAL);
@@ -103,6 +102,16 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 	    return new TypeCheckerQualities(TypeCheckerQualities.CHAR);
 	} else {
 	    return new TypeCheckerQualities(TypeCheckerQualities.NA);
+	}
+    }
+
+    private static TypeCheckerQualities arrayTypeToType(ArrayDeclaration.Type type){
+	switch(type){
+	case CHAR: return new TypeCheckerQualities(TypeCheckerQualities.STRING);
+	case INT: return new TypeCheckerQualities(TypeCheckerQualities.INTEGER | TypeCheckerQualities.ARRAY);
+	case REAL: return new TypeCheckerQualities(TypeCheckerQualities.REAL | TypeCheckerQualities.ARRAY);
+	case BOOLEAN : return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN | TypeCheckerQualities.BOOLEAN);
+	default: return new TypeCheckerQualities(TypeCheckerQualities.NA);
 	}
     }
 
@@ -208,6 +217,27 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 		} else {
 			errorLog.add("Multiple Declaration of Variable " + id.getLexeme(), id.getStart());
 		}
+    }
+
+    @Override
+    public void visit(ArrayDeclaration decl){
+	String name = decl.getName();
+	if(!varEnvironment.inScope(name)){
+	    Expression exp = decl.getSize();
+	    TypeCheckerQualities qual = exp.acceptResult(this);
+	    if(qual.missingQualities(TypeCheckerQualities.INTEGER)){
+		errorLog.add("Cant declare array with size not of type INTEGER exp=" + exp.toString(), decl.getStart());
+	    }
+
+	    TypeCheckerQualities qual2 = arrayTypeToType(decl.getType());
+	    if(qual2.containsQualities(TypeCheckerQualities.VOID)){
+		errorLog.add("Variable " + decl.getName() + " is of invalid type " + qual, decl.getStart());
+	    } else {
+		varEnvironment.addEntry(name, qual2);
+	    }
+	} else {
+	    errorLog.add("Multiple Declaration of Array Variable " + decl.getName(), decl.getStart());
+	}
     }
 
     @Override
@@ -1234,6 +1264,14 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 
 		if(qual.containsQualities(TypeCheckerQualities.STRING))
 		    return new TypeCheckerQualities(TypeCheckerQualities.CHAR);
+		else if(qual.containsQualities(TypeCheckerQualities.CHAR) && qual.containsQualities(TypeCheckerQualities.ARRAY))
+		    return new TypeCheckerQualities(TypeCheckerQualities.CHAR);
+		else if(qual.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.ARRAY))
+		    return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+		else if(qual.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.ARRAY))
+		    return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+	        else if(qual.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.ARRAY))
+		    return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 		else
 		    errorLog.add("Qualities for " + ident.getLexeme() + " is not an array type!!!", ident.getStart());
 

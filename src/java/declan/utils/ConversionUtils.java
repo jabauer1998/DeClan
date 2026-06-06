@@ -37,6 +37,7 @@ import declan.utils.pat.P;
 import declan.utils.position.Position;
 import declan.utils.symboltable.entry.TypeCheckerQualities;
 import declan.frontend.token.IrTokenType;
+import declan.frontend.ast.ArrayDeclaration;
 
 public class ConversionUtils {
     public static BinExp.Operator getBinOp(DagOperationNode.Op op){
@@ -340,6 +341,19 @@ public class ConversionUtils {
 	public static CopyBool newB(boolean b) {
 		return new CopyBool(b);
 	}
+
+        public static ArrayDeclaration.Type getTypeFromStr(String label){
+	    if(label.equals("INTEGER"))
+		return ArrayDeclaration.Type.INT;
+	    else if(label.equals("CHAR"))
+		return ArrayDeclaration.Type.CHAR;
+	    else if(label.equals("BOOLEAN"))
+		return ArrayDeclaration.Type.BOOLEAN;
+	    else if(label.equals("REAL"))
+		return ArrayDeclaration.Type.REAL;
+	    else
+	        throw new RuntimeException();
+        }
 	
 	public static Type getTypeFromConstExp(NullableExp dest) {
 		if(dest instanceof IntExp)

@@ -19,6 +19,7 @@ public class TypeCheckerQualities implements Copyable<TypeCheckerQualities> {
     public static final int NULL = 0b0010000000;
     public static final int CONST = 0b100000000;
     public static final int CHAR = 0b1000000000;
+    public static final int ARRAY = 0b10000000000;
 
     public boolean containsQualities(int quality){
         return (quality & this.val) == quality;

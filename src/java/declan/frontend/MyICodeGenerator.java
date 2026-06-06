@@ -151,9 +151,12 @@ public class MyICodeGenerator{
     builder.buildSymbolSectionHeader();
 
     builder.buildBssSectionHeader();
-    for (VariableDeclaration decl : program.getVarDecls()) {
+    for (Declaration decl : program.getVarDecls()) {
       decl.accept(typeChecker);
-      generateVariableIr(Scope.GLOBAL, decl, builder);
+      if(decl instanceof VariableDeclaration)
+	  generateVariableIr(Scope.GLOBAL, decl, builder);
+      else if(decl instanceof ArrayDeclaration)
+	  generateArrayIr(Scope.GLOBAL, decl, builder);
     }
     
     builder.buildDataSectionHeader();
@@ -227,6 +230,10 @@ public class MyICodeGenerator{
       if(scope == ICode.Scope.GLOBAL)
           builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id.getLexeme(), ICode.Type.INT, false);
     }
+  }
+
+  public void generateArrayIr(Scope scope, VariableDeclaration varDecl, DefinitionBuilder builder){
+      //TODO - Finish method
   }
   
   public void generateLocalVariableIr(String funcName, VariableDeclaration varDecl, DefinitionBuilder builder) {

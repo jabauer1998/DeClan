@@ -17,6 +17,7 @@ import declan.utils.position.Position;
 import declan.frontend.token.DeclanToken;
 import declan.frontend.token.DeclanTokenType;
 import declan.frontend.MyDeClanLexer;
+import declan.utils.ConversionUtils;
 
 /**
  * A parser for a subset of DeCLan consisting only of integer constant
@@ -125,15 +126,10 @@ public class MyDeClanParser implements Parser{
       skip();
       constDeclarations.addAll(parseConstDeclSequence());
     }
-    List<VariableDeclaration> varDeclarations = new LinkedList<VariableDeclaration>();
-    if(willMatch(DeclanTokenType.VAR)){
-      skip();
-      varDeclarations.addAll(parseVariableDeclSequence());
-    }
     List<ProcedureDeclaration> procDeclarations = new LinkedList<ProcedureDeclaration>();
     procDeclarations.addAll(parseProcedureDeclSequence());
 
-    return new Library(start, constDeclarations, varDeclarations, procDeclarations);
+    return new Library(start, constDeclarations, procDeclarations);
   }
   
   // Program -> DeclSequence BEGIN StatementSequence END
@@ -145,7 +141,7 @@ public class MyDeClanParser implements Parser{
       skip();
       constDeclarations.addAll(parseConstDeclSequence());
     }
-    List<VariableDeclaration> varDeclarations = new LinkedList<VariableDeclaration>();
+    List<Declaration> varDeclarations = new LinkedList<Declaration>();
     if(willMatch(DeclanTokenType.VAR)){
       skip();
       varDeclarations.addAll(parseVariableDeclSequence());
@@ -192,10 +188,10 @@ public class MyDeClanParser implements Parser{
         
   //VariableDeclSequence -> VariableDecl ; VariableDeclSequence
   //VariableDeclSequence ->
-  private List<VariableDeclaration> parseVariableDeclSequence(){
-    List<VariableDeclaration> varDecls = new ArrayList<>();
+  private List<Declaration> parseVariableDeclSequence(){
+    List<Declaration> varDecls = new ArrayList<>();
     while (willMatch(DeclanTokenType.ID)) {
-      List<VariableDeclaration> varDecl = parseVariableDecl();
+      List<Declaration> varDecl = parseVariableDecl();
       varDecls.addAll(varDecl);
       match(DeclanTokenType.SEMI);
     }
@@ -311,7 +307,7 @@ public class MyDeClanParser implements Parser{
   }
 
   //VariableDecl -> IdentList : Type
-  private List <VariableDeclaration> parseVariableDecl() {
+  private List <Declaration> parseVariableDecl() {
     List<Identifier> identList = new ArrayList<>();
     //IdentList -> ident IdentListRest
     //IdentListRest -> , ident IdentListRest
@@ -324,14 +320,29 @@ public class MyDeClanParser implements Parser{
       identList.add(new Identifier(varname.getPosition(), varname.getLexeme()));
     }
     match(DeclanTokenType.COLON);
-    DeclanToken type = match(DeclanTokenType.ID);
-    Identifier typeid = new Identifier(type.getPosition(), type.getLexeme());
-    List <VariableDeclaration> varDecl = new ArrayList<>();
-    for(int i = 0; i < identList.size(); i++){
-      Identifier elem = identList.get(i);
-      varDecl.add(new VariableDeclaration(elem.getStart(), elem, typeid));
+    if(willMatch(DeclanTokenType.ARRAY)){
+	skip();
+	Expression exp = parseExpression();
+	match(DeclanTokenType.OF);
+	DeclanToken type = match(DeclanTokenType.ID);
+	ArrayDeclaration.Type atype = ConversionUtils.getTypeFromStr(type.getLexeme());
+	List <Declaration> varDecl = new ArrayList<>();
+	for(int i = 0; i < identList.size(); i++){
+	    Identifier elem = identList.get(i);
+	    varDecl.add(new ArrayDeclaration(elem.getStart(), elem.getLexeme(), exp, atype));
+	}
+	return Collections.unmodifiableList(varDecl);
+    } else {
+	DeclanToken type = match(DeclanTokenType.ID);
+	Identifier typeid = new Identifier(type.getPosition(), type.getLexeme());
+	List <Declaration> varDecl = new ArrayList<>();
+	for(int i = 0; i < identList.size(); i++){
+	    Identifier elem = identList.get(i);
+	    varDecl.add(new VariableDeclaration(elem.getStart(), elem, typeid));
+	}
+	return Collections.unmodifiableList(varDecl);
     }
-    return Collections.unmodifiableList(varDecl);
+    
   }
 
   // StatementSequence -> Statement StatementSequenceRest

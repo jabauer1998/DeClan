@@ -31,7 +31,7 @@ public enum DeclanTokenType {
 	RBRACK, // right bracket [
 	LBRACK, // left bracket ]
 	// the rest are reserved words whose lexeme matches their name
-	BEGIN, BY, CONST, DIV, DO, ELSE, ELSIF, END, FALSE, FOR, IF, MOD, OR, PROCEDURE, REPEAT, RETURN, THEN, TO, TRUE, UNTIL, VAR, WHILE, BAND, BOR, BXOR, LSHIFT, RSHIFT, BNOT;
+	BEGIN, BY, CONST, DIV, DO, ELSE, ELSIF, END, FALSE, FOR, IF, MOD, OR, PROCEDURE, REPEAT, RETURN, THEN, TO, TRUE, UNTIL, VAR, WHILE, BAND, BOR, BXOR, LSHIFT, RSHIFT, BNOT, ARRAY, OF;
 
 	public static final Map<String, DeclanTokenType> reserved; 
 	private static final Map<Character, DeclanTokenType> singleOperators; //all 1 character long operators
@@ -127,6 +127,8 @@ public enum DeclanTokenType {
 		addKeyword(BOR);
 		addKeyword(BXOR);
 		addKeyword(BNOT);
+		addKeyword(ARRAY);
+		addKeyword(OF);
 
 		singleOperators = new HashMap<>();
 		addSingleOp('<', LT);

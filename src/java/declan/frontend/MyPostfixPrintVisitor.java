@@ -24,6 +24,7 @@ import declan.frontend.ast.NumValue;
 import declan.frontend.ast.ParamaterDeclaration;
 import declan.frontend.ast.ProcedureCall;
 import declan.frontend.ast.ProcedureDeclaration;
+import declan.frontend.ast.ArrayDeclaration;
 import declan.frontend.ast.Program;
 import declan.frontend.ast.RepeatBranch;
 import declan.frontend.ast.Statement;
@@ -83,6 +84,11 @@ public class MyPostfixPrintVisitor implements ASTVisitor {
         @Override
 	public void visit(VariableDeclaration varDecl){
 	    //dont do anything not supported at this point in the project
+	}
+
+        @Override
+	public void visit(ArrayDeclaration decl){
+	    //Do nothing yet!!! TODO
 	}
 
 	@Override

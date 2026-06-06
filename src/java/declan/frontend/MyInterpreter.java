@@ -38,6 +38,7 @@ import declan.utils.symboltable.entry.ProcedureEntry;
 import declan.utils.symboltable.entry.VariableEntry;
 import declan.frontend.ast.ElementAssignment;
 import declan.frontend.ast.ElementAccess;
+import declan.frontend.ast.ArrayDeclaration;
 
 import java.lang.Object;
 import java.io.IOException;
@@ -130,6 +131,22 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     } else if(type.equals("CHAR")){
 	    varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, '\0'));
     }
+  }
+
+  @Override
+  public void visit(ArrayDeclaration decl){
+      String name = decl.getName();
+      ArrayDeclaration.Type type = decl.getType();
+      Expression size = decl.getSize();
+      int mySize = (int)size.acceptResult(this);
+
+      switch(type){
+      case CHAR: varEnvironment.addEntry(name, new VariableEntry(false, "")); break;
+      case REAL: varEnvironment.addEntry(name, new VariableEntry(false, new float[mySize])); break;
+      case INT: varEnvironment.addEntry(name, new VariableEntry(false, new int[mySize])); break;
+      case BOOLEAN: varEnvironment.addEntry(name, new VariableEntry(false, new boolean[mySize])); break;
+      default: throw new RuntimeException(); 
+      }
   }
 
   @Override
@@ -602,8 +619,20 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	int index2 = (int)index;
 
 	return valText.charAt(index2);
+    } else if(value instanceof int[] && index instanceof Integer){
+	int[] val = (int[])value;
+	int index2 = (int)index;
+	return val[index2];
+    } else if(value instanceof float[] && index instanceof Integer){
+	float[] val = (float[])value;
+	int index2 = (int)index;
+	return val[index2];
+    } else if(value instanceof boolean[] && index instanceof Integer){
+	boolean[] val = (boolean[])value;
+	int index2 = (int)index;
+	return val[index2];
     } else {
-	return null;
+	throw new RuntimeException("Error unexpected type for array " + value.getClass().getSimpleName());
     }
   }
     

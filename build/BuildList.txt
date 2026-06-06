@@ -37,6 +37,7 @@ C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\frontend\MyStackSolv
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\frontend\MyTypeChecker.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\frontend\Parser.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\frontend\ast\AbstractASTNode.java
+C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\frontend\ast\ArrayDeclaration.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\frontend\ast\Asm.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\frontend\ast\Assignment.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\frontend\ast\ASTNode.java

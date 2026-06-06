@@ -32,6 +32,7 @@ import declan.frontend.ast.WhileElifBranch;
 import declan.frontend.ast.CharValue;
 import declan.frontend.ast.ElementAccess;
 import declan.frontend.ast.ElementAssignment;
+import declan.frontend.ast.ArrayDeclaration;
 import declan.utils.symboltable.Environment;
 
 import java.lang.Number;
@@ -111,6 +112,19 @@ public class MyIndexer implements ASTVisitor {
 	    printIndexMessage("DECL", id.getStart(), "VAR " + id.getLexeme());
 	  }
 	}
+
+        @Override
+	public void visit(ArrayDeclaration decl){
+	    String name = decl.getName();
+	    Expression index = decl.getSize();
+	    index.accept(this);
+	    varEnvironment.addEntry(name, decl.getStart());
+	    if(ParTrue){
+		printIndexMessage("DECL", decl.getStart(), "PARAM " + name);
+	    } else {
+		printIndexMessage("DECL", decl.getStart(), "PARAM " + name);
+	    }
+	}
    
 	@Override
 	public void visit(ConstDeclaration constDecl) {
@@ -123,7 +137,7 @@ public class MyIndexer implements ASTVisitor {
 	public void visit(ProcedureDeclaration procDecl) {
 	  Identifier procedName = procDecl.getProcedureName();
 	  String procedureName = procedName.getLexeme();
-      List <ParamaterDeclaration> args = procDecl.getArguments();
+          List <ParamaterDeclaration> args = procDecl.getArguments();
 	  Identifier retType = procDecl.getReturnType();
           String returnType = retType.getLexeme();
           List <Declaration> localVars = procDecl.getLocalVariables();
@@ -139,6 +153,7 @@ public class MyIndexer implements ASTVisitor {
 	  if(!returnType.equals("VOID")){
 	    printIndexMessage("DECL", retType.getStart(), "TYPE " + returnType);
 	  }
+	  
 	  for(int i = 0; i < localVars.size(); i++){
 	    localVars.get(i).accept(this);
 	  }

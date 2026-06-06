@@ -19,7 +19,7 @@ import java.lang.StringBuilder;
  */
 public class Program extends AbstractASTNode {
 	private final List<ConstDeclaration> constDecls;
-	private final List<VariableDeclaration> varDecls;
+	private final List<Declaration> varDecls;
 	private final List<ProcedureDeclaration> procDecls;
 	private final List<Statement> statements;
 
@@ -33,7 +33,7 @@ public class Program extends AbstractASTNode {
 	 * @param constDecls
 	 * @param statements
 	 */
-	public Program(Position start, List<ConstDeclaration> constDecls, List<VariableDeclaration> varDecls, List<ProcedureDeclaration> procDecls, List<Statement> statements) {
+	public Program(Position start, List<ConstDeclaration> constDecls, List<Declaration> varDecls, List<ProcedureDeclaration> procDecls, List<Statement> statements) {
 		super(start);
 		this.constDecls = constDecls;
 		this.procDecls = procDecls;
@@ -45,13 +45,15 @@ public class Program extends AbstractASTNode {
 		super(start);
 		this.constDecls = new LinkedList<ConstDeclaration>();
 		this.procDecls = new LinkedList<ProcedureDeclaration>();
-		this.varDecls = new LinkedList<VariableDeclaration>();
+		this.varDecls = new LinkedList<Declaration>();
 
 		for(Declaration decl : decls){
 			if(decl instanceof ProcedureDeclaration){
 				procDecls.add((ProcedureDeclaration)decl);
 			} else if(decl instanceof VariableDeclaration){
 				varDecls.add((VariableDeclaration)decl);
+			} else if(decl instanceof ArrayDeclaration) {
+			        varDecls.add((ArrayDeclaration)decl);
 			} else if(decl instanceof ConstDeclaration){
 				constDecls.add((ConstDeclaration)decl);
 			}
@@ -81,7 +83,7 @@ public class Program extends AbstractASTNode {
 		return constDecls;
 	}
 
-	public List<VariableDeclaration> getVarDecls(){
+	public List<Declaration> getVarDecls(){
 		return varDecls;
 	}
 

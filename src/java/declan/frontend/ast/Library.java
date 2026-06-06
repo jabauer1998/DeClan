@@ -9,7 +9,7 @@ public class Library extends AbstractASTNode{
     private final List<ConstDeclaration> constDecls;
     private final List<ProcedureDeclaration> procDecls;
 
-    public Library(Position start, List<ConstDeclaration> constDecls, List<VariableDeclaration> varDecls, List<ProcedureDeclaration> procDecls){
+    public Library(Position start, List<ConstDeclaration> constDecls, List<ProcedureDeclaration> procDecls){
         super(start);
         this.constDecls = constDecls;
         this.procDecls = procDecls;

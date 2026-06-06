@@ -17,6 +17,8 @@ public interface ASTVisitor {
 
         void visit(VariableDeclaration varDecl);
 
+        void visit(ArrayDeclaration decl);
+
         void visit(ProcedureDeclaration varDecl);
 
 	// Statements
