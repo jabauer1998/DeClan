@@ -126,8 +126,6 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 	    varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, 0.0f));
     } else if (type.equals("INTEGER")){
 	    varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, 0));
-    } else if(type.equals("STRING")){
-	    varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, ""));
     } else if(type.equals("CHAR")){
 	    varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, '\0'));
     }
@@ -141,7 +139,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       int mySize = (int)size.acceptResult(this);
 
       switch(type){
-      case CHAR: varEnvironment.addEntry(name, new VariableEntry(false, "")); break;
+      case CHAR: varEnvironment.addEntry(name, new VariableEntry(false, new char[mySize])); break;
       case REAL: varEnvironment.addEntry(name, new VariableEntry(false, new float[mySize])); break;
       case INT: varEnvironment.addEntry(name, new VariableEntry(false, new int[mySize])); break;
       case BOOLEAN: varEnvironment.addEntry(name, new VariableEntry(false, new boolean[mySize])); break;
@@ -186,14 +184,22 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
          standardOutput.append(val.toString());
         }catch(IOException exp){}
     } else if(procName.equals("WriteString") || procName.equals("PrintString")) {
-      Object value = (Object)procedureCall.getArguments().get(0).acceptResult(this);
+      char[] value = (char[])procedureCall.getArguments().get(0).acceptResult(this);
+      int index = 0;
+      StringBuilder sb = new StringBuilder();
+      while(index < value.length){
+	  if(value[index] == '\0')
+	      break;
+	  sb.append(value[index]);
+	  index++;
+      }
       try{
-        standardOutput.append(value.toString());
+        standardOutput.append(sb.toString());
       }catch(IOException exp){}
     } else if(procName.equals("WriteChar")) {
       Object value = (Object)procedureCall.getArguments().get(0).acceptResult(this);
       try{
-        standardOutput.append(value.toString());
+	  standardOutput.append(value.toString());
       }catch(IOException exp){}
     } else if(procName.equals("ASSERT")){
       boolean value = ConversionUtils.toBool(procedureCall.getArguments().get(0).acceptResult(this));
@@ -432,16 +438,40 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       VariableEntry entry = varEnvironment.getEntry(name);
       if(entry.isConst()){
 	      errorLog.add("Variable " + assignment.getVariableName().getLexeme() + " declared as const ", assignment.getVariableName().getStart());
-      } else if(entry.getValue() instanceof String){
+      } else if(entry.getValue() instanceof Character[]){
         Object value = assignment.getVariableValue().acceptResult(this);
 	Object index = assignment.getVariableIndex().acceptResult(this);
         if(value instanceof Character && index instanceof Integer){
 	    char valChar = (char)value;
-	    String original = (String)entry.getValue();
-	    StringBuilder sb = new StringBuilder(original);
-	    sb.setCharAt((int)index, valChar);
-	    entry.setValue(sb.toString());
+	    char[] original = (char[])entry.getValue();
+	    original[(int)index] = valChar;
 	}
+      } else if(entry.getValue() instanceof Integer[]){
+	 Object value = assignment.getVariableValue().acceptResult(this);
+	 Object index = assignment.getVariableIndex().acceptResult(this);
+         if(index instanceof Integer){
+	     int valInt = ConversionUtils.toInt(value);
+	     int[] original = (int[])entry.getValue();
+	     original[(int)index] = valInt;
+	 }
+      } else if(entry.getValue() instanceof Float[]){
+	 Object value = assignment.getVariableValue().acceptResult(this);
+	 Object index = assignment.getVariableIndex().acceptResult(this);
+         if(index instanceof Integer){
+	     float valReal = ConversionUtils.toReal(value);
+	     float[] original = (float[])entry.getValue();
+	     original[(int)index] = valReal;
+	 }
+      } else if(entry.getValue() instanceof Boolean[]){
+	 Object value = assignment.getVariableValue().acceptResult(this);
+	 Object index = assignment.getVariableIndex().acceptResult(this);
+         if(index instanceof Integer){
+	     boolean valBool = ConversionUtils.toBool(value);
+	     boolean[] original = (boolean[])entry.getValue();
+	     original[(int)index] = valReal;
+	 }
+      } else {
+	  errorLog.add("Cant assign to element of array of type " + entry.getValue().getClass().getSimpleName());
       }
     }
   }
@@ -675,7 +705,13 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
 
   @Override
   public Object visitResult(StrValue strValue){
-    return strValue.getLexeme();
+      char[] toRet = new char[strValue.getLexeme().length() + 1];
+      int i;
+      for(i = 0; i < strValue.getLexeme().length(); i++){
+	  toRet[i] = strValue.getLexeme().charAt(i);
+      }
+      toRet[i] = '\0';
+      return toRet;
   }
 
 
