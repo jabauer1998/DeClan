@@ -7,3 +7,4 @@ BEGIN
     UNTIL i >= 10;
     WriteLn()
 END.
+

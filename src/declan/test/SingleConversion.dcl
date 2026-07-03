@@ -4,3 +4,4 @@ BEGIN
     result := IntToReal(i);
     WriteReal(result)
 END.
+

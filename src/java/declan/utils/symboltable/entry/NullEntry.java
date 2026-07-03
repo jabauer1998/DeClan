@@ -10,3 +10,5 @@ public class NullEntry implements  Copyable<NullEntry>{
         return this;
     }
 }
+
+

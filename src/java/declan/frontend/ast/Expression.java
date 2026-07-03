@@ -20,3 +20,5 @@ public interface Expression extends ASTNode {
 	public boolean isConstant();
 	public boolean containsIdentifier(String ident);
 }
+
+

@@ -2,6 +2,7 @@ package declan.middleware;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.PushbackReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -30,9 +31,14 @@ import declan.middleware.icode.exp.Exp;
 import declan.middleware.icode.exp.IdentExp;
 import declan.middleware.icode.exp.IntExp;
 import declan.middleware.icode.exp.RealExp;
-import declan.middleware.icode.exp.StrExp;
+import declan.middleware.icode .exp.CharArrayExp;
 import declan.middleware.icode.exp.CharExp;
 import declan.middleware.icode.exp.UnExp;
+import declan.middleware.icode.exp.ArrayAccess;
+import declan.middleware.icode.exp.IntArrayExp;
+import declan.middleware.icode.exp.RealArrayExp;
+import declan.middleware.icode.exp.BoolArrayExp;
+import declan.middleware.icode.ArrayAssign;
 import declan.middleware.icode.inline.Inline;
 import declan.middleware.icode.inline.InlineParam;
 import declan.middleware.icode.label.Label;
@@ -54,7 +60,7 @@ public class MyICodeMachine {
     private ErrorLog errLog;
     private Writer standardOutput;
     private Writer standardError;
-    private Reader standardIn;
+    private PushbackReader standardIn;
     private Object tempReturnValue;
 
     public MyICodeMachine(ErrorLog errLog, Writer standardOutput, Writer standardError, Reader standardIn){
@@ -69,7 +75,7 @@ public class MyICodeMachine {
         this.variableValues.addScope();
         this.standardError = standardError;
         this.standardOutput = standardOutput;
-        this.standardIn = standardIn;
+        this.standardIn = new PushbackReader(standardIn);
         this.tempReturnValue = null;
     }
 
@@ -112,6 +118,7 @@ public class MyICodeMachine {
 	                    else if(instruction instanceof If) interpretIfStatement((If)instruction);
 	                    else if(instruction instanceof Goto) interpretGotoStatement((Goto)instruction);
 	                    else if(instruction instanceof End) interpretEndStatement((End)instruction);
+			    else if(instruction instanceof ArrayAssign) interpretArrayAssign((ArrayAssign)instruction);
 	                    else if(instruction instanceof Return) interpretReturnStatement((Return)instruction);
 	                    else if(instruction instanceof Label) interpretLabelStatement((Label)instruction);
 	                    else if(instruction instanceof Inline) interpretInlineAssembly((Inline)instruction);
@@ -144,7 +151,62 @@ public class MyICodeMachine {
 	                            this.programCounter--;
 	                            variableValues.removeScope();
 	                        }
-	                    } else if(instruction instanceof Def){
+	                    } else if(instruction instanceof ArrayAssign) {
+				ArrayAssign placement = (ArrayAssign)instruction;
+				if(placement.expression instanceof IdentExp){
+	                            IdentExp val = (IdentExp)placement.expression;
+	                            if(val.scope == ICode.Scope.RETURN){
+	                                if(!variableValues.entryExists(placement.ident))
+	                                    throw new ICodeVmException(placement, this.programCounter, "Value assigned to (in this case " + placement.ident + ") doesnt exist");
+	                                if(tempReturnValue != null){
+	                                    VariableEntry entry = variableValues.getEntry(placement.ident);
+					    int index = (int)interpretExpression(placement.index, instruction);
+					    Object obj = entry.getValue();
+					    if(obj instanceof int[]){
+						int[] iObj = (int[])obj;
+						iObj[index] = (int)interpretExpression(val, instruction); 
+					    } else if(obj instanceof char[]){
+						char[] cObj = (char[])obj;
+						cObj[index] = (char)interpretExpression(val, instruction);
+					    } else if(obj instanceof float[]){
+						float[] fObj = (float[])obj;
+						fObj[index] = (float)interpretExpression(val, instruction);
+					    } else if(obj instanceof boolean[]){
+						boolean[] bObj = (boolean[])obj;
+						bObj[index] = (boolean)interpretExpression(val, instruction);
+					    }
+	                                    tempReturnValue = null;
+	                                } else {
+	                                    Object obj = interpretExpression(val, instruction);
+	                                    //Now we need to Deallocate the Top of the Stack
+	                                    variableValues.removeScope();
+					    int index = (int)interpretExpression(placement.index, instruction);
+	                                    VariableEntry arr = variableValues.getEntry(placement.ident);
+					    Object arrF = arr.getValue();
+					    if(arrF instanceof int[]){
+						int[] iObj = (int[])arrF;
+						iObj[index] = (int)interpretExpression(val, instruction); 
+					    } else if(arrF instanceof char[]){
+						char[] cObj = (char[])arrF;
+						cObj[index] = (char)interpretExpression(val, instruction);
+					    } else if(arrF instanceof float[]){
+						float[] fObj = (float[])arrF;
+						fObj[index] = (float)interpretExpression(val, instruction);
+					    } else if(arrF instanceof boolean[]){
+						boolean[] bObj = (boolean[])arrF;
+						bObj[index] = (boolean)interpretExpression(val, instruction);
+					    }
+	                                }
+	                            } else {
+	                                this.programCounter--;
+	                                variableValues.removeScope();
+	                            }
+	                        } else {
+	                            //De incriment the program counter
+	                            this.programCounter--;
+	                            variableValues.removeScope();
+	                        }
+			    } else if(instruction instanceof Def){
 	                        Def placement = (Def)instruction;
 	                        if(placement.val instanceof IdentExp){
 	                            IdentExp val = (IdentExp)placement.val;
@@ -166,7 +228,7 @@ public class MyICodeMachine {
 	                            //De incriment the program counter
 	                            this.programCounter--;
 	                            variableValues.removeScope();
-	                        }
+                               }
 	                    } else {
 	                        //Deincriment the program counter in order to have the same icode but in the init state\
 	                        this.programCounter--;
@@ -190,37 +252,7 @@ public class MyICodeMachine {
     }
 
     private void interpretInlineAssembly(Inline instruction) {
-        if(instruction.inlineAssembly.startsWith("MUL")){
-            //Then it is a multiply long instruction and we have to simulate that here
-            List<InlineParam> paramaters = instruction.params;
-            if(paramaters.size() == 3){
-                //First get the two source paramaters
-                IdentExp param1 = paramaters.get(1).name;
-                VariableEntry entry1 = variableValues.getEntry(param1.ident);
-                IdentExp param2 = paramaters.get(2).name;
-                VariableEntry entry2 = variableValues.getEntry(param2.ident);
-
-                Object obj1 = entry1.getValue();
-                Object obj2 = entry2.getValue();
-
-                if(!(obj1 instanceof Integer)){
-                    throw new ICodeVmException(instruction, this.programCounter, "Error in MUL function inline assembly expected both arguments to be of type Integer but found " + param1.ident + "=" + obj1.getClass().getName());
-                } else if(!(obj2 instanceof Integer)){
-                    throw new ICodeVmException(instruction, this.programCounter, "Error in MUL function inline assembly expected both arguments to be of type Integer but found " + param2.ident + "=" + obj2.getClass().getName());
-                }
-
-                Integer int1 = (Integer)obj1;
-                Integer int2 = (Integer)obj2;
-
-                int result = int1 * int2;
-
-                String smallRegister = paramaters.get(0).name.ident;
-                
-                variableValues.addEntry(smallRegister, new VariableEntry(false, result));
-            } else {
-                throw new ICodeVmException(instruction, this.programCounter, "Error in MUL function in inline assembly expected 4 arguments but found " + paramaters.size());
-            }
-        }
+            throw new ICodeVmException(instruction, this.programCounter, "Unexpected inline assembly in ICodeMachine. Method should be implemented within the machine itself");
         //Otherwise we just ignore the instruction
     }
 
@@ -237,6 +269,30 @@ public class MyICodeMachine {
         } else {
             throw new ICodeVmException(assign, programCounter, "Right hand side of the assignment resulted in a null value");
         }
+    }
+
+    private void interpretArrayAssign(ArrayAssign assign){
+	String place = assign.ident;
+	int res = (int)interpretExpression(assign.index, assign);
+	if(variableValues.entryExists(place)){
+	    VariableEntry entry = variableValues.getEntry(place);
+	    Object arr = entry.getValue();
+	    if(arr instanceof int[]){
+		int[] iArr = (int[])arr;
+		iArr[res] = (int)interpretExpression(assign.expression, assign);
+	    } else if(arr instanceof float[]){
+		float[] fArr = (float[])arr;
+		fArr[res] = (float)interpretExpression(assign.expression, assign);
+	    } else if(arr instanceof boolean[]){
+		boolean[] bArr = (boolean[])arr;
+		bArr[res] = (boolean)interpretExpression(assign.expression, assign);
+	    } else if(arr instanceof char[]){
+		char[] cArr = (char[])arr;
+		cArr[res] = (char)interpretExpression(assign.expression, assign);
+	    } else {
+		throw new ICodeVmException(assign, programCounter, "No array type found for value");
+	    }
+	}
     }
 
     private void interpretDefinition(Def def){
@@ -290,204 +346,126 @@ public class MyICodeMachine {
     }
 
     private void interpretProcedureCall(Call procedure){
-        if(procedure.pname.equals("WriteInt")){
-            if(procedure.params.size() == 1){
-                Def arg1 = procedure.params.get(0);
-                if(arg1.val instanceof IntExp){
-                    try{
-                        IntExp intExp = (IntExp)arg1.val;
-                        standardOutput.append("" + intExp.value);
-                    } catch(IOException exp){
-                        throw new ICodeVmException(arg1, programCounter, exp.getMessage());
-                    }
-                } else if(arg1.val instanceof IdentExp){
-                    IdentExp iExp = (IdentExp)arg1.val;
-                    if(variableValues.entryExists(iExp.ident)){
-                        VariableEntry entry = variableValues.getEntry(iExp.ident);
-                        try{
-                            Object val = entry.getValue();
-                            Integer toInt = ConversionUtils.toInt(val);
-                            standardOutput.append("" + toInt);
-                        } catch(IOException exp){
-                            throw new ICodeVmException(arg1, this.programCounter, exp.getMessage());
-                        }
-                    } else {
-                        throw new ICodeVmException(arg1, programCounter, "Variable value was not found for " + iExp.ident);
-                    }
-                } else {
-                    throw new ICodeVmException(procedure, programCounter, "Invalid expression type for paramater into WriteInt expected Int or Ident but found " + arg1.val.getClass().getName());
-                }
-            } else {
-                throw new ICodeVmException(procedure, this.programCounter, "In procedure call expected 1 argument for function call " + procedure.pname);
-            }
-        } else if(procedure.pname.equals("WriteBool")){
-            if(procedure.params.size() == 1){
-                Def arg1 = procedure.params.get(0);
-                if(arg1.val instanceof BoolExp){
-                    try{
-                        BoolExp intExp = (BoolExp)arg1.val;
-                        standardOutput.append("" + intExp.trueFalse);
-                    } catch(IOException exp){
-                        throw new ICodeVmException(arg1, programCounter, exp.getMessage());
-                    }
-                } else if(arg1.val instanceof IdentExp){
-                    IdentExp iExp = (IdentExp)arg1.val;
-                    if(variableValues.entryExists(iExp.ident)){
-                        VariableEntry entry = variableValues.getEntry(iExp.ident);
-                        try{
-                            Object val = entry.getValue();
-                            Boolean toBool = ConversionUtils.toBool(val);
-                            standardOutput.append("" + toBool);
-                        } catch(IOException exp){
-                            throw new ICodeVmException(arg1, this.programCounter, exp.getMessage());
-                        }
-                    } else {
-                        throw new ICodeVmException(arg1, programCounter, "Variable value was not found for " + iExp.ident);
-                    }
-                } else {
-                    throw new ICodeVmException(procedure, programCounter, "Invalid expression type for paramater into WriteBool expected Bool or Ident but found " + arg1.val.getClass().getName());
-                }
-            } else {
-                throw new ICodeVmException(procedure, this.programCounter, "In procedure call expected 1 argument for function call " + procedure.pname);
-            }
-        } else if(procedure.pname.equals("WriteLn")){
+	if(procedure.pname.equals("Multiply")){
+	    Object argument1 = interpretExpression(procedure.params.get(0).val, procedure.params.get(0));
+	    Object argument2 = interpretExpression(procedure.params.get(1).val, procedure.params.get(1));
+	    tempReturnValue = ConversionUtils.toInt((ConversionUtils.toInt(argument1)) * (ConversionUtils.toInt(argument2)));
+	    this.machineState = State.RETURN;
+        } else if(procedure.pname.equals("RMul")) {
+	    Object argument1 = interpretExpression(procedure.params.get(0).val, procedure.params.get(0));
+	    Object argument2 = interpretExpression(procedure.params.get(1).val, procedure.params.get(1));
+	    tempReturnValue = ConversionUtils.toReal((ConversionUtils.toReal(argument1) * ConversionUtils.toReal(argument2)));
+	    this.machineState = State.RETURN;
+        } else if(procedure.pname.equals("WriteChar")){
+	    Def arg1 = procedure.params.get(0);
+	    Object exp = interpretExpression(arg1.val, arg1);
             try{
-                standardOutput.append("\n");
-            } catch(IOException exp){
-                throw new ICodeVmException(procedure, this.programCounter, exp.getMessage());
+                standardOutput.append("" + (char)exp);
+		standardOutput.flush();
+            } catch(IOException m){
+                throw new ICodeVmException(arg1, programCounter, m.getMessage());
             }
-        } else if(procedure.pname.equals("WriteReal")){
-            if(procedure.params.size() == 1){
-                Def arg1 = procedure.params.get(0);
-                if(arg1.val instanceof RealExp){
-                    try{
-                        RealExp intExp = (RealExp)arg1.val;
-                        standardOutput.append("" + intExp.realValue);
-                    } catch(IOException exp){
-                        throw new ICodeVmException(arg1, programCounter, exp.getMessage());
-                    }
-                } else if(arg1.val instanceof IdentExp){
-                    IdentExp iExp = (IdentExp)arg1.val;
-                    if(variableValues.entryExists(iExp.ident)){
-                        VariableEntry entry = variableValues.getEntry(iExp.ident);
-                        try{
-                            Object val = entry.getValue();
-                            Float asReal = ConversionUtils.toReal(val);
-                            standardOutput.append("" + asReal);
-                        } catch(IOException exp){
-                            throw new ICodeVmException(arg1, this.programCounter, exp.getMessage());
-                        }
-                    } else {
-                        throw new ICodeVmException(arg1, programCounter, "Variable value was not found for " + iExp.ident);
-                    }
-                } else {
-                    throw new ICodeVmException(procedure, programCounter, "Invalid expression type for paramater into WriteReal expected Bool or Ident but found " + arg1.val.getClass().getName());
-                }
-            } else {
-                throw new ICodeVmException(procedure, this.programCounter, "In procedure call expected 1 argument for function call " + procedure.pname);
-            }
-        } else if(procedure.pname.equals("WriteString")){
-            if(procedure.params.size() == 1){
-                Def arg1 = procedure.params.get(0);
-                if(arg1.val instanceof StrExp){
-                    try{
-                        StrExp intExp = (StrExp)arg1.val;
-                        standardOutput.append("" + intExp.value);
-                    } catch(IOException exp){
-                        throw new ICodeVmException(arg1, programCounter, exp.getMessage());
-                    }
-                } else if(arg1.val instanceof IdentExp){
-                    IdentExp iExp = (IdentExp)arg1.val;
-                    if(variableValues.entryExists(iExp.ident)){
-                        VariableEntry entry = variableValues.getEntry(iExp.ident);
-                        try{
-                            Object val = entry.getValue();
-                            String toBool = val.toString();
-                            standardOutput.append("" + toBool);
-                        } catch(IOException exp){
-                            throw new ICodeVmException(arg1, this.programCounter, exp.getMessage());
-                        }
-                    } else {
-                        throw new ICodeVmException(arg1, programCounter, "Variable value was not found for " + iExp.ident);
-                    }
-                } else {
-                    throw new ICodeVmException(procedure, programCounter, "Invalid expression type for paramater into WriteString expected Bool or Ident but found " + arg1.val.getClass().getName());
-                }
-            } else {
-                throw new ICodeVmException(procedure, this.programCounter, "In procedure call expected 1 argument for function call " + procedure.pname);
-            }
-        } else if(procedure.pname.equals("readInt") || procedure.pname.equals("ReadInt")){
-            Scanner scanner = new Scanner(standardIn);
-            this.tempReturnValue = Integer.parseInt(scanner.nextLine());
-            scanner.close();
+	} else if(procedure.pname.equals("SkipChar")) {
+	    try{
+	      standardIn.skip(1);
+	    } catch(Exception exp){}
+	} else if(procedure.pname.equals("ReadChar")){
+	    try {
+		int val = standardIn.read();
+		if(val <= -1) tempReturnValue = '\0';
+	        else tempReturnValue = (char)val;
+	    } catch(Exception exp) {
+		throw new RuntimeException(exp);
+	    }
             this.machineState = State.RETURN;  
-        } else if(procedure.pname.equals("readBool") || procedure.pname.equals("ReadBool")){
-            Scanner scanner = new Scanner(standardIn);
-            this.tempReturnValue = Boolean.parseBoolean(scanner.nextLine());
-            scanner.close();
-            this.machineState = State.RETURN; 
-        } else if(procedure.pname.equals("readReal") || procedure.pname.equals("ReadReal")){
-           Scanner scanner = new Scanner(standardIn);
-           this.tempReturnValue = Float.parseFloat(scanner.nextLine());
-           scanner.close();
-           this.machineState = State.RETURN;  
-        } else if(procedure.pname.equals("RealBinaryAsInt") || procedure.pname.equals("realBinaryAsInt")){
+        } else if(procedure.pname.equals("PeekChar")){
+	    try {
+		int val = standardIn.read();
+		if(val <= -1) tempReturnValue = '\0';
+		else {
+		    char res = (char)val;
+		    standardIn.unread(val);
+		    tempReturnValue = res;
+		}
+	    } catch(Exception exp){
+		throw new RuntimeException(exp);
+	    }
+	    this.machineState = State.RETURN;
+	} else if(procedure.pname.equals("RealBinaryAsInt")){
             if(procedure.params.size() == 1){
                 Def arg1 = procedure.params.get(0);
-                if(arg1.val instanceof RealExp){
-                    RealExp expVal = (RealExp)arg1.val;
-                    Integer toRet = Float.floatToRawIntBits(expVal.realValue);
-                    tempReturnValue = toRet;
-                    machineState = State.RETURN;
-                } else if(arg1.val instanceof IdentExp){
-                    IdentExp iExp = (IdentExp)arg1.val;
-                    if(variableValues.entryExists(iExp.ident)){
-                        VariableEntry entry = variableValues.getEntry(iExp.ident);
-                        Object val = entry.getValue();
-                        if(val != null){
-                            Float valFloat = (Float)val;
-                            Integer toRet = Float.floatToRawIntBits(valFloat);
-                            tempReturnValue = toRet;
-                            machineState = State.RETURN;
-                        } else {
-                            throw new ICodeVmException(arg1, this.programCounter, "In procedure " + procedure + " paramater has a null value");
-                        }
-                    } else {
-                        throw new ICodeVmException(arg1, this.programCounter, "Entry for variable " + iExp.ident + " doesnt exist");
-                    }
-                }
-            } else {
-                throw new ICodeVmException(procedure, this.programCounter, "In procedure call " + procedure + " expected 1 argument for function call " + procedure.pname);
-            }
-        } else if(procedure.pname.equals("IntBinaryAsReal") || procedure.pname.equals("intBinaryAsReal")){
+		Object val = interpretExpression(arg1.val, arg1);
+                Integer toRet = Float.floatToRawIntBits((float)val);
+                tempReturnValue = toRet;
+                machineState = State.RETURN;
+             } else {
+		throw new ICodeVmException(procedure, this.programCounter, "Not enough params in RealBinaryAsInt");
+             }
+        } else if(procedure.pname.equals("IntBinaryAsReal")){
             if(procedure.params.size() == 1){
                 Def arg1 = procedure.params.get(0);
-                if(arg1.val instanceof IntExp){
-                    IntExp expVal = (IntExp)arg1.val;
-                    Float toRet = Float.intBitsToFloat(expVal.value);
-                    tempReturnValue = toRet;
-                    machineState = State.RETURN;
-                } else if(arg1.val instanceof IdentExp){
-                    IdentExp iExp = (IdentExp)arg1.val;
-                    if(variableValues.entryExists(iExp.ident)){
-                        VariableEntry entry = variableValues.getEntry(iExp.ident);
-                        Object val = entry.getValue();
-                        if(val != null){
-                            Integer valFloat = (Integer)val;
-                            Float toRet = Float.intBitsToFloat(valFloat);
-                            tempReturnValue = toRet;
-                            machineState = State.RETURN;
-                        } else {
-                            throw new ICodeVmException(arg1, this.programCounter, "In procedure " + procedure + " paramater has a null value");
-                        }
-                    } else {
-                        throw new ICodeVmException(arg1, this.programCounter, "Entry for variable " + iExp.ident + " doesnt exist");
-                    }
-                }
+		Object res = interpretExpression(arg1.val, arg1);
+                Float toRet = Float.intBitsToFloat((int)res);
+                tempReturnValue = toRet;
+                machineState = State.RETURN;
             } else {
-                throw new ICodeVmException(procedure, this.programCounter, "In procedure call " + procedure + " expected 1 argument for function call " + procedure.pname);
+                throw new ICodeVmException(procedure, this.programCounter, "Not enough params in IntBinaryAsReal");
             }
-        } else {
+        } else if(procedure.pname.equals("IntBinaryAsBool")){
+	    if(procedure.params.size() == 1){
+                Def arg1 = procedure.params.get(0);
+		Object val = interpretExpression(arg1.val, arg1);
+                tempReturnValue = ((int)val) != 0;
+                machineState = State.RETURN;
+             } else {
+		throw new ICodeVmException(procedure, this.programCounter, "Not enough params in IntBinaryAsBool");
+             }
+	} else if(procedure.pname.equals("BoolBinaryAsInt")) {
+		if(procedure.params.size() == 1){
+		    Def arg1 = procedure.params.get(0);
+                    Object res = interpretExpression(arg1.val, arg1);
+                    tempReturnValue = (boolean)res ? 1 : 0;
+                    machineState = State.RETURN;
+		} else {
+                        throw new ICodeVmException(procedure, this.programCounter, "Not enough params in BoolBinaryAsInt");
+                }
+	} else if(procedure.pname.equals("RealBinaryAsBool")) {
+	        if(procedure.params.size() == 1){
+		    Def arg1 = procedure.params.get(0);
+                    Object res = interpretExpression(arg1.val, arg1);
+                    tempReturnValue = (((float)res) != 0);
+                    machineState = State.RETURN;
+		} else {
+                        throw new ICodeVmException(procedure, this.programCounter, "Not enough params in RealBinaryAsBool");
+                }
+	} else if(procedure.pname.equals("BoolBinaryAsReal")) {
+	        if(procedure.params.size() == 1){
+		    Def arg1 = procedure.params.get(0);
+                    Object res = interpretExpression(arg1.val, arg1);
+                    tempReturnValue = (float)(((boolean)res) ? 1.0 : 0.0);
+                    machineState = State.RETURN;
+		} else {
+                        throw new ICodeVmException(procedure, this.programCounter, "Not enough params in BoolBinaryAsReal");
+                }
+	} else if(procedure.pname.equals("IntBinaryAsChar")) {
+	        if(procedure.params.size() == 1){
+		    Def arg1 = procedure.params.get(0);
+                    Object res = interpretExpression(arg1.val, arg1);
+                    tempReturnValue = (char)(int)(res);
+                    machineState = State.RETURN;
+		} else {
+                        throw new ICodeVmException(procedure, this.programCounter, "Not enough params in IntBinaryAsChar");
+                }
+	} else if(procedure.pname.equals("CharBinaryAsInt")) {
+	    if(procedure.params.size() == 1){
+		    Def arg1 = procedure.params.get(0);
+                    Object res = interpretExpression(arg1.val, arg1);
+                    tempReturnValue = (int)(char)(res);
+                    machineState = State.RETURN;
+		} else {
+                        throw new ICodeVmException(procedure, this.programCounter, "Not enough params in CharBinaryAsInt");
+                }
+	} else {
             this.returnStack.push(this.programCounter);
         
             List<VariableEntry> argVals = new ArrayList<VariableEntry>();
@@ -527,10 +505,56 @@ public class MyICodeMachine {
         if(expression instanceof BinExp) return interpretBinExp((BinExp)expression, icode);
         else if(expression instanceof UnExp) return interpretUnExp((UnExp)expression, icode);
         else if(expression instanceof IdentExp) return interpretIdentExp((IdentExp)expression, icode);
+	else if(expression instanceof ArrayAccess) return interpretArrayAccess((ArrayAccess)expression, icode);
+	else if(expression instanceof CharArrayExp) return interpretCharArrayExp((CharArrayExp)expression, icode);
+	else if(expression instanceof BoolArrayExp) return interpretBoolArrayExp((BoolArrayExp)expression, icode);
+	else if(expression instanceof IntArrayExp) return interpretIntArrayExp((IntArrayExp)expression, icode);
+	else if(expression instanceof RealArrayExp) return interpretRealArrayExp((RealArrayExp)expression, icode);
         else if(expression.isConstant()) return ConversionUtils.getValue(expression);
         else {
         	throw new ICodeVmException(icode, this.programCounter, "Error unexpected Expression Found");
         }
+    }
+
+    private Object interpretCharArrayExp(CharArrayExp arrExp, ICode icode){
+	return arrExp.getValue();
+    }
+
+    private Object interpretBoolArrayExp(BoolArrayExp bExp, ICode icode){
+	return bExp.getValue();
+    }
+
+    private Object interpretIntArrayExp(IntArrayExp aExp, ICode icode){
+	return aExp.getValue();
+    }
+
+    private Object interpretRealArrayExp(RealArrayExp rExp, ICode icode){
+	return rExp.getValue();
+    }
+
+    private Object interpretArrayAccess(ArrayAccess expression, ICode icode){
+	if(variableValues.entryExists(expression.name)){
+	    VariableEntry entry = variableValues.getEntry(expression.name);
+	    Exp index = expression.index;
+	    Object inRes = (int)interpretExpression(index, icode);
+	    if(entry.getValue() instanceof char[]){
+		char[] cRes = (char[])entry.getValue();
+		return cRes[(int)inRes];
+	    } else if(entry.getValue() instanceof int[]){
+		int[] iRes = (int[])entry.getValue();
+		return iRes[(int)inRes];
+	    } else if(entry.getValue() instanceof float[]){
+		float[] fRes = (float[])entry.getValue();
+		return fRes[(int)inRes];
+	    } else if(entry.getValue() instanceof boolean[]){
+		boolean[] bRes = (boolean[])entry.getValue();
+		return bRes[(int)inRes];
+	    } else {
+		throw new ICodeVmException(expression, this.programCounter, "Error invalid array type found for " + icode.toString());
+	    }
+	} else {
+	    throw new ICodeVmException(expression, this.programCounter, "Error array not found for " + icode.toString());
+	}
     }
 
     private Object interpretIdentExp(IdentExp exp, ICode icode){
@@ -594,6 +618,14 @@ public class MyICodeMachine {
             throw new ICodeVmException(expression, this.programCounter, "In Expression " + expression + " cant find value on the right hand side of the expression " + expression.right.toString() + " inside instruction " + icode);
         }
 
+	if(!(left instanceof Boolean) && !(left instanceof Integer)){
+	    throw new ICodeVmException(expression, this.programCounter, "In Expression " + leftIdent + " in binary opration  " + expression + " found type of  " + left.getClass().getSimpleName());
+	}
+
+	if(!(right instanceof Boolean) && !(right instanceof Integer)){
+	    throw new ICodeVmException(expression, this.programCounter, "In Expression " + rightIdent + " in binary opration  " + expression + " found type of  " + right.getClass().getSimpleName());
+	}
+
         if(left != null && right != null){
             switch(expression.op){
                 case IADD: return OpUtil.iAdd(left, right);
@@ -621,3 +653,5 @@ public class MyICodeMachine {
         }
     }
 }
+
+

@@ -96,3 +96,5 @@ public class TypeCheckerQualities implements Copyable<TypeCheckerQualities> {
         return new TypeCheckerQualities(val);
     }
 }
+
+

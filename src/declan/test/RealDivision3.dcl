@@ -1,5 +1,5 @@
 CONST a = 355; b = 113;
-VAR result: REAL; aAsReal: REAL; bAsReal: REAL; bRealBinary: INT; aRealBinary: INT;
+VAR result: REAL; aAsReal: REAL; bAsReal: REAL;
 BEGIN
     aAsReal := IntToReal(a);
     bAsReal := IntToReal(b);
@@ -8,3 +8,4 @@ BEGIN
     WriteReal(result);
     WriteLn()
 END.
+

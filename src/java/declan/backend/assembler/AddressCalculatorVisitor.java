@@ -472,3 +472,4 @@ public class AddressCalculatorVisitor implements ArmAssemblerVisitor<Integer> {
 		return null;
 	}
 }
+

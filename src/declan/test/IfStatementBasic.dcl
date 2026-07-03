@@ -9,3 +9,4 @@ BEGIN
     ELSE WriteInt(6)
     END;
 END.
+

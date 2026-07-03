@@ -30,3 +30,5 @@ public class Color implements ColorType {
 		return obj instanceof Color;
 	}
 }
+
+

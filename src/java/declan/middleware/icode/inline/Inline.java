@@ -115,3 +115,5 @@ public class Inline extends ICode{
 		return new Inline(inlineAssembly, newCopy);
 	}
 }
+
+

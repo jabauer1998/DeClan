@@ -22,3 +22,4 @@ BEGIN
   WriteReal(x2);
   WriteLn();
 END.
+

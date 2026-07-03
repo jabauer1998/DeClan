@@ -661,3 +661,5 @@ PROCEDURE RNotEqualTo(n1: REAL; n2: REAL);
 		END
 	RETURN result
     END RNotEqualTo;
+
+

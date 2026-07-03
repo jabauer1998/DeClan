@@ -37,16 +37,33 @@ function compile_file_into_ir{
     Write-Host "to output-"
     Write-Host "$out"
     Write-Host "---------Output-Window-----------"
+    $errorOutput = ""
     if($out.Contains(".ir")){
         if (($nolink -eq '') -and ($optimized -eq '')){
-            Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -e -p '$src' -f '$out' -std" -ErrorVariable $errorOutput
+	    try {
+		Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -e -p '$src' -f '$out' -std" -ErrorVariable errorOutput
+	    } catch {
+		Write-Host "Error occured!!!"
+	    }
         } elseif ($nolink -eq ''){
-            Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -e -o -p '$src' -f '$out' -std" -ErrorVariable $errorOutput
+	    try {
+	        Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -e -o -p '$src' -f '$out' -std" -ErrorVariable errorOutput
+	    } catch {
+		Write-Host "Error occured!!!"
+	    }
         } else {
-            Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -e -n -p '$src' -f '$out'" -ErrorVariable $errorOutput
+	    try {
+		Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -e -n -p '$src' -f '$out'" -ErrorVariable errorOutput
+	    } catch {
+		Write-Host "Error Occured!!!"
+	    }
         }
     } elseif ($out.Contains(".ilib")){
-        Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -e -n -l '$src' -f '$out'" -ErrorVariable $errorOutput
+	try {
+	    Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -e -n -l '$src' -f '$out'" -ErrorVariable errorOutput
+	} catch {
+	    Write-Host "Error occured"
+	}
     }
     
     Write-Host "--------End-Output-Window--------"
@@ -70,7 +87,8 @@ function compile_file_into_assembly{
     Write-Host "to output assembly at-"
     Write-Host "$out"
     Write-Host "---------Output-Window-----------"
-    Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -a -p '$src' -f '$out' -std" -ErrorVariable $errorOutput
+    $errorOutput = ""
+    Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -a -p '$src' -f '$out' -std" -ErrorVariable errorOutput
     Write-Host "--------End-Output-Window--------"
     if ([string]::IsNullOrWhiteSpace($errorOutput)) {
         Write-Host "Source-"
@@ -92,7 +110,8 @@ function compile_file_into_binary{
     Write-Host "to output binary at-"
     Write-Host "$out"
     Write-Host "---------Output-Window-----------"
-    Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -p '$src' -f '$out' -std" -ErrorVariable $errorOutput
+    $errorOutput = ""
+    Invoke-Expression "java -cp '$CLASSPATH' declan.driver.MyCompilerDriver -p '$src' -f '$out' -std" -ErrorVariable errorOutput
     Write-Host "--------End-Output-Window--------"
     if ([string]::IsNullOrWhiteSpace($errorOutput)) {
         Write-Host "Source-"
@@ -217,3 +236,4 @@ if($commands["help"] -eq $true){
 }
 
 cd $location
+

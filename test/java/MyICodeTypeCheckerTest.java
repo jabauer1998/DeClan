@@ -5,7 +5,10 @@ import java.io.FileReader;
 import java.io.StringReader;
 
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 
 import declan.utils.ErrorLog;
 import declan.utils.ErrorLog.LogItem;
@@ -90,6 +93,17 @@ public class MyICodeTypeCheckerTest {
         boolean typeCheckerContainsQualities = typeChecker.identContainsQualities(identifier, typeCheckerQualities);
         TypeCheckerQualities checkQualities = new TypeCheckerQualities(typeCheckerQualities);
         assertTrue("Error " + identifier + " does not contain qualities " + checkQualities, typeCheckerContainsQualities);
+    }
+
+    @BeforeEach
+    void init(TestInfo testInfo) {
+        // This will print before every single test method runs
+        System.out.println("Starting test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
+    }
+
+    @AfterEach
+    void finish(TestInfo testInfo){
+	System.out.println("Ending test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
     }
 
     @Test
@@ -238,4 +252,17 @@ public class MyICodeTypeCheckerTest {
         String source = "src/declan/test/test.dcl";
         runTypeCheckerOnDeClanFileSource(source);
     }
+
+    @Test
+    public void testSingleConversion(){
+	String source = "src/declan/test/SingleConversion.dcl";
+	runTypeCheckerOnDeClanFileSource(source);
+    }
+
+    @Test
+    public void testSingleConversion2(){
+	String source = "src/declan/test/SingleConversion2.dcl";
+	runTypeCheckerOnDeClanFileSource(source);
+    }
 }
+

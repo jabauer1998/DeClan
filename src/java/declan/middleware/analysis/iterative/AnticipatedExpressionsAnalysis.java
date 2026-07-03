@@ -53,7 +53,7 @@ Tuple<NullableExp, ICode.Type>>{
                 	instructionKill.add(definition.label);
                 } else if(icode instanceof If) {
                 	If icodeIf = (If)icode;
-                    instructionGen.add(new Tuple<NullableExp, ICode.Type>(icodeIf.exp, ICode.Type.BOOL));
+                        instructionGen.add(new Tuple<NullableExp, ICode.Type>(icodeIf.exp, ICode.Type.BOOL));
                 } else if(icode instanceof Call) {
                 	Call callICode = (Call)icode;
                 	List<Def> params = callICode.params;
@@ -98,3 +98,5 @@ Tuple<NullableExp, ICode.Type>>{
      }
     
 }
+
+

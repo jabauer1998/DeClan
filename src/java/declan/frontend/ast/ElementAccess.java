@@ -20,7 +20,7 @@ public class ElementAccess extends AbstractASTNode implements Expression{
 	}
 
 	public String getLexeme() {
-		return lexeme + '[' + index + ']';
+		return lexeme;
 	}
 
         public Expression getExpression(){
@@ -29,7 +29,7 @@ public class ElementAccess extends AbstractASTNode implements Expression{
 
         @Override
         public String toString(){
-	  return getLexeme();
+	  return getLexeme() + '[' + index + ']';
         }
 
 	@Override
@@ -52,3 +52,5 @@ public class ElementAccess extends AbstractASTNode implements Expression{
 		return lexeme.equals(ident);
 	}
 }
+
+

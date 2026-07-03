@@ -55,3 +55,5 @@ public class BoolValue extends AbstractASTNode implements Expression {
 		return false;
 	}
 }
+
+

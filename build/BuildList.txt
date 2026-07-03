@@ -144,6 +144,7 @@ C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\dfst\Dept
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\dfst\DepthFirstSpanningTree.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\dfst\DfstNode.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\dfst\RootDfstNode.java
+C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\ArrayAssign.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\Assign.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\Call.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\Def.java
@@ -155,15 +156,19 @@ C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\Lib
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\Prog.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\Return.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\Spill.java
+C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\ArrayAccess.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\BinExp.java
+C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\BoolArrayExp.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\BoolExp.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\CharArrayExp.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\CharExp.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\Exp.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\IdentExp.java
+C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\IntArrayExp.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\IntExp.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\NaaExp.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\NullableExp.java
+C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\RealArrayExp.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\RealExp.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\exp\UnExp.java
 C:\Users\jabau\Source\Repos\DeClan-Compiler\src\java\declan\middleware\icode\inline\Inline.java

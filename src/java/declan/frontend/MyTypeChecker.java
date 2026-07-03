@@ -100,6 +100,8 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 	    return new TypeCheckerQualities(TypeCheckerQualities.VOID);
 	} else if(str.equals("CHAR")) {
 	    return new TypeCheckerQualities(TypeCheckerQualities.CHAR);
+	} else if(str.equals("STRING")) {
+	    return new TypeCheckerQualities(TypeCheckerQualities.STRING);
 	} else {
 	    return new TypeCheckerQualities(TypeCheckerQualities.NA);
 	}
@@ -110,8 +112,8 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 	case CHAR: return new TypeCheckerQualities(TypeCheckerQualities.STRING);
 	case INT: return new TypeCheckerQualities(TypeCheckerQualities.INTEGER | TypeCheckerQualities.ARRAY);
 	case REAL: return new TypeCheckerQualities(TypeCheckerQualities.REAL | TypeCheckerQualities.ARRAY);
-	case BOOLEAN : return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN | TypeCheckerQualities.BOOLEAN);
-	default: return new TypeCheckerQualities(TypeCheckerQualities.NA);
+	case BOOLEAN : return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN | TypeCheckerQualities.ARRAY);
+	default: throw new RuntimeException();
 	}
     }
 
@@ -138,11 +140,10 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 			}
 
 			Expression retExp = procDecl.getReturnStatement();
-			String returnType = procDecl.getReturnType().getLexeme();
-			TypeCheckerQualities myType = StringToType(returnType);
-			if(myType.containsQualities(TypeCheckerQualities.NA) && retExp != null){
+			TypeCheckerQualities myType = null;
+			if(retExp != null){
 				myType = retExp.acceptResult(this);
-			} else if(myType.containsQualities(TypeCheckerQualities.VOID) || retExp == null) {
+			} else {
 				myType = new TypeCheckerQualities(TypeCheckerQualities.VOID);
 			}
 
@@ -507,32 +508,32 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 			}
 		default:
 		    if(op == BinaryOperation.OpType.EQ || op == BinaryOperation.OpType.NE){
-				if(leftValue.missingQualities(TypeCheckerQualities.REAL) && leftValue.missingQualities(TypeCheckerQualities.INTEGER) && leftValue.missingQualities(TypeCheckerQualities.BOOLEAN)){
+			        if(leftValue.missingQualities(TypeCheckerQualities.REAL) && leftValue.missingQualities(TypeCheckerQualities.INTEGER) && leftValue.missingQualities(TypeCheckerQualities.BOOLEAN) && leftValue.missingQualities(TypeCheckerQualities.CHAR)){
 					errorLog.add("Error expected left side of the Relation Operation "+ op + " to be of type REAL, INTEGER, or BOOLEAN", binaryOperation.getLeft().getStart());
 				}
 
-				if(rightValue.missingQualities(TypeCheckerQualities.REAL) && rightValue.missingQualities(TypeCheckerQualities.INTEGER) && rightValue.missingQualities(TypeCheckerQualities.BOOLEAN)){
+				if(rightValue.missingQualities(TypeCheckerQualities.REAL) && rightValue.missingQualities(TypeCheckerQualities.INTEGER) && rightValue.missingQualities(TypeCheckerQualities.BOOLEAN) && rightValue.missingQualities(TypeCheckerQualities.CHAR)){
 					errorLog.add("Error expected left side of the Relation Operation " + op + " to be of type REAL, INTEGER, or BOOLEAN", binaryOperation.getRight().getStart());
 				}
 
 				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 			} else if(op == BinaryOperation.OpType.LT || op == BinaryOperation.OpType.LE || op == BinaryOperation.OpType.GT || op == BinaryOperation.OpType.GE){
-				if(leftValue.missingQualities(TypeCheckerQualities.REAL) && leftValue.missingQualities(TypeCheckerQualities.INTEGER)){
+			if(leftValue.missingQualities(TypeCheckerQualities.REAL) && leftValue.missingQualities(TypeCheckerQualities.INTEGER) && leftValue.missingQualities(TypeCheckerQualities.CHAR)){
 					errorLog.add("Error expected left side of the Relation Operation "+ op + " to be of type REAL or of type INTEGER", binaryOperation.getLeft().getStart());
 				}
 
-				if(rightValue.missingQualities(TypeCheckerQualities.REAL) && rightValue.missingQualities(TypeCheckerQualities.INTEGER)){
+			if(rightValue.missingQualities(TypeCheckerQualities.REAL) && rightValue.missingQualities(TypeCheckerQualities.INTEGER) && rightValue.missingQualities(TypeCheckerQualities.CHAR)){
 					errorLog.add("Error expected left side of the Relation Operation " + op + " to be of type REAL or of type INTEGER", binaryOperation.getRight().getStart());
 				}
 
 				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 			} else if(op == BinaryOperation.OpType.BAND || op == BinaryOperation.OpType.BXOR
 			|| op == BinaryOperation.OpType.BOR || op == BinaryOperation.OpType.LSHIFT || op == BinaryOperation.OpType.RSHIFT){
-				if(leftValue.missingQualities(TypeCheckerQualities.INTEGER)){
+				if(leftValue.missingQualities(TypeCheckerQualities.INTEGER) && leftValue.missingQualities(TypeCheckerQualities.CHAR)){
 					errorLog.add("Error expected left side argument of Bitwise Operation " + op + " to be of type INTEGER", binaryOperation.getLeft().getStart());
 				}
 
-				if(rightValue.missingQualities(TypeCheckerQualities.INTEGER)){
+				if(rightValue.missingQualities(TypeCheckerQualities.INTEGER) && rightValue.missingQualities(TypeCheckerQualities.CHAR)){
 					errorLog.add("Error expected right hand side argument of Bitwise Operation " + op + " to be of type INTEGER", binaryOperation.getRight().getStart());
 				}
 				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);	
@@ -647,6 +648,106 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 				errorLog.add("Error expected 1 argument into the RealBinaryAsInt method but found " + valArgs.size(), funcCall.getStart());
 				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
 			}
+		} else if(funcName.equals("ReadChar")) {
+		        return new TypeCheckerQualities(TypeCheckerQualities.CHAR);
+		} else if(funcName.equals("ReadString")) {
+		        return new TypeCheckerQualities(TypeCheckerQualities.STRING);
+		} else if(funcName.equals("IsDigit")) {
+		        if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.CHAR)){
+					errorLog.add("Error in function IsDigit expected argument of type CHAR", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealBinaryAsInt method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("BoolToInt")) {
+		        if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.BOOLEAN)){
+					errorLog.add("Error in function BoolToInt expected argument of type BOOL", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealBinaryAsInt method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("BoolToReal")) {
+		    if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.BOOLEAN)){
+					errorLog.add("Error in function BoolToInt expected argument of type BOOL", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealBinaryAsInt method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+			}
+		} else if(funcName.equals("IntToBool")) {
+		    if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error in function BoolToInt expected argument of type BOOL", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealBinaryAsInt method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			}
+		} else if(funcName.equals("RealToBool")) {
+		    if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.REAL)){
+					errorLog.add("Error in function BoolToInt expected argument of type BOOL", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealBinaryAsInt method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+			}
+		} else if(funcName.equals("IntBinaryAsChar")) {
+		      if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error in function BoolToInt expected argument of type BOOL", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.CHAR);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealBinaryAsInt method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.CHAR);
+			}
+		} else if(funcName.equals("CharBinaryAsInt")) {
+		        if(valArgs.size() == 1){
+				Expression expArg = valArgs.get(0);
+				TypeCheckerQualities qual = expArg.acceptResult(this);
+				if(qual.missingQualities(TypeCheckerQualities.CHAR)){
+					errorLog.add("Error in function CharBInaryAsInt expected argument of type CHAR", funcCall.getStart());
+				}
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			} else {
+				errorLog.add("Error expected 1 argument into the RealBinaryAsInt method but found " + valArgs.size(), funcCall.getStart());
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+			}
+		} else if(funcName.equals("ReadDigit")){
+		    return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+		} else if(funcName.equals("ReadInt")) {
+		    return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+		} else if(funcName.equals("ReadReal")) {
+		    return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+		} else if(funcName.equals("AtEoI")) {
+		    return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
+		} else if(funcName.equals("ReadReal")){
+		    return new TypeCheckerQualities(TypeCheckerQualities.REAL);
+		} else if(funcName.equals("ReadBool")) {
+		    return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
 		} else if(funcName.equals("StringAsAddress")){
 			if(valArgs.size() == 1){
 				Expression expArg = valArgs.get(0);
@@ -1220,6 +1321,24 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 				errorLog.add("Error expected 1 argument into the RealExponent method but found " + valArgs.size(), funcCall.getStart());
 				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
 			}
+		} else if(funcName.equals("Pow")) {
+		    Expression arg1 = valArgs.get(0);
+				Expression arg2 = valArgs.get(1);
+
+				TypeCheckerQualities qual1 = arg1.acceptResult(this);
+				TypeCheckerQualities qual2 = arg2.acceptResult(this);
+
+				if(qual1.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error expected 1st paramater in procedure RNotEqualTo to be of type REAL", funcCall.getStart());
+				}
+
+				if(qual2.missingQualities(TypeCheckerQualities.INTEGER)){
+					errorLog.add("Error expected 2nd paramater in procedure RNotEqualTo to be of type REAL", funcCall.getStart());
+				}
+
+				return new TypeCheckerQualities(TypeCheckerQualities.INTEGER);
+		} else if(funcName.equals("PeekChar")){
+		    return new TypeCheckerQualities(TypeCheckerQualities.CHAR);
 		} else {
 			errorLog.add("No known function defined in the local Program or in the Standard Library with the name of " + funcName, funcCall.getStart());
 			return new TypeCheckerQualities(TypeCheckerQualities.NULL);
@@ -1363,3 +1482,5 @@ public class MyTypeChecker implements ASTVisitor, ExpressionVisitor<TypeCheckerQ
 		}
 	}
 }
+
+

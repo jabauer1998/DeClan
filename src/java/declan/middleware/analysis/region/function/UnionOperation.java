@@ -20,3 +20,5 @@ public class UnionOperation<SetType> implements SetExpression<SetType> {
 		return toRet;
 	}
 }
+
+

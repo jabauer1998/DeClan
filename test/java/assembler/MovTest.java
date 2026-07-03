@@ -49,3 +49,4 @@ public class MovTest{
         TestUtils.testAgainstInput(testString, instructionResult);
     }
 }
+

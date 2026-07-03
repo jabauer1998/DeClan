@@ -48,3 +48,5 @@ public class TerminalAntlrToken<ReturnType> extends AntlrToken<ReturnType> {
         return Node.hashCode();
     }
 }
+
+

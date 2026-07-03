@@ -6,7 +6,10 @@ import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 
 import declan.utils.ErrorLog;
 import declan.utils.ErrorLog.LogItem;
@@ -35,6 +38,17 @@ public class IrLexerTest {
             IrTokenType type = tokTypes.get(i);
             assertTrue("Expected token of type " + tok.getType() + " but got token of type " + type, tok.getType() == type);
         }
+    }
+
+    @BeforeEach
+    void init(TestInfo testInfo) {
+        // This will print before every single test method runs
+        System.out.println("Starting test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
+    }
+
+    @AfterEach
+    void finish(TestInfo testInfo){
+	System.out.println("Ending test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
     }
 
 
@@ -143,3 +157,4 @@ public class IrLexerTest {
         testLexer(lexer, tokTypes);
     }
 }
+

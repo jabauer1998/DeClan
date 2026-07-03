@@ -6,7 +6,10 @@ import java.io.StringReader;
 import java.util.Scanner;
 
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 
 import declan.utils.ErrorLog;
 import declan.frontend.ast.Library;
@@ -22,6 +25,7 @@ import declan.frontend.MyIrLexer;
 import declan.frontend.MyIrParser;
 
 public class ICodeGeneratorTest {
+    
     public static void testReaderFile(Lib program, String programInput){
         try{
             FileReader expectedReader = new FileReader(programInput);
@@ -102,6 +106,17 @@ public class ICodeGeneratorTest {
         } catch(FileNotFoundException exp) {
             assertTrue(exp.toString(), false);
         }
+    }
+
+    @BeforeEach
+    void init(TestInfo testInfo) {
+        // This will print before every single test method runs
+        System.out.println("Starting test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
+    }
+
+    @AfterEach
+    void finish(TestInfo testInfo){
+	System.out.println("Ending test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
     }
 
     @Test
@@ -519,3 +534,4 @@ public class ICodeGeneratorTest {
         testStandardLibraryOnICode(programName);
     }
 }
+

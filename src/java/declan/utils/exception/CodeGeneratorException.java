@@ -5,3 +5,5 @@ public class CodeGeneratorException extends RuntimeException{
 		super("In method: " + method + "\r\n" + message + "\r\n");
 	}
 }
+
+

@@ -64,3 +64,5 @@ public class ConstDeclaration extends AbstractASTNode implements Declaration {
 		return visitor.visitResult(this);
 	}
 }
+
+

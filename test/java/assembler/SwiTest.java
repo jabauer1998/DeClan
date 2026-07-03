@@ -10,3 +10,4 @@ public class SwiTest {
         TestUtils.testAgainstInput(testString, instructionResult);
     }
 }
+

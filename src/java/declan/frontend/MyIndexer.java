@@ -138,8 +138,6 @@ public class MyIndexer implements ASTVisitor {
 	  Identifier procedName = procDecl.getProcedureName();
 	  String procedureName = procedName.getLexeme();
           List <ParamaterDeclaration> args = procDecl.getArguments();
-	  Identifier retType = procDecl.getReturnType();
-          String returnType = retType.getLexeme();
           List <Declaration> localVars = procDecl.getLocalVariables();
           List <Statement> Exec = procDecl.getExecutionStatements();
           Expression retExp = procDecl.getReturnStatement();
@@ -150,9 +148,6 @@ public class MyIndexer implements ASTVisitor {
 	    args.get(i).accept(this);
 	  }
 	  ParTrue = false;
-	  if(!returnType.equals("VOID")){
-	    printIndexMessage("DECL", retType.getStart(), "TYPE " + returnType);
-	  }
 	  
 	  for(int i = 0; i < localVars.size(); i++){
 	    localVars.get(i).accept(this);
@@ -160,9 +155,9 @@ public class MyIndexer implements ASTVisitor {
 	  for(int i = 0; i < Exec.size(); i++){
 	    Exec.get(i).accept(this);
 	  }
-	  if(!returnType.equals("VOID")){
-	    retExp.accept(this);
-	  }
+
+	  if(retExp != null)
+	      retExp.accept(this);
 	}
      
         @Override
@@ -348,3 +343,5 @@ public class MyIndexer implements ASTVisitor {
 		//Do nothing
 	}
 }
+
+

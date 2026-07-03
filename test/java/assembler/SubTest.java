@@ -39,3 +39,4 @@ public class SubTest {
         TestUtils.testAgainstInput(testString, instructionResult);
     }
 }
+

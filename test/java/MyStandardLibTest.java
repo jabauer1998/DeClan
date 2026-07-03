@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileReader;
 
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 
 import declan.utils.ErrorLog;
 import declan.frontend.ast.Library;
@@ -43,7 +46,7 @@ public class MyStandardLibTest {
 
     private static Lib parseAndGenerateDeclanSource(String declanFile, ErrorLog errLog){
         File fileExists = new File(declanFile);
-        assertTrue("Declan File does not exist", fileExists.exists());
+        assertTrue("Declan File does not exist" + fileExists.getAbsolutePath(), fileExists.exists());
         try{
             FileReader declanReader = new FileReader(declanFile);
             Source declanSource = new ElaborateReaderSource(declanFile, declanReader);
@@ -72,6 +75,17 @@ public class MyStandardLibTest {
             assertTrue(exp.toString(), false);
             throw new RuntimeException(exp.toString());
         }
+    }
+
+    @BeforeEach
+    void init(TestInfo testInfo) {
+        // This will print before every single test method runs
+        System.out.println("Starting test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
+    }
+
+    @AfterEach
+    void finish(TestInfo testInfo){
+	System.out.println("Ending test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
     }
 
     @Test
@@ -104,3 +118,4 @@ public class MyStandardLibTest {
         compareLibs("Utils");
     }
 }
+

@@ -63,6 +63,10 @@ public class IrToken implements Token{
         return new IrToken(pos, IrTokenType.NUMBER, lexeme);
     }
 
+    public static IrToken createChar(String lexeme, Position pos){
+	return new IrToken(pos, IrTokenType.CHAR, lexeme);
+    }
+
     public static IrToken createId(String lexeme, Position pos){
         if(IrTokenType.reservedIr.containsKey(lexeme)){
             return new IrToken(pos, IrTokenType.reservedIr.get(lexeme), lexeme);
@@ -75,3 +79,5 @@ public class IrToken implements Token{
         return new IrToken(pos, type, lexeme);
     }
 }
+
+

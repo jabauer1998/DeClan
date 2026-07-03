@@ -1,0 +1,34 @@
+SYMBOL SECTION
+ ENTRY a INTERNAL GLOBAL result  <INT>
+ ENTRY c CONST INTERNAL GLOBAL x  <INT>
+ ENTRY e CONST INTERNAL GLOBAL y  <INT>
+ ENTRY g EXTERNAL PARAM WriteString 0 <STRING>
+ ENTRY h EXTERNAL PARAM WriteInt 0 <INT>
+ ENTRY j EXTERNAL PARAM Mod 0 <INT>
+ ENTRY k EXTERNAL PARAM Mod 1 <INT>
+ ENTRY l EXTERNAL RETURN Mod <INT>
+BSS SECTION
+ DEF GLOBAL a := 0 <INT>
+DATA SECTION
+ DEF b := 10 <INT>
+ DEF GLOBAL c := b <INT>
+ DEF d := 2 <INT>
+ DEF GLOBAL e := d <INT>
+CODE SECTION
+ DEF f := "X is " <STRING>
+ CALL WriteString([f -> g]<STRING>)
+ CALL WriteInt([(GLOBAL c) -> h]<INT>)
+ CALL WriteLn()
+ DEF i := "Y is " <STRING>
+ CALL WriteString([i -> g]<STRING>)
+ CALL WriteInt([(GLOBAL e) -> h]<INT>)
+ CALL WriteLn()
+ CALL Mod([(GLOBAL c) -> j]<INT>, [(GLOBAL e) -> k]<INT>)
+ DEF m := (RETURN l) <INT>
+ GLOBAL a := m <INT>
+ DEF n := "Result is " <STRING>
+ CALL WriteString([n -> g]<STRING>)
+ CALL WriteInt([(GLOBAL a) -> h]<INT>)
+ CALL WriteLn()
+END
+PROC SECTION

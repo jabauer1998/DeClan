@@ -21,3 +21,5 @@ public class IntersectionOperation<SetType> implements SetExpression<SetType>{
 	}
 
 }
+
+

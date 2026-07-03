@@ -30,3 +30,4 @@ BEGIN
   IF r THEN WriteInt(5) ELSE WriteInt(6) END;
   WriteLn()
 END.
+

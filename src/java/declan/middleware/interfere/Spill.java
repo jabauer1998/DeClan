@@ -16,3 +16,5 @@ public class Spill implements ColorType {
 		return obj instanceof Spill;
 	}
 }
+
+

@@ -82,3 +82,5 @@ public class MovedConstantAnalysis extends InstructionAnalysis<HashMap<ICode, Ha
 		return newSet;
 	}
 }
+
+

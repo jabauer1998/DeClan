@@ -11,6 +11,8 @@ import java.util.Scanner;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 import declan.backend.MyCodeGenerator;
 import declan.driver.Config;
@@ -300,6 +302,14 @@ public class MyCompilerDriver {
                     conf.addFlag("std", "TRUE");
                     index++;
                     break;
+	        case "--interpret-declan":
+		    conf.addFlag("IDeclan", "TRUE");
+		    index++;
+		    break;
+	        case "--interpret-icode":
+		    conf.addFlag("IICode", "TRUE");
+		    index++;
+		    break;
                 default:
                     if(conf.containsFlag("library")){
                         StringBuilder sb = new StringBuilder();
@@ -348,6 +358,14 @@ public class MyCompilerDriver {
         if(!cfg.containsFlag("debug")){
             cfg.addFlag("debug", "FALSE");
         }
+
+	if(!cfg.containsFlag("IICode")){
+	    cfg.addFlag("IICode", "FALSE");
+	}
+
+	if(!cfg.containsFlag("IDeclan")){
+	    cfg.addFlag("IDeclan", "FALSE");
+	}
 
         boolean debugEnabled = cfg.getValueFromFlag("debug").equals("TRUE");
         if(!cfg.containsFlag("program") &&  !cfg.containsFlag("library") &&debugEnabled){
@@ -502,6 +520,21 @@ public class MyCompilerDriver {
             String programString = cfg.getValueFromFlag("program");
             Program program = parseDeclanProgram(programString, cfg, errLog);
 
+	    for(LogItem err: errLog){
+		System.out.println(err);
+	    }
+
+	    boolean interpretDeclan = cfg.getValueFromFlag("IDeclan").equals("TRUE");
+	    boolean interpretIr = cfg.getValueFromFlag("IICode").equals("TRUE");
+	    
+	    if(interpretDeclan){
+		MyInterpreter inter = new MyInterpreter(errLog, new FileWriter(cfg.getValueFromFlag("output")), new OutputStreamWriter(System.err), new InputStreamReader(System.in));
+		program.accept(inter);
+		System.out.flush();
+		System.err.flush();
+		return;
+	    }
+
             //We need to compile a Program into an executable
             List<Lib> libs = new LinkedList<Lib>();
             if(cfg.containsFlag("library")){
@@ -514,9 +547,36 @@ public class MyCompilerDriver {
                 }
             }
 
+	    for(LogItem err: errLog){
+		System.out.println(err);
+	    }
+
             boolean emitIr = cfg.getValueFromFlag("ir").equals("TRUE");
             boolean emitAssembly = cfg.getValueFromFlag("assemble").equals("TRUE");
-            if(emitIr){
+
+	    if(interpretIr){
+		MyICodeMachine vm = new MyICodeMachine(errLog, new OutputStreamWriter(System.out), new OutputStreamWriter(System.err), new InputStreamReader(System.in));
+		MyIrLinker linker = new MyIrLinker(cfg, errLog);
+
+		if(cfg.containsFlag("std")){
+		    String isStd = cfg.getValueFromFlag("std");
+                    if(isStd.equals("TRUE")){
+			MyStandardLibrary stdLib = new MyStandardLibrary(errLog);
+                        libs.add(stdLib.irIoLibrary());
+                        libs.add(stdLib.irIntLibrary());
+                        libs.add(stdLib.irRealLibrary());
+                        libs.add(stdLib.irConversionsLibrary());
+                        libs.add(stdLib.irMathLibrary());
+                        libs.add(stdLib.irUtilsLibrary());
+                     }
+                 }
+		
+                Lib[] libsArray = listAsArray(libs);
+                Prog myProg = generateProgram(program, cfg,  errLog);
+                Prog prog = linker.performLinkage(myProg, libsArray);
+		vm.interpretICode(prog);
+		return;
+	    } else if(emitIr){
                 if(cfg.containsFlag("output")){
                     String outputDestination = cfg.getValueFromFlag("output");
                     boolean noLink = false;
@@ -679,9 +739,18 @@ public class MyCompilerDriver {
                     if(noLink){
                         String library = libString;
                         Library lib = parseLibrary(library, cfg, errLog);
+
+			for(LogItem err: errLog){
+			    System.out.println(err);
+			}
                                 
                         MyICodeGenerator iCodeGenerator = new MyICodeGenerator(cfg, errLog);
                         Lib genedLib = iCodeGenerator.generateLibraryIr(lib);
+
+			for(LogItem err: errLog){
+			    System.out.println(err);
+			}
+			
                         File outputFile = new File(outputDestination);
                         if(outputFile.exists()){
                             outputFile.delete();
@@ -729,3 +798,5 @@ public class MyCompilerDriver {
         }
     }
 }
+
+

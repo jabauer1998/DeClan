@@ -11,3 +11,5 @@ public class ICodeTypeCheckerException extends RuntimeException {
         super("In function " + functionName + "\nThe expression " + icode.toString() + "\n at line " + instructionNumber + "\n" + message);
     }
 }
+
+

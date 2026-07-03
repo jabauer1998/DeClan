@@ -23,3 +23,4 @@ BEGIN
   REPEAT WriteInt(i); i := i + 1 UNTIL i >= 1;
   WriteLn();
 END.
+

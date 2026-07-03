@@ -4,3 +4,4 @@ BEGIN
     result := a * b # c / d;
     WriteBool(result)
 END.
+

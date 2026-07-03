@@ -16,6 +16,7 @@ if($javaExists -ne ""){
         $command = $args[0]
         Write-Host "Command is $command"
         if($command -eq "build"){
+	    $isDebug = $args[1]
             $srcRoot = Get-Location
             Write-Host "Generating ANTLR sources..."
             $antlrOut = "src\java\declan\backend\assembler"
@@ -39,7 +40,11 @@ if($javaExists -ne ""){
                 [System.IO.File]::WriteAllText($line, $content, $Utf8NoBomEncoding)
             }
             cat "build/BuildList.txt"
-            javac "@build/BuildList.txt" -d "./tmp" -sourcepath "./src" -cp "./lib/antlr-4.13.2-complete.jar" -encoding "UTF-8"
+	    if ($isDebug -eq "debug"){
+		javac "@build/BuildList.txt" -d "./tmp" -sourcepath "./src" -cp "./lib/antlr-4.13.2-complete.jar" -encoding "UTF-8" -g
+	    } else {
+		javac "@build/BuildList.txt" -d "./tmp" -sourcepath "./src" -cp "./lib/antlr-4.13.2-complete.jar" -encoding "UTF-8"
+	    }
             jar xf "./lib/antlr-4.13.2-complete.jar" -C "./tmp"
             if (Test-Path ".\tmp\META-INF\MANIFEST.MF") {
                 Remove-Item ".\tmp\META-INF\MANIFEST.MF"
@@ -69,9 +74,15 @@ if($javaExists -ne ""){
             cat "build/TestBuildList.txt"
             javac "@build/TestBuildList.txt" -sourcepath "./test/java" -classpath "./bin/*;./lib/junit-platform-console-standalone-6.0.3.jar" -d "tmp" -encoding "UTF-8"
             Remove-Item -Force build\TestBuildList.txt
-            java -jar lib/junit-platform-console-standalone-6.0.3.jar execute --classpath "./bin/Declan.jar;./lib/junit-platform-console-standalone-6.0.3.jar;./tmp" --scan-classpath
+            java -XX:-OmitStackTraceInFastThrow -jar lib/junit-platform-console-standalone-6.0.3.jar execute --classpath "./bin/Declan.jar;./lib/junit-platform-console-standalone-6.0.3.jar;./tmp" --config-resource="../config/junit-config.properties" --scan-classpath
 	    Remove-Item -Force -Recurse -Path "./tmp/*"
-        } else {
+        } elseif ($command -eq "debug") {
+	    Write-Host "Building main sources first..."
+            & "$runPath\WindowsBuild.ps1" build debug
+	    $remainingArgs = $args[1..($args.Count - 1)]
+	    Write-Host "Connect to Jdb with command: jdb -attach 8000"
+	    java -classpath ./bin/Declan.jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000 declan.driver.MyCompilerDriver -d @remainingArgs
+	} else {
             Write-Host "Unknown command '$command'"
         }
     }
@@ -79,4 +90,5 @@ if($javaExists -ne ""){
 
 # At end of script go back to current location
 cd $location
+
 

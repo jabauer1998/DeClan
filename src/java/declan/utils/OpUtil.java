@@ -39,6 +39,7 @@ public class OpUtil {
     public static Object notEqual(Object val1, Object val2){
         if(val1 instanceof Float || val2 instanceof Float) return !ConversionUtils.toReal(val1).equals(ConversionUtils.toReal(val2));
         else if(val1 instanceof Integer || val2 instanceof Integer) return !ConversionUtils.toInt(val1).equals(ConversionUtils.toInt(val2));
+	else if(val1 instanceof Character || val2 instanceof Character) return !ConversionUtils.toChar(val1).equals(ConversionUtils.toChar(val2));
         else if(val1 instanceof Boolean || val2 instanceof Boolean) return !ConversionUtils.toBool(val1).equals(ConversionUtils.toBool(val2));
         else throw new OperationException("notEqual", val1.getClass().getName(), val2.getClass().getName());
     }
@@ -46,15 +47,14 @@ public class OpUtil {
     public static Object equal(Object val1, Object val2){
         if(val1 instanceof Float || val2 instanceof Float) return ConversionUtils.toReal(val1).equals(ConversionUtils.toReal(val2));
         else if(val1 instanceof Integer || val2 instanceof Integer) return ConversionUtils.toInt(val1).equals(ConversionUtils.toInt(val2));
+	else if(val1 instanceof Character || val2 instanceof Character) return ConversionUtils.toChar(val1).equals(ConversionUtils.toChar(val2));
         else if(val1 instanceof Boolean || val2 instanceof Boolean) return ConversionUtils.toBool(val1).equals(ConversionUtils.toBool(val2));
         else throw new OperationException("equal", val1.getClass().getName(), val2.getClass().getName());
     }
 
     public static Object plus(Object val1, Object val2){
-        if(val1 instanceof Float && val2 instanceof Float) return (Float)val1 + (Float)val2;
-        else if(val1 instanceof Integer && val2 instanceof Float) return (Integer)val1 + (Float)val2;
-        else if(val1 instanceof Float && val2 instanceof Integer) return (Float)val1 + (Integer)val2;
-        else if(val1 instanceof Integer && val2 instanceof Integer) return (Integer)val1 + (Integer)val2;
+        if(val1 instanceof Float || val2 instanceof Float) return ConversionUtils.toReal(val1) + ConversionUtils.toReal(val2);
+        else if(val1 instanceof Integer && val2 instanceof Integer) return ConversionUtils.toInt(val1) + ConversionUtils.toInt(val2);
         else throw new OperationException("plus", val1.getClass().getName(), val2.getClass().getName());
     }
 
@@ -71,10 +71,8 @@ public class OpUtil {
     }
 
     public static Object minus(Object val1, Object val2){
-        if(val1 instanceof Float && val2 instanceof Float) return (Float)val1 - (Float)val2;
-        else if(val1 instanceof Integer && val2 instanceof Float) return (Integer)val1 - (Float)val2;
-        else if(val1 instanceof Float && val2 instanceof Integer) return (Float)val1 - (Integer)val2;
-        else if(val1 instanceof Integer && val2 instanceof Integer) return (Integer)val1 - (Integer)val2;
+        if(val1 instanceof Float || val2 instanceof Float) return ConversionUtils.toReal(val1) - ConversionUtils.toReal(val2);
+        else if(val1 instanceof Integer && val2 instanceof Integer) return ConversionUtils.toInt(val1) - ConversionUtils.toInt(val2);
         else throw new OperationException("minus", val1.getClass().getName(), val2.getClass().getName());
     }
 
@@ -91,10 +89,8 @@ public class OpUtil {
     }
 
     public static Object times(Object val1, Object val2){
-        if(val1 instanceof Float && val2 instanceof Float) return (Float)val1 * (Float)val2;
-        else if(val1 instanceof Integer && val2 instanceof Float) return (Integer)val1 * (Float)val2;
-        else if(val1 instanceof Float && val2 instanceof Integer) return (Float)val1 * (Integer)val2;
-        else if(val1 instanceof Integer && val2 instanceof Integer) return (Integer)val1 * (Integer)val2;
+        if(val1 instanceof Float || val2 instanceof Float) return (float)(ConversionUtils.toReal(val1) * ConversionUtils.toReal(val2));
+        else if(val1 instanceof Integer && val2 instanceof Integer) return (int)(ConversionUtils.toInt(val1) * ConversionUtils.toInt(val2));
         else throw new OperationException("times", val1.getClass().getName(), val2.getClass().getName());
     }
 
@@ -112,18 +108,14 @@ public class OpUtil {
     }
 
     public static Object divide(Object val1, Object val2){
-        if(val1 instanceof Float && val2 instanceof Float) return (Float)val1 / (Float)val2;
-        else if(val1 instanceof Integer && val2 instanceof Float) return (Integer)val1 / (Float)val2;
-        else if(val1 instanceof Float && val2 instanceof Integer) return (Float)val1 / (Integer)val2;
+        if(val1 instanceof Float || val2 instanceof Float) return ConversionUtils.toReal(ConversionUtils.toReal(val1) / ConversionUtils.toReal(val2));
         else if(val1 instanceof Integer && val2 instanceof Integer) return ((Integer)val1).floatValue() / ((Integer)val2).floatValue();
         else throw new OperationException("divide", val1.getClass().getName(), val2.getClass().getName());
     }
 
     public static Object div(Object val1, Object val2){
-        if(val1 instanceof Float && val2 instanceof Float) return ConversionUtils.toInt((Float)val1 / (Float)val2);
-        else if(val1 instanceof Integer && val2 instanceof Float) return ConversionUtils.toInt((Integer)val1 / (Float)val2);
-        else if(val1 instanceof Float && val2 instanceof Integer) return ConversionUtils.toInt((Float)val1 / (Integer)val2);
-        else if(val1 instanceof Integer && val2 instanceof Integer) return ConversionUtils.toInt(((Integer)val1).floatValue() / ((Integer)val2).floatValue());
+        if(val1 instanceof Float || val2 instanceof Float) return ConversionUtils.toInt(ConversionUtils.toReal(val1) / ConversionUtils.toReal(val2));
+        else if(val1 instanceof Integer && val2 instanceof Integer) return ConversionUtils.toInt(ConversionUtils.toReal(val1) / ConversionUtils.toReal(val2));
         else throw new OperationException("div", val1.getClass().getName(), val2.getClass().getName());
     }
 
@@ -140,10 +132,7 @@ public class OpUtil {
     }
 
     public static Object mod(Object val1, Object val2){
-        if(val1 instanceof Float && val2 instanceof Float) return (Float)val1 % (Float)val2;
-        else if(val1 instanceof Integer && val2 instanceof Float) return (Integer)val1 % (Float)val2;
-        else if(val1 instanceof Float && val2 instanceof Integer) return (Float)val1 % (Integer)val2;
-        else if(val1 instanceof Integer && val2 instanceof Integer) return (Integer)val1 % (Integer)val2;
+        if(val1 instanceof Integer && val2 instanceof Integer) return ConversionUtils.toInt(val1) % ConversionUtils.toInt(val2);
         else throw new OperationException("mod", val1.getClass().getName(), val2.getClass().getName());
     }
 
@@ -229,3 +218,5 @@ public class OpUtil {
     	return new FunctionCall(pos, new Identifier(pos, name), exps);
     }
 }
+
+

@@ -18,3 +18,5 @@ public class IntEntry implements Copyable<IntEntry> {
         return new IntEntry(value);
     }
 }
+
+

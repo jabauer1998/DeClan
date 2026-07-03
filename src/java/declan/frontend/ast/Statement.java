@@ -18,3 +18,5 @@ public interface Statement extends ASTNode {
 	 */
 	<R> R acceptResult(StatementVisitor<R> visitor);
 }
+
+

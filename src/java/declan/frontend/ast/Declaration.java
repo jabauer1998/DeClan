@@ -21,3 +21,5 @@ public interface Declaration {
     <R> R acceptResult(DeclarationVisitor<R> visitor);
     
 }
+
+

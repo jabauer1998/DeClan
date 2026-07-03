@@ -9,3 +9,5 @@ public class OperationException extends RuntimeException {
         super("In function " + funcName + " cant perform the unary operation on " + type1);
     }
 }
+
+

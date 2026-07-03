@@ -5,7 +5,8 @@ SYMBOL SECTION
  ENTRY f EXTERNAL PARAM RMul 0 <REAL>
  ENTRY g EXTERNAL PARAM RMul 1 <REAL>
  ENTRY h EXTERNAL RETURN RMul <REAL>
- ENTRY j EXTERNAL PARAM WriteReal 0 <REAL>
+ ENTRY k EXTERNAL PARAM WriteString 0 <STRING>
+ ENTRY l EXTERNAL PARAM WriteReal 0 <REAL>
 BSS SECTION
  DEF GLOBAL a := 0.0 <REAL>
 DATA SECTION
@@ -17,6 +18,17 @@ CODE SECTION
  CALL RMul([(GLOBAL c) -> f]<REAL>, [(GLOBAL e) -> g]<REAL>)
  DEF i := (RETURN h) <REAL>
  GLOBAL a := i <REAL>
- CALL WriteReal([(GLOBAL a) -> j]<REAL>)
+ DEF j := "R1 is " <STRING>
+ CALL WriteString([j -> k]<STRING>)
+ CALL WriteReal([(GLOBAL c) -> l]<REAL>)
+ CALL WriteLn()
+ DEF m := "R2 is " <STRING>
+ CALL WriteString([m -> k]<STRING>)
+ CALL WriteReal([(GLOBAL e) -> l]<REAL>)
+ CALL WriteLn()
+ DEF n := "Result is " <STRING>
+ CALL WriteString([n -> k]<STRING>)
+ CALL WriteReal([(GLOBAL a) -> l]<REAL>)
+ CALL WriteLn()
 END
 PROC SECTION

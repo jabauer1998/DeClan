@@ -1,10 +1,22 @@
+package declan.middleware.icode.exp;
+
+import declan.utils.pat.P;
+import java.util.Objects;
+
 public class CharArrayExp implements Exp{
     private char[] value;
+
+    public CharArrayExp(char[] value){
+	this.value = new char[value.length];
+	for(int i = 0; i < value.length; i++){
+	    this.value[i] = value[i];
+	}
+    }
     
     public CharArrayExp(String value){
 	this.value = new char[value.length() + 1];
 	int i;
-	for(i = 0; i < value.size(); i++){
+	for(i = 0; i < value.length(); i++){
 	    this.value[i] = value.charAt(i);
 	}
 	this.value[i] = '\0';
@@ -29,6 +41,7 @@ public class CharArrayExp implements Exp{
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
+	sb.append('"');
 	int index = 0;
 	while(index < value.length){
 	    if(value[index] == '\0')
@@ -36,6 +49,7 @@ public class CharArrayExp implements Exp{
 	    sb.append(value[index]);
 	    index++;
 	}
+	sb.append('"');
 	return sb.toString();
     }
 
@@ -87,3 +101,5 @@ public class CharArrayExp implements Exp{
 	    return false;
     }
 }
+
+

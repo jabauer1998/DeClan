@@ -143,3 +143,5 @@ public class DeclanToken implements Token {
 		return new DeclanToken(position, type, null);
 	}
 }
+
+

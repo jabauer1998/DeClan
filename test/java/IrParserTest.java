@@ -3,7 +3,10 @@ package declan;
 import java.io.StringReader;
 
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 
 import declan.utils.ErrorLog;
 import declan.utils.ErrorLog.LogItem;
@@ -13,6 +16,17 @@ import declan.frontend.MyIrLexer;
 import declan.frontend.MyIrParser;
 
 public class IrParserTest {
+
+    @BeforeEach
+    void init(TestInfo testInfo) {
+        // This will print before every single test method runs
+        System.out.println("Starting test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
+    }
+
+    @AfterEach
+    void finish(TestInfo testInfo){
+	System.out.println("Ending test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
+    }
 
     @Test
     public void testBinaryOp(){
@@ -241,3 +255,4 @@ public class IrParserTest {
         assertTrue(!parser.containsErrors());
     }
 }
+

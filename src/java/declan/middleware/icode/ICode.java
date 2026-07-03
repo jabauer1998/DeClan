@@ -19,8 +19,11 @@ public abstract class ICode implements Copyable<ICode>{
          REAL,
          INT,
          STRING,
-	 CHAR;
-
+	 CHAR,
+	 VOID,
+	 INT_ARRAY,
+	 REAL_ARRAY,
+	 BOOL_ARRAY;
 		@Override
 		public Type copy() {
 			return this;
@@ -40,3 +43,5 @@ public abstract class ICode implements Copyable<ICode>{
     @Override
     public abstract int hashCode();
 }
+
+

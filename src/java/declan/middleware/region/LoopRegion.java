@@ -116,3 +116,5 @@ public class LoopRegion extends Region {
 		return new Tuple<CopyBool, CopyBool>(ConversionUtils.newB(zeroExists), ConversionUtils.newB(otherIsConstant));
 	}
 }
+
+

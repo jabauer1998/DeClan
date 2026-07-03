@@ -5,7 +5,10 @@ import static org.junit.Assert.assertTrue;
 import java.io.StringReader;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 
 import declan.utils.ErrorLog;
 import declan.middleware.icode.ICode;
@@ -19,6 +22,17 @@ public class MyOptimizerTest {
     private void comparePrograms(Prog optimized, String expected){
         String optimizedString = optimized.toString();
         assertTrue("The optimized program equals \n\n" + optimizedString + "\n\n and the expected equals \n\n" + expected, optimizedString.equals(expected));
+    }
+
+    @BeforeEach
+    void init(TestInfo testInfo) {
+        // This will print before every single test method runs
+        System.out.println("Starting test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
+    }
+
+    @AfterEach
+    void finish(TestInfo testInfo){
+	System.out.println("Ending test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
     }
 
     @Test
@@ -356,3 +370,4 @@ public class MyOptimizerTest {
         comparePrograms(optimizedProg, testSrc);
     }
 }
+

@@ -50,7 +50,7 @@ import declan.middleware.icode.exp.Exp;
 import declan.middleware.icode.exp.IdentExp;
 import declan.middleware.icode.exp.IntExp;
 import declan.middleware.icode.exp.RealExp;
-import declan.middleware.icode.exp.StrExp;
+import declan.middleware.icode.exp.CharArrayExp;
 import declan.middleware.icode.exp.UnExp;
 import declan.middleware.icode.inline.Inline;
 import declan.middleware.icode.inline.InlineParam;
@@ -666,17 +666,18 @@ public class MyCodeGenerator {
                         String newReg = res.getRegister(newPlace);
                         cGen.addInstruction("LDRB " + newReg + ", " + newPlace);
                         return newReg;
-                } else if (expression instanceof StrExp) {
-                        StrExp exp = (StrExp) expression;
+                } else if (expression instanceof CharArrayExp) {
+                        CharArrayExp exp = (CharArrayExp) expression;
                         String newPlace = iGen.genNext();
-                        for (int i = 0; i < exp.value.length(); i++) {
-                                char letter = exp.value.charAt(i);
+                        for (int i = 0; i < exp.getValue().length; i++) {
+			        char letter = exp.getValue()[i];
                                 if (i == 0)
                                         cGen.addVariable(newPlace + "Value", VariableLength.BYTE, (int) letter);
                                 else
                                         cGen.addVariable(VariableLength.BYTE, (int) letter);
+				if(letter == '\0')
+				    break;
                         }
-                        cGen.addVariable(VariableLength.BYTE, (int) '\0');
                         cGen.addVariable(newPlace, VariableLength.WORD, newPlace + "Value");
                         return res.getRegister(newPlace);
                 } else if (expression instanceof BinExp) {
@@ -2706,23 +2707,21 @@ public class MyCodeGenerator {
                                 ArmRegisterResult res = rGen.getFilteredOutputSet(icode);
 
                                 Def assignICode = (Def) icode;
-                                StrExp assignExp = (StrExp) assignICode.val;
+                                CharArrayExp assignExp = (CharArrayExp) assignICode.val;
 
                                 if (assignICode.scope == ICode.Scope.GLOBAL) {
-                                        String strToMem = assignExp.value;
-                                        for (int i = 0; i < strToMem.length(); i++) {
-                                                char letter = strToMem.charAt(i);
+				        char[] strToMem = assignExp.getValue();
+                                        for (int i = 0; i < strToMem.length; i++) {
+                                                char letter = strToMem[i];
                                                 if (i == 0) {
                                                         cGen.addVariable(assignICode.label + "Value", VariableLength.BYTE, (int) letter);
+							if(letter == '\0')
+							    break;
                                                 } else {
                                                         cGen.addVariable(VariableLength.BYTE, (int) letter);
+							if(letter == '\0')
+							    break;
                                                 }
-                                        }
-
-                                        if (strToMem.length() > 0) {
-                                                cGen.addVariable(VariableLength.BYTE, (int) '\0');
-                                        } else {
-                                                cGen.addVariable(assignICode.label + "Value", VariableLength.BYTE, (int) '\0');
                                         }
 
                                         cGen.addVariable(assignICode.label, VariableLength.WORD, assignICode.label + "Value");
@@ -3791,3 +3790,5 @@ public class MyCodeGenerator {
         }
 
 }
+
+

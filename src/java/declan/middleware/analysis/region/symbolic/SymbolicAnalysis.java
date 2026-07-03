@@ -28,7 +28,7 @@ import declan.middleware.icode.exp.Exp;
 import declan.middleware.icode.exp.IdentExp;
 import declan.middleware.icode.exp.IntExp;
 import declan.middleware.icode.exp.RealExp;
-import declan.middleware.icode.exp.StrExp;
+import declan.middleware.icode.exp.CharArrayExp;
 import declan.middleware.icode.exp.UnExp;
 import declan.middleware.region.InstructionRegion;
 import declan.middleware.region.RegionBase;
@@ -197,3 +197,5 @@ public class SymbolicAnalysis extends RegionAnalysis<Tuple<CopyStr, Expr>> {
 		return factory.produceRegionTransferFunction(param);
 	}
 }
+
+

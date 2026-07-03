@@ -56,3 +56,5 @@ public class VariableDeclaration extends AbstractASTNode implements Declaration 
 		return visitor.visitResult(this);
 	}
 }
+
+

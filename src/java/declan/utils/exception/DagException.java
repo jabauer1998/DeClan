@@ -5,3 +5,5 @@ public class DagException extends RuntimeException {
 		super("Error in method " + methodName + "\n" + message);
 	}
 }
+
+

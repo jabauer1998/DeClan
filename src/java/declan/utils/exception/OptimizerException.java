@@ -5,3 +5,5 @@ public class OptimizerException extends RuntimeException {
         super("In method " + methodName + "\n" + message);
     }
 }
+
+

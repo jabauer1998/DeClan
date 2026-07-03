@@ -15,3 +15,5 @@ public interface Lexer<TokType> extends Iterator<TokType>, AutoCloseable {
 	@Override
 	public void close();
 }
+
+

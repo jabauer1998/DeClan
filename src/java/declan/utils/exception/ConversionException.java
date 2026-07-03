@@ -5,3 +5,5 @@ public class ConversionException extends RuntimeException {
         super("In function " + funcName + " cant convert from "+ fromType + " to " + toType);
     }
 }
+
+

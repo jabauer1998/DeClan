@@ -39,3 +39,4 @@ public interface Source extends AutoCloseable {
 	 */
 	Position getPosition();
 }
+

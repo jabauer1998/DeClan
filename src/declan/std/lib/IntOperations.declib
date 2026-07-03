@@ -46,13 +46,11 @@ PROCEDURE Divide (dividend: INTEGER; divisor: INTEGER);
 	RETURN divResult
     END Divide;
 PROCEDURE Mod (dividend: INTEGER; divisor: INTEGER);
-    VAR total: INTEGER; result: INTEGER;
+    VAR quotient: INTEGER; result: INTEGER;
     BEGIN
-	total := dividend;
-	WHILE((total - divisor) >= 0) DO
-    	total := total - divisor
-	END
-	RETURN total
+	quotient := dividend DIV divisor;
+	result := dividend - (divisor * quotient)
+	RETURN result
     END Mod;
 PROCEDURE Pow (a: INTEGER; b: INTEGER);
     VAR res: INTEGER;
@@ -70,3 +68,4 @@ PROCEDURE Multiply (a: INTEGER; b: INTEGER);
 	asm("MUL %dr, %ur, %ur": low, a, b);
 	RETURN low
 	END Multiply;
+

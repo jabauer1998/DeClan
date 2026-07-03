@@ -36,3 +36,5 @@ public class CopyInt implements Copyable<CopyInt> {
 		return new CopyInt(val);
 	}
 }
+
+

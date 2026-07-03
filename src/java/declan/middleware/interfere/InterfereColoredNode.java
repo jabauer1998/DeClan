@@ -12,3 +12,5 @@ public class InterfereColoredNode extends Triple<Tuple<CopyStr, ICode>, Set<Tupl
 		super(fst, snd, thrd);
 	}
 }
+
+

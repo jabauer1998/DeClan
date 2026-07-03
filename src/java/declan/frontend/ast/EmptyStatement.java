@@ -36,3 +36,5 @@ public class EmptyStatement extends AbstractASTNode implements Statement {
 		return visitor.visitResult(this);
 	}
 }
+
+

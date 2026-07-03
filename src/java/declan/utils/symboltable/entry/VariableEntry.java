@@ -47,3 +47,5 @@ public class VariableEntry implements Copyable<VariableEntry>{
         return new VariableEntry(isConst, value);
     }
 }
+
+

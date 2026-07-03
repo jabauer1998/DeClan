@@ -23,8 +23,14 @@ import declan.middleware.icode.exp.Exp;
 import declan.middleware.icode.exp.IdentExp;
 import declan.middleware.icode.exp.IntExp;
 import declan.middleware.icode.exp.RealExp;
-import declan.middleware.icode.exp.StrExp;
+import declan.middleware.icode.exp.CharArrayExp;
+import declan.middleware.icode.exp.CharExp;
 import declan.middleware.icode.exp.UnExp;
+import declan.middleware.icode.exp.RealArrayExp;
+import declan.middleware.icode.exp.IntArrayExp;
+import declan.middleware.icode.exp.BoolArrayExp;
+import declan.middleware.icode.exp.ArrayAccess;
+import declan.middleware.icode.ArrayAssign;
 import declan.middleware.icode.inline.Inline;
 import declan.middleware.icode.inline.InlineParam;
 import declan.middleware.icode.label.Label;
@@ -183,7 +189,7 @@ public class MyIrParser {
             || willMatch(IrTokenType.ID) || willMatch(IrTokenType.GOTO) || 
             willMatch(IrTokenType.IASM) || willMatch(IrTokenType.IPARAM) || 
             willMatch(IrTokenType.CALL) || willMatch(IrTokenType.GLOBAL) || 
-            willMatch(IrTokenType.DEF)){
+	    willMatch(IrTokenType.DEF) || willMatch(IrTokenType.PARAM)){
                 icode = parseInstruction();
                 toRet.add(icode);
             }
@@ -325,7 +331,7 @@ public class MyIrParser {
     
     private InlineParam parseInlineParam() {
     	match(IrTokenType.IPARAM);
-    	IdentExp ident = parseIdentifier();
+    	IdentExp ident = (IdentExp)parseIdentifier();
     	ICode.Type type = parseType();
     	IrToken tok = match(IrTokenType.SPECIFIER);
     	String tokLexeme = tok.getLexeme();
@@ -357,13 +363,33 @@ public class MyIrParser {
         return new Inline(lexeme, params);
     }
 
-    private IdentExp parseIdentifier(){
+    private Exp parseIdentifier(){
         if(willMatch(IrTokenType.LPAR)){
             skip();
-            ICode.Scope scope = parseScope();
-            IrToken id = match(IrTokenType.ID);
-            match(IrTokenType.RPAR);
-            return new IdentExp(scope, id.getLexeme());
+	    if(willMatch(IrTokenType.ID)){
+		IrToken id = skip();
+		if(willMatch(IrTokenType.AT)){
+		    skip();
+		    IdentExp num = (IdentExp)parseIdentifier(); 
+		    match(IrTokenType.RPAR);
+                    return new ArrayAccess(ICode.Scope.LOCAL, id.getLexeme(), num);
+		} else {
+		    match(IrTokenType.RPAR);
+                    return new IdentExp(ICode.Scope.LOCAL, id.getLexeme());
+		}
+	    } else {
+		ICode.Scope scope = parseScope();
+                IrToken id = match(IrTokenType.ID);
+		if(willMatch(IrTokenType.AT)){
+		    skip();
+		    IdentExp num = (IdentExp)parseIdentifier();
+		    match(IrTokenType.RPAR);
+                    return new ArrayAccess(scope, id.getLexeme(), num);
+		} else {
+		    match(IrTokenType.RPAR);
+                    return new IdentExp(scope, id.getLexeme());
+		}
+	    }
         } else {
             IrToken id = match(IrTokenType.ID);
             return new IdentExp(ICode.Scope.LOCAL, id.getLexeme());
@@ -386,14 +412,17 @@ public class MyIrParser {
             }
         } else if(willMatch(IrTokenType.STRING)){
             IrToken tok = skip();
-            return new StrExp(tok.getLexeme());
-        } else {
-            throw new ParseException("Error when parsing primary expression expected token of type BOOL/REAL/INT/STRING/IDENT but found token of type " + skip());
+            return new CharArrayExp(tok.getLexeme());
+        } else if(willMatch(IrTokenType.CHAR)) {
+	    IrToken tok = skip();
+	    return new CharExp(tok.getLexeme().translateEscapes().charAt(0));
+	} else {
+            throw new ParseException("Error when parsing primary expression expected token of type BOOL/REAL/INT/STRING/IDENT/CHAR but found token of type " + skip());
         }
     }
 
     private BinExp parseRelationalExpression(){
-        IdentExp left = parseIdentifier();
+        IdentExp left = (IdentExp)parseIdentifier();
 
         IrToken op = null;
         if(willMatch(IrTokenType.BEQ) 
@@ -409,7 +438,7 @@ public class MyIrParser {
             op = match(IrTokenType.IEQ);
         }
 
-        IdentExp right = parseIdentifier();
+        IdentExp right = (IdentExp)parseIdentifier();
 
         BinExp expr = new BinExp(left, ConversionUtils.toBinOp(op.getType()), right);
         return expr;
@@ -467,11 +496,11 @@ public class MyIrParser {
     private UnExp parseUnaryExpression(){
         if(willMatch(IrTokenType.BNOT)){
             skip();
-            IdentExp right = parseIdentifier();
+            IdentExp right = (IdentExp)parseIdentifier();
             return new UnExp(UnExp.Operator.BNOT, right);
         } else if(willMatch(IrTokenType.INOT)){
             skip();
-            IdentExp right = parseIdentifier();
+            IdentExp right = (IdentExp)parseIdentifier();
             return new UnExp(UnExp.Operator.INOT, right);  
         } else {
             return null;
@@ -482,7 +511,7 @@ public class MyIrParser {
         if(willMatch(IrTokenType.BNOT) || willMatch(IrTokenType.INOT)) {
             return parseUnaryExpression();
         } else if(willMatch(IrTokenType.ID) || willMatch(IrTokenType.LPAR)) {
-            IdentExp exp1 = parseIdentifier();
+            Exp exp1 = parseIdentifier();
 
             if(willMatch(IrTokenType.LT) || willMatch(IrTokenType.IADD) 
             || willMatch(IrTokenType.LE) || willMatch(IrTokenType.GT)
@@ -495,9 +524,9 @@ public class MyIrParser {
             || willMatch(IrTokenType.IXOR)) {
                 IrToken op = skip();
 
-                IdentExp exp2 = parseIdentifier();
+                IdentExp exp2 = (IdentExp)parseIdentifier();
 
-                return new BinExp(exp1, ConversionUtils.toBinOp(op.getType()), exp2);
+                return new BinExp((IdentExp)exp1, ConversionUtils.toBinOp(op.getType()), exp2);
             } else {
                 return exp1;
             }
@@ -547,7 +576,10 @@ public class MyIrParser {
         } else if(willMatch(IrTokenType.BOOL)){
             skip();
             type = ICode.Type.BOOL;
-        } else {
+        } else if(willMatch(IrTokenType.CHAR)) {
+	    skip();
+	    type = ICode.Type.CHAR;
+	} else {
             throw new ParseException("In function parseType expected token of type INT/STRING/BOOL/REAL but found token of type " + skip());
         }
 
@@ -560,17 +592,48 @@ public class MyIrParser {
         ICode.Scope scope = parseScope();
         IrToken id = match(IrTokenType.ID);
         match(IrTokenType.ASSIGN);
-        Exp expression = parseExpression();
-        ICode.Type type = parseType();
-        return new Def(scope, id.getLexeme(), expression, type);
+	if(willMatch(IrTokenType.NEW)){
+	    match(IrTokenType.NEW);
+	    match(IrTokenType.ARRAY);
+	    IrToken size = match(IrTokenType.NUMBER);
+	    match(IrTokenType.OF);
+	    if(willMatch(IrTokenType.INT)){
+		skip();
+		return new Def(scope, id.getLexeme(), new IntArrayExp(Integer.parseUnsignedInt(size.getLexeme())), ICode.Type.INT_ARRAY);
+	    } else if(willMatch(IrTokenType.REAL)){
+		skip();
+		return new Def(scope, id.getLexeme(), new RealArrayExp(Integer.parseUnsignedInt(size.getLexeme())), ICode.Type.REAL_ARRAY);
+	    } else if(willMatch(IrTokenType.BOOL)){
+		skip();
+		return new Def(scope, id.getLexeme(), new BoolArrayExp(Integer.parseUnsignedInt(size.getLexeme())), ICode.Type.BOOL_ARRAY);
+	    } else {
+		throw new RuntimeException("Unexpected token for array size declaration " + skip().getLexeme());
+	    }
+	} else {
+	    Exp expression = parseExpression();
+	    ICode.Type type = parseType();
+	    return new Def(scope, id.getLexeme(), expression, type);
+	}
     }
 
     private ICode parseAssignment(){
         ICode.Scope scope = parseScope();
         IrToken id = match(IrTokenType.ID);
-        match(IrTokenType.ASSIGN);
-        Exp expression = parseExpression();
-        ICode.Type assignType = parseType();
-        return new Assign(scope, id.getLexeme(), expression, assignType);
+	if(willMatch(IrTokenType.AT)){
+	    skip();
+	    IdentExp index = (IdentExp)parseIdentifier();
+	    match(IrTokenType.ASSIGN);
+	    Exp expression = parseExpression();
+	    ICode.Type assignType = parseType();
+	    return new ArrayAssign(scope, id.getLexeme(), index, expression, assignType);
+	} else {
+	    match(IrTokenType.ASSIGN);
+            Exp expression = parseExpression();
+            ICode.Type assignType = parseType();
+            return new Assign(scope, id.getLexeme(), expression, assignType);
+	}
+        
     }
 }
+
+

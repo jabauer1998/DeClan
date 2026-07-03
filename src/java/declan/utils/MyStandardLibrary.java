@@ -26,7 +26,7 @@ public class MyStandardLibrary {
 
     public MyStandardLibrary(ErrorLog errLog){
         this.errLog = errLog;
-        irDir = "./src/ir/std/lib";
+        irDir = "./src/ir/std/lib/linkable";
         declanDir = "./src/declan/std/lib";
         File irDirAsFile = new File(irDir);
         File declanDirAsFile = new File(declanDir);
@@ -48,8 +48,6 @@ public class MyStandardLibrary {
         if(declanDirFound){
             String declanSrcFile = declanDir + '/' + fileName + ".declib";
             File file = new File(declanSrcFile);
-
-	    System.out.println("File is " + file.getAbsolutePath());
 
             if(!file.exists())
                 throw new RuntimeException("Error file at path-\n" + declanSrcFile + "\ndoes not exist!!!\n");
@@ -149,5 +147,7 @@ public class MyStandardLibrary {
         return parseDeclanSource("Utils");
     }
 }
+
+
 
 

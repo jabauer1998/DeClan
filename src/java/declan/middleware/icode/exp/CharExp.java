@@ -1,7 +1,7 @@
 package declan.middleware.icode.exp;
 
 import java.util.Objects;
-
+import java.util.regex.Pattern;
 import declan.utils.pat.P;
 
 public class CharExp implements Exp{
@@ -12,7 +12,29 @@ public class CharExp implements Exp{
     }
 
     public String toString(){
-	return "" + c;
+	StringBuilder sb = new StringBuilder();
+	sb.append('\'');
+	String escs = "\n\t\r\b\f\\\"'";
+	if(c == '\n')
+	    sb.append("\\n");
+	else if(c == '\t')
+	    sb.append("\\t");
+	else if(c == '\r')
+	    sb.append("\\r");
+	else if(c == '\b')
+	    sb.append("\\b");
+	else if(c == '\f')
+	    sb.append("\\f");
+	else if(c == '\\')
+	    sb.append("\\");
+	else if(c == '\"')
+	    sb.append("\\\"");
+	else if(c == '\'')
+	    sb.append("\\'");
+	else
+	    sb.append(c);
+	sb.append('\'');
+	return sb.toString();
     }
 
     public int hashCode(){
@@ -23,6 +45,16 @@ public class CharExp implements Exp{
 	return new CharExp(c);
     }
 
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof CharExp){
+	    CharExp o = (CharExp)obj;
+	    return o.c == c;
+	} else {
+	    return false;
+	}
+    }
+    
     public P asPattern(boolean tf){
 	if(tf)
 	    return P.PAT(P.CHAR());
@@ -55,3 +87,5 @@ public class CharExp implements Exp{
 	return c == '\0';
     }
 }
+
+

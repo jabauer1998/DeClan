@@ -5,7 +5,10 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileReader;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 
 import declan.utils.ErrorLog;
 import declan.utils.source.ReaderSource;
@@ -30,6 +33,17 @@ public class MyParserBasicTest {
         } catch(Exception exp){
             assertTrue(exp.toString(), false);
         }
+    }
+
+    @BeforeEach
+    void init(TestInfo testInfo) {
+        // This will print before every single test method runs
+        System.out.println("Starting test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
+    }
+
+    @AfterEach
+    void finish(TestInfo testInfo){
+	System.out.println("Ending test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
     }
 
     @Test
@@ -127,3 +141,4 @@ public class MyParserBasicTest {
         runParserOnSource("src/declan/test/RealDivision2.dcl");
     }
 }
+

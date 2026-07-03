@@ -12,7 +12,7 @@ import declan.utils.pat.P;
 import declan.utils.ConversionUtils;
 
 public class Assign extends ICode{
-	private static Set<Assign> times = new HashSet<Assign>();
+    private static Set<Assign> times = new HashSet<Assign>();
 	
     public String place;
     public Exp value;
@@ -165,3 +165,4 @@ public class Assign extends ICode{
 		return new Assign(this);
 	}
 }
+

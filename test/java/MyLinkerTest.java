@@ -5,7 +5,10 @@ import java.io.StringReader;
 import java.util.Scanner;
 
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 
 import declan.utils.ErrorLog;
 import declan.frontend.ast.Program;
@@ -61,6 +64,17 @@ public class MyLinkerTest {
             }
             assertTrue(exp.toString(), false);
         }
+    }
+
+    @BeforeEach
+    void init(TestInfo testInfo) {
+        // This will print before every single test method runs
+        System.out.println("Starting test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
+    }
+
+    @AfterEach
+    void finish(TestInfo testInfo){
+	System.out.println("Ending test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
     }
     
     private static void compareProgramStrings(String resultProgram, String expectedProgram){
@@ -625,3 +639,4 @@ public class MyLinkerTest {
         linkTestProgram(progSrc);
     }
 }
+

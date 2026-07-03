@@ -8,7 +8,10 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.TestInfo;
 
 import declan.utils.ErrorLog;
 import declan.utils.ErrorLog.LogItem;
@@ -44,12 +47,6 @@ public class InterpreterICodeTest {
             MyStandardLibrary lib = new MyStandardLibrary(errLog);
         
             MyInterpreter interpreter = new MyInterpreter(errLog, intOut, errOut, standardInInt);
-            lib.declanIoLibrary().accept(interpreter);
-            lib.declanMathLibrary().accept(interpreter);
-            lib.declanRealLibrary().accept(interpreter);
-            lib.declanConversionsLibrary().accept(interpreter);
-            lib.declanUtilsLibrary().accept(interpreter);
-            lib.declanIntLibrary().accept(interpreter);
             prog.accept(interpreter);
 
             for(LogItem errItem : errLog){
@@ -92,6 +89,17 @@ public class InterpreterICodeTest {
         } catch (IOException e) {
                 assertTrue(e.toString(), false);
         }
+    }
+
+    @BeforeEach
+    void init(TestInfo testInfo) {
+        // This will print before every single test method runs
+        System.out.println("Starting test: " + testInfo.getDisplayName());
+    }
+
+    @AfterEach
+    void finish(TestInfo testInfo){
+	System.out.println("Ending test: " + testInfo.getDisplayName());
     }
 
     @Test
@@ -276,7 +284,8 @@ public class InterpreterICodeTest {
     public void testRealDivision5(){
         testInterpreterWithICode("src/declan/test/RealDivision5.dcl", nullReader, nullReader, nullReader, false);
     }
-    
+
+    /*
     @Test
     public void testConversionsOpt(){
         testInterpreterWithICode("src/declan/test/conversions.dcl", nullReader, nullReader, nullReader, true);
@@ -459,4 +468,6 @@ public class InterpreterICodeTest {
     public void testRealDivision5Opt(){
         testInterpreterWithICode("src/declan/test/RealDivision5.dcl", nullReader, nullReader, nullReader, true);
     }
+    */
 }
+

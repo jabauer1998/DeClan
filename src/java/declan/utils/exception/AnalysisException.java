@@ -5,3 +5,5 @@ class AnalysisException extends RuntimeException {
 		super("In analysis type: " + analysisType + "\r\nIn method name: " + methodName + "\r\n" + message);
 	}
 }
+
+

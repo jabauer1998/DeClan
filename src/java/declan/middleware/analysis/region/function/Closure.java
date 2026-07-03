@@ -5,3 +5,5 @@ public class Closure<SetType> extends RegionTransferFunction<SetType> {
 		super(funcExpression);
 	}
 }
+
+

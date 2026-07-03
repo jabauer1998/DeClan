@@ -20,3 +20,5 @@ public class ColoredGraph {
 		return colored.get(color);
 	}
 }
+
+

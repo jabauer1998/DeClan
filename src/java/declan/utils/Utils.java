@@ -42,7 +42,7 @@ import declan.middleware.icode.exp.IdentExp;
 import declan.middleware.icode.exp.IntExp;
 import declan.middleware.icode.exp.NullableExp;
 import declan.middleware.icode.exp.RealExp;
-import declan.middleware.icode.exp.StrExp;
+import declan.middleware.icode.exp.CharArrayExp;
 import declan.middleware.icode.exp.UnExp;
 import declan.middleware.icode.inline.Inline;
 import declan.middleware.icode.label.Label;
@@ -552,3 +552,5 @@ public class Utils {
           throw new RuntimeException();
   }
 }
+
+

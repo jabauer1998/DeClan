@@ -6,3 +6,4 @@ BEGIN
   END;
   WriteLn();
 END.
+

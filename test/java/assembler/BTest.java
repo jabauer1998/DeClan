@@ -15,3 +15,4 @@ public class BTest {
         TestUtils.testAgainstInput(testString, result);
     }
 }
+

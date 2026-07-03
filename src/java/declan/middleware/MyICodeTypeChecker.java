@@ -24,7 +24,7 @@ import declan.middleware.icode.exp.IdentExp;
 import declan.middleware.icode.exp.IntExp;
 import declan.middleware.icode.exp.RealExp;
 import declan.middleware.icode.exp.CharExp;
-import declan.middleware.icode.exp.StrExp;
+import declan.middleware.icode.exp.CharArrayExp;
 import declan.middleware.icode.exp.UnExp;
 import declan.middleware.icode.label.Label;
 import declan.utils.pat.P;
@@ -233,7 +233,7 @@ public class MyICodeTypeChecker {
         else if(expression instanceof IdentExp) return typeCheckIdentifier((IdentExp)expression);
         else if(expression instanceof IntExp) return typeCheckInteger();
         else if(expression instanceof RealExp) return typeCheckReal();
-        else if(expression instanceof StrExp) return typeCheckString();
+        else if(expression instanceof CharArrayExp) return typeCheckString();
 	else if(expression instanceof CharExp) return typeCheckChar();
         else if(expression instanceof BoolExp) return typeCheckBoolean();
         else {
@@ -312,3 +312,5 @@ public class MyICodeTypeChecker {
         return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN);
     }
 }
+
+

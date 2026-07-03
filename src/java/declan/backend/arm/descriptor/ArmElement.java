@@ -8,3 +8,5 @@ public interface ArmElement extends Copyable<ArmElement> {
 	public int hashCode();
 	public ArmElement copy();
 }
+
+

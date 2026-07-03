@@ -15,6 +15,7 @@ import declan.frontend.MyICodeGenerator;
 import declan.frontend.MyIrLexer;
 import declan.frontend.MyIrParser;
 import declan.middleware.icode.Assign;
+import declan.middleware.icode.ArrayAssign;
 import declan.middleware.icode.Call;
 import declan.middleware.icode.Def;
 import declan.middleware.icode.Goto;
@@ -28,6 +29,7 @@ import declan.middleware.icode.exp.BinExp;
 import declan.middleware.icode.exp.Exp;
 import declan.middleware.icode.exp.IdentExp;
 import declan.middleware.icode.exp.UnExp;
+import declan.middleware.icode.exp.ArrayAccess;
 import declan.middleware.icode.inline.Inline;
 import declan.middleware.icode.inline.InlineParam;
 import declan.middleware.icode.label.Label;
@@ -246,7 +248,60 @@ public class MyIrLinker {
                                         newProgram.addDataInstruction(assignLib);
                                     if(!newProgram.containsEntry(identName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
                                         newProgram.addSymEntry(libEntry);
-                                } else {
+                                } else if(exp instanceof ArrayAccess) {
+				    ArrayAccess identExp = (ArrayAccess)exp;
+				    IdentExp index = (IdentExp)identExp.index;
+				    
+				    if(library.containsEntry(index.ident, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        VarSymEntry entry = library.getVariableData(index.ident, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                        if(!newProgram.containsEntry(index.ident, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProgram, library);
+                                    } else {
+                                        fetchInternalDependentInstructions(library, program, libraries, index.ident, newProgram);
+                                    }
+
+                                    String oldPlace = index.ident;
+                                    if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
+                                        String newPlace = null;    
+                                        do{
+                                            newPlace = gen.genNext();
+                                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+
+                                        replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
+                                    }
+
+				    if(library.containsEntry(identExp.name, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        VarSymEntry entry = library.getVariableData(identExp.name, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                        if(!newProgram.containsEntry(entry.declanIdent, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProgram, library);
+                                    } else {
+                                        fetchInternalDependentInstructions(library, program, libraries, identExp.name, newProgram);
+                                    }
+
+                                    oldPlace = identExp.name;
+                                    if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
+                                        String newPlace = null;    
+                                        do{
+                                            newPlace = gen.genNext();
+                                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+
+                                        replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, library);
+                                    }
+
+                                    if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.label, program, libraries)){
+                                        String place = null;    
+                                        do{
+                                            place = gen.genNext();
+                                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                                        replacePlaceAcrossProgramAndLibraries(assignLib.label, place, program, libraries, library);
+                                    }
+
+                                    if(!newProgram.dataSectionContainsInstruction(assignLib))
+                                        newProgram.addDataInstruction(assignLib);
+                                    if(!newProgram.containsEntry(identName, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        newProgram.addSymEntry(libEntry);
+				} else {
                                     if(!placeIsUniqueAcrossProgramAndLibraries(assignLib.label, program, libraries)){
                                         String place = null;    
                                         do{
@@ -449,7 +504,60 @@ public class MyIrLinker {
                                         newLib.addDataInstruction(assignLib);
                                     if(!newLib.containsEntry(identName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
                                         newLib.addSymEntry(libEntry);
-                                } else {
+                                } else if(exp instanceof ArrayAccess) {
+				    ArrayAccess identExp = (ArrayAccess)exp;
+				    IdentExp index = (IdentExp)identExp.index;
+				    
+				    if(library.containsEntry(index.ident, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        VarSymEntry entry = library.getVariableData(index.ident, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                        if(!newLib.containsEntry(index.ident, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                            fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                                    } else {
+                                        fetchInternalDependentInstructions(library, single, libraries, index.ident, newLib);
+                                    }
+
+                                    String oldPlace = index.ident;
+                                    if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                                        String newPlace = null;    
+                                        do{
+                                            newPlace = gen.genNext();
+                                        } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+
+                                        replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
+                                    }
+
+				    if(library.containsEntry(identExp.name, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        VarSymEntry entry = library.getVariableData(identExp.name, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                        if(!newLib.containsEntry(entry.declanIdent, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                            fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                                    } else {
+                                        fetchInternalDependentInstructions(library, single, libraries, identExp.name, newLib);
+                                    }
+
+                                    oldPlace = identExp.name;
+                                    if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                                        String newPlace = null;    
+                                        do{
+                                            newPlace = gen.genNext();
+                                        } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+
+                                        replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
+                                    }
+
+                                    if(!placeIsUniqueAcrossLibraries(assignLib.label, single, libraries)){
+                                        String place = null;    
+                                        do{
+                                            place = gen.genNext();
+                                        } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
+
+                                        replacePlaceAcrossLibraries(assignLib.label, place, single, libraries, library);
+                                    }
+
+                                    if(!newLib.dataSectionContainsInstruction(assignLib))
+                                        newLib.addDataInstruction(assignLib);
+                                    if(!newLib.containsEntry(identName, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        newLib.addSymEntry(libEntry);
+				} else {
                                     if(!placeIsUniqueAcrossLibraries(assignLib.label, single, libraries)){
                                         String place = null;    
                                         do{
@@ -655,7 +763,63 @@ public class MyIrLinker {
                             if(!newLib.containsEntry(entry.declanIdent, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
                                 newLib.addSymEntry(entry);
                         }
-                    } else {
+                    } else if(exp instanceof ArrayAccess){
+			ArrayAccess identExp = (ArrayAccess)exp;
+			IdentExp myIdent = (IdentExp)identExp.index;
+
+			if(currentLib.containsEntry(myIdent.ident, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = currentLib.getVariableData(myIdent.ident, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newLib.containsEntry(entry.declanIdent, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, currentLib);
+                        } else {
+                            fetchInternalDependentInstructions(currentLib, single, libraries, myIdent.ident, newLib);
+                        }
+
+                        String oldPlace = myIdent.ident;
+                        if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                            String newPlace = null;    
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+
+                            replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, currentLib);
+                        }
+			
+			if(currentLib.containsEntry(identExp.name, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = currentLib.getVariableData(identExp.name, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newLib.containsEntry(entry.declanIdent, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, currentLib);
+                        } else {
+                            fetchInternalDependentInstructions(currentLib, single, libraries, identExp.name, newLib);
+                        }
+
+                        oldPlace = identExp.name;
+                        if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                            String newPlace = null;    
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+
+                            replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, currentLib);
+                        }
+
+                        if(!placeIsUniqueAcrossLibraries(assign.label, single, libraries)){
+                            String place = null;    
+                            do{
+                                place = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(place, single, libraries));
+                            
+                            replacePlaceAcrossLibraries(assign.label, place, single, libraries, currentLib);
+                        }
+
+                        if(!newLib.dataSectionContainsInstruction(assign))
+                            newLib.addDataInstruction(assign);
+                        if(currentLib.containsEntry(labelName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = currentLib.getVariableData(labelName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newLib.containsEntry(entry.declanIdent, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                newLib.addSymEntry(entry);
+                        }
+		    } else {
                         if(!placeIsUniqueAcrossLibraries(assign.label, single, libraries)){
                             String place = null;    
                             do{
@@ -860,7 +1024,62 @@ public class MyIrLinker {
                             if(!newProgram.containsEntry(entry.declanIdent, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
                                 newProgram.addSymEntry(entry);
                         }
-                    } else {
+                    } else if(exp instanceof ArrayAccess) {
+			ArrayAccess arr = (ArrayAccess)exp;
+			IdentExp index = (IdentExp)arr.index;
+
+			if(currentLib.containsEntry(index.ident, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = currentLib.getVariableData(index.ident, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProgram.containsEntry(entry.declanIdent, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProgram, currentLib);
+                        } else {
+                            fetchInternalDependentInstructions(currentLib, program, libraries, index.ident, newProgram);
+                        }
+                        
+                        if(!placeIsUniqueAcrossProgramAndLibraries(index.ident, program, libraries)){
+                            String newPlace = null;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+
+                            replacePlaceAcrossProgramAndLibraries(index.ident, newPlace, program, libraries, currentLib);
+                        }
+
+			
+			if(!placeIsUniqueAcrossProgramAndLibraries(assign.label, program, libraries)){
+                            String newPlace = null;    
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+
+                            replacePlaceAcrossProgramAndLibraries(assign.label, newPlace, program, libraries, currentLib);
+                        }
+                        
+                        if(currentLib.containsEntry(arr.name, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = currentLib.getVariableData(arr.name, SymEntry.EXTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProgram.containsEntry(entry.declanIdent, SymEntry.INTERNAL | SymEntry.RETURN, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProgram, currentLib);
+                        } else {
+                            fetchInternalDependentInstructions(currentLib, program, libraries, arr.name, newProgram);
+                        }
+                        
+                        if(!placeIsUniqueAcrossProgramAndLibraries(arr.name, program, libraries)){
+                            String newPlace = null;    
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+
+                            replacePlaceAcrossProgramAndLibraries(arr.name, newPlace, program, libraries, currentLib);
+                        }
+                        
+                        if(!newProgram.dataSectionContainsInstruction(assign))
+                            newProgram.addDataInstruction(assign);
+                        if(currentLib.containsEntry(labelName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = currentLib.getVariableData(labelName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProgram.containsEntry(entry.declanIdent, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                newProgram.addSymEntry(entry);
+			}
+		    } else {
                         if(!placeIsUniqueAcrossProgramAndLibraries(assign.label, program, libraries)){
                             String place = null;    
                             do{
@@ -939,7 +1158,71 @@ public class MyIrLinker {
                                 }
                             }
                         }
-                    } else if(assignExp instanceof UnExp){
+                    } else if(assignExp instanceof ArrayAccess) {
+			ArrayAccess ident = (ArrayAccess)assignExp;
+			IdentExp index = (IdentExp) ident.index;
+
+			if(program.containsEntry(index.ident, SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = program.getVariableData(index.ident, SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                        }
+
+                        String oldPlace = index.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
+                            
+                            if(program.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                            }
+                        } else {
+                                if(program.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+				    if(!newProg.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+				    }
+				}
+                        }
+			
+
+			if(program.containsEntry(ident.name, SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = program.getVariableData(ident.name, SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                        }
+
+                        oldPlace = ident.name;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
+                            
+                            if(program.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                            }
+                        } else {
+                                if(program.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+				    if(!newProg.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+				    }
+				}
+                        }
+		    } else if(assignExp instanceof UnExp){
                         UnExp unExp = (UnExp)assignExp;
                         
                         IdentExp ident = unExp.right;
@@ -1037,7 +1320,239 @@ public class MyIrLinker {
                             }
                         }
                     }
-                } else if (icode instanceof Def){
+                } else if(icode instanceof ArrayAssign){
+		    ArrayAssign assignment = (ArrayAssign)icode;
+		    IdentExp declIndex = (IdentExp)assignment.index;
+		    
+		    String myOld = declIndex.ident;
+		    if(!placeIsUniqueAcrossProgramAndLibraries(myOld, program, libraries)){
+			String newPlace;
+			do{
+			    newPlace = gen.genNext();
+			} while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+        
+			replacePlaceAcrossProgramAndLibraries(myOld, newPlace, program, libraries, program);
+                            
+			if(program.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+			    if(!newProg.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+				SymEntry entry = program.getVariableData(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+				newProg.addSymEntry(entry);
+			    }
+			}
+		    } else {
+			if(program.containsEntry(myOld, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+			    if(!newProg.containsEntry(myOld, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+				SymEntry entry = program.getVariableData(myOld, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+				newProg.addSymEntry(entry);
+			    }
+			}
+		    }
+		    
+                    
+                    if(!placeIsUniqueAcrossProgramAndLibraries(assignment.ident, program, libraries)){
+                        String newPlace = null;
+                        do{
+                            newPlace = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+                        
+                        replacePlaceAcrossProgramAndLibraries(assignment.ident, newPlace, program, libraries, program);
+                    }
+
+                    Exp assignExp = assignment.expression;
+                    if(assignExp instanceof IdentExp){
+                        IdentExp ident = (IdentExp)assignExp;
+                        if(program.containsEntry(ident.ident, SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = program.getVariableData(ident.ident, SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                        }
+
+                        String oldPlace = ident.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
+                            
+                            if(program.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                            }
+                        } else {
+                                if(program.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                            }
+                        }
+                    } else if(assignExp instanceof ArrayAccess){
+			ArrayAccess ident = (ArrayAccess)assignExp;
+			IdentExp index = (IdentExp) ident.index;
+
+			if(program.containsEntry(index.ident, SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = program.getVariableData(index.ident, SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                        }
+
+                        String oldPlace = index.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
+                            
+                            if(program.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                            }
+                        } else {
+                                if(program.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+				    if(!newProg.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+				    }
+				}
+                        }
+			
+
+			if(program.containsEntry(ident.name, SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = program.getVariableData(ident.name, SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                        }
+
+                        oldPlace = ident.name;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
+                            
+                            if(program.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                            }
+                        } else {
+                                if(program.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+				    if(!newProg.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+				    }
+				}
+                        }
+		    } else if(assignExp instanceof UnExp){
+                        UnExp unExp = (UnExp)assignExp;
+                        
+                        IdentExp ident = unExp.right;
+                        if(program.containsEntry(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = program.getVariableData(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                        }
+
+                        String oldPlace = ident.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
+                            
+                            if(program.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                            }
+                        } else {
+                                if(program.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                            }
+                        }
+                    } else if(assignExp instanceof BinExp){
+                        BinExp binExp = (BinExp)assignExp;
+
+                        IdentExp leftExp = binExp.left;
+                        if(program.containsEntry(leftExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = program.getVariableData(leftExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                        }
+
+                        String leftOldPlace = leftExp.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(leftOldPlace, program, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(leftOldPlace, newPlace, program, libraries, program);
+                            
+                            if(program.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                            }
+                        } else {
+                                if(program.containsEntry(leftOldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(leftOldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(leftOldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                            }
+                        }
+
+                        IdentExp rightExp = binExp.right;
+                        if(program.containsEntry(rightExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = program.getVariableData(rightExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                        }
+
+                        String rightOldPlace = rightExp.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(rightOldPlace, program, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(rightOldPlace, newPlace, program, libraries, program);
+                            
+                            if(program.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                            }
+                        } else {
+                                if(program.containsEntry(rightOldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(rightOldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(rightOldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                            }
+                        }
+                    }
+		} else if (icode instanceof Def){
                     Def definition = (Def)icode;
                     
                     if(!placeIsUniqueAcrossProgramAndLibraries(definition.label, program, libraries)){
@@ -1095,7 +1610,71 @@ public class MyIrLinker {
                                 }
                             }
                         }
-                    } else if(assignExp instanceof UnExp){
+                    } else if(assignExp instanceof ArrayAccess) {
+			ArrayAccess ident = (ArrayAccess)assignExp;
+			IdentExp index = (IdentExp)ident.index;
+
+			if(program.containsEntry(index.ident, SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = program.getVariableData(index.ident, SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                        }
+
+                        String oldPlace = index.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
+                            
+                            if(program.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                            }
+                        } else {
+                                if(program.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+				    if(!newProg.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+				    }
+				}
+                        }
+			
+
+			if(program.containsEntry(ident.name, SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = program.getVariableData(ident.name, SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                        }
+
+                        oldPlace = ident.name;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, program, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, program, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, program, libraries, program);
+                            
+                            if(program.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                            }
+                        } else {
+                                if(program.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+				    if(!newProg.containsEntry(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = program.getVariableData(oldPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+				    }
+				}
+                        }
+		    } else if(assignExp instanceof UnExp){
                         UnExp unExp = (UnExp)assignExp;
                         
                         IdentExp ident = unExp.right;
@@ -1541,7 +2120,56 @@ public class MyIrLinker {
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                         }
-                    } else if(assignExp instanceof UnExp){
+                    } else if(assignExp instanceof ArrayAccess) {
+		        ArrayAccess acc = (ArrayAccess)assignExp;
+			IdentExp ident = (IdentExp)acc.index;
+			
+			if(library.containsEntry(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = library.getVariableData(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
+                        } else if(library.containsEntry(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                        } else {
+                            fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
+                        }
+
+                        String oldPlace = ident.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, prog, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                        }
+
+			if(library.containsEntry(acc.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = library.getVariableData(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
+                        } else if(library.containsEntry(acc.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(acc.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(acc.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                        } else {
+                            fetchInternalDependentInstructions(library, prog, libraries, acc.name, newProg);
+                        }
+
+                        oldPlace = acc.name;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, prog, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                        }
+		    } else if(assignExp instanceof UnExp){
                         UnExp unExp = (UnExp)assignExp;
                         
                         IdentExp ident = (IdentExp)unExp.right;
@@ -1618,7 +2246,225 @@ public class MyIrLinker {
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                         }
                     }
-                } else if(icode instanceof Def){
+                } else if(icode instanceof ArrayAssign) {
+		    ArrayAssign assignment = (ArrayAssign)icode;
+		    
+		    if(!placeIsUniqueAcrossProgramAndLibraries(assignment.ident, prog, libraries)){
+                        String newPlace = null;
+                        do{
+                            newPlace = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                        
+                        replacePlaceAcrossProgramAndLibraries(assignment.ident, newPlace, prog, libraries, library);
+                        
+                        if(library.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                        } else if(library.containsEntry(newPlace, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                if(!newProg.containsEntry(newPlace, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        fetchInternalDependentInstructions(library, prog, libraries, newPlace, newProg);
+                                }
+                        }
+                    } else {
+                        if(library.containsEntry(assignment.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(assignment.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(assignment.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                        } else if(library.containsEntry(assignment.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                if(!newProg.containsEntry(assignment.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        fetchInternalDependentInstructions(library, prog, libraries, assignment.ident, newProg);
+                                }
+                        }
+                    }
+
+		    IdentExp myIndex = (IdentExp)assignment.index;
+
+		    if(!placeIsUniqueAcrossProgramAndLibraries(myIndex.ident, prog, libraries)){
+                        String newPlace = null;
+                        do{
+                            newPlace = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                        
+                        replacePlaceAcrossProgramAndLibraries(myIndex.ident, newPlace, prog, libraries, library);
+                        
+                        if(library.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(newPlace, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                        } else if(library.containsEntry(newPlace, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                if(!newProg.containsEntry(newPlace, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        fetchInternalDependentInstructions(library, prog, libraries, newPlace, newProg);
+                                }
+                        }
+                    } else {
+                        if(library.containsEntry(myIndex.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(myIndex.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(myIndex.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                        } else if(library.containsEntry(myIndex.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                if(!newProg.containsEntry(myIndex.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        fetchInternalDependentInstructions(library, prog, libraries, myIndex.ident, newProg);
+                                }
+                        }
+                    }
+
+                    Exp assignExp = assignment.expression;
+                    if(assignExp instanceof IdentExp){
+                        IdentExp ident = (IdentExp)assignExp;
+                        if(library.containsEntry(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = library.getVariableData(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
+                        } else if(library.containsEntry(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                        } else {
+                            fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
+                        }
+
+                        String oldPlace = ident.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, prog, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                        }
+                    } else if(assignExp instanceof ArrayAccess) {
+		        ArrayAccess acc = (ArrayAccess)assignExp;
+			IdentExp ident = (IdentExp)acc.index;
+			
+			if(library.containsEntry(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = library.getVariableData(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
+                        } else if(library.containsEntry(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                        } else {
+                            fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
+                        }
+
+                        String oldPlace = ident.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, prog, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                        }
+
+			if(library.containsEntry(acc.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = library.getVariableData(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
+                        } else if(library.containsEntry(acc.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(acc.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(acc.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                        } else {
+                            fetchInternalDependentInstructions(library, prog, libraries, acc.name, newProg);
+                        }
+
+                        oldPlace = acc.name;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, prog, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                        }
+		    } else if(assignExp instanceof UnExp){
+                        UnExp unExp = (UnExp)assignExp;
+                        
+                        IdentExp ident = (IdentExp)unExp.right;
+                        if(library.containsEntry(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = library.getVariableData(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
+                        } else if(library.containsEntry(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                        } else {
+                            fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
+                        }
+
+                        String oldPlace = ident.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, prog, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                        }
+                    } else if(assignExp instanceof BinExp){
+                        BinExp binExp = (BinExp)assignExp;
+
+                        IdentExp leftExp = binExp.left;
+                        if(library.containsEntry(leftExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = library.getVariableData(leftExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
+                        } else if(library.containsEntry(leftExp.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(leftExp.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(leftExp.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                        } else {
+                            fetchInternalDependentInstructions(library, prog, libraries, leftExp.ident, newProg);
+                        }
+
+                        String leftOldPlace = leftExp.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(leftOldPlace, prog, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(leftOldPlace, newPlace, prog, libraries, library);
+                        }
+
+                        IdentExp rightExp = binExp.right;
+                        if(library.containsEntry(rightExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = library.getVariableData(rightExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
+                        } else if(library.containsEntry(rightExp.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(rightExp.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(rightExp.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                        } else {
+                            fetchInternalDependentInstructions(library, prog, libraries, rightExp.ident, newProg);
+                        }
+
+                        String oldPlace = rightExp.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, prog, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                        }
+                    }
+		} else if(icode instanceof Def){
                     Def definition = (Def)icode;
                     
                     if(library.containsEntry(definition.label, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
@@ -1663,7 +2509,56 @@ public class MyIrLinker {
         
                             replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
                         }
-                    } else if(assignExp instanceof UnExp){
+                    } else if(assignExp instanceof ArrayAccess) {
+			ArrayAccess acc = (ArrayAccess)assignExp;
+			IdentExp ident = (IdentExp)acc.index;
+			
+			if(library.containsEntry(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = library.getVariableData(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
+                        } else if(library.containsEntry(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                        } else {
+                            fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
+                        }
+
+                        String oldPlace = ident.ident;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, prog, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                        }
+
+			if(library.containsEntry(acc.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = library.getVariableData(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
+                        } else if(library.containsEntry(acc.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newProg.containsEntry(acc.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(acc.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION) ;
+                                        newProg.addSymEntry(entry);
+                                }
+                        } else {
+                            fetchInternalDependentInstructions(library, prog, libraries, acc.name, newProg);
+                        }
+
+                        oldPlace = acc.name;
+                        if(!placeIsUniqueAcrossProgramAndLibraries(oldPlace, prog, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+        
+                            replacePlaceAcrossProgramAndLibraries(oldPlace, newPlace, prog, libraries, library);
+                        }
+		    } else if(assignExp instanceof UnExp){
                         UnExp unExp = (UnExp)assignExp;
                         
                         IdentExp ident = (IdentExp)unExp.right;
@@ -1939,7 +2834,56 @@ public class MyIrLinker {
         
                             replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                          }
-                    } else if(assignExp instanceof UnExp){
+                    } else if(assignExp instanceof ArrayAccess) {
+			ArrayAccess ident = (ArrayAccess)assignExp;
+			IdentExp index = (IdentExp)ident.index;
+			
+			if(library.containsEntry(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = library.getVariableData(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                        } else if(library.containsEntry(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newLib.containsEntry(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                        newLib.addSymEntry(entry);
+                                }
+                        } else {
+                            fetchInternalDependentInstructions(library, single, libraries, index.ident, newLib);
+                        }
+
+                        String oldPlace = index.ident;
+                        if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+        
+                            replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
+                         }
+			
+			if(library.containsEntry(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = library.getVariableData(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                        } else if(library.containsEntry(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newLib.containsEntry(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                        newLib.addSymEntry(entry);
+                                }
+                        } else {
+                            fetchInternalDependentInstructions(library, single, libraries, ident.name, newLib);
+                        }
+
+                        oldPlace = ident.name;
+                        if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+        
+                            replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
+                         }
+		    } else if(assignExp instanceof UnExp){
                         UnExp unExp = (UnExp)assignExp;
                         
                         IdentExp ident = unExp.right;
@@ -2060,7 +3004,56 @@ public class MyIrLinker {
         
                             replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                         }
-                    } else if(assignExp instanceof UnExp){
+                    } else if(assignExp instanceof ArrayAccess) {
+			ArrayAccess ident = (ArrayAccess)assignExp;
+			IdentExp index = (IdentExp)ident.index;
+			
+			if(library.containsEntry(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = library.getVariableData(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                        } else if(library.containsEntry(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newLib.containsEntry(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                        newLib.addSymEntry(entry);
+                                }
+                        } else {
+                            fetchInternalDependentInstructions(library, single, libraries, index.ident, newLib);
+                        }
+
+                        String oldPlace = index.ident;
+                        if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+        
+                            replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
+                         }
+			
+			if(library.containsEntry(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                            VarSymEntry entry = library.getVariableData(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                            if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                        } else if(library.containsEntry(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newLib.containsEntry(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                        newLib.addSymEntry(entry);
+                                }
+                        } else {
+                            fetchInternalDependentInstructions(library, single, libraries, ident.name, newLib);
+                        }
+
+                        oldPlace = ident.name;
+                        if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                            String newPlace;
+                            do{
+                                newPlace = gen.genNext();
+                            } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+        
+                            replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
+                         }
+		    } else if(assignExp instanceof UnExp){
                         UnExp unExp = (UnExp)assignExp;
                         
                         IdentExp ident = unExp.right;
@@ -2339,7 +3332,57 @@ public class MyIrLinker {
                 
                                     replacePlaceAcrossProgramAndLibraries(rightOldPlace, newPlace, prog, libraries, library);
                                  }
-                            } else if(assignExp instanceof UnExp){
+                            } else if(assignExp instanceof ArrayAccess) {
+				ArrayAccess ident = (ArrayAccess)assignExp;
+				
+                                if(library.containsEntry(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                    if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
+                                } else if(library.containsEntry(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        if(!newProg.containsEntry(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                                SymEntry entry = library.getVariableData(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                                newProg.addSymEntry(entry);
+                                        }
+                                } else {
+                                    fetchInternalDependentInstructions(library, prog, libraries, ident.name, newProg);
+                                }
+                                
+                                String rightOldPlace = ident.name;
+                                if(!placeIsUniqueAcrossProgramAndLibraries(rightOldPlace, prog, libraries)){
+                                    String newPlace;
+                                    do{
+                                        newPlace = gen.genNext();
+                                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                
+                                    replacePlaceAcrossProgramAndLibraries(rightOldPlace, newPlace, prog, libraries, library);
+                                 }
+
+				IdentExp index = (IdentExp)ident.index;
+
+				if(library.containsEntry(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                    if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        fetchExternalDependentInstructions(index.ident, prog, libraries, newProg, library);
+                                } else if(library.containsEntry(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        if(!newProg.containsEntry(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                                SymEntry entry = library.getVariableData(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                                newProg.addSymEntry(entry);
+                                        }
+                                } else {
+                                    fetchInternalDependentInstructions(library, prog, libraries, index.ident, newProg);
+                                }
+                                
+                                rightOldPlace = index.ident;
+                                if(!placeIsUniqueAcrossProgramAndLibraries(rightOldPlace, prog, libraries)){
+                                    String newPlace;
+                                    do{
+                                        newPlace = gen.genNext();
+                                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                
+                                    replacePlaceAcrossProgramAndLibraries(rightOldPlace, newPlace, prog, libraries, library);
+                                 }
+			    } else if(assignExp instanceof UnExp){
                                 UnExp unExp = (UnExp)assignExp;
                                 
                                 IdentExp ident = unExp.right;
@@ -2465,7 +3508,57 @@ public class MyIrLinker {
                                 } else {
                                     fetchInternalDependentInstructions(library, prog, libraries, ident.ident, newProg);
                                 }
-                            } else if(assignExp instanceof UnExp){
+                            } else if(assignExp instanceof ArrayAccess) {
+				ArrayAccess ident = (ArrayAccess)assignExp;
+				
+                                if(library.containsEntry(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                    if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        fetchExternalDependentInstructions(entry.declanIdent, prog, libraries, newProg, library);
+                                } else if(library.containsEntry(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        if(!newProg.containsEntry(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                                SymEntry entry = library.getVariableData(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                                newProg.addSymEntry(entry);
+                                        }
+                                } else {
+                                    fetchInternalDependentInstructions(library, prog, libraries, ident.name, newProg);
+                                }
+                                
+                                String rightOldPlace = ident.name;
+                                if(!placeIsUniqueAcrossProgramAndLibraries(rightOldPlace, prog, libraries)){
+                                    String newPlace;
+                                    do{
+                                        newPlace = gen.genNext();
+                                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                
+                                    replacePlaceAcrossProgramAndLibraries(rightOldPlace, newPlace, prog, libraries, library);
+                                 }
+
+				IdentExp index = (IdentExp)ident.index;
+
+				if(library.containsEntry(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                    if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        fetchExternalDependentInstructions(index.ident, prog, libraries, newProg, library);
+                                } else if(library.containsEntry(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        if(!newProg.containsEntry(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                                SymEntry entry = library.getVariableData(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                                newProg.addSymEntry(entry);
+                                        }
+                                } else {
+                                    fetchInternalDependentInstructions(library, prog, libraries, index.ident, newProg);
+                                }
+                                
+                                rightOldPlace = index.ident;
+                                if(!placeIsUniqueAcrossProgramAndLibraries(rightOldPlace, prog, libraries)){
+                                    String newPlace;
+                                    do{
+                                        newPlace = gen.genNext();
+                                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(newPlace, prog, libraries));
+                
+                                    replacePlaceAcrossProgramAndLibraries(rightOldPlace, newPlace, prog, libraries, library);
+                                 }
+			    } else if(assignExp instanceof UnExp){
                                 UnExp unExp = (UnExp)assignExp;
                                 
                                 IdentExp ident = unExp.right;
@@ -2785,7 +3878,55 @@ public class MyIrLinker {
                 
                                     replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);     
                                 }
-                            } else if(assignExp instanceof UnExp){
+                            } else if(assignExp instanceof ArrayAccess) {
+				ArrayAccess ident = (ArrayAccess)assignExp;
+				IdentExp index = (IdentExp)ident.index;
+                                if(library.containsEntry(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                    if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                                } else if(library.containsEntry(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        if(!newLib.containsEntry(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                                SymEntry entry = library.getVariableData(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                                newLib.addSymEntry(entry);
+                                        }
+                                } else {
+                                    fetchInternalDependentInstructions(library, single, libraries, index.ident, newLib);
+                                }
+
+                                String oldPlace = index.ident;
+                                if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                                    String newPlace;
+                                    do{
+                                        newPlace = gen.genNext();
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+                
+                                    replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);     
+                                }
+
+				if(library.containsEntry(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                    if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                                } else if(library.containsEntry(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        if(!newLib.containsEntry(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                                SymEntry entry = library.getVariableData(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                                newLib.addSymEntry(entry);
+                                        }
+                                } else {
+                                    fetchInternalDependentInstructions(library, single, libraries, ident.name, newLib);
+                                }
+
+                                oldPlace = ident.name;
+                                if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                                    String newPlace;
+                                    do{
+                                        newPlace = gen.genNext();
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+                
+                                    replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);     
+                                }
+			    } else if(assignExp instanceof UnExp){
                                 UnExp unExp = (UnExp)assignExp;
                                 
                                 IdentExp ident = unExp.right;
@@ -2862,7 +4003,205 @@ public class MyIrLinker {
                                     replacePlaceAcrossLibraries(rightOldPlace, newPlace, single, libraries, library);
                                 }
                             }
-                        } else if(icode instanceof Def){
+                        } else if(icode instanceof ArrayAssign) {
+			    ArrayAssign assignment = (ArrayAssign)icode;
+			    IdentExp myIndex = (IdentExp)assignment.index;
+
+			    if(library.containsEntry(myIndex.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                VarSymEntry entry = library.getVariableData(myIndex.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                    fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                            } else if(library.containsEntry(myIndex.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newLib.containsEntry(myIndex.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+				        SymEntry entry = library.getVariableData(myIndex.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                        newLib.addSymEntry(entry);
+                                }
+                            } else {
+                                fetchInternalDependentInstructions(library, single, libraries, myIndex.ident, newLib);
+                            }
+                            
+                            if(!placeIsUniqueAcrossLibraries(myIndex.ident, single, libraries)){
+                                String newPlace = null;
+                                do{
+                                    newPlace = gen.genNext();
+                                } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+                                
+                                replacePlaceAcrossLibraries(myIndex.ident, newPlace, single, libraries, library);
+                            }
+                            
+                            if(library.containsEntry(assignment.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                VarSymEntry entry = library.getVariableData(assignment.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                    fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                            } else if(library.containsEntry(assignment.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                if(!newLib.containsEntry(assignment.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                        SymEntry entry = library.getVariableData(assignment.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                        newLib.addSymEntry(entry);
+                                }
+                            } else {
+                                fetchInternalDependentInstructions(library, single, libraries, assignment.ident, newLib);
+                            }
+                            
+                            if(!placeIsUniqueAcrossLibraries(assignment.ident, single, libraries)){
+                                String newPlace = null;
+                                do{
+                                    newPlace = gen.genNext();
+                                } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+                                
+                                replacePlaceAcrossLibraries(assignment.ident, newPlace, single, libraries, library);
+                            }
+
+                            Exp assignExp = assignment.expression;
+                            if(assignExp instanceof IdentExp){
+                                IdentExp ident = (IdentExp)assignExp;
+                                if(library.containsEntry(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                    if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                                } else if(library.containsEntry(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        if(!newLib.containsEntry(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                                SymEntry entry = library.getVariableData(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                                newLib.addSymEntry(entry);
+                                        }
+                                } else {
+                                    fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
+                                }
+
+                                String oldPlace = ident.ident;
+                                if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                                    String newPlace;
+                                    do{
+                                        newPlace = gen.genNext();
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+                
+                                    replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);     
+                                }
+                            } else if(assignExp instanceof ArrayAccess) {
+				ArrayAccess ident = (ArrayAccess)assignExp;
+				IdentExp index = (IdentExp)ident.index;
+                                if(library.containsEntry(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                    if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                                } else if(library.containsEntry(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        if(!newLib.containsEntry(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                                SymEntry entry = library.getVariableData(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                                newLib.addSymEntry(entry);
+                                        }
+                                } else {
+                                    fetchInternalDependentInstructions(library, single, libraries, index.ident, newLib);
+                                }
+
+                                String oldPlace = index.ident;
+                                if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                                    String newPlace;
+                                    do{
+                                        newPlace = gen.genNext();
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+                
+                                    replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);     
+                                }
+
+				if(library.containsEntry(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                    if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                                } else if(library.containsEntry(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        if(!newLib.containsEntry(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                                SymEntry entry = library.getVariableData(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                                newLib.addSymEntry(entry);
+                                        }
+                                } else {
+                                    fetchInternalDependentInstructions(library, single, libraries, ident.name, newLib);
+                                }
+
+                                oldPlace = ident.name;
+                                if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                                    String newPlace;
+                                    do{
+                                        newPlace = gen.genNext();
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+                
+                                    replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);     
+                                }
+			    } else if(assignExp instanceof UnExp){
+                                UnExp unExp = (UnExp)assignExp;
+                                
+                                IdentExp ident = unExp.right;
+                                if(library.containsEntry(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                    if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                                } else if(library.containsEntry(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        if(!newLib.containsEntry(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                                SymEntry entry = library.getVariableData(ident.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                                newLib.addSymEntry(entry);
+                                        }
+                                } else {
+                                    fetchInternalDependentInstructions(library, single, libraries, ident.ident, newLib);
+                                }
+
+                                String oldPlace = ident.ident;
+                                if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                                    String newPlace;
+                                    do{
+                                        newPlace = gen.genNext();
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+                
+                                    replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
+                                 }
+                            } else if(assignExp instanceof BinExp){
+                                BinExp binExp = (BinExp)assignExp;
+
+                                IdentExp leftExp = binExp.left;
+                                if(library.containsEntry(leftExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(leftExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                    if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                                } else if(library.containsEntry(leftExp.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        if(!newLib.containsEntry(leftExp.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                                SymEntry entry = library.getVariableData(leftExp.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                                newLib.addSymEntry(entry);
+                                        }
+                                } else {
+                                    fetchInternalDependentInstructions(library, single, libraries, leftExp.ident, newLib);
+                                }
+
+                                String leftOldPlace = leftExp.ident;
+                                if(!placeIsUniqueAcrossLibraries(leftOldPlace, single, libraries)){
+                                    String newPlace;
+                                    do{
+                                        newPlace = gen.genNext();
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+                
+                                    replacePlaceAcrossLibraries(leftOldPlace, newPlace, single, libraries, library);
+                                 }
+
+                                IdentExp rightExp = binExp.right;
+                                if(library.containsEntry(rightExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(rightExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                    if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                                } else if(library.containsEntry(rightExp.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        if(!newLib.containsEntry(rightExp.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                                SymEntry entry = library.getVariableData(rightExp.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                                newLib.addSymEntry(entry);
+                                        }
+                                } else {
+                                    fetchInternalDependentInstructions(library, single, libraries, rightExp.ident, newLib);
+                                }
+
+                                String rightOldPlace = rightExp.ident;
+                                if(!placeIsUniqueAcrossLibraries(rightOldPlace, single, libraries)){
+                                    String newPlace;
+                                    do{
+                                        newPlace = gen.genNext();
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+                
+                                    replacePlaceAcrossLibraries(rightOldPlace, newPlace, single, libraries, library);
+                                }
+                            }
+			} else if(icode instanceof Def){
                             Def assignment = (Def)icode;
                             
                             if(library.containsEntry(assignment.label, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
@@ -2908,7 +4247,55 @@ public class MyIrLinker {
                 
                                     replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);
                                 }
-                            } else if(assignExp instanceof UnExp){
+                            } else if(assignExp instanceof ArrayAccess) {
+				ArrayAccess ident = (ArrayAccess)assignExp;
+				IdentExp index = (IdentExp)ident.index;
+                                if(library.containsEntry(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                    if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                                } else if(library.containsEntry(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        if(!newLib.containsEntry(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                                SymEntry entry = library.getVariableData(index.ident, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                                newLib.addSymEntry(entry);
+                                        }
+                                } else {
+                                    fetchInternalDependentInstructions(library, single, libraries, index.ident, newLib);
+                                }
+
+                                String oldPlace = index.ident;
+                                if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                                    String newPlace;
+                                    do{
+                                        newPlace = gen.genNext();
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+                
+                                    replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);     
+                                }
+
+				if(library.containsEntry(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                    VarSymEntry entry = library.getVariableData(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                    if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                                        fetchExternalDependentInstructions(entry.declanIdent, single, libraries, newLib, library);
+                                } else if(library.containsEntry(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                                        if(!newLib.containsEntry(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)) {
+                                                SymEntry entry = library.getVariableData(ident.name, procName, SymEntry.INTERNAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                                                newLib.addSymEntry(entry);
+                                        }
+                                } else {
+                                    fetchInternalDependentInstructions(library, single, libraries, ident.name, newLib);
+                                }
+
+                                oldPlace = ident.name;
+                                if(!placeIsUniqueAcrossLibraries(oldPlace, single, libraries)){
+                                    String newPlace;
+                                    do{
+                                        newPlace = gen.genNext();
+                                    } while(!newPlaceWillBeUniqueAcrossLibraries(newPlace, single, libraries));
+                
+                                    replacePlaceAcrossLibraries(oldPlace, newPlace, single, libraries, library);     
+                                }
+			    } else if(assignExp instanceof UnExp){
                                 UnExp unExp = (UnExp)assignExp;
                                 
                                 IdentExp ident = (IdentExp)unExp.right;
@@ -3837,7 +5224,42 @@ public class MyIrLinker {
 
                         replacePlaceAcrossProgramAndLibraries(origPlace, place, startingProgram, libraries, startingProgram);
                     }
-                }
+                } else if(assignExp instanceof ArrayAccess){
+		    ArrayAccess ident = (ArrayAccess)assignExp;
+		    IdentExp index = (IdentExp)ident.index;
+
+		    if(startingProgram.containsEntry(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                        VarSymEntry entry = startingProgram.getVariableData(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                            fetchExternalDependentInstructions(entry.declanIdent, startingProgram, libraries, newProg);
+                    }
+
+                    String origPlace = index.ident;
+                    if(!placeIsUniqueAcrossProgramAndLibraries(origPlace, startingProgram, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
+
+                        replacePlaceAcrossProgramAndLibraries(origPlace, place, startingProgram, libraries, startingProgram);
+                    }
+
+		    if(startingProgram.containsEntry(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                        VarSymEntry entry = startingProgram.getVariableData(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                            fetchExternalDependentInstructions(entry.declanIdent, startingProgram, libraries, newProg);
+                    }
+
+                    origPlace = ident.name;
+                    if(!placeIsUniqueAcrossProgramAndLibraries(origPlace, startingProgram, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, startingProgram, libraries));
+
+                        replacePlaceAcrossProgramAndLibraries(origPlace, place, startingProgram, libraries, startingProgram);
+                    }
+		}
 
                 newProg.addDataInstruction(assign);
                 
@@ -4081,7 +5503,42 @@ public class MyIrLinker {
 
                         replacePlaceAcrossLibraries(origPlace, place, startingLibrary, libraries, startingLibrary);
                     }
-                }
+                } else if(assignExp instanceof ArrayAccess){
+		    ArrayAccess assignIdentExp = (ArrayAccess)assignExp;
+		    IdentExp index = (IdentExp)assignIdentExp.index;
+		    
+                    if(startingLibrary.containsEntry(assignIdentExp.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                        VarSymEntry entry = startingLibrary.getVariableData(assignIdentExp.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                            fetchExternalDependentInstructions(entry.declanIdent, startingLibrary, libraries, newLib);
+                    }
+
+                    String origPlace = assignIdentExp.name;
+                    if(!placeIsUniqueAcrossLibraries(origPlace, startingLibrary, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossLibraries(place, startingLibrary, libraries));
+
+                        replacePlaceAcrossLibraries(origPlace, place, startingLibrary, libraries, startingLibrary);
+                    }
+
+		    if(startingLibrary.containsEntry(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                        VarSymEntry entry = startingLibrary.getVariableData(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        if(!newLib.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                            fetchExternalDependentInstructions(index.ident, startingLibrary, libraries, newLib);
+                    }
+
+                    origPlace = index.ident;
+                    if(!placeIsUniqueAcrossLibraries(origPlace, startingLibrary, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossLibraries(place, startingLibrary, libraries));
+
+                        replacePlaceAcrossLibraries(origPlace, place, startingLibrary, libraries, startingLibrary);
+                    }
+		}
                 newLib.addDataInstruction(assign);
             } else if(instruction instanceof Call){
                 Call call = (Call)instruction;
@@ -4162,7 +5619,176 @@ public class MyIrLinker {
 
                         replacePlaceAcrossProgramAndLibraries(value, place, program, libraries, program);
                     }
-                } else if(assignExp instanceof UnExp){
+                } else if(assignExp instanceof ArrayAccess){
+		    ArrayAccess ident = (ArrayAccess)assignExp;
+		    IdentExp index = (IdentExp)ident.index;
+                    
+                    if(program.containsEntry(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                        VarSymEntry entry = program.getVariableData(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                    }
+
+                    String value = ident.name; 
+                    if(!placeIsUniqueAcrossProgramAndLibraries(value, program, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                        replacePlaceAcrossProgramAndLibraries(value, place, program, libraries, program);
+                    }
+
+		    if(program.containsEntry(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                        VarSymEntry entry = program.getVariableData(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                    }
+
+                    value = index.ident; 
+                    if(!placeIsUniqueAcrossProgramAndLibraries(value, program, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                        replacePlaceAcrossProgramAndLibraries(value, place, program, libraries, program);
+                    }
+		} else if(assignExp instanceof UnExp){
+                    UnExp unExp = (UnExp)assignExp;
+                    
+                    IdentExp ident = unExp.right;
+                    if(program.containsEntry(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                        VarSymEntry entry = program.getVariableData(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                    }
+
+                    String value = ident.ident; 
+                    if(!placeIsUniqueAcrossProgramAndLibraries(value, program, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                        replacePlaceAcrossProgramAndLibraries(value, place, program, libraries, program);
+                    }
+                } else if(assignExp instanceof BinExp){
+                    BinExp binExp = (BinExp)assignExp;
+
+                    IdentExp leftExp = binExp.left;
+                    if(program.containsEntry(leftExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                        VarSymEntry entry = program.getVariableData(leftExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                    }
+
+                    String leftOldPlace = leftExp.ident; 
+                    if(!placeIsUniqueAcrossProgramAndLibraries(leftOldPlace, program, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                        replacePlaceAcrossProgramAndLibraries(leftOldPlace, place, program, libraries, program);
+                    }
+
+                    IdentExp rightExp = (IdentExp)binExp.right;
+                    if(program.containsEntry(rightExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                        VarSymEntry entry = program.getVariableData(rightExp.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                    }
+
+                    String rightOldPlace = rightExp.ident; 
+                    if(!placeIsUniqueAcrossProgramAndLibraries(rightOldPlace, program, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                        replacePlaceAcrossProgramAndLibraries(rightOldPlace, place, program, libraries, program);
+                    }
+                }              
+            } else if(icode instanceof ArrayAssign) {
+		ArrayAssign assignment = (ArrayAssign)icode;
+		IdentExp myIndex = (IdentExp)assignment.index;
+
+                String origPlace = assignment.ident;
+                if(!placeIsUniqueAcrossProgramAndLibraries(origPlace, program, libraries)){
+                    String place;
+                    do{
+                        place = gen.genNext();
+                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                    replacePlaceAcrossProgramAndLibraries(origPlace, place, program, libraries, program);
+                }
+
+		origPlace = myIndex.ident;
+                if(!placeIsUniqueAcrossProgramAndLibraries(origPlace, program, libraries)){
+                    String place;
+                    do{
+                        place = gen.genNext();
+                    } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                    replacePlaceAcrossProgramAndLibraries(origPlace, place, program, libraries, program);
+                }
+
+                Exp assignExp = assignment.expression;
+                if(assignExp instanceof IdentExp){
+                    IdentExp ident = (IdentExp)assignExp;
+                    
+                    if(program.containsEntry(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                        VarSymEntry entry = program.getVariableData(ident.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                    }
+
+                    String value = ident.ident; 
+                    if(!placeIsUniqueAcrossProgramAndLibraries(value, program, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                        replacePlaceAcrossProgramAndLibraries(value, place, program, libraries, program);
+                    }
+                } else if(assignExp instanceof ArrayAccess){
+		    ArrayAccess ident = (ArrayAccess)assignExp;
+		    IdentExp index = (IdentExp)ident.index;
+                    
+                    if(program.containsEntry(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                        VarSymEntry entry = program.getVariableData(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                    }
+
+                    String value = ident.name; 
+                    if(!placeIsUniqueAcrossProgramAndLibraries(value, program, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                        replacePlaceAcrossProgramAndLibraries(value, place, program, libraries, program);
+                    }
+
+		    if(program.containsEntry(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                        VarSymEntry entry = program.getVariableData(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                    }
+
+                    value = index.ident; 
+                    if(!placeIsUniqueAcrossProgramAndLibraries(value, program, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                        replacePlaceAcrossProgramAndLibraries(value, place, program, libraries, program);
+                    }
+		} else if(assignExp instanceof UnExp){
                     UnExp unExp = (UnExp)assignExp;
                     
                     IdentExp ident = unExp.right;
@@ -4218,8 +5844,7 @@ public class MyIrLinker {
                         replacePlaceAcrossProgramAndLibraries(rightOldPlace, place, program, libraries, program);
                     }
                 }
-                
-            } else if(icode instanceof Def){
+	    } else if(icode instanceof Def){
                 Def assignment = (Def)icode;
 
                 String origPlace = assignment.label;
@@ -4251,7 +5876,42 @@ public class MyIrLinker {
 
                         replacePlaceAcrossProgramAndLibraries(value, place, program, libraries, program);
                     }
-                } else if(assignExp instanceof UnExp){
+                } else if(assignExp instanceof ArrayAccess) {
+		    ArrayAccess ident = (ArrayAccess)assignExp;
+		    IdentExp index = (IdentExp)ident.index;
+                    
+                    if(program.containsEntry(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                        VarSymEntry entry = program.getVariableData(ident.name,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                    }
+
+                    String value = ident.name; 
+                    if(!placeIsUniqueAcrossProgramAndLibraries(value, program, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                        replacePlaceAcrossProgramAndLibraries(value, place, program, libraries, program);
+                    }
+
+		    if(program.containsEntry(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION)){
+                        VarSymEntry entry = program.getVariableData(index.ident,  SymEntry.EXTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_ICODE_LOCATION);
+                        if(!newProg.containsEntry(entry.declanIdent,  SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolSearchStrategy.FIND_VIA_IDENTIFIER_NAME))
+                            fetchExternalDependentInstructions(entry.declanIdent, program, libraries, newProg);
+                    }
+
+                    value = index.ident; 
+                    if(!placeIsUniqueAcrossProgramAndLibraries(value, program, libraries)){
+                        String place;
+                        do{
+                            place = gen.genNext();
+                        } while(!newPlaceWillBeUniqueAcrossProgramAndLibraries(place, program, libraries));
+
+                        replacePlaceAcrossProgramAndLibraries(value, place, program, libraries, program);
+                    }
+		} else if(assignExp instanceof UnExp){
                     UnExp unExp = (UnExp)assignExp;
                     
                     IdentExp ident = (IdentExp)unExp.right;
@@ -4538,3 +6198,5 @@ public class MyIrLinker {
         return performLinkage(lib, libs);
     }
 }
+
+

@@ -56,3 +56,5 @@ public class ArrayDeclaration extends AbstractASTNode implements Declaration{
 		return visitor.visitResult(this);
 	}
 }
+
+

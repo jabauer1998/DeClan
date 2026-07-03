@@ -7,3 +7,4 @@ BEGIN
     result := ~e OR (x >= a);
     WriteBool(result)
 END.
+

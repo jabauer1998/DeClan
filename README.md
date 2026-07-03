@@ -13,3 +13,4 @@ It also performs constant folding.
 I plan on adding support for more Global Analysis features. 
 I also have to support generation into the ARM7TDMIS architecture. 
 I plan on integrating this compiler into the ARM7TDMIS Emulator project that is on my github.
+

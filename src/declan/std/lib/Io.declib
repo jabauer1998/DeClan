@@ -2,37 +2,78 @@ PROCEDURE WriteLn();
     BEGIN
 	WriteChar('\n');
     END WriteLn;
+    
 PROCEDURE WriteChar(c: CHAR);
     BEGIN
         asm("LDRB R0, %ua": c);
 	asm("SWI WriteChar");
     END WriteChar;
-PROCEUDRE ReadChar(): CHAR;
+
+PROCEDURE PeekChar();
+    VAR c: CHAR;
+    BEGIN
+       asm("SWI PeekChar");
+       asm("STRB R0, %da": c);
+       RETURN c
+    END PeekChar;
+    
+PROCEDURE ReadChar();
     VAR c: CHAR;
     BEGIN
 	asm("SWI ReadChar");
-	asm("STR R0, %da": c);
+	asm("STRB R0, %da": c);
 	RETURN c
     END ReadChar;
+    
 PROCEDURE WriteString(s: STRING);
     VAR index: INTEGER;
     BEGIN
 	index := 0;
-	WHILE (s[index] != '\0') BEGIN
+	WHILE (~(s[index] = '\0')) DO
 	     WriteChar(s[index]);
-	     index = index + 1
+	     index := index + 1
 	END
     END WriteString;
-PROCEDURE WriteInt(i: INTEGER);
-    VAR modRes: INTEGER; byteRes: CHAR;
+
+PROCEDURE WriteFractionDigit(i: INTEGER; count: INTEGER);
+    VAR numInt: INTEGER; charInt: CHAR;
     BEGIN
-	WHILE(i > 0) BEGIN
-	     modRes := i MOD 10;
-	     byteRes := IntToByte(modRes);
-	     byteRes := byteRes | '0';
-	     WriteChar(byteRes);
-	     i := i DIV 10
+        IF (i > 0) & (count > 0) THEN
+	   WriteFractionDigit(i DIV 10, count - 1);
+	   numInt := i MOD 10;
+	   charInt := IntBinaryAsChar(numInt + CharBinaryAsInt('0'));
+	   WriteChar(charInt)
+	ELSIF (count > 0) THEN
+	   WriteFractionDigit(0, count - 1);
+	   WriteChar('0')
+	ELSE
+	   WriteChar('0')
 	END
+    END WriteFractionDigit;
+
+PROCEDURE WriteFraction(i: INTEGER);
+    BEGIN
+	IF (i = 0) THEN
+	   WriteChar('0')
+	ELSE
+	   WriteFractionDigit(i, 6)
+	END
+    END WriteFraction;
+
+PROCEDURE WriteDigit(i: INTEGER);
+    VAR numInt: INTEGER; charInt: CHAR;
+    BEGIN
+        IF (i >= 10) THEN
+	    WriteDigit(i DIV 10)
+	END;
+	numInt := i MOD 10;
+	charInt := IntBinaryAsChar(numInt + CharBinaryAsInt('0'));
+        WriteChar(charInt)
+    END WriteDigit;
+    
+PROCEDURE WriteInt(i: INTEGER);
+    BEGIN
+	WriteDigit(i)
     END WriteInt;
 
 PROCEDURE WriteReal(r: REAL);
@@ -40,10 +81,11 @@ PROCEDURE WriteReal(r: REAL);
     BEGIN
 	intR := RealToInt(r);
 	WriteInt(intR);
+	WriteChar('.');
 	r := r - IntToReal(intR);
 	r := RMul(r, IntToReal(Pow(10, 6)));
 	intR := RealToInt(r);
-	WriteInt(intR)
+	WriteFraction(intR)
     END WriteReal;
 
 PROCEDURE WriteBool(b: BOOLEAN);
@@ -61,7 +103,7 @@ PROCEDURE ReadString(str: STRING);
     BEGIN
 	SkipWhiteSpace();
 	c := PeekChar();
-	WHILE (~AtEoI() & c != ' ' & c != '\t' & c != '\r') DO
+	WHILE (~AtEoI() & (~(c = ' ')) & (~(c = '\t')) & (~(c = '\r'))) DO
 	    str[index] := c;
 	    index := index + 1;
 	    c := ReadChar()
@@ -69,14 +111,14 @@ PROCEDURE ReadString(str: STRING);
 	str[index] := '\0'
     END ReadString;
     
-PROCEDURE IsDigit(c: CHAR): BOOLEAN;
+PROCEDURE IsDigit(c: CHAR);
     VAR result: BOOLEAN;
     BEGIN
          RETURN (c >= '0') & (c <= '9')
     END IsDigit;
     
     
-PROCEDURE ReadDigit(): INTEGER;
+PROCEDURE ReadDigit();
     VAR result: INTEGER; res: CHAR;
     BEGIN
 	res := '\0';
@@ -89,16 +131,16 @@ PROCEDURE ReadDigit(): INTEGER;
 	   END
 	END;
 
-	IF (res == '\0') THEN
+	IF (res = '\0') THEN
 	    result := -1
 	ELSE
-	    result := res - '0'
+	    result := CharBinaryAsInt(res) - CharBinaryAsInt('0')
 	END;
 	
 	RETURN result
     END ReadDigit;
 
-PROCEDURE ReadInt(): INTEGER;
+PROCEDURE ReadInt();
     VAR result: INTEGER; digitChar: CHAR;
     BEGIN
 	SkipWhiteSpace();
@@ -109,19 +151,21 @@ PROCEDURE ReadInt(): INTEGER;
 	    result := result + ReadDigit();
 	    digitChar := PeekChar()
 	END;
+	RETURN result
     END ReadInt;
 
-PROCEDURE ReadReal(): REAL;
+PROCEDURE ReadReal();
     VAR result: REAL; beforeDot: INTEGER; dot: CHAR; str: STRING; index: INTEGER; digit: CHAR;
     BEGIN
         beforeDot := ReadInt();
 	IF PeekChar() = '.' THEN
 	   SkipChar();
 	   digit := PeekChar();
-	   index := 1
+	   index := 1;
 	   result := beforeDot;
 	   WHILE (IsDigit(digit)) DO
-	       result := result + (ReadDigit() / (10^index));
+	       SkipChar();
+	       result := result + (ReadDigit() / (Pow(10, index)));
 	       index := index + 1;
 	       digit := PeekChar()
 	   END
@@ -131,37 +175,36 @@ PROCEDURE ReadReal(): REAL;
 	RETURN result
     END ReadReal;
 
-PROCEDURE AtEoI(): BOOLEAN;
+PROCEDURE AtEoI();
 	 VAR c: CHAR;
          BEGIN
 	     c := PeekChar();
-	     RETURN c == '\0';
-         END
+	     RETURN c = '\0'
+         END AtEoI;
 	 
-PROCEUDRE PeekWhiteSpace(): BOOLEAN;
-	VAR c: CHAR; VAR b: RESULT;
+PROCEDURE PeekWhiteSpace();
+	VAR c: CHAR; b: BOOLEAN;
 	BEGIN
-	    IF atEoI() THEN
+	    IF AtEoI() THEN
 	       b := FALSE
 	    ELSE
 	       c := PeekChar();
-	       b := c == ' ' || c == '\t' || c == '\r' || c == '\n'
+	       b := (c = ' ') OR (c = '\t') OR (c = '\r') OR (c = '\n')
 	    END;
 	    RETURN b
-	END
+	END PeekWhiteSpace;
 
-PROCEUDRE SkipChar(): BOOLEAN;
+PROCEDURE SkipChar();
 	  BEGIN
 	      asm("SWI SkipChar");
-	  END
+	  END SkipChar;
 	
-PROCEUDRE SkipToWhiteSpace();
-	VAR c: CHAR;
+PROCEDURE SkipToWhiteSpace();
 	BEGIN
 	    WHILE (~PeekWhiteSpace()) DO
 	    	  SkipChar();
 	    END
-	END
+	END SkipToWhiteSpace;
 
 PROCEDURE SkipWhiteSpace();
 	VAR c: CHAR;
@@ -169,7 +212,7 @@ PROCEDURE SkipWhiteSpace();
 	    WHILE (PeekWhiteSpace()) DO
 	    	  SkipChar();
 	    END
-	END
+	END SkipWhiteSpace;
 
 PROCEDURE ReadBool();
 	VAR result: BOOLEAN; found: BOOLEAN; c: CHAR;
@@ -179,27 +222,27 @@ PROCEDURE ReadBool();
 	    c := '\0';
 	    WHILE (~found) DO
 		SkipWhiteSpace();
-                IF c == 'T' THEN
+                IF c = 'T' THEN
 		   c := ReadChar();
-		   IF c == 'R' THEN
+		   IF c = 'R' THEN
 		       c := ReadChar();
-		       IF c == 'U' THEN
+		       IF c = 'U' THEN
 		       	  c := ReadChar();
-			  IF c == 'E' THEN
+			  IF c = 'E' THEN
 			      found := TRUE;
 			      result := TRUE;
 			  END;
 		       END
 		   END
-		ELSIF c == 'F' THEN
+		ELSIF c = 'F' THEN
 		    c := ReadChar();
-		    IF c == 'A' THEN
+		    IF c = 'A' THEN
 		       c := ReadChar();
-		       IF c == 'L' THEN
+		       IF c = 'L' THEN
 		       	  c := ReadChar();
-			  IF c == 'S' THEN
+			  IF c = 'S' THEN
 			     c := ReadChar();
-			     IF c == 'e' THEN
+			     IF c = 'E' THEN
 			         found := TRUE;
 				 result := FALSE;
 			     END
@@ -214,3 +257,4 @@ PROCEDURE ReadBool();
 	    
 	    RETURN result
 	END ReadBool;
+

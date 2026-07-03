@@ -7,3 +7,5 @@ public class DagFormatException extends RuntimeException {
         super("Error with node \n" + node.toString() + "\n" + message);
     }
 }
+
+

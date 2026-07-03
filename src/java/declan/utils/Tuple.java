@@ -44,3 +44,5 @@ public class Tuple<SourceType extends Copyable<SourceType>, DestType extends Cop
 		return new Tuple<>(source.copy(), dest.copy());
 	}
 }
+
+

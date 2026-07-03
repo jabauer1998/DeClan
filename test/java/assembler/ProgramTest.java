@@ -50,3 +50,4 @@ public class ProgramTest {
         TestUtils.testAgainstInput(assembly, expectedOutput);
     }
 }
+

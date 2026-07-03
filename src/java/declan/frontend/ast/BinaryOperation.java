@@ -126,3 +126,5 @@ public class BinaryOperation extends AbstractASTNode implements Expression {
 		return left.containsIdentifier(ident) || right.containsIdentifier(ident);
 	}
 }
+
+

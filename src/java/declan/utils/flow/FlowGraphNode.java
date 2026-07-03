@@ -22,3 +22,5 @@ public interface FlowGraphNode extends Copyable<FlowGraphNode>{
     public boolean checkStartData();
     public boolean checkStartBss();
 }
+
+

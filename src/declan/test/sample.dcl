@@ -21,3 +21,4 @@ BEGIN
   WriteReal(answer * 1.);
   WriteLn()
 END. (* Don't forget the ending period! *)
+

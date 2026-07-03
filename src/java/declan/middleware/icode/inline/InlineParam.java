@@ -89,3 +89,5 @@ public class InlineParam implements Copyable<InlineParam>{
 		return new InlineParam(name, type, qual);
 	}
 }
+
+

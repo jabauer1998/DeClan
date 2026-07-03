@@ -7,3 +7,4 @@ BEGIN
     WriteReal(result);
     WriteLn()
 END.
+

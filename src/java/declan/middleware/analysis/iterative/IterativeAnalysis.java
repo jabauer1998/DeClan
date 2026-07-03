@@ -142,3 +142,5 @@ public abstract class IterativeAnalysis<AnalysisType extends Copyable<AnalysisTy
     
     protected abstract void runAnalysis(FlowGraph flowGraph, Direction direction, Function<List<DataType>, DataType> meetOperation, DataType semiLattice, boolean copyKey);
 }
+
+

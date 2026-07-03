@@ -15,3 +15,5 @@ public class Constant<SetType> implements SetExpression<SetType> {
 	}
 
 }
+
+

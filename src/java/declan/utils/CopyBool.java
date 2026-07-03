@@ -38,3 +38,5 @@ public class CopyBool implements Copyable<CopyBool>{
 		return false;
 	}
 }
+
+

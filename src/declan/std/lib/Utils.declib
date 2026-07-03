@@ -3,13 +3,13 @@ PROCEDURE RealIsZero(r: REAL);
     VAR result: BOOLEAN; val: INTEGER; exp: INTEGER;
     BEGIN
         exp := RealBinaryAsInt(r);
-		val := exp BAND 07FFFFFFFH;
-		IF val = 0 THEN
-			result := TRUE
-		ELSE
-			result := FALSE
-		END
-		RETURN result
+	val := exp BAND 07FFFFFFFH;
+	IF val = 0 THEN
+		result := TRUE
+	ELSE
+		result := FALSE
+	END
+	RETURN result
     END RealIsZero;
 PROCEDURE IntIsZero(n: INTEGER);
     VAR result: BOOLEAN;
@@ -36,12 +36,12 @@ PROCEDURE RealIsNegative(r: REAL);
     VAR result: BOOLEAN; rest: INTEGER; thirtyFirstBit: INTEGER;
     BEGIN
         thirtyFirstBit := RealSign(r);
-		rest := RealBinaryAsInt(r) BAND 07FFFFFFFH;
-		IF (thirtyFirstBit = 1) & (~IntIsZero(rest)) THEN
-	    	result := TRUE
-		ELSE
-	    	result := FALSE
-		END
+	rest := RealBinaryAsInt(r) BAND 07FFFFFFFH;
+	IF (thirtyFirstBit = 1) & (~IntIsZero(rest)) THEN
+	    result := TRUE
+	ELSE
+	    result := FALSE
+	END
 	RETURN result
     END RealIsNegative;
 PROCEDURE IntIsPositive(n: INTEGER);
@@ -58,7 +58,7 @@ PROCEDURE IntIsPositive(n: INTEGER);
 PROCEDURE RealIsPositive(r: REAL);
     VAR result: BOOLEAN; realAsInteger: INTEGER; thirtyFirstBit: INTEGER;
     BEGIN
-        thirtyFirstBit := RealSign(r);
+                thirtyFirstBit := RealSign(r);
 		realAsInteger := RealBinaryAsInt(r) BAND 07FFFFFFFH;
 		IF (thirtyFirstBit = 0) & (~IntIsZero(realAsInteger)) THEN
 			result := TRUE
@@ -70,13 +70,13 @@ PROCEDURE RealIsPositive(r: REAL);
 PROCEDURE RealMantissa(r: REAL);
     VAR result: INTEGER; realAsInt: INTEGER; significand: INTEGER; exp: INTEGER;
     BEGIN
-		realAsInt := RealBinaryAsInt(r);
+	realAsInt := RealBinaryAsInt(r);
         significand := realAsInt BAND 07FFFFFH;
-		IF RealIsZero(r) THEN
-			result := significand
-		ELSE			
-			result := significand BOR 0800000H
-		END
+	IF RealIsZero(r) THEN
+		result := significand
+	ELSE			
+		result := significand BOR 0800000H
+	END
 	RETURN result
     END RealMantissa;
 PROCEDURE RealSign(r: REAL);
@@ -90,7 +90,7 @@ PROCEDURE RealExponent(r: REAL);
     VAR result: INTEGER; realAsInteger: INTEGER; exponent: INTEGER;
     BEGIN
 	realAsInteger := RealBinaryAsInt(r);
-    exponent := (realAsInteger >> 23) BAND 0ffH;
+        exponent := (realAsInteger >> 23) BAND 0ffH;
 	result := exponent - realBias
 	RETURN result
     END RealExponent;
@@ -116,3 +116,4 @@ PROCEDURE MantissaAbs(m: INTEGER);
 	END;
 	RETURN result
    END MantissaAbs;
+

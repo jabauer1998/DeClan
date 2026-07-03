@@ -36,10 +36,10 @@ SYMBOL SECTION
  ENTRY c4 EXTERNAL PARAM RDivide 0 <REAL>
  ENTRY c5 EXTERNAL PARAM RDivide 1 <REAL>
  ENTRY c6 EXTERNAL RETURN RDivide <REAL>
- ENTRY c8 INTERNAL total Mod <INT>
+ ENTRY c8 INTERNAL quotient Mod <INT>
  ENTRY c9 INTERNAL result Mod <INT>
- ENTRY d8 INTERNAL res Pow <INT>
- ENTRY e8 INTERNAL low Multiply <INT>
+ ENTRY d3 INTERNAL res Pow <INT>
+ ENTRY e3 INTERNAL low Multiply <INT>
 DATA SECTION
 PROC SECTION
  PROC LABEL INeg
@@ -173,64 +173,49 @@ PROC SECTION
  PROC LABEL Mod
   DEF c8 := 0 <INT>
   DEF c9 := 0 <INT>
-  c8 := (PARAM i) <INT>
-  DEF d0 := c8 ISUB (PARAM j) <INT>
-  DEF d1 := 0 <INT>
-  DEF d2 := d0 GE d1 <BOOL>
-  DEF d3 := TRUE <BOOL>
-  IF d2 BEQ d3
+  CALL Div([(PARAM i) -> c]<INT>, [(PARAM j) -> d]<INT>)
+  DEF d0 := (RETURN e) <INT>
+  c8 := d0 <INT>
+  CALL Multiply([(PARAM j) -> o]<INT>, [c8 -> p]<INT>)
+  DEF d1 := (RETURN q) <INT>
+  DEF d2 := (PARAM i) ISUB d1 <INT>
+  c9 := d2 <INT>
+  DEF RETURN k := c9 <INT>
+ RETURN FROM Mod
+ PROC LABEL Pow
+  DEF d3 := 0 <INT>
+  DEF d4 := 1 <INT>
+  d3 := d4 <INT>
+  DEF d5 := 0 <INT>
+  DEF d6 := (PARAM m) GT d5 <BOOL>
+  DEF d7 := TRUE <BOOL>
+  IF d6 BEQ d7
   THEN WHILESTAT_4_SEQ_0_LEVEL_0
   ELSE WHILENEXT_4_SEQ_0_LEVEL_0
   LABEL WHILECOND_4_SEQ_0_LEVEL_0
-  IF d2 BEQ d3
+  IF d6 BEQ d7
   THEN WHILESTAT_4_SEQ_0_LEVEL_0
   ELSE WHILEEND_4_LEVEL_0
   LABEL WHILESTAT_4_SEQ_0_LEVEL_0
-  DEF d4 := c8 ISUB (PARAM j) <INT>
-  c8 := d4 <INT>
-  DEF d5 := c8 ISUB (PARAM j) <INT>
-  DEF d6 := 0 <INT>
-  DEF d7 := d5 GE d6 <BOOL>
-  d2 := d7 <BOOL>
+  CALL Multiply([d3 -> o]<INT>, [(PARAM l) -> p]<INT>)
+  DEF d8 := (RETURN q) <INT>
+  d3 := d8 <INT>
+  DEF d9 := 1 <INT>
+  DEF e0 := (PARAM m) ISUB d9 <INT>
+  PARAM m := e0 <INT>
+  DEF e1 := 0 <INT>
+  DEF e2 := (PARAM m) GT e1 <BOOL>
+  d6 := e2 <BOOL>
   GOTO WHILECOND_4_SEQ_0_LEVEL_0
   LABEL WHILENEXT_4_SEQ_0_LEVEL_0
   LABEL WHILEEND_4_LEVEL_0
-  DEF RETURN k := c8 <INT>
- RETURN FROM Mod
- PROC LABEL Pow
-  DEF d8 := 0 <INT>
-  DEF d9 := 1 <INT>
-  d8 := d9 <INT>
-  DEF e0 := 0 <INT>
-  DEF e1 := (PARAM m) GT e0 <BOOL>
-  DEF e2 := TRUE <BOOL>
-  IF e1 BEQ e2
-  THEN WHILESTAT_6_SEQ_0_LEVEL_0
-  ELSE WHILENEXT_6_SEQ_0_LEVEL_0
-  LABEL WHILECOND_6_SEQ_0_LEVEL_0
-  IF e1 BEQ e2
-  THEN WHILESTAT_6_SEQ_0_LEVEL_0
-  ELSE WHILEEND_6_LEVEL_0
-  LABEL WHILESTAT_6_SEQ_0_LEVEL_0
-  CALL Multiply([d8 -> o]<INT>, [(PARAM l) -> p]<INT>)
-  DEF e3 := (RETURN q) <INT>
-  d8 := e3 <INT>
-  DEF e4 := 1 <INT>
-  DEF e5 := (PARAM m) ISUB e4 <INT>
-  PARAM m := e5 <INT>
-  DEF e6 := 0 <INT>
-  DEF e7 := (PARAM m) GT e6 <BOOL>
-  e1 := e7 <BOOL>
-  GOTO WHILECOND_6_SEQ_0_LEVEL_0
-  LABEL WHILENEXT_6_SEQ_0_LEVEL_0
-  LABEL WHILEEND_6_LEVEL_0
-  DEF RETURN n := d8 <INT>
+  DEF RETURN n := d3 <INT>
  RETURN FROM Pow
  PROC LABEL Multiply
-  DEF e8 := 0 <INT>
-  IPARAM e8 <INT> %dr
+  DEF e3 := 0 <INT>
+  IPARAM e3 <INT> %dr
   IPARAM (PARAM o) <INT> %ur
   IPARAM (PARAM p) <INT> %ur
   IASM "MUL %dr, %ur, %ur"
-  DEF RETURN q := e8 <INT>
+  DEF RETURN q := e3 <INT>
  RETURN FROM Multiply

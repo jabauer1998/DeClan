@@ -228,6 +228,11 @@ public class DagNodeFactory {
         return new DagValueNode(isDefinition, scope, nodeName, value, ValueType.STRING);
     }
 
+    public DagNode createStringNode(boolean isDefinition, Assign.Scope origScope, String nodeName, char[] value){
+	ScopeType scope = ConversionUtils.assignScopeToDagScopeType(origScope);
+	return new DagValueNode(isDefinition, scope, nodeName, value, ValueType.STRING);
+    }
+
     public DagNode createDefaultVariableNode(boolean isDefinition, ICode.Scope scope, String nodeName, DagNode child, Assign.Type origType){
         ValueType type = ConversionUtils.assignTypeToDagValueType(origType);
         ScopeType scopeType = ConversionUtils.assignScopeToDagScopeType(scope);
@@ -249,3 +254,5 @@ public class DagNodeFactory {
         return new DagVariableNode(isDefinition, ScopeType.RETURN, nodeName, child, type);
     }
 }
+
+

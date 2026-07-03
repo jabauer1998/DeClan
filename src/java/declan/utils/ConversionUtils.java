@@ -30,9 +30,12 @@ import declan.middleware.icode.exp.IdentExp;
 import declan.middleware.icode.exp.IntExp;
 import declan.middleware.icode.exp.NullableExp;
 import declan.middleware.icode.exp.RealExp;
-import declan.middleware.icode.exp.StrExp;
+import declan.middleware.icode.exp.CharArrayExp;
 import declan.middleware.icode.exp.UnExp;
 import declan.middleware.icode.exp.CharExp;
+import declan.middleware.icode.exp.IntArrayExp;
+import declan.middleware.icode.exp.RealArrayExp;
+import declan.middleware.icode.exp.BoolArrayExp;
 import declan.utils.pat.P;
 import declan.utils.position.Position;
 import declan.utils.symboltable.entry.TypeCheckerQualities;
@@ -76,13 +79,17 @@ public class ConversionUtils {
             return new BoolExp((boolean)result);
         } else if(result instanceof Integer){
             return new IntExp((int)result);
-        } else if(result instanceof String){
-            return new StrExp((String)result);
+        } else if(result instanceof Character[]){
+            return new CharArrayExp((char[])result);
         } else if(result instanceof Float){
             return new RealExp((float)result);
-        } else if(result instanceof Double){
-        	return new RealExp((float)result);
-        } else {
+        } else if(result instanceof Integer[]) {
+	    return new IntArrayExp((int[])result);
+	} else if(result instanceof Float[]){
+	    return new RealArrayExp((float[])result);
+	} else if(result instanceof Boolean[]) {
+	    return new BoolArrayExp((boolean[])result);
+	} else {
             throw new ConversionException("valueToExp", result.getClass().getName(), Exp.class.getName());
         }
     }
@@ -92,12 +99,14 @@ public class ConversionUtils {
             return new BoolValue(pos, ((Boolean)result) ? "TRUE" : "FALSE");
         } else if(result instanceof Integer){
             return new NumValue(pos, ((Integer)result).toString());
-        } else if(result instanceof String){
+        } else if(result instanceof char[]){
+	    StringBuilder sb = new StringBuilder();
+	    sb.append(result);
             return new StrValue(pos, (String)result);
         } else if(result instanceof Float){
             return new NumValue(pos, ((Float)result).toString());
         } else if(result instanceof Double){
-        	return new NumValue(pos, ((Float)result).toString());
+            return new NumValue(pos, ((Float)result).toString());
         } else {
             throw new ConversionException("valueToExp", result.getClass().getName(), Exp.class.getName());
         }
@@ -110,8 +119,8 @@ public class ConversionUtils {
             return ((IntExp)value).value;
         } else if(value instanceof RealExp){
             return ((RealExp)value).realValue;
-        } else if(value instanceof StrExp){
-            return ((StrExp)value).value;
+        } else if(value instanceof CharArrayExp){
+            return ((CharArrayExp)value).getValue();
         } else if(value instanceof CharExp){
 	    return ((CharExp)value).c;
 	} else {
@@ -151,12 +160,16 @@ public class ConversionUtils {
     }
 
     public static ICode.Type typeCheckerQualitiesToAssignType(TypeCheckerQualities type){
-        if(type.containsQualities(TypeCheckerQualities.BOOLEAN)) return ICode.Type.BOOL;
+        if(type.containsQualities(TypeCheckerQualities.INTEGER | TypeCheckerQualities.ARRAY)) return ICode.Type.INT_ARRAY;
+        else if(type.containsQualities(TypeCheckerQualities.BOOLEAN | TypeCheckerQualities.ARRAY)) return ICode.Type.BOOL_ARRAY;
+	else if(type.containsQualities(TypeCheckerQualities.REAL | TypeCheckerQualities.ARRAY)) return ICode.Type.REAL_ARRAY;
+        else if(type.containsQualities(TypeCheckerQualities.BOOLEAN)) return ICode.Type.BOOL;
         else if(type.containsQualities(TypeCheckerQualities.STRING)) return ICode.Type.STRING;
         else if(type.containsQualities(TypeCheckerQualities.REAL)) return ICode.Type.REAL;
         else if(type.containsQualities(TypeCheckerQualities.INTEGER)) return ICode.Type.INT;
 	else if(type.containsQualities(TypeCheckerQualities.CHAR)) return ICode.Type.CHAR;
-        else throw new ConversionException("typeCheckerQualitiesToAssignType", "TypeCheckerQualities", ICode.Type.class.getName());
+	else if(type.containsQualities(TypeCheckerQualities.VOID)) return ICode.Type.VOID;
+        else throw new ConversionException("typeCheckerQualitiesToAssignType", type.toString(), ICode.Type.class.getName());
     }
 
     public static TypeCheckerQualities assignTypeToTypeCheckerQualities(ICode.Type type){
@@ -165,6 +178,9 @@ public class ConversionUtils {
         else if(type == ICode.Type.REAL) return new TypeCheckerQualities(TypeCheckerQualities.REAL);
         else if(type == ICode.Type.STRING) return new TypeCheckerQualities(TypeCheckerQualities.STRING);
 	else if(type == ICode.Type.CHAR) return new TypeCheckerQualities(TypeCheckerQualities.CHAR);
+	else if(type == ICode.Type.REAL_ARRAY) return new TypeCheckerQualities(TypeCheckerQualities.REAL | TypeCheckerQualities.ARRAY);
+	else if(type == ICode.Type.INT_ARRAY) return new TypeCheckerQualities(TypeCheckerQualities.INTEGER | TypeCheckerQualities.ARRAY);
+	else if(type == ICode.Type.BOOL_ARRAY) return new TypeCheckerQualities(TypeCheckerQualities.BOOLEAN | TypeCheckerQualities.ARRAY);
         throw new ConversionException("assignTypeToTypeCheckerQualities", ICode.Type.class.getName(), "TypeCheckerQualities");
     }
 
@@ -174,6 +190,9 @@ public class ConversionUtils {
         else if(type == ICode.Type.REAL) return ValueType.REAL;
         else if(type == ICode.Type.INT) return ValueType.INT;
 	else if(type == ICode.Type.CHAR) return ValueType.CHAR;
+	else if(type == ICode.Type.INT_ARRAY) return ValueType.INT_ARRAY;
+	else if(type == ICode.Type.REAL_ARRAY) return ValueType.REAL_ARRAY;
+	else if(type == ICode.Type.BOOL_ARRAY) return ValueType.BOOL_ARRAY;
         else throw new ConversionException("assignTypeToDagValueType", ICode.Type.class.getName(), ValueType.class.getName());
     }
 
@@ -199,6 +218,9 @@ public class ConversionUtils {
         else if(type == ValueType.REAL) return ICode.Type.REAL;
         else if(type == ValueType.INT) return ICode.Type.INT;
 	else if(type == ValueType.CHAR) return ICode.Type.CHAR;
+	else if(type == ValueType.INT_ARRAY) return ICode.Type.INT_ARRAY;
+	else if(type == ValueType.REAL_ARRAY) return ICode.Type.REAL_ARRAY;
+	else if(type == ValueType.BOOL_ARRAY) return ICode.Type.BOOL_ARRAY;
         else throw new ConversionException("dagValueTypeToAssignType", ValueType.class.getName(), ICode.Type.class.getName());
     }
 
@@ -232,7 +254,9 @@ public class ConversionUtils {
         } else if(input instanceof Float){
             Float fValue = (Float)input;
             return fValue.floatValue();
-        } else if(input instanceof Boolean){
+        } else if(input instanceof Character){
+	    return (float)(int)input;
+	} else if(input instanceof Boolean){
             Boolean bi = (Boolean)input;
             if(bi){
                 return 1.0f;
@@ -247,9 +271,8 @@ public class ConversionUtils {
     public static Integer toInt(Object input){
         if(input instanceof Integer){
             return (Integer)input;
-        } else if(input instanceof BigInteger){
-            BigInteger lInput = (BigInteger)input;
-            return lInput.intValue();
+        } else if(input instanceof Character){
+            return (int)input;
         } else if(input instanceof Float){
             Float di = (Float)input;
             return di.intValue();
@@ -265,18 +288,40 @@ public class ConversionUtils {
         }
     }
 
-    public static Integer toRawInt(Object input){
+    public static Character toChar(Object input){
         if(input instanceof Integer){
-            return (Integer)input;
+            return (char)input;
         } else if(input instanceof Float){
-            Float dV = (Float)input;
-            Integer result = Float.floatToIntBits(dV);
-            return result;
+            return (char)input;
         } else if(input instanceof Boolean){
             Boolean bi = (Boolean)input;
+            if(bi){
+                return (char)1;
+            } else {
+                return (char)0;
+            }
+        } else if(input instanceof Character){
+	    return (char)input;
+	} else {
+            throw new ConversionException("toChar", input.getClass().getName(), Integer.class.getName());
+        }
+    }
+
+    public static Integer toRawInt(Object input){
+        if(input instanceof Integer){
+            return (int)input;
+        } else if(input instanceof Float){
+            float dV = (float)input;
+            int result = Float.floatToIntBits(dV);
+            return result;
+        } else if(input instanceof Boolean){
+            boolean bi = (boolean)input;
             if(bi) return 1;
             else return 0;
-        } else {
+        } else if(input instanceof Character) {
+	    char c = (char)input;
+	    return (int)c;
+	} else {
             throw new ConversionException("toRawInt", input.getClass().getName(), Integer.class.getName());
         }
     }
@@ -326,6 +371,9 @@ public class ConversionUtils {
 		case BOOL: return P.BOOL();
 		case STRING: return P.STR();
 		case CHAR: return P.CHAR();
+		case INT_ARRAY: return P.PAT(P.INT(), P.ARRAY());
+		case BOOL_ARRAY: return P.PAT(P.BOOL(), P.ARRAY());
+		case REAL_ARRAY: return P.PAT(P.REAL(), P.ARRAY());
 		default: throw new ConversionException("typeToPattern", type.toString(), P.class.getSimpleName());
 		}
 	}
@@ -362,11 +410,19 @@ public class ConversionUtils {
 			return ICode.Type.REAL;
 		else if(dest instanceof BoolExp)
 			return ICode.Type.BOOL;
-		else if(dest instanceof StrExp)
+		else if(dest instanceof CharArrayExp)
 			return ICode.Type.STRING;
 		else if(dest instanceof CharExp)
 		        return ICode.Type.CHAR;
+		else if(dest instanceof IntArrayExp)
+		    return ICode.Type.INT_ARRAY;
+		else if(dest instanceof RealArrayExp)
+		    return ICode.Type.REAL_ARRAY;
+		else if(dest instanceof BoolArrayExp)
+		    return ICode.Type.BOOL_ARRAY;
 		else
 			throw new RuntimeException();
 	}
 }
+
+

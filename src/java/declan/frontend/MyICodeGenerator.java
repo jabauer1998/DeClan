@@ -19,9 +19,13 @@ import declan.middleware.icode.exp.IdentExp;
 import declan.middleware.icode.exp.IntExp;
 import declan.middleware.icode.exp.NullableExp;
 import declan.middleware.icode.exp.RealExp;
-import declan.middleware.icode.exp.StrExp;
+import declan.middleware.icode.exp.CharArrayExp;
 import declan.middleware.icode.exp.UnExp;
 import declan.middleware.icode.exp.CharExp;
+import declan.middleware.icode.exp.IntArrayExp;
+import declan.middleware.icode.exp.RealArrayExp;
+import declan.middleware.icode.exp.BoolArrayExp;
+import declan.middleware.icode.exp.ArrayAccess;
 import declan.middleware.icode.label.Label;
 import declan.middleware.icode.symbols.SymEntry;
 import declan.driver.Config;
@@ -55,6 +59,9 @@ import declan.frontend.ast.Statement;
 import declan.frontend.ast.StrValue;
 import declan.frontend.ast.UnaryOperation;
 import declan.frontend.ast.VariableDeclaration;
+import declan.frontend.ast.ArrayDeclaration;
+import declan.frontend.ast.ElementAccess;
+import declan.frontend.ast.ElementAssignment;
 import declan.frontend.ast.WhileElifBranch;
 import declan.frontend.ast.CharValue;
 import declan.frontend.builder.AssignmentBuilder;
@@ -154,9 +161,9 @@ public class MyICodeGenerator{
     for (Declaration decl : program.getVarDecls()) {
       decl.accept(typeChecker);
       if(decl instanceof VariableDeclaration)
-	  generateVariableIr(Scope.GLOBAL, decl, builder);
+	  generateVariableIr(Scope.GLOBAL, (VariableDeclaration)decl, builder);
       else if(decl instanceof ArrayDeclaration)
-	  generateArrayIr(Scope.GLOBAL, decl, builder);
+	  generateArrayIr(Scope.GLOBAL, (ArrayDeclaration)decl, builder);
     }
     
     builder.buildDataSectionHeader();
@@ -213,11 +220,7 @@ public class MyICodeGenerator{
     Identifier id = varDecl.getIdentifier();
     Identifier type = varDecl.getType();
     IdentExp place = null;
-    if(type.getLexeme().equals("STRING")){
-      place = builder.buildDefinition(scope, new StrExp("\0"), ICode.Type.STRING);
-      if(scope == ICode.Scope.GLOBAL)
-          builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id.getLexeme(), ICode.Type.STRING, false);
-    } else if(type.getLexeme().equals("REAL")) {
+    if(type.getLexeme().equals("REAL")) {
       place = builder.buildDefinition(scope, new RealExp(0), ICode.Type.REAL);
       if(scope == ICode.Scope.GLOBAL)
           builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id.getLexeme(), ICode.Type.REAL, false);
@@ -225,38 +228,105 @@ public class MyICodeGenerator{
       place = builder.buildDefinition(scope, new BoolExp(false), ICode.Type.BOOL);
       if(scope == ICode.Scope.GLOBAL)
           builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id.getLexeme(), ICode.Type.BOOL, false);
-    } else {
+    } else if(type.getLexeme().equals("INTEGER")) {
       place = builder.buildDefinition(scope, new IntExp(0), ICode.Type.INT);
       if(scope == ICode.Scope.GLOBAL)
           builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id.getLexeme(), ICode.Type.INT, false);
+    } else if(type.getLexeme().equals("CHAR")){
+	place = builder.buildDefinition(scope, new CharExp('\0'), ICode.Type.CHAR);
+	if(scope == ICode.Scope.GLOBAL)
+	    builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id.getLexeme(), ICode.Type.CHAR, false);
+    } else {
+	throw new RuntimeException();
     }
   }
 
-  public void generateArrayIr(Scope scope, VariableDeclaration varDecl, DefinitionBuilder builder){
-      //TODO - Finish method
+  public void generateArrayIr(Scope scope, ArrayDeclaration varDecl, DefinitionBuilder builder){
+      IdentExp place = null;
+      String id = varDecl.getName();
+      switch(varDecl.getType()){
+      case INT: {
+	  place = builder.buildDefinition(scope, new IntArrayExp((int)(varDecl.getSize().acceptResult(interpreter))), ICode.Type.INT_ARRAY);
+	  if(scope == ICode.Scope.GLOBAL)
+	      builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id, ICode.Type.INT_ARRAY, false);
+	  break;
+      }
+      case BOOLEAN: {
+	  place = builder.buildDefinition(scope, new BoolArrayExp((int)(varDecl.getSize().acceptResult(interpreter))), ICode.Type.BOOL_ARRAY);
+	  if(scope == ICode.Scope.GLOBAL)
+	      builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id, ICode.Type.BOOL_ARRAY, false);
+	  break;
+      }
+      case REAL: {
+	  place = builder.buildDefinition(scope, new RealArrayExp((int)(varDecl.getSize().acceptResult(interpreter))), ICode.Type.REAL_ARRAY);
+	  if(scope == ICode.Scope.GLOBAL)
+	      builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id, ICode.Type.REAL_ARRAY, false);
+	  break;
+      }
+      case CHAR: {
+	  place = builder.buildDefinition(scope, new CharArrayExp((int)(varDecl.getSize().acceptResult(interpreter))), ICode.Type.STRING);
+	  if(scope == ICode.Scope.GLOBAL)
+	      builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.GLOBAL, id, ICode.Type.STRING, false);
+	  break;
+      }
+      default: throw new RuntimeException();
+      }
   }
   
   public void generateLocalVariableIr(String funcName, VariableDeclaration varDecl, DefinitionBuilder builder) {
     Identifier id = varDecl.getIdentifier();
     Identifier type = varDecl.getType();
     IdentExp place = null;
-    if(type.getLexeme().equals("STRING")){
-      place = builder.buildDefinition(Scope.LOCAL, new StrExp("\0"), ICode.Type.STRING);
-      builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName, ICode.Type.STRING);
-    } else if(type.getLexeme().equals("REAL")) {
+    if(type.getLexeme().equals("REAL")) {
       place = builder.buildDefinition(Scope.LOCAL, new RealExp(0), ICode.Type.REAL);
       builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName, ICode.Type.REAL);
     } else if(type.getLexeme().equals("BOOLEAN")){
       place = builder.buildDefinition(Scope.LOCAL, new BoolExp(false), ICode.Type.BOOL);
       builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName, ICode.Type.BOOL);
-    } else {
+    } else if(type.getLexeme().equals("CHAR")) {
+	place = builder.buildDefinition(Scope.LOCAL, new CharExp('\0'), ICode.Type.CHAR);
+	builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName, ICode.Type.CHAR);
+    } else if(type.getLexeme().equals("INTEGER")){
       place = builder.buildDefinition(Scope.LOCAL, new IntExp(0), ICode.Type.INT);
       builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName, ICode.Type.INT);
+    } else if(type.getLexeme().equals("STRING")) {
+	place = builder.buildDefinition(Scope.LOCAL, new CharArrayExp(0), ICode.Type.STRING);
+	builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id.getLexeme(), funcName, ICode.Type.STRING);
+    } else {
+	throw new RuntimeException("Error cant make a variable for type " + type + " at " + varDecl.getStart());
     }
   }
 
+    public void generateLocalArrayIr(String funcName, ArrayDeclaration varDecl, DefinitionBuilder builder){
+      IdentExp place = null;
+      String id = varDecl.getName();
+      switch(varDecl.getType()){
+      case INT: {
+	  place = builder.buildDefinition(ICode.Scope.LOCAL, new IntArrayExp((int)(varDecl.getSize().acceptResult(interpreter))), ICode.Type.INT_ARRAY);
+	  builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id, funcName, ICode.Type.INT_ARRAY);
+	  break;
+      }
+      case BOOLEAN: {
+	  place = builder.buildDefinition(ICode.Scope.LOCAL, new BoolArrayExp((int)(varDecl.getSize().acceptResult(interpreter))), ICode.Type.BOOL_ARRAY);
+	  builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id, funcName, ICode.Type.BOOL_ARRAY);
+	  break;
+      }
+      case REAL: {
+	  place = builder.buildDefinition(ICode.Scope.LOCAL, new RealArrayExp((int)(varDecl.getSize().acceptResult(interpreter))), ICode.Type.REAL_ARRAY);
+	  builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id, funcName, ICode.Type.REAL_ARRAY);
+	  break;
+      }
+      case CHAR: {
+	  place = builder.buildDefinition(ICode.Scope.LOCAL, new CharArrayExp((int)(varDecl.getSize().acceptResult(interpreter))), ICode.Type.STRING);
+	  builder.addVariableEntry(place.ident, SymEntry.INTERNAL | SymEntry.LOCAL, id, funcName, ICode.Type.STRING);
+	  break;
+      }
+      default: throw new RuntimeException();
+      }
+  }
+
   private void loadFunctions(List<ProcedureDeclaration> decls, SymbolBuilder builder){
-        typeChecker.loadFunctions(decls);
+    typeChecker.loadFunctions(decls);
     for(ProcedureDeclaration decl : decls){
       loadFunction(decl, builder);
     }
@@ -268,10 +338,10 @@ public class MyICodeGenerator{
     
     
     for(int i = 0; i < args.size(); i++){
-            String argAlias = gen.genNext();
-            Identifier ident = args.get(i).getIdentifier();
-            TypeCheckerQualities qual = typeChecker.getParamType(procedureName, i);
-            ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+        String argAlias = gen.genNext();
+        Identifier ident = args.get(i).getIdentifier();
+        TypeCheckerQualities qual = typeChecker.getParamType(procedureName, i);
+        ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
         builder.addVariableEntry(argAlias, SymEntry.PARAM | SymEntry.INTERNAL, ident.getLexeme(), procedureName, i, type);
     }
   
@@ -293,6 +363,8 @@ public class MyICodeGenerator{
       Declaration localDecl = localVars.get(i);
       if(localDecl instanceof VariableDeclaration){
         generateLocalVariableIr(procedureName, (VariableDeclaration)localDecl, builder);
+      } else if(localDecl instanceof ArrayDeclaration){
+	generateLocalArrayIr(procedureName, (ArrayDeclaration)localDecl, builder);
       } else if(localDecl instanceof ConstDeclaration){
         generateLocalConstantIr(procedureName, (ConstDeclaration)localDecl, builder);
       }
@@ -318,6 +390,7 @@ public class MyICodeGenerator{
     if(stat instanceof ProcedureCall) generateProcedureCallIr((ProcedureCall)stat, builder);
     else if(stat instanceof Branch) generateBranchIr((Branch)stat, builder);
     else if(stat instanceof Assignment) generateAssignmentIr((Assignment)stat, builder);
+    else if(stat instanceof ElementAssignment) generateElementAssignmentIr((ElementAssignment)stat, builder);
     else if(stat instanceof Asm) generateInlineAssemblyIr((Asm)stat, builder);
     else if(stat instanceof EmptyStatement){
          //Do nothing
@@ -331,6 +404,7 @@ public class MyICodeGenerator{
             if(stat instanceof ProcedureCall) generateProcedureCallIr((ProcedureCall)stat, callerFuncName, builder);
             else if(stat instanceof Branch) generateBranchIr((Branch)stat, callerFuncName, builder);
             else if(stat instanceof Assignment) generateAssignmentIr((Assignment)stat, callerFuncName, builder);
+	    else if(stat instanceof ElementAssignment) generateElementAssignmentIr((ElementAssignment)stat, callerFuncName, builder);
             else if(stat instanceof Asm) generateInlineAssemblyIr((Asm)stat, callerFuncName, builder);
             else if(stat instanceof EmptyStatement){
                  //Do nothing
@@ -752,26 +826,70 @@ public class MyICodeGenerator{
         } else {
                 throw new ICodeGeneratorException(assignment, "Error no variable was found with attributes selected");
         }
-    Expression exp = assignment.getVariableValue();
-    IdentExp value = generateExpressionIr(exp, callerFuncName, builder);
-    TypeCheckerQualities qual = exp.acceptResult(typeChecker);
-    TypeCheckerQualities convType = assignment.getVariableName().acceptResult(typeChecker);
+	Expression exp = assignment.getVariableValue();
+	IdentExp value = generateExpressionIr(exp, callerFuncName, builder);
+	TypeCheckerQualities qual = exp.acceptResult(typeChecker);
+	TypeCheckerQualities convType = assignment.getVariableName().acceptResult(typeChecker);
     
-    if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.REAL)){
-      value = builder.buildRealToIntConversion(ICode.Scope.LOCAL, value);
-    } else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
-      value = builder.buildIntToRealConversion(ICode.Scope.LOCAL, value);
-    } else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
-      value = builder.buildIntToBoolConversion(ICode.Scope.LOCAL, value);
-    } else if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
-      value = builder.buildBoolToIntConversion(ICode.Scope.LOCAL, value);
-    } else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.REAL)){
-      value = builder.buildRealToBoolConversion(ICode.Scope.LOCAL, value);
-    } else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
-      value = builder.buildBoolToRealConversion(ICode.Scope.LOCAL, value);
-    }
-    ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(convType);
-    builder.buildAssignment(place.scope, place.ident, value, type);
+	if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.REAL)){
+	    value = builder.buildRealToIntConversion(ICode.Scope.LOCAL, value);
+	} else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
+	    value = builder.buildIntToRealConversion(ICode.Scope.LOCAL, value);
+	} else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
+	    value = builder.buildIntToBoolConversion(ICode.Scope.LOCAL, value);
+	} else if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
+	    value = builder.buildBoolToIntConversion(ICode.Scope.LOCAL, value);
+	} else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.REAL)){
+	    value = builder.buildRealToBoolConversion(ICode.Scope.LOCAL, value);
+	} else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
+	    value = builder.buildBoolToRealConversion(ICode.Scope.LOCAL, value);
+	} else if(convType.containsQualities(TypeCheckerQualities.CHAR) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
+	    value = builder.buildIntToCharConversion(ICode.Scope.LOCAL, value);
+	} else if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.CHAR)){
+	    value = builder.buildCharToIntConversion(ICode.Scope.LOCAL, value);
+	}
+	
+	ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(convType);
+	builder.buildAssignment(place.scope, place.ident, value, type);
+  }
+
+  public void generateElementAssignmentIr(ElementAssignment assignment, String callerFuncName, AssignmentBuilder builder){
+        IdentExp place = null;
+        String myStr = assignment.getVariableName().getLexeme();
+        if(builder.containsEntry(myStr, callerFuncName, SymEntry.INTERNAL)) {
+                place = builder.getVariablePlace(myStr, callerFuncName, SymEntry.INTERNAL);
+        } else if(builder.containsEntry(myStr, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)) {
+                place = builder.getVariablePlace(myStr, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+        } else {
+                throw new ICodeGeneratorException(assignment, "Error no variable was found with attributes selected");
+        }
+	Expression exp = assignment.getVariableValue();
+	IdentExp value = generateExpressionIr(exp, callerFuncName, builder);
+	TypeCheckerQualities qual = exp.acceptResult(typeChecker);
+	TypeCheckerQualities convType = assignment.getVariableName().acceptResult(typeChecker);
+    
+	if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.REAL)){
+	    value = builder.buildRealToIntConversion(ICode.Scope.LOCAL, value);
+	} else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
+	    value = builder.buildIntToRealConversion(ICode.Scope.LOCAL, value);
+	} else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
+	    value = builder.buildIntToBoolConversion(ICode.Scope.LOCAL, value);
+	} else if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
+	    value = builder.buildBoolToIntConversion(ICode.Scope.LOCAL, value);
+	} else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.REAL)){
+	    value = builder.buildRealToBoolConversion(ICode.Scope.LOCAL, value);
+	} else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
+	    value = builder.buildBoolToRealConversion(ICode.Scope.LOCAL, value);
+	} else if(convType.containsQualities(TypeCheckerQualities.CHAR) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
+	    value = builder.buildIntToCharConversion(ICode.Scope.LOCAL, value);
+	} else if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.CHAR)){
+	    value = builder.buildCharToIntConversion(ICode.Scope.LOCAL, value);
+	}
+	ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(convType);
+
+	Expression index = assignment.getVariableIndex();
+	IdentExp valueIndex = generateExpressionIr(index, callerFuncName, builder);
+	builder.buildElementAssignment(place.scope, place.ident, valueIndex, value, type);
   }
 
   public void generateAssignmentIr(Assignment assignment, AssignmentBuilder builder) {
@@ -802,10 +920,55 @@ public class MyICodeGenerator{
               value = builder.buildRealToBoolConversion(ICode.Scope.LOCAL, value);
             } else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
               value = builder.buildBoolToRealConversion(ICode.Scope.LOCAL, value);
-            }
+            } else if(convType.containsQualities(TypeCheckerQualities.CHAR) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
+	      value = builder.buildIntToCharConversion(ICode.Scope.LOCAL, value);
+	    } else if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.CHAR)){
+	      value = builder.buildCharToIntConversion(ICode.Scope.LOCAL, value);
+	    }
+	    
             ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(convType);
             builder.buildAssignment(place.scope, place.ident, value, type);
           }
+
+          public void generateElementAssignmentIr(ElementAssignment assignment, AssignmentBuilder builder){
+                IdentExp place = null;
+                String myStr = assignment.getVariableName().getLexeme();
+                if(builder.containsEntry(myStr, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)) {
+                        place = builder.getVariablePlace(myStr, SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+                } else if (builder.containsEntry(myStr, SymEntry.LOCAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
+                        place = builder.getVariablePlace(myStr, SymEntry.LOCAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+                } else {
+                        throw new ICodeGeneratorException(assignment, "Error no variable was found with attributes selected");
+                }
+                
+            Expression exp = assignment.getVariableValue();
+            IdentExp value = generateExpressionIr(exp, builder);
+            TypeCheckerQualities qual = exp.acceptResult(typeChecker);
+            TypeCheckerQualities convType = assignment.getVariableName().acceptResult(typeChecker);
+            
+            if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.REAL)){
+              value = builder.buildRealToIntConversion(ICode.Scope.LOCAL, value);
+            } else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
+              value = builder.buildIntToRealConversion(ICode.Scope.LOCAL, value);
+            } else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
+              value = builder.buildIntToBoolConversion(ICode.Scope.LOCAL, value);
+            } else if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
+              value = builder.buildBoolToIntConversion(ICode.Scope.LOCAL, value);
+            } else if(convType.containsQualities(TypeCheckerQualities.BOOLEAN) && qual.containsQualities(TypeCheckerQualities.REAL)){
+              value = builder.buildRealToBoolConversion(ICode.Scope.LOCAL, value);
+            } else if(convType.containsQualities(TypeCheckerQualities.REAL) && qual.containsQualities(TypeCheckerQualities.BOOLEAN)){
+              value = builder.buildBoolToRealConversion(ICode.Scope.LOCAL, value);
+            } else if(convType.containsQualities(TypeCheckerQualities.CHAR) && qual.containsQualities(TypeCheckerQualities.INTEGER)){
+	      value = builder.buildIntToCharConversion(ICode.Scope.LOCAL, value);
+	    } else if(convType.containsQualities(TypeCheckerQualities.INTEGER) && qual.containsQualities(TypeCheckerQualities.CHAR)){
+	      value = builder.buildCharToIntConversion(ICode.Scope.LOCAL, value);
+	    }
+            ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(convType);
+
+	    Expression index = assignment.getVariableIndex();
+	    IdentExp valueIndex = generateExpressionIr(index, builder);
+	    builder.buildElementAssignment(place.scope, place.ident, valueIndex, value, type);
+  }
   
   public void generateInlineAssemblyIr(Asm asm, StatementBuilder builder) {
      List<Tuple<NullableExp, ICode.Type>> icodeParams = new LinkedList<Tuple<NullableExp, ICode.Type>>();
@@ -845,6 +1008,7 @@ public class MyICodeGenerator{
     else if(exp instanceof FunctionCall) return generateFunctionCallIr((FunctionCall)exp, builder);
     else if(exp instanceof UnaryOperation) return generateUnaryOperationIr((UnaryOperation)exp, builder);
     else if(exp instanceof Identifier) return generateIdentifierIr((Identifier)exp, builder);
+    else if(exp instanceof ElementAccess) return generateElementAccessIr((ElementAccess)exp, builder);
     else if(exp instanceof NumValue) return generateNumberIr((NumValue)exp, builder);
     else if(exp instanceof BoolValue) return generateBooleanIr((BoolValue)exp, builder);
     else if(exp instanceof StrValue) return generateStringIr((StrValue)exp, builder);
@@ -859,6 +1023,7 @@ public class MyICodeGenerator{
             else if(exp instanceof FunctionCall) return generateFunctionCallIr((FunctionCall)exp, callerFuncName, builder);
             else if(exp instanceof UnaryOperation) return generateUnaryOperationIr((UnaryOperation)exp, callerFuncName, builder);
             else if(exp instanceof Identifier) return generateIdentifierIr((Identifier)exp, callerFuncName, builder);
+	    else if(exp instanceof ElementAccess) return generateElementAccessIr((ElementAccess)exp, callerFuncName, builder);
             else if(exp instanceof NumValue) return generateNumberIr((NumValue)exp, builder);
             else if(exp instanceof BoolValue) return generateBooleanIr((BoolValue)exp, builder);
             else if(exp instanceof StrValue) return generateStringIr((StrValue)exp, builder);
@@ -918,6 +1083,14 @@ public class MyICodeGenerator{
           default: return leftValue;
       }
     } else {
+	  if(leftType.containsQualities(TypeCheckerQualities.CHAR)){
+                  leftValue = builder.buildCharToIntConversion(ICode.Scope.LOCAL, leftValue);
+          }
+
+          if(rightType.containsQualities(TypeCheckerQualities.CHAR)){
+                  rightValue = builder.buildCharToIntConversion(ICode.Scope.LOCAL, rightValue);
+          }
+	  
       switch (binaryOperation.getOperator()){
         case PLUS: return builder.buildIntegerAdditionDefinition(Scope.LOCAL, leftValue, rightValue);
         case MINUS: return builder.buildIntegerSubtractionDefinition(Scope.LOCAL, leftValue, rightValue);
@@ -990,6 +1163,15 @@ public class MyICodeGenerator{
           default: return leftValue;
       }
     } else {
+
+	  if(leftType.containsQualities(TypeCheckerQualities.CHAR)){
+                  leftValue = builder.buildCharToIntConversion(ICode.Scope.LOCAL, leftValue);
+          }
+
+          if(rightType.containsQualities(TypeCheckerQualities.CHAR)){
+                  rightValue = builder.buildCharToIntConversion(ICode.Scope.LOCAL, rightValue);
+          }
+	  
       switch (binaryOperation.getOperator()){
         case PLUS: return builder.buildIntegerAdditionDefinition(Scope.LOCAL, leftValue, rightValue);
         case MINUS: return builder.buildIntegerSubtractionDefinition(Scope.LOCAL, leftValue, rightValue);
@@ -1181,6 +1363,27 @@ public class MyICodeGenerator{
         return ident;
     }
   }
+
+  public IdentExp generateElementAccessIr(ElementAccess elem, String funcName, DefinitionBuilder builder){
+      if(builder.containsEntry(elem.getLexeme(), funcName, SymEntry.INTERNAL)){
+	  IdentExp place = builder.getVariablePlace(elem.getLexeme(), funcName, SymEntry.INTERNAL);
+	  IdentExp index = generateExpressionIr(elem.getExpression(), funcName, builder);
+	  TypeCheckerQualities qual = elem.acceptResult(typeChecker);
+	  return builder.buildDefinition(Scope.LOCAL, new ArrayAccess(place.scope, place.ident, index), ConversionUtils.typeCheckerQualitiesToAssignType(qual));
+      } else if(builder.containsEntry(elem.getLexeme(), SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)) {
+	  IdentExp place = builder.getVariablePlace(elem.getLexeme(), SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+	  IdentExp index = generateExpressionIr(elem.getExpression(), funcName, builder);
+	  TypeCheckerQualities qual = elem.acceptResult(typeChecker);
+	  return builder.buildDefinition(Scope.LOCAL, new ArrayAccess(Scope.GLOBAL, place.ident, index), ConversionUtils.typeCheckerQualitiesToAssignType(qual));
+      } else {
+	String place = gen.genNext();
+        TypeCheckerQualities qual = elem.acceptResult(typeChecker);
+        ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+	IdentExp exp = generateExpressionIr(elem.getExpression(), funcName, builder);
+        builder.addVariableEntry(place, SymEntry.GLOBAL | SymEntry.EXTERNAL, elem.getLexeme(), type, false);
+        return builder.buildDefinition(Scope.LOCAL, new ArrayAccess(Scope.GLOBAL, place, exp), type);
+      }
+  }
   
   public IdentExp generateIdentifierIr(Identifier identifier, DefinitionBuilder builder){
     if(builder.containsEntry(identifier.getLexeme(), SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
@@ -1197,6 +1400,28 @@ public class MyICodeGenerator{
     }
   }
 
+  
+  public IdentExp generateElementAccessIr(ElementAccess elem, DefinitionBuilder builder){
+      if(builder.containsEntry(elem.getLexeme(), SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)){
+	  IdentExp place = builder.getVariablePlace(elem.getLexeme(), SymEntry.INTERNAL | SymEntry.GLOBAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+	  IdentExp index = generateExpressionIr(elem.getExpression(), builder);
+	  TypeCheckerQualities qual = elem.acceptResult(typeChecker);
+	  return builder.buildDefinition(Scope.LOCAL, new ArrayAccess(Scope.GLOBAL, place.ident, index), ConversionUtils.typeCheckerQualitiesToAssignType(qual));
+      } else if(builder.containsEntry(elem.getLexeme(), SymEntry.GLOBAL | SymEntry.EXTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME)) {
+	  IdentExp place = builder.getVariablePlace(elem.getLexeme(), SymEntry.GLOBAL | SymEntry.EXTERNAL, SymbolBuilderSearchStrategy.SEARCH_VIA_IDENT_NAME);
+	  IdentExp index = generateExpressionIr(elem.getExpression(), builder);
+	  TypeCheckerQualities qual = elem.acceptResult(typeChecker);
+	  return builder.buildDefinition(Scope.LOCAL, new ArrayAccess(Scope.GLOBAL, place.ident, index), ConversionUtils.typeCheckerQualitiesToAssignType(qual));
+      } else {
+	String place = gen.genNext();
+        TypeCheckerQualities qual = elem.acceptResult(typeChecker);
+        ICode.Type type = ConversionUtils.typeCheckerQualitiesToAssignType(qual);
+	IdentExp exp = generateExpressionIr(elem.getExpression(), builder);
+        builder.addVariableEntry(place, SymEntry.GLOBAL | SymEntry.EXTERNAL, elem.getLexeme(), type, false);
+        return builder.buildDefinition(Scope.LOCAL, new ArrayAccess(Scope.GLOBAL, place, exp), type);
+      }
+  }
+    
   public IdentExp generateNumberIr(NumValue numValue, DefinitionBuilder builder){
       String rawnum = Utils.ifHexToInt(numValue.getLexeme());
       if(rawnum.contains(".")){
@@ -1217,10 +1442,12 @@ public class MyICodeGenerator{
 
   public IdentExp generateCharIr(CharValue chrValue, DefinitionBuilder builder){
       String lexeme = chrValue.getLexeme();
-      return builder.buildDefinition(Scope.LOCAL, new CharExp(lexeme.charAt(0)), ICode.Type.CHAR);
+      return builder.buildDefinition(Scope.LOCAL, new CharExp(lexeme.translateEscapes().charAt(0)), ICode.Type.CHAR);
   }
 
   public IdentExp generateStringIr(StrValue strValue, DefinitionBuilder builder){
-      return builder.buildDefinition(Scope.LOCAL, new StrExp(strValue.getLexeme()), ICode.Type.STRING);
+      return builder.buildDefinition(Scope.LOCAL, new CharArrayExp(strValue.getLexeme()), ICode.Type.STRING);
   }
 }
+
+

@@ -20,3 +20,5 @@ public class StringEntry implements Copyable<StringEntry> {
     }
     
 }
+
+

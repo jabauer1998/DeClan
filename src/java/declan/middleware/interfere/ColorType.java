@@ -5,3 +5,5 @@ public interface ColorType {
 	public boolean equals(Object obj);
 	public boolean matches(Object obj);
 }
+
+

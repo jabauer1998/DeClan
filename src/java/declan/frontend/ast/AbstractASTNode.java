@@ -22,3 +22,5 @@ public abstract class AbstractASTNode implements ASTNode {
 	@Override
 	public abstract String toString();
 }
+
+

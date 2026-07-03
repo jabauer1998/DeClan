@@ -52,3 +52,4 @@ All packages now use the `declan.*` prefix matching the directory layout:
 - 2026-02-18: Refactored all package paths from `io.github.h20man13.DeClan.*` to `declan.*` to match directory structure
 - 2026-02-18: Fixed Java 21+ API compatibility (replaced `getFirst()`, `getLast()`, `reversed()` with Java 19 compatible alternatives)
 - 2026-02-18: Initial Replit environment setup
+

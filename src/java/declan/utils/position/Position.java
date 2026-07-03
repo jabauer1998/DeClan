@@ -78,3 +78,5 @@ public class Position implements Comparable<Position>, Copyable<Position> {
 		return new Position(line, column);
 	}
 }
+
+

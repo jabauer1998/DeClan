@@ -374,6 +374,41 @@ public abstract class P {
 	}
     }
 
+    private static class OF extends P{
+	@Override
+	public boolean equals(Object obj){
+	    return obj instanceof OF;
+	}
+    }
+
+    private static class NEW extends P{
+	@Override
+	public boolean equals(Object obj){
+	    return obj instanceof NEW;
+	}
+    }
+
+    private static class ARRAY extends P{
+	@Override
+	public boolean equals(Object obj){
+	    return obj instanceof ARRAY;
+	}
+    }
+
+    private static class AT extends P{
+	@Override
+	public boolean equals(Object obj){
+	    return obj instanceof AT;
+	}
+    }
+
+    private static class AS extends P{
+	@Override
+	public boolean equals(Object obj){
+	    return obj instanceof AS;
+	}
+    }
+
     private static class PAT extends P{
         private P[] pattern;
 
@@ -601,6 +636,21 @@ public abstract class P {
     public static CHAR CHAR(){
 	return new CHAR();
     }
+    public static OF OF(){
+	return new OF();
+    }
+    public static NEW NEW(){
+	return new NEW();
+    }
+    public static ARRAY ARRAY(){
+	return new ARRAY();
+    }
+    public static AT AT(){
+	return new AT();
+    }
+    public static AS AS(){
+	return new AS();
+    }
 
     @Override
     public abstract boolean equals(Object obj);
@@ -615,3 +665,5 @@ public abstract class P {
         return this.toString().hashCode();
     }
 }
+
+

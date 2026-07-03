@@ -168,3 +168,5 @@ public abstract class InstructionAnalysis<MapType extends Map<ICode, SetType>, S
 
     public abstract SetType transferFunction(ICode instr, SetType inputSet);
 }
+
+

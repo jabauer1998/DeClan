@@ -16,7 +16,11 @@ import java.util.concurrent.Future;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.TestRig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+
 
 import declan.utils.ErrorLog;
 import declan.utils.ErrorLog.LogItem;
@@ -39,6 +43,7 @@ import declan.middleware.MyOptimizer;
 import declan.utils.MyStandardLibrary;
 import declan.backend.assembler.ArmAssemblerLexer;
 import declan.backend.assembler.ArmAssemblerParser;
+import org.junit.jupiter.api.BeforeEach;
 
 public class CodeGeneratorTest {
     private void testIrFile(String fileName) throws Exception{
@@ -66,6 +71,18 @@ public class CodeGeneratorTest {
         ArmAssemblerParser armParser = new ArmAssemblerParser(tokStream);
         armParser.program();
         assertTrue("Error syntax errors discovered", armParser.getNumberOfSyntaxErrors() == 0);
+    }
+
+    @BeforeEach
+    void init(TestInfo testInfo) {
+        // This will print before every single test method runs
+        System.out.println("Starting test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
+    }
+
+    @AfterEach
+    void end(TestInfo testInfo) {
+        // This will print before every single test method runs
+        System.out.println("Ending test: " + testInfo.getTestClass().get().getName() + '.' + testInfo.getDisplayName());
     }
     
     @Test
@@ -163,3 +180,4 @@ public class CodeGeneratorTest {
         testIrFile("src/ir/optimized/WhileLoopBasic.ir");
     }
 }
+

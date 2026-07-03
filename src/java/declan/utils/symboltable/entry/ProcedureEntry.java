@@ -17,30 +17,17 @@ import declan.frontend.ast.VariableDeclaration;
 import java.util.ArrayList;
 
 public class ProcedureEntry implements Copyable<ProcedureEntry>{
-
-    private final ProcType Type;
-    private final String typeStr;
     private final List<ParamaterDeclaration> arguments;
     private final List<Declaration> local;
     private final List<Statement> ExecutionStats;
     private final Expression ReturnStatement;
   
-    public ProcedureEntry(List<ParamaterDeclaration> arguments, String type, List<Declaration> local, List<Statement> ExecutionStats, Expression ReturnStatement){
+    public ProcedureEntry(List<ParamaterDeclaration> arguments, List<Declaration> local, List<Statement> ExecutionStats, Expression ReturnStatement){
         if(arguments == null){
-	        arguments = new ArrayList<>();
+	     arguments = new ArrayList<>();
         }
-        this.typeStr = type;
-	      this.arguments = arguments;
-        if(type.equals("REAL")){
-	          Type = ProcType.REAL;
-        } else if(type.equals("INTEGER")){
-            Type = ProcType.INTEGER;
-        } else if(type.equals("BOOLEAN")){
-            Type = ProcType.BOOLEAN;
-        } else {
-            Type = ProcType.VOID;
-        }
-	      this.local = local;
+	this.arguments = arguments;
+	this.local = local;
         if(ExecutionStats == null){
           ExecutionStats = new ArrayList<>();
         }
@@ -51,8 +38,6 @@ public class ProcedureEntry implements Copyable<ProcedureEntry>{
     @Override
     public String toString(){
       StringBuilder mystring = new StringBuilder();
-      mystring.append("TYPE: ");
-      mystring.append(typeToString(getType()));
       mystring.append(" ARGUMENTS: ");
       mystring.append("( ");
       List<ParamaterDeclaration> argments = getArguments();
@@ -97,28 +82,10 @@ public class ProcedureEntry implements Copyable<ProcedureEntry>{
       return ReturnStatement;
     }
 
-    public ProcType getType(){
-      return Type;
-    }
-
-    public static enum ProcType{
-      INTEGER, BOOLEAN, REAL, VOID
-    }
-
-    private static String typeToString(ProcType proc){
-      if(proc == ProcType.INTEGER){
-	return "int";
-      } else if (proc == ProcType.BOOLEAN){
-	return "bool";
-      } else if (proc == ProcType.REAL){
-	return "double";
-      } else {
-	return "void";
-      }
-    }
-
     @Override
     public ProcedureEntry copy() {
-      return new ProcedureEntry(arguments, typeStr, local, ExecutionStats, ReturnStatement);
+      return new ProcedureEntry(arguments, local, ExecutionStats, ReturnStatement);
     }
 }
+
+

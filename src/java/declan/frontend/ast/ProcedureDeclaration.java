@@ -18,7 +18,6 @@ import java.lang.StringBuilder;
 public class ProcedureDeclaration extends AbstractASTNode implements Declaration {
 	private final Identifier procedureName;
         private final List<ParamaterDeclaration> arguments;
-        private final Identifier returnType;
         private final List<Declaration> localVariables;
         private final List<Statement> toExec;
         private final Expression returnStatement;
@@ -31,7 +30,7 @@ public class ProcedureDeclaration extends AbstractASTNode implements Declaration
 	 * @param identifier
 	 * @param number
 	 */
-    public ProcedureDeclaration(Position start, Identifier procedureName, List<ParamaterDeclaration> arguments, Identifier returnType, List<Declaration> localVariables, List<Statement> toExec, Expression returnStatement){
+    public ProcedureDeclaration(Position start, Identifier procedureName, List<ParamaterDeclaration> arguments, List<Declaration> localVariables, List<Statement> toExec, Expression returnStatement){
 	    super(start);
 	    this.procedureName = procedureName;
 	    if(arguments == null){
@@ -44,15 +43,10 @@ public class ProcedureDeclaration extends AbstractASTNode implements Declaration
 	    }
 	    this.toExec = toExec;
 	    this.returnStatement = returnStatement;
-	    this.returnType = returnType;
 	}
 
 	public Identifier getProcedureName() {
 		return procedureName;
-	}
-
-    public Identifier getReturnType() {
-		return returnType;
 	}
 
     public List<ParamaterDeclaration> getArguments(){
@@ -75,8 +69,6 @@ public class ProcedureDeclaration extends AbstractASTNode implements Declaration
 	  StringBuilder mystring = new StringBuilder();
 	  mystring.append("IDENT: ");
 	  mystring.append(getProcedureName().toString());
-	  mystring.append(" TYPE: ");
-	  mystring.append(getReturnType().toString());
 	  mystring.append(" ARGUMENTS: ");
 	  mystring.append("( ");
 	  List<ParamaterDeclaration> argu = getArguments();
@@ -115,3 +107,5 @@ public class ProcedureDeclaration extends AbstractASTNode implements Declaration
 		return visitor.visitResult(this);
 	}
 }
+
+

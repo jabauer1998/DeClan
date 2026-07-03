@@ -84,3 +84,4 @@ if [ -n "$javaExists" ]; then
 fi
 
 cd "$location"
+

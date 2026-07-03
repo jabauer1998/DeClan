@@ -46,6 +46,14 @@ public class DefinitionBuilder extends SymbolBuilder{
     public IdentExp buildRealToBoolConversion(ICode.Scope resultScope, IdentExp input){
     	return this.buildUnaryFunctionCall("RealToBool", resultScope, ICode.Type.BOOL, input, ICode.Type.REAL);
     }
+
+    public IdentExp buildCharToIntConversion(ICode.Scope resultScope, IdentExp input){
+	return this.buildUnaryFunctionCall("CharBinaryAsInt", resultScope, ICode.Type.INT, input, ICode.Type.CHAR);
+    }
+
+    public IdentExp buildIntToCharConversion(ICode.Scope resultScope, IdentExp input){
+	return this.buildUnaryFunctionCall("IntBinaryAsChar", resultScope, ICode.Type.CHAR, input, ICode.Type.INT);
+    }
     
     public IdentExp buildIntToBoolConversion(ICode.Scope resultScope, IdentExp input){
     	return this.buildUnaryFunctionCall("IntToBool", resultScope, ICode.Type.BOOL, input, ICode.Type.INT);
@@ -350,3 +358,5 @@ public class DefinitionBuilder extends SymbolBuilder{
         return new IdentExp(Scope.LOCAL, place);
     }
 }
+
+

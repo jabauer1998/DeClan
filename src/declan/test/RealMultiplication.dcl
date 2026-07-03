@@ -4,3 +4,4 @@ BEGIN
     result := r1 * r2;
     WriteReal(result)
 END.
+

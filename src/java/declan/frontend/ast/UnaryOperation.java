@@ -92,3 +92,5 @@ public class UnaryOperation extends AbstractASTNode implements Expression {
 		return expression.containsIdentifier(ident);
 	}
 }
+
+

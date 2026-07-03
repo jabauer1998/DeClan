@@ -16,3 +16,5 @@ public abstract class AntlrToken<ReturnType> {
 
     public abstract int hashCode();
 }
+
+

@@ -1,18 +1,27 @@
 SYMBOL SECTION
  ENTRY a INTERNAL GLOBAL result  <INT>
  ENTRY c CONST INTERNAL GLOBAL r  <REAL>
- ENTRY d EXTERNAL PARAM RealToInt 0 <REAL>
- ENTRY e EXTERNAL RETURN RealToInt <INT>
- ENTRY g EXTERNAL PARAM WriteInt 0 <INT>
+ ENTRY e EXTERNAL PARAM WriteString 0 <STRING>
+ ENTRY f EXTERNAL PARAM WriteReal 0 <REAL>
+ ENTRY g EXTERNAL PARAM RealToInt 0 <REAL>
+ ENTRY h EXTERNAL RETURN RealToInt <INT>
+ ENTRY k EXTERNAL PARAM WriteInt 0 <INT>
 BSS SECTION
  DEF GLOBAL a := 0 <INT>
 DATA SECTION
  DEF b := 6.5 <REAL>
  DEF GLOBAL c := b <REAL>
 CODE SECTION
- CALL RealToInt([(GLOBAL c) -> d]<REAL>)
- DEF f := (RETURN e) <INT>
- GLOBAL a := f <INT>
- CALL WriteInt([(GLOBAL a) -> g]<INT>)
+ DEF d := "Real is " <STRING>
+ CALL WriteString([d -> e]<STRING>)
+ CALL WriteReal([(GLOBAL c) -> f]<REAL>)
+ CALL WriteLn()
+ CALL RealToInt([(GLOBAL c) -> g]<REAL>)
+ DEF i := (RETURN h) <INT>
+ GLOBAL a := i <INT>
+ DEF j := "Int is: " <STRING>
+ CALL WriteString([j -> e]<STRING>)
+ CALL WriteInt([(GLOBAL a) -> k]<INT>)
+ CALL WriteLn()
 END
 PROC SECTION

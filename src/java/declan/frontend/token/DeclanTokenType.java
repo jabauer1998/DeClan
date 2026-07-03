@@ -159,3 +159,5 @@ public enum DeclanTokenType {
 		addDualOp("<<", LSHIFT);
 	}
 }
+
+

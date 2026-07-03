@@ -71,3 +71,4 @@ public class LdrTest {
           TestUtils.testAgainstInput(assembly, expectedOutput);
    }
 }
+

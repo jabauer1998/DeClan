@@ -55,3 +55,5 @@ public class ElementAssignment extends AbstractASTNode implements Statement{
 	    return visitor.visitResult(this);
     }
 }
+
+

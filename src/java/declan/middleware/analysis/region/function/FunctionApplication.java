@@ -16,3 +16,5 @@ public class FunctionApplication<SetType> implements SetExpression<SetType> {
 		return func1.compute(func2.compute(input));
 	}
 }
+
+

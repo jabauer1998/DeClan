@@ -32,3 +32,4 @@ args = "cd /home/runner/workspace && bash build/LinuxBuild.sh build && echo \"Bu
 
 [userenv.shared]
 DECLIB = "src/declan/std/lib"
+

@@ -5,3 +5,5 @@ public class IterativeAnalysisException extends AnalysisException {
 		super(methodName, "Iterative-Algorithm", message);
 	}
 }
+
+

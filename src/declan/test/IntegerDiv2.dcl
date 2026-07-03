@@ -4,3 +4,4 @@ BEGIN
     result := i1 DIV i2;
     WriteInt(result)
 END.
+

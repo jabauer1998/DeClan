@@ -17,3 +17,4 @@ public class BXTest {
         TestUtils.testAgainstInput(testString, instructionOutput);
     }
 }
+

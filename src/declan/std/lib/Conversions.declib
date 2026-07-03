@@ -42,14 +42,18 @@ PROCEDURE RealToInt(n: REAL);
 	exp := RealExponent(n);
 	mantissa := RealMantissa(n);
 	sign := RealSign(n);
-	IF exp > 0 THEN
-	   fullMantissa := mantissa << exp
-	ELSIF exp < 0 THEN
-	   fullMantissa := mantissa >> exp
+	
+	IF exp < 0 THEN
+	   result := 0
+	ELSIF (exp >= 31) & (sign = 0) THEN
+	   result := 2147483647
+	ELSIF (exp >= 31) & (sign = 1) THEN
+	   result := -2147483648
+	ELSIF (exp <= 23) THEN
+	   result := mantissa >> (23 - exp)
 	ELSE
-	   fullMantissa := mantissa
+	   result := mantissa << (exp - 23)
 	END;
-	result := fullMantissa >> 23;
 	IF sign = 1 THEN
 	    result := BNOT result;
 	    result := result + 1;
@@ -100,14 +104,14 @@ PROCEDURE RealBinaryAsInt(r: REAL);
     VAR result: INTEGER; temp: REAL;
     BEGIN
         asm("LDR %dr, %ua": temp, r);
-	    asm("STR %ur, %da": temp, result)
+	asm("STR %ur, %da": temp, result)
 	RETURN result
     END RealBinaryAsInt;
 PROCEDURE IntBinaryAsReal(n: INTEGER);
     VAR result: REAL; temp: INTEGER;
     BEGIN
-	    asm("LDR %dr, %ua": temp, n);
-	    asm("STR %ur, %da": temp, result)
+	asm("LDR %dr, %ua": temp, n);
+	asm("STR %ur, %da": temp, result)
         RETURN result
     END IntBinaryAsReal;
 PROCEDURE BoolBinaryAsReal(b: BOOLEAN);
@@ -138,6 +142,20 @@ PROCEDURE IntBinaryAsBool(n: INTEGER);
         asm("STRB %ur, %da": temp, result)
         RETURN result
     END IntBinaryAsBool;
+PROCEDURE CharBinaryAsInt(c: CHAR);
+    VAR result: INTEGER; temp: CHAR;
+    BEGIN
+	asm("LDRB %dr, %ua": temp, c);
+	asm("STR %ur, %da": temp, result);
+	RETURN result
+    END CharBinaryAsInt;
+PROCEDURE IntBinaryAsChar(i: INTEGER);
+    VAR result: CHAR; temp: INTEGER;
+    BEGIN
+        asm("LDR %dr, %ua": temp, i);
+	asm("STRB %ur, %da": temp, result);
+	RETURN result
+    END IntBinaryAsChar;
 PROCEDURE StringAsAddress(s: STRING);
    VAR result: INTEGER; temp: INTEGER;
    BEGIN
@@ -145,3 +163,4 @@ PROCEDURE StringAsAddress(s: STRING);
       asm("STR %ur, %da": temp, result);
       RETURN result
    END StringAsAddress;
+

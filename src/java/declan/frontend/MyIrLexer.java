@@ -42,7 +42,7 @@ public class MyIrLexer implements Lexer<IrToken> {
     }
 
     private static enum State{
-        INIT, IDENT, STRING, COMMENT, NUM, REAL, OP, SPEC
+        INIT, IDENT, STRING, CHAR, COMMENT, NUM, REAL, OP, SPEC
     }
 
     private void scanNext(){
@@ -61,7 +61,12 @@ public class MyIrLexer implements Lexer<IrToken> {
                         position = source.getPosition();
                         source.advance();
                         continue;
-                    } else if(Character.isDigit(c)){
+                    } else if(c == '\''){
+			state = State.CHAR;
+			position = source.getPosition();
+			source.advance();
+			continue;
+		    } else if(Character.isDigit(c)){
                         state = state.NUM;
                         lexeme.append(c);
                         position = source.getPosition();
@@ -114,7 +119,17 @@ public class MyIrLexer implements Lexer<IrToken> {
                         source.advance();
                         return;
                     }
-                case COMMENT:
+	        case CHAR:
+		    if(c != '\''){
+			source.advance();
+			lexeme.append(c);
+			continue;
+		    } else {
+			nextToken = IrToken.createChar(lexeme.toString(), position);
+			source.advance();
+			return;
+		    }
+	        case COMMENT:
                     if(c != '\n'){
                         source.advance();
                         continue;
@@ -185,6 +200,8 @@ public class MyIrLexer implements Lexer<IrToken> {
                 errorLog.add("Unterminated String Literal at the end of the file", position);
                 nextToken = null;
                 return;
+	    case CHAR:
+		errorLog.add("Unterminated Character Literal at the end of the file", position);
             case COMMENT:
                 nextToken = null;
                 return;
@@ -209,3 +226,5 @@ public class MyIrLexer implements Lexer<IrToken> {
         }
     }
 }
+
+

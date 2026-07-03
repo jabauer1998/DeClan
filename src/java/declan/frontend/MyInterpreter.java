@@ -4,6 +4,7 @@ import declan.utils.ConversionUtils;
 import declan.utils.OpUtil;
 import declan.utils.Utils;
 import declan.utils.ErrorLog;
+import declan.utils.MyStandardLibrary;
 import declan.frontend.ast.ASTVisitor;
 import declan.frontend.ast.Asm;
 import declan.frontend.ast.Assignment;
@@ -43,6 +44,7 @@ import declan.frontend.ast.ArrayDeclaration;
 import java.lang.Object;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.PushbackReader;
 import java.io.Writer;
 import java.lang.Math;
 import java.lang.String;
@@ -65,29 +67,48 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   private Environment <String, ProcedureEntry> procEnvironment;
   private Writer standardOutput;
   private Writer standardError;
-  private Reader standardIn;
+  private PushbackReader standardIn;
+  private MyStandardLibrary libs;
 
   public MyInterpreter(ErrorLog errorLog, Writer standardOutput, Writer standardError, Reader standardIn) {
     this.errorLog = errorLog;
     this.standardOutput = standardOutput;
     this.standardError = standardError;
-    this.standardIn = standardIn;
+    if(standardIn != null)
+	this.standardIn = new PushbackReader(standardIn);
+    else
+	this.standardIn = null;
+    libs = new MyStandardLibrary(errorLog);
     this.varEnvironment = new Environment<>();
     this.procEnvironment = new Environment<>();
   }
 
   @Override
   public void visit(Library library){
-    procEnvironment.addScope();
-    varEnvironment.addScope();
     for(Declaration decl : library.getDecls()){
-      decl.accept(this);
+        decl.accept(this);
     }
   }
+
+  private void visitStandardLibrary(){
+      libs.declanMathLibrary().accept(this);
+      libs.declanIoLibrary().accept(this);
+      libs.declanRealLibrary().accept(this);
+      libs.declanIntLibrary().accept(this);
+      libs.declanConversionsLibrary().accept(this);
+      libs.declanUtilsLibrary().accept(this);
+  }
+    
   @Override
   public void visit(Program program) {
     procEnvironment.addScope();
     varEnvironment.addScope();
+
+    visitStandardLibrary();
+
+    procEnvironment.addScope();
+    varEnvironment.addScope();
+    
     for (Declaration Decl : program.getDecls()) {
       Decl.accept(this);
     }
@@ -143,7 +164,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
       case REAL: varEnvironment.addEntry(name, new VariableEntry(false, new float[mySize])); break;
       case INT: varEnvironment.addEntry(name, new VariableEntry(false, new int[mySize])); break;
       case BOOLEAN: varEnvironment.addEntry(name, new VariableEntry(false, new boolean[mySize])); break;
-      default: throw new RuntimeException(); 
+      default: throw new RuntimeException("Unknown array type found for " + decl.toString() + " at position " + decl.getStart()); 
       }
   }
 
@@ -151,56 +172,25 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   public void visit(ProcedureDeclaration procDecl){
     String procedureName = procDecl.getProcedureName().getLexeme();
     List <ParamaterDeclaration> args = procDecl.getArguments();
-    String returnType = procDecl.getReturnType().getLexeme();
     List <Declaration> localVars = procDecl.getLocalVariables();
     List <Statement> Exec = procDecl.getExecutionStatements();
     Expression retExp = procDecl.getReturnStatement();
-    procEnvironment.addEntry(procedureName, new ProcedureEntry(args, returnType, localVars, Exec, retExp));
+    procEnvironment.addEntry(procedureName, new ProcedureEntry(args, localVars, Exec, retExp));
   }
         
   @Override
   public void visit(ProcedureCall procedureCall) {
     String procName = procedureCall.getProcedureName().getLexeme();
-    if (procName.equals("WriteInt") || procName.equals("PrintInt")) {
-      Object value = procedureCall.getArguments().get(0).acceptResult(this);
-      Integer intVal = ConversionUtils.toInt(value);
+    if(procName.equals("WriteChar")) {
+      char value = (char)procedureCall.getArguments().get(0).acceptResult(this);
       try{
-        standardOutput.append("" + intVal);
-      } catch(IOException exp){}
-    } else if (procName.equals("WriteReal") || procName.equals("PrintReal")) {
-      Object value = procedureCall.getArguments().get(0).acceptResult(this);
-      Float floatVal = ConversionUtils.toReal(value);
-      try{
-        standardOutput.append(floatVal.toString());
-      } catch(IOException exp){}
-    } else if(procName.equals("WriteLn") || procName.equals("PrintLn")) {
-       try{
-        standardOutput.append("\n");
-       } catch(IOException exp){}
-    } else if(procName.equals("WriteBool") || procName.equals("PrintBool")){
-        Object value = procedureCall.getArguments().get(0).acceptResult(this);
-        Boolean val = ConversionUtils.toBool(value);
-        try{
-         standardOutput.append(val.toString());
-        }catch(IOException exp){}
-    } else if(procName.equals("WriteString") || procName.equals("PrintString")) {
-      char[] value = (char[])procedureCall.getArguments().get(0).acceptResult(this);
-      int index = 0;
-      StringBuilder sb = new StringBuilder();
-      while(index < value.length){
-	  if(value[index] == '\0')
-	      break;
-	  sb.append(value[index]);
-	  index++;
-      }
-      try{
-        standardOutput.append(sb.toString());
+	  standardOutput.write((int)value);
+	  standardOutput.flush();
       }catch(IOException exp){}
-    } else if(procName.equals("WriteChar")) {
-      Object value = (Object)procedureCall.getArguments().get(0).acceptResult(this);
-      try{
-	  standardOutput.append(value.toString());
-      }catch(IOException exp){}
+    } else if(procName.equals("SkipChar")) {
+	try{
+	  standardIn.skip(1);
+	} catch(Exception exp){}
     } else if(procName.equals("ASSERT")){
       boolean value = ConversionUtils.toBool(procedureCall.getArguments().get(0).acceptResult(this));
       Object toPrint = (Object)procedureCall.getArguments().get(1).acceptResult(this);
@@ -208,11 +198,15 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         try{
           standardError.append("" + toPrint);
         } catch(IOException exp){}
-	      System.exit(1);
       }
     } else {
         String funcName = procedureCall.getProcedureName().getLexeme();
         ProcedureEntry pentry = procEnvironment.getEntry(funcName);
+
+	if(pentry == null){
+	    throw new RuntimeException("Cant find entry for " + funcName + " in symbol table for procedure call " + procedureCall + "\n at " + procedureCall.getStart());
+	}
+	
         List<ParamaterDeclaration> args = pentry.getArguments();
         List<Expression> valArgs = procedureCall.getArguments();
         List<Object> valArgResults = new ArrayList<>();
@@ -235,7 +229,7 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         for(Statement toDo : toExec){
             toDo.accept(this);
         }
-	      varEnvironment.removeScope(); //clean up local declarations as well as parameters	
+	varEnvironment.removeScope(); //clean up local declarations as well as parameters	
     }
   }
 
@@ -411,22 +405,30 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     if(varEnvironment.entryExists(name)){
       VariableEntry entry = varEnvironment.getEntry(name);
       if(entry.isConst()){
-	      errorLog.add("Variable " + assignment.getVariableName().getLexeme() + " declared as const ", assignment.getVariableName().getStart());
+	 throw new RuntimeException("Variable " + assignment.getVariableName().getLexeme() + " declared as const at" + assignment.getVariableName().getStart());
       } else if(entry.getValue() instanceof Float){
         Object value = assignment.getVariableValue().acceptResult(this);
         Float ivalue = ConversionUtils.toReal(value);
         entry.setValue(ivalue);
       } else if(entry.getValue() instanceof Integer){
         Object value = assignment.getVariableValue().acceptResult(this);
+	if(value == null)
+	    throw new RuntimeException("Error cant assign null value to int in instuction " + assignment + " at " + assignment.getStart());
         Integer ivalue = ConversionUtils.toInt(value);
         entry.setValue(ivalue);
       } else if(entry.getValue() instanceof Boolean){
         Object value = assignment.getVariableValue().acceptResult(this);
         Boolean ivalue = ConversionUtils.toBool(value);
         entry.setValue(ivalue);
-      } else {
+      } else if(entry.getValue() instanceof Character) {
+	Object value = assignment.getVariableValue().acceptResult(this);
+	Character cValue = ConversionUtils.toChar(value);
+	entry.setValue(cValue);
+      } else if(entry.getValue() instanceof String) {
         Object value = assignment.getVariableValue().acceptResult(this);
         entry.setValue(value);
+      } else {
+	  throw new RuntimeException("Unexpected type on left hand of assignment " + assignment.toString() + " at " + assignment.getStart());
       }
     }
   }
@@ -468,10 +470,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
          if(index instanceof Integer){
 	     boolean valBool = ConversionUtils.toBool(value);
 	     boolean[] original = (boolean[])entry.getValue();
-	     original[(int)index] = valReal;
+	     original[(int)index] = valBool;
 	 }
       } else {
-	  errorLog.add("Cant assign to element of array of type " + entry.getValue().getClass().getSimpleName());
+	  throw new RuntimeException("Cant assign to element of array of type " + entry.getValue().getClass().getSimpleName() + " at " + assignment.getStart());
       }
     }
   }
@@ -524,6 +526,14 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   public Object visitResult(BinaryOperation binaryOperation) {
     Object leftValue = binaryOperation.getLeft().acceptResult(this);
     Object rightValue = binaryOperation.getRight().acceptResult(this);
+
+    if(leftValue instanceof Character){
+	leftValue = (int)(char)leftValue;
+    }
+    if(rightValue instanceof Character){
+	rightValue = (int)(char)rightValue;
+    }
+    
     switch(binaryOperation.getOperator()){
         case NE: return OpUtil.notEqual(leftValue, rightValue);
         case PLUS: return OpUtil.plus(leftValue, rightValue);
@@ -543,48 +553,65 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         case BOR: return OpUtil.bitwiseOr(leftValue, rightValue);
         case LSHIFT: return OpUtil.leftShift(leftValue, rightValue);
         case RSHIFT: return OpUtil.rightShift(leftValue, rightValue);
-        default: return null;
+        default: throw new RuntimeException("Error Invalid operation in binary operation " + binaryOperation.toString() + " at " + binaryOperation.getStart());
     }
   }
 
   @Override
   public Object visitResult(FunctionCall funcCall) {
     String funcName = funcCall.getFunctionName().getLexeme();
-    if(funcName.equals("round") || funcName.equals("Round")){
-      float argument = ConversionUtils.toReal(funcCall.getArguments().get(0).acceptResult(this));
-      return (int)Math.round(argument);
-    } else if(funcName.equals("floor") || funcName.equals("Floor")) {
-      float argument = ConversionUtils.toReal(funcCall.getArguments().get(0).acceptResult(this));
-      return (int)Math.floor(argument);
-    } else if(funcName.equals("ceil") || funcName.equals("Ceil")) {
-      float argument = ConversionUtils.toReal(funcCall.getArguments().get(0).acceptResult(this));
-      return (int)Math.ceil(argument);
-    } else if (funcName.equals("readInt") || funcName.equals("ReadInt")) {
-      Scanner scanner = new Scanner(standardIn);
-      String line = scanner.nextLine();
-      scanner.close();
-      return Integer.parseInt(line);
-    } else if(funcName.equals("readReal") || funcName.equals("ReadReal")){
-      Scanner scanner = new Scanner(standardIn);
-      String line = scanner.nextLine();
-      scanner.close();
-      return Float.parseFloat(line);
-    } else if(funcName.equals("readBool") || funcName.equals("ReadBool")){
-      Scanner scanner = new Scanner(standardIn);
-      String line = scanner.nextLine();
-      scanner.close();
-      return Boolean.parseBoolean(line);
-    } else if(funcName.equals("readChar") || funcName.equals("ReadChar")) {
-      Scanner scanner = new Scanner(standardIn);
-      String line = scanner.nextLine();
-      scanner.close();
-      return line.charAt(0);
+    if(funcName.equals("readChar") || funcName.equals("ReadChar")) {
+      try{
+	  int res = standardIn.read();
+	  if(res == -1)
+	      return '\0';
+	  return (char)res;
+	} catch(Exception exp){
+	  throw new RuntimeException("In function " +  funcCall.toString() + "exp.toString()");
+        }
+    } else if(funcName.equals("peekChar") || funcName.equals("PeekChar")) {
+	try {
+	    int res = standardIn.read();
+	    if(res <= -1)
+		return '\0';
+	    char line = (char)res;
+	    standardIn.unread(res);
+	    return line;
+	} catch(Exception exp){
+	    throw new RuntimeException("Function call " + funcCall.toString() + "\n exception occured " + exp.toString());
+	}
     } else if(funcName.equals("realBinaryAsInt") || funcName.equals("RealBinaryAsInt")){
       float argument = ConversionUtils.toReal(funcCall.getArguments().get(0).acceptResult(this));
       return Float.floatToRawIntBits(argument);
     } else if(funcName.equals("intBinaryAsReal") || funcName.equals("IntBinaryAsReal")){
       int argument = ConversionUtils.toInt(funcCall.getArguments().get(0).acceptResult(this));
       return Float.intBitsToFloat(argument);
+    } else if(funcName.equals("BoolBinaryAsReal")) {
+	boolean argument = ConversionUtils.toBool(funcCall.getArguments().get(0).acceptResult(this));
+	return (float)(argument ? 1.0 : 0.0);
+    } else if(funcName.equals("RealBinaryAsBool")) {
+	float argument = ConversionUtils.toReal(funcCall.getArguments().get(0).acceptResult(this));
+	return argument != 0;
+    } else if(funcName.equals("BoolBinaryAsInt")) {
+	boolean argument = ConversionUtils.toBool(funcCall.getArguments().get(0).acceptResult(this));
+	return argument ? 1 : 0;
+    } else if(funcName.equals("IntBinaryAsBool")) {
+        int argument = ConversionUtils.toInt(funcCall.getArguments().get(0).acceptResult(this));
+        return argument > 0;
+    } else if(funcName.equals("CharBinaryAsInt")) {
+	char arg = ConversionUtils.toChar(funcCall.getArguments().get(0).acceptResult(this));
+	return (int)arg;
+    } else if(funcName.equals("IntBinaryAsChar")) {
+	int argument = ConversionUtils.toInt(funcCall.getArguments().get(0).acceptResult(this));
+        return (char)argument;
+    } else if(funcName.equals("Multiply")) {
+	int argument1 = ConversionUtils.toInt(funcCall.getArguments().get(0).acceptResult(this));
+	int argument2 = ConversionUtils.toInt(funcCall.getArguments().get(1).acceptResult(this));
+	return (int)(argument1 * argument2);
+    } else if(funcName.equals("RMul")) {
+	float argument1 = ConversionUtils.toReal(funcCall.getArguments().get(0).acceptResult(this));
+	float argument2 = ConversionUtils.toReal(funcCall.getArguments().get(1).acceptResult(this));
+	return (float)(argument1 * argument2);
     } else {
       ProcedureEntry fentry = procEnvironment.getEntry(funcName);
       List<ParamaterDeclaration> args = fentry.getArguments();
@@ -608,7 +635,10 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
         } else if(toChange.getValue() instanceof Boolean){
           Boolean varVal = ConversionUtils.toBool(variableValue);
           toChange.setValue(varVal);
-        } else {
+        } else if(toChange.getValue() instanceof Character) {
+	    char val = ConversionUtils.toChar(variableValue);
+	    toChange.setValue(val);
+	} else {
           toChange.setValue(variableValue);
         }
       }
@@ -630,10 +660,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   @Override
   public Object visitResult(UnaryOperation unaryOperation) {
     Object value = unaryOperation.getExpression().acceptResult(this);
-	  switch(unaryOperation.getOperator()){
-	    case NOT: return OpUtil.not(value);
+      switch(unaryOperation.getOperator()){
+      case NOT: return OpUtil.not(value);
       case PLUS: return value;
       case MINUS: return OpUtil.negate(value);
+      case BNOT: return OpUtil.bitwiseNot(value);
       default: return null;
     }
   }
@@ -644,11 +675,11 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     Object value = ident.getValue();
     Object index = access.getExpression().acceptResult(this);
 
-    if(value instanceof String && index instanceof Integer){
-	String valText = (String)value;
+    if(value instanceof char[] && index instanceof Integer){
+	char[] valText = (char[])value;
 	int index2 = (int)index;
 
-	return valText.charAt(index2);
+	return valText[index2];
     } else if(value instanceof int[] && index instanceof Integer){
 	int[] val = (int[])value;
 	int index2 = (int)index;
@@ -677,9 +708,9 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   public Object visitResult(NumValue numValue){
     String lexeme = ifHexToInteger(numValue.getLexeme()); //change to hex if you need to otherwise unchanged
     if(lexeme.contains(".")){
-      return (Float)Float.parseFloat(lexeme);
+      return (float)Float.parseFloat(lexeme);
     } else {
-      return (Integer)Integer.parseInt(lexeme);
+      return (int)Integer.parseInt(lexeme);
     }
   }
 
@@ -697,9 +728,9 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   public Object visitResult(CharValue chrValue){
       String lexeme = chrValue.getLexeme();
       if(!lexeme.isEmpty()){
-	  return lexeme.charAt(0);
+	  return lexeme.translateEscapes().charAt(0);
       } else {
-	  return '\0';
+	  throw new RuntimeException("Error lexeme is empty expected \\0");
       }
   }
 
@@ -720,11 +751,17 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
     Identifier id = declaration.getIdentifier();
     String type = declaration.getType().getLexeme();
     if(type.equals("BOOLEAN")){
-	      varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, false));
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, false));
     } else if (type.equals("REAL")){
-	      varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, 0.0f));
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, 0.0f));
+    } else if(type.equals("STRING")){
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, new char[]{}));
+    } else if(type.equals("INTEGER")){
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, 0));
+    } else if(type.equals("CHAR")) {
+	varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, '\0'));
     } else {
-	      varEnvironment.addEntry(id.getLexeme(), new VariableEntry(false, 0));
+	throw new RuntimeException("Error unexpected type for paramater " + type + " in " + declaration.toString());
     }
   }
 
@@ -736,3 +773,5 @@ public class MyInterpreter implements ASTVisitor, ExpressionVisitor<Object> {
   public void visit(ElementAccess access){
   }
 }
+
+

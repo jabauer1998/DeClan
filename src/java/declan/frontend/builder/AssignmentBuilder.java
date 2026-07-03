@@ -9,6 +9,7 @@ import declan.utils.Tuple;
 import declan.frontend.builder.template.ResetableBuilder;
 import declan.frontend.IrRegisterGenerator;
 import declan.middleware.icode.Assign;
+import declan.middleware.icode.ArrayAssign;
 import declan.middleware.icode.Call;
 import declan.middleware.icode.Def;
 import declan.middleware.icode.ICode;
@@ -24,6 +25,10 @@ import declan.middleware.icode.symbols.SymEntry;
 public abstract class AssignmentBuilder extends DefinitionBuilder{
     protected AssignmentBuilder(IrRegisterGenerator gen){
         super(gen);
+    }
+
+    public void buildElementAssignment(ICode.Scope scope, String ident, IdentExp index, Exp exp, ICode.Type type){
+	addInstruction(new ArrayAssign(scope, ident, index, exp, type));
     }
     
     public void buildAssignment(ICode.Scope scope, String ident, Exp exp, ICode.Type type) {
@@ -284,3 +289,5 @@ public abstract class AssignmentBuilder extends DefinitionBuilder{
     	this.buildUnaryFunctionCallAssignment("RNeg", scope, place, ICode.Type.REAL, right, ICode.Type.REAL);
     }
 }
+
+

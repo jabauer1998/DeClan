@@ -19,3 +19,4 @@ BEGIN
   FOR n := 10 TO 2 BY -1 DO WriteInt(n) END;
   REPEAT Display(n) UNTIL TRUE
 END. (* Don't forget the ending period *)
+

@@ -53,6 +53,7 @@ import declan.middleware.icode.Goto;
 import declan.middleware.icode.ICode;
 import declan.middleware.icode.ICode.Scope;
 import declan.middleware.icode.If;
+import declan.middleware.icode.ArrayAssign;
 import declan.middleware.icode.Lib.SymbolSearchStrategy;
 import declan.middleware.icode.Prog;
 import declan.middleware.icode.exp.BinExp;
@@ -63,7 +64,7 @@ import declan.middleware.icode.exp.IntExp;
 import declan.middleware.icode.exp.NaaExp;
 import declan.middleware.icode.exp.NullableExp;
 import declan.middleware.icode.exp.RealExp;
-import declan.middleware.icode.exp.StrExp;
+import declan.middleware.icode.exp.CharArrayExp;
 import declan.middleware.icode.exp.UnExp;
 import declan.middleware.icode.inline.Inline;
 import declan.middleware.icode.inline.InlineParam;
@@ -632,14 +633,18 @@ public class MyOptimizer {
     private void regenerateUniqueNumbers() {
         Def.resetDefs();
         Assign.resetAssigns();
+	ArrayAssign.resetAssigns();
         Goto.clearGotos();
         Call.resetCalls();
         
         for(ICode icode: this.intermediateCode) {
                 if(icode instanceof Assign) {
-                        Assign assign = (Assign)icode;
-                        assign.recalculateIdentNumber();
-                } else if(icode instanceof Def) {
+                    Assign assign = (Assign)icode;
+                    assign.recalculateIdentNumber();
+                } else if(icode instanceof ArrayAssign) {
+		    ArrayAssign assign = (ArrayAssign)icode;
+		    assign.recalculateIdentNumber();
+		} else if(icode instanceof Def) {
                         Def def = (Def)icode;
                         def.recalculateIdentNumber();
                 } else if(icode instanceof Goto) {
@@ -983,9 +988,9 @@ public class MyOptimizer {
                     RealExp realICode = (RealExp)assignICode.value;
                     DagNode newNode = factory.createRealNode(false, assignICode.getScope(), assignICode.place, realICode.realValue);
                     dag.addDagNode(newNode);
-                } else if(assignICode.value instanceof StrExp){
-                    StrExp strICode = (StrExp)assignICode.value;
-                    DagNode newNode = factory.createStringNode(false, assignICode.getScope(), assignICode.place, strICode.value);
+                } else if(assignICode.value instanceof CharArrayExp){
+                    CharArrayExp strICode = (CharArrayExp)assignICode.value;
+                    DagNode newNode = factory.createStringNode(false, assignICode.getScope(), assignICode.place, strICode.getValue());
                     dag.addDagNode(newNode);
                 }
             } else if(icode instanceof Def){
@@ -1063,9 +1068,9 @@ public class MyOptimizer {
                     RealExp realICode = (RealExp)assignICode.val;
                     DagNode newNode = factory.createRealNode(true, assignICode.scope, assignICode.label, realICode.realValue);
                     dag.addDagNode(newNode);
-                } else if(assignICode.val instanceof StrExp){
-                    StrExp strICode = (StrExp)assignICode.val;
-                    DagNode newNode = factory.createStringNode(true, assignICode.scope, assignICode.label, strICode.value);
+                } else if(assignICode.val instanceof CharArrayExp){
+                    CharArrayExp strICode = (CharArrayExp)assignICode.val;
+                    DagNode newNode = factory.createStringNode(true, assignICode.scope, assignICode.label, strICode.getValue());
                     dag.addDagNode(newNode);
                 }
             } else {
@@ -2716,3 +2721,5 @@ public class MyOptimizer {
                 }
         }
 }
+
+

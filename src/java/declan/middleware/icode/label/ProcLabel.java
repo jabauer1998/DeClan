@@ -42,3 +42,4 @@ public class ProcLabel extends Label {
 		return new ProcLabel(label);
 	}
 }
+

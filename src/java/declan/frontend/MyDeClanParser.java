@@ -219,10 +219,7 @@ public class MyDeClanParser implements Parser{
     match(DeclanTokenType.PROCEDURE);
     Identifier procName = parseIdentifier();
     List<ParamaterDeclaration> fpSequence = new ArrayList<>();
-    Identifier returnType = new Identifier(start, "NA"); //defualt is no return Type
-    // FormalParameters -> ( FPSection FPSectionSequence ) : Type
     // FormalParameters -> ( FPSection FPSectionSequence )
-    // FormalParameters -> ( ) : Type
     // FormalParameters -> ( )
     if(willMatch(DeclanTokenType.LPAR)){
       skip();
@@ -246,10 +243,6 @@ public class MyDeClanParser implements Parser{
         }
       }
       match(DeclanTokenType.RPAR);
-      if(willMatch(DeclanTokenType.COLON)){
-        skip();
-        returnType = parseIdentifier();
-      }
     }
     match(DeclanTokenType.SEMI);
     // ProcedureBody -> DeclSequence BEGIN StatementSequence RETURN Expression END
@@ -272,7 +265,7 @@ public class MyDeClanParser implements Parser{
     if(!nameCheck.getLexeme().equals(procName.getLexeme())){
 	    errorLog.add("Expected -> Identity Given at the end of Procedure Declaration ( " + nameCheck.getLexeme() + " ) is not equal to the Expected Procedure Declaration Name ( " + procName.getLexeme() + " )", start);
     }
-    return new ProcedureDeclaration(start, procName, fpSequence, returnType, procDeclSequence, toExecute, retExpression);
+    return new ProcedureDeclaration(start, procName, fpSequence, procDeclSequence, toExecute, retExpression);
   }
 
  // ConstDecl -> ident = number
@@ -787,3 +780,5 @@ public class MyDeClanParser implements Parser{
     }
   }
 }
+
+

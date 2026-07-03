@@ -13,7 +13,7 @@ public interface DagNode {
     }
 
     public enum ValueType{
-        STRING, INT, REAL, BOOL, CHAR
+        STRING, INT, REAL, BOOL, CHAR, INT_ARRAY, REAL_ARRAY, BOOL_ARRAY
     }
 
     public boolean containsId(IdentExp ident);
@@ -28,3 +28,5 @@ public interface DagNode {
     public ScopeType getScopeType();
     public ValueType getValueType();
 }
+
+

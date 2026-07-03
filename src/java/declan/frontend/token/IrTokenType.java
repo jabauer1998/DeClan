@@ -54,6 +54,10 @@ public enum IrTokenType {
     BSS,
     FROM,
     SPILL,
+    AS,
+    ARRAY,
+    NEW,
+    OF,
     
     //Operators
     ASSIGN,
@@ -64,6 +68,7 @@ public enum IrTokenType {
     INT,
     REAL,
     BOOL,
+    CHAR,
 
     //Other Misc Symbols
     COMMA,
@@ -72,7 +77,8 @@ public enum IrTokenType {
     LBRACK,
     RBRACK,
     LANGLE,
-    RANGLE;
+    RANGLE,
+    AT;
 
     public static final Map<String, IrTokenType> reservedIr;
     private static final Map<Character, IrTokenType> singleOperators;
@@ -158,6 +164,11 @@ public enum IrTokenType {
         addKeyword(BSS);
         addKeyword(FROM);
         addKeyword(SPILL);
+	addKeyword(CHAR);
+	addKeyword(ARRAY);
+	addKeyword(AS);
+	addKeyword(NEW);
+	addKeyword(OF);
 
         dualOperators = new HashMap<>();
         addDualOp(":=", ASSIGN);
@@ -171,5 +182,8 @@ public enum IrTokenType {
         addSingleOp(']', RBRACK);
         addSingleOp('<', LANGLE);
         addSingleOp('>', RANGLE);
+	addSingleOp('@', AT);
     }
 }
+
+

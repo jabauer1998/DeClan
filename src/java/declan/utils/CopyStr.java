@@ -31,3 +31,5 @@ public class CopyStr implements Copyable<CopyStr>{
 		return data.hashCode();
 	}
 }
+
+

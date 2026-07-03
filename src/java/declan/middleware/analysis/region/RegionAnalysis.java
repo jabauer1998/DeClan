@@ -684,3 +684,5 @@ public abstract class RegionAnalysis<SetType> implements AnalysisBase {
 	protected abstract RegionTransferFunction<SetType> transferFunction(RegionBase region);
 	protected abstract RegionTransferFunction<SetType> identityFunction();
 }
+
+
